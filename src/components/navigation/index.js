@@ -40,7 +40,7 @@ export default function Navigation() {
             <StyledNavigation show={show} onClick={() => setShow(false)}>
                 <StyledNavigationContainer onClick={(event) => event.stopPropagation()}>
                     <Elevator>
-                        <StyledLogoContainer href="/">
+                        <StyledLogoContainer to="/">
                             <StyledLogo className="navigation__logo-image" src={withPrefix("/img/logo.svg")} alt="Logo" />
                         </StyledLogoContainer>
                         {/* This will later be replaced with an actual quick search */}

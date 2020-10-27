@@ -2,6 +2,7 @@ import styled, {css} from "styled-components";
 import Container from "components/container";
 import {gapsColumn, gapsRow} from "styles/mixins";
 import SearchInput from "components/input/search";
+import {Link} from "gatsby";
 
 export const StyledNavigation = styled.nav`
     background-color: ${(props) => props.theme.colors.primaryBackground[props.theme.elevation]};
@@ -69,7 +70,7 @@ export const StyledQuickSearch = styled(SearchInput)`
     flex: 2;
 `;
 
-export const StyledLogoContainer = styled.a`
+export const StyledLogoContainer = styled(Link)`
     flex: 1;
 
     display: flex;
