@@ -39,7 +39,7 @@ export default function IndexPage() {
                 <PageGridItem path="/anime/bakemonogatari" description="Browse all themes of a specific anime."/>
                 <PageGridItem path="/video/Bakemonogatari-OP1" description="Watch themes. Still work in progress."/>
             </StyledPageGrid>
-            {!!process.env.CI && (
+            {!!process.env.GATSBY_CI && (
                 <>
                     <Title variant="section">GitHub Pages</Title>
                     <Text as="p">
