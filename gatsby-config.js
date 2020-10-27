@@ -17,7 +17,7 @@ const aliases = fs.readdirSync(path.join(__dirname, "src")).reduce((obj, directo
 }, {});
 
 module.exports = {
-    pathPrefix: "/animethemes",
+    pathPrefix: process.env.GATSBY_PATH_PREFIX || "/animethemes",
     plugins: [
         "gatsby-plugin-styled-components",
         "gatsby-plugin-react-helmet",
