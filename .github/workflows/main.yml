@@ -31,7 +31,7 @@ jobs:
         run: npm run build-with-paths
         env:
           GATSBY_PATH_PREFIX: /animethemes-web
-          GATSBY_CI: ${{ env.CI }}
+          GATSBY_CI: true
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

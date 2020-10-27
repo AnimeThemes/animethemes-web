@@ -47,7 +47,7 @@ export default function IndexPage() {
                         <Text code link href="https://github.com/AnimeThemes/animethemes-web">animethemes-web</Text>
                         <span> repository this site gets updated. This also comes with some limitations like </span>
                         <Text code>.htaccess</Text>
-                        <span> files not working. So don't expect everything on this site to work the same way as the production site.</span>
+                        <span> files not working. So don't expect everything on this site to work the same way as on the production site.</span>
                     </Text>
                 </>
             )}
