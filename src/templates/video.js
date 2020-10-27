@@ -38,7 +38,7 @@ export default function VideoPage({ pageContext: { video, anime, theme, entry } 
                 ]
             });
         }
-    }, [ theme, image ]);
+    }, [ anime, theme, image ]);
 
     return (
         <Flex gapsColumn="1rem">

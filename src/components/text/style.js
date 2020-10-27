@@ -1,7 +1,8 @@
 import styled, { css } from "styled-components";
+import elevatedPrimaryBackground from "styles/helper";
 
 export const StyledTextBase = styled.span.attrs((props) => ({
-    as: props.as || props.link ? "a" : "span"
+    as: props.as || (props.link ? "a" : (props.code ? "code" : "span"))
 }))`
     color: ${(props) => props.color || "inherit"};
 
@@ -18,6 +19,14 @@ export const StyledTextBase = styled.span.attrs((props) => ({
         -webkit-line-clamp: ${props.maxLines};
         -webkit-box-orient: vertical;
         overflow: hidden;
+    `}
+  
+    ${(props) => props.code && css`
+        font-family: monospace;
+        padding: 0.25rem;
+        border-radius: 0.25rem;
+        background-color: ${elevatedPrimaryBackground};
+        line-height: 1.5rem;
     `}
 
     margin: 0;

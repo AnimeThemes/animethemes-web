@@ -69,7 +69,7 @@ export const StyledQuickSearch = styled(SearchInput)`
     flex: 2;
 `;
 
-export const StyledLogoContainer = styled.div`
+export const StyledLogoContainer = styled.a`
     flex: 1;
 
     display: flex;
