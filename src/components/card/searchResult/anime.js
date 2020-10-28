@@ -26,7 +26,9 @@ export default function AnimeSearchResultCard({ anime }) {
         >
             <Elevator>
                 <Flex row wrap gapsBoth="0.75rem">
-                    {anime.themes.slice(0, 4).map((theme) => (
+                    {anime.themes.slice(0, 4).filter((theme) => {
+                        return theme.entries.length && theme.entries[0].videos.length;
+                    }).map((theme) => (
                         <ButtonPlay key={theme.id} to={`/video/${theme.entries[0].videos[0].filename}`}>
                             <Text small block>{theme.slug}</Text>
                         </ButtonPlay>
