@@ -36,7 +36,7 @@ export default function GlobalSearch({ searchQuery, searchEntity }) {
     }
 
     return (
-        <Flex gapsColumn="1rem">
+        <Flex gapsColumn="2rem">
             <EntitySearch searchEntity={searchEntity} entity="anime" title="Anime" results={animeResults}/>
             <EntitySearch searchEntity={searchEntity} entity="theme" title="Themes" results={themeResults}/>
             <EntitySearch searchEntity={searchEntity} entity="artist" title="Artist" results={artistResults}/>
@@ -47,9 +47,15 @@ export default function GlobalSearch({ searchQuery, searchEntity }) {
 function EntitySearch({ searchEntity, entity, title, results }) {
     const { search, hash } = useLocation();
     const urlSuffix = search + hash;
+    const totalResults = results.length;
 
     if ((searchEntity && searchEntity !== entity) || !results.length) {
         return null;
+    }
+
+    // If no entity is selected, just show a preview with 3 results
+    if (!searchEntity) {
+        results = results.slice(0, 3);
     }
 
     let resultCards = results.map((result) => {
@@ -66,18 +72,18 @@ function EntitySearch({ searchEntity, entity, title, results }) {
     });
 
     return (
-        <>
+        <Flex gapsColumn="1rem">
             {!searchEntity && (
                 <Title variant="section">{title}</Title>
             )}
             {resultCards}
-            {!searchEntity && (
+            {!searchEntity && totalResults > 3 && (
                 <Flex row justifyContent="center">
                     <Button to={`/search/${entity}${urlSuffix}`} icon>
                         <FontAwesomeIcon icon={faChevronDown} fixedWidth/>
                     </Button>
                 </Flex>
             )}
-        </>
+        </Flex>
     );
 }

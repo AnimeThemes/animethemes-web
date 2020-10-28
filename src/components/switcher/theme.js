@@ -31,7 +31,7 @@ export default function ThemeSwitcher({ themes }) {
                                 active={activeGroup === group}
                                 onClick={() => setActiveGroup(group)}
                             >
-                                {group.name}
+                                {group.name || "Original"}
                             </Button>
                         ))}
                     </Switcher>

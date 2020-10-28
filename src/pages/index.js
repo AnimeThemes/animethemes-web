@@ -12,6 +12,10 @@ const StyledPageGrid = styled.div`
     grid-template-columns: auto 1fr;
     grid-gap: 1rem;
     align-items: center;
+  
+    @media (max-width: 720px) {
+        grid-template-columns: 1fr;
+    }
 `;
 
 export default function IndexPage() {

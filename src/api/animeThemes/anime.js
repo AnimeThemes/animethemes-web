@@ -38,8 +38,8 @@ async function fetchAnimeList({ reporter }) {
     return animeList;
 }
 
-function fetchAnimeSearch(query = "", limit = 5) {
-    return fetchJsonCached(`${baseUrl}/api/anime?page[size]=${limit}&${fields}&q=${query}`)
+function fetchAnimeSearch(query = "") {
+    return fetchJsonCached(`${baseUrl}/api/search?${fields}&q=${query}`)
         .then((json) => json.anime);
 }
 

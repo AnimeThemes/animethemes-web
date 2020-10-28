@@ -4,7 +4,7 @@ export function fetchTheme(id) {
     return fetchJsonCached(`${baseUrl}/api/theme/${id}`);
 }
 
-export function fetchThemeSearch(query = "", limit = 5) {
-    return fetchJsonCached(`${baseUrl}/api/theme?page[size]=${limit}&q=${query}`)
+export function fetchThemeSearch(query = "") {
+    return fetchJsonCached(`${baseUrl}/api/search?fields=themes&q=${query}`)
         .then((json) => json.themes);
 }

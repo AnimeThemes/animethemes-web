@@ -4,16 +4,33 @@ import {navigate} from "gatsby";
 import {useDebounce} from "use-debounce";
 import SearchInput from "components/input/search";
 import GlobalSearch from "components/search/global";
-import {gapsColumn} from "styles/mixins";
+import {gapsColumn, gapsRow} from "styles/mixins";
 import Title from "components/text/title";
+import Flex, {FlexItem} from "components/flex";
+import Switcher from "components/switcher";
+import Button from "components/button";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTimes} from "@fortawesome/free-solid-svg-icons";
 
 const StyledSearchPage = styled.div`
     ${gapsColumn("1.5rem")}
 `;
+const StyledSearchOptions = styled(Flex)`
+    @media (min-width: 721px) {
+        flex-direction: row;
+        ${gapsRow("1rem")}
+    }
+    @media (max-width: 720px) {
+        flex-direction: column;
+        align-items: center;
+        ${gapsColumn("1rem")}
+    }
+`;
 
-export default function SearchPage({ location: { pathname, search } }) {
+export default function SearchPage({ location: { pathname, search, hash } }) {
     const entity = useMemo(() => pathname.match(/\/search(?:\/(.+))?/)[1], [ pathname ]);
     const urlParams = useMemo(() => new URLSearchParams(search), [ search ]);
+    const urlSuffix = search + hash;
 
     const [ searchQuery, setSearchQuery ] = useState(urlParams.get("q") || "");
     const [ debouncedSearchQuery ] = useDebounce(searchQuery, 500);
@@ -43,7 +60,21 @@ export default function SearchPage({ location: { pathname, search } }) {
     return (
         <StyledSearchPage>
             <Title>Search</Title>
-            <SearchInput query={searchQuery} setQuery={setSearchQuery} isSearching={false}/>
+            <StyledSearchOptions>
+                <FlexItem flex={1}>
+                    <SearchInput query={searchQuery} setQuery={setSearchQuery} isSearching={false}/>
+                </FlexItem>
+                <Switcher>
+                    {!!entity && (
+                        <Button icon to={`/search${urlSuffix}`}>
+                            <FontAwesomeIcon icon={faTimes} fixedWidth/>
+                        </Button>
+                    )}
+                    <Button to={`/search/anime${urlSuffix}`} active={entity === "anime"}>Anime</Button>
+                    <Button to={`/search/theme${urlSuffix}`} active={entity === "theme"}>Themes</Button>
+                    <Button to={`/search/artist${urlSuffix}`} active={entity === "artist"}>Artists</Button>
+                </Switcher>
+            </StyledSearchOptions>
             <GlobalSearch searchEntity={entity} searchQuery={debouncedSearchQuery}/>
         </StyledSearchPage>
     );

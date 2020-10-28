@@ -25,6 +25,9 @@ const StyledPrefix = styled.div`
     background-color: ${(props) => props.theme.colors.secondaryBackground};
     color: ${(props) => props.theme.colors.primaryBackground[0]};
 `;
+const StyledBody = styled.div`
+    padding: 0.5rem;  
+`;
 
 export default function ButtonPlay({ children, ...props }) {
     return (
@@ -32,7 +35,9 @@ export default function ButtonPlay({ children, ...props }) {
             <StyledPrefix>
                 <FontAwesomeIcon icon={faPlay} fixedWidth />
             </StyledPrefix>
-            {children}
+            <StyledBody>
+                {children}
+            </StyledBody>
         </StyledButtonPlay>
     );
 }

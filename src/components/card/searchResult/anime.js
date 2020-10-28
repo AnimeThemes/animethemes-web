@@ -27,8 +27,8 @@ export default function AnimeSearchResultCard({ anime }) {
             <Elevator>
                 <Flex row wrap gapsBoth="0.75rem">
                     {anime.themes.slice(0, 4).map((theme) => (
-                        <ButtonPlay key={theme.id} to={`/theme/${theme.id}`}>
-                            <Text small>{theme.slug}</Text>
+                        <ButtonPlay key={theme.id} to={`/video/${theme.entries[0].videos[0].filename}`}>
+                            <Text small block>{theme.slug}</Text>
                         </ButtonPlay>
                     ))}
                     {anime.themes.length > 4 && (
