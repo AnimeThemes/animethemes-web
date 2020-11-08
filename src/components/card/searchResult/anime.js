@@ -9,7 +9,7 @@ import SearchResultCard from "components/card/searchResult";
 import Elevator from "components/elevator";
 import ButtonPlay from "components/button/play";
 
-export default function AnimeSearchResultCard({ anime }) {
+export default function AnimeSearchResultCard({ anime, hideThemes = false }) {
     const { image } = useAniList(anime);
 
     let premiere = anime.year;
@@ -24,22 +24,24 @@ export default function AnimeSearchResultCard({ anime }) {
             image={image}
             to={`/anime/${anime.alias}`}
         >
-            <Elevator>
-                <Flex row wrap gapsBoth="0.75rem">
-                    {anime.themes.slice(0, 4).filter((theme) => {
-                        return theme.entries.length && theme.entries[0].videos.length;
-                    }).map((theme) => (
-                        <ButtonPlay key={theme.id} to={`/video/${theme.entries[0].videos[0].filename}`}>
-                            <Text small block>{theme.slug}</Text>
-                        </ButtonPlay>
-                    ))}
-                    {anime.themes.length > 4 && (
-                        <Button icon title="Show all themes">
-                            <FontAwesomeIcon icon={faEllipsisH} fixedWidth/>
-                        </Button>
-                    )}
-                </Flex>
-            </Elevator>
+            {!hideThemes && (
+                <Elevator>
+                    <Flex row wrap gapsBoth="0.75rem">
+                        {anime.themes.slice(0, 4).filter((theme) => {
+                            return theme.entries.length && theme.entries[0].videos.length;
+                        }).map((theme) => (
+                            <ButtonPlay key={theme.id} to={`/video/${theme.entries[0].videos[0].filename}`}>
+                                <Text small block>{theme.slug}</Text>
+                            </ButtonPlay>
+                        ))}
+                        {anime.themes.length > 4 && (
+                            <Button icon title="Show all themes">
+                                <FontAwesomeIcon icon={faEllipsisH} fixedWidth/>
+                            </Button>
+                        )}
+                    </Flex>
+                </Elevator>
+            )}
         </SearchResultCard>
     );
 }

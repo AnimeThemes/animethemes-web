@@ -12,7 +12,7 @@ import ArtistSearchResultCard from "components/card/searchResult/artist";
 import Flex from "components/flex";
 
 export default function GlobalSearch({ searchQuery, searchEntity }) {
-    const [ results, isSearching ] = useSearch(searchEntity, searchQuery);
+    const [ results, isSearching ] = useSearch(searchQuery);
 
     if (!searchQuery) {
         return (

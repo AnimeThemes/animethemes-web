@@ -1,8 +1,5 @@
 import {useRef} from "react";
 import useSWR from "swr";
-import {fetchAnimeSearch} from "api/animeThemes/anime";
-import {fetchThemeSearch} from "api/animeThemes/theme";
-import {fetchArtistSearch} from "api/animeThemes/artist";
 import {fetchSearch} from "api/animeThemes/search";
 
 const createEmptyResults = () => ({
@@ -11,8 +8,8 @@ const createEmptyResults = () => ({
     artistResults: []
 });
 
-export default function useSearch(entity, query) {
-    const { data: results, isValidating } = useSWR([ entity, query ], fetchSearchResults);
+export default function useSearch(query) {
+    const { data: results, isValidating } = useSWR(query, fetchSearchResults);
 
     const stickyResults = useRef();
     if (results !== undefined) {
@@ -22,30 +19,15 @@ export default function useSearch(entity, query) {
     return [ stickyResults.current || createEmptyResults(), isValidating ];
 }
 
-async function fetchSearchResults(entity, query) {
-    let results = createEmptyResults();
-
+async function fetchSearchResults(query) {
     if (query) {
-        switch (entity) {
-            case "anime":
-                results.animeResults = await fetchAnimeSearch(query, 10);
-                break;
-            case "theme":
-                results.themeResults = await fetchThemeSearch(query, 10);
-                break;
-            case "artist":
-                results.artistResults = await fetchArtistSearch(query, 10)
-                break;
-            default:
-                const {anime, themes, artists} = await fetchSearch(query);
-                results = {
-                    animeResults: anime,
-                    themeResults: themes,
-                    artistResults: artists
-                };
-                break;
-        }
+        const {anime, themes, artists} = await fetchSearch(query);
+        return {
+            animeResults: anime,
+            themeResults: themes,
+            artistResults: artists
+        };
     }
 
-    return results;
+    return createEmptyResults();
 }
