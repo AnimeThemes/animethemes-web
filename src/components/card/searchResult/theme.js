@@ -14,6 +14,7 @@ export default function ThemeSearchResultCard({ theme }) {
             title={<SongTitleWithArtists song={theme.song}/>}
             description={`Theme • ${theme.slug} • ${theme.anime.name}`}
             image={image}
+            to={`/video/${theme.entries[0].videos[0].filename}`}
         />
     );
 }

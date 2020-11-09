@@ -2,7 +2,7 @@ import styled, { css } from "styled-components";
 import elevatedPrimaryBackground from "styles/helper";
 
 export const StyledTextBase = styled.span.attrs((props) => ({
-    as: props.as || (props.link ? "a" : (props.code ? "code" : "span"))
+    as: props.as || (props.code ? "code" : "span")
 }))`
     color: ${(props) => props.color || "inherit"};
 

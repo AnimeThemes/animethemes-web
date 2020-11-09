@@ -6,6 +6,7 @@ import Text from "components/text";
 import {gapsRow} from "styles/mixins";
 
 const StyledExternalLink = styled(Text).attrs({
+    forwardedAs: "a",
     link: true
 })`
     ${gapsRow("0.25rem")}

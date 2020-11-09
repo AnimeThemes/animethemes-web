@@ -38,7 +38,7 @@ exports.createPages = async ({ actions: { createPage }, reporter }) => {
             createPage({
                 path: `/video/${video.filename}`,
                 component: require.resolve("./src/templates/video.js"),
-                context: { video, anime, entry, theme }
+                context: { video, anime, entry, theme, layoutContext: { video } }
             });
         })));
     });
