@@ -3,6 +3,10 @@ import Title from "components/text/title";
 import Text from "components/text";
 import styled from "styled-components";
 import {gapsColumn} from "styles/mixins";
+import Card from "components/card";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faInfo} from "@fortawesome/free-solid-svg-icons";
+import Flex from "components/flex";
 
 const StyledIndexPage = styled.div`
     ${gapsColumn("1.5rem")}
@@ -17,23 +21,44 @@ const StyledPageGrid = styled.div`
         grid-template-columns: 1fr;
     }
 `;
+const StyledAnnouncement = styled(Text)`
+    & a {
+        color: ${(props) => props.theme.colors.secondaryTitle};
+    }
+`;
 
-export default function IndexPage() {
+export default function IndexPage({ pageContext: { announcements } }) {
     return (
         <StyledIndexPage>
             <Title>Welcome, to AnimeThemes.moe!</Title>
             <Text as="p">
                 <span>This page is still activily being worked on. If you are a developer and interested in contributing feel free to contact us on </span>
-                <Text link href="https://discordapp.com/invite/m9zbVyQ">Discord</Text>
+                <Text as="a" link href="https://discordapp.com/invite/m9zbVyQ">Discord</Text>
                 <span>.</span>
             </Text>
             <Text as="p">
                 <span>The source code for this page can be found </span>
-                <Text link href="https://github.com/AnimeThemes/animethemes-web">here</Text>
+                <Text as="a" link href="https://github.com/AnimeThemes/animethemes-web">here</Text>
                 <span> and our other open source projects can be found in our </span>
-                <Text link href="https://github.com/AnimeThemes">GitHub organization</Text>
+                <Text as="a" link href="https://github.com/AnimeThemes">GitHub organization</Text>
                 <span>.</span>
             </Text>
+            {announcements.length && (
+                <>
+                    <Title variant="section">Announcements</Title>
+                    <Text as="p">These are for demo purposes only. The content may not be accurate.</Text>
+                    {announcements.map((announcement) => (
+                        <Card key={announcement.id}>
+                            <Flex row gapsRow="1rem">
+                                <Text link>
+                                    <FontAwesomeIcon icon={faInfo}/>
+                                </Text>
+                                <StyledAnnouncement dangerouslySetInnerHTML={{__html: announcement.content}}/>
+                            </Flex>
+                        </Card>
+                    ))}
+                </>
+            )}
             <Title variant="section">Pages</Title>
             <StyledPageGrid>
                 <PageGridItem path="/search" description="Search the AnimeThemes database. You can also use the search bar in the navigation."/>
@@ -48,7 +73,7 @@ export default function IndexPage() {
                     <Title variant="section">GitHub Pages</Title>
                     <Text as="p">
                         <span>You are browsing this site on GitHub Pages. On every commit in the </span>
-                        <Text code link href="https://github.com/AnimeThemes/animethemes-web">animethemes-web</Text>
+                        <Text as="a" code link href="https://github.com/AnimeThemes/animethemes-web">animethemes-web</Text>
                         <span> repository this site gets updated. This also comes with some limitations like </span>
                         <Text code>.htaccess</Text>
                         <span> files not working. So don't expect everything on this site to work the same way as on the production site.</span>

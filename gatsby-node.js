@@ -1,7 +1,17 @@
 const {fetchAnimeList} = require("./src/api/animeThemes/anime");
+const {fetchAnnouncements} = require("./src/api/animeThemes/announcement");
 const seasonOrder = [ "winter", "spring", "summer", "fall" ];
 
 exports.createPages = async ({ actions: { createPage }, reporter }) => {
+    // Home page
+    const announcements = await fetchAnnouncements();
+    createPage({
+        path: "/",
+        component: require.resolve("./src/templates/index.js"),
+        context: { announcements }
+    });
+
+    // Aggregate anime
     const animeList = await fetchAnimeList({ reporter });
     const animeByYear = {};
 
@@ -28,7 +38,7 @@ exports.createPages = async ({ actions: { createPage }, reporter }) => {
     // Anime pages
     animeList.forEach((anime) => {
         createPage({
-            path: `/anime/${anime.alias}`,
+            path: `/anime/${anime.slug}`,
             component: require.resolve("./src/templates/anime.js"),
             context: { anime },
         });
@@ -38,7 +48,24 @@ exports.createPages = async ({ actions: { createPage }, reporter }) => {
             createPage({
                 path: `/video/${video.filename}`,
                 component: require.resolve("./src/templates/video.js"),
-                context: { video, anime, entry, theme, layoutContext: { video } }
+                context: {
+                    video,
+                    anime,
+                    entry,
+                    theme,
+                    layoutContext: {
+                        video: {
+                            ...video,
+                            entry: {
+                                ...entry,
+                                theme: {
+                                    ...theme,
+                                    anime
+                                }
+                            }
+                        }
+                    }
+                }
             });
         })));
     });

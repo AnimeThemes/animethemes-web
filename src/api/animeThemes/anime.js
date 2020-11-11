@@ -1,7 +1,7 @@
 const { baseUrl, fetchJsonCached, createFieldParams } = require("./index");
 
 const fields = createFieldParams({
-    anime:    [ "id", "name", "alias", "year", "season" ],
+    anime:    [ "id", "name", "slug", "year", "season" ],
     synonym:  [ "text" ],
     theme:    [ "id", "slug", "group" ],
     song:     [ "title" ],
@@ -45,7 +45,7 @@ function fetchAnimeSearch(query = "") {
 
 function fetchAnimeSlugs() {
     return fetchAnimeList()
-        .then((animeList) => animeList.map((anime) => anime.alias));
+        .then((animeList) => animeList.map((anime) => anime.slug));
 }
 
 function fetchAnimeByYear(year) {

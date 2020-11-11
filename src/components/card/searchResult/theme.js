@@ -6,7 +6,7 @@ import SearchResultCard from "components/card/searchResult";
 import SongTitleWithArtists from "components/utils/songTitleWithArtists";
 
 export default function ThemeSearchResultCard({ theme }) {
-    const { data: anime } = useSWR(theme.anime.alias, fetchAnime);
+    const { data: anime } = useSWR(theme.anime.slug, fetchAnime);
     const { image } = useAniList(anime);
 
     return (

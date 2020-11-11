@@ -22,7 +22,7 @@ export default function AnimeSearchResultCard({ anime, hideThemes = false }) {
             title={anime.name}
             description={`Anime • ${premiere} • ${anime.themes.length} themes`}
             image={image}
-            to={`/anime/${anime.alias}`}
+            to={`/anime/${anime.slug}`}
         >
             {!hideThemes && (
                 <Elevator>

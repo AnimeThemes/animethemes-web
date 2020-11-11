@@ -62,7 +62,7 @@ export default function VideoPage({ pageContext: { video, anime, theme, entry } 
                         <SongTitleWithArtists song={theme.song}/>
                         <Text small maxLines={1}>
                             <Text>{theme.slug} from </Text>
-                            <Link to={`/anime/${anime.alias}`}>
+                            <Link to={`/anime/${anime.slug}`}>
                                 <Text link>{anime.name}</Text>
                             </Link>
                         </Text>

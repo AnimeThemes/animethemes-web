@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlay} from "@fortawesome/free-solid-svg-icons";
+import {faCircleNotch, faPlay} from "@fortawesome/free-solid-svg-icons";
 import Button from "components/button";
 
 const StyledButtonPlay = styled(Button)`
@@ -29,11 +29,11 @@ const StyledBody = styled.div`
     padding: 0.5rem;  
 `;
 
-export default function ButtonPlay({ children, ...props }) {
+export default function ButtonPlay({ children, playing, ...props }) {
     return (
         <StyledButtonPlay {...props}>
             <StyledPrefix>
-                <FontAwesomeIcon icon={faPlay} fixedWidth />
+                <FontAwesomeIcon icon={playing ? faCircleNotch : faPlay} spin={playing} fixedWidth />
             </StyledPrefix>
             <StyledBody>
                 {children}

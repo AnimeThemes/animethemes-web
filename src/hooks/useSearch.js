@@ -2,32 +2,31 @@ import {useRef} from "react";
 import useSWR from "swr";
 import {fetchSearch} from "api/animeThemes/search";
 
-const createEmptyResults = () => ({
+const emptyResults = {
     animeResults: [],
     themeResults: [],
     artistResults: []
-});
+};
 
 export default function useSearch(query) {
     const { data: results, isValidating } = useSWR(query, fetchSearchResults);
 
-    const stickyResults = useRef();
-    if (results !== undefined) {
+    const stickyResults = useRef(emptyResults);
+    if (!query) {
+        stickyResults.current = emptyResults;
+    } else if (results !== undefined) {
         stickyResults.current = results;
     }
 
-    return [ stickyResults.current || createEmptyResults(), isValidating ];
+    return [ stickyResults.current, isValidating ];
 }
 
 async function fetchSearchResults(query) {
-    if (query) {
-        const {anime, themes, artists} = await fetchSearch(query);
-        return {
-            animeResults: anime,
-            themeResults: themes,
-            artistResults: artists
-        };
-    }
+    const {anime, themes, artists} = await fetchSearch(encodeURIComponent(query));
 
-    return createEmptyResults();
+    return {
+        animeResults: anime,
+        themeResults: themes,
+        artistResults: artists
+    };
 }

@@ -17,6 +17,7 @@ import {navigate} from "gatsby";
 export default function Navigation() {
     const [ show, setShow ] = useState(false);
     const [ theme, setTheme ] = useState(null);
+    const [ quickSearchQuery, setQuickSearchQuery ] = useState("");
 
     useEffect(() => {
         const body = document.body;
@@ -44,7 +45,11 @@ export default function Navigation() {
                             <StyledLogo className="navigation__logo-image" src={withPrefix("/img/logo.svg")} alt="Logo" />
                         </StyledLogoContainer>
                         {/* This will later be replaced with an actual quick search */}
-                        <StyledQuickSearch setQuery={(query) => navigate(`/search?q=${query}`, { replace: true })}/>
+                        <StyledQuickSearch
+                            query={quickSearchQuery}
+                            setQuery={setQuickSearchQuery}
+                            onSubmit={() => navigate(`/search?q=${quickSearchQuery}`)}
+                        />
                         <StyledLinks>
                             {/* Other links */}
                             <Button silent icon onClick={toggleTheme}>
