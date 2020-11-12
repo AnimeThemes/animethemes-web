@@ -120,9 +120,19 @@ export default function VideoPlayer({ video, background, ...props }) {
         }
     }
 
+    function maximize() {
+        navigate(`/video/${video.filename}`);
+    }
+
+    function preventTextSelection(event) {
+        if (event.detail > 1) {
+            event.preventDefault();
+        }
+    }
+
     return (
         <Elevator>
-            <StyledPlayer background={background} {...props}>
+            <StyledPlayer background={background} onDoubleClick={background && maximize} onMouseDown={preventTextSelection} {...props}>
                 <StyledVideoContainer background={background} layout transition={{ type: "tween" }}>
                     <StyledVideo
                         ref={playerRef}
@@ -145,7 +155,7 @@ export default function VideoPlayer({ video, background, ...props }) {
                             <StyledPlayerButton size="2rem" onClick={togglePlay}>
                                 <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} fixedWidth/>
                             </StyledPlayerButton>
-                            <StyledPlayerButton onClick={() => navigate(`/video/${video.filename}`)}>
+                            <StyledPlayerButton onClick={maximize}>
                                 <FontAwesomeIcon icon={faExpand} fixedWidth/>
                             </StyledPlayerButton>
                         </Elevator>
