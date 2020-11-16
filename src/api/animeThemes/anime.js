@@ -8,8 +8,8 @@ const fields = createFieldParams({
     artist:   [ "name", "as" ],
     entry:    [ "version", "episodes", "nsfw", "spoiler" ],
     video:    [ "filename", "link", "resolution", "nc", "subbed", "lyrics", "uncen", "source", "overlap" ],
-    series:   [ "name" ],
-    resource: [ "link", "type" ]
+    series:   [ "id", "name", "slug" ],
+    resource: [ "link", "site" ]
 });
 
 function fetchAnime(slug) {
@@ -22,7 +22,7 @@ async function fetchAnimeList({ reporter }) {
 
     const animeList = [];
 
-    let nextUrl = `${baseUrl}/api/anime?page[size]=100&${fields}`;
+    let nextUrl = `${baseUrl}/api/anime?page[size]=100&sort=year,season,name&${fields}`;
     while (nextUrl) {
         const page = await fetchJsonCached(nextUrl);
 

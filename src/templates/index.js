@@ -5,15 +5,17 @@ import styled from "styled-components";
 import {gapsColumn} from "styles/mixins";
 import Card from "components/card";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faInfo} from "@fortawesome/free-solid-svg-icons";
+import {faDesktop, faInfo, faMobileAlt} from "@fortawesome/free-solid-svg-icons";
 import Flex from "components/flex";
+import Tag from "components/tag";
+import {useMedia} from "react-media";
 
 const StyledIndexPage = styled.div`
     ${gapsColumn("1.5rem")}
 `;
 const StyledPageGrid = styled.div`
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto 1fr auto auto;
     grid-gap: 1rem;
     align-items: center;
   
@@ -61,12 +63,46 @@ export default function IndexPage({ pageContext: { announcements } }) {
             )}
             <Title variant="section">Pages</Title>
             <StyledPageGrid>
-                <PageGridItem path="/search" description="Search the AnimeThemes database. You can also use the search bar in the navigation."/>
-                <PageGridItem path="/year" description="Browse all years present in the database."/>
-                <PageGridItem path="/year/2009" description="Browse all seasons of a specific year."/>
-                <PageGridItem path="/year/2009/summer" description="Browse all anime of a specific season."/>
-                <PageGridItem path="/anime/bakemonogatari" description="Browse all themes of a specific anime."/>
-                <PageGridItem path="/video/Bakemonogatari-OP1" description="Watch themes. Still work in progress."/>
+                <PageGridItem
+                    path="/search"
+                    description="Search the AnimeThemes database. You can also use the search bar in the navigation."
+                    desktop
+                    mobile
+                />
+                <PageGridItem
+                    path="/year"
+                    description="Browse all years present in the database."
+                    desktop
+                    mobile
+                />
+                <PageGridItem
+                    path="/year/2009"
+                    description="Browse all seasons of a specific year."
+                    desktop
+                    mobile
+                />
+                <PageGridItem
+                    path="/year/2009/summer"
+                    description="Browse all anime of a specific season."
+                    desktop
+                    mobile
+                />
+                <PageGridItem
+                    path="/anime/bakemonogatari"
+                    description="Browse all themes of a specific anime."
+                    desktop
+                    mobile
+                />
+                <PageGridItem
+                    path="/series/monogatari"
+                    description="Browse all anime which belong to the same series."
+                    desktop
+                />
+                <PageGridItem
+                    path="/video/Bakemonogatari-OP1"
+                    description="Watch themes."
+                    desktop
+                />
             </StyledPageGrid>
             {!!process.env.GATSBY_CI && (
                 <>
@@ -84,13 +120,25 @@ export default function IndexPage({ pageContext: { announcements } }) {
     );
 }
 
-function PageGridItem({ path, description, children }) {
+function PageGridItem({ path, description, desktop, mobile, children }) {
+    const isMobile = useMedia({ query: "(max-width: 720px)" });
+
     return (
-          <>
-             <Link to={path}>
+        <>
+            <Link to={path}>
                 <Text code link>{path}</Text>
             </Link>
             <Text>{description || children}</Text>
-          </>
+            {desktop ? (
+                <Tag icon={faDesktop} title="Compatible with desktop devices">
+                    {isMobile && "Compatible with desktop devices"}
+                </Tag>
+            ) : <span/>}
+            {mobile ? (
+                <Tag icon={faMobileAlt} title="Compatible with mobile devices">
+                    {isMobile && "Compatible with mobile devices"}
+                </Tag>
+            ) : <span/>}
+        </>
     );
 }

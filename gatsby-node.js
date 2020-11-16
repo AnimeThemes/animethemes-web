@@ -14,23 +14,41 @@ exports.createPages = async ({ actions: { createPage }, reporter }) => {
     // Aggregate anime
     const animeList = await fetchAnimeList({ reporter });
     const animeByYear = {};
+    const seriesList = [];
 
     for (const anime of animeList) {
+        // Year aggregation
         const year = anime.year;
         const season = anime.season.toLowerCase() || null;
 
-        if (!season) {
-            continue;
+        if (season) {
+            if (!animeByYear[year]) {
+                animeByYear[year] = {};
+            }
+            if (!animeByYear[year][season]) {
+                animeByYear[year][season] = [];
+            }
+
+            animeByYear[year][season].push(anime);
         }
 
-        if (!animeByYear[year]) {
-            animeByYear[year] = {};
-        }
-        if (!animeByYear[year][season]) {
-            animeByYear[year][season] = [];
-        }
+        // Series aggregation
+        const animeSeriesList = anime.series;
 
-        animeByYear[year][season].push(anime);
+        for (const animeSeries of animeSeriesList) {
+            let series = seriesList.find((series) => series.id === animeSeries.id);
+
+            if (!series) {
+                series = {
+                    ...animeSeries,
+                    anime: []
+                };
+
+                seriesList.push(series);
+            }
+
+            series.anime.push(anime);
+        }
     }
 
     const yearList = Object.keys(animeByYear).sort((a, b) => a - b);
@@ -90,5 +108,14 @@ exports.createPages = async ({ actions: { createPage }, reporter }) => {
                 context: { animeList, year, season, yearList, seasonList },
             });
         })
+    });
+
+    // Series pages
+    seriesList.forEach((series) => {
+        createPage({
+            path: `/series/${series.slug}`,
+            component: require.resolve("./src/templates/series.js"),
+            context: { series }
+        });
     });
 };

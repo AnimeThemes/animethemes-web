@@ -34,7 +34,7 @@ export default function AnimeDetailPage({ pageContext: { anime } }) {
             <DescriptionList>
                 {{
                     "Alternative Titles": (
-                        !!anime.synonyms && !!anime.synonyms.length && (
+                        !!anime.synonyms.length && (
                             <StyledList>
                                 {anime.synonyms.map((synonym) => (
                                     <Text key={synonym.text}>{synonym.text}</Text>
@@ -49,10 +49,23 @@ export default function AnimeDetailPage({ pageContext: { anime } }) {
                             </Text>
                         </Link>
                     ),
+                    "Series": (
+                        !!anime.series.length && (
+                            <StyledList>
+                                {anime.series.map((series) =>
+                                    <Link to={`/series/${series.slug}`}>
+                                        <Text link>
+                                            {series.name}
+                                        </Text>
+                                    </Link>
+                                )}
+                            </StyledList>
+                        )
+                    ),
                     "Links": (
                         !!anime.resources && anime.resources.map((resource) => (
                             <ExternalLink key={resource.link} href={resource.link}>
-                                {resource.type}
+                                {resource.site}
                             </ExternalLink>
                         ))
                     )
