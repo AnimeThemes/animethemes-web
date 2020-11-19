@@ -30,7 +30,7 @@ export default function SearchInput({ query, setQuery, isSearching, onSubmit, ..
             <FontAwesomeIcon icon={faSearch} fixedWidth />
             <StyledForm onSubmit={(event) => {
                 event.preventDefault();
-                onSubmit(event);
+                if(onSubmit) onSubmit(event);
             }}>
                 <StyledInput
                     type="text"
