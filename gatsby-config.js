@@ -19,6 +19,7 @@ const aliases = fs.readdirSync(path.join(__dirname, "src")).reduce((obj, directo
 module.exports = {
     pathPrefix: process.env.GATSBY_PATH_PREFIX || "/animethemes",
     plugins: [
+        "gatsby-source-animethemes",
         "gatsby-plugin-styled-components",
         "gatsby-plugin-react-helmet",
         {
@@ -35,6 +36,12 @@ module.exports = {
             resolve: "gatsby-plugin-create-client-paths",
             options: { prefixes: [ "/search/*" ] },
         },
-        "gatsby-plugin-fontawesome-css"
+        "gatsby-plugin-fontawesome-css",
+        {
+            resolve: "gatsby-plugin-manifest",
+            options: {
+                icon: "src/images/icon.png"
+            }
+        }
     ]
 };

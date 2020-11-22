@@ -1,5 +1,5 @@
 import React from "react";
-import {Link} from "gatsby";
+import {graphql, Link} from "gatsby";
 import styled from "styled-components";
 import useAniList from "../hooks/useAniList";
 import ExternalLink from "../components/externalLink";
@@ -25,7 +25,7 @@ const StyledList = styled.div`
     text-align: center;
 `;
 
-export default function AnimeDetailPage({ pageContext: { anime } }) {
+export default function AnimeDetailPage({ data: { anime } }) {
     const { synopsis, image } = useAniList(anime);
 
     const sidebar = (
@@ -37,7 +37,7 @@ export default function AnimeDetailPage({ pageContext: { anime } }) {
                         !!anime.synonyms.length && (
                             <StyledList>
                                 {anime.synonyms.map((synonym) => (
-                                    <Text key={synonym.text}>{synonym.text}</Text>
+                                    <Text key={synonym}>{synonym}</Text>
                                 ))}
                             </StyledList>
                         )
@@ -50,7 +50,7 @@ export default function AnimeDetailPage({ pageContext: { anime } }) {
                         </Link>
                     ),
                     "Series": (
-                        !!anime.series.length && (
+                        !!anime.series && !!anime.series.length && (
                             <StyledList>
                                 {anime.series.map((series) =>
                                     <Link to={`/series/${series.slug}`}>
@@ -96,3 +96,52 @@ export default function AnimeDetailPage({ pageContext: { anime } }) {
         </StyledAnimePage>
     );
 }
+
+export const query = graphql`
+    query($slug: String!) {
+        anime(slug: { eq: $slug }) {
+            name
+            year
+            season
+            synonyms
+            series {
+                slug
+                name
+            }
+            themes {
+                group
+                slug
+                song {
+                    title
+                    performances {
+                        artist {
+                            slug
+                            name
+                        }
+                        as
+                    }
+                }
+                entries {
+                    episodes
+                    nsfw
+                    spoiler
+                    version
+                    videos {
+                        filename
+                        lyrics
+                        nc
+                        overlap
+                        resolution
+                        source
+                        subbed
+                        uncen
+                    }
+                }
+            }
+            resources {
+                link
+                site
+            }
+        }
+    }
+`;

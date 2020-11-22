@@ -8,14 +8,15 @@ import Container from "components/container";
 import VideoPlayer from "components/videoPlayer";
 import PlayerContext from "context/playerContext";
 
-export default function Layout({ children, pageContext: { layoutContext = {} } }) {
-    const [ currentVideo, setCurrentVideo ] = useState(layoutContext.video);
+export default function Layout({ children, data }) {
+    const video = data ? data.video : null;
+    const [ currentVideo, setCurrentVideo ] = useState(video);
 
     useEffect(() => {
-        if (layoutContext.video) {
-            setCurrentVideo(layoutContext.video);
+        if (video) {
+            setCurrentVideo(video);
         }
-    }, [ layoutContext.video ]);
+    }, [ video ]);
 
     return (
         <ThemeProvider theme={theme}>
@@ -32,7 +33,7 @@ export default function Layout({ children, pageContext: { layoutContext = {} } }
                     {currentVideo && (
                         <VideoPlayer
                             video={currentVideo}
-                            background={!layoutContext.video}
+                            background={!video}
                         />
                     )}
                     {children}

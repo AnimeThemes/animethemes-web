@@ -2,6 +2,7 @@ import styled from "styled-components";
 import Flex from "components/flex";
 import Button from "components/button";
 import Title from "components/text/title";
+import {graphql} from "gatsby";
 
 const StyledYearPage = styled.div`
     display: grid;
@@ -9,10 +10,10 @@ const StyledYearPage = styled.div`
     grid-auto-rows: 8rem;
 `;
 
-export default function YearPage({ pageContext: { yearList } }) {
+export default function YearPage({ data: { allAnime } }) {
     return (
         <StyledYearPage>
-            {yearList.map((year) => (
+            {allAnime.groupedByYear.map(({ year }) => (
                 <Flex key={year} alignItems="center" justifyContent="center">
                     <Button to={`/year/${year}`}>
                         <Title variant="page">{year}</Title>
@@ -22,3 +23,13 @@ export default function YearPage({ pageContext: { yearList } }) {
         </StyledYearPage>
     );
 }
+
+export const query = graphql`
+    query YearPageQuery {
+        allAnime {
+            groupedByYear: group(field: year) {
+                year: fieldValue
+            }
+        }
+    }
+`;

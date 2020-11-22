@@ -1,20 +1,29 @@
-import Title from "components/text/title";
 import Text from "components/text";
+import {Link} from "gatsby";
 
 export default function SongTitleWithArtists({ song }) {
     return (
-        <Title variant="card">
-            <Text link>{song.title}</Text>
-            {!!song.artists && !!song.artists.length && (
+        <>
+            <span>{song.title}</span>
+            {!!song.performances && !!song.performances.length && (
                 <>
                     <Text small> by </Text>
-                    {song.artists.map((artist, index) => (
-                        <Text key={artist.as || artist.name} link>
-                            {(artist.as || artist.name) + (index === song.artists.length - 2 ? " & " : index < song.artists.length - 1 ? ", " : "")}
-                        </Text>
+                    {song.performances.map((performance, index) => (
+                        <>
+                            <Link to={`/artist/${performance.artist.slug}`}>
+                                <Text key={performance.as || performance.artist.name} link>
+                                    {performance.as || performance.artist.name}
+                                </Text>
+                            </Link>
+                            {index < song.performances.length - 1 && (
+                                <Text small>
+                                    {index === song.performances.length - 2 ? " & " : ", "}
+                                </Text>
+                            )}
+                        </>
                     ))}
                 </>
             )}
-        </Title>
+        </>
     );
 }

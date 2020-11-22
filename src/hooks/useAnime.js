@@ -1,7 +1,7 @@
 // TODO: This will be obsolete when cover images are provided with anime.
 
 import useSWR from "swr";
-import {baseUrl} from "api/animeThemes";
+import {baseUrl} from "../../plugins/gatsby-source-animethemes/src/index";
 
 export default function useAnime(slug) {
     const { data: anime } = useSWR(
