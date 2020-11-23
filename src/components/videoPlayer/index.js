@@ -32,7 +32,7 @@ const StyledPlayer = styled.div`
             flex-direction: row;
         }
     ` : css`
-        margin-bottom: 1rem;
+        margin-bottom: 2rem;
     `}
 `;
 const StyledVideoContainer = styled(motion.div)`

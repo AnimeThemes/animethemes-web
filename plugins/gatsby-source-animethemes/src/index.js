@@ -1,5 +1,5 @@
 const fetch = require("node-fetch");
-const withCache = require("../../utils/withCache");
+const withCache = require("./utils/withCache");
 
 const baseUrl = process.env.GATSBY_API_URL || "https://animethemes.dev";
 

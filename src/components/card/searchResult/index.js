@@ -4,6 +4,7 @@ import Text from "components/text";
 import Title from "components/text/title";
 import styled from "styled-components";
 import Card from "components/card/index";
+import {gapsColumn} from "styles/mixins";
 
 const StyledSearchResultCard = styled(Card)`
     display: flex;
@@ -23,7 +24,9 @@ const StyledBody = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
-
+  
+    ${gapsColumn("0.25rem")}  
+  
     padding: 0 1rem;
 `;
 const StyledChildren = styled.div`
@@ -37,7 +40,7 @@ export default function SearchResultCard({ title, description, image, to, childr
         <StyledSearchResultCard {...props}>
             <StyledCover alt="Cover" src={image}/>
             <StyledBody>
-                <Title variant="card" link maxLines={2}>{title}</Title>
+                <Title variant="card" maxLines={2}>{title}</Title>
                 <Text small maxLines={1}>{description}</Text>
             </StyledBody>
             <StyledChildren>

@@ -8,6 +8,10 @@ export const StyledTextBase = styled.span.attrs((props) => ({
 
     ${(props) => props.link && css`
         color: ${(props) => props.theme.colors.secondaryTitle};
+            
+        &:hover {
+            text-decoration: underline;
+        }
     `}
 
     ${(props) => props.block && css`

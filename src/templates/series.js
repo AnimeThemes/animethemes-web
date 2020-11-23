@@ -6,6 +6,7 @@ import styled from "styled-components";
 import {gapsColumn} from "styles/mixins";
 import AnimeSearchResultCard from "components/card/searchResult/anime";
 import useAniList from "hooks/useAniList";
+import {graphql} from "gatsby";
 
 const StyledSeriesPage = styled.div`
     ${gapsColumn("1.5rem")}
@@ -36,7 +37,7 @@ const StyledCover = styled.img`
     object-fit: cover;
 `;
 
-export default function SeriesDetailPage({ pageContext: { series } }) {
+export default function SeriesDetailPage({ data: { series } }) {
     const images = [
         useAniList(series.anime[0]),
         useAniList(series.anime[1]),
@@ -72,3 +73,28 @@ export default function SeriesDetailPage({ pageContext: { series } }) {
         </StyledSeriesPage>
     );
 }
+
+export const query = graphql`
+    query($slug: String!) {
+        series(slug: { eq: $slug }) {
+            slug
+            name
+            anime {
+                slug
+                name
+                themes {
+                    slug
+                    entries {
+                        videos {
+                            filename
+                        }
+                    }
+                }
+                resources {
+                    link
+                    site
+                }
+            }
+        }
+    }
+`;

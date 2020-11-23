@@ -13,7 +13,7 @@ export default function VideoTags({ video }) {
     return (
         <Flex row wrap gapsBoth="0.75rem">
             <Tag title="Resolution">
-                { video.resolution }p
+                {video.resolution}p
             </Tag>
 
             {!!video.nc && (

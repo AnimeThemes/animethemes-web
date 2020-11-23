@@ -18,7 +18,7 @@ const StyledTitleSection = styled(StyledTextBase).attrs((props) => ({
     text-transform: uppercase;
 `;
 const StyledTitleCard = styled(StyledTextBase).attrs((props) => ({
-    color: props.theme.colors.primaryTitle
+    color: props.theme.colors.secondaryTitle
 }))`
     font-weight: bold;
 `;

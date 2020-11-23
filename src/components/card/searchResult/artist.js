@@ -8,8 +8,9 @@ export default function ArtistSearchResultCard({ artist }) {
     return (
         <SearchResultCard
             title={artist.name}
-            description={artist.songs ? `Artist • ${artist.songs.length} songs` : "Artist"}
+            description={artist.performances ? `Artist • ${artist.performances.length} songs` : "Artist"}
             image={image}
+            to={`/artist/${artist.slug}`}
         />
     );
 }

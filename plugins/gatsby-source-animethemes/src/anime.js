@@ -4,10 +4,10 @@ const fields = createFieldParams({
     anime:    [ "id", "name", "slug", "year", "season" ],
     synonym:  [ "text" ],
     theme:    [ "id", "slug", "group" ],
-    song:     [ "title" ],
-    artist:   [ "name", "as" ],
-    entry:    [ "version", "episodes", "nsfw", "spoiler" ],
-    video:    [ "filename", "link", "resolution", "nc", "subbed", "lyrics", "uncen", "source", "overlap" ],
+    song:     [ "id", "title" ],
+    artist:   [ "id", "slug", "name", "as" ],
+    entry:    [ "id", "version", "episodes", "nsfw", "spoiler" ],
+    video:    [ "id", "filename", "link", "resolution", "nc", "subbed", "lyrics", "uncen", "source", "overlap" ],
     series:   [ "id", "name", "slug" ],
     resource: [ "link", "site" ]
 });

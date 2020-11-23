@@ -1,4 +1,4 @@
-import {Link} from "gatsby";
+import {graphql, Link} from "gatsby";
 import Title from "components/text/title";
 import Text from "components/text";
 import styled from "styled-components";
@@ -26,10 +26,14 @@ const StyledPageGrid = styled.div`
 const StyledAnnouncement = styled(Text)`
     & a {
         color: ${(props) => props.theme.colors.secondaryTitle};
+      
+        &:hover {
+            text-decoration: underline;
+        }
     }
 `;
 
-export default function IndexPage({ pageContext: { announcements } }) {
+export default function IndexPage({ data: { allAnnouncement } }) {
     return (
         <StyledIndexPage>
             <Title>Welcome, to AnimeThemes.moe!</Title>
@@ -45,11 +49,11 @@ export default function IndexPage({ pageContext: { announcements } }) {
                 <Text as="a" link href="https://github.com/AnimeThemes">GitHub organization</Text>
                 <span>.</span>
             </Text>
-            {announcements.length && (
+            {allAnnouncement.totalCount && (
                 <>
                     <Title variant="section">Announcements</Title>
                     <Text as="p">These are for demo purposes only. The content may not be accurate.</Text>
-                    {announcements.map((announcement) => (
+                    {allAnnouncement.nodes.map((announcement) => (
                         <Card key={announcement.id}>
                             <Flex row gapsRow="1rem">
                                 <Text link>
@@ -97,6 +101,13 @@ export default function IndexPage({ pageContext: { announcements } }) {
                     path="/series/monogatari"
                     description="Browse all anime which belong to the same series."
                     desktop
+                    mobile
+                />
+                <PageGridItem
+                    path="/artist/kana_hanazawa"
+                    description="Browse all songs an artist has performed."
+                    desktop
+                    mobile
                 />
                 <PageGridItem
                     path="/video/Bakemonogatari-OP1"
@@ -142,3 +153,14 @@ function PageGridItem({ path, description, desktop, mobile, children }) {
         </>
     );
 }
+
+export const query = graphql`
+    query IndexPageQuery {
+        allAnnouncement {
+            nodes {
+                content
+            }
+            totalCount
+        }
+    }
+`;

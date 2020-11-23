@@ -1,5 +1,5 @@
 import React from "react";
-import {Link} from "gatsby";
+import {graphql, Link} from "gatsby";
 import styled from "styled-components";
 import AnimeSearchResultCard from "components/card/searchResult/anime";
 import Title from "components/text/title";
@@ -32,14 +32,7 @@ const StyledYearNext = styled(StyledYear)`
     justify-content: flex-start;
 `;
 
-const seasonTitles = {
-    winter: "Winter",
-    spring: "Spring",
-    summer: "Summer",
-    fall: "Fall"
-};
-
-export default function SeasonIndexPage({ pageContext: { animeList, year, season, yearList, seasonList } }) {
+export default function SeasonIndexPage({ data: { allAnime }, pageContext: { year, season, yearList, seasonList } }) {
     const previousYear = yearList.indexOf(year) > 0 ? yearList[yearList.indexOf(year) - 1] : null;
     const nextYear = yearList.indexOf(year) < yearList.length - 1 ? yearList[yearList.indexOf(year) + 1] : null;
 
@@ -67,14 +60,14 @@ export default function SeasonIndexPage({ pageContext: { animeList, year, season
             <Flex row justifyContent="center">
                 <Switcher>
                     {seasonList.map((availableSeason) => (
-                        <Button to={`/year/${year}/${availableSeason}`} active={availableSeason === season}>{seasonTitles[availableSeason]}</Button>
+                        <Button to={`/year/${year}/${availableSeason.toLowerCase()}`} active={availableSeason === season}>{availableSeason}</Button>
                     ))}
                 </Switcher>
             </Flex>
             {season ? (
-                <SeasonDetail season={season} year={year} animeList={animeList}/>
+                <SeasonDetail season={season} year={year} animeList={allAnime.nodes}/>
             ) : (
-                <YearOverview year={year} seasonList={seasonList} animeList={animeList}/>
+                <YearOverview year={year} seasonList={seasonList} animeList={allAnime.nodes}/>
             )}
         </StyledPage>
     );
@@ -82,7 +75,7 @@ export default function SeasonIndexPage({ pageContext: { animeList, year, season
 
 function YearOverview({ year, seasonList, animeList }) {
     return seasonList.map((season) => (
-        <SeasonPreview key={season} season={season} year={year} animeList={animeList[season]}/>
+        <SeasonPreview key={season} season={season} year={year} animeList={animeList}/>
     ));
 }
 
@@ -92,11 +85,11 @@ function SeasonPreview({ season, year, animeList }) {
             <Title variant="section">{season}</Title>
             <Flex gapsColumn="1rem">
                 {animeList.slice(0, 3).map((anime) => (
-                    <AnimeSearchResultCard key={anime.id} anime={anime}/>
+                    <AnimeSearchResultCard key={anime.slug} anime={anime}/>
                 ))}
             </Flex>
             <Flex row justifyContent="center">
-                <Button to={`/year/${year}/${season}`} icon>
+                <Button to={`/year/${year}/${season.toLowerCase()}`} icon>
                     <FontAwesomeIcon icon={faChevronDown} fixedWidth/>
                 </Button>
             </Flex>
@@ -110,9 +103,32 @@ function SeasonDetail({ season, year, animeList }) {
             <Title variant="section">{`Anime from ${season} of ${year}`}</Title>
             <Flex gapsColumn="1rem">
                 {animeList.map((anime) => (
-                    <AnimeSearchResultCard key={anime.id} anime={anime}/>
+                    <AnimeSearchResultCard key={anime.slug} anime={anime}/>
                 ))}
             </Flex>
         </>
     );
 }
+
+export const query = graphql`
+    query($year: Int!, $season: String) {
+        allAnime(filter: {year: {eq: $year}, season: {eq: $season}}) {
+            nodes {
+                slug
+                name
+                themes {
+                    slug
+                    entries {
+                        videos {
+                            filename
+                        }
+                    }
+                }
+                resources {
+                    link
+                    site
+                }
+            }
+        }
+    }
+`;

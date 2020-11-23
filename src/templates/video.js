@@ -1,4 +1,4 @@
-import {Link} from "gatsby";
+import {graphql, Link} from "gatsby";
 import Flex, {FlexItem} from "components/flex";
 import styled from "styled-components";
 import Text from "components/text";
@@ -12,18 +12,17 @@ import VideoButton from "components/button/video";
 import AnimeSearchResultCard from "components/card/searchResult/anime";
 import ArtistSearchResultCard from "components/card/searchResult/artist";
 
-const StyledCover = styled.img`
-    width: 48px;
-    height: 64px;
-    object-fit: cover;
-`;
 const StyledVideoInfo = styled(Flex).attrs({
     gapsColumn: "2rem"
 })`
     padding: 0 1rem;
 `;
 
-export default function VideoPage({ pageContext: { video, anime, theme, entry } }) {
+export default function VideoPage({ data: { video } }) {
+    const entry = video.entries[0]; // TODO: What about the other entries?
+    const theme = entry.theme;
+    const anime = theme.anime;
+
     const { image } = useAniList(anime);
 
     useEffect(() => {
@@ -31,7 +30,7 @@ export default function VideoPage({ pageContext: { video, anime, theme, entry } 
             // eslint-disable-next-line no-undef
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: `${theme.slug} • ${theme.song.title}`,
-                artist: theme.song.artists.map((artist) => artist.as || artist.name).join(", "),
+                artist: theme.song.performances ? theme.song.performances.map((performance) => performance.as || performance.artist.name).join(", ") : undefined,
                 album: anime.name,
                 artwork: [
                     { src: image, sizes: "512x512", type: "image/jpeg" }
@@ -56,10 +55,11 @@ export default function VideoPage({ pageContext: { video, anime, theme, entry } 
     return (
         <StyledVideoInfo>
             <Flex row alignItems="center" gapsRow="1rem">
-                <StyledCover alt="Cover" src={image}/>
                 <FlexItem flex={1}>
                     <Flex justifyContent="center" gapsColumn="0.25rem">
-                        <SongTitleWithArtists song={theme.song}/>
+                        <Title variant="card">
+                            <SongTitleWithArtists song={theme.song}/>
+                        </Title>
                         <Text small maxLines={1}>
                             <Text>{theme.slug} from </Text>
                             <Link to={`/anime/${anime.slug}`}>
@@ -85,8 +85,8 @@ export default function VideoPage({ pageContext: { video, anime, theme, entry } 
                             </FlexItem>
                             <FlexItem flex={1}>
                                 <Flex gapsColumn="1rem">
-                                    {theme.song.artists.map((artist) => (
-                                        <ArtistSearchResultCard key={artist.name} artist={artist}/>
+                                    {!!theme.song.performances && theme.song.performances.map((performance) => (
+                                        <ArtistSearchResultCard key={performance.artist.name} artist={performance.artist}/>
                                     ))}
                                 </Flex>
                             </FlexItem>
@@ -115,3 +115,67 @@ export default function VideoPage({ pageContext: { video, anime, theme, entry } 
         </StyledVideoInfo>
     );
 }
+
+export const query = graphql`
+    query($filename: String!) {
+        video(filename: { eq: $filename }) {
+            filename
+            link
+            lyrics
+            nc
+            overlap
+            resolution
+            source
+            subbed
+            uncen
+            entries {
+                episodes
+                nsfw
+                spoiler
+                version
+                theme {
+                    slug
+                    anime {
+                        name
+                        slug
+                        year
+                        season
+                        themes {
+                            slug
+                        }
+                        resources {
+                            site
+                            link
+                        }
+                    }
+                    song {
+                        title
+                        performances {
+                            artist {
+                                name
+                                slug
+                            }
+                            as
+                        }
+                    }
+                    entries {
+                        episodes
+                        nsfw
+                        spoiler
+                        version
+                        videos {
+                            filename
+                            lyrics
+                            nc
+                            overlap
+                            resolution
+                            source
+                            subbed
+                            uncen
+                        }
+                    }
+                }
+            }
+        }
+    }
+`

@@ -12,6 +12,7 @@ import Elevator from "components/elevator";
 import VideoButton from "components/button/video";
 import SongTitleWithArtists from "components/utils/songTitleWithArtists";
 import ThemeEntryTags from "components/utils/themeEntryTags";
+import Title from "components/text/title";
 
 export default function ThemeCard({ theme }) {
     return (
@@ -20,7 +21,9 @@ export default function ThemeCard({ theme }) {
                 <StyledRow>
                     <StyledSequence small>{theme.slug}</StyledSequence>
                     <StyledHeader>
-                        <SongTitleWithArtists song={theme.song}/>
+                        <Title variant="card">
+                            <SongTitleWithArtists song={theme.song}/>
+                        </Title>
                     </StyledHeader>
                 </StyledRow>
                 {theme.entries.map(entry => (

@@ -15,6 +15,9 @@ const StyledSidebar = styled.div`
     @media (min-width: 721px) {
         margin-right: 2rem;
     }
+    @media (max-width: 720px) {
+        margin-bottom: 1.5rem;
+    }
 `;
 const StyledBody = styled.div`
     flex: 3;

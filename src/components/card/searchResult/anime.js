@@ -1,4 +1,4 @@
-import React from "react";
+import {Link} from "gatsby";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEllipsisH} from "@fortawesome/free-solid-svg-icons";
 import Button from "components/button";
@@ -13,14 +13,31 @@ export default function AnimeSearchResultCard({ anime, hideThemes = false }) {
     const { image } = useAniList(anime);
 
     let premiere = anime.year;
+    let premiereLink = `/year/${anime.year}`;
     if (anime.season) {
         premiere = anime.season + " " + premiere;
+        premiereLink += `/${anime.season.toLowerCase()}`;
     }
+
+    let description = (
+        <>
+            <span>Anime</span>
+            {!!premiere && (
+                <>
+                    <span> • </span>
+                    <Link to={premiereLink}>
+                        <Text link>{premiere}</Text>
+                    </Link>
+                </>
+            )}
+            <span> • {anime.themes.length} themes</span>
+        </>
+    );
 
     return (
         <SearchResultCard
             title={anime.name}
-            description={`Anime • ${premiere} • ${anime.themes.length} themes`}
+            description={description}
             image={image}
             to={`/anime/${anime.slug}`}
         >

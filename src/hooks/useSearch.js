@@ -1,6 +1,6 @@
 import {useRef} from "react";
 import useSWR from "swr";
-import {baseUrl} from "api/animeThemes";
+import {baseUrl} from "../../plugins/gatsby-source-animethemes/src/index";
 
 const fields = [ "anime", "themes", "artists" ];
 const emptyResults = {
@@ -28,6 +28,14 @@ export default function useSearch(query) {
 async function fetchSearchResults(url) {
     const res = await fetch(url);
     const { anime, themes, artists } = await res.json();
+
+    // Map artist to performances to comply with the application schema
+    for (const theme of themes) {
+        theme.song.performances = theme.song.artists.map((artist) => ({
+            artist,
+            as: artist.as
+        }));
+    }
 
     return {
         animeResults: anime,
