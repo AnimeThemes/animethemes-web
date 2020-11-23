@@ -9,6 +9,10 @@ export default function ThemeSearchResultCard({ theme }) {
     const anime = useAnime(theme.anime.slug);
     const { image } = useAniList(anime);
 
+    if (!theme.entries[0] || !theme.entries[0].videos[0]) {
+        return null;
+    }
+
     return (
         <SearchResultCard
             title={<SongTitleWithArtists song={theme.song}/>}
