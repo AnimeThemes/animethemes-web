@@ -77,7 +77,7 @@ export default function AnimeDetailPage({ data: { anime } }) {
 
     return (
         <StyledAnimePage>
-            <SEO title={anime.name} description={synopsis} />
+            <SEO title={anime.name} />
             <Title>{anime.name}</Title>
             <ContainerSidebar sidebar={sidebar}>
                 <Flex gapsColumn="1rem">

@@ -41,7 +41,7 @@ export default function SEO({title, description, meta, lang}) {
                 },
                 {
                     property: "og:title",
-                    content: titleTemplate ? titleTemplate.replace(/%s/g, seo.title) : seo.title
+                    content: title ? titleTemplate.replace(/%s/g, title) : seo.title
                 },
                 {
                     property: "og:description",
