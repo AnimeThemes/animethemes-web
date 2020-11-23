@@ -7,6 +7,7 @@ import Navigation from "components/navigation";
 import Container from "components/container";
 import VideoPlayer from "components/videoPlayer";
 import PlayerContext from "context/playerContext";
+import SEO from "../seo";
 
 export default function Layout({ children, data }) {
     const video = data ? data.video : null;
@@ -21,11 +22,14 @@ export default function Layout({ children, data }) {
     return (
         <ThemeProvider theme={theme}>
             <PlayerContext.Provider value={{ currentVideo, setCurrentVideo }}>
+                <SEO
+                    meta={[{
+                        name: "viewport",
+                        content: "width=device-width, initial-scale=1"
+                    }]}
+                />
                 <Helmet>
-                    <meta charSet="utf-8" />
-                    <meta name="viewport" content="width=device-width, initial-scale=1" />
                     <link href="https://fonts.googleapis.com/css?family=Roboto:wght@400,700&display=swap" rel="stylesheet"/>
-                    <title>AnimeThemes</title>
                 </Helmet>
                 <GlobalStyle/>
                 <Navigation/>

@@ -11,6 +11,7 @@ import Title from "components/text/title";
 import VideoButton from "components/button/video";
 import AnimeSearchResultCard from "components/card/searchResult/anime";
 import ArtistSearchResultCard from "components/card/searchResult/artist";
+import SEO, {siteMetadata} from "../components/seo";
 
 const StyledVideoInfo = styled(Flex).attrs({
     gapsColumn: "2rem"
@@ -23,6 +24,7 @@ export default function VideoPage({ data: { video } }) {
     const theme = entry.theme;
     const anime = theme.anime;
 
+    const { siteName } = siteMetadata();
     const { image } = useAniList(anime);
 
     useEffect(() => {
@@ -52,8 +54,33 @@ export default function VideoPage({ data: { video } }) {
         };
     }).filter((otherEntry) => !!otherEntry);
 
+    const pageTitle = (() => {
+        // Generates and returns page title
+        let {title} = theme.song,
+            version = entry.version ? ` V${entry.version}` : "";
+        return `${title} (${anime.name} ${theme.slug}${version})`;
+    })();
+
+    const pageDesc = (() => {
+        // Generates and returns page description for SEO
+        let song = theme.song,
+            artistStr = "",
+            version = entry.version ? ` Version ${entry.version}` : "";
+        if (song.performances && song.performances.length) {
+            artistStr = " by ";
+            song.performances.map((performance, index) => {
+                artistStr += performance.as || performance.artist.name;
+                if (index < song.performances.length - 1) {
+                    artistStr += (index === song.performances.length - 2 ? ", and " : ", ");
+                }
+            });
+        }
+        return `Watch ${anime.name} ${theme.slug}${version}: ${song.title}${artistStr} on ${siteName}`;
+    })();
+
     return (
         <StyledVideoInfo>
+            <SEO title={pageTitle} description={pageDesc} />
             <Flex row alignItems="center" gapsRow="1rem">
                 <FlexItem flex={1}>
                     <Flex justifyContent="center" gapsColumn="0.25rem">

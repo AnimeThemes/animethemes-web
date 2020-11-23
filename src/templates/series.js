@@ -7,6 +7,7 @@ import {gapsColumn} from "styles/mixins";
 import AnimeSearchResultCard from "components/card/searchResult/anime";
 import useAniList from "hooks/useAniList";
 import {graphql} from "gatsby";
+import SEO from "../components/seo";
 
 const StyledSeriesPage = styled.div`
     ${gapsColumn("1.5rem")}
@@ -61,6 +62,7 @@ export default function SeriesDetailPage({ data: { series } }) {
 
     return (
         <StyledSeriesPage>
+            <SEO title={series.name} />
             <Title>{series.name}</Title>
             <ContainerSidebar sidebar={sidebar}>
                 <Flex gapsColumn="1rem">

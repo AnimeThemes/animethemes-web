@@ -11,6 +11,8 @@ import Switcher from "components/switcher";
 import Button from "components/button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimes} from "@fortawesome/free-solid-svg-icons";
+import { Helmet } from "react-helmet";
+import SEO from "../components/seo";
 
 const StyledSearchPage = styled.div`
     ${gapsColumn("1.5rem")}
@@ -34,6 +36,14 @@ export default function SearchPage({ location: { pathname, search, hash } }) {
 
     const [ searchQuery, setSearchQuery ] = useState(urlParams.get("q") || "");
     const [ debouncedSearchQuery ] = useDebounce(searchQuery, 500);
+
+    const pageTitle = (() => {
+        // Generates page title based on search query
+        if (searchQuery && searchQuery.trim()) {
+            return `${searchQuery} - Search`;
+        }
+        return "Search";
+    })();
 
     // Temporary effect to listen for changes to the search query that may be made by the quick search (WIP)
     useEffect(() => { setSearchQuery(urlParams.get("q")) }, [ urlParams ]);
@@ -59,6 +69,7 @@ export default function SearchPage({ location: { pathname, search, hash } }) {
 
     return (
         <StyledSearchPage>
+            <SEO title={pageTitle} />
             <Title>Search</Title>
             <StyledSearchOptions>
                 <FlexItem flex={1}>

@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const siteConfig = require("./site-config")
 
 // Load environment configuration
 require("dotenv").config({
@@ -16,8 +17,18 @@ const aliases = fs.readdirSync(path.join(__dirname, "src")).reduce((obj, directo
     return obj;
 }, {});
 
+// If Gatsby already set up a path prefix, use that instead
+const pathPrefix = process.env.GATSBY_PATH_PREFIX || siteConfig.pathPrefix;
+
 module.exports = {
-    pathPrefix: process.env.GATSBY_PATH_PREFIX || "/animethemes",
+    pathPrefix: pathPrefix,
+    siteMetadata: {
+        lang: siteConfig.siteLanguage,
+        siteName: siteConfig.siteName,
+        description: siteConfig.description,
+        titleTemplate: `%s · ${siteConfig.siteName}`,
+        siteUrl: path.posix.join((process.env.SITE_URL || siteConfig.rootUrl), pathPrefix)
+    },
     plugins: [
         "gatsby-source-animethemes",
         "gatsby-plugin-styled-components",
