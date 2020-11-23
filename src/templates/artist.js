@@ -10,7 +10,7 @@ import Flex from "components/flex";
 import ContainerSidebar from "components/container/sidebar";
 import {fullWidth, gapsColumn} from "styles/mixins";
 import ThemeSearchResultCard from "components/card/searchResult/theme";
-import SEO from "../components/seo";
+import SEO from "components/seo";
 
 const StyledArtistPage = styled.div`
     ${gapsColumn("1.5rem")}

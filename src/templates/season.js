@@ -7,9 +7,9 @@ import {gapsColumn} from "styles/mixins";
 import Button from "components/button";
 import Flex from "components/flex";
 import Switcher from "components/switcher";
+import SEO from "components/seo";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronDown} from "@fortawesome/free-solid-svg-icons";
-import SEO from "../components/seo";
 
 const StyledPage = styled.div`
     ${gapsColumn()}

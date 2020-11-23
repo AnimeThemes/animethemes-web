@@ -5,9 +5,9 @@ import ContainerSidebar from "components/container/sidebar";
 import styled from "styled-components";
 import {gapsColumn} from "styles/mixins";
 import AnimeSearchResultCard from "components/card/searchResult/anime";
+import SEO from "components/seo";
 import useAniList from "hooks/useAniList";
 import {graphql} from "gatsby";
-import SEO from "../components/seo";
 
 const StyledSeriesPage = styled.div`
     ${gapsColumn("1.5rem")}

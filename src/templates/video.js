@@ -11,7 +11,7 @@ import Title from "components/text/title";
 import VideoButton from "components/button/video";
 import AnimeSearchResultCard from "components/card/searchResult/anime";
 import ArtistSearchResultCard from "components/card/searchResult/artist";
-import SEO, {siteMetadata} from "../components/seo";
+import SEO, {siteMetadata} from "components/seo";
 
 const StyledVideoInfo = styled(Flex).attrs({
     gapsColumn: "2rem"

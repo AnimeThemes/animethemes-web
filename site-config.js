@@ -1,5 +1,3 @@
-const { pathPrefix } = require("./gatsby-config");
-
 module.exports =  {
     // Basic site metadata
     siteName: "AnimeThemes",

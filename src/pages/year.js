@@ -2,8 +2,8 @@ import styled from "styled-components";
 import Flex from "components/flex";
 import Button from "components/button";
 import Title from "components/text/title";
+import SEO from "components/seo";
 import {graphql} from "gatsby";
-import SEO from "../components/seo";
 
 const StyledYearPage = styled.div`
     display: grid;

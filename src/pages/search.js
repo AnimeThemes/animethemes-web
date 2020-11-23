@@ -9,10 +9,9 @@ import Title from "components/text/title";
 import Flex, {FlexItem} from "components/flex";
 import Switcher from "components/switcher";
 import Button from "components/button";
+import SEO from "components/seo";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimes} from "@fortawesome/free-solid-svg-icons";
-import { Helmet } from "react-helmet";
-import SEO from "../components/seo";
 
 const StyledSearchPage = styled.div`
     ${gapsColumn("1.5rem")}

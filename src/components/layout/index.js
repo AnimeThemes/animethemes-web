@@ -7,7 +7,7 @@ import Navigation from "components/navigation";
 import Container from "components/container";
 import VideoPlayer from "components/videoPlayer";
 import PlayerContext from "context/playerContext";
-import SEO from "../seo";
+import SEO from "components/seo";
 
 export default function Layout({ children, data }) {
     const video = data ? data.video : null;
