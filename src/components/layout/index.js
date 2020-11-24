@@ -22,12 +22,7 @@ export default function Layout({ children, data }) {
     return (
         <ThemeProvider theme={theme}>
             <PlayerContext.Provider value={{ currentVideo, setCurrentVideo }}>
-                <SEO
-                    meta={[{
-                        name: "viewport",
-                        content: "width=device-width, initial-scale=1"
-                    }]}
-                />
+                <SEO />
                 <Helmet>
                     <link href="https://fonts.googleapis.com/css?family=Roboto:wght@400,700&display=swap" rel="stylesheet"/>
                 </Helmet>
