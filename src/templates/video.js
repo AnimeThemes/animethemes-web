@@ -3,6 +3,7 @@ import Flex, {FlexItem} from "components/flex";
 import styled from "styled-components";
 import Text from "components/text";
 import useAniList from "hooks/useAniList";
+import useSiteMeta from "hooks/useSiteMeta";
 import SongTitleWithArtists from "components/utils/songTitleWithArtists";
 import VideoTags from "components/utils/videoTags";
 import ThemeEntryTags from "components/utils/themeEntryTags";
@@ -11,7 +12,7 @@ import Title from "components/text/title";
 import VideoButton from "components/button/video";
 import AnimeSearchResultCard from "components/card/searchResult/anime";
 import ArtistSearchResultCard from "components/card/searchResult/artist";
-import SEO, {siteMetadata} from "components/seo";
+import SEO from "components/seo";
 
 const StyledVideoInfo = styled(Flex).attrs({
     gapsColumn: "2rem"
@@ -24,7 +25,7 @@ export default function VideoPage({ data: { video } }) {
     const theme = entry.theme;
     const anime = theme.anime;
 
-    const { siteName } = siteMetadata();
+    const { siteName } = useSiteMeta();
     const { image } = useAniList(anime);
 
     useEffect(() => {
@@ -54,12 +55,10 @@ export default function VideoPage({ data: { video } }) {
         };
     }).filter((otherEntry) => !!otherEntry);
 
-    const pageTitle = (() => {
-        // Generates and returns page title
-        let {title} = theme.song,
-            version = entry.version ? ` V${entry.version}` : "";
-        return `${title} (${anime.name} ${theme.slug}${version})`;
-    })();
+    // Generates and returns page title
+    const pageTitle = entry.version
+        ? `${theme.song.title} (${anime.name} ${theme.slug} V${entry.version})`
+        : `${theme.song.title} (${anime.name} ${theme.slug})`;
 
     const pageDesc = (() => {
         // Generates and returns page description for SEO

@@ -36,13 +36,10 @@ export default function SearchPage({ location: { pathname, search, hash } }) {
     const [ searchQuery, setSearchQuery ] = useState(urlParams.get("q") || "");
     const [ debouncedSearchQuery ] = useDebounce(searchQuery, 500);
 
-    const pageTitle = (() => {
-        // Generates page title based on search query
-        if (searchQuery && searchQuery.trim()) {
-            return `${searchQuery} - Search`;
-        }
-        return "Search";
-    })();
+    // Generates page title based on search query
+    const pageTitle = searchQuery && searchQuery.trim()
+        ? `${searchQuery} - Search`
+        : "Search";
 
     // Temporary effect to listen for changes to the search query that may be made by the quick search (WIP)
     useEffect(() => { setSearchQuery(urlParams.get("q")) }, [ urlParams ]);
