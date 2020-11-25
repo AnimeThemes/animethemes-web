@@ -7,6 +7,7 @@ import {gapsColumn} from "styles/mixins";
 import Button from "components/button";
 import Flex from "components/flex";
 import Switcher from "components/switcher";
+import SEO from "components/seo";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronDown} from "@fortawesome/free-solid-svg-icons";
 
@@ -35,9 +36,12 @@ const StyledYearNext = styled(StyledYear)`
 export default function SeasonIndexPage({ data: { allAnime }, pageContext: { year, season, yearList, seasonList } }) {
     const previousYear = yearList.indexOf(year) > 0 ? yearList[yearList.indexOf(year) - 1] : null;
     const nextYear = yearList.indexOf(year) < yearList.length - 1 ? yearList[yearList.indexOf(year) + 1] : null;
+    
+    const pageTitle = season ? `${season} ${year} Anime` : `${year} Anime`;
 
     return (
         <StyledPage>
+            <SEO title={pageTitle} />
             <StyledYearContainer>
                 <StyledYearPrevious>
                     {previousYear && (

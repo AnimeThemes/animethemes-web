@@ -9,6 +9,7 @@ import Title from "components/text/title";
 import Flex, {FlexItem} from "components/flex";
 import Switcher from "components/switcher";
 import Button from "components/button";
+import SEO from "components/seo";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimes} from "@fortawesome/free-solid-svg-icons";
 
@@ -35,6 +36,11 @@ export default function SearchPage({ location: { pathname, search, hash } }) {
     const [ searchQuery, setSearchQuery ] = useState(urlParams.get("q") || "");
     const [ debouncedSearchQuery ] = useDebounce(searchQuery, 500);
 
+    // Generates page title based on search query
+    const pageTitle = searchQuery && searchQuery.trim()
+        ? `${searchQuery} - Search`
+        : "Search";
+
     // Temporary effect to listen for changes to the search query that may be made by the quick search (WIP)
     useEffect(() => { setSearchQuery(urlParams.get("q")) }, [ urlParams ]);
 
@@ -59,6 +65,7 @@ export default function SearchPage({ location: { pathname, search, hash } }) {
 
     return (
         <StyledSearchPage>
+            <SEO title={pageTitle} />
             <Title>Search</Title>
             <StyledSearchOptions>
                 <FlexItem flex={1}>

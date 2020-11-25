@@ -11,6 +11,7 @@ import ContainerSidebar from "components/container/sidebar";
 import CollapseCard from "components/card/collapse";
 import {fullWidth, gapsColumn} from "styles/mixins";
 import ThemeSwitcher from "components/switcher/theme";
+import SEO from "components/seo";
 
 const StyledAnimePage = styled.div`
     ${gapsColumn("1.5rem")}
@@ -76,6 +77,7 @@ export default function AnimeDetailPage({ data: { anime } }) {
 
     return (
         <StyledAnimePage>
+            <SEO title={anime.name} />
             <Title>{anime.name}</Title>
             <ContainerSidebar sidebar={sidebar}>
                 <Flex gapsColumn="1rem">

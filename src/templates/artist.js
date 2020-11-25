@@ -10,6 +10,7 @@ import Flex from "components/flex";
 import ContainerSidebar from "components/container/sidebar";
 import {fullWidth, gapsColumn} from "styles/mixins";
 import ThemeSearchResultCard from "components/card/searchResult/theme";
+import SEO from "components/seo";
 
 const StyledArtistPage = styled.div`
     ${gapsColumn("1.5rem")}
@@ -76,6 +77,7 @@ export default function ArtistDetailPage({ data: { artist } }) {
 
     return (
         <StyledArtistPage>
+            <SEO title={artist.name} />
             <Title>{artist.name}</Title>
             <ContainerSidebar sidebar={sidebar}>
                 <Flex gapsColumn="1rem">

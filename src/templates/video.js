@@ -3,6 +3,7 @@ import Flex, {FlexItem} from "components/flex";
 import styled from "styled-components";
 import Text from "components/text";
 import useAniList from "hooks/useAniList";
+import useSiteMeta from "hooks/useSiteMeta";
 import SongTitleWithArtists from "components/utils/songTitleWithArtists";
 import VideoTags from "components/utils/videoTags";
 import ThemeEntryTags from "components/utils/themeEntryTags";
@@ -11,6 +12,7 @@ import Title from "components/text/title";
 import VideoButton from "components/button/video";
 import AnimeSearchResultCard from "components/card/searchResult/anime";
 import ArtistSearchResultCard from "components/card/searchResult/artist";
+import SEO from "components/seo";
 
 const StyledVideoInfo = styled(Flex).attrs({
     gapsColumn: "2rem"
@@ -23,6 +25,7 @@ export default function VideoPage({ data: { video } }) {
     const theme = entry.theme;
     const anime = theme.anime;
 
+    const { siteName } = useSiteMeta();
     const { image } = useAniList(anime);
 
     useEffect(() => {
@@ -52,8 +55,31 @@ export default function VideoPage({ data: { video } }) {
         };
     }).filter((otherEntry) => !!otherEntry);
 
+    // Generates and returns page title
+    const pageTitle = entry.version
+        ? `${theme.song.title} (${anime.name} ${theme.slug} V${entry.version})`
+        : `${theme.song.title} (${anime.name} ${theme.slug})`;
+
+    const pageDesc = (() => {
+        // Generates and returns page description for SEO
+        let song = theme.song,
+            artistStr = "",
+            version = entry.version ? ` Version ${entry.version}` : "";
+        if (song.performances && song.performances.length) {
+            artistStr = " by ";
+            song.performances.map((performance, index) => {
+                artistStr += performance.as || performance.artist.name;
+                if (index < song.performances.length - 1) {
+                    artistStr += (index === song.performances.length - 2 ? ", and " : ", ");
+                }
+            });
+        }
+        return `Watch ${anime.name} ${theme.slug}${version}: ${song.title}${artistStr} on ${siteName}`;
+    })();
+
     return (
         <StyledVideoInfo>
+            <SEO title={pageTitle} description={pageDesc} />
             <Flex row alignItems="center" gapsRow="1rem">
                 <FlexItem flex={1}>
                     <Flex justifyContent="center" gapsColumn="0.25rem">

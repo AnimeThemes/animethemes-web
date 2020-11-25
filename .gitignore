@@ -1,3 +1,7 @@
+# General
+.env
+.env.*
+
 # NPM
 /node_modules
 
