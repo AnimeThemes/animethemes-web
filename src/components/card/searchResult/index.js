@@ -1,10 +1,10 @@
 import React from "react";
 import {Link} from "gatsby";
 import Text from "components/text";
-import Title from "components/text/title";
 import styled from "styled-components";
 import Card from "components/card/index";
 import {gapsColumn} from "styles/mixins";
+import theme from "theme";
 
 const StyledSearchResultCard = styled(Card)`
     display: flex;
@@ -40,7 +40,7 @@ export default function SearchResultCard({ title, description, image, to, childr
         <StyledSearchResultCard {...props}>
             <StyledCover alt="Cover" src={image}/>
             <StyledBody>
-                <Title variant="card" maxLines={2}>{title}</Title>
+                <Text bold color={theme.colors.secondaryTitle} maxLines={2}>{title}</Text>
                 <Text small maxLines={1}>{description}</Text>
             </StyledBody>
             <StyledChildren>
@@ -58,4 +58,15 @@ export default function SearchResultCard({ title, description, image, to, childr
     }
 
     return card;
+}
+
+export function SearchResultDescription({ children }) {
+    return children.filter((child) => !!child).map((child, index, { length }) => (
+        <Text color={theme.colors.primaryMediumEmphasis}>
+            <span>{child}</span>
+            {index < length - 1 && (
+                <span color={theme.colors.primaryMediumEmphasis}> &bull; </span>
+            )}
+        </Text>
+    ));
 }

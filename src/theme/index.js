@@ -1,4 +1,4 @@
-export default {
+const theme = {
     colors: {
         primaryBackground: [
             createColor("--primary-background-0", {
@@ -56,6 +56,8 @@ export default {
         return css;
     }
 };
+
+export default theme;
 
 function createColor(name, mappings) {
     return {

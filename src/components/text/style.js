@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components";
 import elevatedPrimaryBackground from "styles/helper";
+import PropTypes from "prop-types";
 
 export const StyledTextBase = styled.span.attrs((props) => ({
     as: props.as || (props.code ? "code" : "span")
@@ -14,6 +15,10 @@ export const StyledTextBase = styled.span.attrs((props) => ({
         }
     `}
 
+    ${(props) => props.bold && css`
+        font-weight: bold;
+    `}
+    
     ${(props) => props.block && css`
         display: block;
     `}
@@ -35,3 +40,11 @@ export const StyledTextBase = styled.span.attrs((props) => ({
 
     margin: 0;
 `;
+
+StyledTextBase.propTypes = {
+    color: PropTypes.string,
+    link: PropTypes.bool,
+    block: PropTypes.bool,
+    maxLines: PropTypes.number,
+    code: PropTypes.bool
+};
