@@ -17,11 +17,6 @@ const StyledTitleSection = styled(StyledTextBase).attrs((props) => ({
     font-weight: bold;
     text-transform: uppercase;
 `;
-const StyledTitleCard = styled(StyledTextBase).attrs((props) => ({
-    color: props.theme.colors.secondaryTitle
-}))`
-    font-weight: bold;
-`;
 
 export default function Title({ variant = "page", children, ...props }) {
     switch (variant) {
@@ -30,12 +25,6 @@ export default function Title({ variant = "page", children, ...props }) {
                 <StyledTitleSection {...props}>
                     {children}
                 </StyledTitleSection>
-            );
-        case "card":
-            return (
-                <StyledTitleCard {...props}>
-                    {children}
-                </StyledTitleCard>
             );
         case "page":
         default:

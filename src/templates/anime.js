@@ -64,11 +64,15 @@ export default function AnimeDetailPage({ data: { anime } }) {
                         )
                     ),
                     "Links": (
-                        !!anime.resources && anime.resources.map((resource) => (
-                            <ExternalLink key={resource.link} href={resource.link}>
-                                {resource.site}
-                            </ExternalLink>
-                        ))
+                        !!anime.resources && !!anime.resources.length && (
+                            <StyledList>
+                                {anime.resources.map((resource) => (
+                                    <ExternalLink key={resource.link} href={resource.link}>
+                                        {resource.site}
+                                    </ExternalLink>
+                                ))}
+                            </StyledList>
+                        )
                     )
                 }}
             </DescriptionList>

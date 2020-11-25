@@ -83,9 +83,9 @@ export default function VideoPage({ data: { video } }) {
             <Flex row alignItems="center" gapsRow="1rem">
                 <FlexItem flex={1}>
                     <Flex justifyContent="center" gapsColumn="0.25rem">
-                        <Title variant="card">
+                        <Text bold>
                             <SongTitleWithArtists song={theme.song}/>
-                        </Title>
+                        </Text>
                         <Text small maxLines={1}>
                             <Text>{theme.slug} from </Text>
                             <Link to={`/anime/${anime.slug}`}>

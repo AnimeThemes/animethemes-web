@@ -16,6 +16,7 @@ export default createGlobalStyle`
         min-height: 100vh;
 
         background-color: ${(props) => props.theme.colors.primaryBackground[0]};
+        color: ${(props) => props.theme.colors.primaryHighEmphasis};
 
         font-family: "Roboto", sans-serif;
         -webkit-font-smoothing: antialiased;

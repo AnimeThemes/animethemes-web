@@ -53,6 +53,7 @@ module.exports = {
             options: {
                 icon: "src/images/icon.png"
             }
-        }
+        },
+        "gatsby-plugin-eslint"
     ]
 };

@@ -5,7 +5,7 @@ import Button from "components/button";
 import Flex from "components/flex";
 import Text from "components/text";
 import useAniList from "hooks/useAniList";
-import SearchResultCard from "components/card/searchResult";
+import SearchResultCard, {SearchResultDescription} from "components/card/searchResult";
 import Elevator from "components/elevator";
 import ButtonPlay from "components/button/play";
 
@@ -20,18 +20,15 @@ export default function AnimeSearchResultCard({ anime, hideThemes = false }) {
     }
 
     let description = (
-        <>
+        <SearchResultDescription>
             <span>Anime</span>
             {!!premiere && (
-                <>
-                    <span> • </span>
-                    <Link to={premiereLink}>
-                        <Text link>{premiere}</Text>
-                    </Link>
-                </>
+                <Link to={premiereLink}>
+                    <Text link>{premiere}</Text>
+                </Link>
             )}
-            <span> • {anime.themes.length} themes</span>
-        </>
+            <span>{anime.themes.length} themes</span>
+        </SearchResultDescription>
     );
 
     return (

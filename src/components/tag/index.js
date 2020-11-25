@@ -3,6 +3,7 @@ import styled, {css} from "styled-components";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {gapsRow} from "styles/mixins";
 import Text from "components/text";
+import theme from "theme";
 
 const StyledTag = styled.span`
     display: inline-flex;
@@ -26,7 +27,7 @@ export default function Tag({ icon, iconProps, warning, children, ...props }) {
                 <StyledTagIcon icon={icon} fixedWidth warning={warning} {...iconProps}/>
             )}
             {!!children && (
-                <Text small>
+                <Text small color={theme.colors.primaryHighEmphasis}>
                     {children}
                 </Text>
             )}
