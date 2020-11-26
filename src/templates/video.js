@@ -66,13 +66,13 @@ export default function VideoPage({ data: { video } }) {
             artistStr = "",
             version = entry.version ? ` Version ${entry.version}` : "";
         if (song.performances && song.performances.length) {
-            artistStr = " by ";
-            song.performances.map((performance, index) => {
-                artistStr += performance.as || performance.artist.name;
-                if (index < song.performances.length - 1) {
-                    artistStr += (index === song.performances.length - 2 ? ", and " : ", ");
+            artistStr = song.performances.reduce((str, performance, index, { length }) => {
+                str += performance.as || performance.artist.name;
+                if (index < length - 1) {
+                    str += (index === length - 2 ? " & " : ", ");
                 }
-            });
+                return str;
+            }, " by ");
         }
         return `Watch ${anime.name} ${theme.slug}${version}: ${song.title}${artistStr} on ${siteName}`;
     })();

@@ -51,8 +51,6 @@ exports.createPages = async ({ actions: { createPage }, graphql }) => {
         });
     }
 
-    const yearList = data.allAnime.groupedByYear.map((node) => +node.year);
-
     for (const { year, nodes } of data.allAnime.groupedByYear) {
         const yearNumeric = +year;
 
@@ -61,15 +59,15 @@ exports.createPages = async ({ actions: { createPage }, graphql }) => {
 
         createPage({
             path: `/year/${year}`,
-            component: require.resolve("./src/templates/season.js"),
-            context: { year: yearNumeric, yearList, seasonList }
+            component: require.resolve("./src/templates/year.js"),
+            context: { year: yearNumeric, seasonList }
         });
 
         for (const season of seasonList) {
             createPage({
                 path: `/year/${year}/${season.toLowerCase()}`,
                 component: require.resolve("./src/templates/season.js"),
-                context: { year: yearNumeric, season, yearList, seasonList }
+                context: { year: yearNumeric, season, seasonList }
             });
         }
     }
