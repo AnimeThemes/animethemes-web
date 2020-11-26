@@ -34,6 +34,9 @@ const StyledChildren = styled.div`
         display: none;
     }
 `;
+const StyledLink = styled(Link)`
+    display: block;
+`;
 
 export default function SearchResultCard({ title, description, image, to, children, ...props }) {
     const card = (
@@ -51,9 +54,9 @@ export default function SearchResultCard({ title, description, image, to, childr
 
     if (to) {
         return (
-            <Link to={to}>
+            <StyledLink to={to}>
                 {card}
-            </Link>
+            </StyledLink>
         );
     }
 

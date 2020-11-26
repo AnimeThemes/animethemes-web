@@ -11,7 +11,7 @@ const StyledYearPage = styled.div`
     grid-auto-rows: 8rem;
 `;
 
-export default function YearPage({ data: { allAnime } }) {
+export default function YearIndexPage({ data: { allAnime } }) {
     return (
         <StyledYearPage>
             <SEO title="Browse by Year"></SEO>
