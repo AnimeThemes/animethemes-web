@@ -1,7 +1,6 @@
 import React from "react";
-import {graphql, Link} from "gatsby";
+import { graphql, Link } from "gatsby";
 import styled from "styled-components";
-import useAniList from "../hooks/useAniList";
 import ExternalLink from "../components/externalLink";
 import DescriptionList from "components/descriptionList";
 import Text from "components/text";
@@ -9,9 +8,10 @@ import Title from "components/text/title";
 import Flex from "components/flex";
 import ContainerSidebar from "components/container/sidebar";
 import CollapseCard from "components/card/collapse";
-import {fullWidth, gapsColumn} from "styles/mixins";
+import { fullWidth, gapsColumn } from "styles/mixins";
 import ThemeSwitcher from "components/switcher/theme";
 import SEO from "components/seo";
+import useImage from "hooks/useImage";
 
 const StyledAnimePage = styled.div`
     ${gapsColumn("1.5rem")}
@@ -27,11 +27,11 @@ const StyledList = styled.div`
 `;
 
 export default function AnimeDetailPage({ data: { anime } }) {
-    const { synopsis, image } = useAniList(anime);
+    const { largeCover } = useImage(anime);
 
     const sidebar = (
         <Flex gapsColumn="1.5rem">
-            <StyledCover src={image} alt="Cover"/>
+            <StyledCover src={largeCover} alt="Cover"/>
             <DescriptionList>
                 {{
                     "Alternative Titles": (
@@ -88,7 +88,7 @@ export default function AnimeDetailPage({ data: { anime } }) {
                     <Title variant="section">Synopsis</Title>
                     <CollapseCard>
                         {(collapse) => (
-                            <Text maxLines={collapse ? 2 : null} dangerouslySetInnerHTML={{ __html: synopsis }}/>
+                            <Text maxLines={collapse ? 2 : null} dangerouslySetInnerHTML={{ __html: anime.synopsis }}/>
                         )}
                     </CollapseCard>
                     <Title variant="section">Themes</Title>
@@ -109,6 +109,7 @@ export const query = graphql`
             name
             year
             season
+            synopsis
             synonyms
             series {
                 slug
@@ -147,6 +148,10 @@ export const query = graphql`
             resources {
                 link
                 site
+            }
+            images {
+                facet
+                link
             }
         }
     }

@@ -25,7 +25,7 @@ in the client root directory and include the following:
 
 ```ini
 ; The URL to the AnimeThemes API to use.
-; If not specified, "https://animethemes.dev" is used as a default.
+; If not specified, "https://staging.animethemes.moe" is used as a default.
 GATSBY_API_URL = http://localhost
 ```
 
@@ -44,5 +44,5 @@ GATSBY_API_URL = http://localhost
 ### APIs
 
 - [AniList GraphQL API](https://anilist.gitbook.io/anilist-apiv2-docs/)
-  - Temporarily for fetching anime covers and synopsis.
+  - Temporarily for fetching artist covers.
 - AnimeThemes' own API

@@ -4,13 +4,13 @@ import {faEllipsisH} from "@fortawesome/free-solid-svg-icons";
 import Button from "components/button";
 import Flex from "components/flex";
 import Text from "components/text";
-import useAniList from "hooks/useAniList";
 import SearchResultCard, {SearchResultDescription} from "components/card/searchResult";
 import Elevator from "components/elevator";
 import ButtonPlay from "components/button/play";
+import useImage from "hooks/useImage";
 
 export default function AnimeSearchResultCard({ anime, hideThemes = false }) {
-    const { image } = useAniList(anime);
+    const { smallCover } = useImage(anime);
 
     let premiere = anime.year;
     let premiereLink = `/year/${anime.year}`;
@@ -35,7 +35,7 @@ export default function AnimeSearchResultCard({ anime, hideThemes = false }) {
         <SearchResultCard
             title={anime.name}
             description={description}
-            image={image}
+            image={smallCover}
             to={`/anime/${anime.slug}`}
         >
             {!hideThemes && (

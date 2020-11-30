@@ -1,18 +1,18 @@
-import {graphql, Link} from "gatsby";
-import Flex, {FlexItem} from "components/flex";
+import { Fragment, useEffect } from "react";
+import { graphql, Link } from "gatsby";
+import Flex, { FlexItem } from "components/flex";
 import styled from "styled-components";
 import Text from "components/text";
-import useAniList from "hooks/useAniList";
 import useSiteMeta from "hooks/useSiteMeta";
 import SongTitleWithArtists from "components/utils/songTitleWithArtists";
 import VideoTags from "components/utils/videoTags";
 import ThemeEntryTags from "components/utils/themeEntryTags";
-import React, {useEffect} from "react";
 import Title from "components/text/title";
 import VideoButton from "components/button/video";
 import AnimeSearchResultCard from "components/card/searchResult/anime";
 import ArtistSearchResultCard from "components/card/searchResult/artist";
 import SEO from "components/seo";
+import useImage from "hooks/useImage";
 
 const StyledVideoInfo = styled(Flex).attrs({
     gapsColumn: "2rem"
@@ -26,21 +26,21 @@ export default function VideoPage({ data: { video } }) {
     const anime = theme.anime;
 
     const { siteName } = useSiteMeta();
-    const { image } = useAniList(anime);
+    const { smallCover } = useImage(anime);
 
     useEffect(() => {
-        if (theme && image) {
+        if (theme && smallCover) {
             // eslint-disable-next-line no-undef
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: `${theme.slug} • ${theme.song.title}`,
                 artist: theme.song.performances ? theme.song.performances.map((performance) => performance.as || performance.artist.name).join(", ") : undefined,
                 album: anime.name,
                 artwork: [
-                    { src: image, sizes: "512x512", type: "image/jpeg" }
+                    { src: smallCover, sizes: "512x512", type: "image/jpeg" }
                 ]
             });
         }
-    }, [ anime, theme, image ]);
+    }, [ anime, theme, smallCover ]);
 
     const otherEntries = theme.entries.map(otherEntry => {
         const videos = otherEntry.videos.filter((otherVideo) => otherVideo.filename !== video.filename);
@@ -124,7 +124,7 @@ export default function VideoPage({ data: { video } }) {
                         <Flex gapsColumn="1rem" alignItems="flex-end">
                             <Title variant="section">Other versions</Title>
                             {otherEntries.map((otherEntry) => (
-                                <React.Fragment key={otherEntry.version}>
+                                <Fragment key={otherEntry.version}>
                                     <Flex row alignItems="center" gapsRow="0.5rem">
                                         <Text small>Version {otherEntry.version || 1}</Text>
                                         <ThemeEntryTags entry={entry}/>
@@ -132,7 +132,7 @@ export default function VideoPage({ data: { video } }) {
                                     {otherEntry.videos.map((video, index) => (
                                         <VideoButton key={index} video={video}/>
                                     ))}
-                                </React.Fragment>
+                                </Fragment>
                             ))}
                         </Flex>
                     )}
@@ -146,6 +146,7 @@ export const query = graphql`
     query($filename: String!) {
         video(filename: { eq: $filename }) {
             filename
+            basename
             link
             lyrics
             nc
@@ -171,6 +172,10 @@ export const query = graphql`
                         }
                         resources {
                             site
+                            link
+                        }
+                        images {
+                            facet
                             link
                         }
                     }

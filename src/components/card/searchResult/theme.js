@@ -1,13 +1,11 @@
-import {Link} from "gatsby";
-import useAniList from "hooks/useAniList";
-import SearchResultCard, {SearchResultDescription} from "components/card/searchResult";
+import { Link } from "gatsby";
+import SearchResultCard, { SearchResultDescription } from "components/card/searchResult";
 import SongTitleWithArtists from "components/utils/songTitleWithArtists";
-import useAnime from "hooks/useAnime";
 import Text from "components/text";
+import useImage from "hooks/useImage";
 
 export default function ThemeSearchResultCard({ theme }) {
-    const anime = useAnime(theme.anime.slug);
-    const { image } = useAniList(anime);
+    const { smallCover } = useImage(theme.anime);
 
     if (!theme.entries[0] || !theme.entries[0].videos[0]) {
         return null;
@@ -27,7 +25,7 @@ export default function ThemeSearchResultCard({ theme }) {
         <SearchResultCard
             title={<SongTitleWithArtists song={theme.song}/>}
             description={description}
-            image={image}
+            image={smallCover}
             to={`/video/${theme.entries[0].videos[0].filename}`}
         />
     );
