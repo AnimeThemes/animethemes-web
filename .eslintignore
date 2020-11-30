@@ -1,0 +1,10 @@
+# NPM
+/node_modules
+
+# Gatsby
+/.cache
+/public
+
+# IDE (WebStorm)
+*.iml
+/.idea

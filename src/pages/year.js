@@ -14,7 +14,7 @@ const StyledYearPage = styled.div`
 export default function YearIndexPage({ data: { allAnime } }) {
     return (
         <StyledYearPage>
-            <SEO title="Browse by Year"></SEO>
+            <SEO title="Browse by Year" />
             {allAnime.groupedByYear.map(({ year }) => (
                 <Flex key={year} alignItems="center" justifyContent="center">
                     <Button to={`/year/${year}`}>

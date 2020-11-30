@@ -94,8 +94,8 @@ export default function AnimeDetailPage({ data: { anime } }) {
                     <Title variant="section">Themes</Title>
                     {
                         !!anime.themes && anime.themes.length
-                        ? <ThemeSwitcher themes={anime.themes}/>
-                        : <Text>There are no themes for this anime.</Text>
+                            ? <ThemeSwitcher themes={anime.themes}/>
+                            : <Text>There are no themes for this anime.</Text>
                     }
                 </Flex>
             </ContainerSidebar>

@@ -12,8 +12,7 @@ export const StyledButton = styled.button`
 
     background-color: ${(props) => props.active
         ? props.theme.colors.secondaryBackground
-        : props.theme.colors.primaryBackground[props.theme.elevation - (props.silent ? 1 : 0)]
-    };
+        : props.theme.colors.primaryBackground[props.theme.elevation - (props.silent ? 1 : 0)]};
     color: ${(props) => props.active ? props.theme.colors.primaryBackground[0] : props.theme.colors.primaryMediumEmphasis};
 
     border-radius: 1rem;

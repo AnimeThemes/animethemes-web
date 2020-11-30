@@ -23,6 +23,7 @@
         "gatsby-plugin-root-import": "^2.0.5",
         "gatsby-plugin-styled-components": "^3.3.12",
         "node-fetch": "^2.6.1",
+        "prop-types": "^15.7.2",
         "react": "^16.14.0",
         "react-dom": "^16.14.0",
         "react-helmet": "^6.1.0",
