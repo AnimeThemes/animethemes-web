@@ -110,6 +110,10 @@ export const query = graphql`
                         anime {
                             slug
                             name
+                            images {
+                                facet
+                                link
+                            }
                         }
                         entries {
                             videos {

@@ -10,6 +10,8 @@ import PlayerContext from "context/playerContext";
 import elevatedPrimaryBackground from "styles/helper";
 import Elevator from "components/elevator";
 
+const videoBaseUrl = process.env.GATSBY_VIDEO_URL || "https://animethemes.moe";
+
 const StyledPlayer = styled.div`
     ${(props) => props.background ? css`
         position: fixed;
@@ -136,7 +138,7 @@ export default function VideoPlayer({ video, background, ...props }) {
                 <StyledVideoContainer background={background} layout transition={{ type: "tween" }}>
                     <StyledVideo
                         ref={playerRef}
-                        src={video.link.replace(".dev", ".moe")}
+                        src={`${videoBaseUrl}/video/${video.basename}`}
                         controls={!background}
                         autoPlay
                         onPlay={() => setPlaying(true)}

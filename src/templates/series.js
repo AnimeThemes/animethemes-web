@@ -3,11 +3,11 @@ import Flex from "components/flex";
 import React from "react";
 import ContainerSidebar from "components/container/sidebar";
 import styled from "styled-components";
-import {gapsColumn} from "styles/mixins";
+import { gapsColumn } from "styles/mixins";
 import AnimeSearchResultCard from "components/card/searchResult/anime";
 import SEO from "components/seo";
-import useAniList from "hooks/useAniList";
-import {graphql} from "gatsby";
+import { graphql } from "gatsby";
+import useImage from "hooks/useImage";
 
 const StyledSeriesPage = styled.div`
     ${gapsColumn("1.5rem")}
@@ -40,11 +40,11 @@ const StyledCover = styled.img`
 
 export default function SeriesDetailPage({ data: { series } }) {
     const images = [
-        useAniList(series.anime[0]),
-        useAniList(series.anime[1]),
-        useAniList(series.anime[2]),
-        useAniList(series.anime[3])
-    ].map((info) => info.image).filter((image) => !!image);
+        useImage(series.anime[0]),
+        useImage(series.anime[1]),
+        useImage(series.anime[2]),
+        useImage(series.anime[3])
+    ].map((images) => images.largeCover).filter((image) => !!image);
 
     const sidebar = (
         <Flex gapsColumn="1.5rem">
@@ -95,6 +95,10 @@ export const query = graphql`
                 resources {
                     link
                     site
+                }
+                images {
+                    facet
+                    link
                 }
             }
         }

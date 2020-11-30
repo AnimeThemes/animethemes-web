@@ -14,11 +14,13 @@ exports.createSchemaCustomization = ({ actions }) => {
             slug: String!
             year: Int!
             season: String
+            synopsis: String
             synonyms: [String]
             # See custom resolver below (n-to-n relations cannot be resolved with @link)
             series: [Series]
             themes: [Theme] @link(by: "anime.id", from: "id")
             resources: [Resource]
+            images: [Image]
         }
         
         type Theme implements Node {
@@ -44,6 +46,7 @@ exports.createSchemaCustomization = ({ actions }) => {
         type Video implements Node {
             id: ID!
             filename: String!
+            basename: String!
             link: String!
             resolution: String
             nc: Boolean!
@@ -91,6 +94,11 @@ exports.createSchemaCustomization = ({ actions }) => {
             site: String!
         }
         
+        type Image {
+            facet: String!
+            link: String!
+        }
+        
         type Announcement implements Node {
             id: ID!
             content: String!
@@ -115,12 +123,17 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest, repor
             slug: anime.slug,
             year: anime.year,
             season: anime.season,
+            synopsis: anime.synopsis,
             synonyms: anime.synonyms.map((synonym) => synonym.text),
             series: anime.series.map((series) => createNodeId(`Series-${series.id}`)),
             themes: anime.themes.map((theme) => createNodeId(`Theme-${theme.id}`)),
             resources: anime.resources.map((resource) => ({
                 link: resource.link,
                 site: resource.site
+            })),
+            images: anime.images.map((image) => ({
+                facet: image.facet,
+                link: image.link
             }))
         }, "Anime", helpers);
 
@@ -183,6 +196,7 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest, repor
         createNodeFromData({
             id: video.id,
             filename: video.filename,
+            basename: video.basename,
             link: video.link,
             resolution: video.resolution,
             nc: video.nc,

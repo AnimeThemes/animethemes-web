@@ -69,6 +69,10 @@ export const query = graphql`
                         link
                         site
                     }
+                    images {
+                        facet
+                        link
+                    }
                 }
             }
         }

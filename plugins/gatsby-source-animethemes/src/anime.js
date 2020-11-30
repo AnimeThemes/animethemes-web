@@ -1,13 +1,14 @@
 const { baseUrl, fetchJsonCached, createFieldParams } = require("./index");
 
 const fields = createFieldParams({
-    anime:    [ "id", "name", "slug", "year", "season" ],
+    anime:    [ "id", "name", "slug", "year", "season", "synopsis" ],
     synonym:  [ "text" ],
+    image:    [ "facet", "link" ],
     theme:    [ "id", "slug", "group" ],
     song:     [ "id", "title" ],
     artist:   [ "id", "slug", "name", "as" ],
     entry:    [ "id", "version", "episodes", "nsfw", "spoiler" ],
-    video:    [ "id", "filename", "link", "resolution", "nc", "subbed", "lyrics", "uncen", "source", "overlap" ],
+    video:    [ "id", "filename", "basename", "link", "resolution", "nc", "subbed", "lyrics", "uncen", "source", "overlap" ],
     series:   [ "id", "name", "slug" ],
     resource: [ "link", "site" ]
 });
