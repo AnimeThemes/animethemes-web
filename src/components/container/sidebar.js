@@ -26,12 +26,12 @@ const StyledBody = styled.div`
 export default function ContainerSidebar({ sidebar, children, ...props }) {
     return (
         <StyledContainerSidebar {...props}>
-           <StyledSidebar>
-               {sidebar}
-           </StyledSidebar>
-           <StyledBody>
-               {children}
-           </StyledBody>
-       </StyledContainerSidebar>
+            <StyledSidebar>
+                {sidebar}
+            </StyledSidebar>
+            <StyledBody>
+                {children}
+            </StyledBody>
+        </StyledContainerSidebar>
     );
 }
