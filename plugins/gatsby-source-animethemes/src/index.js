@@ -15,6 +15,8 @@ async function fetchJsonCached(url, init) {
         }
     }
 
+    lastRequest = Date.now();
+
     return await withCache(
         url,
         (url) => fetch(url, init).then((response) => response.json())
@@ -27,8 +29,8 @@ function createFieldParams(fields) {
         .join("&");
 }
 
-async function sleep(millis) {
-    return await new Promise((resolve) => setTimeout(resolve, millis));
+function sleep(millis) {
+    return new Promise((resolve) => setTimeout(resolve, millis));
 }
 
 module.exports = {
