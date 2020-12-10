@@ -6,6 +6,8 @@ import {Link} from "gatsby";
 
 export const StyledNavigation = styled.nav`
     background-color: ${(props) => props.theme.colors.primaryBackground[props.theme.elevation]};
+    
+    z-index: 1;
 
     @media (max-width: 720px) {
         display: flex;
@@ -59,20 +61,17 @@ export const StyledNavigationContainer = styled(Container)`
 `;
 
 export const StyledLinks = styled.span`
-    flex: 1;
-    justify-content: flex-end;
-
     display: flex;
     flex-direction: row;
 `;
 
 export const StyledQuickSearch = styled(SearchInput)`
-    flex: 2;
+    @media (min-width: 721px) {
+        width: 50%;
+    }
 `;
 
 export const StyledLogoContainer = styled(Link)`
-    flex: 1;
-
     display: flex;
     align-items: center;
 
@@ -99,6 +98,8 @@ export const StyledMobileToggle = styled.button`
     background-color: ${(props) => props.theme.colors.secondaryBackground};
     color: ${(props) => props.theme.colors.primaryBackground[0]};
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    
+    z-index: 2;
 
     @media (min-width: 721px) {
         display: none;

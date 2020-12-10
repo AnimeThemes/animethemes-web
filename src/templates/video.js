@@ -127,7 +127,7 @@ export default function VideoPage({ data: { video } }) {
                                 <Fragment key={otherEntry.version}>
                                     <Flex row alignItems="center" gapsRow="0.5rem">
                                         <Text small>Version {otherEntry.version || 1}</Text>
-                                        <ThemeEntryTags entry={entry}/>
+                                        <ThemeEntryTags entry={otherEntry}/>
                                     </Flex>
                                     {otherEntry.videos.map((video, index) => (
                                         <VideoButton key={index} video={video}/>
