@@ -18,7 +18,7 @@ const ThemeInjection = () => {
     );
 };
 
-export const onRenderBody = ({ setBodyAttributes, setPreBodyComponents }) => {
+export function onRenderBody({ setBodyAttributes, setPreBodyComponents }) {
     setBodyAttributes({ theme: "light" });
     setPreBodyComponents(<ThemeInjection />);
-};
+}

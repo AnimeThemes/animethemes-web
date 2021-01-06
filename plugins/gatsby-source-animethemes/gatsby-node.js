@@ -48,7 +48,7 @@ exports.createSchemaCustomization = ({ actions }) => {
             filename: String!
             basename: String!
             link: String!
-            resolution: String
+            resolution: Int
             nc: Boolean!
             subbed: Boolean!
             lyrics: Boolean!

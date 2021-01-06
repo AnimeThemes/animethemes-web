@@ -35,7 +35,13 @@ export default function ThemeCard({ theme }) {
                                 <StyledVideoListContainer>
                                     <StyledVideoList>
                                         {entry.videos.map((video, index) => (
-                                            <VideoButton key={index} video={video}/>
+                                            <VideoButton
+                                                key={index}
+                                                anime={theme.anime}
+                                                theme={theme}
+                                                entry={entry}
+                                                video={video}
+                                            />
                                         ))}
                                     </StyledVideoList>
                                 </StyledVideoListContainer>

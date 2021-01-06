@@ -20,8 +20,7 @@ const StyledVideoInfo = styled(Flex).attrs({
     padding: 0 1rem;
 `;
 
-export default function VideoPage({ data: { video } }) {
-    const entry = video.entries[0]; // TODO: What about the other entries?
+export default function VideoPage({ data: { video, entry } }) {
     const theme = entry.theme;
     const anime = theme.anime;
 
@@ -130,7 +129,13 @@ export default function VideoPage({ data: { video } }) {
                                         <ThemeEntryTags entry={otherEntry}/>
                                     </Flex>
                                     {otherEntry.videos.map((video, index) => (
-                                        <VideoButton key={index} video={video}/>
+                                        <VideoButton
+                                            key={index}
+                                            anime={anime}
+                                            theme={theme}
+                                            entry={entry}
+                                            video={video}
+                                        />
                                     ))}
                                 </Fragment>
                             ))}
@@ -143,8 +148,8 @@ export default function VideoPage({ data: { video } }) {
 }
 
 export const query = graphql`
-    query($filename: String!) {
-        video(filename: { eq: $filename }) {
+    query($id: String!, $entryId: String!) {
+        video(id: { eq: $id }) {
             filename
             basename
             link
@@ -155,57 +160,58 @@ export const query = graphql`
             source
             subbed
             uncen
-            entries {
-                episodes
-                nsfw
-                spoiler
-                version
-                theme {
+        }
+        entry(id: { eq: $entryId }) {
+            episodes
+            nsfw
+            spoiler
+            version
+            theme {
+                slug
+                anime {
+                    name
                     slug
-                    anime {
-                        name
+                    year
+                    season
+                    themes {
                         slug
-                        year
-                        season
-                        themes {
-                            slug
-                        }
-                        resources {
-                            site
-                            link
-                        }
-                        images {
-                            facet
-                            link
-                        }
                     }
-                    song {
-                        title
-                        performances {
-                            artist {
-                                name
-                                slug
-                            }
-                            as
-                        }
+                    resources {
+                        site
+                        link
                     }
-                    entries {
-                        episodes
-                        nsfw
-                        spoiler
-                        version
-                        videos {
-                            filename
-                            lyrics
-                            nc
-                            overlap
-                            resolution
-                            source
-                            subbed
-                            uncen
-                        }
+                    images {
+                        facet
+                        link
                     }
                 }
+                song {
+                    title
+                    performances {
+                        artist {
+                            name
+                            slug
+                        }
+                        as
+                    }
+                }
+                entries {
+                    episodes
+                    nsfw
+                    spoiler
+                    version
+                    videos {
+                        filename
+                        lyrics
+                        nc
+                        overlap
+                        resolution
+                        source
+                        subbed
+                        uncen
+                    }
+                }
+                ...VideoSlug
             }
         }
     }

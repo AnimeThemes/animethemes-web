@@ -34,6 +34,10 @@ const theme = {
             light: "hsla(0, 0%, 0%, 0.38)",
             dark: "hsla(0, 0%, 100%, 0.38)"
         }),
+        primaryTransparent: createColor("--primary-transparent", {
+            light: "hsla(267, 10%, 100%, 0.5)",
+            dark: "hsla(267, 10%, 7%, 0.5)"
+        }),
         secondaryBackground: createColor("--secondary-background", {
             light: "rgb(0,137,123)",
             dark: "rgb(128, 203, 196)"

@@ -11,13 +11,17 @@ import SEO from "components/seo";
 
 export default function Layout({ children, data }) {
     const video = data ? data.video : null;
+    const entry = data ? data.entry : null;
+
     const [ currentVideo, setCurrentVideo ] = useState(video);
+    const [ currentEntry, setCurrentEntry ] = useState(entry);
 
     useEffect(() => {
-        if (video) {
+        if (video && entry) {
             setCurrentVideo(video);
+            setCurrentEntry(entry);
         }
-    }, [ video ]);
+    }, [ video, entry ]);
 
     return (
         <ThemeProvider theme={theme}>
@@ -32,6 +36,7 @@ export default function Layout({ children, data }) {
                     {currentVideo && (
                         <VideoPlayer
                             video={currentVideo}
+                            entry={currentEntry}
                             background={!video}
                         />
                     )}
