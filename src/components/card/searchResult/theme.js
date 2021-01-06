@@ -3,13 +3,23 @@ import SearchResultCard, { SearchResultDescription } from "components/card/searc
 import SongTitleWithArtists from "components/utils/songTitleWithArtists";
 import Text from "components/text";
 import useImage from "hooks/useImage";
+import createVideoSlug from "utils/createVideoSlug";
 
 export default function ThemeSearchResultCard({ theme }) {
     const { smallCover } = useImage(theme.anime);
 
-    if (!theme.entries[0] || !theme.entries[0].videos[0]) {
+    if (!theme.entries.length) {
         return null;
     }
+
+    const entry = theme.entries[0];
+
+    if (!entry.videos.length) {
+        return null;
+    }
+
+    const video = entry.videos[0];
+    const videoSlug = createVideoSlug(theme, entry, video);
 
     const description = (
         <SearchResultDescription>
@@ -26,7 +36,7 @@ export default function ThemeSearchResultCard({ theme }) {
             title={<SongTitleWithArtists song={theme.song}/>}
             description={description}
             image={smallCover}
-            to={`/video/${theme.entries[0].videos[0].filename}`}
+            to={`/anime/${theme.anime.slug}/${videoSlug}`}
         />
     );
 }

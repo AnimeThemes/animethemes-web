@@ -115,11 +115,7 @@ export const query = graphql`
                                 link
                             }
                         }
-                        entries {
-                            videos {
-                                filename
-                            }
-                        }
+                        ...VideoSlug
                     }
                 }
             }

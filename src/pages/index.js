@@ -49,7 +49,7 @@ export default function IndexPage({ data: { allAnnouncement } }) {
                 <Text as="a" link href="https://github.com/AnimeThemes">GitHub organization</Text>
                 <span>.</span>
             </Text>
-            {allAnnouncement.totalCount && (
+            {!!allAnnouncement.totalCount && (
                 <>
                     <Title variant="section">Announcements</Title>
                     <Text as="p">These are for demo purposes only. The content may not be accurate.</Text>
@@ -92,12 +92,6 @@ export default function IndexPage({ data: { allAnnouncement } }) {
                     mobile
                 />
                 <PageGridItem
-                    path="/anime/bakemonogatari"
-                    description="Browse all themes of a specific anime."
-                    desktop
-                    mobile
-                />
-                <PageGridItem
                     path="/series/monogatari"
                     description="Browse all anime which belong to the same series."
                     desktop
@@ -110,7 +104,13 @@ export default function IndexPage({ data: { allAnnouncement } }) {
                     mobile
                 />
                 <PageGridItem
-                    path="/video/Bakemonogatari-OP1"
+                    path="/anime/bakemonogatari"
+                    description="Browse all themes of a specific anime."
+                    desktop
+                    mobile
+                />
+                <PageGridItem
+                    path="/anime/bakemonogatari/OP1-NCBD1080"
                     description="Watch themes."
                     desktop
                 />

@@ -29,6 +29,8 @@ const StyledList = styled.div`
 export default function AnimeDetailPage({ data: { anime } }) {
     const { largeCover } = useImage(anime);
 
+    console.log(anime);
+
     const sidebar = (
         <Flex gapsColumn="1.5rem">
             <StyledCover src={largeCover} alt="Cover"/>
@@ -128,6 +130,9 @@ export const query = graphql`
                         as
                     }
                 }
+                anime {
+                    slug
+                }
                 entries {
                     episodes
                     nsfw
@@ -144,6 +149,7 @@ export const query = graphql`
                         uncen
                     }
                 }
+                ...VideoSlug
             }
             resources {
                 link

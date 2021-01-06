@@ -9,6 +9,7 @@ import {navigate} from "gatsby";
 import PlayerContext from "context/playerContext";
 import elevatedPrimaryBackground from "styles/helper";
 import Elevator from "components/elevator";
+import createVideoSlug from "utils/createVideoSlug";
 
 const videoBaseUrl = process.env.GATSBY_VIDEO_URL || "https://animethemes.moe";
 
@@ -95,7 +96,7 @@ const StyledPlayerButton = styled(Button)`
     color: ${(props) => props.theme.colors.primaryTitle};
     
     @media (min-width: 1601px) {
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: ${(props) => props.theme.colors.primaryTransparent};
 
         &:hover {
             background-color: ${(props) => props.theme.colors.primaryBackground[0]};
@@ -109,7 +110,7 @@ const StyledPlayerButton = styled(Button)`
     }
 `;
 
-export default function VideoPlayer({ video, background, ...props }) {
+export default function VideoPlayer({ video, entry, background, ...props }) {
     const [ isPlaying, setPlaying ] = useState(false);
     const playerRef = useRef();
     const { setCurrentVideo } = useContext(PlayerContext);
@@ -123,7 +124,8 @@ export default function VideoPlayer({ video, background, ...props }) {
     }
 
     function maximize() {
-        navigate(`/video/${video.filename}`);
+        const videoSlug = createVideoSlug(entry.theme, entry, video);
+        navigate(`/anime/${entry.theme.anime.slug}/${videoSlug}`);
     }
 
     function preventTextSelection(event) {

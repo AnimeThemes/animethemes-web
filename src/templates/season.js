@@ -37,11 +37,7 @@ export const query = graphql`
                 name
                 themes {
                     slug
-                    entries {
-                        videos {
-                            filename
-                        }
-                    }
+                    ...VideoSlug
                 }
                 resources {
                     link

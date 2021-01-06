@@ -8,6 +8,7 @@ import SearchResultCard, {SearchResultDescription} from "components/card/searchR
 import Elevator from "components/elevator";
 import ButtonPlay from "components/button/play";
 import useImage from "hooks/useImage";
+import createVideoSlug from "utils/createVideoSlug";
 
 export default function AnimeSearchResultCard({ anime, hideThemes = false }) {
     const { smallCover } = useImage(anime);
@@ -41,13 +42,21 @@ export default function AnimeSearchResultCard({ anime, hideThemes = false }) {
             {!hideThemes && (
                 <Elevator>
                     <Flex row wrap gapsBoth="0.75rem">
-                        {anime.themes.slice(0, 4).filter((theme) => {
-                            return theme.entries.length && theme.entries[0].videos.length;
-                        }).map((theme) => (
-                            <ButtonPlay key={theme.id} to={`/video/${theme.entries[0].videos[0].filename}`}>
-                                <Text small block>{theme.slug}</Text>
-                            </ButtonPlay>
-                        ))}
+                        {anime.themes
+                            .slice(0, 4)
+                            .filter((theme) => theme.entries.length && theme.entries[0].videos.length)
+                            .map((theme) => {
+                                const entry = theme.entries[0];
+                                const video = entry.videos[0];
+                                const videoSlug = createVideoSlug(theme, entry, video);
+
+                                return (
+                                    <ButtonPlay key={theme.id} to={`/anime/${anime.slug}/${videoSlug}`}>
+                                        <Text small block>{theme.slug}</Text>
+                                    </ButtonPlay>
+                                );
+                            })
+                        }
                         {anime.themes.length > 4 && (
                             <Button icon title="Show all themes">
                                 <FontAwesomeIcon icon={faEllipsisH} fixedWidth/>
