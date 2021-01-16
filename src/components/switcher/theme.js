@@ -1,6 +1,6 @@
 import React, {useMemo, useState} from "react";
 import ThemeCard from "components/card/theme";
-import Flex, {FlexItem} from "components/flex";
+import { Box } from "components/flex";
 import Button from "components/button";
 import Switcher from "components/switcher";
 
@@ -21,25 +21,23 @@ export default function ThemeSwitcher({ themes }) {
     const [activeGroup, setActiveGroup] = useState(groups[0]);
 
     return (
-        <Flex gapsColumn="1rem">
+        <Box gapsColumn="1rem">
             {groups.length > 1 && (
-                <FlexItem alignSelf="flex-start">
-                    <Switcher>
-                        {groups.map((group) => (
-                            <Button
-                                key={group.name}
-                                active={activeGroup === group}
-                                onClick={() => setActiveGroup(group)}
-                            >
-                                {group.name || "Original"}
-                            </Button>
-                        ))}
-                    </Switcher>
-                </FlexItem>
+                <Switcher>
+                    {groups.map((group) => (
+                        <Button
+                            key={group.name}
+                            active={activeGroup === group}
+                            onClick={() => setActiveGroup(group)}
+                        >
+                            {group.name || "Original"}
+                        </Button>
+                    ))}
+                </Switcher>
             )}
             {activeGroup.themes.map((theme, index) => (
                 <ThemeCard key={index} theme={theme} />
             ))}
-        </Flex>
+        </Box>
     );
 }

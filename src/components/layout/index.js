@@ -28,18 +28,19 @@ export default function Layout({ children, data }) {
             <PlayerContext.Provider value={{ currentVideo, setCurrentVideo }}>
                 <SEO />
                 <Helmet>
+                    <meta name="theme-color" content={theme.colors.primaryBackground[1].mappings.dark}/>
                     <link href="https://fonts.googleapis.com/css?family=Roboto:wght@400,700&display=swap" rel="stylesheet"/>
                 </Helmet>
                 <GlobalStyle/>
                 <Navigation/>
+                {currentVideo && (
+                    <VideoPlayer
+                        video={currentVideo}
+                        entry={currentEntry}
+                        background={!video}
+                    />
+                )}
                 <Container>
-                    {currentVideo && (
-                        <VideoPlayer
-                            video={currentVideo}
-                            entry={currentEntry}
-                            background={!video}
-                        />
-                    )}
                     {children}
                 </Container>
             </PlayerContext.Provider>

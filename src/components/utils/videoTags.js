@@ -7,11 +7,11 @@ import {
     faStream
 } from "@fortawesome/free-solid-svg-icons";
 import Tag from "components/tag";
-import Flex from "components/flex";
+import { Flex } from "components/flex";
 
 export default function VideoTags({ video }) {
     return (
-        <Flex row wrap gapsBoth="0.75rem">
+        <Flex flexWrap="wrap" gapsBoth="0.75rem">
             <Tag title="Resolution">
                 {video.resolution}p
             </Tag>

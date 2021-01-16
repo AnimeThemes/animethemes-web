@@ -1,5 +1,4 @@
 import Title from "components/text/title";
-import Flex from "components/flex";
 import React from "react";
 import ContainerSidebar from "components/container/sidebar";
 import styled from "styled-components";
@@ -8,6 +7,7 @@ import AnimeSearchResultCard from "components/card/searchResult/anime";
 import SEO from "components/seo";
 import { graphql } from "gatsby";
 import useImage from "hooks/useImage";
+import { Box } from "components/flex";
 
 const StyledSeriesPage = styled.div`
     ${gapsColumn("1.5rem")}
@@ -47,17 +47,17 @@ export default function SeriesDetailPage({ data: { series } }) {
     ].map((images) => images.largeCover).filter((image) => !!image);
 
     const sidebar = (
-        <Flex gapsColumn="1.5rem">
+        <Box gapsColumn="1.5rem">
             <StyledCoverContainer>
                 <StyledCoverContainerFlex>
                     {images.map((image) => (
-                        <StyledCoverItemContainer>
+                        <StyledCoverItemContainer key={image}>
                             <StyledCover src={image}/>
                         </StyledCoverItemContainer>
                     ))}
                 </StyledCoverContainerFlex>
             </StyledCoverContainer>
-        </Flex>
+        </Box>
     );
 
     return (
@@ -65,12 +65,12 @@ export default function SeriesDetailPage({ data: { series } }) {
             <SEO title={series.name} />
             <Title>{series.name}</Title>
             <ContainerSidebar sidebar={sidebar}>
-                <Flex gapsColumn="1rem">
+                <Box gapsColumn="1rem">
                     <Title variant="section">Anime</Title>
                     {series.anime.map((anime) => (
-                        <AnimeSearchResultCard anime={anime}/>
+                        <AnimeSearchResultCard key={anime.slug} anime={anime}/>
                     ))}
-                </Flex>
+                </Box>
             </ContainerSidebar>
         </StyledSeriesPage>
     );

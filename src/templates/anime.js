@@ -5,7 +5,7 @@ import ExternalLink from "../components/externalLink";
 import DescriptionList from "components/descriptionList";
 import Text from "components/text";
 import Title from "components/text/title";
-import Flex from "components/flex";
+import { Box } from "components/flex";
 import ContainerSidebar from "components/container/sidebar";
 import CollapseCard from "components/card/collapse";
 import { fullWidth, gapsColumn } from "styles/mixins";
@@ -29,10 +29,8 @@ const StyledList = styled.div`
 export default function AnimeDetailPage({ data: { anime } }) {
     const { largeCover } = useImage(anime);
 
-    console.log(anime);
-
     const sidebar = (
-        <Flex gapsColumn="1.5rem">
+        <Box gapsColumn="1.5rem">
             <StyledCover src={largeCover} alt="Cover"/>
             <DescriptionList>
                 {{
@@ -56,7 +54,7 @@ export default function AnimeDetailPage({ data: { anime } }) {
                         !!anime.series && !!anime.series.length && (
                             <StyledList>
                                 {anime.series.map((series) =>
-                                    <Link to={`/series/${series.slug}`}>
+                                    <Link key={series.slug} to={`/series/${series.slug}`}>
                                         <Text link>
                                             {series.name}
                                         </Text>
@@ -78,7 +76,7 @@ export default function AnimeDetailPage({ data: { anime } }) {
                     )
                 }}
             </DescriptionList>
-        </Flex>
+        </Box>
     );
 
     return (
@@ -86,7 +84,7 @@ export default function AnimeDetailPage({ data: { anime } }) {
             <SEO title={anime.name} />
             <Title>{anime.name}</Title>
             <ContainerSidebar sidebar={sidebar}>
-                <Flex gapsColumn="1rem">
+                <Box gapsColumn="1rem">
                     <Title variant="section">Synopsis</Title>
                     <CollapseCard>
                         {(collapse) => (
@@ -99,7 +97,7 @@ export default function AnimeDetailPage({ data: { anime } }) {
                             ? <ThemeSwitcher themes={anime.themes}/>
                             : <Text>There are no themes for this anime.</Text>
                     }
-                </Flex>
+                </Box>
             </ContainerSidebar>
         </StyledAnimePage>
     );

@@ -2,7 +2,7 @@ import {graphql, Link, useStaticQuery} from "gatsby";
 import Button from "components/button";
 import Title from "components/text/title";
 import styled from "styled-components";
-import Flex from "components/flex";
+import { Flex } from "components/flex";
 
 const StyledYear = styled.div`
     flex: 1;
@@ -33,7 +33,7 @@ export default function YearNavigation({ year }) {
     const nextYear = yearList.indexOf(year) < yearList.length - 1 ? yearList[yearList.indexOf(year) + 1] : null;
 
     return (
-        <Flex row alignItems="center">
+        <Flex alignItems="center">
             <StyledYearPrevious>
                 {previousYear && (
                     <Link to={`/year/${previousYear}`}>

@@ -1,5 +1,6 @@
-import Title from "components/text/title";
+import {Fragment} from "react";
 import styled from "styled-components";
+import Title from "components/text/title";
 
 const StyledDescriptionList = styled.dl`
     display: flex;
@@ -22,15 +23,13 @@ const StyledValue = styled.dd`
 export default function DescriptionList({ children, ...props }) {
     return (
         <StyledDescriptionList {...props}>
-            {Object.entries(children).map(([ title, description ]) => (
-                !!description && (
-                    <>
-                        <StyledKey>
-                            <Title variant="section">{title}</Title>
-                        </StyledKey>
-                        <StyledValue>{description}</StyledValue>
-                    </>
-                )
+            {Object.entries(children).filter(([, description]) => !!description).map(([ title, description ]) => (
+                <Fragment key={title}>
+                    <StyledKey>
+                        <Title variant="section">{title}</Title>
+                    </StyledKey>
+                    <StyledValue>{description}</StyledValue>
+                </Fragment>
             ))}
         </StyledDescriptionList>
     );
