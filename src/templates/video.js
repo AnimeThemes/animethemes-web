@@ -1,6 +1,6 @@
 import { Fragment, useEffect } from "react";
 import { graphql, Link } from "gatsby";
-import Flex, { FlexItem } from "components/flex";
+import { Flex, Box } from "components/flex";
 import styled from "styled-components";
 import Text from "components/text";
 import useSiteMeta from "hooks/useSiteMeta";
@@ -14,10 +14,12 @@ import ArtistSearchResultCard from "components/card/searchResult/artist";
 import SEO from "components/seo";
 import useImage from "hooks/useImage";
 
-const StyledVideoInfo = styled(Flex).attrs({
+const StyledVideoInfo = styled(Box).attrs({
     gapsColumn: "2rem"
 })`
-    padding: 0 1rem;
+    @media (min-width: 721px) {
+        padding: 0 1rem;
+    }
 `;
 
 export default function VideoPage({ data: { video, entry } }) {
@@ -79,9 +81,9 @@ export default function VideoPage({ data: { video, entry } }) {
     return (
         <StyledVideoInfo>
             <SEO title={pageTitle} description={pageDesc} />
-            <Flex row alignItems="center" gapsRow="1rem">
-                <FlexItem flex={1}>
-                    <Flex justifyContent="center" gapsColumn="0.25rem">
+            <Flex flexDirection={["column", "row"]} alignItems={["flex-start", "center"]} gapsRow={[0, "1rem"]} gapsColumn={["1rem", 0]}>
+                <Box flex="1">
+                    <Flex flexDirection="column" justifyContent="center" gapsColumn="0.25rem">
                         <Text bold>
                             <SongTitleWithArtists song={theme.song}/>
                         </Text>
@@ -92,39 +94,39 @@ export default function VideoPage({ data: { video, entry } }) {
                             </Link>
                         </Text>
                     </Flex>
-                </FlexItem>
-                <Flex row alignItems="center" gapsRow="0.5rem">
+                </Box>
+                <Flex alignItems="center" gapsRow="0.5rem">
                     <Text small>Version {entry.version || 1}</Text>
                     <ThemeEntryTags entry={entry}/>
                     <Text link>&bull;</Text>
                     <VideoTags video={video}/>
                 </Flex>
             </Flex>
-            <Flex row gapsRow="2rem">
-                <FlexItem flex={2}>
-                    <Flex gapsColumn="1rem">
+            <Flex flexDirection={["column", "row"]} gapsColumn={["2rem", 0]} gapsRow={[0, "2rem"]}>
+                <Box flex="2">
+                    <Box gapsColumn="1rem">
                         <Title variant="section">Related entries</Title>
-                        <Flex row gapsRow="1rem">
-                            <FlexItem flex={1}>
+                        <Flex flexDirection={["column", "row"]} gapsColumn={["1rem", 0]} gapsRow={[0, "1rem"]}>
+                            <Box flex="1">
                                 <AnimeSearchResultCard anime={anime} hideThemes/>
-                            </FlexItem>
-                            <FlexItem flex={1}>
-                                <Flex gapsColumn="1rem">
+                            </Box>
+                            <Box flex="1">
+                                <Box gapsColumn="1rem">
                                     {!!theme.song.performances && theme.song.performances.map((performance) => (
                                         <ArtistSearchResultCard key={performance.artist.name} artist={performance.artist}/>
                                     ))}
-                                </Flex>
-                            </FlexItem>
+                                </Box>
+                            </Box>
                         </Flex>
-                    </Flex>
-                </FlexItem>
-                <FlexItem flex={1}>
+                    </Box>
+                </Box>
+                <Box flex="1">
                     {!!otherEntries.length && (
-                        <Flex gapsColumn="1rem" alignItems="flex-end">
+                        <Flex flexDirection="column" gapsColumn="1rem" alignItems={["flex-start", "flex-end"]}>
                             <Title variant="section">Other versions</Title>
                             {otherEntries.map((otherEntry) => (
                                 <Fragment key={otherEntry.version}>
-                                    <Flex row alignItems="center" gapsRow="0.5rem">
+                                    <Flex alignItems="center" gapsRow="0.5rem">
                                         <Text small>Version {otherEntry.version || 1}</Text>
                                         <ThemeEntryTags entry={otherEntry}/>
                                     </Flex>
@@ -141,7 +143,7 @@ export default function VideoPage({ data: { video, entry } }) {
                             ))}
                         </Flex>
                     )}
-                </FlexItem>
+                </Box>
             </Flex>
         </StyledVideoInfo>
     );

@@ -36,6 +36,13 @@ export default function Navigation() {
         window.localStorage.setItem("theme", newTheme);
     }
 
+    function submitSearch() {
+        navigate(`/search?q=${quickSearchQuery}`);
+
+        // Hide navigation after user submits search so the user can see the results.
+        setShow(false);
+    }
+
     return (
         <>
             <StyledNavigation show={show} onClick={() => setShow(false)}>
@@ -48,7 +55,7 @@ export default function Navigation() {
                         <StyledQuickSearch
                             query={quickSearchQuery}
                             setQuery={setQuickSearchQuery}
-                            onSubmit={() => navigate(`/search?q=${quickSearchQuery}`)}
+                            onSubmit={submitSearch}
                         />
                         <StyledLinks>
                             {/* Other links */}

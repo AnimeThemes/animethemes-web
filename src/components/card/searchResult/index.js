@@ -34,16 +34,21 @@ const StyledChildren = styled.div`
         display: none;
     }
 `;
-const StyledLink = styled(Link)`
-    display: block;
-`;
 
 export default function SearchResultCard({ title, description, image, to, children, ...props }) {
-    const card = (
+    return (
         <StyledSearchResultCard {...props}>
-            <StyledCover alt="Cover" src={image}/>
+            <Link to={to}>
+                <StyledCover alt="Cover" src={image}/>
+            </Link>
             <StyledBody>
-                <Text bold color={theme.colors.secondaryTitle} maxLines={2}>{title}</Text>
+                <Text bold maxLines={2}>
+                    {typeof title === "string" ? (
+                        <Link to={to}>
+                            <Text link>{title}</Text>
+                        </Link>
+                    ) : title}
+                </Text>
                 <Text small maxLines={1}>{description}</Text>
             </StyledBody>
             <StyledChildren>
@@ -51,21 +56,11 @@ export default function SearchResultCard({ title, description, image, to, childr
             </StyledChildren>
         </StyledSearchResultCard>
     );
-
-    if (to) {
-        return (
-            <StyledLink to={to}>
-                {card}
-            </StyledLink>
-        );
-    }
-
-    return card;
 }
 
 export function SearchResultDescription({ children }) {
     return children.filter((child) => !!child).map((child, index, { length }) => (
-        <Text color={theme.colors.primaryMediumEmphasis}>
+        <Text key={index} color={theme.colors.primaryMediumEmphasis}>
             <span>{child}</span>
             {index < length - 1 && (
                 <span color={theme.colors.primaryMediumEmphasis}> &bull; </span>

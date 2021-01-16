@@ -1,11 +1,11 @@
 import Tag from "components/tag";
 import {faBomb, faExclamationTriangle, faFilm} from "@fortawesome/free-solid-svg-icons";
-import Flex from "components/flex";
+import { Flex } from "components/flex";
 import React from "react";
 
 export default function ThemeEntryTags({ entry }) {
     return (
-        <Flex row wrap gapsBoth="0.75rem">
+        <Flex flexWrap="wrap" gapsBoth="0.75rem">
             <Tag icon={faFilm}>
                 {entry.episodes || "—"}
             </Tag>

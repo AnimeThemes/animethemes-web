@@ -1,18 +1,28 @@
-import Text from "components/text";
+import {Fragment} from "react";
 import {Link} from "gatsby";
 import theme from "theme";
+import Text from "components/text";
 
-export default function SongTitleWithArtists({ song }) {
+export default function SongTitleWithArtists({ song, songTitleLinkTo }) {
     return (
-        <>
-            <Text color={theme.colors.secondaryTitle}>{song.title}</Text>
+        <Text>
+            {songTitleLinkTo
+                ? (
+                    <Link to={songTitleLinkTo}>
+                        <Text link>{song.title}</Text>
+                    </Link>
+                )
+                : (
+                    <Text color={theme.colors.secondaryTitle}>{song.title}</Text>
+                )
+            }
             {!!song.performances && !!song.performances.length && (
                 <>
                     <Text small color={theme.colors.primaryMediumEmphasis}> by </Text>
                     {song.performances.map((performance, index) => (
-                        <>
+                        <Fragment key={performance.artist.slug}>
                             <Link to={`/artist/${performance.artist.slug}`}>
-                                <Text key={performance.as || performance.artist.name} link>
+                                <Text link>
                                     {performance.as || performance.artist.name}
                                 </Text>
                             </Link>
@@ -21,10 +31,10 @@ export default function SongTitleWithArtists({ song }) {
                                     {index === song.performances.length - 2 ? " & " : ", "}
                                 </Text>
                             )}
-                        </>
+                        </Fragment>
                     ))}
                 </>
             )}
-        </>
+        </Text>
     );
 }

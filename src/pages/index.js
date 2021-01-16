@@ -5,23 +5,12 @@ import styled from "styled-components";
 import {gapsColumn} from "styles/mixins";
 import Card from "components/card";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faDesktop, faInfo, faMobileAlt} from "@fortawesome/free-solid-svg-icons";
-import Flex from "components/flex";
-import Tag from "components/tag";
-import {useMedia} from "react-media";
+import {faInfo} from "@fortawesome/free-solid-svg-icons";
+import { Box, Flex, Grid } from "components/flex";
+import theme from "theme";
 
 const StyledIndexPage = styled.div`
     ${gapsColumn("1.5rem")}
-`;
-const StyledPageGrid = styled.div`
-    display: grid;
-    grid-template-columns: auto 1fr auto auto;
-    grid-gap: 1rem;
-    align-items: center;
-  
-    @media (max-width: 720px) {
-        grid-template-columns: 1fr;
-    }
 `;
 const StyledAnnouncement = styled(Text)`
     & a {
@@ -55,7 +44,7 @@ export default function IndexPage({ data: { allAnnouncement } }) {
                     <Text as="p">These are for demo purposes only. The content may not be accurate.</Text>
                     {allAnnouncement.nodes.map((announcement) => (
                         <Card key={announcement.id}>
-                            <Flex row gapsRow="1rem">
+                            <Flex gapsRow="1rem">
                                 <Text link>
                                     <FontAwesomeIcon icon={faInfo}/>
                                 </Text>
@@ -66,55 +55,69 @@ export default function IndexPage({ data: { allAnnouncement } }) {
                 </>
             )}
             <Title variant="section">Pages</Title>
-            <StyledPageGrid>
+            <Box gapsColumn={["2rem", "1rem"]}>
+                <PageGridItem
+                    path="/"
+                    description="This page!"
+                />
                 <PageGridItem
                     path="/search"
                     description="Search the AnimeThemes database. You can also use the search bar in the navigation."
-                    desktop
-                    mobile
                 />
                 <PageGridItem
                     path="/year"
                     description="Browse all years present in the database."
-                    desktop
-                    mobile
                 />
                 <PageGridItem
                     path="/year/2009"
                     description="Browse all seasons of a specific year."
-                    desktop
-                    mobile
+                    otherPaths={{
+                        "/year/1963": "Every year has a page, even 60s, 70s, etc."
+                    }}
                 />
                 <PageGridItem
                     path="/year/2009/summer"
                     description="Browse all anime of a specific season."
-                    desktop
-                    mobile
                 />
                 <PageGridItem
                     path="/series/monogatari"
                     description="Browse all anime which belong to the same series."
-                    desktop
-                    mobile
+                    otherPaths={{
+                        "/series/precure": "A lot of anime.",
+                        "/series/clannad": "Only three anime.",
+                        "/series/fma": "Only two anime."
+                    }}
                 />
                 <PageGridItem
                     path="/artist/kana_hanazawa"
                     description="Browse all songs an artist has performed."
-                    desktop
-                    mobile
+                    otherPaths={{
+                        "/artist/vickeblanka": "Very few songs."
+                    }}
                 />
                 <PageGridItem
                     path="/anime/bakemonogatari"
                     description="Browse all themes of a specific anime."
-                    desktop
-                    mobile
+                    otherPaths={{
+                        "/anime/etotama": "Many themes with a lot of artists.",
+                        "/anime/gintama": "Theme groups with many themes.",
+                        "/anime/bleach": "Many themes and many variants.",
+                        "/anime/tales_of_phantasia_the_animation": "Many sources.",
+                        "/anime/isekai_quartet": "Multiple series."
+                    }}
                 />
                 <PageGridItem
                     path="/anime/bakemonogatari/OP1-NCBD1080"
                     description="Watch themes."
-                    desktop
+                    otherPaths={{
+                        "/anime/uma_musume_pretty_derby/ED5": "Many artists.",
+                        "/anime/girls_und_panzer/ED-NCBD1080": "Many alternative versions.",
+                        "/anime/fatekaleid_liner_prismaillya_2wei_herz/OP": "Many alternative sources.",
+                        "/anime/shingeki_no_kyojin/ED1-NCBD1080": "Same video for two entries.",
+                        "/anime/shingeki_no_kyojin_ova/ED1-NCBD1080": "See above."
+                    }}
                 />
-            </StyledPageGrid>
+            </Box>
             {!!process.env.GATSBY_CI && (
                 <>
                     <Title variant="section">GitHub Pages</Title>
@@ -123,7 +126,7 @@ export default function IndexPage({ data: { allAnnouncement } }) {
                         <Text as="a" code link href="https://github.com/AnimeThemes/animethemes-web">animethemes-web</Text>
                         <span> repository this site gets updated. This also comes with some limitations like </span>
                         <Text code>.htaccess</Text>
-                        <span> files not working. So don't expect everything on this site to work the same way as on the production site.</span>
+                        <span> files not working. So don&apos;t expect everything on this site to work the same way as on the production site.</span>
                     </Text>
                 </>
             )}
@@ -131,33 +134,36 @@ export default function IndexPage({ data: { allAnnouncement } }) {
     );
 }
 
-function PageGridItem({ path, description, desktop, mobile, children }) {
-    const isMobile = useMedia({ query: "(max-width: 720px)" });
-
+function PageGridItem({ path, otherPaths = {}, description }) {
     return (
-        <>
-            <Link to={path}>
-                <Text code link>{path}</Text>
-            </Link>
-            <Text>{description || children}</Text>
-            {desktop ? (
-                <Tag icon={faDesktop} title="Compatible with desktop devices">
-                    {isMobile && "Compatible with desktop devices"}
-                </Tag>
-            ) : <span/>}
-            {mobile ? (
-                <Tag icon={faMobileAlt} title="Compatible with mobile devices">
-                    {isMobile && "Compatible with mobile devices"}
-                </Tag>
-            ) : <span/>}
-        </>
+        <Grid gridTemplateColumns={["minmax(0, 1fr)", "minmax(0, 1fr) 2fr"]} gridColumnGap="1rem" gridRowGap="0.5rem">
+            <PageLink path={path}/>
+            <Text>{description}</Text>
+            {Object.entries(otherPaths).map(([path, description]) => (
+                <>
+                    <PageLink path={path}/>
+                    <Text color={theme.colors.primaryMediumEmphasis}>{description}</Text>
+                </>
+            ))}
+        </Grid>
     );
+}
+
+function PageLink({ path }) {
+    return (
+        <Link key={path} to={path}>
+            <Text link block truncate>
+                <Text link code>{path}</Text>
+            </Text>
+        </Link>
+    )
 }
 
 export const query = graphql`
     query IndexPageQuery {
         allAnnouncement {
             nodes {
+                id
                 content
             }
             totalCount

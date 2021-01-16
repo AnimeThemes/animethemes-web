@@ -5,7 +5,7 @@ import AnimeSearchResultCard from "components/card/searchResult/anime";
 import Title from "components/text/title";
 import {gapsColumn} from "styles/mixins";
 import Button from "components/button";
-import Flex from "components/flex";
+import { Flex } from "components/flex";
 import SEO from "components/seo";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronDown} from "@fortawesome/free-solid-svg-icons";
@@ -40,7 +40,7 @@ function SeasonPreview({ season, year, animeList }) {
             {animeList.map((anime) => (
                 <AnimeSearchResultCard key={anime.slug} anime={anime}/>
             ))}
-            <Flex row justifyContent="center">
+            <Flex justifyContent="center">
                 <Button to={`/year/${year}/${season.toLowerCase()}`} icon>
                     <FontAwesomeIcon icon={faChevronDown} fixedWidth/>
                 </Button>

@@ -8,6 +8,7 @@
 # Gatsby
 /.cache
 /public
+/schema.json
 
 # IDE (WebStorm)
 *.iml

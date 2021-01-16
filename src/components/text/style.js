@@ -29,6 +29,12 @@ export const StyledTextBase = styled.span.attrs((props) => ({
         -webkit-box-orient: vertical;
         overflow: hidden;
     `}
+
+    ${(props) => props.truncate && css`
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    `}
   
     ${(props) => props.code && css`
         font-family: monospace;

@@ -9,7 +9,7 @@ import Button from "components/button";
 import Text from "components/text";
 import Title from "components/text/title";
 import ArtistSearchResultCard from "components/card/searchResult/artist";
-import Flex from "components/flex";
+import { Box, Flex } from "components/flex";
 
 export default function GlobalSearch({ searchQuery, searchEntity }) {
     const [ results, isSearching ] = useSearch(searchQuery);
@@ -31,16 +31,16 @@ export default function GlobalSearch({ searchQuery, searchEntity }) {
         }
 
         return (
-            <Text block>No results found for query "{searchQuery}". Did you spell it correctly?</Text>
+            <Text block>No results found for query &quot;{searchQuery}&quot;. Did you spell it correctly?</Text>
         );
     }
 
     return (
-        <Flex gapsColumn="2rem">
+        <Box gapsColumn="2rem">
             <EntitySearch searchEntity={searchEntity} entity="anime" title="Anime" results={animeResults}/>
             <EntitySearch searchEntity={searchEntity} entity="theme" title="Themes" results={themeResults}/>
             <EntitySearch searchEntity={searchEntity} entity="artist" title="Artist" results={artistResults}/>
-        </Flex>
+        </Box>
     );
 }
 
@@ -72,18 +72,18 @@ function EntitySearch({ searchEntity, entity, title, results }) {
     });
 
     return (
-        <Flex gapsColumn="1rem">
+        <Box gapsColumn="1rem">
             {!searchEntity && (
                 <Title variant="section">{title}</Title>
             )}
             {resultCards}
             {!searchEntity && totalResults > 3 && (
-                <Flex row justifyContent="center">
+                <Flex justifyContent="center">
                     <Button to={`/search/${entity}${urlSuffix}`} icon>
                         <FontAwesomeIcon icon={faChevronDown} fixedWidth/>
                     </Button>
                 </Flex>
             )}
-        </Flex>
+        </Box>
     );
 }

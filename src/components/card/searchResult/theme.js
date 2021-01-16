@@ -20,6 +20,7 @@ export default function ThemeSearchResultCard({ theme }) {
 
     const video = entry.videos[0];
     const videoSlug = createVideoSlug(theme, entry, video);
+    const to = `/anime/${theme.anime.slug}/${videoSlug}`;
 
     const description = (
         <SearchResultDescription>
@@ -33,10 +34,10 @@ export default function ThemeSearchResultCard({ theme }) {
 
     return (
         <SearchResultCard
-            title={<SongTitleWithArtists song={theme.song}/>}
+            title={<SongTitleWithArtists song={theme.song} songTitleLinkTo={to}/>}
             description={description}
             image={smallCover}
-            to={`/anime/${theme.anime.slug}/${videoSlug}`}
+            to={to}
         />
     );
 }

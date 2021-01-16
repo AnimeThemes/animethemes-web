@@ -64,4 +64,8 @@ export default createGlobalStyle`
             color: ${(props) => props.theme.colors.primaryMediumEmphasis};
         }
     }
+    
+    img {
+        display: block;
+    }
 `;

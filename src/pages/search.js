@@ -6,7 +6,7 @@ import SearchInput from "components/input/search";
 import GlobalSearch from "components/search/global";
 import {gapsColumn, gapsRow} from "styles/mixins";
 import Title from "components/text/title";
-import Flex, {FlexItem} from "components/flex";
+import { Box, Flex } from "components/flex";
 import Switcher from "components/switcher";
 import Button from "components/button";
 import SEO from "components/seo";
@@ -68,9 +68,9 @@ export default function SearchPage({ location: { pathname, search, hash } }) {
             <SEO title={pageTitle} />
             <Title>Search</Title>
             <StyledSearchOptions>
-                <FlexItem flex={1}>
+                <Box flex="1">
                     <SearchInput query={searchQuery} setQuery={setSearchQuery} isSearching={false}/>
-                </FlexItem>
+                </Box>
                 <Switcher>
                     {!!entity && (
                         <Button icon to={`/search${urlSuffix}`}>

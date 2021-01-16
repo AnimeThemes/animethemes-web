@@ -1,4 +1,5 @@
 const theme = {
+    breakpoints: ["721px"],
     colors: {
         primaryBackground: [
             createColor("--primary-background-0", {

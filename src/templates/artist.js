@@ -1,14 +1,14 @@
 import React from "react";
-import {graphql, Link} from "gatsby";
+import { graphql, Link } from "gatsby";
 import styled from "styled-components";
 import useAniList from "../hooks/useAniListArtist";
 import ExternalLink from "../components/externalLink";
 import DescriptionList from "components/descriptionList";
 import Text from "components/text";
 import Title from "components/text/title";
-import Flex from "components/flex";
+import { Box } from "components/flex";
 import ContainerSidebar from "components/container/sidebar";
-import {fullWidth, gapsColumn} from "styles/mixins";
+import { fullWidth, gapsColumn } from "styles/mixins";
 import ThemeSearchResultCard from "components/card/searchResult/theme";
 import SEO from "components/seo";
 
@@ -33,7 +33,7 @@ export default function ArtistDetailPage({ data: { artist } }) {
     });
 
     const sidebar = (
-        <Flex gapsColumn="1.5rem">
+        <Box gapsColumn="1.5rem">
             <StyledCover src={image} alt="Cover"/>
             <DescriptionList>
                 {{
@@ -41,7 +41,7 @@ export default function ArtistDetailPage({ data: { artist } }) {
                         !!artist.members && !!artist.members.length && (
                             <StyledList>
                                 {artist.members.map((member) =>
-                                    <Link to={`/artist/${member.slug}`}>
+                                    <Link key={member.slug} to={`/artist/${member.slug}`}>
                                         <Text link>
                                             {member.name}
                                         </Text>
@@ -54,7 +54,7 @@ export default function ArtistDetailPage({ data: { artist } }) {
                         !!artist.groups && !!artist.groups.length && (
                             <StyledList>
                                 {artist.groups.map((group) =>
-                                    <Link to={`/artist/${group.slug}`}>
+                                    <Link key={group.slug} to={`/artist/${group.slug}`}>
                                         <Text link>
                                             {group.name}
                                         </Text>
@@ -72,7 +72,7 @@ export default function ArtistDetailPage({ data: { artist } }) {
                     )
                 }}
             </DescriptionList>
-        </Flex>
+        </Box>
     );
 
     return (
@@ -80,12 +80,12 @@ export default function ArtistDetailPage({ data: { artist } }) {
             <SEO title={artist.name} />
             <Title>{artist.name}</Title>
             <ContainerSidebar sidebar={sidebar}>
-                <Flex gapsColumn="1rem">
+                <Box gapsColumn="1rem">
                     <Title variant="section">Song Perfomances</Title>
-                    {performances.map((performance) => (
-                        <ThemeSearchResultCard theme={{ ...performance.song.theme, song: performance.song }}/>
+                    {performances.map((performance, index) => (
+                        <ThemeSearchResultCard key={index} theme={{ ...performance.song.theme, song: performance.song }}/>
                     ))}
-                </Flex>
+                </Box>
             </ContainerSidebar>
         </StyledArtistPage>
     );

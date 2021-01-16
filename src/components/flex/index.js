@@ -1,43 +1,58 @@
-import React from "react";
-import styled, {css} from "styled-components";
-import {gapsColumn, gapsRow} from "styles/mixins";
+import styled from "styled-components";
+import { space, layout, typography, color, flexbox, grid, system, get } from "styled-system";
 
-const StyledFlex = styled.div`
-    display: flex;
-    flex-direction: ${(props) => props.row ? "row" : "column"};
-    flex-wrap: ${(props) => props.wrap ? "wrap" : "nowrap"};
-    justify-content: ${(props) => props.justifyContent || "flex-start"};
-    align-items: ${(props) => props.alignItems || "stretch"};
+const gapsAxesSystem = system({
+    gapsRow: {
+        property: "marginLeft",
+        scale: "space"
+    },
+    gapsColumn: {
+        property: "marginTop",
+        scale: "space"
+    }
+});
 
-    ${(props) => props.gapsRow && gapsRow(props.gapsRow)}
-    ${(props) => props.gapsColumn && gapsColumn(props.gapsColumn)}
-    ${(props) => props.gapsBoth && css`
-        // Hack to have gutters between items without an outer margin
-        margin: calc(${props.gapsBoth} / -2);
+const gapsBothSystem = system({
+    gapsBoth: {
+        property: "margin",
+        scale: "space",
+        transform: (value, scale) => `calc(${get(scale, value, value)} / -2)`
+    }
+});
 
-        & > * {
-            margin: calc(${props.gapsBoth} / 2);
-        }
-    `}
+const gapsBothItemSystem = system({
+    gapsBoth: {
+        property: "margin",
+        scale: "space",
+        transform: (value, scale) => `calc(${get(scale, value, value)} / 2)`
+    }
+});
+
+export const Box = styled.div`
+    ${space}
+    ${layout}
+    ${typography}
+    ${color}
+    ${flexbox}
+
+    & > :not(:first-child) {        
+        ${gapsAxesSystem}
+    }
+
+    // Hack to have gutters between items without an outer margin
+    ${gapsBothSystem}
+
+    & > * {
+        ${gapsBothItemSystem}
+    }
 `;
-const StyledFlexItem = styled.div`
-    flex: ${(props) => props.flex || "0 0 auto"};
-    align-self: ${(props) => props.alignSelf || "auto"};
-    justify-self: ${(props) => props.justifySelf || "auto"};
+
+export const Flex = styled(Box)`
+    display: ${(props) => props.flexInline ? "inline-flex" : "flex"};
 `;
 
-export default function Flex({ children, ...props }) {
-    return (
-        <StyledFlex {...props}>
-            {children}
-        </StyledFlex>
-    );
-}
-
-export function FlexItem({ children, ...props }) {
-    return (
-        <StyledFlexItem {...props}>
-            {children}
-        </StyledFlexItem>
-    );
-}
+export const Grid = styled(Box)`
+    display: ${(props) => props.gridInline ? "inline-grid" : "grid"};
+    
+    ${grid}
+`;

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Flex from "components/flex";
+import { Flex } from "components/flex";
 import Button from "components/button";
 import Title from "components/text/title";
 import SEO from "components/seo";

@@ -1,5 +1,5 @@
 import styled, {css} from "styled-components";
-import Flex from "components/flex";
+import { Flex } from "components/flex";
 import Text from "components/text";
 import {gapsColumn} from "styles/mixins";
 import Card from "components/card";
@@ -54,8 +54,7 @@ export const StyledVideoListContainer = styled.div`
 `;
 
 export const StyledVideoList = styled(Flex).attrs({
-    row: true,
-    wrap: true,
+    flexWrap: "wrap",
     gapsBoth: "0.75rem"
 })`
     @media (min-width: 721px) {
