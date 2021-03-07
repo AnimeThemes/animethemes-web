@@ -12,7 +12,7 @@ import ArtistSearchResultCard from "components/card/searchResult/artist";
 import { Box, Flex } from "components/flex";
 
 export default function GlobalSearch({ searchQuery, searchEntity }) {
-    const [ results, isSearching ] = useSearch(searchQuery);
+    const [ results, isSearching ] = useSearch(searchQuery, searchEntity ? 15 : 4, searchEntity ? [ searchEntity ] : [ "anime", "theme", "artist" ]);
 
     if (!searchQuery) {
         return (

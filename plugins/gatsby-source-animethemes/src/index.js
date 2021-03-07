@@ -3,7 +3,7 @@ const withCache = require("./utils/withCache");
 
 const baseUrl = process.env.GATSBY_API_URL || "https://staging.animethemes.moe";
 
-const requestCooldown = 1000;
+const requestCooldown = 1500;
 let lastRequest;
 
 async function fetchJsonCached(url, init) {
