@@ -1,12 +1,11 @@
 const fetch = require("node-fetch");
-const withCache = require("./utils/withCache");
 
 const baseUrl = process.env.GATSBY_API_URL || "https://staging.animethemes.moe";
 
 const requestCooldown = 1500;
 let lastRequest;
 
-async function fetchJsonCached(url, init) {
+async function fetchJson(url, init) {
     // Debounce, we should only request once every second
     if (lastRequest) {
         const expiredTime = Date.now() - lastRequest;
@@ -17,10 +16,9 @@ async function fetchJsonCached(url, init) {
 
     lastRequest = Date.now();
 
-    return await withCache(
-        url,
-        (url) => fetch(url, init).then((response) => response.json())
-    );
+    const response = await fetch(url, init);
+
+    return await response.json();
 }
 
 function createFieldParams(fields) {
@@ -35,6 +33,6 @@ function sleep(millis) {
 
 module.exports = {
     baseUrl,
-    fetchJsonCached,
+    fetchJson,
     createFieldParams
 };
