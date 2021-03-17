@@ -162,6 +162,7 @@ export const query = graphql`
             source
             subbed
             uncen
+            tags
         }
         entry(id: { eq: $entryId }) {
             episodes
