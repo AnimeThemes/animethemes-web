@@ -1,6 +1,6 @@
-import {useRef} from "react";
+import { useRef } from "react";
 import useSWR from "swr";
-import {baseUrl} from "../../plugins/gatsby-source-animethemes/src/index";
+import { baseUrl } from "../../plugins/gatsby-source-animethemes/src/index";
 
 const entityConfigs = {
     anime: {
@@ -24,13 +24,7 @@ const entityConfigs = {
                 "version"
             ],
             video: [
-                "resolution",
-                "nc",
-                "subbed",
-                "lyrics",
-                "uncen",
-                "source",
-                "overlap"
+                "tags"
             ],
             image: [
                 "facet",
@@ -61,13 +55,7 @@ const entityConfigs = {
                 "version"
             ],
             video: [
-                "resolution",
-                "nc",
-                "subbed",
-                "lyrics",
-                "uncen",
-                "source",
-                "overlap"
+                "tags"
             ],
             image: [
                 "facet",

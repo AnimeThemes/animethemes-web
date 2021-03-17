@@ -1,24 +1,26 @@
-import Tag from "components/tag";
-import {faBomb, faExclamationTriangle, faFilm} from "@fortawesome/free-solid-svg-icons";
-import { Flex } from "components/flex";
-import React from "react";
+import { Tag } from "components/tag";
+import { faBomb, faExclamationTriangle, faFilm } from "@fortawesome/free-solid-svg-icons";
+import { Flex } from "components/box";
+import { Icon } from "components/icon";
 
-export default function ThemeEntryTags({ entry }) {
+export function ThemeEntryTags({ entry }) {
     return (
-        <Flex flexWrap="wrap" gapsBoth="0.75rem">
-            <Tag icon={faFilm}>
-                {entry.episodes || "—"}
-            </Tag>
-            {!!entry.spoiler && (
-                <Tag icon={faBomb} warning>
-                    SPOILER
+        <div>
+            <Flex flexWrap="wrap" gapsBoth="0.5rem">
+                <Tag icon={faFilm}>
+                    {entry.episodes || "—"}
                 </Tag>
-            )}
-            {!!entry.nsfw && (
-                <Tag icon={faExclamationTriangle} warning>
-                    NSFW
-                </Tag>
-            )}
-        </Flex>
+                {!!entry.spoiler && (
+                    <Tag icon={<Icon icon={faBomb} color="text-warning"/>}>
+                        SPOILER
+                    </Tag>
+                )}
+                {!!entry.nsfw && (
+                    <Tag icon={<Icon icon={faExclamationTriangle} color="text-warning"/>}>
+                        NSFW
+                    </Tag>
+                )}
+            </Flex>
+        </div>
     );
 }

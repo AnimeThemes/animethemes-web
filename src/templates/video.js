@@ -1,17 +1,13 @@
 import { Fragment, useEffect } from "react";
 import { graphql, Link } from "gatsby";
-import { Flex, Box } from "components/flex";
+import { Box, Flex } from "components/box";
 import styled from "styled-components";
-import Text from "components/text";
+import { Text } from "components/text";
 import useSiteMeta from "hooks/useSiteMeta";
-import SongTitleWithArtists from "components/utils/songTitleWithArtists";
-import VideoTags from "components/utils/videoTags";
-import ThemeEntryTags from "components/utils/themeEntryTags";
-import Title from "components/text/title";
-import VideoButton from "components/button/video";
-import AnimeSearchResultCard from "components/card/searchResult/anime";
-import ArtistSearchResultCard from "components/card/searchResult/artist";
-import SEO from "components/seo";
+import { SongTitleWithArtists, ThemeEntryTags, VideoTags } from "components/utils";
+import { VideoButton } from "components/button";
+import { AnimeSummaryCard, ArtistSummaryCard } from "components/card";
+import { SEO } from "components/seo";
 import useImage from "hooks/useImage";
 
 const StyledVideoInfo = styled(Box).attrs({
@@ -84,10 +80,10 @@ export default function VideoPage({ data: { video, entry } }) {
             <Flex flexDirection={["column", "row"]} alignItems={["flex-start", "center"]} gapsRow={[0, "1rem"]} gapsColumn={["1rem", 0]}>
                 <Box flex="1">
                     <Flex flexDirection="column" justifyContent="center" gapsColumn="0.25rem">
-                        <Text bold>
+                        <Text fontWeight="700">
                             <SongTitleWithArtists song={theme.song}/>
                         </Text>
-                        <Text small maxLines={1}>
+                        <Text variant="small" color="text-muted" maxLines={1}>
                             <Text>{theme.slug} from </Text>
                             <Link to={`/anime/${anime.slug}`}>
                                 <Text link>{anime.name}</Text>
@@ -95,25 +91,27 @@ export default function VideoPage({ data: { video, entry } }) {
                         </Text>
                     </Flex>
                 </Box>
-                <Flex alignItems="center" gapsRow="0.5rem">
-                    <Text small>Version {entry.version || 1}</Text>
-                    <ThemeEntryTags entry={entry}/>
-                    <Text link>&bull;</Text>
-                    <VideoTags video={video}/>
-                </Flex>
+                <Text variant="small" color="text-muted">
+                    <Flex alignItems="center" gapsRow="1rem">
+                        <Text>Version {entry.version || 1}</Text>
+                        <ThemeEntryTags entry={entry}/>
+                        <Text color="text-primary">&bull;</Text>
+                        <VideoTags video={video}/>
+                    </Flex>
+                </Text>
             </Flex>
             <Flex flexDirection={["column", "row"]} gapsColumn={["2rem", 0]} gapsRow={[0, "2rem"]}>
                 <Box flex="2">
                     <Box gapsColumn="1rem">
-                        <Title variant="section">Related entries</Title>
+                        <Text variant="h2">Related entries</Text>
                         <Flex flexDirection={["column", "row"]} gapsColumn={["1rem", 0]} gapsRow={[0, "1rem"]}>
                             <Box flex="1">
-                                <AnimeSearchResultCard anime={anime} hideThemes/>
+                                <AnimeSummaryCard anime={anime} hideThemes/>
                             </Box>
                             <Box flex="1">
                                 <Box gapsColumn="1rem">
                                     {!!theme.song.performances && theme.song.performances.map((performance) => (
-                                        <ArtistSearchResultCard key={performance.artist.name} artist={performance.artist}/>
+                                        <ArtistSummaryCard key={performance.artist.name} artist={performance.artist}/>
                                     ))}
                                 </Box>
                             </Box>
@@ -123,13 +121,15 @@ export default function VideoPage({ data: { video, entry } }) {
                 <Box flex="1">
                     {!!otherEntries.length && (
                         <Flex flexDirection="column" gapsColumn="1rem" alignItems={["flex-start", "flex-end"]}>
-                            <Title variant="section">Other versions</Title>
+                            <Text variant="h2">Other versions</Text>
                             {otherEntries.map((otherEntry) => (
                                 <Fragment key={otherEntry.version}>
-                                    <Flex alignItems="center" gapsRow="0.5rem">
-                                        <Text small>Version {otherEntry.version || 1}</Text>
-                                        <ThemeEntryTags entry={otherEntry}/>
-                                    </Flex>
+                                    <Text variant="small" color="text-muted">
+                                        <Flex alignItems="center" gapsRow="0.5rem">
+                                            <Text>Version {otherEntry.version || 1}</Text>
+                                            <ThemeEntryTags entry={otherEntry}/>
+                                        </Flex>
+                                    </Text>
                                     {otherEntry.videos.map((video, index) => (
                                         <VideoButton
                                             key={index}
@@ -193,6 +193,10 @@ export const query = graphql`
                         artist {
                             name
                             slug
+                            images {
+                                facet
+                                link
+                            }
                         }
                         as
                     }

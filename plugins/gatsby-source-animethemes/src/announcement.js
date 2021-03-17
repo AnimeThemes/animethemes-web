@@ -1,7 +1,7 @@
-const { baseUrl, fetchJsonCached } = require("./index");
+const { baseUrl, fetchJson } = require("./index");
 
 function fetchAnnouncements() {
-    return fetchJsonCached(`${baseUrl}/api/announcement`)
+    return fetchJson(`${baseUrl}/api/announcement`)
         .then((json) => json.announcements);
 }
 

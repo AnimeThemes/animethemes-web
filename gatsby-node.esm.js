@@ -9,7 +9,7 @@ export async function createPages({ actions: { createPage }, graphql }) {
                     themes {
                         # We can't use fragments in gatsby-node.js, 
                         # so this is mostly a copy of the fragment found in 
-                        # createVideoSlug.js.
+                        # createVideoSlug.fragment.js.
                         # (https://stackoverflow.com/a/49351248)
                         slug
                         entries {
@@ -17,13 +17,7 @@ export async function createPages({ actions: { createPage }, graphql }) {
                             version
                             videos {
                                 id
-                                nc
-                                source
-                                lyrics
-                                subbed
-                                uncen
-                                overlap
-                                resolution
+                                tags
                             }
                         }
                     }

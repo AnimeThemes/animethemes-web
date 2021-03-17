@@ -1,10 +1,20 @@
-import {createGlobalStyle} from "styled-components";
-import theme, {createColorDefinition} from "theme";
+import { createGlobalStyle } from "styled-components";
+import { colors, createCssDefinition } from "theme/colors";
+import { darkColors } from "theme/colors/dark";
+import theme from "theme";
 
 export default createGlobalStyle`
     * {
         box-sizing: border-box;
-        transition: color, background-color 250ms;
+        transition: opacity 250ms, box-shadow 250ms, background-color 250ms;
+    }
+
+    [theme="light"] {
+        ${createCssDefinition(colors)}
+    }
+
+    [theme="dark"] {
+        ${createCssDefinition(darkColors)}
     }
 
     html {
@@ -15,25 +25,21 @@ export default createGlobalStyle`
         margin: 0;
         min-height: 100vh;
 
-        background-color: ${(props) => props.theme.colors.primaryBackground[0]};
-        color: ${(props) => props.theme.colors.primaryHighEmphasis};
+        background-color: ${theme.colors["background"]};
+        color: ${theme.colors["text"]};
 
         font-family: "Roboto", sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-
-        &[theme="light"] {
-            ${createColorDefinition(theme, "light")}
-        }
-
-        &[theme="dark"] {
-            ${createColorDefinition(theme, "dark")}
-        }
     }
 
     a {
         color: inherit;
         text-decoration: inherit;
+    }
+    
+    p {
+        line-height: 1.5;
     }
 
     button {
@@ -61,7 +67,7 @@ export default createGlobalStyle`
         font-weight: inherit;
 
         ::placeholder {
-            color: ${(props) => props.theme.colors.primaryMediumEmphasis};
+            color: ${theme.colors["text-muted"]};
         }
     }
     

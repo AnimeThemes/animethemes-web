@@ -1,46 +1,46 @@
-import {graphql, Link} from "gatsby";
-import Title from "components/text/title";
-import Text from "components/text";
+import { graphql, Link } from "gatsby";
+import { Text } from "components/text";
 import styled from "styled-components";
-import {gapsColumn} from "styles/mixins";
-import Card from "components/card";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faInfo} from "@fortawesome/free-solid-svg-icons";
-import { Box, Flex, Grid } from "components/flex";
+import { Card } from "components/card";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faInfo } from "@fortawesome/free-solid-svg-icons";
+import { Box, Flex, Grid } from "components/box";
+import { ExternalLink } from "components/external-link";
 import theme from "theme";
 
-const StyledIndexPage = styled.div`
-    ${gapsColumn("1.5rem")}
-`;
 const StyledAnnouncement = styled(Text)`
     & a {
-        color: ${(props) => props.theme.colors.secondaryTitle};
+        color: ${theme.colors["text-primary"]};
+        font-weight: 500;
       
         &:hover {
             text-decoration: underline;
         }
     }
 `;
+const StyledLink = styled(Link)`
+    max-width: 100%;
+`;
 
 export default function IndexPage({ data: { allAnnouncement } }) {
     return (
-        <StyledIndexPage>
-            <Title>Welcome, to AnimeThemes.moe!</Title>
+        <Box gapsColumn="1.5rem">
+            <Text variant="h1">Welcome, to AnimeThemes.moe!</Text>
             <Text as="p">
                 <span>This page is still activily being worked on. If you are a developer and interested in contributing feel free to contact us on </span>
-                <Text as="a" link href="https://discordapp.com/invite/m9zbVyQ">Discord</Text>
+                <ExternalLink href="https://discordapp.com/invite/m9zbVyQ">Discord</ExternalLink>
                 <span>.</span>
             </Text>
             <Text as="p">
-                <span>The source code for this page can be found </span>
-                <Text as="a" link href="https://github.com/AnimeThemes/animethemes-web">here</Text>
-                <span> and our other open source projects can be found in our </span>
-                <Text as="a" link href="https://github.com/AnimeThemes">GitHub organization</Text>
+                <span>The source code for this page can be found on </span>
+                <ExternalLink href="https://github.com/AnimeThemes/animethemes-web">GitHub</ExternalLink>
+                <span>. For our other open source projects we also have a </span>
+                <ExternalLink href="https://github.com/AnimeThemes">GitHub organization</ExternalLink>
                 <span>.</span>
             </Text>
             {!!allAnnouncement.totalCount && (
                 <>
-                    <Title variant="section">Announcements</Title>
+                    <Text variant="h2">Announcements</Text>
                     <Text as="p">These are for demo purposes only. The content may not be accurate.</Text>
                     {allAnnouncement.nodes.map((announcement) => (
                         <Card key={announcement.id}>
@@ -48,17 +48,27 @@ export default function IndexPage({ data: { allAnnouncement } }) {
                                 <Text link>
                                     <FontAwesomeIcon icon={faInfo}/>
                                 </Text>
-                                <StyledAnnouncement dangerouslySetInnerHTML={{__html: announcement.content}}/>
+                                <StyledAnnouncement dangerouslySetInnerHTML={{ __html: announcement.content }}/>
                             </Flex>
                         </Card>
                     ))}
                 </>
             )}
-            <Title variant="section">Pages</Title>
-            <Box gapsColumn={["2rem", "1rem"]}>
+            <Text variant="h2">Pages</Text>
+            <Box gapsColumn={["2rem", "1.5rem"]}>
                 <PageGridItem
                     path="/"
                     description="This page!"
+                />
+                <PageGridItem
+                    path="/design"
+                    description={
+                        <Text>
+                            <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
+                            A page listing various design components!
+                        </Text>
+                    }
+                    isNew
                 />
                 <PageGridItem
                     path="/search"
@@ -120,29 +130,29 @@ export default function IndexPage({ data: { allAnnouncement } }) {
             </Box>
             {!!process.env.GATSBY_CI && (
                 <>
-                    <Title variant="section">GitHub Pages</Title>
+                    <Text variant="h2">GitHub Pages</Text>
                     <Text as="p">
                         <span>You are browsing this site on GitHub Pages. On every commit in the </span>
-                        <Text as="a" code link href="https://github.com/AnimeThemes/animethemes-web">animethemes-web</Text>
+                        <Text as="a" variant="code" link href="https://github.com/AnimeThemes/animethemes-web">animethemes-web</Text>
                         <span> repository this site gets updated. This also comes with some limitations like </span>
-                        <Text code>.htaccess</Text>
+                        <Text variant="code">.htaccess</Text>
                         <span> files not working. So don&apos;t expect everything on this site to work the same way as on the production site.</span>
                     </Text>
                 </>
             )}
-        </StyledIndexPage>
+        </Box>
     );
 }
 
 function PageGridItem({ path, otherPaths = {}, description }) {
     return (
-        <Grid gridTemplateColumns={["minmax(0, 1fr)", "minmax(0, 1fr) 2fr"]} gridColumnGap="1rem" gridRowGap="0.5rem">
+        <Grid gridTemplateColumns={["minmax(0, 1fr)", "minmax(0, 1fr) 1fr"]} gridColumnGap="1rem" gridRowGap="0.5rem" alignItems="center" justifyItems="flex-start">
             <PageLink path={path}/>
             <Text>{description}</Text>
             {Object.entries(otherPaths).map(([path, description]) => (
                 <>
                     <PageLink path={path}/>
-                    <Text color={theme.colors.primaryMediumEmphasis}>{description}</Text>
+                    <Text color="text-muted">{description}</Text>
                 </>
             ))}
         </Grid>
@@ -151,11 +161,9 @@ function PageGridItem({ path, otherPaths = {}, description }) {
 
 function PageLink({ path }) {
     return (
-        <Link key={path} to={path}>
-            <Text link block truncate>
-                <Text link code>{path}</Text>
-            </Text>
-        </Link>
+        <StyledLink key={path} to={path}>
+            <Text variant="code" link maxLines={1}>{path}</Text>
+        </StyledLink>
     )
 }
 

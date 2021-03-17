@@ -1,49 +1,41 @@
-import React from "react";
-import {graphql} from "gatsby";
-import styled from "styled-components";
-import AnimeSearchResultCard from "components/card/searchResult/anime";
-import Title from "components/text/title";
-import {gapsColumn} from "styles/mixins";
-import Button from "components/button";
-import { Flex } from "components/flex";
-import SEO from "components/seo";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faChevronDown} from "@fortawesome/free-solid-svg-icons";
-import YearNavigation from "components/navigation/year";
-import SeasonNavigation from "components/navigation/season";
+import { graphql, Link } from "gatsby";
+import { AnimeSummaryCard } from "components/card";
+import { Button } from "components/button";
+import { Box, Flex } from "components/box";
+import { SEO } from "components/seo";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { Icon } from "components/icon";
+import { Text } from "components/text";
 
 const seasonOrder = [ "Winter", "Spring", "Summer", "Fall" ];
-const StyledPage = styled.div`
-    ${gapsColumn()}
-`;
 
-export default function YearDetailPage({ data: { allAnime }, pageContext: { year, seasonList } }) {
+export default function YearDetailPage({ data: { allAnime }, pageContext: { year } }) {
     const pageTitle = `${year} Anime`;
     const animeBySeason = allAnime.groupedBySeason.sort((a, b) => seasonOrder.indexOf(a.fieldValue) - seasonOrder.indexOf(b.fieldValue));
 
     return (
-        <StyledPage>
+        <Box gapsColumn="1.5rem">
             <SEO title={pageTitle} />
-            <YearNavigation year={year} />
-            <SeasonNavigation year={year} seasonList={seasonList} />
             {animeBySeason.map(({ fieldValue: season, nodes: animeList }) => (
                 <SeasonPreview key={season} season={season} year={year} animeList={animeList}/>
             ))}
-        </StyledPage>
+        </Box>
     );
 }
 
 function SeasonPreview({ season, year, animeList }) {
     return (
         <>
-            <Title variant="section">{season}</Title>
+            <Text variant="h2">{season}</Text>
             {animeList.map((anime) => (
-                <AnimeSearchResultCard key={anime.slug} anime={anime}/>
+                <AnimeSummaryCard key={anime.slug} anime={anime}/>
             ))}
             <Flex justifyContent="center">
-                <Button to={`/year/${year}/${season.toLowerCase()}`} icon>
-                    <FontAwesomeIcon icon={faChevronDown} fixedWidth/>
-                </Button>
+                <Link to={`/year/${year}/${season.toLowerCase()}`}>
+                    <Button silent>
+                        <Icon icon={faChevronDown}/>
+                    </Button>
+                </Link>
             </Flex>
         </>
     );

@@ -1,4 +1,4 @@
-const { baseUrl, fetchJsonCached, createFieldParams } = require("./index");
+const { baseUrl, fetchJson, createFieldParams } = require("./index");
 
 const fields = createFieldParams({
     series:   [ "id", "slug", "name" ],
@@ -13,7 +13,7 @@ async function fetchSeriesList({ reporter }) {
 
     let nextUrl = `${baseUrl}/api/series?page[size]=100&sort=name&${fields}&include=anime`;
     while (nextUrl) {
-        const page = await fetchJsonCached(nextUrl);
+        const page = await fetchJson(nextUrl);
 
         seriesList.push(...page.series);
 

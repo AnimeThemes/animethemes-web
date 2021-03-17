@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import { Flex } from "components/flex";
-import Button from "components/button";
-import Title from "components/text/title";
-import SEO from "components/seo";
-import {graphql} from "gatsby";
+import { Flex } from "components/box";
+import { Button } from "components/button";
+import { SEO } from "components/seo";
+import { graphql, Link } from "gatsby";
+import { Text } from "components/text";
 
 const StyledYearPage = styled.div`
     display: grid;
@@ -17,9 +17,11 @@ export default function YearIndexPage({ data: { allAnime } }) {
             <SEO title="Browse by Year" />
             {allAnime.groupedByYear.map(({ year }) => (
                 <Flex key={year} alignItems="center" justifyContent="center">
-                    <Button to={`/year/${year}`}>
-                        <Title variant="page">{year}</Title>
-                    </Button>
+                    <Link to={`/year/${year}`}>
+                        <Button>
+                            <Text variant="h1">{year}</Text>
+                        </Button>
+                    </Link>
                 </Flex>
             ))}
         </StyledYearPage>
