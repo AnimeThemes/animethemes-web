@@ -1,7 +1,7 @@
-const {fetchAnimeList} = require("./src/anime");
-const {fetchArtistList} = require("./src/artist");
-const {fetchSeriesList} = require("./src/series");
-const {fetchAnnouncements} = require("./src/announcement");
+const { fetchAnimeList } = require("./src/anime");
+const { fetchArtistList } = require("./src/artist");
+const { fetchSeriesList } = require("./src/series");
+const { fetchAnnouncements } = require("./src/announcement");
 
 exports.onPreInit = ({ reporter }) => reporter.info("Loaded gatsby-source-animethemes");
 
@@ -55,6 +55,7 @@ exports.createSchemaCustomization = ({ actions }) => {
             uncen: Boolean!
             source: String
             overlap: String
+            tags: String
             # See custom resolver below (n-to-n relations cannot be resolved with @link)
             entries: [Entry]
         }
@@ -79,6 +80,7 @@ exports.createSchemaCustomization = ({ actions }) => {
             name: String!
             performances: [Performance] @link(by: "artist.id", from: "id")
             resources: [Resource]
+            images: [Image]
         }
         
         type Series implements Node {
@@ -205,6 +207,7 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest, repor
             uncen: video.uncen,
             source: video.source,
             overlap: video.overlap,
+            tags: video.tags,
             entries: video.entries.map((entry) => createNodeId(`Entry-${entry.id}`))
         }, "Video", helpers);
     }
@@ -220,6 +223,10 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest, repor
             resources: artist.resources.map((resource) => ({
                 link: resource.link,
                 site: resource.site
+            })),
+            images: artist.images.map((image) => ({
+                facet: image.facet,
+                link: image.link
             }))
         }, "Artist", helpers);
     }

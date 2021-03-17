@@ -1,21 +1,17 @@
-import {useEffect, useMemo, useState} from "react";
+import { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
-import {navigate} from "gatsby";
-import {useDebounce} from "use-debounce";
-import SearchInput from "components/input/search";
-import GlobalSearch from "components/search/global";
-import {gapsColumn, gapsRow} from "styles/mixins";
-import Title from "components/text/title";
-import { Box, Flex } from "components/flex";
-import Switcher from "components/switcher";
-import Button from "components/button";
-import SEO from "components/seo";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTimes} from "@fortawesome/free-solid-svg-icons";
+import { graphql, Link, navigate } from "gatsby";
+import { useDebounce } from "use-debounce";
+import { SearchInput } from "components/input";
+import { GlobalSearch } from "components/search";
+import { gapsColumn, gapsRow } from "styles/mixins";
+import { Box, Flex } from "components/box";
+import { Switcher } from "components/switcher";
+import { SEO } from "components/seo";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { Text } from "components/text";
+import { Icon } from "components/icon";
 
-const StyledSearchPage = styled.div`
-    ${gapsColumn("1.5rem")}
-`;
 const StyledSearchOptions = styled(Flex)`
     @media (min-width: 721px) {
         flex-direction: row;
@@ -29,7 +25,7 @@ const StyledSearchOptions = styled(Flex)`
 `;
 
 export default function SearchPage({ location: { pathname, search, hash } }) {
-    const entity = useMemo(() => pathname.match(/\/search(?:\/(.+))?/)[1], [ pathname ]);
+    const entity = useMemo(() => pathname.match(/\/search(?:\/([^/]+))?/)[1], [ pathname ]);
     const urlParams = useMemo(() => new URLSearchParams(search), [ search ]);
     const urlSuffix = search + hash;
 
@@ -64,25 +60,75 @@ export default function SearchPage({ location: { pathname, search, hash } }) {
     }, [ entity, searchQuery ]);
 
     return (
-        <StyledSearchPage>
+        <Box gapsColumn="1.5rem">
             <SEO title={pageTitle} />
-            <Title>Search</Title>
+            <Text variant="h1">Search</Text>
             <StyledSearchOptions>
                 <Box flex="1">
-                    <SearchInput query={searchQuery} setQuery={setSearchQuery} isSearching={false}/>
+                    <SearchInput
+                        query={searchQuery}
+                        setQuery={setSearchQuery}
+                        isSearching={false}
+                        inputProps={{
+                            autoFocus: true,
+                            spellCheck: false
+                        }}
+                    />
                 </Box>
-                <Switcher>
-                    {!!entity && (
-                        <Button icon to={`/search${urlSuffix}`}>
-                            <FontAwesomeIcon icon={faTimes} fixedWidth/>
-                        </Button>
+                <Switcher
+                    items={[ null, "anime", "theme", "artist" ]}
+                    selectedItem={entity}
+                >
+                    {({ Button, item, selected, content }) => item.value === null ? (
+                        !!entity ? (
+                            <Link key={null} to={`/search${urlSuffix}`}>
+                                <Button>
+                                    <Icon icon={faTimes}/>
+                                </Button>
+                            </Link>
+                        ) : null
+                    ) : (
+                        <Link key={item.value} to={`/search/${item.value}${urlSuffix}`}>
+                            <Button variant={selected && "primary"}>
+                                {content}
+                            </Button>
+                        </Link>
                     )}
-                    <Button to={`/search/anime${urlSuffix}`} active={entity === "anime"}>Anime</Button>
-                    <Button to={`/search/theme${urlSuffix}`} active={entity === "theme"}>Themes</Button>
-                    <Button to={`/search/artist${urlSuffix}`} active={entity === "artist"}>Artists</Button>
                 </Switcher>
             </StyledSearchOptions>
+            {/*<Collapse collapse={!entity}>*/}
+            {/*    <Grid gridTemplateColumns="repeat(6, 1fr)" gridGap="1rem">*/}
+            {/*        <Flex flexDirection="column" alignItems="stretch" gapsColumn="0.5rem">*/}
+            {/*            <Text color={theme.colors.primaryMediumEmphasis}>Season</Text>*/}
+            {/*            <Listbox defaultValue={null} nullLabel="Any" options={{*/}
+            {/*                winter: "Winter",*/}
+            {/*                spring: "Spring",*/}
+            {/*                summer: "Summer",*/}
+            {/*                fall: "Fall"*/}
+            {/*            }}/>*/}
+            {/*        </Flex>*/}
+            {/*        <Flex flexDirection="column" alignItems="stretch" gapsColumn="0.5rem">*/}
+            {/*            <Text color={theme.colors.primaryMediumEmphasis}>Year</Text>*/}
+            {/*            <Listbox defaultValue={null} nullLabel="Any" options={*/}
+            {/*                allAnime.groupedByYear.reduce((options, { year }) => {*/}
+            {/*                    options[year] = year;*/}
+            {/*                    return options;*/}
+            {/*                }, {})*/}
+            {/*            }/>*/}
+            {/*        </Flex>*/}
+            {/*    </Grid>*/}
+            {/*</Collapse>*/}
             <GlobalSearch searchEntity={entity} searchQuery={debouncedSearchQuery}/>
-        </StyledSearchPage>
+        </Box>
     );
 }
+
+export const query = graphql`
+    query SearchPageQuery {
+        allAnime {
+            groupedByYear: group(field: year) {
+                year: fieldValue
+            }
+        }
+    }
+`;

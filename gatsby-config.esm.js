@@ -41,7 +41,7 @@ const config = {
         {
             resolve: "gatsby-plugin-layout",
             options: {
-                component: require.resolve("./src/components/layout/index.js"),
+                component: require.resolve("./src/layout/index.js"),
             }
         },
         {
@@ -55,7 +55,8 @@ const config = {
                 icon: "src/images/icon.png"
             }
         },
-        "gatsby-plugin-eslint"
+        "gatsby-plugin-eslint",
+        "gatsby-plugin-sass"
     ]
 };
 

@@ -1,9 +1,10 @@
-const { baseUrl, fetchJsonCached, createFieldParams } = require("./index");
+const { baseUrl, fetchJson, createFieldParams } = require("./index");
 
 const fields = createFieldParams({
     artist:   [ "id", "slug", "name" ],
     song:     [ "id" ],
-    resource: [ "link", "site" ]
+    resource: [ "link", "site" ],
+    image:    [ "facet", "link" ]
 });
 
 async function fetchArtistList({ reporter }) {
@@ -14,7 +15,7 @@ async function fetchArtistList({ reporter }) {
 
     let nextUrl = `${baseUrl}/api/artist?page[size]=100&sort=name&${fields}`;
     while (nextUrl) {
-        const page = await fetchJsonCached(nextUrl);
+        const page = await fetchJson(nextUrl);
 
         artistList.push(...page.artists);
 

@@ -1,31 +1,21 @@
-import React from "react";
-import {graphql} from "gatsby";
-import styled from "styled-components";
-import AnimeSearchResultCard from "components/card/searchResult/anime";
-import Title from "components/text/title";
-import {gapsColumn} from "styles/mixins";
-import SEO from "components/seo";
-import YearNavigation from "components/navigation/year";
-import SeasonNavigation from "components/navigation/season";
+import { graphql } from "gatsby";
+import { AnimeSummaryCard } from "components/card";
+import { SEO } from "components/seo";
+import { Text } from "components/text";
+import { Box } from "components/box";
 
-const StyledPage = styled.div`
-    ${gapsColumn()}
-`;
-
-export default function SeasonDetailPage({ data: { allAnime }, pageContext: { year, season, seasonList } }) {
+export default function SeasonDetailPage({ data: { allAnime }, pageContext: { year, season } }) {
     const pageTitle = `${season} ${year} Anime`;
     const animeList = allAnime.nodes;
 
     return (
-        <StyledPage>
+        <Box gapsColumn="1.5rem">
             <SEO title={pageTitle} />
-            <YearNavigation year={year} />
-            <SeasonNavigation year={year} season={season} seasonList={seasonList} />
-            <Title variant="section">{`Anime from ${season} of ${year}`}</Title>
+            <Text variant="h2">{`Anime from ${season} of ${year}`}</Text>
             {animeList.map((anime) => (
-                <AnimeSearchResultCard key={anime.slug} anime={anime}/>
+                <AnimeSummaryCard key={anime.slug} anime={anime}/>
             ))}
-        </StyledPage>
+        </Box>
     );
 }
 

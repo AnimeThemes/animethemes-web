@@ -6,13 +6,7 @@ export const query = graphql`
         entries {
             version
             videos {
-                nc
-                source
-                lyrics
-                subbed
-                uncen
-                overlap
-                resolution
+                tags
             }
         }
     }

@@ -1,31 +1,19 @@
-import Title from "components/text/title";
-import React from "react";
-import ContainerSidebar from "components/container/sidebar";
+import { SidebarContainer } from "components/container";
 import styled from "styled-components";
-import { gapsColumn } from "styles/mixins";
-import AnimeSearchResultCard from "components/card/searchResult/anime";
-import SEO from "components/seo";
+import { AnimeSummaryCard } from "components/card";
+import { SEO } from "components/seo";
 import { graphql } from "gatsby";
 import useImage from "hooks/useImage";
-import { Box } from "components/flex";
+import { Box } from "components/box";
+import { Text } from "components/text";
+import { AspectRatio } from "components/utils";
 
-const StyledSeriesPage = styled.div`
-    ${gapsColumn("1.5rem")}
-`;
-const StyledCoverContainer = styled.div`        
-    position: relative;
-    width: 100%;
-    padding-top: 150%;
-`;
-const StyledCoverContainerFlex = styled.div`
+const StyledCoverContainer = styled.div`
     display: flex;
     flex-direction: row;
-
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
     height: 100%;
+    border-radius: 0.5rem;
+    overflow: hidden;
 `;
 const StyledCoverItemContainer = styled.div`
     flex: 1;
@@ -46,33 +34,30 @@ export default function SeriesDetailPage({ data: { series } }) {
         useImage(series.anime[3])
     ].map((images) => images.largeCover).filter((image) => !!image);
 
-    const sidebar = (
-        <Box gapsColumn="1.5rem">
-            <StyledCoverContainer>
-                <StyledCoverContainerFlex>
-                    {images.map((image) => (
-                        <StyledCoverItemContainer key={image}>
-                            <StyledCover src={image}/>
-                        </StyledCoverItemContainer>
-                    ))}
-                </StyledCoverContainerFlex>
-            </StyledCoverContainer>
-        </Box>
-    );
-
     return (
-        <StyledSeriesPage>
+        <Box gapsColumn="1.5rem">
             <SEO title={series.name} />
-            <Title>{series.name}</Title>
-            <ContainerSidebar sidebar={sidebar}>
+            <Text variant="h1">{series.name}</Text>
+            <SidebarContainer>
+                <Box gapsColumn="1.5rem">
+                    <AspectRatio ratio={1 / 2}>
+                        <StyledCoverContainer>
+                            {images.map((image) => (
+                                <StyledCoverItemContainer key={image}>
+                                    <StyledCover src={image}/>
+                                </StyledCoverItemContainer>
+                            ))}
+                        </StyledCoverContainer>
+                    </AspectRatio>
+                </Box>
                 <Box gapsColumn="1rem">
-                    <Title variant="section">Anime</Title>
+                    <Text variant="h2">Anime</Text>
                     {series.anime.map((anime) => (
-                        <AnimeSearchResultCard key={anime.slug} anime={anime}/>
+                        <AnimeSummaryCard key={anime.slug} anime={anime}/>
                     ))}
                 </Box>
-            </ContainerSidebar>
-        </StyledSeriesPage>
+            </SidebarContainer>
+        </Box>
     );
 }
 

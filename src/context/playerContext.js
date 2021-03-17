@@ -1,6 +1,6 @@
-import React from "react";
+import { createContext } from "react";
 
-const PlayerContext = React.createContext({
+const PlayerContext = createContext({
     currentVideo: null,
     setCurrentVideo: () => {}
 });
