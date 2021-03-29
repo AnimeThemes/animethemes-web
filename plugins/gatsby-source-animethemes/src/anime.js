@@ -1,34 +1,25 @@
-const { baseUrl, fetchJson, createFieldParams } = require("./index");
+const { baseUrl, fetchJsonPaginated, createFieldParams } = require("./index");
 
 const fields = createFieldParams({
     anime:    [ "id", "name", "slug", "year", "season", "synopsis" ],
-    synonym:  [ "text" ],
-    image:    [ "facet", "link" ],
-    theme:    [ "id", "slug", "group" ],
-    song:     [ "id", "title" ],
-    artist:   [ "id", "slug", "name", "as" ],
-    entry:    [ "id", "version", "episodes", "nsfw", "spoiler" ],
-    video:    [ "id", "filename", "basename", "link", "resolution", "nc", "subbed", "lyrics", "uncen", "source", "overlap", "tags" ],
-    series:   [ "id", "name", "slug" ],
-    resource: [ "link", "site" ]
+    image:    [ "id" ],
+    theme:    [ "id" ],
+    series:   [ "id" ],
+    resource: [ "id" ]
 });
 
-async function fetchAnimeList({ reporter }) {
+async function fetchAnimeList({ reporter, lastFetched }) {
     const activity = reporter.activityTimer("Fetching anime list");
     activity.start();
 
-    const animeList = [];
-
-    let nextUrl = `${baseUrl}/api/anime?page[size]=100&sort=year,season,name&${fields}`;
-    while (nextUrl) {
-        const page = await fetchJson(nextUrl);
-
-        animeList.push(...page.anime);
-
-        nextUrl = page.links.next;
-
-        activity.setStatus(`${animeList.length} anime fetched`);
-    }
+    const animeList = await fetchJsonPaginated(
+        `${baseUrl}/api/anime?page[size]=100&sort=year,season,name&${fields}&include=images,themes,series,externalResources&filter[updated_at][gte]=${lastFetched}`,
+        {
+            reducer: (page) => page.anime,
+            flatten: true,
+            onProgress: (results) => activity.setStatus(`${results.length} anime fetched`)
+        }
+    );
 
     activity.end();
 

@@ -21,6 +21,32 @@ async function fetchJson(url, init) {
     return await response.json();
 }
 
+async function fetchJsonPaginated(url, { reducer = (page) => page, flatten, onProgress, ...init }) {
+    const results = [];
+    let nextUrl = url;
+
+    console.log(`URL schema: ${nextUrl}`);
+
+    while (nextUrl) {
+        const page = await fetchJson(nextUrl, init);
+        const pageResults = reducer(page);
+
+        if (flatten) {
+            results.push(...pageResults);
+        } else {
+            results.push(pageResults);
+        }
+
+        if (onProgress) {
+            onProgress(results);
+        }
+
+        nextUrl = page.links.next;
+    }
+
+    return results;
+}
+
 function createFieldParams(fields) {
     return Object.entries(fields)
         .map(([ key, values ]) => `fields[${key}]=${values.join()}`)
@@ -34,5 +60,6 @@ function sleep(millis) {
 module.exports = {
     baseUrl,
     fetchJson,
+    fetchJsonPaginated,
     createFieldParams
 };

@@ -50,11 +50,13 @@ export default function SeriesDetailPage({ data: { series } }) {
                         </StyledCoverContainer>
                     </AspectRatio>
                 </Box>
-                <Box gapsColumn="1rem">
+                <Box gapsColumn="1.5rem">
                     <Text variant="h2">Anime</Text>
-                    {series.anime.map((anime) => (
-                        <AnimeSummaryCard key={anime.slug} anime={anime}/>
-                    ))}
+                    <Box gapsColumn="1rem">
+                        {series.anime.map((anime) => (
+                            <AnimeSummaryCard key={anime.slug} anime={anime}/>
+                        ))}
+                    </Box>
                 </Box>
             </SidebarContainer>
         </Box>

@@ -27,9 +27,11 @@ function SeasonPreview({ season, year, animeList }) {
     return (
         <>
             <Text variant="h2">{season}</Text>
-            {animeList.map((anime) => (
-                <AnimeSummaryCard key={anime.slug} anime={anime}/>
-            ))}
+            <Box gapsColumn="1rem">
+                {animeList.map((anime) => (
+                    <AnimeSummaryCard key={anime.slug} anime={anime}/>
+                ))}
+            </Box>
             <Flex justifyContent="center">
                 <Link to={`/year/${year}/${season.toLowerCase()}`}>
                     <Button silent>

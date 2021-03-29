@@ -11,7 +11,7 @@ import theme from "theme";
 const StyledAnnouncement = styled(Text)`
     & a {
         color: ${theme.colors["text-primary"]};
-        font-weight: 500;
+        font-weight: 600;
       
         &:hover {
             text-decoration: underline;

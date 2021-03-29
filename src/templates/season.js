@@ -12,9 +12,11 @@ export default function SeasonDetailPage({ data: { allAnime }, pageContext: { ye
         <Box gapsColumn="1.5rem">
             <SEO title={pageTitle} />
             <Text variant="h2">{`Anime from ${season} of ${year}`}</Text>
-            {animeList.map((anime) => (
-                <AnimeSummaryCard key={anime.slug} anime={anime}/>
-            ))}
+            <Box gapsColumn="1rem">
+                {animeList.map((anime) => (
+                    <AnimeSummaryCard key={anime.slug} anime={anime}/>
+                ))}
+            </Box>
         </Box>
     );
 }

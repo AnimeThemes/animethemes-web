@@ -20,9 +20,13 @@ const StyledList = styled.div`
 `;
 
 export default function ArtistDetailPage({ data: { artist } }) {
-    const performances = artist.performances.sort((a, b) => {
-        return a.song.theme.anime.name.localeCompare(b.song.theme.anime.name);
-    });
+    const themes = artist.performances
+        .flatMap(
+            (performance) => performance.song.themes.map(
+                (theme) => ({ ...theme, song: performance.song })
+            )
+        )
+        .sort((a, b) => a.anime.name.localeCompare(b.anime.name));
 
     return (
         <Box gapsColumn="1.5rem">
@@ -71,11 +75,13 @@ export default function ArtistDetailPage({ data: { artist } }) {
                         )}
                     </DescriptionList>
                 </Box>
-                <Box gapsColumn="1rem">
+                <Box gapsColumn="1.5rem">
                     <Text variant="h2">Song Perfomances</Text>
-                    {performances.map((performance, index) => (
-                        <ThemeSummaryCard key={index} theme={{ ...performance.song.theme, song: performance.song }}/>
-                    ))}
+                    <Box gapsColumn="1rem">
+                        {themes.map((theme, index) => (
+                            <ThemeSummaryCard key={index} theme={theme} artist={artist}/>
+                        ))}
+                    </Box>
                 </Box>
             </SidebarContainer>
         </Box>
@@ -85,6 +91,7 @@ export default function ArtistDetailPage({ data: { artist } }) {
 export const query = graphql`
     query($slug: String!) {
         artist(slug: { eq: $slug }) {
+            slug
             name
             performances {
                 song {
@@ -96,7 +103,7 @@ export const query = graphql`
                         }
                         as
                     }
-                    theme {
+                    themes {
                         slug
                         anime {
                             slug

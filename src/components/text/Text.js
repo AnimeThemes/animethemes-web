@@ -37,7 +37,7 @@ export const Text = styled.span.attrs(getAttributes)`
     ${(props) => props.link && css`
         cursor: pointer;
         color: ${theme.colors["text-primary"]};
-        font-weight: 500;
+        font-weight: 600;
         
         &:hover {
             text-decoration: underline;
