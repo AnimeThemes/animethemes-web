@@ -58,9 +58,12 @@ const config = {
             }
         },
         "gatsby-plugin-eslint",
-        "gatsby-plugin-sass",
-        "gatsby-plugin-extract-schema"
+        "gatsby-plugin-sass"
     ]
 };
+
+if (process.env.NODE_ENV === "development") {
+    config.plugins.push("gatsby-plugin-extract-schema");
+}
 
 export default config;
