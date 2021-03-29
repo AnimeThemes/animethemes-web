@@ -74,7 +74,8 @@ const entityConfigs = {
     artist: {
         plural: "artists",
         includes: [
-            "images"
+            "images",
+            "songs"
         ],
         fields: {
             artist: [
@@ -84,7 +85,9 @@ const entityConfigs = {
             image: [
                 "facet",
                 "link"
-            ]
+            ],
+            // TODO: Wait till we can specify deep field property lists
+            // song: []
         }
     }
 };
@@ -116,11 +119,17 @@ async function fetchSearchResults(url) {
     const res = await fetch(url);
     const { anime = [], themes = [], artists = [] } = (await res.json()).search;
 
-    // Map artist to performances to comply with the application schema
+    // Map artists and songs to performances to comply with the application schema
     for (const theme of themes) {
         theme.song.performances = theme.song.artists.map((artist) => ({
             artist,
             as: artist.as
+        }));
+    }
+    for (const artist of artists) {
+        artist.performances = artist.songs.map((song) => ({
+            song,
+            as: song.as
         }));
     }
 

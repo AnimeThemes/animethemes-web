@@ -17,7 +17,7 @@ export function SummaryCard({ title, description, image, to, children, ...props 
                 <StyledCover alt="Cover" src={image}/>
             </Link>
             <Flex flex={1} flexDirection="column" justifyContent="center" gapsColumn="0.25rem" px="1rem">
-                <Text fontWeight="500" maxLines={2}>
+                <Text fontWeight="600" maxLines={2}>
                     {typeof title === "string" ? (
                         <Link to={to}>
                             <Text link>{title}</Text>

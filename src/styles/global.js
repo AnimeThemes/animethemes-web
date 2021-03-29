@@ -28,7 +28,7 @@ export default createGlobalStyle`
         background-color: ${theme.colors["background"]};
         color: ${theme.colors["text"]};
 
-        font-family: "Roboto", sans-serif;
+        font-family: "Nunito", sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }

@@ -3,7 +3,7 @@
 .env.*
 
 # NPM
-/node_modules
+node_modules
 
 # Gatsby
 /.cache

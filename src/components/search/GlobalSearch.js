@@ -33,7 +33,7 @@ export function GlobalSearch({ searchQuery, searchEntity }) {
     }
 
     return (
-        <Box gapsColumn="2rem">
+        <Box gapsColumn="1.5rem">
             <EntitySearch searchEntity={searchEntity} entity="anime" title="Anime" results={animeResults}/>
             <EntitySearch searchEntity={searchEntity} entity="theme" title="Themes" results={themeResults}/>
             <EntitySearch searchEntity={searchEntity} entity="artist" title="Artist" results={artistResults}/>
@@ -69,11 +69,13 @@ function EntitySearch({ searchEntity, entity, title, results }) {
     });
 
     return (
-        <Box gapsColumn="1rem">
+        <Box gapsColumn="1.5rem">
             {!searchEntity && (
                 <Text variant="h2">{title}</Text>
             )}
-            {resultCards}
+            <Box gapsColumn="1rem">
+                {resultCards}
+            </Box>
             {!searchEntity && totalResults > 3 && (
                 <Flex justifyContent="center">
                     <Link to={`/search/${entity}${urlSuffix}`}>

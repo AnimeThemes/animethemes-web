@@ -111,7 +111,7 @@ export default function VideoPage({ data: { video, entry } }) {
                             <Box flex="1">
                                 <Box gapsColumn="1rem">
                                     {!!theme.song.performances && theme.song.performances.map((performance) => (
-                                        <ArtistSummaryCard key={performance.artist.name} artist={performance.artist}/>
+                                        <ArtistSummaryCard key={performance.artist.name} artist={performance.artist} as={performance.as}/>
                                     ))}
                                 </Box>
                             </Box>

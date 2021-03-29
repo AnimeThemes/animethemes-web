@@ -1,6 +1,13 @@
 const { fetchAnimeList } = require("./src/anime");
+const { fetchSynonymList } = require("./src/synonym");
+const { fetchThemeList } = require("./src/theme");
+const { fetchEntryList } = require("./src/entry");
+const { fetchVideoList } = require("./src/video");
+const { fetchSongList } = require("./src/song");
 const { fetchArtistList } = require("./src/artist");
 const { fetchSeriesList } = require("./src/series");
+const { fetchResourceList } = require("./src/resource");
+const { fetchImageList } = require("./src/image");
 const { fetchAnnouncements } = require("./src/announcement");
 
 exports.onPreInit = ({ reporter }) => reporter.info("Loaded gatsby-source-animethemes");
@@ -15,12 +22,19 @@ exports.createSchemaCustomization = ({ actions }) => {
             year: Int!
             season: String
             synopsis: String
-            synonyms: [String]
+            synonyms: [Synonym] @link(by: "anime.id", from: "id")
+            themes: [Theme] @link(by: "anime.id", from: "id")
+            
             # See custom resolver below (n-to-n relations cannot be resolved with @link)
             series: [Series]
-            themes: [Theme] @link(by: "anime.id", from: "id")
             resources: [Resource]
             images: [Image]
+        }
+        
+        type Synonym implements Node {
+            id: ID!
+            text: String!
+            anime: Anime! @link(by: "id")
         }
         
         type Theme implements Node {
@@ -39,6 +53,7 @@ exports.createSchemaCustomization = ({ actions }) => {
             nsfw: Boolean!
             spoiler: Boolean!
             theme: Theme! @link(by: "id")
+            
             # See custom resolver below (n-to-n relations cannot be resolved with @link)
             videos: [Video]
         }
@@ -56,6 +71,7 @@ exports.createSchemaCustomization = ({ actions }) => {
             source: String
             overlap: String
             tags: String
+            
             # See custom resolver below (n-to-n relations cannot be resolved with @link)
             entries: [Entry]
         }
@@ -63,7 +79,7 @@ exports.createSchemaCustomization = ({ actions }) => {
         type Song implements Node {
             id: ID!
             title: String!
-            theme: Theme! @link(by: "id")
+            themes: [Theme] @link(by: "song.id", from: "id")
             performances: [Performance] @link(by: "song.id", from: "id")
         }
         
@@ -79,6 +95,8 @@ exports.createSchemaCustomization = ({ actions }) => {
             slug: String!
             name: String!
             performances: [Performance] @link(by: "artist.id", from: "id")
+            
+            # See custom resolver below (n-to-n relations cannot be resolved with @link)
             resources: [Resource]
             images: [Image]
         }
@@ -87,18 +105,27 @@ exports.createSchemaCustomization = ({ actions }) => {
             id: ID!
             slug: String!
             name: String!
+            
             # See custom resolver below (n-to-n relations cannot be resolved with @link)
             anime: [Anime]
         }
         
-        type Resource {
+        type Resource implements Node {
             link: String!
             site: String!
+            
+            # See custom resolver below (n-to-n relations cannot be resolved with @link)
+            anime: [Anime]
+            artists: [Artist]
         }
         
-        type Image {
+        type Image implements Node {
             facet: String!
             link: String!
+            
+            # See custom resolver below (n-to-n relations cannot be resolved with @link)
+            anime: [Anime]
+            artists: [Artist]
         }
         
         type Announcement implements Node {
@@ -108,15 +135,29 @@ exports.createSchemaCustomization = ({ actions }) => {
     `);
 };
 
-exports.sourceNodes = async ({ actions, createNodeId, createContentDigest, reporter }) => {
+exports.sourceNodes = async ({ cache, actions, getNodes, createNodeId, createContentDigest, reporter }) => {
     const helpers = {
         ...actions,
         createNodeId,
         createContentDigest
     };
 
+    // const lastFetched = await cache.get("last-fetched");
+    //
+    // getNodes().filter(isPluginNode).forEach((node) => helpers.touchNode(node));
+    //
+    // const now = new Date().toISOString().replace("Z", "000");
+
     const animeList = await fetchAnimeList({ reporter });
-    const videoAggregations = new Map();
+    const synonymList = await fetchSynonymList({ reporter });
+    const themeList = await fetchThemeList({ reporter });
+    const entryList = await fetchEntryList({ reporter });
+    const videoList = await fetchVideoList({ reporter });
+    const songList = await fetchSongList({ reporter });
+    const artistList = await fetchArtistList({ reporter });
+    const seriesList = await fetchSeriesList({ reporter });
+    const resourceList = await fetchResourceList({ reporter });
+    const imageList = await fetchImageList({ reporter });
 
     for (const anime of animeList) {
         createNodeFromData({
@@ -126,75 +167,45 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest, repor
             year: anime.year,
             season: anime.season,
             synopsis: anime.synopsis,
-            synonyms: anime.synonyms.map((synonym) => synonym.text),
             series: anime.series.map((series) => createNodeId(`Series-${series.id}`)),
             themes: anime.themes.map((theme) => createNodeId(`Theme-${theme.id}`)),
-            resources: anime.resources.map((resource) => ({
-                link: resource.link,
-                site: resource.site
-            })),
-            images: anime.images.map((image) => ({
-                facet: image.facet,
-                link: image.link
-            }))
+            resources: anime.resources.map((resource) => createNodeId(`Resource-${resource.id}`)),
+            images: anime.images.map((image) => createNodeId(`Image-${image.id}`))
         }, "Anime", helpers);
-
-        for (const theme of anime.themes) {
-            const song = theme.song;
-
-            createNodeFromData({
-                id: theme.id,
-                slug: theme.slug,
-                group: theme.group,
-                song: createNodeId(`Song-${song.id}`),
-                anime: createNodeId(`Anime-${anime.id}`),
-                entries: theme.entries.map((entry) => createNodeId(`Entry-${entry.id}`))
-            }, "Theme", helpers);
-
-            createNodeFromData({
-                id: song.id,
-                title: song.title,
-                theme: createNodeId(`Theme-${theme.id}`),
-                performances: song.artists.map((artist) => createNodeId(`Performance-${song.id}-${artist.id}`))
-            }, "Song", helpers);
-
-            for (const artist of song.artists) {
-                createNodeFromData({
-                    id: `${song.id}-${artist.id}`,
-                    song: createNodeId(`Song-${song.id}`),
-                    artist: createNodeId(`Artist-${artist.id}`),
-                    as: artist.as
-                }, "Performance", helpers);
-            }
-
-            for (const entry of theme.entries) {
-                createNodeFromData({
-                    id: entry.id,
-                    version: entry.version || 1,
-                    episodes: entry.episodes,
-                    nsfw: entry.nsfw,
-                    spoiler: entry.spoiler,
-                    theme: createNodeId(`Theme-${theme.id}`),
-                    videos: entry.videos.map((video) => createNodeId(`Video-${video.id}`))
-                }, "Entry", helpers);
-
-                for (const video of entry.videos) {
-                    // To account for n-to-n relations, we need to aggregate the videos
-                    let videoAggregation = videoAggregations.get(video.id);
-                    if (!videoAggregation) {
-                        videoAggregation = {
-                            ...video,
-                            entries: []
-                        };
-                        videoAggregations.set(videoAggregation.id, videoAggregation);
-                    }
-                    videoAggregation.entries.push(entry);
-                }
-            }
-        }
     }
 
-    for (const video of videoAggregations.values()) {
+    for (const synonym of synonymList) {
+        createNodeFromData({
+            id: synonym.id,
+            text: synonym.text,
+            anime: createNodeId(`Anime-${synonym.anime.id}`)
+        }, "Synonym", helpers);
+    }
+
+    for (const theme of themeList) {
+        createNodeFromData({
+            id: theme.id,
+            slug: theme.slug,
+            group: theme.group,
+            song: createNodeId(`Song-${theme.song.id}`),
+            anime: createNodeId(`Anime-${theme.anime.id}`),
+            entries: theme.entries.map((entry) => createNodeId(`Entry-${entry.id}`))
+        }, "Theme", helpers);
+    }
+
+    for (const entry of entryList) {
+        createNodeFromData({
+            id: entry.id,
+            version: entry.version || 1,
+            episodes: entry.episodes,
+            nsfw: entry.nsfw,
+            spoiler: entry.spoiler,
+            theme: createNodeId(`Theme-${entry.theme.id}`),
+            videos: entry.videos.map((video) => createNodeId(`Video-${video.id}`))
+        }, "Entry", helpers);
+    }
+
+    for (const video of videoList) {
         createNodeFromData({
             id: video.id,
             filename: video.filename,
@@ -212,7 +223,23 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest, repor
         }, "Video", helpers);
     }
 
-    const artistList = await fetchArtistList({ reporter });
+    for (const song of songList) {
+        createNodeFromData({
+            id: song.id,
+            title: song.title,
+            themes: song.themes.map((theme) => createNodeId(`Theme-${theme.id}`)),
+            performances: song.artists.map((artist) => createNodeId(`Performance-${song.id}-${artist.id}`))
+        }, "Song", helpers);
+
+        for (const artist of song.artists) {
+            createNodeFromData({
+                id: `${song.id}-${artist.id}`,
+                song: createNodeId(`Song-${song.id}`),
+                artist: createNodeId(`Artist-${artist.id}`),
+                as: artist.as
+            }, "Performance", helpers);
+        }
+    }
 
     for (const artist of artistList) {
         createNodeFromData({
@@ -220,18 +247,10 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest, repor
             slug: artist.slug,
             name: artist.name,
             performances: artist.songs.map((song) => createNodeId(`Performance-${song.id}-${artist.id}`)),
-            resources: artist.resources.map((resource) => ({
-                link: resource.link,
-                site: resource.site
-            })),
-            images: artist.images.map((image) => ({
-                facet: image.facet,
-                link: image.link
-            }))
+            resources: artist.resources.map((resource) => createNodeId(`Resource-${resource.id}`)),
+            images: artist.images.map((image) => createNodeId(`Image-${image.id}`))
         }, "Artist", helpers);
     }
-
-    const seriesList = await fetchSeriesList({ reporter });
 
     for (const series of seriesList) {
         createNodeFromData({
@@ -242,6 +261,26 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest, repor
         }, "Series", helpers);
     }
 
+    for (const resource of resourceList) {
+        createNodeFromData({
+            id: resource.id,
+            link: resource.link,
+            site: resource.site,
+            anime: resource.anime.map((anime) => createNodeId(`Anime-${anime.id}`)),
+            artists: resource.artists.map((artist) => createNodeId(`Artist-${artist.id}`))
+        }, "Resource", helpers);
+    }
+
+    for (const image of imageList) {
+        createNodeFromData({
+            id: image.id,
+            facet: image.facet,
+            link: image.link,
+            anime: image.anime.map((anime) => createNodeId(`Anime-${anime.id}`)),
+            artists: image.artists.map((artist) => createNodeId(`Artist-${artist.id}`))
+        }, "Image", helpers);
+    }
+
     const announcements = await fetchAnnouncements();
 
     for (const announcement of announcements) {
@@ -250,6 +289,8 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest, repor
             content: announcement.content
         }, "Announcement", helpers);
     }
+
+    // await cache.set("last-fetched", now);
 };
 
 exports.createResolvers = ({ createResolvers }) => {
@@ -258,6 +299,28 @@ exports.createResolvers = ({ createResolvers }) => {
             series: {
                 resolve(source, args, context) {
                     return context.nodeModel.getNodesByIds({ ids: source.series, type: "Series" });
+                }
+            },
+            images: {
+                resolve(source, args, context) {
+                    return context.nodeModel.getAllNodes({ type: "Image" }).filter((node) => node.anime.includes(source.id));
+                }
+            },
+            resources: {
+                resolve(source, args, context) {
+                    return context.nodeModel.getAllNodes({ type: "Resource" }).filter((node) => node.anime.includes(source.id));
+                }
+            }
+        },
+        Artist: {
+            images: {
+                resolve(source, args, context) {
+                    return context.nodeModel.getAllNodes({ type: "Resource" }).filter((node) => node.artists.includes(source.id));
+                }
+            },
+            resources: {
+                resolve(source, args, context) {
+                    return context.nodeModel.getAllNodes({ type: "Resource" }).filter((node) => node.artists.includes(source.id));
                 }
             }
         },
@@ -302,3 +365,7 @@ function createNodeFromData(item, nodeType, helpers) {
 
     return node;
 }
+
+// function isPluginNode(node) {
+//     return node.internal.owner === "gatsby-source-animethemes";
+// }

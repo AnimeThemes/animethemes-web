@@ -1,14 +1,17 @@
 import useImage from "hooks/useImage";
 import { SummaryCard } from "components/card";
 
-export function ArtistSummaryCard({ artist }) {
+export function ArtistSummaryCard({ artist, as }) {
     const { smallCover } = useImage(artist);
 
     const description = (
         <SummaryCard.Description>
             <span>Artist</span>
             {!!artist.performances && (
-                <span>{artist.performances.length} songs</span>
+                <span>{artist.performances.length} performance{artist.performances.length === 1 ? "" : "s"}</span>
+            )}
+            {!!as && (
+                <span>As {as}</span>
             )}
         </SummaryCard.Description>
     );

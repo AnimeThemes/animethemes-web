@@ -31,7 +31,9 @@ const config = {
         siteUrl: path.posix.join((process.env.SITE_URL || siteConfig.rootUrl), pathPrefix)
     },
     plugins: [
-        "gatsby-source-animethemes",
+        process.env.SOURCE_PLUGIN === "DB"
+            ? "gatsby-source-animethemes-db"
+            : "gatsby-source-animethemes",
         "gatsby-plugin-styled-components",
         "gatsby-plugin-react-helmet",
         {
@@ -56,7 +58,8 @@ const config = {
             }
         },
         "gatsby-plugin-eslint",
-        "gatsby-plugin-sass"
+        "gatsby-plugin-sass",
+        "gatsby-plugin-extract-schema"
     ]
 };
 

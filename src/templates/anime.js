@@ -37,7 +37,7 @@ export default function AnimeDetailPage({ data: { anime } }) {
                             <DescriptionList.Item title="Alternative Titles">
                                 <StyledList>
                                     {anime.synonyms.map((synonym) => (
-                                        <Text key={synonym}>{synonym}</Text>
+                                        <Text key={synonym.text}>{synonym.text}</Text>
                                     ))}
                                 </StyledList>
                             </DescriptionList.Item>
@@ -75,7 +75,7 @@ export default function AnimeDetailPage({ data: { anime } }) {
                         )}
                     </DescriptionList>
                 </Box>
-                <Box gapsColumn="1rem">
+                <Box gapsColumn="1.5rem">
                     <Text variant="h2">Synopsis</Text>
                     <Card hoverable onClick={() => setCollapseSynopsis(!collapseSynopsis)}>
                         <HeightTransition>
@@ -101,7 +101,9 @@ export const query = graphql`
             year
             season
             synopsis
-            synonyms
+            synonyms {
+                text
+            }
             series {
                 slug
                 name

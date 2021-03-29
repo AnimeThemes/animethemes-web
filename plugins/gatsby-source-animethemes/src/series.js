@@ -1,26 +1,22 @@
-const { baseUrl, fetchJson, createFieldParams } = require("./index");
+const { baseUrl, fetchJsonPaginated, createFieldParams } = require("./index");
 
 const fields = createFieldParams({
     series:   [ "id", "slug", "name" ],
-    anime:     [ "id" ]
+    anime:    [ "id" ]
 });
 
-async function fetchSeriesList({ reporter }) {
+async function fetchSeriesList({ reporter, lastFetched }) {
     const activity = reporter.activityTimer("Fetching series list");
     activity.start();
 
-    const seriesList = [];
-
-    let nextUrl = `${baseUrl}/api/series?page[size]=100&sort=name&${fields}&include=anime`;
-    while (nextUrl) {
-        const page = await fetchJson(nextUrl);
-
-        seriesList.push(...page.series);
-
-        nextUrl = page.links.next;
-
-        activity.setStatus(`${seriesList.length} series fetched`);
-    }
+    const seriesList = await fetchJsonPaginated(
+        `${baseUrl}/api/series?page[size]=100&sort=name&${fields}&include=anime&filter[updated_at][gte]=${lastFetched}`,
+        {
+            reducer: (page) => page.series,
+            flatten: true,
+            onProgress: (results) => activity.setStatus(`${results.length} series fetched`)
+        }
+    );
 
     activity.end();
 

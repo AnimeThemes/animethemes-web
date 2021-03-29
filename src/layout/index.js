@@ -36,7 +36,7 @@ export default function Layout({ children, data, pageContext }) {
                     <Helmet>
                         <meta name="theme-color" content={darkColors["background"]}/>
                         <link rel="preconnect" href="https://fonts.gstatic.com"/>
-                        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
+                        <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
                     </Helmet>
                     <GlobalStyle/>
                     <Navigation/>
@@ -49,7 +49,7 @@ export default function Layout({ children, data, pageContext }) {
                     )}
                     <Container>
                         {!!pageContext.year && (
-                            <Box gapsColumn="1rem" mb="1rem">
+                            <Box gapsColumn="1rem" mb="1.5rem">
                                 <YearNavigation year={pageContext.year} />
                                 <SeasonNavigation year={pageContext.year} season={pageContext.season} seasonList={pageContext.seasonList} />
                             </Box>
