@@ -22,10 +22,6 @@
             "error",
             "always"
         ],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
         "indent": [
             "error",
             4,
