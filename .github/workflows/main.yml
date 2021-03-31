@@ -23,7 +23,9 @@ jobs:
       - name: Import database dump
         env:
           PORT: ${{ job.services.mariadb.ports[3306] }}
-        run: curl https://github.com/AnimeThemes/animethemes-db-dump/raw/wiki/sql/animethemes-db-dump.sql | mysql --user=root --password=test123 --port="$PORT" animethemes
+        run: |
+          sudo /etc/init.d/mysql start
+          curl https://github.com/AnimeThemes/animethemes-db-dump/raw/wiki/sql/animethemes-db-dump.sql | mysql --user=root --password=test123 --port="$PORT" animethemes
 
       - name: Setup Node
         uses: actions/setup-node@v2.1.2
