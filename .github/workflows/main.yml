@@ -11,8 +11,7 @@ jobs:
       mariadb:
         image: mariadb:latest
         env:
-          MYSQL_USER: root
-          MYSQL_PASSWORD: test123
+          MYSQL_ROOT_PASSWORD: test123
           MYSQL_DATABASE: animethemes
         ports:
           - 3306
