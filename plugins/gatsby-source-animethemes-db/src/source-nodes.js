@@ -1,4 +1,4 @@
-const mysql = require("mysql");
+const mysql = require("mysql2");
 
 module.exports = async ({ actions, createNodeId, createContentDigest, reporter }) => {
     const helpers = {

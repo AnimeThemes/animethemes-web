@@ -6,7 +6,7 @@ export function CoverImage({ resourceWithImages }) {
     const { largeCover } = useImage(resourceWithImages);
 
     return (
-        <AspectRatio ratio={1 / 2}>
+        <AspectRatio ratio={2 / 3}>
             <FullWidthImage src={largeCover} alt="Cover"/>
         </AspectRatio>
     );

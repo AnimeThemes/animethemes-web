@@ -54,6 +54,10 @@ export const Text = styled.span.attrs(getAttributes)`
         -webkit-box-orient: vertical;
         overflow: hidden;
     `}
+
+    ${(props) => props.noWrap && css`
+        white-space: nowrap;
+    `}
     
     // Typography and color props can override variant styles
     ${typography}

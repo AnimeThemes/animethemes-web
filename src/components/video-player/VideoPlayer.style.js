@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { gapsRow } from "styles/mixins";
 import { Button } from "components/button";
 
-export const StyledPlayer = styled.div`
+export const StyledPlayer = styled(motion.div)`
     ${(props) => props.background ? css`
         position: fixed;
         width: 352px;
@@ -22,29 +22,17 @@ export const StyledPlayer = styled.div`
         @media (min-width: 721px) {
             margin: 0 auto;
             padding: 1.5rem 1rem 0 1rem;
+            width: 100%;
             max-width: 1100px;
         }
     `}
-`;
-
-export const StyledVideoContainer = styled(motion.div)`
-    flex: 1;
-        
-    position: relative;
-    width: 100%;
-    height: 0;
-    padding-top: 56.25%;
+    
+    will-change: transform;
 `;
 
 export const StyledVideo = styled.video`
     outline: none;
     background-color: rgb(0, 0, 0);
-
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
 `;
 
 export const StyledOverlay = styled(motion.div)`    
