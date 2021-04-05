@@ -367,6 +367,7 @@ interface Entity {
 }
 
 type Anime implements Node & Entity {
+  idRaw: Int
   name: String!
   slug: String!
   year: Int!
@@ -377,7 +378,6 @@ type Anime implements Node & Entity {
   series: [Series]
   resources: [Resource]
   images: [Image]
-  idRaw: Int
   id: ID!
   parent: Node
   children: [Node!]!
@@ -385,9 +385,9 @@ type Anime implements Node & Entity {
 }
 
 type Synonym implements Node & Entity {
+  idRaw: Int
   text: String!
   anime: Anime!
-  idRaw: Int
   id: ID!
   parent: Node
   children: [Node!]!
@@ -395,12 +395,12 @@ type Synonym implements Node & Entity {
 }
 
 type Theme implements Node & Entity {
+  idRaw: Int
   slug: String!
   group: String
   song: Song!
   anime: Anime!
   entries: [Entry]
-  idRaw: Int
   id: ID!
   parent: Node
   children: [Node!]!
@@ -408,13 +408,13 @@ type Theme implements Node & Entity {
 }
 
 type Entry implements Node & Entity {
+  idRaw: Int
   version: Int
   episodes: String
   nsfw: Boolean!
   spoiler: Boolean!
   theme: Theme!
   videos: [Video]
-  idRaw: Int
   id: ID!
   parent: Node
   children: [Node!]!
@@ -422,6 +422,7 @@ type Entry implements Node & Entity {
 }
 
 type Video implements Node & Entity {
+  idRaw: Int
   filename: String!
   basename: String!
   link: String
@@ -434,7 +435,6 @@ type Video implements Node & Entity {
   overlap: String
   tags: String
   entries: [Entry]
-  idRaw: Int
   id: ID!
   parent: Node
   children: [Node!]!
@@ -442,10 +442,10 @@ type Video implements Node & Entity {
 }
 
 type Song implements Node & Entity {
+  idRaw: Int
   title: String!
   themes: [Theme]
   performances: [Performance]
-  idRaw: Int
   id: ID!
   parent: Node
   children: [Node!]!
@@ -463,12 +463,12 @@ type Performance implements Node {
 }
 
 type Artist implements Node & Entity {
+  idRaw: Int
   slug: String!
   name: String!
   performances: [Performance]
   resources: [Resource]
   images: [Image]
-  idRaw: Int
   id: ID!
   parent: Node
   children: [Node!]!
@@ -476,10 +476,10 @@ type Artist implements Node & Entity {
 }
 
 type Series implements Node & Entity {
+  idRaw: Int
   slug: String!
   name: String!
   anime: [Anime]
-  idRaw: Int
   id: ID!
   parent: Node
   children: [Node!]!
@@ -487,9 +487,9 @@ type Series implements Node & Entity {
 }
 
 type Resource implements Node & Entity {
+  idRaw: Int
   link: String!
   site: String!
-  idRaw: Int
   id: ID!
   parent: Node
   children: [Node!]!
@@ -497,9 +497,9 @@ type Resource implements Node & Entity {
 }
 
 type Image implements Node & Entity {
+  idRaw: Int
   facet: String!
   link: String
-  idRaw: Int
   id: ID!
   parent: Node
   children: [Node!]!
@@ -561,8 +561,8 @@ type ArtistImage implements Node {
 }
 
 type Announcement implements Node & Entity {
-  content: String!
   idRaw: Int
+  content: String!
   id: ID!
   parent: Node
   children: [Node!]!
@@ -674,27 +674,27 @@ type Query {
   allSite(filter: SiteFilterInput, sort: SiteSortInput, skip: Int, limit: Int): SiteConnection!
   sitePage(path: StringQueryOperatorInput, component: StringQueryOperatorInput, internalComponentName: StringQueryOperatorInput, componentChunkName: StringQueryOperatorInput, matchPath: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput, isCreatedByStatefulCreatePages: BooleanQueryOperatorInput, context: SitePageContextFilterInput, pluginCreator: SitePluginFilterInput, pluginCreatorId: StringQueryOperatorInput, componentPath: StringQueryOperatorInput): SitePage
   allSitePage(filter: SitePageFilterInput, sort: SitePageSortInput, skip: Int, limit: Int): SitePageConnection!
-  anime(name: StringQueryOperatorInput, slug: StringQueryOperatorInput, year: IntQueryOperatorInput, season: StringQueryOperatorInput, synopsis: StringQueryOperatorInput, synonyms: SynonymFilterListInput, themes: ThemeFilterListInput, series: SeriesFilterListInput, resources: ResourceFilterListInput, images: ImageFilterListInput, idRaw: IntQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Anime
+  anime(idRaw: IntQueryOperatorInput, name: StringQueryOperatorInput, slug: StringQueryOperatorInput, year: IntQueryOperatorInput, season: StringQueryOperatorInput, synopsis: StringQueryOperatorInput, synonyms: SynonymFilterListInput, themes: ThemeFilterListInput, series: SeriesFilterListInput, resources: ResourceFilterListInput, images: ImageFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Anime
   allAnime(filter: AnimeFilterInput, sort: AnimeSortInput, skip: Int, limit: Int): AnimeConnection!
-  synonym(text: StringQueryOperatorInput, anime: AnimeFilterInput, idRaw: IntQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Synonym
+  synonym(idRaw: IntQueryOperatorInput, text: StringQueryOperatorInput, anime: AnimeFilterInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Synonym
   allSynonym(filter: SynonymFilterInput, sort: SynonymSortInput, skip: Int, limit: Int): SynonymConnection!
-  theme(slug: StringQueryOperatorInput, group: StringQueryOperatorInput, song: SongFilterInput, anime: AnimeFilterInput, entries: EntryFilterListInput, idRaw: IntQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Theme
+  theme(idRaw: IntQueryOperatorInput, slug: StringQueryOperatorInput, group: StringQueryOperatorInput, song: SongFilterInput, anime: AnimeFilterInput, entries: EntryFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Theme
   allTheme(filter: ThemeFilterInput, sort: ThemeSortInput, skip: Int, limit: Int): ThemeConnection!
-  entry(version: IntQueryOperatorInput, episodes: StringQueryOperatorInput, nsfw: BooleanQueryOperatorInput, spoiler: BooleanQueryOperatorInput, theme: ThemeFilterInput, videos: VideoFilterListInput, idRaw: IntQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Entry
+  entry(idRaw: IntQueryOperatorInput, version: IntQueryOperatorInput, episodes: StringQueryOperatorInput, nsfw: BooleanQueryOperatorInput, spoiler: BooleanQueryOperatorInput, theme: ThemeFilterInput, videos: VideoFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Entry
   allEntry(filter: EntryFilterInput, sort: EntrySortInput, skip: Int, limit: Int): EntryConnection!
-  video(filename: StringQueryOperatorInput, basename: StringQueryOperatorInput, link: StringQueryOperatorInput, resolution: IntQueryOperatorInput, nc: BooleanQueryOperatorInput, subbed: BooleanQueryOperatorInput, lyrics: BooleanQueryOperatorInput, uncen: BooleanQueryOperatorInput, source: StringQueryOperatorInput, overlap: StringQueryOperatorInput, tags: StringQueryOperatorInput, entries: EntryFilterListInput, idRaw: IntQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Video
+  video(idRaw: IntQueryOperatorInput, filename: StringQueryOperatorInput, basename: StringQueryOperatorInput, link: StringQueryOperatorInput, resolution: IntQueryOperatorInput, nc: BooleanQueryOperatorInput, subbed: BooleanQueryOperatorInput, lyrics: BooleanQueryOperatorInput, uncen: BooleanQueryOperatorInput, source: StringQueryOperatorInput, overlap: StringQueryOperatorInput, tags: StringQueryOperatorInput, entries: EntryFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Video
   allVideo(filter: VideoFilterInput, sort: VideoSortInput, skip: Int, limit: Int): VideoConnection!
-  song(title: StringQueryOperatorInput, themes: ThemeFilterListInput, performances: PerformanceFilterListInput, idRaw: IntQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Song
+  song(idRaw: IntQueryOperatorInput, title: StringQueryOperatorInput, themes: ThemeFilterListInput, performances: PerformanceFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Song
   allSong(filter: SongFilterInput, sort: SongSortInput, skip: Int, limit: Int): SongConnection!
   performance(song: SongFilterInput, artist: ArtistFilterInput, as: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Performance
   allPerformance(filter: PerformanceFilterInput, sort: PerformanceSortInput, skip: Int, limit: Int): PerformanceConnection!
-  artist(slug: StringQueryOperatorInput, name: StringQueryOperatorInput, performances: PerformanceFilterListInput, resources: ResourceFilterListInput, images: ImageFilterListInput, idRaw: IntQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Artist
+  artist(idRaw: IntQueryOperatorInput, slug: StringQueryOperatorInput, name: StringQueryOperatorInput, performances: PerformanceFilterListInput, resources: ResourceFilterListInput, images: ImageFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Artist
   allArtist(filter: ArtistFilterInput, sort: ArtistSortInput, skip: Int, limit: Int): ArtistConnection!
-  series(slug: StringQueryOperatorInput, name: StringQueryOperatorInput, anime: AnimeFilterListInput, idRaw: IntQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Series
+  series(idRaw: IntQueryOperatorInput, slug: StringQueryOperatorInput, name: StringQueryOperatorInput, anime: AnimeFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Series
   allSeries(filter: SeriesFilterInput, sort: SeriesSortInput, skip: Int, limit: Int): SeriesConnection!
-  resource(link: StringQueryOperatorInput, site: StringQueryOperatorInput, idRaw: IntQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Resource
+  resource(idRaw: IntQueryOperatorInput, link: StringQueryOperatorInput, site: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Resource
   allResource(filter: ResourceFilterInput, sort: ResourceSortInput, skip: Int, limit: Int): ResourceConnection!
-  image(facet: StringQueryOperatorInput, link: StringQueryOperatorInput, idRaw: IntQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Image
+  image(idRaw: IntQueryOperatorInput, facet: StringQueryOperatorInput, link: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Image
   allImage(filter: ImageFilterInput, sort: ImageSortInput, skip: Int, limit: Int): ImageConnection!
   animeSeries(anime: AnimeFilterInput, series: SeriesFilterInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): AnimeSeries
   allAnimeSeries(filter: AnimeSeriesFilterInput, sort: AnimeSeriesSortInput, skip: Int, limit: Int): AnimeSeriesConnection!
@@ -708,7 +708,7 @@ type Query {
   allAnimeImage(filter: AnimeImageFilterInput, sort: AnimeImageSortInput, skip: Int, limit: Int): AnimeImageConnection!
   artistImage(artist: ArtistFilterInput, image: ImageFilterInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): ArtistImage
   allArtistImage(filter: ArtistImageFilterInput, sort: ArtistImageSortInput, skip: Int, limit: Int): ArtistImageConnection!
-  announcement(content: StringQueryOperatorInput, idRaw: IntQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Announcement
+  announcement(idRaw: IntQueryOperatorInput, content: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Announcement
   allAnnouncement(filter: AnnouncementFilterInput, sort: AnnouncementSortInput, skip: Int, limit: Int): AnnouncementConnection!
   siteBuildMetadata(id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput, buildTime: DateQueryOperatorInput): SiteBuildMetadata
   allSiteBuildMetadata(filter: SiteBuildMetadataFilterInput, sort: SiteBuildMetadataSortInput, skip: Int, limit: Int): SiteBuildMetadataConnection!
@@ -1668,9 +1668,9 @@ input SynonymFilterListInput {
 }
 
 input SynonymFilterInput {
+  idRaw: IntQueryOperatorInput
   text: StringQueryOperatorInput
   anime: AnimeFilterInput
-  idRaw: IntQueryOperatorInput
   id: StringQueryOperatorInput
   parent: NodeFilterInput
   children: NodeFilterListInput
@@ -1678,6 +1678,7 @@ input SynonymFilterInput {
 }
 
 input AnimeFilterInput {
+  idRaw: IntQueryOperatorInput
   name: StringQueryOperatorInput
   slug: StringQueryOperatorInput
   year: IntQueryOperatorInput
@@ -1688,7 +1689,6 @@ input AnimeFilterInput {
   series: SeriesFilterListInput
   resources: ResourceFilterListInput
   images: ImageFilterListInput
-  idRaw: IntQueryOperatorInput
   id: StringQueryOperatorInput
   parent: NodeFilterInput
   children: NodeFilterListInput
@@ -1700,12 +1700,12 @@ input ThemeFilterListInput {
 }
 
 input ThemeFilterInput {
+  idRaw: IntQueryOperatorInput
   slug: StringQueryOperatorInput
   group: StringQueryOperatorInput
   song: SongFilterInput
   anime: AnimeFilterInput
   entries: EntryFilterListInput
-  idRaw: IntQueryOperatorInput
   id: StringQueryOperatorInput
   parent: NodeFilterInput
   children: NodeFilterListInput
@@ -1713,10 +1713,10 @@ input ThemeFilterInput {
 }
 
 input SongFilterInput {
+  idRaw: IntQueryOperatorInput
   title: StringQueryOperatorInput
   themes: ThemeFilterListInput
   performances: PerformanceFilterListInput
-  idRaw: IntQueryOperatorInput
   id: StringQueryOperatorInput
   parent: NodeFilterInput
   children: NodeFilterListInput
@@ -1738,12 +1738,12 @@ input PerformanceFilterInput {
 }
 
 input ArtistFilterInput {
+  idRaw: IntQueryOperatorInput
   slug: StringQueryOperatorInput
   name: StringQueryOperatorInput
   performances: PerformanceFilterListInput
   resources: ResourceFilterListInput
   images: ImageFilterListInput
-  idRaw: IntQueryOperatorInput
   id: StringQueryOperatorInput
   parent: NodeFilterInput
   children: NodeFilterListInput
@@ -1755,9 +1755,9 @@ input ResourceFilterListInput {
 }
 
 input ResourceFilterInput {
+  idRaw: IntQueryOperatorInput
   link: StringQueryOperatorInput
   site: StringQueryOperatorInput
-  idRaw: IntQueryOperatorInput
   id: StringQueryOperatorInput
   parent: NodeFilterInput
   children: NodeFilterListInput
@@ -1769,9 +1769,9 @@ input ImageFilterListInput {
 }
 
 input ImageFilterInput {
+  idRaw: IntQueryOperatorInput
   facet: StringQueryOperatorInput
   link: StringQueryOperatorInput
-  idRaw: IntQueryOperatorInput
   id: StringQueryOperatorInput
   parent: NodeFilterInput
   children: NodeFilterListInput
@@ -1783,13 +1783,13 @@ input EntryFilterListInput {
 }
 
 input EntryFilterInput {
+  idRaw: IntQueryOperatorInput
   version: IntQueryOperatorInput
   episodes: StringQueryOperatorInput
   nsfw: BooleanQueryOperatorInput
   spoiler: BooleanQueryOperatorInput
   theme: ThemeFilterInput
   videos: VideoFilterListInput
-  idRaw: IntQueryOperatorInput
   id: StringQueryOperatorInput
   parent: NodeFilterInput
   children: NodeFilterListInput
@@ -1801,6 +1801,7 @@ input VideoFilterListInput {
 }
 
 input VideoFilterInput {
+  idRaw: IntQueryOperatorInput
   filename: StringQueryOperatorInput
   basename: StringQueryOperatorInput
   link: StringQueryOperatorInput
@@ -1813,7 +1814,6 @@ input VideoFilterInput {
   overlap: StringQueryOperatorInput
   tags: StringQueryOperatorInput
   entries: EntryFilterListInput
-  idRaw: IntQueryOperatorInput
   id: StringQueryOperatorInput
   parent: NodeFilterInput
   children: NodeFilterListInput
@@ -1825,10 +1825,10 @@ input SeriesFilterListInput {
 }
 
 input SeriesFilterInput {
+  idRaw: IntQueryOperatorInput
   slug: StringQueryOperatorInput
   name: StringQueryOperatorInput
   anime: AnimeFilterListInput
-  idRaw: IntQueryOperatorInput
   id: StringQueryOperatorInput
   parent: NodeFilterInput
   children: NodeFilterListInput
@@ -1855,50 +1855,52 @@ type AnimeEdge {
 }
 
 enum AnimeFieldsEnum {
+  idRaw
   name
   slug
   year
   season
   synopsis
   synonyms
+  synonyms___idRaw
   synonyms___text
+  synonyms___anime___idRaw
   synonyms___anime___name
   synonyms___anime___slug
   synonyms___anime___year
   synonyms___anime___season
   synonyms___anime___synopsis
   synonyms___anime___synonyms
-  synonyms___anime___synonyms___text
   synonyms___anime___synonyms___idRaw
+  synonyms___anime___synonyms___text
   synonyms___anime___synonyms___id
   synonyms___anime___synonyms___children
   synonyms___anime___themes
+  synonyms___anime___themes___idRaw
   synonyms___anime___themes___slug
   synonyms___anime___themes___group
   synonyms___anime___themes___entries
-  synonyms___anime___themes___idRaw
   synonyms___anime___themes___id
   synonyms___anime___themes___children
   synonyms___anime___series
+  synonyms___anime___series___idRaw
   synonyms___anime___series___slug
   synonyms___anime___series___name
   synonyms___anime___series___anime
-  synonyms___anime___series___idRaw
   synonyms___anime___series___id
   synonyms___anime___series___children
   synonyms___anime___resources
+  synonyms___anime___resources___idRaw
   synonyms___anime___resources___link
   synonyms___anime___resources___site
-  synonyms___anime___resources___idRaw
   synonyms___anime___resources___id
   synonyms___anime___resources___children
   synonyms___anime___images
+  synonyms___anime___images___idRaw
   synonyms___anime___images___facet
   synonyms___anime___images___link
-  synonyms___anime___images___idRaw
   synonyms___anime___images___id
   synonyms___anime___images___children
-  synonyms___anime___idRaw
   synonyms___anime___id
   synonyms___anime___parent___id
   synonyms___anime___parent___children
@@ -1913,7 +1915,6 @@ enum AnimeFieldsEnum {
   synonyms___anime___internal___mediaType
   synonyms___anime___internal___owner
   synonyms___anime___internal___type
-  synonyms___idRaw
   synonyms___id
   synonyms___parent___id
   synonyms___parent___parent___id
@@ -1953,21 +1954,22 @@ enum AnimeFieldsEnum {
   synonyms___internal___owner
   synonyms___internal___type
   themes
+  themes___idRaw
   themes___slug
   themes___group
+  themes___song___idRaw
   themes___song___title
   themes___song___themes
+  themes___song___themes___idRaw
   themes___song___themes___slug
   themes___song___themes___group
   themes___song___themes___entries
-  themes___song___themes___idRaw
   themes___song___themes___id
   themes___song___themes___children
   themes___song___performances
   themes___song___performances___as
   themes___song___performances___id
   themes___song___performances___children
-  themes___song___idRaw
   themes___song___id
   themes___song___parent___id
   themes___song___parent___children
@@ -1982,43 +1984,43 @@ enum AnimeFieldsEnum {
   themes___song___internal___mediaType
   themes___song___internal___owner
   themes___song___internal___type
+  themes___anime___idRaw
   themes___anime___name
   themes___anime___slug
   themes___anime___year
   themes___anime___season
   themes___anime___synopsis
   themes___anime___synonyms
-  themes___anime___synonyms___text
   themes___anime___synonyms___idRaw
+  themes___anime___synonyms___text
   themes___anime___synonyms___id
   themes___anime___synonyms___children
   themes___anime___themes
+  themes___anime___themes___idRaw
   themes___anime___themes___slug
   themes___anime___themes___group
   themes___anime___themes___entries
-  themes___anime___themes___idRaw
   themes___anime___themes___id
   themes___anime___themes___children
   themes___anime___series
+  themes___anime___series___idRaw
   themes___anime___series___slug
   themes___anime___series___name
   themes___anime___series___anime
-  themes___anime___series___idRaw
   themes___anime___series___id
   themes___anime___series___children
   themes___anime___resources
+  themes___anime___resources___idRaw
   themes___anime___resources___link
   themes___anime___resources___site
-  themes___anime___resources___idRaw
   themes___anime___resources___id
   themes___anime___resources___children
   themes___anime___images
+  themes___anime___images___idRaw
   themes___anime___images___facet
   themes___anime___images___link
-  themes___anime___images___idRaw
   themes___anime___images___id
   themes___anime___images___children
-  themes___anime___idRaw
   themes___anime___id
   themes___anime___parent___id
   themes___anime___parent___children
@@ -2034,17 +2036,19 @@ enum AnimeFieldsEnum {
   themes___anime___internal___owner
   themes___anime___internal___type
   themes___entries
+  themes___entries___idRaw
   themes___entries___version
   themes___entries___episodes
   themes___entries___nsfw
   themes___entries___spoiler
+  themes___entries___theme___idRaw
   themes___entries___theme___slug
   themes___entries___theme___group
   themes___entries___theme___entries
-  themes___entries___theme___idRaw
   themes___entries___theme___id
   themes___entries___theme___children
   themes___entries___videos
+  themes___entries___videos___idRaw
   themes___entries___videos___filename
   themes___entries___videos___basename
   themes___entries___videos___link
@@ -2057,10 +2061,8 @@ enum AnimeFieldsEnum {
   themes___entries___videos___overlap
   themes___entries___videos___tags
   themes___entries___videos___entries
-  themes___entries___videos___idRaw
   themes___entries___videos___id
   themes___entries___videos___children
-  themes___entries___idRaw
   themes___entries___id
   themes___entries___parent___id
   themes___entries___parent___children
@@ -2075,7 +2077,6 @@ enum AnimeFieldsEnum {
   themes___entries___internal___mediaType
   themes___entries___internal___owner
   themes___entries___internal___type
-  themes___idRaw
   themes___id
   themes___parent___id
   themes___parent___parent___id
@@ -2115,46 +2116,47 @@ enum AnimeFieldsEnum {
   themes___internal___owner
   themes___internal___type
   series
+  series___idRaw
   series___slug
   series___name
   series___anime
+  series___anime___idRaw
   series___anime___name
   series___anime___slug
   series___anime___year
   series___anime___season
   series___anime___synopsis
   series___anime___synonyms
-  series___anime___synonyms___text
   series___anime___synonyms___idRaw
+  series___anime___synonyms___text
   series___anime___synonyms___id
   series___anime___synonyms___children
   series___anime___themes
+  series___anime___themes___idRaw
   series___anime___themes___slug
   series___anime___themes___group
   series___anime___themes___entries
-  series___anime___themes___idRaw
   series___anime___themes___id
   series___anime___themes___children
   series___anime___series
+  series___anime___series___idRaw
   series___anime___series___slug
   series___anime___series___name
   series___anime___series___anime
-  series___anime___series___idRaw
   series___anime___series___id
   series___anime___series___children
   series___anime___resources
+  series___anime___resources___idRaw
   series___anime___resources___link
   series___anime___resources___site
-  series___anime___resources___idRaw
   series___anime___resources___id
   series___anime___resources___children
   series___anime___images
+  series___anime___images___idRaw
   series___anime___images___facet
   series___anime___images___link
-  series___anime___images___idRaw
   series___anime___images___id
   series___anime___images___children
-  series___anime___idRaw
   series___anime___id
   series___anime___parent___id
   series___anime___parent___children
@@ -2169,7 +2171,6 @@ enum AnimeFieldsEnum {
   series___anime___internal___mediaType
   series___anime___internal___owner
   series___anime___internal___type
-  series___idRaw
   series___id
   series___parent___id
   series___parent___parent___id
@@ -2209,9 +2210,9 @@ enum AnimeFieldsEnum {
   series___internal___owner
   series___internal___type
   resources
+  resources___idRaw
   resources___link
   resources___site
-  resources___idRaw
   resources___id
   resources___parent___id
   resources___parent___parent___id
@@ -2251,9 +2252,9 @@ enum AnimeFieldsEnum {
   resources___internal___owner
   resources___internal___type
   images
+  images___idRaw
   images___facet
   images___link
-  images___idRaw
   images___id
   images___parent___id
   images___parent___parent___id
@@ -2292,7 +2293,6 @@ enum AnimeFieldsEnum {
   images___internal___mediaType
   images___internal___owner
   images___internal___type
-  idRaw
   id
   parent___id
   parent___parent___id
@@ -2411,14 +2411,18 @@ type SynonymEdge {
 }
 
 enum SynonymFieldsEnum {
+  idRaw
   text
+  anime___idRaw
   anime___name
   anime___slug
   anime___year
   anime___season
   anime___synopsis
   anime___synonyms
+  anime___synonyms___idRaw
   anime___synonyms___text
+  anime___synonyms___anime___idRaw
   anime___synonyms___anime___name
   anime___synonyms___anime___slug
   anime___synonyms___anime___year
@@ -2429,10 +2433,8 @@ enum SynonymFieldsEnum {
   anime___synonyms___anime___series
   anime___synonyms___anime___resources
   anime___synonyms___anime___images
-  anime___synonyms___anime___idRaw
   anime___synonyms___anime___id
   anime___synonyms___anime___children
-  anime___synonyms___idRaw
   anime___synonyms___id
   anime___synonyms___parent___id
   anime___synonyms___parent___children
@@ -2448,14 +2450,16 @@ enum SynonymFieldsEnum {
   anime___synonyms___internal___owner
   anime___synonyms___internal___type
   anime___themes
+  anime___themes___idRaw
   anime___themes___slug
   anime___themes___group
+  anime___themes___song___idRaw
   anime___themes___song___title
   anime___themes___song___themes
   anime___themes___song___performances
-  anime___themes___song___idRaw
   anime___themes___song___id
   anime___themes___song___children
+  anime___themes___anime___idRaw
   anime___themes___anime___name
   anime___themes___anime___slug
   anime___themes___anime___year
@@ -2466,19 +2470,17 @@ enum SynonymFieldsEnum {
   anime___themes___anime___series
   anime___themes___anime___resources
   anime___themes___anime___images
-  anime___themes___anime___idRaw
   anime___themes___anime___id
   anime___themes___anime___children
   anime___themes___entries
+  anime___themes___entries___idRaw
   anime___themes___entries___version
   anime___themes___entries___episodes
   anime___themes___entries___nsfw
   anime___themes___entries___spoiler
   anime___themes___entries___videos
-  anime___themes___entries___idRaw
   anime___themes___entries___id
   anime___themes___entries___children
-  anime___themes___idRaw
   anime___themes___id
   anime___themes___parent___id
   anime___themes___parent___children
@@ -2494,9 +2496,11 @@ enum SynonymFieldsEnum {
   anime___themes___internal___owner
   anime___themes___internal___type
   anime___series
+  anime___series___idRaw
   anime___series___slug
   anime___series___name
   anime___series___anime
+  anime___series___anime___idRaw
   anime___series___anime___name
   anime___series___anime___slug
   anime___series___anime___year
@@ -2507,10 +2511,8 @@ enum SynonymFieldsEnum {
   anime___series___anime___series
   anime___series___anime___resources
   anime___series___anime___images
-  anime___series___anime___idRaw
   anime___series___anime___id
   anime___series___anime___children
-  anime___series___idRaw
   anime___series___id
   anime___series___parent___id
   anime___series___parent___children
@@ -2526,9 +2528,9 @@ enum SynonymFieldsEnum {
   anime___series___internal___owner
   anime___series___internal___type
   anime___resources
+  anime___resources___idRaw
   anime___resources___link
   anime___resources___site
-  anime___resources___idRaw
   anime___resources___id
   anime___resources___parent___id
   anime___resources___parent___children
@@ -2544,9 +2546,9 @@ enum SynonymFieldsEnum {
   anime___resources___internal___owner
   anime___resources___internal___type
   anime___images
+  anime___images___idRaw
   anime___images___facet
   anime___images___link
-  anime___images___idRaw
   anime___images___id
   anime___images___parent___id
   anime___images___parent___children
@@ -2561,7 +2563,6 @@ enum SynonymFieldsEnum {
   anime___images___internal___mediaType
   anime___images___internal___owner
   anime___images___internal___type
-  anime___idRaw
   anime___id
   anime___parent___id
   anime___parent___parent___id
@@ -2600,7 +2601,6 @@ enum SynonymFieldsEnum {
   anime___internal___mediaType
   anime___internal___owner
   anime___internal___type
-  idRaw
   id
   parent___id
   parent___parent___id
@@ -2719,18 +2719,22 @@ type ThemeEdge {
 }
 
 enum ThemeFieldsEnum {
+  idRaw
   slug
   group
+  song___idRaw
   song___title
   song___themes
+  song___themes___idRaw
   song___themes___slug
   song___themes___group
+  song___themes___song___idRaw
   song___themes___song___title
   song___themes___song___themes
   song___themes___song___performances
-  song___themes___song___idRaw
   song___themes___song___id
   song___themes___song___children
+  song___themes___anime___idRaw
   song___themes___anime___name
   song___themes___anime___slug
   song___themes___anime___year
@@ -2741,19 +2745,17 @@ enum ThemeFieldsEnum {
   song___themes___anime___series
   song___themes___anime___resources
   song___themes___anime___images
-  song___themes___anime___idRaw
   song___themes___anime___id
   song___themes___anime___children
   song___themes___entries
+  song___themes___entries___idRaw
   song___themes___entries___version
   song___themes___entries___episodes
   song___themes___entries___nsfw
   song___themes___entries___spoiler
   song___themes___entries___videos
-  song___themes___entries___idRaw
   song___themes___entries___id
   song___themes___entries___children
-  song___themes___idRaw
   song___themes___id
   song___themes___parent___id
   song___themes___parent___children
@@ -2769,18 +2771,18 @@ enum ThemeFieldsEnum {
   song___themes___internal___owner
   song___themes___internal___type
   song___performances
+  song___performances___song___idRaw
   song___performances___song___title
   song___performances___song___themes
   song___performances___song___performances
-  song___performances___song___idRaw
   song___performances___song___id
   song___performances___song___children
+  song___performances___artist___idRaw
   song___performances___artist___slug
   song___performances___artist___name
   song___performances___artist___performances
   song___performances___artist___resources
   song___performances___artist___images
-  song___performances___artist___idRaw
   song___performances___artist___id
   song___performances___artist___children
   song___performances___as
@@ -2798,7 +2800,6 @@ enum ThemeFieldsEnum {
   song___performances___internal___mediaType
   song___performances___internal___owner
   song___performances___internal___type
-  song___idRaw
   song___id
   song___parent___id
   song___parent___parent___id
@@ -2837,13 +2838,16 @@ enum ThemeFieldsEnum {
   song___internal___mediaType
   song___internal___owner
   song___internal___type
+  anime___idRaw
   anime___name
   anime___slug
   anime___year
   anime___season
   anime___synopsis
   anime___synonyms
+  anime___synonyms___idRaw
   anime___synonyms___text
+  anime___synonyms___anime___idRaw
   anime___synonyms___anime___name
   anime___synonyms___anime___slug
   anime___synonyms___anime___year
@@ -2854,10 +2858,8 @@ enum ThemeFieldsEnum {
   anime___synonyms___anime___series
   anime___synonyms___anime___resources
   anime___synonyms___anime___images
-  anime___synonyms___anime___idRaw
   anime___synonyms___anime___id
   anime___synonyms___anime___children
-  anime___synonyms___idRaw
   anime___synonyms___id
   anime___synonyms___parent___id
   anime___synonyms___parent___children
@@ -2873,14 +2875,16 @@ enum ThemeFieldsEnum {
   anime___synonyms___internal___owner
   anime___synonyms___internal___type
   anime___themes
+  anime___themes___idRaw
   anime___themes___slug
   anime___themes___group
+  anime___themes___song___idRaw
   anime___themes___song___title
   anime___themes___song___themes
   anime___themes___song___performances
-  anime___themes___song___idRaw
   anime___themes___song___id
   anime___themes___song___children
+  anime___themes___anime___idRaw
   anime___themes___anime___name
   anime___themes___anime___slug
   anime___themes___anime___year
@@ -2891,19 +2895,17 @@ enum ThemeFieldsEnum {
   anime___themes___anime___series
   anime___themes___anime___resources
   anime___themes___anime___images
-  anime___themes___anime___idRaw
   anime___themes___anime___id
   anime___themes___anime___children
   anime___themes___entries
+  anime___themes___entries___idRaw
   anime___themes___entries___version
   anime___themes___entries___episodes
   anime___themes___entries___nsfw
   anime___themes___entries___spoiler
   anime___themes___entries___videos
-  anime___themes___entries___idRaw
   anime___themes___entries___id
   anime___themes___entries___children
-  anime___themes___idRaw
   anime___themes___id
   anime___themes___parent___id
   anime___themes___parent___children
@@ -2919,9 +2921,11 @@ enum ThemeFieldsEnum {
   anime___themes___internal___owner
   anime___themes___internal___type
   anime___series
+  anime___series___idRaw
   anime___series___slug
   anime___series___name
   anime___series___anime
+  anime___series___anime___idRaw
   anime___series___anime___name
   anime___series___anime___slug
   anime___series___anime___year
@@ -2932,10 +2936,8 @@ enum ThemeFieldsEnum {
   anime___series___anime___series
   anime___series___anime___resources
   anime___series___anime___images
-  anime___series___anime___idRaw
   anime___series___anime___id
   anime___series___anime___children
-  anime___series___idRaw
   anime___series___id
   anime___series___parent___id
   anime___series___parent___children
@@ -2951,9 +2953,9 @@ enum ThemeFieldsEnum {
   anime___series___internal___owner
   anime___series___internal___type
   anime___resources
+  anime___resources___idRaw
   anime___resources___link
   anime___resources___site
-  anime___resources___idRaw
   anime___resources___id
   anime___resources___parent___id
   anime___resources___parent___children
@@ -2969,9 +2971,9 @@ enum ThemeFieldsEnum {
   anime___resources___internal___owner
   anime___resources___internal___type
   anime___images
+  anime___images___idRaw
   anime___images___facet
   anime___images___link
-  anime___images___idRaw
   anime___images___id
   anime___images___parent___id
   anime___images___parent___children
@@ -2986,7 +2988,6 @@ enum ThemeFieldsEnum {
   anime___images___internal___mediaType
   anime___images___internal___owner
   anime___images___internal___type
-  anime___idRaw
   anime___id
   anime___parent___id
   anime___parent___parent___id
@@ -3026,18 +3027,21 @@ enum ThemeFieldsEnum {
   anime___internal___owner
   anime___internal___type
   entries
+  entries___idRaw
   entries___version
   entries___episodes
   entries___nsfw
   entries___spoiler
+  entries___theme___idRaw
   entries___theme___slug
   entries___theme___group
+  entries___theme___song___idRaw
   entries___theme___song___title
   entries___theme___song___themes
   entries___theme___song___performances
-  entries___theme___song___idRaw
   entries___theme___song___id
   entries___theme___song___children
+  entries___theme___anime___idRaw
   entries___theme___anime___name
   entries___theme___anime___slug
   entries___theme___anime___year
@@ -3048,19 +3052,17 @@ enum ThemeFieldsEnum {
   entries___theme___anime___series
   entries___theme___anime___resources
   entries___theme___anime___images
-  entries___theme___anime___idRaw
   entries___theme___anime___id
   entries___theme___anime___children
   entries___theme___entries
+  entries___theme___entries___idRaw
   entries___theme___entries___version
   entries___theme___entries___episodes
   entries___theme___entries___nsfw
   entries___theme___entries___spoiler
   entries___theme___entries___videos
-  entries___theme___entries___idRaw
   entries___theme___entries___id
   entries___theme___entries___children
-  entries___theme___idRaw
   entries___theme___id
   entries___theme___parent___id
   entries___theme___parent___children
@@ -3076,6 +3078,7 @@ enum ThemeFieldsEnum {
   entries___theme___internal___owner
   entries___theme___internal___type
   entries___videos
+  entries___videos___idRaw
   entries___videos___filename
   entries___videos___basename
   entries___videos___link
@@ -3088,15 +3091,14 @@ enum ThemeFieldsEnum {
   entries___videos___overlap
   entries___videos___tags
   entries___videos___entries
+  entries___videos___entries___idRaw
   entries___videos___entries___version
   entries___videos___entries___episodes
   entries___videos___entries___nsfw
   entries___videos___entries___spoiler
   entries___videos___entries___videos
-  entries___videos___entries___idRaw
   entries___videos___entries___id
   entries___videos___entries___children
-  entries___videos___idRaw
   entries___videos___id
   entries___videos___parent___id
   entries___videos___parent___children
@@ -3111,7 +3113,6 @@ enum ThemeFieldsEnum {
   entries___videos___internal___mediaType
   entries___videos___internal___owner
   entries___videos___internal___type
-  entries___idRaw
   entries___id
   entries___parent___id
   entries___parent___parent___id
@@ -3150,7 +3151,6 @@ enum ThemeFieldsEnum {
   entries___internal___mediaType
   entries___internal___owner
   entries___internal___type
-  idRaw
   id
   parent___id
   parent___parent___id
@@ -3269,25 +3269,27 @@ type EntryEdge {
 }
 
 enum EntryFieldsEnum {
+  idRaw
   version
   episodes
   nsfw
   spoiler
+  theme___idRaw
   theme___slug
   theme___group
+  theme___song___idRaw
   theme___song___title
   theme___song___themes
+  theme___song___themes___idRaw
   theme___song___themes___slug
   theme___song___themes___group
   theme___song___themes___entries
-  theme___song___themes___idRaw
   theme___song___themes___id
   theme___song___themes___children
   theme___song___performances
   theme___song___performances___as
   theme___song___performances___id
   theme___song___performances___children
-  theme___song___idRaw
   theme___song___id
   theme___song___parent___id
   theme___song___parent___children
@@ -3302,43 +3304,43 @@ enum EntryFieldsEnum {
   theme___song___internal___mediaType
   theme___song___internal___owner
   theme___song___internal___type
+  theme___anime___idRaw
   theme___anime___name
   theme___anime___slug
   theme___anime___year
   theme___anime___season
   theme___anime___synopsis
   theme___anime___synonyms
-  theme___anime___synonyms___text
   theme___anime___synonyms___idRaw
+  theme___anime___synonyms___text
   theme___anime___synonyms___id
   theme___anime___synonyms___children
   theme___anime___themes
+  theme___anime___themes___idRaw
   theme___anime___themes___slug
   theme___anime___themes___group
   theme___anime___themes___entries
-  theme___anime___themes___idRaw
   theme___anime___themes___id
   theme___anime___themes___children
   theme___anime___series
+  theme___anime___series___idRaw
   theme___anime___series___slug
   theme___anime___series___name
   theme___anime___series___anime
-  theme___anime___series___idRaw
   theme___anime___series___id
   theme___anime___series___children
   theme___anime___resources
+  theme___anime___resources___idRaw
   theme___anime___resources___link
   theme___anime___resources___site
-  theme___anime___resources___idRaw
   theme___anime___resources___id
   theme___anime___resources___children
   theme___anime___images
+  theme___anime___images___idRaw
   theme___anime___images___facet
   theme___anime___images___link
-  theme___anime___images___idRaw
   theme___anime___images___id
   theme___anime___images___children
-  theme___anime___idRaw
   theme___anime___id
   theme___anime___parent___id
   theme___anime___parent___children
@@ -3354,17 +3356,19 @@ enum EntryFieldsEnum {
   theme___anime___internal___owner
   theme___anime___internal___type
   theme___entries
+  theme___entries___idRaw
   theme___entries___version
   theme___entries___episodes
   theme___entries___nsfw
   theme___entries___spoiler
+  theme___entries___theme___idRaw
   theme___entries___theme___slug
   theme___entries___theme___group
   theme___entries___theme___entries
-  theme___entries___theme___idRaw
   theme___entries___theme___id
   theme___entries___theme___children
   theme___entries___videos
+  theme___entries___videos___idRaw
   theme___entries___videos___filename
   theme___entries___videos___basename
   theme___entries___videos___link
@@ -3377,10 +3381,8 @@ enum EntryFieldsEnum {
   theme___entries___videos___overlap
   theme___entries___videos___tags
   theme___entries___videos___entries
-  theme___entries___videos___idRaw
   theme___entries___videos___id
   theme___entries___videos___children
-  theme___entries___idRaw
   theme___entries___id
   theme___entries___parent___id
   theme___entries___parent___children
@@ -3395,7 +3397,6 @@ enum EntryFieldsEnum {
   theme___entries___internal___mediaType
   theme___entries___internal___owner
   theme___entries___internal___type
-  theme___idRaw
   theme___id
   theme___parent___id
   theme___parent___parent___id
@@ -3435,6 +3436,7 @@ enum EntryFieldsEnum {
   theme___internal___owner
   theme___internal___type
   videos
+  videos___idRaw
   videos___filename
   videos___basename
   videos___link
@@ -3447,17 +3449,19 @@ enum EntryFieldsEnum {
   videos___overlap
   videos___tags
   videos___entries
+  videos___entries___idRaw
   videos___entries___version
   videos___entries___episodes
   videos___entries___nsfw
   videos___entries___spoiler
+  videos___entries___theme___idRaw
   videos___entries___theme___slug
   videos___entries___theme___group
   videos___entries___theme___entries
-  videos___entries___theme___idRaw
   videos___entries___theme___id
   videos___entries___theme___children
   videos___entries___videos
+  videos___entries___videos___idRaw
   videos___entries___videos___filename
   videos___entries___videos___basename
   videos___entries___videos___link
@@ -3470,10 +3474,8 @@ enum EntryFieldsEnum {
   videos___entries___videos___overlap
   videos___entries___videos___tags
   videos___entries___videos___entries
-  videos___entries___videos___idRaw
   videos___entries___videos___id
   videos___entries___videos___children
-  videos___entries___idRaw
   videos___entries___id
   videos___entries___parent___id
   videos___entries___parent___children
@@ -3488,7 +3490,6 @@ enum EntryFieldsEnum {
   videos___entries___internal___mediaType
   videos___entries___internal___owner
   videos___entries___internal___type
-  videos___idRaw
   videos___id
   videos___parent___id
   videos___parent___parent___id
@@ -3527,7 +3528,6 @@ enum EntryFieldsEnum {
   videos___internal___mediaType
   videos___internal___owner
   videos___internal___type
-  idRaw
   id
   parent___id
   parent___parent___id
@@ -3646,6 +3646,7 @@ type VideoEdge {
 }
 
 enum VideoFieldsEnum {
+  idRaw
   filename
   basename
   link
@@ -3658,18 +3659,21 @@ enum VideoFieldsEnum {
   overlap
   tags
   entries
+  entries___idRaw
   entries___version
   entries___episodes
   entries___nsfw
   entries___spoiler
+  entries___theme___idRaw
   entries___theme___slug
   entries___theme___group
+  entries___theme___song___idRaw
   entries___theme___song___title
   entries___theme___song___themes
   entries___theme___song___performances
-  entries___theme___song___idRaw
   entries___theme___song___id
   entries___theme___song___children
+  entries___theme___anime___idRaw
   entries___theme___anime___name
   entries___theme___anime___slug
   entries___theme___anime___year
@@ -3680,19 +3684,17 @@ enum VideoFieldsEnum {
   entries___theme___anime___series
   entries___theme___anime___resources
   entries___theme___anime___images
-  entries___theme___anime___idRaw
   entries___theme___anime___id
   entries___theme___anime___children
   entries___theme___entries
+  entries___theme___entries___idRaw
   entries___theme___entries___version
   entries___theme___entries___episodes
   entries___theme___entries___nsfw
   entries___theme___entries___spoiler
   entries___theme___entries___videos
-  entries___theme___entries___idRaw
   entries___theme___entries___id
   entries___theme___entries___children
-  entries___theme___idRaw
   entries___theme___id
   entries___theme___parent___id
   entries___theme___parent___children
@@ -3708,6 +3710,7 @@ enum VideoFieldsEnum {
   entries___theme___internal___owner
   entries___theme___internal___type
   entries___videos
+  entries___videos___idRaw
   entries___videos___filename
   entries___videos___basename
   entries___videos___link
@@ -3720,15 +3723,14 @@ enum VideoFieldsEnum {
   entries___videos___overlap
   entries___videos___tags
   entries___videos___entries
+  entries___videos___entries___idRaw
   entries___videos___entries___version
   entries___videos___entries___episodes
   entries___videos___entries___nsfw
   entries___videos___entries___spoiler
   entries___videos___entries___videos
-  entries___videos___entries___idRaw
   entries___videos___entries___id
   entries___videos___entries___children
-  entries___videos___idRaw
   entries___videos___id
   entries___videos___parent___id
   entries___videos___parent___children
@@ -3743,7 +3745,6 @@ enum VideoFieldsEnum {
   entries___videos___internal___mediaType
   entries___videos___internal___owner
   entries___videos___internal___type
-  entries___idRaw
   entries___id
   entries___parent___id
   entries___parent___parent___id
@@ -3782,7 +3783,6 @@ enum VideoFieldsEnum {
   entries___internal___mediaType
   entries___internal___owner
   entries___internal___type
-  idRaw
   id
   parent___id
   parent___parent___id
@@ -3901,23 +3901,25 @@ type SongEdge {
 }
 
 enum SongFieldsEnum {
+  idRaw
   title
   themes
+  themes___idRaw
   themes___slug
   themes___group
+  themes___song___idRaw
   themes___song___title
   themes___song___themes
+  themes___song___themes___idRaw
   themes___song___themes___slug
   themes___song___themes___group
   themes___song___themes___entries
-  themes___song___themes___idRaw
   themes___song___themes___id
   themes___song___themes___children
   themes___song___performances
   themes___song___performances___as
   themes___song___performances___id
   themes___song___performances___children
-  themes___song___idRaw
   themes___song___id
   themes___song___parent___id
   themes___song___parent___children
@@ -3932,43 +3934,43 @@ enum SongFieldsEnum {
   themes___song___internal___mediaType
   themes___song___internal___owner
   themes___song___internal___type
+  themes___anime___idRaw
   themes___anime___name
   themes___anime___slug
   themes___anime___year
   themes___anime___season
   themes___anime___synopsis
   themes___anime___synonyms
-  themes___anime___synonyms___text
   themes___anime___synonyms___idRaw
+  themes___anime___synonyms___text
   themes___anime___synonyms___id
   themes___anime___synonyms___children
   themes___anime___themes
+  themes___anime___themes___idRaw
   themes___anime___themes___slug
   themes___anime___themes___group
   themes___anime___themes___entries
-  themes___anime___themes___idRaw
   themes___anime___themes___id
   themes___anime___themes___children
   themes___anime___series
+  themes___anime___series___idRaw
   themes___anime___series___slug
   themes___anime___series___name
   themes___anime___series___anime
-  themes___anime___series___idRaw
   themes___anime___series___id
   themes___anime___series___children
   themes___anime___resources
+  themes___anime___resources___idRaw
   themes___anime___resources___link
   themes___anime___resources___site
-  themes___anime___resources___idRaw
   themes___anime___resources___id
   themes___anime___resources___children
   themes___anime___images
+  themes___anime___images___idRaw
   themes___anime___images___facet
   themes___anime___images___link
-  themes___anime___images___idRaw
   themes___anime___images___id
   themes___anime___images___children
-  themes___anime___idRaw
   themes___anime___id
   themes___anime___parent___id
   themes___anime___parent___children
@@ -3984,17 +3986,19 @@ enum SongFieldsEnum {
   themes___anime___internal___owner
   themes___anime___internal___type
   themes___entries
+  themes___entries___idRaw
   themes___entries___version
   themes___entries___episodes
   themes___entries___nsfw
   themes___entries___spoiler
+  themes___entries___theme___idRaw
   themes___entries___theme___slug
   themes___entries___theme___group
   themes___entries___theme___entries
-  themes___entries___theme___idRaw
   themes___entries___theme___id
   themes___entries___theme___children
   themes___entries___videos
+  themes___entries___videos___idRaw
   themes___entries___videos___filename
   themes___entries___videos___basename
   themes___entries___videos___link
@@ -4007,10 +4011,8 @@ enum SongFieldsEnum {
   themes___entries___videos___overlap
   themes___entries___videos___tags
   themes___entries___videos___entries
-  themes___entries___videos___idRaw
   themes___entries___videos___id
   themes___entries___videos___children
-  themes___entries___idRaw
   themes___entries___id
   themes___entries___parent___id
   themes___entries___parent___children
@@ -4025,7 +4027,6 @@ enum SongFieldsEnum {
   themes___entries___internal___mediaType
   themes___entries___internal___owner
   themes___entries___internal___type
-  themes___idRaw
   themes___id
   themes___parent___id
   themes___parent___parent___id
@@ -4065,19 +4066,19 @@ enum SongFieldsEnum {
   themes___internal___owner
   themes___internal___type
   performances
+  performances___song___idRaw
   performances___song___title
   performances___song___themes
+  performances___song___themes___idRaw
   performances___song___themes___slug
   performances___song___themes___group
   performances___song___themes___entries
-  performances___song___themes___idRaw
   performances___song___themes___id
   performances___song___themes___children
   performances___song___performances
   performances___song___performances___as
   performances___song___performances___id
   performances___song___performances___children
-  performances___song___idRaw
   performances___song___id
   performances___song___parent___id
   performances___song___parent___children
@@ -4092,6 +4093,7 @@ enum SongFieldsEnum {
   performances___song___internal___mediaType
   performances___song___internal___owner
   performances___song___internal___type
+  performances___artist___idRaw
   performances___artist___slug
   performances___artist___name
   performances___artist___performances
@@ -4099,18 +4101,17 @@ enum SongFieldsEnum {
   performances___artist___performances___id
   performances___artist___performances___children
   performances___artist___resources
+  performances___artist___resources___idRaw
   performances___artist___resources___link
   performances___artist___resources___site
-  performances___artist___resources___idRaw
   performances___artist___resources___id
   performances___artist___resources___children
   performances___artist___images
+  performances___artist___images___idRaw
   performances___artist___images___facet
   performances___artist___images___link
-  performances___artist___images___idRaw
   performances___artist___images___id
   performances___artist___images___children
-  performances___artist___idRaw
   performances___artist___id
   performances___artist___parent___id
   performances___artist___parent___children
@@ -4164,7 +4165,6 @@ enum SongFieldsEnum {
   performances___internal___mediaType
   performances___internal___owner
   performances___internal___type
-  idRaw
   id
   parent___id
   parent___parent___id
@@ -4283,16 +4283,19 @@ type PerformanceEdge {
 }
 
 enum PerformanceFieldsEnum {
+  song___idRaw
   song___title
   song___themes
+  song___themes___idRaw
   song___themes___slug
   song___themes___group
+  song___themes___song___idRaw
   song___themes___song___title
   song___themes___song___themes
   song___themes___song___performances
-  song___themes___song___idRaw
   song___themes___song___id
   song___themes___song___children
+  song___themes___anime___idRaw
   song___themes___anime___name
   song___themes___anime___slug
   song___themes___anime___year
@@ -4303,19 +4306,17 @@ enum PerformanceFieldsEnum {
   song___themes___anime___series
   song___themes___anime___resources
   song___themes___anime___images
-  song___themes___anime___idRaw
   song___themes___anime___id
   song___themes___anime___children
   song___themes___entries
+  song___themes___entries___idRaw
   song___themes___entries___version
   song___themes___entries___episodes
   song___themes___entries___nsfw
   song___themes___entries___spoiler
   song___themes___entries___videos
-  song___themes___entries___idRaw
   song___themes___entries___id
   song___themes___entries___children
-  song___themes___idRaw
   song___themes___id
   song___themes___parent___id
   song___themes___parent___children
@@ -4331,18 +4332,18 @@ enum PerformanceFieldsEnum {
   song___themes___internal___owner
   song___themes___internal___type
   song___performances
+  song___performances___song___idRaw
   song___performances___song___title
   song___performances___song___themes
   song___performances___song___performances
-  song___performances___song___idRaw
   song___performances___song___id
   song___performances___song___children
+  song___performances___artist___idRaw
   song___performances___artist___slug
   song___performances___artist___name
   song___performances___artist___performances
   song___performances___artist___resources
   song___performances___artist___images
-  song___performances___artist___idRaw
   song___performances___artist___id
   song___performances___artist___children
   song___performances___as
@@ -4360,7 +4361,6 @@ enum PerformanceFieldsEnum {
   song___performances___internal___mediaType
   song___performances___internal___owner
   song___performances___internal___type
-  song___idRaw
   song___id
   song___parent___id
   song___parent___parent___id
@@ -4399,21 +4399,22 @@ enum PerformanceFieldsEnum {
   song___internal___mediaType
   song___internal___owner
   song___internal___type
+  artist___idRaw
   artist___slug
   artist___name
   artist___performances
+  artist___performances___song___idRaw
   artist___performances___song___title
   artist___performances___song___themes
   artist___performances___song___performances
-  artist___performances___song___idRaw
   artist___performances___song___id
   artist___performances___song___children
+  artist___performances___artist___idRaw
   artist___performances___artist___slug
   artist___performances___artist___name
   artist___performances___artist___performances
   artist___performances___artist___resources
   artist___performances___artist___images
-  artist___performances___artist___idRaw
   artist___performances___artist___id
   artist___performances___artist___children
   artist___performances___as
@@ -4432,9 +4433,9 @@ enum PerformanceFieldsEnum {
   artist___performances___internal___owner
   artist___performances___internal___type
   artist___resources
+  artist___resources___idRaw
   artist___resources___link
   artist___resources___site
-  artist___resources___idRaw
   artist___resources___id
   artist___resources___parent___id
   artist___resources___parent___children
@@ -4450,9 +4451,9 @@ enum PerformanceFieldsEnum {
   artist___resources___internal___owner
   artist___resources___internal___type
   artist___images
+  artist___images___idRaw
   artist___images___facet
   artist___images___link
-  artist___images___idRaw
   artist___images___id
   artist___images___parent___id
   artist___images___parent___children
@@ -4467,7 +4468,6 @@ enum PerformanceFieldsEnum {
   artist___images___internal___mediaType
   artist___images___internal___owner
   artist___images___internal___type
-  artist___idRaw
   artist___id
   artist___parent___id
   artist___parent___parent___id
@@ -4625,22 +4625,23 @@ type ArtistEdge {
 }
 
 enum ArtistFieldsEnum {
+  idRaw
   slug
   name
   performances
+  performances___song___idRaw
   performances___song___title
   performances___song___themes
+  performances___song___themes___idRaw
   performances___song___themes___slug
   performances___song___themes___group
   performances___song___themes___entries
-  performances___song___themes___idRaw
   performances___song___themes___id
   performances___song___themes___children
   performances___song___performances
   performances___song___performances___as
   performances___song___performances___id
   performances___song___performances___children
-  performances___song___idRaw
   performances___song___id
   performances___song___parent___id
   performances___song___parent___children
@@ -4655,6 +4656,7 @@ enum ArtistFieldsEnum {
   performances___song___internal___mediaType
   performances___song___internal___owner
   performances___song___internal___type
+  performances___artist___idRaw
   performances___artist___slug
   performances___artist___name
   performances___artist___performances
@@ -4662,18 +4664,17 @@ enum ArtistFieldsEnum {
   performances___artist___performances___id
   performances___artist___performances___children
   performances___artist___resources
+  performances___artist___resources___idRaw
   performances___artist___resources___link
   performances___artist___resources___site
-  performances___artist___resources___idRaw
   performances___artist___resources___id
   performances___artist___resources___children
   performances___artist___images
+  performances___artist___images___idRaw
   performances___artist___images___facet
   performances___artist___images___link
-  performances___artist___images___idRaw
   performances___artist___images___id
   performances___artist___images___children
-  performances___artist___idRaw
   performances___artist___id
   performances___artist___parent___id
   performances___artist___parent___children
@@ -4728,9 +4729,9 @@ enum ArtistFieldsEnum {
   performances___internal___owner
   performances___internal___type
   resources
+  resources___idRaw
   resources___link
   resources___site
-  resources___idRaw
   resources___id
   resources___parent___id
   resources___parent___parent___id
@@ -4770,9 +4771,9 @@ enum ArtistFieldsEnum {
   resources___internal___owner
   resources___internal___type
   images
+  images___idRaw
   images___facet
   images___link
-  images___idRaw
   images___id
   images___parent___id
   images___parent___parent___id
@@ -4811,7 +4812,6 @@ enum ArtistFieldsEnum {
   images___internal___mediaType
   images___internal___owner
   images___internal___type
-  idRaw
   id
   parent___id
   parent___parent___id
@@ -4930,16 +4930,20 @@ type SeriesEdge {
 }
 
 enum SeriesFieldsEnum {
+  idRaw
   slug
   name
   anime
+  anime___idRaw
   anime___name
   anime___slug
   anime___year
   anime___season
   anime___synopsis
   anime___synonyms
+  anime___synonyms___idRaw
   anime___synonyms___text
+  anime___synonyms___anime___idRaw
   anime___synonyms___anime___name
   anime___synonyms___anime___slug
   anime___synonyms___anime___year
@@ -4950,10 +4954,8 @@ enum SeriesFieldsEnum {
   anime___synonyms___anime___series
   anime___synonyms___anime___resources
   anime___synonyms___anime___images
-  anime___synonyms___anime___idRaw
   anime___synonyms___anime___id
   anime___synonyms___anime___children
-  anime___synonyms___idRaw
   anime___synonyms___id
   anime___synonyms___parent___id
   anime___synonyms___parent___children
@@ -4969,14 +4971,16 @@ enum SeriesFieldsEnum {
   anime___synonyms___internal___owner
   anime___synonyms___internal___type
   anime___themes
+  anime___themes___idRaw
   anime___themes___slug
   anime___themes___group
+  anime___themes___song___idRaw
   anime___themes___song___title
   anime___themes___song___themes
   anime___themes___song___performances
-  anime___themes___song___idRaw
   anime___themes___song___id
   anime___themes___song___children
+  anime___themes___anime___idRaw
   anime___themes___anime___name
   anime___themes___anime___slug
   anime___themes___anime___year
@@ -4987,19 +4991,17 @@ enum SeriesFieldsEnum {
   anime___themes___anime___series
   anime___themes___anime___resources
   anime___themes___anime___images
-  anime___themes___anime___idRaw
   anime___themes___anime___id
   anime___themes___anime___children
   anime___themes___entries
+  anime___themes___entries___idRaw
   anime___themes___entries___version
   anime___themes___entries___episodes
   anime___themes___entries___nsfw
   anime___themes___entries___spoiler
   anime___themes___entries___videos
-  anime___themes___entries___idRaw
   anime___themes___entries___id
   anime___themes___entries___children
-  anime___themes___idRaw
   anime___themes___id
   anime___themes___parent___id
   anime___themes___parent___children
@@ -5015,9 +5017,11 @@ enum SeriesFieldsEnum {
   anime___themes___internal___owner
   anime___themes___internal___type
   anime___series
+  anime___series___idRaw
   anime___series___slug
   anime___series___name
   anime___series___anime
+  anime___series___anime___idRaw
   anime___series___anime___name
   anime___series___anime___slug
   anime___series___anime___year
@@ -5028,10 +5032,8 @@ enum SeriesFieldsEnum {
   anime___series___anime___series
   anime___series___anime___resources
   anime___series___anime___images
-  anime___series___anime___idRaw
   anime___series___anime___id
   anime___series___anime___children
-  anime___series___idRaw
   anime___series___id
   anime___series___parent___id
   anime___series___parent___children
@@ -5047,9 +5049,9 @@ enum SeriesFieldsEnum {
   anime___series___internal___owner
   anime___series___internal___type
   anime___resources
+  anime___resources___idRaw
   anime___resources___link
   anime___resources___site
-  anime___resources___idRaw
   anime___resources___id
   anime___resources___parent___id
   anime___resources___parent___children
@@ -5065,9 +5067,9 @@ enum SeriesFieldsEnum {
   anime___resources___internal___owner
   anime___resources___internal___type
   anime___images
+  anime___images___idRaw
   anime___images___facet
   anime___images___link
-  anime___images___idRaw
   anime___images___id
   anime___images___parent___id
   anime___images___parent___children
@@ -5082,7 +5084,6 @@ enum SeriesFieldsEnum {
   anime___images___internal___mediaType
   anime___images___internal___owner
   anime___images___internal___type
-  anime___idRaw
   anime___id
   anime___parent___id
   anime___parent___parent___id
@@ -5121,7 +5122,6 @@ enum SeriesFieldsEnum {
   anime___internal___mediaType
   anime___internal___owner
   anime___internal___type
-  idRaw
   id
   parent___id
   parent___parent___id
@@ -5240,9 +5240,9 @@ type ResourceEdge {
 }
 
 enum ResourceFieldsEnum {
+  idRaw
   link
   site
-  idRaw
   id
   parent___id
   parent___parent___id
@@ -5361,9 +5361,9 @@ type ImageEdge {
 }
 
 enum ImageFieldsEnum {
+  idRaw
   facet
   link
-  idRaw
   id
   parent___id
   parent___parent___id
@@ -5482,13 +5482,16 @@ type AnimeSeriesEdge {
 }
 
 enum AnimeSeriesFieldsEnum {
+  anime___idRaw
   anime___name
   anime___slug
   anime___year
   anime___season
   anime___synopsis
   anime___synonyms
+  anime___synonyms___idRaw
   anime___synonyms___text
+  anime___synonyms___anime___idRaw
   anime___synonyms___anime___name
   anime___synonyms___anime___slug
   anime___synonyms___anime___year
@@ -5499,10 +5502,8 @@ enum AnimeSeriesFieldsEnum {
   anime___synonyms___anime___series
   anime___synonyms___anime___resources
   anime___synonyms___anime___images
-  anime___synonyms___anime___idRaw
   anime___synonyms___anime___id
   anime___synonyms___anime___children
-  anime___synonyms___idRaw
   anime___synonyms___id
   anime___synonyms___parent___id
   anime___synonyms___parent___children
@@ -5518,14 +5519,16 @@ enum AnimeSeriesFieldsEnum {
   anime___synonyms___internal___owner
   anime___synonyms___internal___type
   anime___themes
+  anime___themes___idRaw
   anime___themes___slug
   anime___themes___group
+  anime___themes___song___idRaw
   anime___themes___song___title
   anime___themes___song___themes
   anime___themes___song___performances
-  anime___themes___song___idRaw
   anime___themes___song___id
   anime___themes___song___children
+  anime___themes___anime___idRaw
   anime___themes___anime___name
   anime___themes___anime___slug
   anime___themes___anime___year
@@ -5536,19 +5539,17 @@ enum AnimeSeriesFieldsEnum {
   anime___themes___anime___series
   anime___themes___anime___resources
   anime___themes___anime___images
-  anime___themes___anime___idRaw
   anime___themes___anime___id
   anime___themes___anime___children
   anime___themes___entries
+  anime___themes___entries___idRaw
   anime___themes___entries___version
   anime___themes___entries___episodes
   anime___themes___entries___nsfw
   anime___themes___entries___spoiler
   anime___themes___entries___videos
-  anime___themes___entries___idRaw
   anime___themes___entries___id
   anime___themes___entries___children
-  anime___themes___idRaw
   anime___themes___id
   anime___themes___parent___id
   anime___themes___parent___children
@@ -5564,9 +5565,11 @@ enum AnimeSeriesFieldsEnum {
   anime___themes___internal___owner
   anime___themes___internal___type
   anime___series
+  anime___series___idRaw
   anime___series___slug
   anime___series___name
   anime___series___anime
+  anime___series___anime___idRaw
   anime___series___anime___name
   anime___series___anime___slug
   anime___series___anime___year
@@ -5577,10 +5580,8 @@ enum AnimeSeriesFieldsEnum {
   anime___series___anime___series
   anime___series___anime___resources
   anime___series___anime___images
-  anime___series___anime___idRaw
   anime___series___anime___id
   anime___series___anime___children
-  anime___series___idRaw
   anime___series___id
   anime___series___parent___id
   anime___series___parent___children
@@ -5596,9 +5597,9 @@ enum AnimeSeriesFieldsEnum {
   anime___series___internal___owner
   anime___series___internal___type
   anime___resources
+  anime___resources___idRaw
   anime___resources___link
   anime___resources___site
-  anime___resources___idRaw
   anime___resources___id
   anime___resources___parent___id
   anime___resources___parent___children
@@ -5614,9 +5615,9 @@ enum AnimeSeriesFieldsEnum {
   anime___resources___internal___owner
   anime___resources___internal___type
   anime___images
+  anime___images___idRaw
   anime___images___facet
   anime___images___link
-  anime___images___idRaw
   anime___images___id
   anime___images___parent___id
   anime___images___parent___children
@@ -5631,7 +5632,6 @@ enum AnimeSeriesFieldsEnum {
   anime___images___internal___mediaType
   anime___images___internal___owner
   anime___images___internal___type
-  anime___idRaw
   anime___id
   anime___parent___id
   anime___parent___parent___id
@@ -5670,46 +5670,47 @@ enum AnimeSeriesFieldsEnum {
   anime___internal___mediaType
   anime___internal___owner
   anime___internal___type
+  series___idRaw
   series___slug
   series___name
   series___anime
+  series___anime___idRaw
   series___anime___name
   series___anime___slug
   series___anime___year
   series___anime___season
   series___anime___synopsis
   series___anime___synonyms
-  series___anime___synonyms___text
   series___anime___synonyms___idRaw
+  series___anime___synonyms___text
   series___anime___synonyms___id
   series___anime___synonyms___children
   series___anime___themes
+  series___anime___themes___idRaw
   series___anime___themes___slug
   series___anime___themes___group
   series___anime___themes___entries
-  series___anime___themes___idRaw
   series___anime___themes___id
   series___anime___themes___children
   series___anime___series
+  series___anime___series___idRaw
   series___anime___series___slug
   series___anime___series___name
   series___anime___series___anime
-  series___anime___series___idRaw
   series___anime___series___id
   series___anime___series___children
   series___anime___resources
+  series___anime___resources___idRaw
   series___anime___resources___link
   series___anime___resources___site
-  series___anime___resources___idRaw
   series___anime___resources___id
   series___anime___resources___children
   series___anime___images
+  series___anime___images___idRaw
   series___anime___images___facet
   series___anime___images___link
-  series___anime___images___idRaw
   series___anime___images___id
   series___anime___images___children
-  series___anime___idRaw
   series___anime___id
   series___anime___parent___id
   series___anime___parent___children
@@ -5724,7 +5725,6 @@ enum AnimeSeriesFieldsEnum {
   series___anime___internal___mediaType
   series___anime___internal___owner
   series___anime___internal___type
-  series___idRaw
   series___id
   series___parent___id
   series___parent___parent___id
@@ -5890,18 +5890,21 @@ type EntryVideoEdge {
 }
 
 enum EntryVideoFieldsEnum {
+  entry___idRaw
   entry___version
   entry___episodes
   entry___nsfw
   entry___spoiler
+  entry___theme___idRaw
   entry___theme___slug
   entry___theme___group
+  entry___theme___song___idRaw
   entry___theme___song___title
   entry___theme___song___themes
   entry___theme___song___performances
-  entry___theme___song___idRaw
   entry___theme___song___id
   entry___theme___song___children
+  entry___theme___anime___idRaw
   entry___theme___anime___name
   entry___theme___anime___slug
   entry___theme___anime___year
@@ -5912,19 +5915,17 @@ enum EntryVideoFieldsEnum {
   entry___theme___anime___series
   entry___theme___anime___resources
   entry___theme___anime___images
-  entry___theme___anime___idRaw
   entry___theme___anime___id
   entry___theme___anime___children
   entry___theme___entries
+  entry___theme___entries___idRaw
   entry___theme___entries___version
   entry___theme___entries___episodes
   entry___theme___entries___nsfw
   entry___theme___entries___spoiler
   entry___theme___entries___videos
-  entry___theme___entries___idRaw
   entry___theme___entries___id
   entry___theme___entries___children
-  entry___theme___idRaw
   entry___theme___id
   entry___theme___parent___id
   entry___theme___parent___children
@@ -5940,6 +5941,7 @@ enum EntryVideoFieldsEnum {
   entry___theme___internal___owner
   entry___theme___internal___type
   entry___videos
+  entry___videos___idRaw
   entry___videos___filename
   entry___videos___basename
   entry___videos___link
@@ -5952,15 +5954,14 @@ enum EntryVideoFieldsEnum {
   entry___videos___overlap
   entry___videos___tags
   entry___videos___entries
+  entry___videos___entries___idRaw
   entry___videos___entries___version
   entry___videos___entries___episodes
   entry___videos___entries___nsfw
   entry___videos___entries___spoiler
   entry___videos___entries___videos
-  entry___videos___entries___idRaw
   entry___videos___entries___id
   entry___videos___entries___children
-  entry___videos___idRaw
   entry___videos___id
   entry___videos___parent___id
   entry___videos___parent___children
@@ -5975,7 +5976,6 @@ enum EntryVideoFieldsEnum {
   entry___videos___internal___mediaType
   entry___videos___internal___owner
   entry___videos___internal___type
-  entry___idRaw
   entry___id
   entry___parent___id
   entry___parent___parent___id
@@ -6014,6 +6014,7 @@ enum EntryVideoFieldsEnum {
   entry___internal___mediaType
   entry___internal___owner
   entry___internal___type
+  video___idRaw
   video___filename
   video___basename
   video___link
@@ -6026,17 +6027,19 @@ enum EntryVideoFieldsEnum {
   video___overlap
   video___tags
   video___entries
+  video___entries___idRaw
   video___entries___version
   video___entries___episodes
   video___entries___nsfw
   video___entries___spoiler
+  video___entries___theme___idRaw
   video___entries___theme___slug
   video___entries___theme___group
   video___entries___theme___entries
-  video___entries___theme___idRaw
   video___entries___theme___id
   video___entries___theme___children
   video___entries___videos
+  video___entries___videos___idRaw
   video___entries___videos___filename
   video___entries___videos___basename
   video___entries___videos___link
@@ -6049,10 +6052,8 @@ enum EntryVideoFieldsEnum {
   video___entries___videos___overlap
   video___entries___videos___tags
   video___entries___videos___entries
-  video___entries___videos___idRaw
   video___entries___videos___id
   video___entries___videos___children
-  video___entries___idRaw
   video___entries___id
   video___entries___parent___id
   video___entries___parent___children
@@ -6067,7 +6068,6 @@ enum EntryVideoFieldsEnum {
   video___entries___internal___mediaType
   video___entries___internal___owner
   video___entries___internal___type
-  video___idRaw
   video___id
   video___parent___id
   video___parent___parent___id
@@ -6233,13 +6233,16 @@ type AnimeResourceEdge {
 }
 
 enum AnimeResourceFieldsEnum {
+  anime___idRaw
   anime___name
   anime___slug
   anime___year
   anime___season
   anime___synopsis
   anime___synonyms
+  anime___synonyms___idRaw
   anime___synonyms___text
+  anime___synonyms___anime___idRaw
   anime___synonyms___anime___name
   anime___synonyms___anime___slug
   anime___synonyms___anime___year
@@ -6250,10 +6253,8 @@ enum AnimeResourceFieldsEnum {
   anime___synonyms___anime___series
   anime___synonyms___anime___resources
   anime___synonyms___anime___images
-  anime___synonyms___anime___idRaw
   anime___synonyms___anime___id
   anime___synonyms___anime___children
-  anime___synonyms___idRaw
   anime___synonyms___id
   anime___synonyms___parent___id
   anime___synonyms___parent___children
@@ -6269,14 +6270,16 @@ enum AnimeResourceFieldsEnum {
   anime___synonyms___internal___owner
   anime___synonyms___internal___type
   anime___themes
+  anime___themes___idRaw
   anime___themes___slug
   anime___themes___group
+  anime___themes___song___idRaw
   anime___themes___song___title
   anime___themes___song___themes
   anime___themes___song___performances
-  anime___themes___song___idRaw
   anime___themes___song___id
   anime___themes___song___children
+  anime___themes___anime___idRaw
   anime___themes___anime___name
   anime___themes___anime___slug
   anime___themes___anime___year
@@ -6287,19 +6290,17 @@ enum AnimeResourceFieldsEnum {
   anime___themes___anime___series
   anime___themes___anime___resources
   anime___themes___anime___images
-  anime___themes___anime___idRaw
   anime___themes___anime___id
   anime___themes___anime___children
   anime___themes___entries
+  anime___themes___entries___idRaw
   anime___themes___entries___version
   anime___themes___entries___episodes
   anime___themes___entries___nsfw
   anime___themes___entries___spoiler
   anime___themes___entries___videos
-  anime___themes___entries___idRaw
   anime___themes___entries___id
   anime___themes___entries___children
-  anime___themes___idRaw
   anime___themes___id
   anime___themes___parent___id
   anime___themes___parent___children
@@ -6315,9 +6316,11 @@ enum AnimeResourceFieldsEnum {
   anime___themes___internal___owner
   anime___themes___internal___type
   anime___series
+  anime___series___idRaw
   anime___series___slug
   anime___series___name
   anime___series___anime
+  anime___series___anime___idRaw
   anime___series___anime___name
   anime___series___anime___slug
   anime___series___anime___year
@@ -6328,10 +6331,8 @@ enum AnimeResourceFieldsEnum {
   anime___series___anime___series
   anime___series___anime___resources
   anime___series___anime___images
-  anime___series___anime___idRaw
   anime___series___anime___id
   anime___series___anime___children
-  anime___series___idRaw
   anime___series___id
   anime___series___parent___id
   anime___series___parent___children
@@ -6347,9 +6348,9 @@ enum AnimeResourceFieldsEnum {
   anime___series___internal___owner
   anime___series___internal___type
   anime___resources
+  anime___resources___idRaw
   anime___resources___link
   anime___resources___site
-  anime___resources___idRaw
   anime___resources___id
   anime___resources___parent___id
   anime___resources___parent___children
@@ -6365,9 +6366,9 @@ enum AnimeResourceFieldsEnum {
   anime___resources___internal___owner
   anime___resources___internal___type
   anime___images
+  anime___images___idRaw
   anime___images___facet
   anime___images___link
-  anime___images___idRaw
   anime___images___id
   anime___images___parent___id
   anime___images___parent___children
@@ -6382,7 +6383,6 @@ enum AnimeResourceFieldsEnum {
   anime___images___internal___mediaType
   anime___images___internal___owner
   anime___images___internal___type
-  anime___idRaw
   anime___id
   anime___parent___id
   anime___parent___parent___id
@@ -6421,9 +6421,9 @@ enum AnimeResourceFieldsEnum {
   anime___internal___mediaType
   anime___internal___owner
   anime___internal___type
+  resource___idRaw
   resource___link
   resource___site
-  resource___idRaw
   resource___id
   resource___parent___id
   resource___parent___parent___id
@@ -6589,21 +6589,22 @@ type ArtistResourceEdge {
 }
 
 enum ArtistResourceFieldsEnum {
+  artist___idRaw
   artist___slug
   artist___name
   artist___performances
+  artist___performances___song___idRaw
   artist___performances___song___title
   artist___performances___song___themes
   artist___performances___song___performances
-  artist___performances___song___idRaw
   artist___performances___song___id
   artist___performances___song___children
+  artist___performances___artist___idRaw
   artist___performances___artist___slug
   artist___performances___artist___name
   artist___performances___artist___performances
   artist___performances___artist___resources
   artist___performances___artist___images
-  artist___performances___artist___idRaw
   artist___performances___artist___id
   artist___performances___artist___children
   artist___performances___as
@@ -6622,9 +6623,9 @@ enum ArtistResourceFieldsEnum {
   artist___performances___internal___owner
   artist___performances___internal___type
   artist___resources
+  artist___resources___idRaw
   artist___resources___link
   artist___resources___site
-  artist___resources___idRaw
   artist___resources___id
   artist___resources___parent___id
   artist___resources___parent___children
@@ -6640,9 +6641,9 @@ enum ArtistResourceFieldsEnum {
   artist___resources___internal___owner
   artist___resources___internal___type
   artist___images
+  artist___images___idRaw
   artist___images___facet
   artist___images___link
-  artist___images___idRaw
   artist___images___id
   artist___images___parent___id
   artist___images___parent___children
@@ -6657,7 +6658,6 @@ enum ArtistResourceFieldsEnum {
   artist___images___internal___mediaType
   artist___images___internal___owner
   artist___images___internal___type
-  artist___idRaw
   artist___id
   artist___parent___id
   artist___parent___parent___id
@@ -6696,9 +6696,9 @@ enum ArtistResourceFieldsEnum {
   artist___internal___mediaType
   artist___internal___owner
   artist___internal___type
+  resource___idRaw
   resource___link
   resource___site
-  resource___idRaw
   resource___id
   resource___parent___id
   resource___parent___parent___id
@@ -6864,13 +6864,16 @@ type AnimeImageEdge {
 }
 
 enum AnimeImageFieldsEnum {
+  anime___idRaw
   anime___name
   anime___slug
   anime___year
   anime___season
   anime___synopsis
   anime___synonyms
+  anime___synonyms___idRaw
   anime___synonyms___text
+  anime___synonyms___anime___idRaw
   anime___synonyms___anime___name
   anime___synonyms___anime___slug
   anime___synonyms___anime___year
@@ -6881,10 +6884,8 @@ enum AnimeImageFieldsEnum {
   anime___synonyms___anime___series
   anime___synonyms___anime___resources
   anime___synonyms___anime___images
-  anime___synonyms___anime___idRaw
   anime___synonyms___anime___id
   anime___synonyms___anime___children
-  anime___synonyms___idRaw
   anime___synonyms___id
   anime___synonyms___parent___id
   anime___synonyms___parent___children
@@ -6900,14 +6901,16 @@ enum AnimeImageFieldsEnum {
   anime___synonyms___internal___owner
   anime___synonyms___internal___type
   anime___themes
+  anime___themes___idRaw
   anime___themes___slug
   anime___themes___group
+  anime___themes___song___idRaw
   anime___themes___song___title
   anime___themes___song___themes
   anime___themes___song___performances
-  anime___themes___song___idRaw
   anime___themes___song___id
   anime___themes___song___children
+  anime___themes___anime___idRaw
   anime___themes___anime___name
   anime___themes___anime___slug
   anime___themes___anime___year
@@ -6918,19 +6921,17 @@ enum AnimeImageFieldsEnum {
   anime___themes___anime___series
   anime___themes___anime___resources
   anime___themes___anime___images
-  anime___themes___anime___idRaw
   anime___themes___anime___id
   anime___themes___anime___children
   anime___themes___entries
+  anime___themes___entries___idRaw
   anime___themes___entries___version
   anime___themes___entries___episodes
   anime___themes___entries___nsfw
   anime___themes___entries___spoiler
   anime___themes___entries___videos
-  anime___themes___entries___idRaw
   anime___themes___entries___id
   anime___themes___entries___children
-  anime___themes___idRaw
   anime___themes___id
   anime___themes___parent___id
   anime___themes___parent___children
@@ -6946,9 +6947,11 @@ enum AnimeImageFieldsEnum {
   anime___themes___internal___owner
   anime___themes___internal___type
   anime___series
+  anime___series___idRaw
   anime___series___slug
   anime___series___name
   anime___series___anime
+  anime___series___anime___idRaw
   anime___series___anime___name
   anime___series___anime___slug
   anime___series___anime___year
@@ -6959,10 +6962,8 @@ enum AnimeImageFieldsEnum {
   anime___series___anime___series
   anime___series___anime___resources
   anime___series___anime___images
-  anime___series___anime___idRaw
   anime___series___anime___id
   anime___series___anime___children
-  anime___series___idRaw
   anime___series___id
   anime___series___parent___id
   anime___series___parent___children
@@ -6978,9 +6979,9 @@ enum AnimeImageFieldsEnum {
   anime___series___internal___owner
   anime___series___internal___type
   anime___resources
+  anime___resources___idRaw
   anime___resources___link
   anime___resources___site
-  anime___resources___idRaw
   anime___resources___id
   anime___resources___parent___id
   anime___resources___parent___children
@@ -6996,9 +6997,9 @@ enum AnimeImageFieldsEnum {
   anime___resources___internal___owner
   anime___resources___internal___type
   anime___images
+  anime___images___idRaw
   anime___images___facet
   anime___images___link
-  anime___images___idRaw
   anime___images___id
   anime___images___parent___id
   anime___images___parent___children
@@ -7013,7 +7014,6 @@ enum AnimeImageFieldsEnum {
   anime___images___internal___mediaType
   anime___images___internal___owner
   anime___images___internal___type
-  anime___idRaw
   anime___id
   anime___parent___id
   anime___parent___parent___id
@@ -7052,9 +7052,9 @@ enum AnimeImageFieldsEnum {
   anime___internal___mediaType
   anime___internal___owner
   anime___internal___type
+  image___idRaw
   image___facet
   image___link
-  image___idRaw
   image___id
   image___parent___id
   image___parent___parent___id
@@ -7220,21 +7220,22 @@ type ArtistImageEdge {
 }
 
 enum ArtistImageFieldsEnum {
+  artist___idRaw
   artist___slug
   artist___name
   artist___performances
+  artist___performances___song___idRaw
   artist___performances___song___title
   artist___performances___song___themes
   artist___performances___song___performances
-  artist___performances___song___idRaw
   artist___performances___song___id
   artist___performances___song___children
+  artist___performances___artist___idRaw
   artist___performances___artist___slug
   artist___performances___artist___name
   artist___performances___artist___performances
   artist___performances___artist___resources
   artist___performances___artist___images
-  artist___performances___artist___idRaw
   artist___performances___artist___id
   artist___performances___artist___children
   artist___performances___as
@@ -7253,9 +7254,9 @@ enum ArtistImageFieldsEnum {
   artist___performances___internal___owner
   artist___performances___internal___type
   artist___resources
+  artist___resources___idRaw
   artist___resources___link
   artist___resources___site
-  artist___resources___idRaw
   artist___resources___id
   artist___resources___parent___id
   artist___resources___parent___children
@@ -7271,9 +7272,9 @@ enum ArtistImageFieldsEnum {
   artist___resources___internal___owner
   artist___resources___internal___type
   artist___images
+  artist___images___idRaw
   artist___images___facet
   artist___images___link
-  artist___images___idRaw
   artist___images___id
   artist___images___parent___id
   artist___images___parent___children
@@ -7288,7 +7289,6 @@ enum ArtistImageFieldsEnum {
   artist___images___internal___mediaType
   artist___images___internal___owner
   artist___images___internal___type
-  artist___idRaw
   artist___id
   artist___parent___id
   artist___parent___parent___id
@@ -7327,9 +7327,9 @@ enum ArtistImageFieldsEnum {
   artist___internal___mediaType
   artist___internal___owner
   artist___internal___type
+  image___idRaw
   image___facet
   image___link
-  image___idRaw
   image___id
   image___parent___id
   image___parent___parent___id
@@ -7495,8 +7495,8 @@ type AnnouncementEdge {
 }
 
 enum AnnouncementFieldsEnum {
-  content
   idRaw
+  content
   id
   parent___id
   parent___parent___id
@@ -7595,8 +7595,8 @@ type AnnouncementGroupConnection {
 }
 
 input AnnouncementFilterInput {
-  content: StringQueryOperatorInput
   idRaw: IntQueryOperatorInput
+  content: StringQueryOperatorInput
   id: StringQueryOperatorInput
   parent: NodeFilterInput
   children: NodeFilterListInput

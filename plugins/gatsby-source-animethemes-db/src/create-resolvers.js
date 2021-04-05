@@ -58,7 +58,7 @@ module.exports = ({ createResolvers }) => {
                     if (source.nc) {
                         tags.push("NC");
                     }
-                    if (source.source === videoSource.get(2) || source.source === videoSource.get(3)) {
+                    if (source.source === 2 || source.source === 3) {
                         tags.push(videoSource.get(source.source));
                     }
                     if (source.resolution && source.resolution !== 720) {

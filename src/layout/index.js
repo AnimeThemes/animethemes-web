@@ -10,8 +10,9 @@ import PlayerContext from "context/playerContext";
 import { SEO } from "components/seo";
 import ColorThemeContext from "context/colorThemeContext";
 import useColorTheme from "hooks/useColorTheme";
-import { Box } from "components/box";
+import { Box, Flex } from "components/box";
 import { darkColors } from "theme/colors/dark";
+import { Footer } from "components/footer";
 
 export default function Layout({ children, data, pageContext }) {
     const video = data ? data.video : null;
@@ -39,23 +40,26 @@ export default function Layout({ children, data, pageContext }) {
                         <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
                     </Helmet>
                     <GlobalStyle/>
-                    <Navigation/>
-                    {currentVideo && (
-                        <VideoPlayer
-                            video={currentVideo}
-                            entry={currentEntry}
-                            background={!video}
-                        />
-                    )}
-                    <Container>
-                        {!!pageContext.year && (
-                            <Box gapsColumn="1rem" mb="1.5rem">
-                                <YearNavigation year={pageContext.year} />
-                                <SeasonNavigation year={pageContext.year} season={pageContext.season} seasonList={pageContext.seasonList} />
-                            </Box>
+                    <Flex flexDirection="column" minHeight="100vh">
+                        <Navigation/>
+                        {currentVideo && (
+                            <VideoPlayer
+                                video={currentVideo}
+                                entry={currentEntry}
+                                background={!video}
+                            />
                         )}
-                        {children}
-                    </Container>
+                        <Container mb="2rem">
+                            {!!pageContext.year && (
+                                <Box gapsColumn="1rem" mb="1.5rem">
+                                    <YearNavigation year={pageContext.year} />
+                                    <SeasonNavigation year={pageContext.year} season={pageContext.season} seasonList={pageContext.seasonList} />
+                                </Box>
+                            )}
+                            {children}
+                        </Container>
+                        <Footer/>
+                    </Flex>
                 </PlayerContext.Provider>
             </ColorThemeContext.Provider>
         </ThemeProvider>

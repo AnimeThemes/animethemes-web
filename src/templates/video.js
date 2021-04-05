@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from "react";
+import { useEffect } from "react";
 import { graphql, Link } from "gatsby";
 import { Box, Flex } from "components/box";
 import styled from "styled-components";
@@ -122,25 +122,31 @@ export default function VideoPage({ data: { video, entry } }) {
                     {!!otherEntries.length && (
                         <Flex flexDirection="column" gapsColumn="1rem" alignItems={["flex-start", "flex-end"]}>
                             <Text variant="h2">Other versions</Text>
-                            {otherEntries.map((otherEntry) => (
-                                <Fragment key={otherEntry.version}>
-                                    <Text variant="small" color="text-muted">
-                                        <Flex alignItems="center" gapsRow="0.5rem">
-                                            <Text>Version {otherEntry.version || 1}</Text>
-                                            <ThemeEntryTags entry={otherEntry}/>
-                                        </Flex>
-                                    </Text>
-                                    {otherEntry.videos.map((video, index) => (
-                                        <VideoButton
-                                            key={index}
-                                            anime={anime}
-                                            theme={theme}
-                                            entry={entry}
-                                            video={video}
-                                        />
-                                    ))}
-                                </Fragment>
-                            ))}
+                            <Box gapsColumn="2rem">
+                                {otherEntries.map((otherEntry) => (
+                                    <Flex key={otherEntry.version} flexDirection="column" gapsColumn="1rem" alignItems={["flex-start", "flex-end"]}>
+                                        <Text variant="small" color="text-muted">
+                                            <Flex alignItems="center" gapsRow="0.5rem">
+                                                <Text>Version {otherEntry.version || 1}</Text>
+                                                <ThemeEntryTags entry={otherEntry}/>
+                                            </Flex>
+                                        </Text>
+                                        <div>
+                                            <Flex flexWrap="wrap" gapsBoth="1rem">
+                                                {otherEntry.videos.map((video, index) => (
+                                                    <VideoButton
+                                                        key={index}
+                                                        anime={anime}
+                                                        theme={theme}
+                                                        entry={entry}
+                                                        video={video}
+                                                    />
+                                                ))}
+                                            </Flex>
+                                        </div>
+                                    </Flex>
+                                ))}
+                            </Box>
                         </Flex>
                     )}
                 </Box>

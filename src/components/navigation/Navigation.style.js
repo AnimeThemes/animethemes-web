@@ -50,6 +50,7 @@ export const StyledNavigationContainer = styled(Container)`
 
         padding: 1rem;
         border-radius: 1rem;
+        width: auto;
 
         background-color: ${theme.colors["solid"]};
 

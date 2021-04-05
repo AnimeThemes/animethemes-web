@@ -3,7 +3,6 @@ import {
     StyledPlayer,
     StyledPlayerButton,
     StyledVideo,
-    StyledVideoContainer,
     StyledOverlay
 } from "./VideoPlayer.style";
 import { faExpandAlt, faPause, faPlay, faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -12,6 +11,7 @@ import PlayerContext from "context/playerContext";
 import createVideoSlug from "utils/createVideoSlug";
 import { useMedia } from "react-media";
 import { Icon } from "components/icon";
+import { AspectRatio } from "components/utils";
 
 const videoBaseUrl = process.env.GATSBY_VIDEO_URL || "https://animethemes.moe";
 
@@ -46,13 +46,13 @@ export function VideoPlayer({ video, entry, background, ...props }) {
             onDoubleClick={background ? maximize : undefined}
             onMouseDown={preventTextSelection}
             onClick={background && isMobile ? maximize : undefined}
+
+            layout
+            transition={{ type: "tween" }}
+
             {...props}
         >
-            <StyledVideoContainer
-                background={background}
-                layout
-                transition={{ type: "tween" }}
-            >
+            <AspectRatio ratio={16 / 9}>
                 <StyledVideo
                     ref={playerRef}
                     src={`${videoBaseUrl}/video/${video.basename}`}
@@ -64,7 +64,7 @@ export function VideoPlayer({ video, entry, background, ...props }) {
                 >
                     Your browser doesn&apos;t support HTML5 video playback. Please use a modern browser.
                 </StyledVideo>
-            </StyledVideoContainer>
+            </AspectRatio>
             {background && (
                 <StyledOverlay force={!isPlaying}>
                     <StyledPlayerButton onClick={() => setCurrentVideo(null)}>

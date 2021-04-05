@@ -1,5 +1,7 @@
 import createVideoSlug from "./src/utils/createVideoSlug";
 
+const seasonOrder = [ "Winter", "Spring", "Summer", "Fall" ];
+
 export async function createPages({ actions: { createPage }, graphql }) {
     const { data } = await graphql(`
         query {
@@ -68,7 +70,10 @@ export async function createPages({ actions: { createPage }, graphql }) {
         const yearNumeric = +year;
 
         // Get unique seasons
-        const seasonList = nodes.map((node) => node.season).filter((value, index, self) => self.indexOf(value) === index);
+        const seasonList = nodes
+            .map((node) => node.season)
+            .filter((value, index, self) => self.indexOf(value) === index)
+            .sort((a, b) => seasonOrder.indexOf(a) - seasonOrder.indexOf(b));
 
         createPage({
             path: `/year/${year}`,

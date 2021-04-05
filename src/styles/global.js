@@ -63,6 +63,7 @@ export default createGlobalStyle`
         outline: none;
         background-color: transparent;
         color: inherit;
+        font-family: inherit;
         font-size: inherit;
         font-weight: inherit;
 

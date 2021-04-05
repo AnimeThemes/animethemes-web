@@ -6,6 +6,7 @@ module.exports = ({ actions }) => {
         }
     
         type Anime implements Node & Entity {
+            idRaw: Int
             name: String!
             slug: String!
             year: Int!
@@ -19,11 +20,13 @@ module.exports = ({ actions }) => {
         }
         
         type Synonym implements Node & Entity {
+            idRaw: Int
             text: String!
             anime: Anime! @link(by: "id")
         }
         
         type Theme implements Node & Entity {
+            idRaw: Int
             slug: String!
             group: String
             song: Song! @link(by: "id")
@@ -32,6 +35,7 @@ module.exports = ({ actions }) => {
         }
 
         type Entry implements Node & Entity {
+            idRaw: Int
             version: Int
             episodes: String
             nsfw: Boolean!
@@ -41,6 +45,7 @@ module.exports = ({ actions }) => {
         }
         
         type Video implements Node & Entity {
+            idRaw: Int
             filename: String!
             basename: String!
             link: String
@@ -56,6 +61,7 @@ module.exports = ({ actions }) => {
         }
         
         type Song implements Node & Entity {
+            idRaw: Int
             title: String!
             themes: [Theme] @link(by: "song.id", from: "id")
             performances: [Performance] @link(by: "song.id", from: "id")
@@ -68,6 +74,7 @@ module.exports = ({ actions }) => {
         }
         
         type Artist implements Node & Entity {
+            idRaw: Int
             slug: String!
             name: String!            
             performances: [Performance] @link(by: "artist.id", from: "id")
@@ -76,17 +83,20 @@ module.exports = ({ actions }) => {
         }
         
         type Series implements Node & Entity {
+            idRaw: Int
             slug: String!
             name: String!            
             anime: [Anime]
         }
         
         type Resource implements Node & Entity {
+            idRaw: Int
             link: String!
             site: String!
         }
         
         type Image implements Node & Entity {
+            idRaw: Int
             facet: String!
             link: String
         }
@@ -122,6 +132,7 @@ module.exports = ({ actions }) => {
         }
         
         type Announcement implements Node & Entity {
+            idRaw: Int
             content: String!
         }
     `);
