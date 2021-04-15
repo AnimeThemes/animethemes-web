@@ -9,7 +9,7 @@ import { faExpandAlt, faPause, faPlay, faTimes } from "@fortawesome/free-solid-s
 import { navigate } from "gatsby";
 import PlayerContext from "context/playerContext";
 import createVideoSlug from "utils/createVideoSlug";
-import { useMedia } from "react-media";
+import { useMedia } from "use-media";
 import { Icon } from "components/icon";
 import { AspectRatio } from "components/utils";
 
@@ -19,7 +19,7 @@ export function VideoPlayer({ video, entry, background, ...props }) {
     const [isPlaying, setPlaying] = useState(false);
     const playerRef = useRef();
     const { setCurrentVideo } = useContext(PlayerContext);
-    const isMobile = useMedia({ query: "(max-width: 720px)" });
+    const isMobile = useMedia({ maxWidth: "720px" });
 
     function togglePlay() {
         if (isPlaying) {
