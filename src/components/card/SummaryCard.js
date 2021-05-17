@@ -2,7 +2,7 @@ import { Link } from "gatsby";
 import { Text } from "components/text";
 import styled from "styled-components";
 import { Card } from "components/card";
-import { Box, Flex } from "components/box";
+import { Flex } from "components/box";
 
 const StyledCover = styled.img`
     width: 48px;
@@ -17,7 +17,7 @@ export function SummaryCard({ title, description, image, to, children, ...props 
                 <StyledCover alt="Cover" src={image}/>
             </Link>
             <Flex flex={1} flexDirection="column" justifyContent="center" gapsColumn="0.25rem" px="1rem">
-                <Text fontWeight="600" maxLines={2}>
+                <Text fontWeight="600" maxLines={1}>
                     {typeof title === "string" ? (
                         <Link to={to}>
                             <Text link>{title}</Text>
@@ -26,9 +26,7 @@ export function SummaryCard({ title, description, image, to, children, ...props 
                 </Text>
                 <Text variant="small" maxLines={1}>{description}</Text>
             </Flex>
-            <Box display={[ "none", "block" ]}>
-                {children}
-            </Box>
+            {children}
         </Card>
     );
 }

@@ -36,7 +36,7 @@ export function Footer() {
                         <FooterTextLink href="https://staging.animethemes.moe/privacy-policy">
                             Privacy Policy
                         </FooterTextLink>
-                        <FooterTextLink href="admin@animethemes.moe">
+                        <FooterTextLink href="mailto:admin@animethemes.moe">
                             Contact
                         </FooterTextLink>
                     </Box>

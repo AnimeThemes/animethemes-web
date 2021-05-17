@@ -569,6 +569,56 @@ type Announcement implements Node & Entity {
   internal: Internal!
 }
 
+type Bracket implements Node {
+  slug: String!
+  name: String!
+  currentRound: BracketRound
+  currentGroup: Int
+  rounds: [BracketRound]
+  id: ID!
+  parent: Node
+  children: [Node!]!
+  internal: Internal!
+}
+
+type BracketRound implements Node {
+  bracket: Bracket
+  tier: Int!
+  name: String
+  pairings: [BracketPairing]
+  id: ID!
+  parent: Node
+  children: [Node!]!
+  internal: Internal!
+}
+
+type BracketPairing implements Node {
+  round: BracketRound
+  order: Int!
+  group: Int!
+  characterA: BracketCharacter
+  characterB: BracketCharacter
+  votesA: Int
+  votesB: Int
+  id: ID!
+  parent: Node
+  children: [Node!]!
+  internal: Internal!
+}
+
+type BracketCharacter implements Node {
+  pairing: BracketPairing
+  idRaw: Int!
+  seed: Int!
+  name: String!
+  source: String!
+  theme: Theme
+  id: ID!
+  parent: Node
+  children: [Node!]!
+  internal: Internal!
+}
+
 type SiteBuildMetadata implements Node {
   id: ID!
   parent: Node
@@ -710,6 +760,14 @@ type Query {
   allArtistImage(filter: ArtistImageFilterInput, sort: ArtistImageSortInput, skip: Int, limit: Int): ArtistImageConnection!
   announcement(idRaw: IntQueryOperatorInput, content: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Announcement
   allAnnouncement(filter: AnnouncementFilterInput, sort: AnnouncementSortInput, skip: Int, limit: Int): AnnouncementConnection!
+  bracket(slug: StringQueryOperatorInput, name: StringQueryOperatorInput, currentRound: BracketRoundFilterInput, currentGroup: IntQueryOperatorInput, rounds: BracketRoundFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Bracket
+  allBracket(filter: BracketFilterInput, sort: BracketSortInput, skip: Int, limit: Int): BracketConnection!
+  bracketRound(bracket: BracketFilterInput, tier: IntQueryOperatorInput, name: StringQueryOperatorInput, pairings: BracketPairingFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): BracketRound
+  allBracketRound(filter: BracketRoundFilterInput, sort: BracketRoundSortInput, skip: Int, limit: Int): BracketRoundConnection!
+  bracketPairing(round: BracketRoundFilterInput, order: IntQueryOperatorInput, group: IntQueryOperatorInput, characterA: BracketCharacterFilterInput, characterB: BracketCharacterFilterInput, votesA: IntQueryOperatorInput, votesB: IntQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): BracketPairing
+  allBracketPairing(filter: BracketPairingFilterInput, sort: BracketPairingSortInput, skip: Int, limit: Int): BracketPairingConnection!
+  bracketCharacter(pairing: BracketPairingFilterInput, idRaw: IntQueryOperatorInput, seed: IntQueryOperatorInput, name: StringQueryOperatorInput, source: StringQueryOperatorInput, theme: ThemeFilterInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): BracketCharacter
+  allBracketCharacter(filter: BracketCharacterFilterInput, sort: BracketCharacterSortInput, skip: Int, limit: Int): BracketCharacterConnection!
   siteBuildMetadata(id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput, buildTime: DateQueryOperatorInput): SiteBuildMetadata
   allSiteBuildMetadata(filter: SiteBuildMetadataFilterInput, sort: SiteBuildMetadataSortInput, skip: Int, limit: Int): SiteBuildMetadataConnection!
   sitePlugin(id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput, resolve: StringQueryOperatorInput, name: StringQueryOperatorInput, version: StringQueryOperatorInput, pluginOptions: SitePluginPluginOptionsFilterInput, nodeAPIs: StringQueryOperatorInput, browserAPIs: StringQueryOperatorInput, ssrAPIs: StringQueryOperatorInput, pluginFilepath: StringQueryOperatorInput, packageJson: SitePluginPackageJsonFilterInput): SitePlugin
@@ -7605,6 +7663,1630 @@ input AnnouncementFilterInput {
 
 input AnnouncementSortInput {
   fields: [AnnouncementFieldsEnum]
+  order: [SortOrderEnum] = [ASC]
+}
+
+input BracketRoundFilterInput {
+  bracket: BracketFilterInput
+  tier: IntQueryOperatorInput
+  name: StringQueryOperatorInput
+  pairings: BracketPairingFilterListInput
+  id: StringQueryOperatorInput
+  parent: NodeFilterInput
+  children: NodeFilterListInput
+  internal: InternalFilterInput
+}
+
+input BracketFilterInput {
+  slug: StringQueryOperatorInput
+  name: StringQueryOperatorInput
+  currentRound: BracketRoundFilterInput
+  currentGroup: IntQueryOperatorInput
+  rounds: BracketRoundFilterListInput
+  id: StringQueryOperatorInput
+  parent: NodeFilterInput
+  children: NodeFilterListInput
+  internal: InternalFilterInput
+}
+
+input BracketRoundFilterListInput {
+  elemMatch: BracketRoundFilterInput
+}
+
+input BracketPairingFilterListInput {
+  elemMatch: BracketPairingFilterInput
+}
+
+input BracketPairingFilterInput {
+  round: BracketRoundFilterInput
+  order: IntQueryOperatorInput
+  group: IntQueryOperatorInput
+  characterA: BracketCharacterFilterInput
+  characterB: BracketCharacterFilterInput
+  votesA: IntQueryOperatorInput
+  votesB: IntQueryOperatorInput
+  id: StringQueryOperatorInput
+  parent: NodeFilterInput
+  children: NodeFilterListInput
+  internal: InternalFilterInput
+}
+
+input BracketCharacterFilterInput {
+  pairing: BracketPairingFilterInput
+  idRaw: IntQueryOperatorInput
+  seed: IntQueryOperatorInput
+  name: StringQueryOperatorInput
+  source: StringQueryOperatorInput
+  theme: ThemeFilterInput
+  id: StringQueryOperatorInput
+  parent: NodeFilterInput
+  children: NodeFilterListInput
+  internal: InternalFilterInput
+}
+
+type BracketConnection {
+  totalCount: Int!
+  edges: [BracketEdge!]!
+  nodes: [Bracket!]!
+  pageInfo: PageInfo!
+  distinct(field: BracketFieldsEnum!): [String!]!
+  group(skip: Int, limit: Int, field: BracketFieldsEnum!): [BracketGroupConnection!]!
+}
+
+type BracketEdge {
+  next: Bracket
+  node: Bracket!
+  previous: Bracket
+}
+
+enum BracketFieldsEnum {
+  slug
+  name
+  currentRound___bracket___slug
+  currentRound___bracket___name
+  currentRound___bracket___currentRound___tier
+  currentRound___bracket___currentRound___name
+  currentRound___bracket___currentRound___pairings
+  currentRound___bracket___currentRound___id
+  currentRound___bracket___currentRound___children
+  currentRound___bracket___currentGroup
+  currentRound___bracket___rounds
+  currentRound___bracket___rounds___tier
+  currentRound___bracket___rounds___name
+  currentRound___bracket___rounds___pairings
+  currentRound___bracket___rounds___id
+  currentRound___bracket___rounds___children
+  currentRound___bracket___id
+  currentRound___bracket___parent___id
+  currentRound___bracket___parent___children
+  currentRound___bracket___children
+  currentRound___bracket___children___id
+  currentRound___bracket___children___children
+  currentRound___bracket___internal___content
+  currentRound___bracket___internal___contentDigest
+  currentRound___bracket___internal___description
+  currentRound___bracket___internal___fieldOwners
+  currentRound___bracket___internal___ignoreType
+  currentRound___bracket___internal___mediaType
+  currentRound___bracket___internal___owner
+  currentRound___bracket___internal___type
+  currentRound___tier
+  currentRound___name
+  currentRound___pairings
+  currentRound___pairings___round___tier
+  currentRound___pairings___round___name
+  currentRound___pairings___round___pairings
+  currentRound___pairings___round___id
+  currentRound___pairings___round___children
+  currentRound___pairings___order
+  currentRound___pairings___group
+  currentRound___pairings___characterA___idRaw
+  currentRound___pairings___characterA___seed
+  currentRound___pairings___characterA___name
+  currentRound___pairings___characterA___source
+  currentRound___pairings___characterA___id
+  currentRound___pairings___characterA___children
+  currentRound___pairings___characterB___idRaw
+  currentRound___pairings___characterB___seed
+  currentRound___pairings___characterB___name
+  currentRound___pairings___characterB___source
+  currentRound___pairings___characterB___id
+  currentRound___pairings___characterB___children
+  currentRound___pairings___votesA
+  currentRound___pairings___votesB
+  currentRound___pairings___id
+  currentRound___pairings___parent___id
+  currentRound___pairings___parent___children
+  currentRound___pairings___children
+  currentRound___pairings___children___id
+  currentRound___pairings___children___children
+  currentRound___pairings___internal___content
+  currentRound___pairings___internal___contentDigest
+  currentRound___pairings___internal___description
+  currentRound___pairings___internal___fieldOwners
+  currentRound___pairings___internal___ignoreType
+  currentRound___pairings___internal___mediaType
+  currentRound___pairings___internal___owner
+  currentRound___pairings___internal___type
+  currentRound___id
+  currentRound___parent___id
+  currentRound___parent___parent___id
+  currentRound___parent___parent___children
+  currentRound___parent___children
+  currentRound___parent___children___id
+  currentRound___parent___children___children
+  currentRound___parent___internal___content
+  currentRound___parent___internal___contentDigest
+  currentRound___parent___internal___description
+  currentRound___parent___internal___fieldOwners
+  currentRound___parent___internal___ignoreType
+  currentRound___parent___internal___mediaType
+  currentRound___parent___internal___owner
+  currentRound___parent___internal___type
+  currentRound___children
+  currentRound___children___id
+  currentRound___children___parent___id
+  currentRound___children___parent___children
+  currentRound___children___children
+  currentRound___children___children___id
+  currentRound___children___children___children
+  currentRound___children___internal___content
+  currentRound___children___internal___contentDigest
+  currentRound___children___internal___description
+  currentRound___children___internal___fieldOwners
+  currentRound___children___internal___ignoreType
+  currentRound___children___internal___mediaType
+  currentRound___children___internal___owner
+  currentRound___children___internal___type
+  currentRound___internal___content
+  currentRound___internal___contentDigest
+  currentRound___internal___description
+  currentRound___internal___fieldOwners
+  currentRound___internal___ignoreType
+  currentRound___internal___mediaType
+  currentRound___internal___owner
+  currentRound___internal___type
+  currentGroup
+  rounds
+  rounds___bracket___slug
+  rounds___bracket___name
+  rounds___bracket___currentRound___tier
+  rounds___bracket___currentRound___name
+  rounds___bracket___currentRound___pairings
+  rounds___bracket___currentRound___id
+  rounds___bracket___currentRound___children
+  rounds___bracket___currentGroup
+  rounds___bracket___rounds
+  rounds___bracket___rounds___tier
+  rounds___bracket___rounds___name
+  rounds___bracket___rounds___pairings
+  rounds___bracket___rounds___id
+  rounds___bracket___rounds___children
+  rounds___bracket___id
+  rounds___bracket___parent___id
+  rounds___bracket___parent___children
+  rounds___bracket___children
+  rounds___bracket___children___id
+  rounds___bracket___children___children
+  rounds___bracket___internal___content
+  rounds___bracket___internal___contentDigest
+  rounds___bracket___internal___description
+  rounds___bracket___internal___fieldOwners
+  rounds___bracket___internal___ignoreType
+  rounds___bracket___internal___mediaType
+  rounds___bracket___internal___owner
+  rounds___bracket___internal___type
+  rounds___tier
+  rounds___name
+  rounds___pairings
+  rounds___pairings___round___tier
+  rounds___pairings___round___name
+  rounds___pairings___round___pairings
+  rounds___pairings___round___id
+  rounds___pairings___round___children
+  rounds___pairings___order
+  rounds___pairings___group
+  rounds___pairings___characterA___idRaw
+  rounds___pairings___characterA___seed
+  rounds___pairings___characterA___name
+  rounds___pairings___characterA___source
+  rounds___pairings___characterA___id
+  rounds___pairings___characterA___children
+  rounds___pairings___characterB___idRaw
+  rounds___pairings___characterB___seed
+  rounds___pairings___characterB___name
+  rounds___pairings___characterB___source
+  rounds___pairings___characterB___id
+  rounds___pairings___characterB___children
+  rounds___pairings___votesA
+  rounds___pairings___votesB
+  rounds___pairings___id
+  rounds___pairings___parent___id
+  rounds___pairings___parent___children
+  rounds___pairings___children
+  rounds___pairings___children___id
+  rounds___pairings___children___children
+  rounds___pairings___internal___content
+  rounds___pairings___internal___contentDigest
+  rounds___pairings___internal___description
+  rounds___pairings___internal___fieldOwners
+  rounds___pairings___internal___ignoreType
+  rounds___pairings___internal___mediaType
+  rounds___pairings___internal___owner
+  rounds___pairings___internal___type
+  rounds___id
+  rounds___parent___id
+  rounds___parent___parent___id
+  rounds___parent___parent___children
+  rounds___parent___children
+  rounds___parent___children___id
+  rounds___parent___children___children
+  rounds___parent___internal___content
+  rounds___parent___internal___contentDigest
+  rounds___parent___internal___description
+  rounds___parent___internal___fieldOwners
+  rounds___parent___internal___ignoreType
+  rounds___parent___internal___mediaType
+  rounds___parent___internal___owner
+  rounds___parent___internal___type
+  rounds___children
+  rounds___children___id
+  rounds___children___parent___id
+  rounds___children___parent___children
+  rounds___children___children
+  rounds___children___children___id
+  rounds___children___children___children
+  rounds___children___internal___content
+  rounds___children___internal___contentDigest
+  rounds___children___internal___description
+  rounds___children___internal___fieldOwners
+  rounds___children___internal___ignoreType
+  rounds___children___internal___mediaType
+  rounds___children___internal___owner
+  rounds___children___internal___type
+  rounds___internal___content
+  rounds___internal___contentDigest
+  rounds___internal___description
+  rounds___internal___fieldOwners
+  rounds___internal___ignoreType
+  rounds___internal___mediaType
+  rounds___internal___owner
+  rounds___internal___type
+  id
+  parent___id
+  parent___parent___id
+  parent___parent___parent___id
+  parent___parent___parent___children
+  parent___parent___children
+  parent___parent___children___id
+  parent___parent___children___children
+  parent___parent___internal___content
+  parent___parent___internal___contentDigest
+  parent___parent___internal___description
+  parent___parent___internal___fieldOwners
+  parent___parent___internal___ignoreType
+  parent___parent___internal___mediaType
+  parent___parent___internal___owner
+  parent___parent___internal___type
+  parent___children
+  parent___children___id
+  parent___children___parent___id
+  parent___children___parent___children
+  parent___children___children
+  parent___children___children___id
+  parent___children___children___children
+  parent___children___internal___content
+  parent___children___internal___contentDigest
+  parent___children___internal___description
+  parent___children___internal___fieldOwners
+  parent___children___internal___ignoreType
+  parent___children___internal___mediaType
+  parent___children___internal___owner
+  parent___children___internal___type
+  parent___internal___content
+  parent___internal___contentDigest
+  parent___internal___description
+  parent___internal___fieldOwners
+  parent___internal___ignoreType
+  parent___internal___mediaType
+  parent___internal___owner
+  parent___internal___type
+  children
+  children___id
+  children___parent___id
+  children___parent___parent___id
+  children___parent___parent___children
+  children___parent___children
+  children___parent___children___id
+  children___parent___children___children
+  children___parent___internal___content
+  children___parent___internal___contentDigest
+  children___parent___internal___description
+  children___parent___internal___fieldOwners
+  children___parent___internal___ignoreType
+  children___parent___internal___mediaType
+  children___parent___internal___owner
+  children___parent___internal___type
+  children___children
+  children___children___id
+  children___children___parent___id
+  children___children___parent___children
+  children___children___children
+  children___children___children___id
+  children___children___children___children
+  children___children___internal___content
+  children___children___internal___contentDigest
+  children___children___internal___description
+  children___children___internal___fieldOwners
+  children___children___internal___ignoreType
+  children___children___internal___mediaType
+  children___children___internal___owner
+  children___children___internal___type
+  children___internal___content
+  children___internal___contentDigest
+  children___internal___description
+  children___internal___fieldOwners
+  children___internal___ignoreType
+  children___internal___mediaType
+  children___internal___owner
+  children___internal___type
+  internal___content
+  internal___contentDigest
+  internal___description
+  internal___fieldOwners
+  internal___ignoreType
+  internal___mediaType
+  internal___owner
+  internal___type
+}
+
+type BracketGroupConnection {
+  totalCount: Int!
+  edges: [BracketEdge!]!
+  nodes: [Bracket!]!
+  pageInfo: PageInfo!
+  field: String!
+  fieldValue: String
+}
+
+input BracketSortInput {
+  fields: [BracketFieldsEnum]
+  order: [SortOrderEnum] = [ASC]
+}
+
+type BracketRoundConnection {
+  totalCount: Int!
+  edges: [BracketRoundEdge!]!
+  nodes: [BracketRound!]!
+  pageInfo: PageInfo!
+  distinct(field: BracketRoundFieldsEnum!): [String!]!
+  group(skip: Int, limit: Int, field: BracketRoundFieldsEnum!): [BracketRoundGroupConnection!]!
+}
+
+type BracketRoundEdge {
+  next: BracketRound
+  node: BracketRound!
+  previous: BracketRound
+}
+
+enum BracketRoundFieldsEnum {
+  bracket___slug
+  bracket___name
+  bracket___currentRound___bracket___slug
+  bracket___currentRound___bracket___name
+  bracket___currentRound___bracket___currentGroup
+  bracket___currentRound___bracket___rounds
+  bracket___currentRound___bracket___id
+  bracket___currentRound___bracket___children
+  bracket___currentRound___tier
+  bracket___currentRound___name
+  bracket___currentRound___pairings
+  bracket___currentRound___pairings___order
+  bracket___currentRound___pairings___group
+  bracket___currentRound___pairings___votesA
+  bracket___currentRound___pairings___votesB
+  bracket___currentRound___pairings___id
+  bracket___currentRound___pairings___children
+  bracket___currentRound___id
+  bracket___currentRound___parent___id
+  bracket___currentRound___parent___children
+  bracket___currentRound___children
+  bracket___currentRound___children___id
+  bracket___currentRound___children___children
+  bracket___currentRound___internal___content
+  bracket___currentRound___internal___contentDigest
+  bracket___currentRound___internal___description
+  bracket___currentRound___internal___fieldOwners
+  bracket___currentRound___internal___ignoreType
+  bracket___currentRound___internal___mediaType
+  bracket___currentRound___internal___owner
+  bracket___currentRound___internal___type
+  bracket___currentGroup
+  bracket___rounds
+  bracket___rounds___bracket___slug
+  bracket___rounds___bracket___name
+  bracket___rounds___bracket___currentGroup
+  bracket___rounds___bracket___rounds
+  bracket___rounds___bracket___id
+  bracket___rounds___bracket___children
+  bracket___rounds___tier
+  bracket___rounds___name
+  bracket___rounds___pairings
+  bracket___rounds___pairings___order
+  bracket___rounds___pairings___group
+  bracket___rounds___pairings___votesA
+  bracket___rounds___pairings___votesB
+  bracket___rounds___pairings___id
+  bracket___rounds___pairings___children
+  bracket___rounds___id
+  bracket___rounds___parent___id
+  bracket___rounds___parent___children
+  bracket___rounds___children
+  bracket___rounds___children___id
+  bracket___rounds___children___children
+  bracket___rounds___internal___content
+  bracket___rounds___internal___contentDigest
+  bracket___rounds___internal___description
+  bracket___rounds___internal___fieldOwners
+  bracket___rounds___internal___ignoreType
+  bracket___rounds___internal___mediaType
+  bracket___rounds___internal___owner
+  bracket___rounds___internal___type
+  bracket___id
+  bracket___parent___id
+  bracket___parent___parent___id
+  bracket___parent___parent___children
+  bracket___parent___children
+  bracket___parent___children___id
+  bracket___parent___children___children
+  bracket___parent___internal___content
+  bracket___parent___internal___contentDigest
+  bracket___parent___internal___description
+  bracket___parent___internal___fieldOwners
+  bracket___parent___internal___ignoreType
+  bracket___parent___internal___mediaType
+  bracket___parent___internal___owner
+  bracket___parent___internal___type
+  bracket___children
+  bracket___children___id
+  bracket___children___parent___id
+  bracket___children___parent___children
+  bracket___children___children
+  bracket___children___children___id
+  bracket___children___children___children
+  bracket___children___internal___content
+  bracket___children___internal___contentDigest
+  bracket___children___internal___description
+  bracket___children___internal___fieldOwners
+  bracket___children___internal___ignoreType
+  bracket___children___internal___mediaType
+  bracket___children___internal___owner
+  bracket___children___internal___type
+  bracket___internal___content
+  bracket___internal___contentDigest
+  bracket___internal___description
+  bracket___internal___fieldOwners
+  bracket___internal___ignoreType
+  bracket___internal___mediaType
+  bracket___internal___owner
+  bracket___internal___type
+  tier
+  name
+  pairings
+  pairings___round___bracket___slug
+  pairings___round___bracket___name
+  pairings___round___bracket___currentGroup
+  pairings___round___bracket___rounds
+  pairings___round___bracket___id
+  pairings___round___bracket___children
+  pairings___round___tier
+  pairings___round___name
+  pairings___round___pairings
+  pairings___round___pairings___order
+  pairings___round___pairings___group
+  pairings___round___pairings___votesA
+  pairings___round___pairings___votesB
+  pairings___round___pairings___id
+  pairings___round___pairings___children
+  pairings___round___id
+  pairings___round___parent___id
+  pairings___round___parent___children
+  pairings___round___children
+  pairings___round___children___id
+  pairings___round___children___children
+  pairings___round___internal___content
+  pairings___round___internal___contentDigest
+  pairings___round___internal___description
+  pairings___round___internal___fieldOwners
+  pairings___round___internal___ignoreType
+  pairings___round___internal___mediaType
+  pairings___round___internal___owner
+  pairings___round___internal___type
+  pairings___order
+  pairings___group
+  pairings___characterA___pairing___order
+  pairings___characterA___pairing___group
+  pairings___characterA___pairing___votesA
+  pairings___characterA___pairing___votesB
+  pairings___characterA___pairing___id
+  pairings___characterA___pairing___children
+  pairings___characterA___idRaw
+  pairings___characterA___seed
+  pairings___characterA___name
+  pairings___characterA___source
+  pairings___characterA___theme___idRaw
+  pairings___characterA___theme___slug
+  pairings___characterA___theme___group
+  pairings___characterA___theme___entries
+  pairings___characterA___theme___id
+  pairings___characterA___theme___children
+  pairings___characterA___id
+  pairings___characterA___parent___id
+  pairings___characterA___parent___children
+  pairings___characterA___children
+  pairings___characterA___children___id
+  pairings___characterA___children___children
+  pairings___characterA___internal___content
+  pairings___characterA___internal___contentDigest
+  pairings___characterA___internal___description
+  pairings___characterA___internal___fieldOwners
+  pairings___characterA___internal___ignoreType
+  pairings___characterA___internal___mediaType
+  pairings___characterA___internal___owner
+  pairings___characterA___internal___type
+  pairings___characterB___pairing___order
+  pairings___characterB___pairing___group
+  pairings___characterB___pairing___votesA
+  pairings___characterB___pairing___votesB
+  pairings___characterB___pairing___id
+  pairings___characterB___pairing___children
+  pairings___characterB___idRaw
+  pairings___characterB___seed
+  pairings___characterB___name
+  pairings___characterB___source
+  pairings___characterB___theme___idRaw
+  pairings___characterB___theme___slug
+  pairings___characterB___theme___group
+  pairings___characterB___theme___entries
+  pairings___characterB___theme___id
+  pairings___characterB___theme___children
+  pairings___characterB___id
+  pairings___characterB___parent___id
+  pairings___characterB___parent___children
+  pairings___characterB___children
+  pairings___characterB___children___id
+  pairings___characterB___children___children
+  pairings___characterB___internal___content
+  pairings___characterB___internal___contentDigest
+  pairings___characterB___internal___description
+  pairings___characterB___internal___fieldOwners
+  pairings___characterB___internal___ignoreType
+  pairings___characterB___internal___mediaType
+  pairings___characterB___internal___owner
+  pairings___characterB___internal___type
+  pairings___votesA
+  pairings___votesB
+  pairings___id
+  pairings___parent___id
+  pairings___parent___parent___id
+  pairings___parent___parent___children
+  pairings___parent___children
+  pairings___parent___children___id
+  pairings___parent___children___children
+  pairings___parent___internal___content
+  pairings___parent___internal___contentDigest
+  pairings___parent___internal___description
+  pairings___parent___internal___fieldOwners
+  pairings___parent___internal___ignoreType
+  pairings___parent___internal___mediaType
+  pairings___parent___internal___owner
+  pairings___parent___internal___type
+  pairings___children
+  pairings___children___id
+  pairings___children___parent___id
+  pairings___children___parent___children
+  pairings___children___children
+  pairings___children___children___id
+  pairings___children___children___children
+  pairings___children___internal___content
+  pairings___children___internal___contentDigest
+  pairings___children___internal___description
+  pairings___children___internal___fieldOwners
+  pairings___children___internal___ignoreType
+  pairings___children___internal___mediaType
+  pairings___children___internal___owner
+  pairings___children___internal___type
+  pairings___internal___content
+  pairings___internal___contentDigest
+  pairings___internal___description
+  pairings___internal___fieldOwners
+  pairings___internal___ignoreType
+  pairings___internal___mediaType
+  pairings___internal___owner
+  pairings___internal___type
+  id
+  parent___id
+  parent___parent___id
+  parent___parent___parent___id
+  parent___parent___parent___children
+  parent___parent___children
+  parent___parent___children___id
+  parent___parent___children___children
+  parent___parent___internal___content
+  parent___parent___internal___contentDigest
+  parent___parent___internal___description
+  parent___parent___internal___fieldOwners
+  parent___parent___internal___ignoreType
+  parent___parent___internal___mediaType
+  parent___parent___internal___owner
+  parent___parent___internal___type
+  parent___children
+  parent___children___id
+  parent___children___parent___id
+  parent___children___parent___children
+  parent___children___children
+  parent___children___children___id
+  parent___children___children___children
+  parent___children___internal___content
+  parent___children___internal___contentDigest
+  parent___children___internal___description
+  parent___children___internal___fieldOwners
+  parent___children___internal___ignoreType
+  parent___children___internal___mediaType
+  parent___children___internal___owner
+  parent___children___internal___type
+  parent___internal___content
+  parent___internal___contentDigest
+  parent___internal___description
+  parent___internal___fieldOwners
+  parent___internal___ignoreType
+  parent___internal___mediaType
+  parent___internal___owner
+  parent___internal___type
+  children
+  children___id
+  children___parent___id
+  children___parent___parent___id
+  children___parent___parent___children
+  children___parent___children
+  children___parent___children___id
+  children___parent___children___children
+  children___parent___internal___content
+  children___parent___internal___contentDigest
+  children___parent___internal___description
+  children___parent___internal___fieldOwners
+  children___parent___internal___ignoreType
+  children___parent___internal___mediaType
+  children___parent___internal___owner
+  children___parent___internal___type
+  children___children
+  children___children___id
+  children___children___parent___id
+  children___children___parent___children
+  children___children___children
+  children___children___children___id
+  children___children___children___children
+  children___children___internal___content
+  children___children___internal___contentDigest
+  children___children___internal___description
+  children___children___internal___fieldOwners
+  children___children___internal___ignoreType
+  children___children___internal___mediaType
+  children___children___internal___owner
+  children___children___internal___type
+  children___internal___content
+  children___internal___contentDigest
+  children___internal___description
+  children___internal___fieldOwners
+  children___internal___ignoreType
+  children___internal___mediaType
+  children___internal___owner
+  children___internal___type
+  internal___content
+  internal___contentDigest
+  internal___description
+  internal___fieldOwners
+  internal___ignoreType
+  internal___mediaType
+  internal___owner
+  internal___type
+}
+
+type BracketRoundGroupConnection {
+  totalCount: Int!
+  edges: [BracketRoundEdge!]!
+  nodes: [BracketRound!]!
+  pageInfo: PageInfo!
+  field: String!
+  fieldValue: String
+}
+
+input BracketRoundSortInput {
+  fields: [BracketRoundFieldsEnum]
+  order: [SortOrderEnum] = [ASC]
+}
+
+type BracketPairingConnection {
+  totalCount: Int!
+  edges: [BracketPairingEdge!]!
+  nodes: [BracketPairing!]!
+  pageInfo: PageInfo!
+  distinct(field: BracketPairingFieldsEnum!): [String!]!
+  group(skip: Int, limit: Int, field: BracketPairingFieldsEnum!): [BracketPairingGroupConnection!]!
+}
+
+type BracketPairingEdge {
+  next: BracketPairing
+  node: BracketPairing!
+  previous: BracketPairing
+}
+
+enum BracketPairingFieldsEnum {
+  round___bracket___slug
+  round___bracket___name
+  round___bracket___currentRound___tier
+  round___bracket___currentRound___name
+  round___bracket___currentRound___pairings
+  round___bracket___currentRound___id
+  round___bracket___currentRound___children
+  round___bracket___currentGroup
+  round___bracket___rounds
+  round___bracket___rounds___tier
+  round___bracket___rounds___name
+  round___bracket___rounds___pairings
+  round___bracket___rounds___id
+  round___bracket___rounds___children
+  round___bracket___id
+  round___bracket___parent___id
+  round___bracket___parent___children
+  round___bracket___children
+  round___bracket___children___id
+  round___bracket___children___children
+  round___bracket___internal___content
+  round___bracket___internal___contentDigest
+  round___bracket___internal___description
+  round___bracket___internal___fieldOwners
+  round___bracket___internal___ignoreType
+  round___bracket___internal___mediaType
+  round___bracket___internal___owner
+  round___bracket___internal___type
+  round___tier
+  round___name
+  round___pairings
+  round___pairings___round___tier
+  round___pairings___round___name
+  round___pairings___round___pairings
+  round___pairings___round___id
+  round___pairings___round___children
+  round___pairings___order
+  round___pairings___group
+  round___pairings___characterA___idRaw
+  round___pairings___characterA___seed
+  round___pairings___characterA___name
+  round___pairings___characterA___source
+  round___pairings___characterA___id
+  round___pairings___characterA___children
+  round___pairings___characterB___idRaw
+  round___pairings___characterB___seed
+  round___pairings___characterB___name
+  round___pairings___characterB___source
+  round___pairings___characterB___id
+  round___pairings___characterB___children
+  round___pairings___votesA
+  round___pairings___votesB
+  round___pairings___id
+  round___pairings___parent___id
+  round___pairings___parent___children
+  round___pairings___children
+  round___pairings___children___id
+  round___pairings___children___children
+  round___pairings___internal___content
+  round___pairings___internal___contentDigest
+  round___pairings___internal___description
+  round___pairings___internal___fieldOwners
+  round___pairings___internal___ignoreType
+  round___pairings___internal___mediaType
+  round___pairings___internal___owner
+  round___pairings___internal___type
+  round___id
+  round___parent___id
+  round___parent___parent___id
+  round___parent___parent___children
+  round___parent___children
+  round___parent___children___id
+  round___parent___children___children
+  round___parent___internal___content
+  round___parent___internal___contentDigest
+  round___parent___internal___description
+  round___parent___internal___fieldOwners
+  round___parent___internal___ignoreType
+  round___parent___internal___mediaType
+  round___parent___internal___owner
+  round___parent___internal___type
+  round___children
+  round___children___id
+  round___children___parent___id
+  round___children___parent___children
+  round___children___children
+  round___children___children___id
+  round___children___children___children
+  round___children___internal___content
+  round___children___internal___contentDigest
+  round___children___internal___description
+  round___children___internal___fieldOwners
+  round___children___internal___ignoreType
+  round___children___internal___mediaType
+  round___children___internal___owner
+  round___children___internal___type
+  round___internal___content
+  round___internal___contentDigest
+  round___internal___description
+  round___internal___fieldOwners
+  round___internal___ignoreType
+  round___internal___mediaType
+  round___internal___owner
+  round___internal___type
+  order
+  group
+  characterA___pairing___round___tier
+  characterA___pairing___round___name
+  characterA___pairing___round___pairings
+  characterA___pairing___round___id
+  characterA___pairing___round___children
+  characterA___pairing___order
+  characterA___pairing___group
+  characterA___pairing___characterA___idRaw
+  characterA___pairing___characterA___seed
+  characterA___pairing___characterA___name
+  characterA___pairing___characterA___source
+  characterA___pairing___characterA___id
+  characterA___pairing___characterA___children
+  characterA___pairing___characterB___idRaw
+  characterA___pairing___characterB___seed
+  characterA___pairing___characterB___name
+  characterA___pairing___characterB___source
+  characterA___pairing___characterB___id
+  characterA___pairing___characterB___children
+  characterA___pairing___votesA
+  characterA___pairing___votesB
+  characterA___pairing___id
+  characterA___pairing___parent___id
+  characterA___pairing___parent___children
+  characterA___pairing___children
+  characterA___pairing___children___id
+  characterA___pairing___children___children
+  characterA___pairing___internal___content
+  characterA___pairing___internal___contentDigest
+  characterA___pairing___internal___description
+  characterA___pairing___internal___fieldOwners
+  characterA___pairing___internal___ignoreType
+  characterA___pairing___internal___mediaType
+  characterA___pairing___internal___owner
+  characterA___pairing___internal___type
+  characterA___idRaw
+  characterA___seed
+  characterA___name
+  characterA___source
+  characterA___theme___idRaw
+  characterA___theme___slug
+  characterA___theme___group
+  characterA___theme___song___idRaw
+  characterA___theme___song___title
+  characterA___theme___song___themes
+  characterA___theme___song___performances
+  characterA___theme___song___id
+  characterA___theme___song___children
+  characterA___theme___anime___idRaw
+  characterA___theme___anime___name
+  characterA___theme___anime___slug
+  characterA___theme___anime___year
+  characterA___theme___anime___season
+  characterA___theme___anime___synopsis
+  characterA___theme___anime___synonyms
+  characterA___theme___anime___themes
+  characterA___theme___anime___series
+  characterA___theme___anime___resources
+  characterA___theme___anime___images
+  characterA___theme___anime___id
+  characterA___theme___anime___children
+  characterA___theme___entries
+  characterA___theme___entries___idRaw
+  characterA___theme___entries___version
+  characterA___theme___entries___episodes
+  characterA___theme___entries___nsfw
+  characterA___theme___entries___spoiler
+  characterA___theme___entries___videos
+  characterA___theme___entries___id
+  characterA___theme___entries___children
+  characterA___theme___id
+  characterA___theme___parent___id
+  characterA___theme___parent___children
+  characterA___theme___children
+  characterA___theme___children___id
+  characterA___theme___children___children
+  characterA___theme___internal___content
+  characterA___theme___internal___contentDigest
+  characterA___theme___internal___description
+  characterA___theme___internal___fieldOwners
+  characterA___theme___internal___ignoreType
+  characterA___theme___internal___mediaType
+  characterA___theme___internal___owner
+  characterA___theme___internal___type
+  characterA___id
+  characterA___parent___id
+  characterA___parent___parent___id
+  characterA___parent___parent___children
+  characterA___parent___children
+  characterA___parent___children___id
+  characterA___parent___children___children
+  characterA___parent___internal___content
+  characterA___parent___internal___contentDigest
+  characterA___parent___internal___description
+  characterA___parent___internal___fieldOwners
+  characterA___parent___internal___ignoreType
+  characterA___parent___internal___mediaType
+  characterA___parent___internal___owner
+  characterA___parent___internal___type
+  characterA___children
+  characterA___children___id
+  characterA___children___parent___id
+  characterA___children___parent___children
+  characterA___children___children
+  characterA___children___children___id
+  characterA___children___children___children
+  characterA___children___internal___content
+  characterA___children___internal___contentDigest
+  characterA___children___internal___description
+  characterA___children___internal___fieldOwners
+  characterA___children___internal___ignoreType
+  characterA___children___internal___mediaType
+  characterA___children___internal___owner
+  characterA___children___internal___type
+  characterA___internal___content
+  characterA___internal___contentDigest
+  characterA___internal___description
+  characterA___internal___fieldOwners
+  characterA___internal___ignoreType
+  characterA___internal___mediaType
+  characterA___internal___owner
+  characterA___internal___type
+  characterB___pairing___round___tier
+  characterB___pairing___round___name
+  characterB___pairing___round___pairings
+  characterB___pairing___round___id
+  characterB___pairing___round___children
+  characterB___pairing___order
+  characterB___pairing___group
+  characterB___pairing___characterA___idRaw
+  characterB___pairing___characterA___seed
+  characterB___pairing___characterA___name
+  characterB___pairing___characterA___source
+  characterB___pairing___characterA___id
+  characterB___pairing___characterA___children
+  characterB___pairing___characterB___idRaw
+  characterB___pairing___characterB___seed
+  characterB___pairing___characterB___name
+  characterB___pairing___characterB___source
+  characterB___pairing___characterB___id
+  characterB___pairing___characterB___children
+  characterB___pairing___votesA
+  characterB___pairing___votesB
+  characterB___pairing___id
+  characterB___pairing___parent___id
+  characterB___pairing___parent___children
+  characterB___pairing___children
+  characterB___pairing___children___id
+  characterB___pairing___children___children
+  characterB___pairing___internal___content
+  characterB___pairing___internal___contentDigest
+  characterB___pairing___internal___description
+  characterB___pairing___internal___fieldOwners
+  characterB___pairing___internal___ignoreType
+  characterB___pairing___internal___mediaType
+  characterB___pairing___internal___owner
+  characterB___pairing___internal___type
+  characterB___idRaw
+  characterB___seed
+  characterB___name
+  characterB___source
+  characterB___theme___idRaw
+  characterB___theme___slug
+  characterB___theme___group
+  characterB___theme___song___idRaw
+  characterB___theme___song___title
+  characterB___theme___song___themes
+  characterB___theme___song___performances
+  characterB___theme___song___id
+  characterB___theme___song___children
+  characterB___theme___anime___idRaw
+  characterB___theme___anime___name
+  characterB___theme___anime___slug
+  characterB___theme___anime___year
+  characterB___theme___anime___season
+  characterB___theme___anime___synopsis
+  characterB___theme___anime___synonyms
+  characterB___theme___anime___themes
+  characterB___theme___anime___series
+  characterB___theme___anime___resources
+  characterB___theme___anime___images
+  characterB___theme___anime___id
+  characterB___theme___anime___children
+  characterB___theme___entries
+  characterB___theme___entries___idRaw
+  characterB___theme___entries___version
+  characterB___theme___entries___episodes
+  characterB___theme___entries___nsfw
+  characterB___theme___entries___spoiler
+  characterB___theme___entries___videos
+  characterB___theme___entries___id
+  characterB___theme___entries___children
+  characterB___theme___id
+  characterB___theme___parent___id
+  characterB___theme___parent___children
+  characterB___theme___children
+  characterB___theme___children___id
+  characterB___theme___children___children
+  characterB___theme___internal___content
+  characterB___theme___internal___contentDigest
+  characterB___theme___internal___description
+  characterB___theme___internal___fieldOwners
+  characterB___theme___internal___ignoreType
+  characterB___theme___internal___mediaType
+  characterB___theme___internal___owner
+  characterB___theme___internal___type
+  characterB___id
+  characterB___parent___id
+  characterB___parent___parent___id
+  characterB___parent___parent___children
+  characterB___parent___children
+  characterB___parent___children___id
+  characterB___parent___children___children
+  characterB___parent___internal___content
+  characterB___parent___internal___contentDigest
+  characterB___parent___internal___description
+  characterB___parent___internal___fieldOwners
+  characterB___parent___internal___ignoreType
+  characterB___parent___internal___mediaType
+  characterB___parent___internal___owner
+  characterB___parent___internal___type
+  characterB___children
+  characterB___children___id
+  characterB___children___parent___id
+  characterB___children___parent___children
+  characterB___children___children
+  characterB___children___children___id
+  characterB___children___children___children
+  characterB___children___internal___content
+  characterB___children___internal___contentDigest
+  characterB___children___internal___description
+  characterB___children___internal___fieldOwners
+  characterB___children___internal___ignoreType
+  characterB___children___internal___mediaType
+  characterB___children___internal___owner
+  characterB___children___internal___type
+  characterB___internal___content
+  characterB___internal___contentDigest
+  characterB___internal___description
+  characterB___internal___fieldOwners
+  characterB___internal___ignoreType
+  characterB___internal___mediaType
+  characterB___internal___owner
+  characterB___internal___type
+  votesA
+  votesB
+  id
+  parent___id
+  parent___parent___id
+  parent___parent___parent___id
+  parent___parent___parent___children
+  parent___parent___children
+  parent___parent___children___id
+  parent___parent___children___children
+  parent___parent___internal___content
+  parent___parent___internal___contentDigest
+  parent___parent___internal___description
+  parent___parent___internal___fieldOwners
+  parent___parent___internal___ignoreType
+  parent___parent___internal___mediaType
+  parent___parent___internal___owner
+  parent___parent___internal___type
+  parent___children
+  parent___children___id
+  parent___children___parent___id
+  parent___children___parent___children
+  parent___children___children
+  parent___children___children___id
+  parent___children___children___children
+  parent___children___internal___content
+  parent___children___internal___contentDigest
+  parent___children___internal___description
+  parent___children___internal___fieldOwners
+  parent___children___internal___ignoreType
+  parent___children___internal___mediaType
+  parent___children___internal___owner
+  parent___children___internal___type
+  parent___internal___content
+  parent___internal___contentDigest
+  parent___internal___description
+  parent___internal___fieldOwners
+  parent___internal___ignoreType
+  parent___internal___mediaType
+  parent___internal___owner
+  parent___internal___type
+  children
+  children___id
+  children___parent___id
+  children___parent___parent___id
+  children___parent___parent___children
+  children___parent___children
+  children___parent___children___id
+  children___parent___children___children
+  children___parent___internal___content
+  children___parent___internal___contentDigest
+  children___parent___internal___description
+  children___parent___internal___fieldOwners
+  children___parent___internal___ignoreType
+  children___parent___internal___mediaType
+  children___parent___internal___owner
+  children___parent___internal___type
+  children___children
+  children___children___id
+  children___children___parent___id
+  children___children___parent___children
+  children___children___children
+  children___children___children___id
+  children___children___children___children
+  children___children___internal___content
+  children___children___internal___contentDigest
+  children___children___internal___description
+  children___children___internal___fieldOwners
+  children___children___internal___ignoreType
+  children___children___internal___mediaType
+  children___children___internal___owner
+  children___children___internal___type
+  children___internal___content
+  children___internal___contentDigest
+  children___internal___description
+  children___internal___fieldOwners
+  children___internal___ignoreType
+  children___internal___mediaType
+  children___internal___owner
+  children___internal___type
+  internal___content
+  internal___contentDigest
+  internal___description
+  internal___fieldOwners
+  internal___ignoreType
+  internal___mediaType
+  internal___owner
+  internal___type
+}
+
+type BracketPairingGroupConnection {
+  totalCount: Int!
+  edges: [BracketPairingEdge!]!
+  nodes: [BracketPairing!]!
+  pageInfo: PageInfo!
+  field: String!
+  fieldValue: String
+}
+
+input BracketPairingSortInput {
+  fields: [BracketPairingFieldsEnum]
+  order: [SortOrderEnum] = [ASC]
+}
+
+type BracketCharacterConnection {
+  totalCount: Int!
+  edges: [BracketCharacterEdge!]!
+  nodes: [BracketCharacter!]!
+  pageInfo: PageInfo!
+  distinct(field: BracketCharacterFieldsEnum!): [String!]!
+  group(skip: Int, limit: Int, field: BracketCharacterFieldsEnum!): [BracketCharacterGroupConnection!]!
+}
+
+type BracketCharacterEdge {
+  next: BracketCharacter
+  node: BracketCharacter!
+  previous: BracketCharacter
+}
+
+enum BracketCharacterFieldsEnum {
+  pairing___round___bracket___slug
+  pairing___round___bracket___name
+  pairing___round___bracket___currentGroup
+  pairing___round___bracket___rounds
+  pairing___round___bracket___id
+  pairing___round___bracket___children
+  pairing___round___tier
+  pairing___round___name
+  pairing___round___pairings
+  pairing___round___pairings___order
+  pairing___round___pairings___group
+  pairing___round___pairings___votesA
+  pairing___round___pairings___votesB
+  pairing___round___pairings___id
+  pairing___round___pairings___children
+  pairing___round___id
+  pairing___round___parent___id
+  pairing___round___parent___children
+  pairing___round___children
+  pairing___round___children___id
+  pairing___round___children___children
+  pairing___round___internal___content
+  pairing___round___internal___contentDigest
+  pairing___round___internal___description
+  pairing___round___internal___fieldOwners
+  pairing___round___internal___ignoreType
+  pairing___round___internal___mediaType
+  pairing___round___internal___owner
+  pairing___round___internal___type
+  pairing___order
+  pairing___group
+  pairing___characterA___pairing___order
+  pairing___characterA___pairing___group
+  pairing___characterA___pairing___votesA
+  pairing___characterA___pairing___votesB
+  pairing___characterA___pairing___id
+  pairing___characterA___pairing___children
+  pairing___characterA___idRaw
+  pairing___characterA___seed
+  pairing___characterA___name
+  pairing___characterA___source
+  pairing___characterA___theme___idRaw
+  pairing___characterA___theme___slug
+  pairing___characterA___theme___group
+  pairing___characterA___theme___entries
+  pairing___characterA___theme___id
+  pairing___characterA___theme___children
+  pairing___characterA___id
+  pairing___characterA___parent___id
+  pairing___characterA___parent___children
+  pairing___characterA___children
+  pairing___characterA___children___id
+  pairing___characterA___children___children
+  pairing___characterA___internal___content
+  pairing___characterA___internal___contentDigest
+  pairing___characterA___internal___description
+  pairing___characterA___internal___fieldOwners
+  pairing___characterA___internal___ignoreType
+  pairing___characterA___internal___mediaType
+  pairing___characterA___internal___owner
+  pairing___characterA___internal___type
+  pairing___characterB___pairing___order
+  pairing___characterB___pairing___group
+  pairing___characterB___pairing___votesA
+  pairing___characterB___pairing___votesB
+  pairing___characterB___pairing___id
+  pairing___characterB___pairing___children
+  pairing___characterB___idRaw
+  pairing___characterB___seed
+  pairing___characterB___name
+  pairing___characterB___source
+  pairing___characterB___theme___idRaw
+  pairing___characterB___theme___slug
+  pairing___characterB___theme___group
+  pairing___characterB___theme___entries
+  pairing___characterB___theme___id
+  pairing___characterB___theme___children
+  pairing___characterB___id
+  pairing___characterB___parent___id
+  pairing___characterB___parent___children
+  pairing___characterB___children
+  pairing___characterB___children___id
+  pairing___characterB___children___children
+  pairing___characterB___internal___content
+  pairing___characterB___internal___contentDigest
+  pairing___characterB___internal___description
+  pairing___characterB___internal___fieldOwners
+  pairing___characterB___internal___ignoreType
+  pairing___characterB___internal___mediaType
+  pairing___characterB___internal___owner
+  pairing___characterB___internal___type
+  pairing___votesA
+  pairing___votesB
+  pairing___id
+  pairing___parent___id
+  pairing___parent___parent___id
+  pairing___parent___parent___children
+  pairing___parent___children
+  pairing___parent___children___id
+  pairing___parent___children___children
+  pairing___parent___internal___content
+  pairing___parent___internal___contentDigest
+  pairing___parent___internal___description
+  pairing___parent___internal___fieldOwners
+  pairing___parent___internal___ignoreType
+  pairing___parent___internal___mediaType
+  pairing___parent___internal___owner
+  pairing___parent___internal___type
+  pairing___children
+  pairing___children___id
+  pairing___children___parent___id
+  pairing___children___parent___children
+  pairing___children___children
+  pairing___children___children___id
+  pairing___children___children___children
+  pairing___children___internal___content
+  pairing___children___internal___contentDigest
+  pairing___children___internal___description
+  pairing___children___internal___fieldOwners
+  pairing___children___internal___ignoreType
+  pairing___children___internal___mediaType
+  pairing___children___internal___owner
+  pairing___children___internal___type
+  pairing___internal___content
+  pairing___internal___contentDigest
+  pairing___internal___description
+  pairing___internal___fieldOwners
+  pairing___internal___ignoreType
+  pairing___internal___mediaType
+  pairing___internal___owner
+  pairing___internal___type
+  idRaw
+  seed
+  name
+  source
+  theme___idRaw
+  theme___slug
+  theme___group
+  theme___song___idRaw
+  theme___song___title
+  theme___song___themes
+  theme___song___themes___idRaw
+  theme___song___themes___slug
+  theme___song___themes___group
+  theme___song___themes___entries
+  theme___song___themes___id
+  theme___song___themes___children
+  theme___song___performances
+  theme___song___performances___as
+  theme___song___performances___id
+  theme___song___performances___children
+  theme___song___id
+  theme___song___parent___id
+  theme___song___parent___children
+  theme___song___children
+  theme___song___children___id
+  theme___song___children___children
+  theme___song___internal___content
+  theme___song___internal___contentDigest
+  theme___song___internal___description
+  theme___song___internal___fieldOwners
+  theme___song___internal___ignoreType
+  theme___song___internal___mediaType
+  theme___song___internal___owner
+  theme___song___internal___type
+  theme___anime___idRaw
+  theme___anime___name
+  theme___anime___slug
+  theme___anime___year
+  theme___anime___season
+  theme___anime___synopsis
+  theme___anime___synonyms
+  theme___anime___synonyms___idRaw
+  theme___anime___synonyms___text
+  theme___anime___synonyms___id
+  theme___anime___synonyms___children
+  theme___anime___themes
+  theme___anime___themes___idRaw
+  theme___anime___themes___slug
+  theme___anime___themes___group
+  theme___anime___themes___entries
+  theme___anime___themes___id
+  theme___anime___themes___children
+  theme___anime___series
+  theme___anime___series___idRaw
+  theme___anime___series___slug
+  theme___anime___series___name
+  theme___anime___series___anime
+  theme___anime___series___id
+  theme___anime___series___children
+  theme___anime___resources
+  theme___anime___resources___idRaw
+  theme___anime___resources___link
+  theme___anime___resources___site
+  theme___anime___resources___id
+  theme___anime___resources___children
+  theme___anime___images
+  theme___anime___images___idRaw
+  theme___anime___images___facet
+  theme___anime___images___link
+  theme___anime___images___id
+  theme___anime___images___children
+  theme___anime___id
+  theme___anime___parent___id
+  theme___anime___parent___children
+  theme___anime___children
+  theme___anime___children___id
+  theme___anime___children___children
+  theme___anime___internal___content
+  theme___anime___internal___contentDigest
+  theme___anime___internal___description
+  theme___anime___internal___fieldOwners
+  theme___anime___internal___ignoreType
+  theme___anime___internal___mediaType
+  theme___anime___internal___owner
+  theme___anime___internal___type
+  theme___entries
+  theme___entries___idRaw
+  theme___entries___version
+  theme___entries___episodes
+  theme___entries___nsfw
+  theme___entries___spoiler
+  theme___entries___theme___idRaw
+  theme___entries___theme___slug
+  theme___entries___theme___group
+  theme___entries___theme___entries
+  theme___entries___theme___id
+  theme___entries___theme___children
+  theme___entries___videos
+  theme___entries___videos___idRaw
+  theme___entries___videos___filename
+  theme___entries___videos___basename
+  theme___entries___videos___link
+  theme___entries___videos___resolution
+  theme___entries___videos___nc
+  theme___entries___videos___subbed
+  theme___entries___videos___lyrics
+  theme___entries___videos___uncen
+  theme___entries___videos___source
+  theme___entries___videos___overlap
+  theme___entries___videos___tags
+  theme___entries___videos___entries
+  theme___entries___videos___id
+  theme___entries___videos___children
+  theme___entries___id
+  theme___entries___parent___id
+  theme___entries___parent___children
+  theme___entries___children
+  theme___entries___children___id
+  theme___entries___children___children
+  theme___entries___internal___content
+  theme___entries___internal___contentDigest
+  theme___entries___internal___description
+  theme___entries___internal___fieldOwners
+  theme___entries___internal___ignoreType
+  theme___entries___internal___mediaType
+  theme___entries___internal___owner
+  theme___entries___internal___type
+  theme___id
+  theme___parent___id
+  theme___parent___parent___id
+  theme___parent___parent___children
+  theme___parent___children
+  theme___parent___children___id
+  theme___parent___children___children
+  theme___parent___internal___content
+  theme___parent___internal___contentDigest
+  theme___parent___internal___description
+  theme___parent___internal___fieldOwners
+  theme___parent___internal___ignoreType
+  theme___parent___internal___mediaType
+  theme___parent___internal___owner
+  theme___parent___internal___type
+  theme___children
+  theme___children___id
+  theme___children___parent___id
+  theme___children___parent___children
+  theme___children___children
+  theme___children___children___id
+  theme___children___children___children
+  theme___children___internal___content
+  theme___children___internal___contentDigest
+  theme___children___internal___description
+  theme___children___internal___fieldOwners
+  theme___children___internal___ignoreType
+  theme___children___internal___mediaType
+  theme___children___internal___owner
+  theme___children___internal___type
+  theme___internal___content
+  theme___internal___contentDigest
+  theme___internal___description
+  theme___internal___fieldOwners
+  theme___internal___ignoreType
+  theme___internal___mediaType
+  theme___internal___owner
+  theme___internal___type
+  id
+  parent___id
+  parent___parent___id
+  parent___parent___parent___id
+  parent___parent___parent___children
+  parent___parent___children
+  parent___parent___children___id
+  parent___parent___children___children
+  parent___parent___internal___content
+  parent___parent___internal___contentDigest
+  parent___parent___internal___description
+  parent___parent___internal___fieldOwners
+  parent___parent___internal___ignoreType
+  parent___parent___internal___mediaType
+  parent___parent___internal___owner
+  parent___parent___internal___type
+  parent___children
+  parent___children___id
+  parent___children___parent___id
+  parent___children___parent___children
+  parent___children___children
+  parent___children___children___id
+  parent___children___children___children
+  parent___children___internal___content
+  parent___children___internal___contentDigest
+  parent___children___internal___description
+  parent___children___internal___fieldOwners
+  parent___children___internal___ignoreType
+  parent___children___internal___mediaType
+  parent___children___internal___owner
+  parent___children___internal___type
+  parent___internal___content
+  parent___internal___contentDigest
+  parent___internal___description
+  parent___internal___fieldOwners
+  parent___internal___ignoreType
+  parent___internal___mediaType
+  parent___internal___owner
+  parent___internal___type
+  children
+  children___id
+  children___parent___id
+  children___parent___parent___id
+  children___parent___parent___children
+  children___parent___children
+  children___parent___children___id
+  children___parent___children___children
+  children___parent___internal___content
+  children___parent___internal___contentDigest
+  children___parent___internal___description
+  children___parent___internal___fieldOwners
+  children___parent___internal___ignoreType
+  children___parent___internal___mediaType
+  children___parent___internal___owner
+  children___parent___internal___type
+  children___children
+  children___children___id
+  children___children___parent___id
+  children___children___parent___children
+  children___children___children
+  children___children___children___id
+  children___children___children___children
+  children___children___internal___content
+  children___children___internal___contentDigest
+  children___children___internal___description
+  children___children___internal___fieldOwners
+  children___children___internal___ignoreType
+  children___children___internal___mediaType
+  children___children___internal___owner
+  children___children___internal___type
+  children___internal___content
+  children___internal___contentDigest
+  children___internal___description
+  children___internal___fieldOwners
+  children___internal___ignoreType
+  children___internal___mediaType
+  children___internal___owner
+  children___internal___type
+  internal___content
+  internal___contentDigest
+  internal___description
+  internal___fieldOwners
+  internal___ignoreType
+  internal___mediaType
+  internal___owner
+  internal___type
+}
+
+type BracketCharacterGroupConnection {
+  totalCount: Int!
+  edges: [BracketCharacterEdge!]!
+  nodes: [BracketCharacter!]!
+  pageInfo: PageInfo!
+  field: String!
+  fieldValue: String
+}
+
+input BracketCharacterSortInput {
+  fields: [BracketCharacterFieldsEnum]
   order: [SortOrderEnum] = [ASC]
 }
 

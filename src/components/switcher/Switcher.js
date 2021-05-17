@@ -1,17 +1,17 @@
 import styled from "styled-components";
-import { Flex } from "components/box";
+import { AnimateSharedLayout, motion } from "framer-motion";
+import { Box } from "components/box";
 import { Button } from "components/button";
 import theme from "theme";
-import { AnimateSharedLayout, motion } from "framer-motion";
 
-const StyledSwitcher = styled(Flex).attrs({
-    flexInline: true,
-    alignSelf: "center"
-})`
-    background-color: ${theme.colors["solid"]};
-    box-shadow: ${theme.shadows.low};
-
+const StyledSwitcher = styled(Box).attrs((props) => ({
+    bg: props.bg || props.backgroundColor || theme.colors["solid"]
+}))`
+    width: fit-content;
     border-radius: 1rem;
+    white-space: nowrap;
+    
+    box-shadow: ${theme.shadows.low};
 `;
 const StyledButton = styled(Button)`
     position: relative;

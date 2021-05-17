@@ -19,6 +19,6 @@ const ThemeInjection = () => {
 };
 
 export function onRenderBody({ setBodyAttributes, setPreBodyComponents }) {
-    setBodyAttributes({ theme: "light" });
+    setBodyAttributes({ theme: "dark" });
     setPreBodyComponents(<ThemeInjection />);
 }

@@ -34,6 +34,7 @@ const config = {
         process.env.SOURCE_PLUGIN === "DB"
             ? "gatsby-source-animethemes-db"
             : "gatsby-source-animethemes",
+        "gatsby-source-animebracket",
         "gatsby-plugin-styled-components",
         "gatsby-plugin-react-helmet",
         {
