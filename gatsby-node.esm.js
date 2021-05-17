@@ -41,6 +41,11 @@ export async function createPages({ actions: { createPage }, graphql }) {
                     slug
                 }
             }
+            allBracket {
+                nodes {
+                    slug
+                }
+            }
         }
     `);
 
@@ -102,6 +107,14 @@ export async function createPages({ actions: { createPage }, graphql }) {
         createPage({
             path: `/artist/${slug}`,
             component: require.resolve("./src/templates/artist.js"),
+            context: { slug }
+        });
+    }
+
+    for (const { slug } of data.allBracket.nodes) {
+        createPage({
+            path: `/bracket/${slug}`,
+            component: require.resolve("./src/templates/bracket.js"),
             context: { slug }
         });
     }

@@ -20,6 +20,14 @@ export const Text = styled.span.attrs(getAttributes)`
         color: ${theme.colors["text-muted"]};
     `}
 
+    ${(props) => props.variant === "h3" && css`
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: ${theme.colors["text-disabled"]};
+    `}
+
     ${(props) => props.variant === "small" && css`
         font-size: 0.8rem;
         font-weight: 700;
@@ -58,6 +66,10 @@ export const Text = styled.span.attrs(getAttributes)`
     ${(props) => props.noWrap && css`
         white-space: nowrap;
     `}
+
+    ${(props) => props.tabularNums && css`
+        font-variant-numeric: tabular-nums;
+    `}
     
     // Typography and color props can override variant styles
     ${typography}
@@ -80,6 +92,8 @@ function getAs(variant) {
             return "h1";
         case "h2":
             return "h2";
+        case "h3":
+            return "h3";
         case "small":
             return "small";
         case "code":

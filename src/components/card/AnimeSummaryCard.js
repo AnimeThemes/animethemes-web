@@ -40,7 +40,7 @@ export function AnimeSummaryCard({ anime, hideThemes = false, maxThemes = 4 }) {
             to={animeLink}
         >
             {!hideThemes && (
-                <Flex flexWrap="wrap" gapsBoth="0.75rem">
+                <Flex display={[ "none", "flex" ]} flexWrap="wrap" gapsBoth="0.75rem">
                     {anime.themes
                         .slice(0, maxThemes)
                         .filter((theme) => "entries" in theme && theme.entries[0].videos.length)
