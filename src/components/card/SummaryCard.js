@@ -4,7 +4,9 @@ import styled from "styled-components";
 import { Card } from "components/card";
 import { Flex } from "components/box";
 
-const StyledCover = styled.img`
+const StyledCover = styled.img.attrs({
+    loading: "lazy"
+})`
     width: 48px;
     height: 64px;
     object-fit: cover;

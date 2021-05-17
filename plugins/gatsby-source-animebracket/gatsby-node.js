@@ -77,7 +77,7 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest }) => 
     }
 
     function sourceRound(round) {
-        const tier = round[0].tier;
+        const tier = +round[0].tier;
 
         const roundNode = createNodeFromData({
             id: `${bracket.id}-${tier}`,
@@ -94,8 +94,8 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest }) => 
             const pairingNode = createNodeFromData({
                 id: pairing.id,
                 round: roundNode.id,
-                order: pairing.order,
-                group: pairing.group,
+                order: +pairing.order,
+                group: +pairing.group,
                 characterA: createNodeId(`BracketCharacter-${pairing.character1.id}`),
                 characterB: createNodeId(`BracketCharacter-${pairing.character2.id}`),
                 votesA: pairing.character1.votes || null,
