@@ -13,11 +13,12 @@ import { SongTitleWithArtists } from "components/utils";
 import { useState } from "react";
 import { Switcher } from "components/switcher";
 
-const CornerIcon = styled(Icon)`
+const CornerIcon = styled(Icon).attrs({
+    size: "2x"
+})`
     position: absolute;
     right: 0;
     top: 0;
-    font-size: 2rem;
     color: ${theme.colors["text-primary"]};
     transform: translate(50%, -33%) rotate(10deg);
 `;
