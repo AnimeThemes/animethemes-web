@@ -35,7 +35,9 @@ export default function BracketPage({ data: { bracket } }) {
         <Box gapsColumn="1.5rem">
             <SEO title={bracket.name} />
             <Text variant="h1">{bracket.name}</Text>
-            <BracketRound round={bracket.currentRound} initialGroup={String(bracket.currentGroup)} isCurrent/>
+            {!!bracket.currentRound && (
+                <BracketRound round={bracket.currentRound} initialGroup={String(bracket.currentGroup)} isCurrent/>
+            )}
             {bracket.rounds.sort((a, b) => a.tier - b.tier).map((round) => <BracketRound key={round.tier} round={round}/>)}
         </Box>
     );
