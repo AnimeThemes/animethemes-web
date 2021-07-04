@@ -1,32 +1,46 @@
 import { useLocation } from "@reach/router";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import useSearch from "hooks/useSearch";
 import { Button } from "components/button";
 import { Text } from "components/text";
 import { Box, Flex } from "components/box";
-import { AnimeSummaryCard, ArtistSummaryCard, ThemeSummaryCard } from "components/card";
 import { Link } from "gatsby";
 import { Icon } from "components/icon";
+import { SearchResultList } from "components/search";
+import { useQuery } from "react-query";
+import { fetchGlobalSearchResults } from "lib/search";
 
-export function GlobalSearch({ searchQuery, searchEntity }) {
-    const [ results, isSearching ] = useSearch(searchQuery, searchEntity ? 15 : 4, searchEntity ? [ searchEntity ] : [ "anime", "theme", "artist" ]);
+export function GlobalSearch({ searchQuery }) {
+    const fetchSearchResults = () => fetchGlobalSearchResults(
+        searchQuery,
+        4,
+        [ "anime", "theme", "artist" ]
+    );
 
-    if (!searchQuery) {
+    const {
+        data,
+        isLoading
+    } = useQuery(
+        [ "searchGlobal", searchQuery ],
+        fetchSearchResults,
+        {
+            keepPreviousData: true
+        }
+    );
+
+    if (isLoading) {
         return (
-            <Text block>Type in a query to begin searching.</Text>
+            <Text block>Searching...</Text>
         );
     }
 
-    const { animeResults, themeResults, artistResults } = results;
+    const {
+        anime: animeResults = [],
+        theme: themeResults = [],
+        artist: artistResults = []
+    } = data;
     const totalResults = animeResults.length + themeResults.length + artistResults.length;
 
     if (!totalResults) {
-        if (isSearching) {
-            return (
-                <Text block>Searching...</Text>
-            );
-        }
-
         return (
             <Text block>No results found for query &quot;{searchQuery}&quot;. Did you spell it correctly?</Text>
         );
@@ -34,57 +48,39 @@ export function GlobalSearch({ searchQuery, searchEntity }) {
 
     return (
         <Box gapsColumn="1.5rem">
-            <EntitySearch searchEntity={searchEntity} entity="anime" title="Anime" results={animeResults}/>
-            <EntitySearch searchEntity={searchEntity} entity="theme" title="Themes" results={themeResults}/>
-            <EntitySearch searchEntity={searchEntity} entity="artist" title="Artist" results={artistResults}/>
+            <GlobalSearchSection entity="anime" title="Anime" results={animeResults}/>
+            <GlobalSearchSection entity="theme" title="Themes" results={themeResults}/>
+            <GlobalSearchSection entity="artist" title="Artist" results={artistResults}/>
         </Box>
     );
 }
 
-function EntitySearch({ searchEntity, entity, title, results }) {
+function GlobalSearchSection({ entity, title, results }) {
     const { search, hash } = useLocation();
     const urlSuffix = search + hash;
-    const totalResults = results.length;
 
-    if ((searchEntity && searchEntity !== entity) || !results.length) {
+    if (!results.length) {
         return null;
     }
 
-    // If no entity is selected, just show a preview with 3 results
-    if (!searchEntity) {
-        results = results.slice(0, 3);
-    }
-
-    let resultCards = results.map((result) => {
-        switch (entity) {
-            case "anime":
-                return <AnimeSummaryCard key={result.slug} anime={result}/>;
-            case "theme":
-                return <ThemeSummaryCard key={result.anime.slug + result.slug} theme={result}/>;
-            case "artist":
-                return <ArtistSummaryCard key={result.slug} artist={result}/>;
-            default:
-                return null;
-        }
-    });
+    const resultsPreview = results.slice(0, 3);
+    const hasMoreResults = results.length > 3;
 
     return (
-        <Box gapsColumn="1.5rem">
-            {!searchEntity && (
-                <Text variant="h2">{title}</Text>
-            )}
+        <>
+            <Text variant="h2">{title}</Text>
             <Box gapsColumn="1rem">
-                {resultCards}
+                <SearchResultList results={resultsPreview} entity={entity}/>
             </Box>
-            {!searchEntity && totalResults > 3 && (
+            {hasMoreResults && (
                 <Flex justifyContent="center">
                     <Link to={`/search/${entity}${urlSuffix}`}>
-                        <Button silent>
+                        <Button silent title="See all results">
                             <Icon icon={faChevronDown}/>
                         </Button>
                     </Link>
                 </Flex>
             )}
-        </Box>
+        </>
     );
 }

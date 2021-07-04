@@ -360,6 +360,7 @@ type SitePageContext {
   year: Int
   seasonList: [String]
   season: String
+  entity: String
 }
 
 interface Entity {
@@ -667,13 +668,13 @@ type SitePluginPluginOptions {
   hooks: String
   images: String
   layout: String
+  lib: String
   pages: String
   styles: String
   templates: String
   theme: String
   utils: String
   component: String
-  prefixes: [String]
   icon: String
   legacy: Boolean
   theme_color_in_head: Boolean
@@ -1392,6 +1393,7 @@ input SitePageContextFilterInput {
   year: IntQueryOperatorInput
   seasonList: StringQueryOperatorInput
   season: StringQueryOperatorInput
+  entity: StringQueryOperatorInput
 }
 
 input SitePluginFilterInput {
@@ -1422,13 +1424,13 @@ input SitePluginPluginOptionsFilterInput {
   hooks: StringQueryOperatorInput
   images: StringQueryOperatorInput
   layout: StringQueryOperatorInput
+  lib: StringQueryOperatorInput
   pages: StringQueryOperatorInput
   styles: StringQueryOperatorInput
   templates: StringQueryOperatorInput
   theme: StringQueryOperatorInput
   utils: StringQueryOperatorInput
   component: StringQueryOperatorInput
-  prefixes: StringQueryOperatorInput
   icon: StringQueryOperatorInput
   legacy: BooleanQueryOperatorInput
   theme_color_in_head: BooleanQueryOperatorInput
@@ -1596,6 +1598,7 @@ enum SitePageFieldsEnum {
   context___year
   context___seasonList
   context___season
+  context___entity
   pluginCreator___id
   pluginCreator___parent___id
   pluginCreator___parent___parent___id
@@ -1648,13 +1651,13 @@ enum SitePageFieldsEnum {
   pluginCreator___pluginOptions___hooks
   pluginCreator___pluginOptions___images
   pluginCreator___pluginOptions___layout
+  pluginCreator___pluginOptions___lib
   pluginCreator___pluginOptions___pages
   pluginCreator___pluginOptions___styles
   pluginCreator___pluginOptions___templates
   pluginCreator___pluginOptions___theme
   pluginCreator___pluginOptions___utils
   pluginCreator___pluginOptions___component
-  pluginCreator___pluginOptions___prefixes
   pluginCreator___pluginOptions___icon
   pluginCreator___pluginOptions___legacy
   pluginCreator___pluginOptions___theme_color_in_head
@@ -9533,13 +9536,13 @@ enum SitePluginFieldsEnum {
   pluginOptions___hooks
   pluginOptions___images
   pluginOptions___layout
+  pluginOptions___lib
   pluginOptions___pages
   pluginOptions___styles
   pluginOptions___templates
   pluginOptions___theme
   pluginOptions___utils
   pluginOptions___component
-  pluginOptions___prefixes
   pluginOptions___icon
   pluginOptions___legacy
   pluginOptions___theme_color_in_head

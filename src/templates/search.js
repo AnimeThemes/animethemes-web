@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
-import { graphql, Link, navigate } from "gatsby";
+import { Link, navigate } from "gatsby";
 import { useDebounce } from "use-debounce";
 import { SearchInput } from "components/input";
-import { GlobalSearch } from "components/search";
+import { EntitySearch, GlobalSearch } from "components/search";
 import { gapsColumn, gapsRow } from "styles/mixins";
 import { Box, Flex } from "components/box";
 import { Switcher } from "components/switcher";
@@ -13,19 +13,18 @@ import { Text } from "components/text";
 import { Icon } from "components/icon";
 
 const StyledSearchOptions = styled(Flex)`
+    align-items: center;
     @media (min-width: 721px) {
         flex-direction: row;
         ${gapsRow("1rem")}
     }
     @media (max-width: 720px) {
         flex-direction: column;
-        align-items: center;
         ${gapsColumn("1rem")}
     }
 `;
 
-export default function SearchPage({ location: { pathname, search, hash } }) {
-    const entity = useMemo(() => pathname.match(/\/search(?:\/([^/]+))?/)[1], [ pathname ]);
+export default function SearchPage({ pageContext: { entity }, location: { search, hash } }) {
     const urlParams = useMemo(() => new URLSearchParams(search), [ search ]);
     const urlSuffix = search + hash;
 
@@ -36,9 +35,6 @@ export default function SearchPage({ location: { pathname, search, hash } }) {
     const pageTitle = searchQuery && searchQuery.trim()
         ? `${searchQuery} - Search`
         : "Search";
-
-    // Temporary effect to listen for changes to the search query that may be made by the quick search (WIP)
-    useEffect(() => { setSearchQuery(urlParams.get("q")) }, [ urlParams ]);
 
     useEffect(() => {
         // Update URL to maintain the searchQuery on page navigation.
@@ -118,17 +114,20 @@ export default function SearchPage({ location: { pathname, search, hash } }) {
             {/*        </Flex>*/}
             {/*    </Grid>*/}
             {/*</Collapse>*/}
-            <GlobalSearch searchEntity={entity} searchQuery={debouncedSearchQuery}/>
+            {}
+            <Search searchEntity={entity} searchQuery={debouncedSearchQuery}/>
         </Box>
     );
 }
 
-export const query = graphql`
-    query SearchPageQuery {
-        allAnime {
-            groupedByYear: group(field: year) {
-                year: fieldValue
-            }
+function Search({ searchQuery, searchEntity }) {
+    if (searchQuery) {
+        if (searchEntity) {
+            return <EntitySearch searchQuery={searchQuery} searchEntity={searchEntity}/>;
+        } else {
+            return <GlobalSearch searchQuery={searchQuery}/>;
         }
+    } else {
+        return <Text block>Type in a query to begin searching.</Text>;
     }
-`;
+}

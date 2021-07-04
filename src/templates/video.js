@@ -138,7 +138,7 @@ export default function VideoPage({ data: { video, entry } }) {
                                                         key={index}
                                                         anime={anime}
                                                         theme={theme}
-                                                        entry={entry}
+                                                        entry={otherEntry}
                                                         video={video}
                                                     />
                                                 ))}

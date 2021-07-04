@@ -37,12 +37,10 @@ GATSBY_API_URL = http://localhost
 
 - [Gatsby](https://www.gatsbyjs.com/)
 - [styled-components](https://styled-components.com/)
-- [SWR](https://swr.vercel.app/)
+- [react-query](https://react-query.tanstack.com/)
 - [Font Awesome](https://fontawesome.com/)
 - ...some other small packages, see the `package.json`.
 
 ### APIs
 
-- [AniList GraphQL API](https://anilist.gitbook.io/anilist-apiv2-docs/)
-  - Temporarily for fetching artist covers.
-- AnimeThemes' own API
+- [AnimeThemes API](https://staging.animethemes.moe/api/docs/)

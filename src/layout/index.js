@@ -13,6 +13,9 @@ import useColorTheme from "hooks/useColorTheme";
 import { Box, Flex } from "components/box";
 import { darkColors } from "theme/colors/dark";
 import { Footer } from "components/footer";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
 
 export default function Layout({ children, data, pageContext }) {
     const video = data ? data.video : null;
@@ -33,33 +36,35 @@ export default function Layout({ children, data, pageContext }) {
         <ThemeProvider theme={theme}>
             <ColorThemeContext.Provider value={{ colorTheme, toggleColorTheme }}>
                 <PlayerContext.Provider value={{ currentVideo, setCurrentVideo }}>
-                    <SEO />
-                    <Helmet>
-                        <meta name="theme-color" content={darkColors["background"]}/>
-                        <link rel="preconnect" href="https://fonts.gstatic.com"/>
-                        <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=fallback" rel="stylesheet"/>
-                    </Helmet>
-                    <GlobalStyle/>
-                    <Flex flexDirection="column" minHeight="100vh" bg="background">
-                        <Navigation/>
-                        {currentVideo && (
-                            <VideoPlayer
-                                video={currentVideo}
-                                entry={currentEntry}
-                                background={!video}
-                            />
-                        )}
-                        <Container mb="2rem">
-                            {!!pageContext.year && (
-                                <Box gapsColumn="1rem" mb="1.5rem">
-                                    <YearNavigation year={pageContext.year} />
-                                    <SeasonNavigation year={pageContext.year} season={pageContext.season} seasonList={pageContext.seasonList} />
-                                </Box>
+                    <QueryClientProvider client={queryClient}>
+                        <SEO />
+                        <Helmet>
+                            <meta name="theme-color" content={darkColors["background"]}/>
+                            <link rel="preconnect" href="https://fonts.gstatic.com"/>
+                            <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=fallback" rel="stylesheet"/>
+                        </Helmet>
+                        <GlobalStyle/>
+                        <Flex flexDirection="column" minHeight="100vh" bg="background">
+                            <Navigation/>
+                            {currentVideo && (
+                                <VideoPlayer
+                                    video={currentVideo}
+                                    entry={currentEntry}
+                                    background={!video}
+                                />
                             )}
-                            {children}
-                        </Container>
-                        <Footer/>
-                    </Flex>
+                            <Container mb="2rem">
+                                {!!pageContext.year && (
+                                    <Box gapsColumn="1rem" mb="1.5rem">
+                                        <YearNavigation year={pageContext.year} />
+                                        <SeasonNavigation year={pageContext.year} season={pageContext.season} seasonList={pageContext.seasonList} />
+                                    </Box>
+                                )}
+                                {children}
+                            </Container>
+                            <Footer/>
+                        </Flex>
+                    </QueryClientProvider>
                 </PlayerContext.Provider>
             </ColorThemeContext.Provider>
         </ThemeProvider>

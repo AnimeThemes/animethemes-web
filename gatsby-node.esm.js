@@ -118,4 +118,12 @@ export async function createPages({ actions: { createPage }, graphql }) {
             context: { slug }
         });
     }
+
+    for (const entity of [ null, "anime", "theme", "artist" ]) {
+        createPage({
+            path: `/search${entity ? `/${entity}` : ``}`,
+            component: require.resolve("./src/templates/search.js"),
+            context: { entity }
+        });
+    }
 }
