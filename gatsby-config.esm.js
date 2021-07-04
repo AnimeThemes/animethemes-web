@@ -47,10 +47,6 @@ const config = {
                 component: require.resolve("./src/layout/index.js"),
             }
         },
-        {
-            resolve: "gatsby-plugin-create-client-paths",
-            options: { prefixes: [ "/search/*" ] },
-        },
         "gatsby-plugin-fontawesome-css",
         {
             resolve: "gatsby-plugin-manifest",

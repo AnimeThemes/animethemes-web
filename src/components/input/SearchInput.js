@@ -42,7 +42,8 @@ export function SearchInput({ query, setQuery, isSearching, onSubmit, inputProps
                 <StyledInput
                     type="text"
                     placeholder="Search"
-                    value={query} onChange={(e) => setQuery && setQuery(e.target.value)}
+                    value={query}
+                    onChange={(e) => setQuery && setQuery(e.target.value)}
                     {...inputProps}
                 />
             </StyledForm>

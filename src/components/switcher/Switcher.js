@@ -7,6 +7,9 @@ import theme from "theme";
 const StyledSwitcher = styled(Box).attrs((props) => ({
     bg: props.bg || props.backgroundColor || theme.colors["solid"]
 }))`
+    display: flex;
+    align-items: stretch;
+    
     width: fit-content;
     border-radius: 1rem;
     white-space: nowrap;
