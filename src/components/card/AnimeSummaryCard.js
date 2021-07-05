@@ -43,7 +43,7 @@ export function AnimeSummaryCard({ anime, hideThemes = false, maxThemes = 4 }) {
                 <Flex display={[ "none", "flex" ]} flexWrap="wrap" gapsBoth="0.75rem">
                     {anime.themes
                         .slice(0, maxThemes)
-                        .filter((theme) => "entries" in theme && theme.entries[0].videos.length)
+                        .filter((theme) => "entries" in theme && theme.entries.length && theme.entries[0].videos.length)
                         .map((theme) => {
                             const entry = theme.entries[0];
                             const video = entry.videos[0];
