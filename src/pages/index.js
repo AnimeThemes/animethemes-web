@@ -7,6 +7,8 @@ import { faInfo } from "@fortawesome/free-solid-svg-icons";
 import { Box, Flex, Grid } from "components/box";
 import { ExternalLink } from "components/external-link";
 import theme from "theme";
+import moment from "moment";
+import { useEffect, useState } from "react";
 
 const StyledAnnouncement = styled(Text)`
     & a {
@@ -22,10 +24,23 @@ const StyledLink = styled(Link)`
     max-width: 100%;
 `;
 
-export default function IndexPage({ data: { allAnnouncement } }) {
+export default function IndexPage({ data: { site, allAnnouncement } }) {
+    const [ timeSinceBuild, setTimeSinceBuild ] = useState();
+
+    useEffect(() => {
+        setTimeSinceBuild(moment(site.buildTime).fromNow());
+    }, [ site.buildTime ]);
+
     return (
         <Box gapsColumn="1.5rem">
             <Text variant="h1">Welcome, to AnimeThemes.moe!</Text>
+            <Text as="p" color="text-disabled">
+                <span>This site was last updated: </span>
+                <Text fontWeight="700">{site.buildTimeFormatted}</Text>
+                {!!timeSinceBuild && (
+                    <span> ({timeSinceBuild})</span>
+                )}
+            </Text>
             <Text as="p">
                 <span>This page is still activily being worked on. If you are a developer and interested in contributing feel free to contact us on </span>
                 <ExternalLink href="https://discordapp.com/invite/m9zbVyQ">Discord</ExternalLink>
@@ -169,6 +184,10 @@ function PageLink({ path }) {
 
 export const query = graphql`
     query IndexPageQuery {
+        site {
+            buildTime
+            buildTimeFormatted: buildTime(formatString: "LLL")
+        }
         allAnnouncement {
             nodes {
                 id
