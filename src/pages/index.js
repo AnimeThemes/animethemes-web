@@ -149,10 +149,9 @@ export default function IndexPage({ data: { site, allAnnouncement } }) {
                     <Text as="p">
                         <span>You are browsing this site on GitHub Pages. On every commit in the </span>
                         <Text as="a" variant="code" link href="https://github.com/AnimeThemes/animethemes-web">animethemes-web</Text>
-                        <span> repository this site gets updated. This also comes with some limitations like </span>
-                        <Text variant="code">.htaccess</Text>
-                        <span> files not working. So don&apos;t expect everything on this site to work the same way as on the production site.</span>
+                        <span> repository this site gets updated.</span>
                     </Text>
+                    <Text as="p">Don&apos;t expect everything on this site to work the same way as on the staging/production sites.</Text>
                 </>
             )}
         </Box>

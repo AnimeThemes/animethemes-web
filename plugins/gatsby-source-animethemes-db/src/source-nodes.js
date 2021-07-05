@@ -144,12 +144,16 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "Image", helpers);
     }
 
-    for (const announcement of await query("SELECT * FROM announcement")) {
-        createNodeFromData({
-            id: announcement.announcement_id,
-            idRaw: announcement.announcement_id,
-            content: announcement.content
-        }, "Announcement", helpers);
+    try {
+        for (const announcement of await query("SELECT * FROM announcement")) {
+            createNodeFromData({
+                id: announcement.announcement_id,
+                idRaw: announcement.announcement_id,
+                content: announcement.content
+            }, "Announcement", helpers);
+        }
+    } catch (e) {
+        reporter.warn("Error while getting announcements. This should only happen on GitHub pages.");
     }
 
     // Pivot types
