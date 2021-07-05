@@ -25,7 +25,7 @@ jobs:
           PORT: ${{ job.services.mariadb.ports[3306] }}
         run: |
           sudo /etc/init.d/mysql start
-          curl https://github.com/AnimeThemes/animethemes-db-dump/raw/wiki/mysql/animethemes-db-dump-create-tables.sql | mysql --user=root --password=test123 --host=127.0.0.1 --port="$PORT" animethemes
+          curl -L https://github.com/AnimeThemes/animethemes-db-dump/raw/wiki/mysql/animethemes-db-dump-create-tables.sql | mysql --user=root --password=test123 --host=127.0.0.1 --port="$PORT" animethemes
 
       - name: Setup Node
         uses: actions/setup-node@v2.1.2
