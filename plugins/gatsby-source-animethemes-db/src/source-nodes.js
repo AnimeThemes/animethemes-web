@@ -38,6 +38,9 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
 
         if (!isPivot) {
             sql += " WHERE deleted_at IS NULL";
+        } else {
+            const [ a, b ] = table.split("_");
+            sql += ` INNER JOIN ${a} ON (${table}.${a}_id = ${a}.${a}_id) INNER JOIN ${b} ON (${table}.${b}_id = ${b}.${b}_id) WHERE ${a}.deleted_at IS NULL AND ${b}.deleted_at IS NULL`;
         }
 
         return await query(sql);
