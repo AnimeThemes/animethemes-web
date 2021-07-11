@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { gapsRow } from "styles/mixins";
 import theme from "theme";
 import { Icon } from "components/icon";
+import { Button } from "components/button";
 
 const StyledSearchInput = styled.div`
     display: flex;
@@ -28,8 +28,16 @@ const StyledForm = styled.form`
 const StyledInput = styled.input`
     width: 100%;
 `;
+const StyledResetButton = styled(Button)`
+    padding: 0;
+    
+    &:hover {
+        background-color: transparent;
+        box-shadow: none;
+    }
+`;
 
-export function SearchInput({ query, setQuery, isSearching, onSubmit, inputProps = {}, ...props }) {
+export function SearchInput({ query, setQuery, onSubmit, inputProps = {}, ...props }) {
     return (
         <StyledSearchInput {...props}>
             <Icon icon={faSearch} color="text-disabled"/>
@@ -47,8 +55,10 @@ export function SearchInput({ query, setQuery, isSearching, onSubmit, inputProps
                     {...inputProps}
                 />
             </StyledForm>
-            {isSearching && (
-                <FontAwesomeIcon icon={faSpinner} fixedWidth spin />
+            {!!query && (
+                <StyledResetButton silent circle>
+                    <Icon icon={faTimes} onClick={() => setQuery && setQuery("")}/>
+                </StyledResetButton>
             )}
         </StyledSearchInput>
     );

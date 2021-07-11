@@ -53,6 +53,7 @@ export default function DesignPage() {
     const colors = Object.keys(theme.colors);
 
     const [selectedItem, setSelectedItem] = useState("anime");
+    const [season, setSeason] = useState(null);
     const [, entitySwitcher] = useSwitcher([ "anime", "themes", "artists" ], "anime");
 
     const [maxLines, toggleMaxLines] = useToggle(1, 0);
@@ -472,21 +473,37 @@ export default function DesignPage() {
                 <Pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
-                            <Listbox defaultValue={null} nullLabel="Any" options={{
-                                winter: "Winter",
-                                spring: "Spring",
-                                summer: "Summer",
-                                fall: "Fall"
-                            }}/>
+                            // At the top of the component
+                            const [season, setSeason] = useState(null);
+                            
+                            // Inside the render output
+                            <Listbox 
+                                options={[
+                                    "Winter",
+                                    "Spring",
+                                    "Summer",
+                                    "Fall"
+                                ]}
+                                selectedValue={season}
+                                onSelect={setSeason}
+                                nullLabel="Any"
+                                width="150px"
+                            />
                         `}
                     </Text>
                 </Pre>
-                <Listbox defaultValue={null} nullLabel="Any" options={{
-                    winter: "Winter",
-                    spring: "Spring",
-                    summer: "Summer",
-                    fall: "Fall"
-                }}/>
+                <Listbox
+                    options={[
+                        "Winter",
+                        "Spring",
+                        "Summer",
+                        "Fall"
+                    ]}
+                    selectedValue={season}
+                    onSelect={setSeason}
+                    nullLabel="Any"
+                    width="150px"
+                />
             </Grid>
             <Text variant="h2">Utils</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
