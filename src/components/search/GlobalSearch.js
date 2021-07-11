@@ -74,7 +74,7 @@ function GlobalSearchSection({ entity, title, results }) {
             </Box>
             {hasMoreResults && (
                 <Flex justifyContent="center">
-                    <Link to={`/search/${entity}${urlSuffix}`}>
+                    <Link to={`/search/${entity}${urlSuffix}`} state={{ noAutoFocus: true }}>
                         <Button silent title="See all results">
                             <Icon icon={faChevronDown}/>
                         </Button>

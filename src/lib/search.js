@@ -106,10 +106,25 @@ export async function fetchGlobalSearchResults(query, limit, entities) {
     return Object.fromEntries(entities.map((entity) => [ entity, json.search[entityConfigs[entity].plural || entity] ]));
 }
 
-export async function fetchEntitySearchResults(query, limit, page, entity) {
-    const parameters = generateEntitySearchParameters(entity);
+export async function fetchEntitySearchResults({
+    query,
+    entity,
+    page = 1,
+    limit = 15,
+    filters = {},
+    sortBy = null
+}) {
+    const parameters = [
+        ...generateEntitySearchParameters(entity),
+        ...generateFilterAndSortParameters(filters, sortBy)
+    ];
 
-    const res = await fetch(`${baseUrl}/api/${entity}?${parameters.join("&")}&page[size]=${limit}&page[number]=${page}&q=${encodeURIComponent(query)}`);
+    let url = `${baseUrl}/api/${entity}?${parameters.join("&")}&page[size]=${limit}&page[number]=${page}`;
+    if (query) {
+        url += `&q=${encodeURIComponent(query)}`;
+    }
+
+    const res = await fetch(url);
     const json = await res.json();
 
     const results = json[entityConfigs[entity].plural || entity];
@@ -151,6 +166,22 @@ function generateEntitySearchParameters(entity) {
 
     if (config.fields) {
         parameters.push(...Object.entries(config.fields).map(([key, fields]) => `fields[${key}]=${fields.join(",")}`));
+    }
+
+    return parameters;
+}
+
+function generateFilterAndSortParameters(filters, sortBy) {
+    const parameters = [];
+
+    for (const [ key, value ] of Object.entries(filters)) {
+        if (value) {
+            parameters.push(`filter[${key}]=${value}`);
+        }
+    }
+
+    if (sortBy) {
+        parameters.push(`sort=${sortBy}`);
     }
 
     return parameters;

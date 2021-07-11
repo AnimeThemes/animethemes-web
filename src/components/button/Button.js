@@ -42,6 +42,11 @@ export const Button = styled.button.attrs(({ children, circle }) => ({
             box-shadow: none;
         }
     `}
+
+    ${(props) => props.disabled && css`
+        cursor: not-allowed;
+        opacity: 0.5;
+    `}
     
     ${gaps}
 `;

@@ -3,11 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faSort, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "components/button";
 import { Text } from "components/text";
-import { useCallback, useRef, useState } from "react";
-import { Collapse } from "components/utils";
+import { useEffect, useRef, useState } from "react";
 import theme from "theme";
+import { Box } from "components/box";
+import { AnimatePresence, motion } from "framer-motion";
+import useResizeObserver from "@react-hook/resize-observer";
 
-const StyledListbox = styled.div`
+const StyledListbox = styled(Box)`
     display: inline-block;
 `;
 const StyledListboxButton = styled(Button)`
@@ -17,7 +19,7 @@ const StyledListboxButton = styled(Button)`
 
     width: 100%;
 `;
-const StyledListboxPopover = styled.div`
+const StyledListboxPopover = styled(motion.div)`
     position: absolute;
     
     margin-top: 0.5rem;
@@ -26,10 +28,15 @@ const StyledListboxPopover = styled.div`
     border-radius: 1rem;
     overflow: hidden;
     
+    will-change: transform, opacity;
+    
     background-color: ${theme.colors["solid"]};
+    box-shadow: ${theme.shadows.high};
+    
+    transition: none;
 `;
 const StyledListboxList = styled.ul`
-    max-height: 10rem;
+    max-height: 33vh;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -59,58 +66,80 @@ const StyledListboxOption = styled.li`
     `}
 `;
 
-export function Listbox({ options, defaultValue, nullLabel }) {
-    const [selectedValue, setSelectedValue] = useState(defaultValue);
+export function Listbox({ options, nullLabel, selectedValue, onSelect, noReset, disabled, defaultValue, ...props }) {
     const [showPopover, setShowPopover] = useState(false);
     const [buttonWidth, setButtonWidth] = useState(0);
 
-    const buttonRef = useCallback((buttonNode) => {
-        if (buttonNode !== null) {
-            setButtonWidth(buttonNode.getBoundingClientRect().width);
-        }
-    }, []);
+    const buttonRef = useRef(null);
     const listRef = useRef(null);
 
+    useResizeObserver(buttonRef, (entry) => setButtonWidth(entry.target.getBoundingClientRect().width));
+
+    useEffect(() => {
+        if (showPopover) {
+            listRef.current.focus();
+        }
+    }, [ showPopover ]);
+
     function handleButtonClick() {
-        setShowPopover(true);
-        listRef.current.focus();
+        if (!disabled) {
+            setShowPopover(true);
+        }
     }
 
     function handleOptionClick(value) {
-        setSelectedValue(value);
-        setShowPopover(false);
+        if (!disabled) {
+            onSelect(value);
+            setShowPopover(false);
+        }
     }
 
     function handleResetClick(event) {
         event.stopPropagation();
-        setSelectedValue(null);
-        setShowPopover(false);
+        if (!disabled) {
+            onSelect(null);
+            setShowPopover(false);
+        }
     }
 
     return (
-        <StyledListbox>
-            <StyledListboxButton ref={buttonRef} active={selectedValue !== null} onClick={handleButtonClick} onMouseDown={(event) => event.preventDefault()}>
-                <Text>{selectedValue !== null ? options[selectedValue] : nullLabel}</Text>
-                {selectedValue !== null ? (
+        <StyledListbox {...props}>
+            <StyledListboxButton
+                ref={buttonRef}
+                variant={selectedValue !== null && selectedValue !== defaultValue && "primary"}
+                onClick={handleButtonClick}
+                onMouseDown={(event) => event.preventDefault()}
+                disabled={disabled}
+            >
+                <Text>{selectedValue !== null ? selectedValue : nullLabel}</Text>
+                {(selectedValue !== null && !noReset) ? (
                     <FontAwesomeIcon icon={faTimes} fixedWidth onClick={handleResetClick}/>
                 ) : (
                     <FontAwesomeIcon icon={faSort} fixedWidth/>
                 )}
             </StyledListboxButton>
-            <StyledListboxPopover style={{ width: buttonWidth }}>
-                <Collapse collapse={!showPopover}>
-                    <StyledListboxList ref={listRef} tabIndex={-1} onBlur={() => setShowPopover(false)}>
-                        {Object.entries(options).map(([value, label]) => (
-                            <StyledListboxOption key={value} selected={value === selectedValue} onClick={() => handleOptionClick(value)}>
-                                <Text>{label}</Text>
-                                {value === selectedValue && (
-                                    <FontAwesomeIcon icon={faCheck} fixedWidth/>
-                                )}
-                            </StyledListboxOption>
-                        ))}
-                    </StyledListboxList>
-                </Collapse>
-            </StyledListboxPopover>
+            <AnimatePresence>
+                {showPopover && (
+                    <StyledListboxPopover
+                        style={{ width: buttonWidth }}
+                        initial={{ rotateX: -45, originY: 0, transformPerspective: 1000 }}
+                        animate={{ rotateX: 0 }}
+                        exit={{ rotateX: -45, opacity: 0 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                    >
+                        <StyledListboxList ref={listRef} tabIndex={-1} onBlur={() => setShowPopover(false)}>
+                            {options.map((value) => (
+                                <StyledListboxOption key={value} selected={value === selectedValue} onClick={() => handleOptionClick(value)}>
+                                    <Text>{value}</Text>
+                                    {value === selectedValue && (
+                                        <FontAwesomeIcon icon={faCheck} fixedWidth/>
+                                    )}
+                                </StyledListboxOption>
+                            ))}
+                        </StyledListboxList>
+                    </StyledListboxPopover>
+                )}
+            </AnimatePresence>
         </StyledListbox>
     );
 }

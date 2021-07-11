@@ -8,7 +8,7 @@ import { gapsColumn, gapsRow } from "styles/mixins";
 import { Box, Flex } from "components/box";
 import { Switcher } from "components/switcher";
 import { SEO } from "components/seo";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faCompass, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { Text } from "components/text";
 import { Icon } from "components/icon";
 
@@ -24,7 +24,7 @@ const StyledSearchOptions = styled(Flex)`
     }
 `;
 
-export default function SearchPage({ pageContext: { entity }, location: { search, hash } }) {
+export default function SearchPage({ pageContext: { entity }, location: { search, hash, state } }) {
     const urlParams = useMemo(() => new URLSearchParams(search), [ search ]);
     const urlSuffix = search + hash;
 
@@ -64,9 +64,8 @@ export default function SearchPage({ pageContext: { entity }, location: { search
                     <SearchInput
                         query={searchQuery}
                         setQuery={setSearchQuery}
-                        isSearching={false}
                         inputProps={{
-                            autoFocus: true,
+                            autoFocus: !state?.noAutoFocus,
                             spellCheck: false
                         }}
                     />
@@ -77,14 +76,14 @@ export default function SearchPage({ pageContext: { entity }, location: { search
                 >
                     {({ Button, item, selected, content }) => item.value === null ? (
                         !!entity ? (
-                            <Link key={null} to={`/search${urlSuffix}`}>
+                            <Link key={null} to={`/search${urlSuffix}`} state={{ noAutoFocus: true }}>
                                 <Button>
                                     <Icon icon={faTimes}/>
                                 </Button>
                             </Link>
                         ) : null
                     ) : (
-                        <Link key={item.value} to={`/search/${item.value}${urlSuffix}`}>
+                        <Link key={item.value} to={`/search/${item.value}${urlSuffix}`} state={{ noAutoFocus: true }}>
                             <Button variant={selected && "primary"}>
                                 {content}
                             </Button>
@@ -92,42 +91,28 @@ export default function SearchPage({ pageContext: { entity }, location: { search
                     )}
                 </Switcher>
             </StyledSearchOptions>
-            {/*<Collapse collapse={!entity}>*/}
-            {/*    <Grid gridTemplateColumns="repeat(6, 1fr)" gridGap="1rem">*/}
-            {/*        <Flex flexDirection="column" alignItems="stretch" gapsColumn="0.5rem">*/}
-            {/*            <Text color={theme.colors.primaryMediumEmphasis}>Season</Text>*/}
-            {/*            <Listbox defaultValue={null} nullLabel="Any" options={{*/}
-            {/*                winter: "Winter",*/}
-            {/*                spring: "Spring",*/}
-            {/*                summer: "Summer",*/}
-            {/*                fall: "Fall"*/}
-            {/*            }}/>*/}
-            {/*        </Flex>*/}
-            {/*        <Flex flexDirection="column" alignItems="stretch" gapsColumn="0.5rem">*/}
-            {/*            <Text color={theme.colors.primaryMediumEmphasis}>Year</Text>*/}
-            {/*            <Listbox defaultValue={null} nullLabel="Any" options={*/}
-            {/*                allAnime.groupedByYear.reduce((options, { year }) => {*/}
-            {/*                    options[year] = year;*/}
-            {/*                    return options;*/}
-            {/*                }, {})*/}
-            {/*            }/>*/}
-            {/*        </Flex>*/}
-            {/*    </Grid>*/}
-            {/*</Collapse>*/}
-            {}
             <Search searchEntity={entity} searchQuery={debouncedSearchQuery}/>
         </Box>
     );
 }
 
 function Search({ searchQuery, searchEntity }) {
-    if (searchQuery) {
-        if (searchEntity) {
-            return <EntitySearch searchQuery={searchQuery} searchEntity={searchEntity}/>;
-        } else {
-            return <GlobalSearch searchQuery={searchQuery}/>;
-        }
+    if (searchEntity) {
+        return <EntitySearch searchQuery={searchQuery} searchEntity={searchEntity}/>;
+    } else if (searchQuery) {
+        return <GlobalSearch searchQuery={searchQuery}/>;
     } else {
-        return <Text block>Type in a query to begin searching.</Text>;
+        return (
+            <Box gapsColumn="1rem">
+                <Box gapsRow="1rem">
+                    <Icon icon={faSearch} color="text-primary"/>
+                    <Text color="text-muted">Looking for something specific? Use the search bar on the left!</Text>
+                </Box>
+                <Box gapsRow="1rem">
+                    <Icon icon={faCompass} color="text-primary"/>
+                    <Text color="text-muted">Feeling adventurous? Explore the database by choosing a category on the right!</Text>
+                </Box>
+            </Box>
+        );
     }
 }

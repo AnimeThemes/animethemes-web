@@ -6,10 +6,35 @@ import { Icon } from "components/icon";
 import { SearchResultList } from "components/search";
 import { useInfiniteQuery, useQueryClient } from "react-query";
 import { fetchEntitySearchResults } from "lib/search";
+import { FilterGroup, SeasonFilter, SortBy, YearFilter } from "components/search-filter";
+import { useState } from "react";
+
+const sortByFields = new Map([
+    [ "Relevance", null ],
+    [ "A ➜ Z", "name" ],
+    [ "Z ➜ A", "-name" ],
+    [ "Old ➜ New", "year,season,name" ],
+    [ "New ➜ Old", "-year,-season,name" ],
+    [ "Last Added", "-created_at" ]
+]);
+const sortByOptions = [ ...sortByFields.keys() ];
 
 export function EntitySearch({ searchQuery, searchEntity }) {
+    const [ filterSeason, setFilterSeason ] = useState(null);
+    const [ filterYear, setFilterYear ] = useState(null);
+    const [ sortBy, setSortBy ] = useState(sortByOptions[0]);
+
     const fetchEntityPage = ({ pageParam = 1 }) =>
-        fetchEntitySearchResults(searchQuery, 15, pageParam, searchEntity);
+        fetchEntitySearchResults({
+            query: searchQuery,
+            entity: searchEntity,
+            page: pageParam,
+            filters: {
+                season: filterSeason,
+                year: filterYear
+            },
+            sortBy: sortByFields.get(sortBy)
+        });
 
     const queryClient = useQueryClient();
 
@@ -21,7 +46,14 @@ export function EntitySearch({ searchQuery, searchEntity }) {
         isLoading,
         isPlaceholderData
     } = useInfiniteQuery(
-        [ "searchEntity", searchQuery, searchEntity ],
+        [
+            "searchEntity",
+            searchQuery,
+            searchEntity,
+            filterSeason,
+            filterYear,
+            sortBy
+        ],
         fetchEntityPage,
         {
             getNextPageParam: (lastPage) => lastPage.hasNextPage,
@@ -42,34 +74,51 @@ export function EntitySearch({ searchQuery, searchEntity }) {
         }
     );
 
-    if (isLoading) {
-        return (
-            <Text block>Searching...</Text>
-        );
-    }
-
-    const results = data.pages.flatMap((page) => page.data);
-
-    if (!results.length) {
-        return (
-            <Text block>No results found for query &quot;{searchQuery}&quot;. Did you spell it correctly?</Text>
-        );
-    }
-
-    const isLoadingMore = isFetchingNextPage || isPlaceholderData;
-
     return (
         <Box gapsColumn="1.5rem">
-            <Box gapsColumn="1rem">
-                <SearchResultList results={results} entity={searchEntity}/>
-            </Box>
-            {(hasNextPage || isPlaceholderData) && (
-                <Flex justifyContent="center">
-                    <Button silent onClick={() => !isLoadingMore && fetchNextPage()} title="Load more">
-                        <Icon icon={isLoadingMore ? faSpinner : faChevronDown} spin={isLoadingMore}/>
-                    </Button>
-                </Flex>
-            )}
+            <FilterGroup>
+                <SeasonFilter value={filterSeason} setValue={setFilterSeason}/>
+                <YearFilter value={filterYear} setValue={setFilterYear}/>
+                <SortBy options={sortByOptions} value={sortBy} setValue={setSortBy}/>
+            </FilterGroup>
+            {(() => {
+                if (isLoading) {
+                    return (
+                        <Text block>Searching...</Text>
+                    );
+                }
+
+                const results = data.pages.flatMap((page) => page.data);
+
+                if (!results.length) {
+                    if (searchQuery) {
+                        return (
+                            <Text block>No results found for query &quot;{searchQuery}&quot;. Did you spell it correctly?</Text>
+                        );
+                    } else {
+                        return (
+                            <Text block>No results found for your current filter settings.</Text>
+                        );
+                    }
+                }
+
+                const isLoadingMore = isFetchingNextPage || isPlaceholderData;
+
+                return (
+                    <>
+                        <Box gapsColumn="1rem">
+                            <SearchResultList results={results} entity={searchEntity}/>
+                        </Box>
+                        {(hasNextPage || isPlaceholderData) && (
+                            <Flex justifyContent="center">
+                                <Button silent onClick={() => !isLoadingMore && fetchNextPage()} title="Load more">
+                                    <Icon icon={isLoadingMore ? faSpinner : faChevronDown} spin={isLoadingMore}/>
+                                </Button>
+                            </Flex>
+                        )}
+                    </>
+                );
+            })()}
         </Box>
     );
 }

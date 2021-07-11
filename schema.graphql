@@ -336,6 +336,20 @@ type SiteSiteMetadata {
   siteUrl: String
 }
 
+type SiteFunction implements Node {
+  functionRoute: String!
+  pluginName: String!
+  originalAbsoluteFilePath: String!
+  originalRelativeFilePath: String!
+  relativeCompiledFilePath: String!
+  absoluteCompiledFilePath: String!
+  matchPath: String
+  id: ID!
+  parent: Node
+  children: [Node!]!
+  internal: Internal!
+}
+
 type SitePage implements Node {
   path: String!
   component: String!
@@ -350,7 +364,6 @@ type SitePage implements Node {
   context: SitePageContext
   pluginCreator: SitePlugin
   pluginCreatorId: String
-  componentPath: String
 }
 
 type SitePageContext {
@@ -620,26 +633,6 @@ type BracketCharacter implements Node {
   internal: Internal!
 }
 
-type SiteBuildMetadata implements Node {
-  id: ID!
-  parent: Node
-  children: [Node!]!
-  internal: Internal!
-  buildTime(
-    # Format the date using Moment.js' date tokens, e.g. `date(formatString: "YYYY MMMM DD")`. See https://momentjs.com/docs/#/displaying/format/ for documentation for different tokens.
-    formatString: String
-
-    # Returns a string generated with Moment.js' `fromNow` function
-    fromNow: Boolean
-
-    # Returns the difference between this date and the current time. Defaults to "milliseconds" but you can also pass in as the measurement "years", "months", "weeks", "days", "hours", "minutes", and "seconds".
-    difference: String
-
-    # Configures the locale Moment.js will use to format the date.
-    locale: String
-  ): Date
-}
-
 type SitePlugin implements Node {
   id: ID!
   parent: Node
@@ -716,6 +709,26 @@ type SitePluginPackageJsonPeerDependencies {
   version: String
 }
 
+type SiteBuildMetadata implements Node {
+  id: ID!
+  parent: Node
+  children: [Node!]!
+  internal: Internal!
+  buildTime(
+    # Format the date using Moment.js' date tokens, e.g. `date(formatString: "YYYY MMMM DD")`. See https://momentjs.com/docs/#/displaying/format/ for documentation for different tokens.
+    formatString: String
+
+    # Returns a string generated with Moment.js' `fromNow` function
+    fromNow: Boolean
+
+    # Returns the difference between this date and the current time. Defaults to "milliseconds" but you can also pass in as the measurement "years", "months", "weeks", "days", "hours", "minutes", and "seconds".
+    difference: String
+
+    # Configures the locale Moment.js will use to format the date.
+    locale: String
+  ): Date
+}
+
 type Query {
   file(sourceInstanceName: StringQueryOperatorInput, absolutePath: StringQueryOperatorInput, relativePath: StringQueryOperatorInput, extension: StringQueryOperatorInput, size: IntQueryOperatorInput, prettySize: StringQueryOperatorInput, modifiedTime: DateQueryOperatorInput, accessTime: DateQueryOperatorInput, changeTime: DateQueryOperatorInput, birthTime: DateQueryOperatorInput, root: StringQueryOperatorInput, dir: StringQueryOperatorInput, base: StringQueryOperatorInput, ext: StringQueryOperatorInput, name: StringQueryOperatorInput, relativeDirectory: StringQueryOperatorInput, dev: IntQueryOperatorInput, mode: IntQueryOperatorInput, nlink: IntQueryOperatorInput, uid: IntQueryOperatorInput, gid: IntQueryOperatorInput, rdev: IntQueryOperatorInput, ino: FloatQueryOperatorInput, atimeMs: FloatQueryOperatorInput, mtimeMs: FloatQueryOperatorInput, ctimeMs: FloatQueryOperatorInput, atime: DateQueryOperatorInput, mtime: DateQueryOperatorInput, ctime: DateQueryOperatorInput, birthtime: DateQueryOperatorInput, birthtimeMs: FloatQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): File
   allFile(filter: FileFilterInput, sort: FileSortInput, skip: Int, limit: Int): FileConnection!
@@ -723,7 +736,9 @@ type Query {
   allDirectory(filter: DirectoryFilterInput, sort: DirectorySortInput, skip: Int, limit: Int): DirectoryConnection!
   site(buildTime: DateQueryOperatorInput, siteMetadata: SiteSiteMetadataFilterInput, port: IntQueryOperatorInput, host: StringQueryOperatorInput, pathPrefix: StringQueryOperatorInput, polyfill: BooleanQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Site
   allSite(filter: SiteFilterInput, sort: SiteSortInput, skip: Int, limit: Int): SiteConnection!
-  sitePage(path: StringQueryOperatorInput, component: StringQueryOperatorInput, internalComponentName: StringQueryOperatorInput, componentChunkName: StringQueryOperatorInput, matchPath: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput, isCreatedByStatefulCreatePages: BooleanQueryOperatorInput, context: SitePageContextFilterInput, pluginCreator: SitePluginFilterInput, pluginCreatorId: StringQueryOperatorInput, componentPath: StringQueryOperatorInput): SitePage
+  siteFunction(functionRoute: StringQueryOperatorInput, pluginName: StringQueryOperatorInput, originalAbsoluteFilePath: StringQueryOperatorInput, originalRelativeFilePath: StringQueryOperatorInput, relativeCompiledFilePath: StringQueryOperatorInput, absoluteCompiledFilePath: StringQueryOperatorInput, matchPath: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): SiteFunction
+  allSiteFunction(filter: SiteFunctionFilterInput, sort: SiteFunctionSortInput, skip: Int, limit: Int): SiteFunctionConnection!
+  sitePage(path: StringQueryOperatorInput, component: StringQueryOperatorInput, internalComponentName: StringQueryOperatorInput, componentChunkName: StringQueryOperatorInput, matchPath: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput, isCreatedByStatefulCreatePages: BooleanQueryOperatorInput, context: SitePageContextFilterInput, pluginCreator: SitePluginFilterInput, pluginCreatorId: StringQueryOperatorInput): SitePage
   allSitePage(filter: SitePageFilterInput, sort: SitePageSortInput, skip: Int, limit: Int): SitePageConnection!
   anime(idRaw: IntQueryOperatorInput, name: StringQueryOperatorInput, slug: StringQueryOperatorInput, year: IntQueryOperatorInput, season: StringQueryOperatorInput, synopsis: StringQueryOperatorInput, synonyms: SynonymFilterListInput, themes: ThemeFilterListInput, series: SeriesFilterListInput, resources: ResourceFilterListInput, images: ImageFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Anime
   allAnime(filter: AnimeFilterInput, sort: AnimeSortInput, skip: Int, limit: Int): AnimeConnection!
@@ -769,10 +784,10 @@ type Query {
   allBracketPairing(filter: BracketPairingFilterInput, sort: BracketPairingSortInput, skip: Int, limit: Int): BracketPairingConnection!
   bracketCharacter(pairing: BracketPairingFilterInput, idRaw: IntQueryOperatorInput, seed: IntQueryOperatorInput, name: StringQueryOperatorInput, source: StringQueryOperatorInput, theme: ThemeFilterInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): BracketCharacter
   allBracketCharacter(filter: BracketCharacterFilterInput, sort: BracketCharacterSortInput, skip: Int, limit: Int): BracketCharacterConnection!
-  siteBuildMetadata(id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput, buildTime: DateQueryOperatorInput): SiteBuildMetadata
-  allSiteBuildMetadata(filter: SiteBuildMetadataFilterInput, sort: SiteBuildMetadataSortInput, skip: Int, limit: Int): SiteBuildMetadataConnection!
   sitePlugin(id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput, resolve: StringQueryOperatorInput, name: StringQueryOperatorInput, version: StringQueryOperatorInput, pluginOptions: SitePluginPluginOptionsFilterInput, nodeAPIs: StringQueryOperatorInput, browserAPIs: StringQueryOperatorInput, ssrAPIs: StringQueryOperatorInput, pluginFilepath: StringQueryOperatorInput, packageJson: SitePluginPackageJsonFilterInput): SitePlugin
   allSitePlugin(filter: SitePluginFilterInput, sort: SitePluginSortInput, skip: Int, limit: Int): SitePluginConnection!
+  siteBuildMetadata(id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput, buildTime: DateQueryOperatorInput): SiteBuildMetadata
+  allSiteBuildMetadata(filter: SiteBuildMetadataFilterInput, sort: SiteBuildMetadataSortInput, skip: Int, limit: Int): SiteBuildMetadataConnection!
 }
 
 input StringQueryOperatorInput {
@@ -852,6 +867,9 @@ type FileConnection {
   nodes: [File!]!
   pageInfo: PageInfo!
   distinct(field: FileFieldsEnum!): [String!]!
+  max(field: FileFieldsEnum!): Float
+  min(field: FileFieldsEnum!): Float
+  sum(field: FileFieldsEnum!): Float
   group(skip: Int, limit: Int, field: FileFieldsEnum!): [FileGroupConnection!]!
 }
 
@@ -1054,6 +1072,9 @@ type DirectoryConnection {
   nodes: [Directory!]!
   pageInfo: PageInfo!
   distinct(field: DirectoryFieldsEnum!): [String!]!
+  max(field: DirectoryFieldsEnum!): Float
+  min(field: DirectoryFieldsEnum!): Float
+  sum(field: DirectoryFieldsEnum!): Float
   group(skip: Int, limit: Int, field: DirectoryFieldsEnum!): [DirectoryGroupConnection!]!
 }
 
@@ -1250,6 +1271,9 @@ type SiteConnection {
   nodes: [Site!]!
   pageInfo: PageInfo!
   distinct(field: SiteFieldsEnum!): [String!]!
+  max(field: SiteFieldsEnum!): Float
+  min(field: SiteFieldsEnum!): Float
+  sum(field: SiteFieldsEnum!): Float
   group(skip: Int, limit: Int, field: SiteFieldsEnum!): [SiteGroupConnection!]!
 }
 
@@ -1386,6 +1410,148 @@ input SiteSortInput {
   order: [SortOrderEnum] = [ASC]
 }
 
+type SiteFunctionConnection {
+  totalCount: Int!
+  edges: [SiteFunctionEdge!]!
+  nodes: [SiteFunction!]!
+  pageInfo: PageInfo!
+  distinct(field: SiteFunctionFieldsEnum!): [String!]!
+  max(field: SiteFunctionFieldsEnum!): Float
+  min(field: SiteFunctionFieldsEnum!): Float
+  sum(field: SiteFunctionFieldsEnum!): Float
+  group(skip: Int, limit: Int, field: SiteFunctionFieldsEnum!): [SiteFunctionGroupConnection!]!
+}
+
+type SiteFunctionEdge {
+  next: SiteFunction
+  node: SiteFunction!
+  previous: SiteFunction
+}
+
+enum SiteFunctionFieldsEnum {
+  functionRoute
+  pluginName
+  originalAbsoluteFilePath
+  originalRelativeFilePath
+  relativeCompiledFilePath
+  absoluteCompiledFilePath
+  matchPath
+  id
+  parent___id
+  parent___parent___id
+  parent___parent___parent___id
+  parent___parent___parent___children
+  parent___parent___children
+  parent___parent___children___id
+  parent___parent___children___children
+  parent___parent___internal___content
+  parent___parent___internal___contentDigest
+  parent___parent___internal___description
+  parent___parent___internal___fieldOwners
+  parent___parent___internal___ignoreType
+  parent___parent___internal___mediaType
+  parent___parent___internal___owner
+  parent___parent___internal___type
+  parent___children
+  parent___children___id
+  parent___children___parent___id
+  parent___children___parent___children
+  parent___children___children
+  parent___children___children___id
+  parent___children___children___children
+  parent___children___internal___content
+  parent___children___internal___contentDigest
+  parent___children___internal___description
+  parent___children___internal___fieldOwners
+  parent___children___internal___ignoreType
+  parent___children___internal___mediaType
+  parent___children___internal___owner
+  parent___children___internal___type
+  parent___internal___content
+  parent___internal___contentDigest
+  parent___internal___description
+  parent___internal___fieldOwners
+  parent___internal___ignoreType
+  parent___internal___mediaType
+  parent___internal___owner
+  parent___internal___type
+  children
+  children___id
+  children___parent___id
+  children___parent___parent___id
+  children___parent___parent___children
+  children___parent___children
+  children___parent___children___id
+  children___parent___children___children
+  children___parent___internal___content
+  children___parent___internal___contentDigest
+  children___parent___internal___description
+  children___parent___internal___fieldOwners
+  children___parent___internal___ignoreType
+  children___parent___internal___mediaType
+  children___parent___internal___owner
+  children___parent___internal___type
+  children___children
+  children___children___id
+  children___children___parent___id
+  children___children___parent___children
+  children___children___children
+  children___children___children___id
+  children___children___children___children
+  children___children___internal___content
+  children___children___internal___contentDigest
+  children___children___internal___description
+  children___children___internal___fieldOwners
+  children___children___internal___ignoreType
+  children___children___internal___mediaType
+  children___children___internal___owner
+  children___children___internal___type
+  children___internal___content
+  children___internal___contentDigest
+  children___internal___description
+  children___internal___fieldOwners
+  children___internal___ignoreType
+  children___internal___mediaType
+  children___internal___owner
+  children___internal___type
+  internal___content
+  internal___contentDigest
+  internal___description
+  internal___fieldOwners
+  internal___ignoreType
+  internal___mediaType
+  internal___owner
+  internal___type
+}
+
+type SiteFunctionGroupConnection {
+  totalCount: Int!
+  edges: [SiteFunctionEdge!]!
+  nodes: [SiteFunction!]!
+  pageInfo: PageInfo!
+  field: String!
+  fieldValue: String
+}
+
+input SiteFunctionFilterInput {
+  functionRoute: StringQueryOperatorInput
+  pluginName: StringQueryOperatorInput
+  originalAbsoluteFilePath: StringQueryOperatorInput
+  originalRelativeFilePath: StringQueryOperatorInput
+  relativeCompiledFilePath: StringQueryOperatorInput
+  absoluteCompiledFilePath: StringQueryOperatorInput
+  matchPath: StringQueryOperatorInput
+  id: StringQueryOperatorInput
+  parent: NodeFilterInput
+  children: NodeFilterListInput
+  internal: InternalFilterInput
+}
+
+input SiteFunctionSortInput {
+  fields: [SiteFunctionFieldsEnum]
+  order: [SortOrderEnum] = [ASC]
+}
+
 input SitePageContextFilterInput {
   slug: StringQueryOperatorInput
   id: StringQueryOperatorInput
@@ -1490,6 +1656,9 @@ type SitePageConnection {
   nodes: [SitePage!]!
   pageInfo: PageInfo!
   distinct(field: SitePageFieldsEnum!): [String!]!
+  max(field: SitePageFieldsEnum!): Float
+  min(field: SitePageFieldsEnum!): Float
+  sum(field: SitePageFieldsEnum!): Float
   group(skip: Int, limit: Int, field: SitePageFieldsEnum!): [SitePageGroupConnection!]!
 }
 
@@ -1690,7 +1859,6 @@ enum SitePageFieldsEnum {
   pluginCreator___packageJson___peerDependencies___version
   pluginCreator___packageJson___keywords
   pluginCreatorId
-  componentPath
 }
 
 type SitePageGroupConnection {
@@ -1716,7 +1884,6 @@ input SitePageFilterInput {
   context: SitePageContextFilterInput
   pluginCreator: SitePluginFilterInput
   pluginCreatorId: StringQueryOperatorInput
-  componentPath: StringQueryOperatorInput
 }
 
 input SitePageSortInput {
@@ -1906,6 +2073,9 @@ type AnimeConnection {
   nodes: [Anime!]!
   pageInfo: PageInfo!
   distinct(field: AnimeFieldsEnum!): [String!]!
+  max(field: AnimeFieldsEnum!): Float
+  min(field: AnimeFieldsEnum!): Float
+  sum(field: AnimeFieldsEnum!): Float
   group(skip: Int, limit: Int, field: AnimeFieldsEnum!): [AnimeGroupConnection!]!
 }
 
@@ -2462,6 +2632,9 @@ type SynonymConnection {
   nodes: [Synonym!]!
   pageInfo: PageInfo!
   distinct(field: SynonymFieldsEnum!): [String!]!
+  max(field: SynonymFieldsEnum!): Float
+  min(field: SynonymFieldsEnum!): Float
+  sum(field: SynonymFieldsEnum!): Float
   group(skip: Int, limit: Int, field: SynonymFieldsEnum!): [SynonymGroupConnection!]!
 }
 
@@ -2770,6 +2943,9 @@ type ThemeConnection {
   nodes: [Theme!]!
   pageInfo: PageInfo!
   distinct(field: ThemeFieldsEnum!): [String!]!
+  max(field: ThemeFieldsEnum!): Float
+  min(field: ThemeFieldsEnum!): Float
+  sum(field: ThemeFieldsEnum!): Float
   group(skip: Int, limit: Int, field: ThemeFieldsEnum!): [ThemeGroupConnection!]!
 }
 
@@ -3320,6 +3496,9 @@ type EntryConnection {
   nodes: [Entry!]!
   pageInfo: PageInfo!
   distinct(field: EntryFieldsEnum!): [String!]!
+  max(field: EntryFieldsEnum!): Float
+  min(field: EntryFieldsEnum!): Float
+  sum(field: EntryFieldsEnum!): Float
   group(skip: Int, limit: Int, field: EntryFieldsEnum!): [EntryGroupConnection!]!
 }
 
@@ -3697,6 +3876,9 @@ type VideoConnection {
   nodes: [Video!]!
   pageInfo: PageInfo!
   distinct(field: VideoFieldsEnum!): [String!]!
+  max(field: VideoFieldsEnum!): Float
+  min(field: VideoFieldsEnum!): Float
+  sum(field: VideoFieldsEnum!): Float
   group(skip: Int, limit: Int, field: VideoFieldsEnum!): [VideoGroupConnection!]!
 }
 
@@ -3952,6 +4134,9 @@ type SongConnection {
   nodes: [Song!]!
   pageInfo: PageInfo!
   distinct(field: SongFieldsEnum!): [String!]!
+  max(field: SongFieldsEnum!): Float
+  min(field: SongFieldsEnum!): Float
+  sum(field: SongFieldsEnum!): Float
   group(skip: Int, limit: Int, field: SongFieldsEnum!): [SongGroupConnection!]!
 }
 
@@ -4334,6 +4519,9 @@ type PerformanceConnection {
   nodes: [Performance!]!
   pageInfo: PageInfo!
   distinct(field: PerformanceFieldsEnum!): [String!]!
+  max(field: PerformanceFieldsEnum!): Float
+  min(field: PerformanceFieldsEnum!): Float
+  sum(field: PerformanceFieldsEnum!): Float
   group(skip: Int, limit: Int, field: PerformanceFieldsEnum!): [PerformanceGroupConnection!]!
 }
 
@@ -4676,6 +4864,9 @@ type ArtistConnection {
   nodes: [Artist!]!
   pageInfo: PageInfo!
   distinct(field: ArtistFieldsEnum!): [String!]!
+  max(field: ArtistFieldsEnum!): Float
+  min(field: ArtistFieldsEnum!): Float
+  sum(field: ArtistFieldsEnum!): Float
   group(skip: Int, limit: Int, field: ArtistFieldsEnum!): [ArtistGroupConnection!]!
 }
 
@@ -4981,6 +5172,9 @@ type SeriesConnection {
   nodes: [Series!]!
   pageInfo: PageInfo!
   distinct(field: SeriesFieldsEnum!): [String!]!
+  max(field: SeriesFieldsEnum!): Float
+  min(field: SeriesFieldsEnum!): Float
+  sum(field: SeriesFieldsEnum!): Float
   group(skip: Int, limit: Int, field: SeriesFieldsEnum!): [SeriesGroupConnection!]!
 }
 
@@ -5291,6 +5485,9 @@ type ResourceConnection {
   nodes: [Resource!]!
   pageInfo: PageInfo!
   distinct(field: ResourceFieldsEnum!): [String!]!
+  max(field: ResourceFieldsEnum!): Float
+  min(field: ResourceFieldsEnum!): Float
+  sum(field: ResourceFieldsEnum!): Float
   group(skip: Int, limit: Int, field: ResourceFieldsEnum!): [ResourceGroupConnection!]!
 }
 
@@ -5412,6 +5609,9 @@ type ImageConnection {
   nodes: [Image!]!
   pageInfo: PageInfo!
   distinct(field: ImageFieldsEnum!): [String!]!
+  max(field: ImageFieldsEnum!): Float
+  min(field: ImageFieldsEnum!): Float
+  sum(field: ImageFieldsEnum!): Float
   group(skip: Int, limit: Int, field: ImageFieldsEnum!): [ImageGroupConnection!]!
 }
 
@@ -5533,6 +5733,9 @@ type AnimeSeriesConnection {
   nodes: [AnimeSeries!]!
   pageInfo: PageInfo!
   distinct(field: AnimeSeriesFieldsEnum!): [String!]!
+  max(field: AnimeSeriesFieldsEnum!): Float
+  min(field: AnimeSeriesFieldsEnum!): Float
+  sum(field: AnimeSeriesFieldsEnum!): Float
   group(skip: Int, limit: Int, field: AnimeSeriesFieldsEnum!): [AnimeSeriesGroupConnection!]!
 }
 
@@ -5941,6 +6144,9 @@ type EntryVideoConnection {
   nodes: [EntryVideo!]!
   pageInfo: PageInfo!
   distinct(field: EntryVideoFieldsEnum!): [String!]!
+  max(field: EntryVideoFieldsEnum!): Float
+  min(field: EntryVideoFieldsEnum!): Float
+  sum(field: EntryVideoFieldsEnum!): Float
   group(skip: Int, limit: Int, field: EntryVideoFieldsEnum!): [EntryVideoGroupConnection!]!
 }
 
@@ -6284,6 +6490,9 @@ type AnimeResourceConnection {
   nodes: [AnimeResource!]!
   pageInfo: PageInfo!
   distinct(field: AnimeResourceFieldsEnum!): [String!]!
+  max(field: AnimeResourceFieldsEnum!): Float
+  min(field: AnimeResourceFieldsEnum!): Float
+  sum(field: AnimeResourceFieldsEnum!): Float
   group(skip: Int, limit: Int, field: AnimeResourceFieldsEnum!): [AnimeResourceGroupConnection!]!
 }
 
@@ -6640,6 +6849,9 @@ type ArtistResourceConnection {
   nodes: [ArtistResource!]!
   pageInfo: PageInfo!
   distinct(field: ArtistResourceFieldsEnum!): [String!]!
+  max(field: ArtistResourceFieldsEnum!): Float
+  min(field: ArtistResourceFieldsEnum!): Float
+  sum(field: ArtistResourceFieldsEnum!): Float
   group(skip: Int, limit: Int, field: ArtistResourceFieldsEnum!): [ArtistResourceGroupConnection!]!
 }
 
@@ -6915,6 +7127,9 @@ type AnimeImageConnection {
   nodes: [AnimeImage!]!
   pageInfo: PageInfo!
   distinct(field: AnimeImageFieldsEnum!): [String!]!
+  max(field: AnimeImageFieldsEnum!): Float
+  min(field: AnimeImageFieldsEnum!): Float
+  sum(field: AnimeImageFieldsEnum!): Float
   group(skip: Int, limit: Int, field: AnimeImageFieldsEnum!): [AnimeImageGroupConnection!]!
 }
 
@@ -7271,6 +7486,9 @@ type ArtistImageConnection {
   nodes: [ArtistImage!]!
   pageInfo: PageInfo!
   distinct(field: ArtistImageFieldsEnum!): [String!]!
+  max(field: ArtistImageFieldsEnum!): Float
+  min(field: ArtistImageFieldsEnum!): Float
+  sum(field: ArtistImageFieldsEnum!): Float
   group(skip: Int, limit: Int, field: ArtistImageFieldsEnum!): [ArtistImageGroupConnection!]!
 }
 
@@ -7546,6 +7764,9 @@ type AnnouncementConnection {
   nodes: [Announcement!]!
   pageInfo: PageInfo!
   distinct(field: AnnouncementFieldsEnum!): [String!]!
+  max(field: AnnouncementFieldsEnum!): Float
+  min(field: AnnouncementFieldsEnum!): Float
+  sum(field: AnnouncementFieldsEnum!): Float
   group(skip: Int, limit: Int, field: AnnouncementFieldsEnum!): [AnnouncementGroupConnection!]!
 }
 
@@ -7733,6 +7954,9 @@ type BracketConnection {
   nodes: [Bracket!]!
   pageInfo: PageInfo!
   distinct(field: BracketFieldsEnum!): [String!]!
+  max(field: BracketFieldsEnum!): Float
+  min(field: BracketFieldsEnum!): Float
+  sum(field: BracketFieldsEnum!): Float
   group(skip: Int, limit: Int, field: BracketFieldsEnum!): [BracketGroupConnection!]!
 }
 
@@ -8063,6 +8287,9 @@ type BracketRoundConnection {
   nodes: [BracketRound!]!
   pageInfo: PageInfo!
   distinct(field: BracketRoundFieldsEnum!): [String!]!
+  max(field: BracketRoundFieldsEnum!): Float
+  min(field: BracketRoundFieldsEnum!): Float
+  sum(field: BracketRoundFieldsEnum!): Float
   group(skip: Int, limit: Int, field: BracketRoundFieldsEnum!): [BracketRoundGroupConnection!]!
 }
 
@@ -8415,6 +8642,9 @@ type BracketPairingConnection {
   nodes: [BracketPairing!]!
   pageInfo: PageInfo!
   distinct(field: BracketPairingFieldsEnum!): [String!]!
+  max(field: BracketPairingFieldsEnum!): Float
+  min(field: BracketPairingFieldsEnum!): Float
+  sum(field: BracketPairingFieldsEnum!): Float
   group(skip: Int, limit: Int, field: BracketPairingFieldsEnum!): [BracketPairingGroupConnection!]!
 }
 
@@ -8885,6 +9115,9 @@ type BracketCharacterConnection {
   nodes: [BracketCharacter!]!
   pageInfo: PageInfo!
   distinct(field: BracketCharacterFieldsEnum!): [String!]!
+  max(field: BracketCharacterFieldsEnum!): Float
+  min(field: BracketCharacterFieldsEnum!): Float
+  sum(field: BracketCharacterFieldsEnum!): Float
   group(skip: Int, limit: Int, field: BracketCharacterFieldsEnum!): [BracketCharacterGroupConnection!]!
 }
 
@@ -9293,139 +9526,15 @@ input BracketCharacterSortInput {
   order: [SortOrderEnum] = [ASC]
 }
 
-type SiteBuildMetadataConnection {
-  totalCount: Int!
-  edges: [SiteBuildMetadataEdge!]!
-  nodes: [SiteBuildMetadata!]!
-  pageInfo: PageInfo!
-  distinct(field: SiteBuildMetadataFieldsEnum!): [String!]!
-  group(skip: Int, limit: Int, field: SiteBuildMetadataFieldsEnum!): [SiteBuildMetadataGroupConnection!]!
-}
-
-type SiteBuildMetadataEdge {
-  next: SiteBuildMetadata
-  node: SiteBuildMetadata!
-  previous: SiteBuildMetadata
-}
-
-enum SiteBuildMetadataFieldsEnum {
-  id
-  parent___id
-  parent___parent___id
-  parent___parent___parent___id
-  parent___parent___parent___children
-  parent___parent___children
-  parent___parent___children___id
-  parent___parent___children___children
-  parent___parent___internal___content
-  parent___parent___internal___contentDigest
-  parent___parent___internal___description
-  parent___parent___internal___fieldOwners
-  parent___parent___internal___ignoreType
-  parent___parent___internal___mediaType
-  parent___parent___internal___owner
-  parent___parent___internal___type
-  parent___children
-  parent___children___id
-  parent___children___parent___id
-  parent___children___parent___children
-  parent___children___children
-  parent___children___children___id
-  parent___children___children___children
-  parent___children___internal___content
-  parent___children___internal___contentDigest
-  parent___children___internal___description
-  parent___children___internal___fieldOwners
-  parent___children___internal___ignoreType
-  parent___children___internal___mediaType
-  parent___children___internal___owner
-  parent___children___internal___type
-  parent___internal___content
-  parent___internal___contentDigest
-  parent___internal___description
-  parent___internal___fieldOwners
-  parent___internal___ignoreType
-  parent___internal___mediaType
-  parent___internal___owner
-  parent___internal___type
-  children
-  children___id
-  children___parent___id
-  children___parent___parent___id
-  children___parent___parent___children
-  children___parent___children
-  children___parent___children___id
-  children___parent___children___children
-  children___parent___internal___content
-  children___parent___internal___contentDigest
-  children___parent___internal___description
-  children___parent___internal___fieldOwners
-  children___parent___internal___ignoreType
-  children___parent___internal___mediaType
-  children___parent___internal___owner
-  children___parent___internal___type
-  children___children
-  children___children___id
-  children___children___parent___id
-  children___children___parent___children
-  children___children___children
-  children___children___children___id
-  children___children___children___children
-  children___children___internal___content
-  children___children___internal___contentDigest
-  children___children___internal___description
-  children___children___internal___fieldOwners
-  children___children___internal___ignoreType
-  children___children___internal___mediaType
-  children___children___internal___owner
-  children___children___internal___type
-  children___internal___content
-  children___internal___contentDigest
-  children___internal___description
-  children___internal___fieldOwners
-  children___internal___ignoreType
-  children___internal___mediaType
-  children___internal___owner
-  children___internal___type
-  internal___content
-  internal___contentDigest
-  internal___description
-  internal___fieldOwners
-  internal___ignoreType
-  internal___mediaType
-  internal___owner
-  internal___type
-  buildTime
-}
-
-type SiteBuildMetadataGroupConnection {
-  totalCount: Int!
-  edges: [SiteBuildMetadataEdge!]!
-  nodes: [SiteBuildMetadata!]!
-  pageInfo: PageInfo!
-  field: String!
-  fieldValue: String
-}
-
-input SiteBuildMetadataFilterInput {
-  id: StringQueryOperatorInput
-  parent: NodeFilterInput
-  children: NodeFilterListInput
-  internal: InternalFilterInput
-  buildTime: DateQueryOperatorInput
-}
-
-input SiteBuildMetadataSortInput {
-  fields: [SiteBuildMetadataFieldsEnum]
-  order: [SortOrderEnum] = [ASC]
-}
-
 type SitePluginConnection {
   totalCount: Int!
   edges: [SitePluginEdge!]!
   nodes: [SitePlugin!]!
   pageInfo: PageInfo!
   distinct(field: SitePluginFieldsEnum!): [String!]!
+  max(field: SitePluginFieldsEnum!): Float
+  min(field: SitePluginFieldsEnum!): Float
+  sum(field: SitePluginFieldsEnum!): Float
   group(skip: Int, limit: Int, field: SitePluginFieldsEnum!): [SitePluginGroupConnection!]!
 }
 
@@ -9587,5 +9696,135 @@ type SitePluginGroupConnection {
 
 input SitePluginSortInput {
   fields: [SitePluginFieldsEnum]
+  order: [SortOrderEnum] = [ASC]
+}
+
+type SiteBuildMetadataConnection {
+  totalCount: Int!
+  edges: [SiteBuildMetadataEdge!]!
+  nodes: [SiteBuildMetadata!]!
+  pageInfo: PageInfo!
+  distinct(field: SiteBuildMetadataFieldsEnum!): [String!]!
+  max(field: SiteBuildMetadataFieldsEnum!): Float
+  min(field: SiteBuildMetadataFieldsEnum!): Float
+  sum(field: SiteBuildMetadataFieldsEnum!): Float
+  group(skip: Int, limit: Int, field: SiteBuildMetadataFieldsEnum!): [SiteBuildMetadataGroupConnection!]!
+}
+
+type SiteBuildMetadataEdge {
+  next: SiteBuildMetadata
+  node: SiteBuildMetadata!
+  previous: SiteBuildMetadata
+}
+
+enum SiteBuildMetadataFieldsEnum {
+  id
+  parent___id
+  parent___parent___id
+  parent___parent___parent___id
+  parent___parent___parent___children
+  parent___parent___children
+  parent___parent___children___id
+  parent___parent___children___children
+  parent___parent___internal___content
+  parent___parent___internal___contentDigest
+  parent___parent___internal___description
+  parent___parent___internal___fieldOwners
+  parent___parent___internal___ignoreType
+  parent___parent___internal___mediaType
+  parent___parent___internal___owner
+  parent___parent___internal___type
+  parent___children
+  parent___children___id
+  parent___children___parent___id
+  parent___children___parent___children
+  parent___children___children
+  parent___children___children___id
+  parent___children___children___children
+  parent___children___internal___content
+  parent___children___internal___contentDigest
+  parent___children___internal___description
+  parent___children___internal___fieldOwners
+  parent___children___internal___ignoreType
+  parent___children___internal___mediaType
+  parent___children___internal___owner
+  parent___children___internal___type
+  parent___internal___content
+  parent___internal___contentDigest
+  parent___internal___description
+  parent___internal___fieldOwners
+  parent___internal___ignoreType
+  parent___internal___mediaType
+  parent___internal___owner
+  parent___internal___type
+  children
+  children___id
+  children___parent___id
+  children___parent___parent___id
+  children___parent___parent___children
+  children___parent___children
+  children___parent___children___id
+  children___parent___children___children
+  children___parent___internal___content
+  children___parent___internal___contentDigest
+  children___parent___internal___description
+  children___parent___internal___fieldOwners
+  children___parent___internal___ignoreType
+  children___parent___internal___mediaType
+  children___parent___internal___owner
+  children___parent___internal___type
+  children___children
+  children___children___id
+  children___children___parent___id
+  children___children___parent___children
+  children___children___children
+  children___children___children___id
+  children___children___children___children
+  children___children___internal___content
+  children___children___internal___contentDigest
+  children___children___internal___description
+  children___children___internal___fieldOwners
+  children___children___internal___ignoreType
+  children___children___internal___mediaType
+  children___children___internal___owner
+  children___children___internal___type
+  children___internal___content
+  children___internal___contentDigest
+  children___internal___description
+  children___internal___fieldOwners
+  children___internal___ignoreType
+  children___internal___mediaType
+  children___internal___owner
+  children___internal___type
+  internal___content
+  internal___contentDigest
+  internal___description
+  internal___fieldOwners
+  internal___ignoreType
+  internal___mediaType
+  internal___owner
+  internal___type
+  buildTime
+}
+
+type SiteBuildMetadataGroupConnection {
+  totalCount: Int!
+  edges: [SiteBuildMetadataEdge!]!
+  nodes: [SiteBuildMetadata!]!
+  pageInfo: PageInfo!
+  field: String!
+  fieldValue: String
+}
+
+input SiteBuildMetadataFilterInput {
+  id: StringQueryOperatorInput
+  parent: NodeFilterInput
+  children: NodeFilterListInput
+  internal: InternalFilterInput
+  buildTime: DateQueryOperatorInput
+}
+
+input SiteBuildMetadataSortInput {
+  fields: [SiteBuildMetadataFieldsEnum]
   order: [SortOrderEnum] = [ASC]
 }
