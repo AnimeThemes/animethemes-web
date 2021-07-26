@@ -9,7 +9,7 @@ import { SearchResultList } from "components/search";
 import { useQuery } from "react-query";
 import { fetchGlobalSearchResults } from "lib/search";
 
-export function GlobalSearch({ searchQuery }) {
+export function SearchGlobal({ searchQuery }) {
     const fetchSearchResults = () => fetchGlobalSearchResults(
         searchQuery,
         4,
@@ -74,7 +74,7 @@ function GlobalSearchSection({ entity, title, results }) {
             </Box>
             {hasMoreResults && (
                 <Flex justifyContent="center">
-                    <Link to={`/search/${entity}${urlSuffix}`} state={{ noAutoFocus: true }}>
+                    <Link to={`/search/${entity}${urlSuffix}`}>
                         <Button silent title="See all results">
                             <Icon icon={faChevronDown}/>
                         </Button>
