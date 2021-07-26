@@ -78,8 +78,16 @@ module.exports = ({ actions }) => {
             slug: String!
             name: String!            
             performances: [Performance] @link(by: "artist.id", from: "id")
+            members: [ArtistMembership] @link(by: "group.id", from: "id")
+            groups: [ArtistMembership] @link(by: "member.id", from: "id")
             resources: [Resource]
             images: [Image]
+        }
+        
+        type ArtistMembership implements Node {
+            group: Artist! @link(by: "id")
+            member: Artist! @link(by: "id")
+            as: String
         }
         
         type Series implements Node & Entity {
