@@ -481,8 +481,20 @@ type Artist implements Node & Entity {
   slug: String!
   name: String!
   performances: [Performance]
+  members: [ArtistMembership]
+  groups: [ArtistMembership]
   resources: [Resource]
   images: [Image]
+  id: ID!
+  parent: Node
+  children: [Node!]!
+  internal: Internal!
+}
+
+type ArtistMembership implements Node {
+  group: Artist!
+  member: Artist!
+  as: String
   id: ID!
   parent: Node
   children: [Node!]!
@@ -754,8 +766,10 @@ type Query {
   allSong(filter: SongFilterInput, sort: SongSortInput, skip: Int, limit: Int): SongConnection!
   performance(song: SongFilterInput, artist: ArtistFilterInput, as: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Performance
   allPerformance(filter: PerformanceFilterInput, sort: PerformanceSortInput, skip: Int, limit: Int): PerformanceConnection!
-  artist(idRaw: IntQueryOperatorInput, slug: StringQueryOperatorInput, name: StringQueryOperatorInput, performances: PerformanceFilterListInput, resources: ResourceFilterListInput, images: ImageFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Artist
+  artist(idRaw: IntQueryOperatorInput, slug: StringQueryOperatorInput, name: StringQueryOperatorInput, performances: PerformanceFilterListInput, members: ArtistMembershipFilterListInput, groups: ArtistMembershipFilterListInput, resources: ResourceFilterListInput, images: ImageFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Artist
   allArtist(filter: ArtistFilterInput, sort: ArtistSortInput, skip: Int, limit: Int): ArtistConnection!
+  artistMembership(group: ArtistFilterInput, member: ArtistFilterInput, as: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): ArtistMembership
+  allArtistMembership(filter: ArtistMembershipFilterInput, sort: ArtistMembershipSortInput, skip: Int, limit: Int): ArtistMembershipConnection!
   series(idRaw: IntQueryOperatorInput, slug: StringQueryOperatorInput, name: StringQueryOperatorInput, anime: AnimeFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Series
   allSeries(filter: SeriesFilterInput, sort: SeriesSortInput, skip: Int, limit: Int): SeriesConnection!
   resource(idRaw: IntQueryOperatorInput, link: StringQueryOperatorInput, site: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Resource
@@ -1970,8 +1984,24 @@ input ArtistFilterInput {
   slug: StringQueryOperatorInput
   name: StringQueryOperatorInput
   performances: PerformanceFilterListInput
+  members: ArtistMembershipFilterListInput
+  groups: ArtistMembershipFilterListInput
   resources: ResourceFilterListInput
   images: ImageFilterListInput
+  id: StringQueryOperatorInput
+  parent: NodeFilterInput
+  children: NodeFilterListInput
+  internal: InternalFilterInput
+}
+
+input ArtistMembershipFilterListInput {
+  elemMatch: ArtistMembershipFilterInput
+}
+
+input ArtistMembershipFilterInput {
+  group: ArtistFilterInput
+  member: ArtistFilterInput
+  as: StringQueryOperatorInput
   id: StringQueryOperatorInput
   parent: NodeFilterInput
   children: NodeFilterListInput
@@ -3018,6 +3048,8 @@ enum ThemeFieldsEnum {
   song___performances___artist___slug
   song___performances___artist___name
   song___performances___artist___performances
+  song___performances___artist___members
+  song___performances___artist___groups
   song___performances___artist___resources
   song___performances___artist___images
   song___performances___artist___id
@@ -4346,6 +4378,14 @@ enum SongFieldsEnum {
   performances___artist___performances___as
   performances___artist___performances___id
   performances___artist___performances___children
+  performances___artist___members
+  performances___artist___members___as
+  performances___artist___members___id
+  performances___artist___members___children
+  performances___artist___groups
+  performances___artist___groups___as
+  performances___artist___groups___id
+  performances___artist___groups___children
   performances___artist___resources
   performances___artist___resources___idRaw
   performances___artist___resources___link
@@ -4591,6 +4631,8 @@ enum PerformanceFieldsEnum {
   song___performances___artist___slug
   song___performances___artist___name
   song___performances___artist___performances
+  song___performances___artist___members
+  song___performances___artist___groups
   song___performances___artist___resources
   song___performances___artist___images
   song___performances___artist___id
@@ -4662,6 +4704,8 @@ enum PerformanceFieldsEnum {
   artist___performances___artist___slug
   artist___performances___artist___name
   artist___performances___artist___performances
+  artist___performances___artist___members
+  artist___performances___artist___groups
   artist___performances___artist___resources
   artist___performances___artist___images
   artist___performances___artist___id
@@ -4681,6 +4725,78 @@ enum PerformanceFieldsEnum {
   artist___performances___internal___mediaType
   artist___performances___internal___owner
   artist___performances___internal___type
+  artist___members
+  artist___members___group___idRaw
+  artist___members___group___slug
+  artist___members___group___name
+  artist___members___group___performances
+  artist___members___group___members
+  artist___members___group___groups
+  artist___members___group___resources
+  artist___members___group___images
+  artist___members___group___id
+  artist___members___group___children
+  artist___members___member___idRaw
+  artist___members___member___slug
+  artist___members___member___name
+  artist___members___member___performances
+  artist___members___member___members
+  artist___members___member___groups
+  artist___members___member___resources
+  artist___members___member___images
+  artist___members___member___id
+  artist___members___member___children
+  artist___members___as
+  artist___members___id
+  artist___members___parent___id
+  artist___members___parent___children
+  artist___members___children
+  artist___members___children___id
+  artist___members___children___children
+  artist___members___internal___content
+  artist___members___internal___contentDigest
+  artist___members___internal___description
+  artist___members___internal___fieldOwners
+  artist___members___internal___ignoreType
+  artist___members___internal___mediaType
+  artist___members___internal___owner
+  artist___members___internal___type
+  artist___groups
+  artist___groups___group___idRaw
+  artist___groups___group___slug
+  artist___groups___group___name
+  artist___groups___group___performances
+  artist___groups___group___members
+  artist___groups___group___groups
+  artist___groups___group___resources
+  artist___groups___group___images
+  artist___groups___group___id
+  artist___groups___group___children
+  artist___groups___member___idRaw
+  artist___groups___member___slug
+  artist___groups___member___name
+  artist___groups___member___performances
+  artist___groups___member___members
+  artist___groups___member___groups
+  artist___groups___member___resources
+  artist___groups___member___images
+  artist___groups___member___id
+  artist___groups___member___children
+  artist___groups___as
+  artist___groups___id
+  artist___groups___parent___id
+  artist___groups___parent___children
+  artist___groups___children
+  artist___groups___children___id
+  artist___groups___children___children
+  artist___groups___internal___content
+  artist___groups___internal___contentDigest
+  artist___groups___internal___description
+  artist___groups___internal___fieldOwners
+  artist___groups___internal___ignoreType
+  artist___groups___internal___mediaType
+  artist___groups___internal___owner
+  artist___groups___internal___type
   artist___resources
   artist___resources___idRaw
   artist___resources___link
@@ -4915,6 +5031,14 @@ enum ArtistFieldsEnum {
   performances___artist___performances___as
   performances___artist___performances___id
   performances___artist___performances___children
+  performances___artist___members
+  performances___artist___members___as
+  performances___artist___members___id
+  performances___artist___members___children
+  performances___artist___groups
+  performances___artist___groups___as
+  performances___artist___groups___id
+  performances___artist___groups___children
   performances___artist___resources
   performances___artist___resources___idRaw
   performances___artist___resources___link
@@ -4980,6 +5104,250 @@ enum ArtistFieldsEnum {
   performances___internal___mediaType
   performances___internal___owner
   performances___internal___type
+  members
+  members___group___idRaw
+  members___group___slug
+  members___group___name
+  members___group___performances
+  members___group___performances___as
+  members___group___performances___id
+  members___group___performances___children
+  members___group___members
+  members___group___members___as
+  members___group___members___id
+  members___group___members___children
+  members___group___groups
+  members___group___groups___as
+  members___group___groups___id
+  members___group___groups___children
+  members___group___resources
+  members___group___resources___idRaw
+  members___group___resources___link
+  members___group___resources___site
+  members___group___resources___id
+  members___group___resources___children
+  members___group___images
+  members___group___images___idRaw
+  members___group___images___facet
+  members___group___images___link
+  members___group___images___id
+  members___group___images___children
+  members___group___id
+  members___group___parent___id
+  members___group___parent___children
+  members___group___children
+  members___group___children___id
+  members___group___children___children
+  members___group___internal___content
+  members___group___internal___contentDigest
+  members___group___internal___description
+  members___group___internal___fieldOwners
+  members___group___internal___ignoreType
+  members___group___internal___mediaType
+  members___group___internal___owner
+  members___group___internal___type
+  members___member___idRaw
+  members___member___slug
+  members___member___name
+  members___member___performances
+  members___member___performances___as
+  members___member___performances___id
+  members___member___performances___children
+  members___member___members
+  members___member___members___as
+  members___member___members___id
+  members___member___members___children
+  members___member___groups
+  members___member___groups___as
+  members___member___groups___id
+  members___member___groups___children
+  members___member___resources
+  members___member___resources___idRaw
+  members___member___resources___link
+  members___member___resources___site
+  members___member___resources___id
+  members___member___resources___children
+  members___member___images
+  members___member___images___idRaw
+  members___member___images___facet
+  members___member___images___link
+  members___member___images___id
+  members___member___images___children
+  members___member___id
+  members___member___parent___id
+  members___member___parent___children
+  members___member___children
+  members___member___children___id
+  members___member___children___children
+  members___member___internal___content
+  members___member___internal___contentDigest
+  members___member___internal___description
+  members___member___internal___fieldOwners
+  members___member___internal___ignoreType
+  members___member___internal___mediaType
+  members___member___internal___owner
+  members___member___internal___type
+  members___as
+  members___id
+  members___parent___id
+  members___parent___parent___id
+  members___parent___parent___children
+  members___parent___children
+  members___parent___children___id
+  members___parent___children___children
+  members___parent___internal___content
+  members___parent___internal___contentDigest
+  members___parent___internal___description
+  members___parent___internal___fieldOwners
+  members___parent___internal___ignoreType
+  members___parent___internal___mediaType
+  members___parent___internal___owner
+  members___parent___internal___type
+  members___children
+  members___children___id
+  members___children___parent___id
+  members___children___parent___children
+  members___children___children
+  members___children___children___id
+  members___children___children___children
+  members___children___internal___content
+  members___children___internal___contentDigest
+  members___children___internal___description
+  members___children___internal___fieldOwners
+  members___children___internal___ignoreType
+  members___children___internal___mediaType
+  members___children___internal___owner
+  members___children___internal___type
+  members___internal___content
+  members___internal___contentDigest
+  members___internal___description
+  members___internal___fieldOwners
+  members___internal___ignoreType
+  members___internal___mediaType
+  members___internal___owner
+  members___internal___type
+  groups
+  groups___group___idRaw
+  groups___group___slug
+  groups___group___name
+  groups___group___performances
+  groups___group___performances___as
+  groups___group___performances___id
+  groups___group___performances___children
+  groups___group___members
+  groups___group___members___as
+  groups___group___members___id
+  groups___group___members___children
+  groups___group___groups
+  groups___group___groups___as
+  groups___group___groups___id
+  groups___group___groups___children
+  groups___group___resources
+  groups___group___resources___idRaw
+  groups___group___resources___link
+  groups___group___resources___site
+  groups___group___resources___id
+  groups___group___resources___children
+  groups___group___images
+  groups___group___images___idRaw
+  groups___group___images___facet
+  groups___group___images___link
+  groups___group___images___id
+  groups___group___images___children
+  groups___group___id
+  groups___group___parent___id
+  groups___group___parent___children
+  groups___group___children
+  groups___group___children___id
+  groups___group___children___children
+  groups___group___internal___content
+  groups___group___internal___contentDigest
+  groups___group___internal___description
+  groups___group___internal___fieldOwners
+  groups___group___internal___ignoreType
+  groups___group___internal___mediaType
+  groups___group___internal___owner
+  groups___group___internal___type
+  groups___member___idRaw
+  groups___member___slug
+  groups___member___name
+  groups___member___performances
+  groups___member___performances___as
+  groups___member___performances___id
+  groups___member___performances___children
+  groups___member___members
+  groups___member___members___as
+  groups___member___members___id
+  groups___member___members___children
+  groups___member___groups
+  groups___member___groups___as
+  groups___member___groups___id
+  groups___member___groups___children
+  groups___member___resources
+  groups___member___resources___idRaw
+  groups___member___resources___link
+  groups___member___resources___site
+  groups___member___resources___id
+  groups___member___resources___children
+  groups___member___images
+  groups___member___images___idRaw
+  groups___member___images___facet
+  groups___member___images___link
+  groups___member___images___id
+  groups___member___images___children
+  groups___member___id
+  groups___member___parent___id
+  groups___member___parent___children
+  groups___member___children
+  groups___member___children___id
+  groups___member___children___children
+  groups___member___internal___content
+  groups___member___internal___contentDigest
+  groups___member___internal___description
+  groups___member___internal___fieldOwners
+  groups___member___internal___ignoreType
+  groups___member___internal___mediaType
+  groups___member___internal___owner
+  groups___member___internal___type
+  groups___as
+  groups___id
+  groups___parent___id
+  groups___parent___parent___id
+  groups___parent___parent___children
+  groups___parent___children
+  groups___parent___children___id
+  groups___parent___children___children
+  groups___parent___internal___content
+  groups___parent___internal___contentDigest
+  groups___parent___internal___description
+  groups___parent___internal___fieldOwners
+  groups___parent___internal___ignoreType
+  groups___parent___internal___mediaType
+  groups___parent___internal___owner
+  groups___parent___internal___type
+  groups___children
+  groups___children___id
+  groups___children___parent___id
+  groups___children___parent___children
+  groups___children___children
+  groups___children___children___id
+  groups___children___children___children
+  groups___children___internal___content
+  groups___children___internal___contentDigest
+  groups___children___internal___description
+  groups___children___internal___fieldOwners
+  groups___children___internal___ignoreType
+  groups___children___internal___mediaType
+  groups___children___internal___owner
+  groups___children___internal___type
+  groups___internal___content
+  groups___internal___contentDigest
+  groups___internal___description
+  groups___internal___fieldOwners
+  groups___internal___ignoreType
+  groups___internal___mediaType
+  groups___internal___owner
+  groups___internal___type
   resources
   resources___idRaw
   resources___link
@@ -5163,6 +5531,490 @@ type ArtistGroupConnection {
 
 input ArtistSortInput {
   fields: [ArtistFieldsEnum]
+  order: [SortOrderEnum] = [ASC]
+}
+
+type ArtistMembershipConnection {
+  totalCount: Int!
+  edges: [ArtistMembershipEdge!]!
+  nodes: [ArtistMembership!]!
+  pageInfo: PageInfo!
+  distinct(field: ArtistMembershipFieldsEnum!): [String!]!
+  max(field: ArtistMembershipFieldsEnum!): Float
+  min(field: ArtistMembershipFieldsEnum!): Float
+  sum(field: ArtistMembershipFieldsEnum!): Float
+  group(skip: Int, limit: Int, field: ArtistMembershipFieldsEnum!): [ArtistMembershipGroupConnection!]!
+}
+
+type ArtistMembershipEdge {
+  next: ArtistMembership
+  node: ArtistMembership!
+  previous: ArtistMembership
+}
+
+enum ArtistMembershipFieldsEnum {
+  group___idRaw
+  group___slug
+  group___name
+  group___performances
+  group___performances___song___idRaw
+  group___performances___song___title
+  group___performances___song___themes
+  group___performances___song___performances
+  group___performances___song___id
+  group___performances___song___children
+  group___performances___artist___idRaw
+  group___performances___artist___slug
+  group___performances___artist___name
+  group___performances___artist___performances
+  group___performances___artist___members
+  group___performances___artist___groups
+  group___performances___artist___resources
+  group___performances___artist___images
+  group___performances___artist___id
+  group___performances___artist___children
+  group___performances___as
+  group___performances___id
+  group___performances___parent___id
+  group___performances___parent___children
+  group___performances___children
+  group___performances___children___id
+  group___performances___children___children
+  group___performances___internal___content
+  group___performances___internal___contentDigest
+  group___performances___internal___description
+  group___performances___internal___fieldOwners
+  group___performances___internal___ignoreType
+  group___performances___internal___mediaType
+  group___performances___internal___owner
+  group___performances___internal___type
+  group___members
+  group___members___group___idRaw
+  group___members___group___slug
+  group___members___group___name
+  group___members___group___performances
+  group___members___group___members
+  group___members___group___groups
+  group___members___group___resources
+  group___members___group___images
+  group___members___group___id
+  group___members___group___children
+  group___members___member___idRaw
+  group___members___member___slug
+  group___members___member___name
+  group___members___member___performances
+  group___members___member___members
+  group___members___member___groups
+  group___members___member___resources
+  group___members___member___images
+  group___members___member___id
+  group___members___member___children
+  group___members___as
+  group___members___id
+  group___members___parent___id
+  group___members___parent___children
+  group___members___children
+  group___members___children___id
+  group___members___children___children
+  group___members___internal___content
+  group___members___internal___contentDigest
+  group___members___internal___description
+  group___members___internal___fieldOwners
+  group___members___internal___ignoreType
+  group___members___internal___mediaType
+  group___members___internal___owner
+  group___members___internal___type
+  group___groups
+  group___groups___group___idRaw
+  group___groups___group___slug
+  group___groups___group___name
+  group___groups___group___performances
+  group___groups___group___members
+  group___groups___group___groups
+  group___groups___group___resources
+  group___groups___group___images
+  group___groups___group___id
+  group___groups___group___children
+  group___groups___member___idRaw
+  group___groups___member___slug
+  group___groups___member___name
+  group___groups___member___performances
+  group___groups___member___members
+  group___groups___member___groups
+  group___groups___member___resources
+  group___groups___member___images
+  group___groups___member___id
+  group___groups___member___children
+  group___groups___as
+  group___groups___id
+  group___groups___parent___id
+  group___groups___parent___children
+  group___groups___children
+  group___groups___children___id
+  group___groups___children___children
+  group___groups___internal___content
+  group___groups___internal___contentDigest
+  group___groups___internal___description
+  group___groups___internal___fieldOwners
+  group___groups___internal___ignoreType
+  group___groups___internal___mediaType
+  group___groups___internal___owner
+  group___groups___internal___type
+  group___resources
+  group___resources___idRaw
+  group___resources___link
+  group___resources___site
+  group___resources___id
+  group___resources___parent___id
+  group___resources___parent___children
+  group___resources___children
+  group___resources___children___id
+  group___resources___children___children
+  group___resources___internal___content
+  group___resources___internal___contentDigest
+  group___resources___internal___description
+  group___resources___internal___fieldOwners
+  group___resources___internal___ignoreType
+  group___resources___internal___mediaType
+  group___resources___internal___owner
+  group___resources___internal___type
+  group___images
+  group___images___idRaw
+  group___images___facet
+  group___images___link
+  group___images___id
+  group___images___parent___id
+  group___images___parent___children
+  group___images___children
+  group___images___children___id
+  group___images___children___children
+  group___images___internal___content
+  group___images___internal___contentDigest
+  group___images___internal___description
+  group___images___internal___fieldOwners
+  group___images___internal___ignoreType
+  group___images___internal___mediaType
+  group___images___internal___owner
+  group___images___internal___type
+  group___id
+  group___parent___id
+  group___parent___parent___id
+  group___parent___parent___children
+  group___parent___children
+  group___parent___children___id
+  group___parent___children___children
+  group___parent___internal___content
+  group___parent___internal___contentDigest
+  group___parent___internal___description
+  group___parent___internal___fieldOwners
+  group___parent___internal___ignoreType
+  group___parent___internal___mediaType
+  group___parent___internal___owner
+  group___parent___internal___type
+  group___children
+  group___children___id
+  group___children___parent___id
+  group___children___parent___children
+  group___children___children
+  group___children___children___id
+  group___children___children___children
+  group___children___internal___content
+  group___children___internal___contentDigest
+  group___children___internal___description
+  group___children___internal___fieldOwners
+  group___children___internal___ignoreType
+  group___children___internal___mediaType
+  group___children___internal___owner
+  group___children___internal___type
+  group___internal___content
+  group___internal___contentDigest
+  group___internal___description
+  group___internal___fieldOwners
+  group___internal___ignoreType
+  group___internal___mediaType
+  group___internal___owner
+  group___internal___type
+  member___idRaw
+  member___slug
+  member___name
+  member___performances
+  member___performances___song___idRaw
+  member___performances___song___title
+  member___performances___song___themes
+  member___performances___song___performances
+  member___performances___song___id
+  member___performances___song___children
+  member___performances___artist___idRaw
+  member___performances___artist___slug
+  member___performances___artist___name
+  member___performances___artist___performances
+  member___performances___artist___members
+  member___performances___artist___groups
+  member___performances___artist___resources
+  member___performances___artist___images
+  member___performances___artist___id
+  member___performances___artist___children
+  member___performances___as
+  member___performances___id
+  member___performances___parent___id
+  member___performances___parent___children
+  member___performances___children
+  member___performances___children___id
+  member___performances___children___children
+  member___performances___internal___content
+  member___performances___internal___contentDigest
+  member___performances___internal___description
+  member___performances___internal___fieldOwners
+  member___performances___internal___ignoreType
+  member___performances___internal___mediaType
+  member___performances___internal___owner
+  member___performances___internal___type
+  member___members
+  member___members___group___idRaw
+  member___members___group___slug
+  member___members___group___name
+  member___members___group___performances
+  member___members___group___members
+  member___members___group___groups
+  member___members___group___resources
+  member___members___group___images
+  member___members___group___id
+  member___members___group___children
+  member___members___member___idRaw
+  member___members___member___slug
+  member___members___member___name
+  member___members___member___performances
+  member___members___member___members
+  member___members___member___groups
+  member___members___member___resources
+  member___members___member___images
+  member___members___member___id
+  member___members___member___children
+  member___members___as
+  member___members___id
+  member___members___parent___id
+  member___members___parent___children
+  member___members___children
+  member___members___children___id
+  member___members___children___children
+  member___members___internal___content
+  member___members___internal___contentDigest
+  member___members___internal___description
+  member___members___internal___fieldOwners
+  member___members___internal___ignoreType
+  member___members___internal___mediaType
+  member___members___internal___owner
+  member___members___internal___type
+  member___groups
+  member___groups___group___idRaw
+  member___groups___group___slug
+  member___groups___group___name
+  member___groups___group___performances
+  member___groups___group___members
+  member___groups___group___groups
+  member___groups___group___resources
+  member___groups___group___images
+  member___groups___group___id
+  member___groups___group___children
+  member___groups___member___idRaw
+  member___groups___member___slug
+  member___groups___member___name
+  member___groups___member___performances
+  member___groups___member___members
+  member___groups___member___groups
+  member___groups___member___resources
+  member___groups___member___images
+  member___groups___member___id
+  member___groups___member___children
+  member___groups___as
+  member___groups___id
+  member___groups___parent___id
+  member___groups___parent___children
+  member___groups___children
+  member___groups___children___id
+  member___groups___children___children
+  member___groups___internal___content
+  member___groups___internal___contentDigest
+  member___groups___internal___description
+  member___groups___internal___fieldOwners
+  member___groups___internal___ignoreType
+  member___groups___internal___mediaType
+  member___groups___internal___owner
+  member___groups___internal___type
+  member___resources
+  member___resources___idRaw
+  member___resources___link
+  member___resources___site
+  member___resources___id
+  member___resources___parent___id
+  member___resources___parent___children
+  member___resources___children
+  member___resources___children___id
+  member___resources___children___children
+  member___resources___internal___content
+  member___resources___internal___contentDigest
+  member___resources___internal___description
+  member___resources___internal___fieldOwners
+  member___resources___internal___ignoreType
+  member___resources___internal___mediaType
+  member___resources___internal___owner
+  member___resources___internal___type
+  member___images
+  member___images___idRaw
+  member___images___facet
+  member___images___link
+  member___images___id
+  member___images___parent___id
+  member___images___parent___children
+  member___images___children
+  member___images___children___id
+  member___images___children___children
+  member___images___internal___content
+  member___images___internal___contentDigest
+  member___images___internal___description
+  member___images___internal___fieldOwners
+  member___images___internal___ignoreType
+  member___images___internal___mediaType
+  member___images___internal___owner
+  member___images___internal___type
+  member___id
+  member___parent___id
+  member___parent___parent___id
+  member___parent___parent___children
+  member___parent___children
+  member___parent___children___id
+  member___parent___children___children
+  member___parent___internal___content
+  member___parent___internal___contentDigest
+  member___parent___internal___description
+  member___parent___internal___fieldOwners
+  member___parent___internal___ignoreType
+  member___parent___internal___mediaType
+  member___parent___internal___owner
+  member___parent___internal___type
+  member___children
+  member___children___id
+  member___children___parent___id
+  member___children___parent___children
+  member___children___children
+  member___children___children___id
+  member___children___children___children
+  member___children___internal___content
+  member___children___internal___contentDigest
+  member___children___internal___description
+  member___children___internal___fieldOwners
+  member___children___internal___ignoreType
+  member___children___internal___mediaType
+  member___children___internal___owner
+  member___children___internal___type
+  member___internal___content
+  member___internal___contentDigest
+  member___internal___description
+  member___internal___fieldOwners
+  member___internal___ignoreType
+  member___internal___mediaType
+  member___internal___owner
+  member___internal___type
+  as
+  id
+  parent___id
+  parent___parent___id
+  parent___parent___parent___id
+  parent___parent___parent___children
+  parent___parent___children
+  parent___parent___children___id
+  parent___parent___children___children
+  parent___parent___internal___content
+  parent___parent___internal___contentDigest
+  parent___parent___internal___description
+  parent___parent___internal___fieldOwners
+  parent___parent___internal___ignoreType
+  parent___parent___internal___mediaType
+  parent___parent___internal___owner
+  parent___parent___internal___type
+  parent___children
+  parent___children___id
+  parent___children___parent___id
+  parent___children___parent___children
+  parent___children___children
+  parent___children___children___id
+  parent___children___children___children
+  parent___children___internal___content
+  parent___children___internal___contentDigest
+  parent___children___internal___description
+  parent___children___internal___fieldOwners
+  parent___children___internal___ignoreType
+  parent___children___internal___mediaType
+  parent___children___internal___owner
+  parent___children___internal___type
+  parent___internal___content
+  parent___internal___contentDigest
+  parent___internal___description
+  parent___internal___fieldOwners
+  parent___internal___ignoreType
+  parent___internal___mediaType
+  parent___internal___owner
+  parent___internal___type
+  children
+  children___id
+  children___parent___id
+  children___parent___parent___id
+  children___parent___parent___children
+  children___parent___children
+  children___parent___children___id
+  children___parent___children___children
+  children___parent___internal___content
+  children___parent___internal___contentDigest
+  children___parent___internal___description
+  children___parent___internal___fieldOwners
+  children___parent___internal___ignoreType
+  children___parent___internal___mediaType
+  children___parent___internal___owner
+  children___parent___internal___type
+  children___children
+  children___children___id
+  children___children___parent___id
+  children___children___parent___children
+  children___children___children
+  children___children___children___id
+  children___children___children___children
+  children___children___internal___content
+  children___children___internal___contentDigest
+  children___children___internal___description
+  children___children___internal___fieldOwners
+  children___children___internal___ignoreType
+  children___children___internal___mediaType
+  children___children___internal___owner
+  children___children___internal___type
+  children___internal___content
+  children___internal___contentDigest
+  children___internal___description
+  children___internal___fieldOwners
+  children___internal___ignoreType
+  children___internal___mediaType
+  children___internal___owner
+  children___internal___type
+  internal___content
+  internal___contentDigest
+  internal___description
+  internal___fieldOwners
+  internal___ignoreType
+  internal___mediaType
+  internal___owner
+  internal___type
+}
+
+type ArtistMembershipGroupConnection {
+  totalCount: Int!
+  edges: [ArtistMembershipEdge!]!
+  nodes: [ArtistMembership!]!
+  pageInfo: PageInfo!
+  field: String!
+  fieldValue: String
+}
+
+input ArtistMembershipSortInput {
+  fields: [ArtistMembershipFieldsEnum]
   order: [SortOrderEnum] = [ASC]
 }
 
@@ -6876,6 +7728,8 @@ enum ArtistResourceFieldsEnum {
   artist___performances___artist___slug
   artist___performances___artist___name
   artist___performances___artist___performances
+  artist___performances___artist___members
+  artist___performances___artist___groups
   artist___performances___artist___resources
   artist___performances___artist___images
   artist___performances___artist___id
@@ -6895,6 +7749,78 @@ enum ArtistResourceFieldsEnum {
   artist___performances___internal___mediaType
   artist___performances___internal___owner
   artist___performances___internal___type
+  artist___members
+  artist___members___group___idRaw
+  artist___members___group___slug
+  artist___members___group___name
+  artist___members___group___performances
+  artist___members___group___members
+  artist___members___group___groups
+  artist___members___group___resources
+  artist___members___group___images
+  artist___members___group___id
+  artist___members___group___children
+  artist___members___member___idRaw
+  artist___members___member___slug
+  artist___members___member___name
+  artist___members___member___performances
+  artist___members___member___members
+  artist___members___member___groups
+  artist___members___member___resources
+  artist___members___member___images
+  artist___members___member___id
+  artist___members___member___children
+  artist___members___as
+  artist___members___id
+  artist___members___parent___id
+  artist___members___parent___children
+  artist___members___children
+  artist___members___children___id
+  artist___members___children___children
+  artist___members___internal___content
+  artist___members___internal___contentDigest
+  artist___members___internal___description
+  artist___members___internal___fieldOwners
+  artist___members___internal___ignoreType
+  artist___members___internal___mediaType
+  artist___members___internal___owner
+  artist___members___internal___type
+  artist___groups
+  artist___groups___group___idRaw
+  artist___groups___group___slug
+  artist___groups___group___name
+  artist___groups___group___performances
+  artist___groups___group___members
+  artist___groups___group___groups
+  artist___groups___group___resources
+  artist___groups___group___images
+  artist___groups___group___id
+  artist___groups___group___children
+  artist___groups___member___idRaw
+  artist___groups___member___slug
+  artist___groups___member___name
+  artist___groups___member___performances
+  artist___groups___member___members
+  artist___groups___member___groups
+  artist___groups___member___resources
+  artist___groups___member___images
+  artist___groups___member___id
+  artist___groups___member___children
+  artist___groups___as
+  artist___groups___id
+  artist___groups___parent___id
+  artist___groups___parent___children
+  artist___groups___children
+  artist___groups___children___id
+  artist___groups___children___children
+  artist___groups___internal___content
+  artist___groups___internal___contentDigest
+  artist___groups___internal___description
+  artist___groups___internal___fieldOwners
+  artist___groups___internal___ignoreType
+  artist___groups___internal___mediaType
+  artist___groups___internal___owner
+  artist___groups___internal___type
   artist___resources
   artist___resources___idRaw
   artist___resources___link
@@ -7513,6 +8439,8 @@ enum ArtistImageFieldsEnum {
   artist___performances___artist___slug
   artist___performances___artist___name
   artist___performances___artist___performances
+  artist___performances___artist___members
+  artist___performances___artist___groups
   artist___performances___artist___resources
   artist___performances___artist___images
   artist___performances___artist___id
@@ -7532,6 +8460,78 @@ enum ArtistImageFieldsEnum {
   artist___performances___internal___mediaType
   artist___performances___internal___owner
   artist___performances___internal___type
+  artist___members
+  artist___members___group___idRaw
+  artist___members___group___slug
+  artist___members___group___name
+  artist___members___group___performances
+  artist___members___group___members
+  artist___members___group___groups
+  artist___members___group___resources
+  artist___members___group___images
+  artist___members___group___id
+  artist___members___group___children
+  artist___members___member___idRaw
+  artist___members___member___slug
+  artist___members___member___name
+  artist___members___member___performances
+  artist___members___member___members
+  artist___members___member___groups
+  artist___members___member___resources
+  artist___members___member___images
+  artist___members___member___id
+  artist___members___member___children
+  artist___members___as
+  artist___members___id
+  artist___members___parent___id
+  artist___members___parent___children
+  artist___members___children
+  artist___members___children___id
+  artist___members___children___children
+  artist___members___internal___content
+  artist___members___internal___contentDigest
+  artist___members___internal___description
+  artist___members___internal___fieldOwners
+  artist___members___internal___ignoreType
+  artist___members___internal___mediaType
+  artist___members___internal___owner
+  artist___members___internal___type
+  artist___groups
+  artist___groups___group___idRaw
+  artist___groups___group___slug
+  artist___groups___group___name
+  artist___groups___group___performances
+  artist___groups___group___members
+  artist___groups___group___groups
+  artist___groups___group___resources
+  artist___groups___group___images
+  artist___groups___group___id
+  artist___groups___group___children
+  artist___groups___member___idRaw
+  artist___groups___member___slug
+  artist___groups___member___name
+  artist___groups___member___performances
+  artist___groups___member___members
+  artist___groups___member___groups
+  artist___groups___member___resources
+  artist___groups___member___images
+  artist___groups___member___id
+  artist___groups___member___children
+  artist___groups___as
+  artist___groups___id
+  artist___groups___parent___id
+  artist___groups___parent___children
+  artist___groups___children
+  artist___groups___children___id
+  artist___groups___children___children
+  artist___groups___internal___content
+  artist___groups___internal___contentDigest
+  artist___groups___internal___description
+  artist___groups___internal___fieldOwners
+  artist___groups___internal___ignoreType
+  artist___groups___internal___mediaType
+  artist___groups___internal___owner
+  artist___groups___internal___type
   artist___resources
   artist___resources___idRaw
   artist___resources___link

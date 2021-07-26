@@ -36,10 +36,10 @@ export default function ArtistDetailPage({ data: { artist } }) {
                 <Box gapsColumn="1.5rem">
                     <CoverImage resourceWithImages={artist}/>
                     <DescriptionList>
-                        {!!artist.members && !!artist.members.length && (
+                        {!!artist.members?.length && (
                             <DescriptionList.Item title="Members">
                                 <StyledList>
-                                    {artist.members.map((member) =>
+                                    {artist.members.map(({ member }) =>
                                         <Link key={member.slug} to={`/artist/${member.slug}`}>
                                             <Text link>
                                                 {member.name}
@@ -49,10 +49,10 @@ export default function ArtistDetailPage({ data: { artist } }) {
                                 </StyledList>
                             </DescriptionList.Item>
                         )}
-                        {!!artist.groups && !!artist.groups.length && (
+                        {!!artist.groups?.length && (
                             <DescriptionList.Item title="Member of">
                                 <StyledList>
-                                    {artist.groups.map((group) =>
+                                    {artist.groups.map(({ group }) =>
                                         <Link key={group.slug} to={`/artist/${group.slug}`}>
                                             <Text link>
                                                 {group.name}
@@ -115,6 +115,18 @@ export const query = graphql`
                         }
                         ...VideoSlug
                     }
+                }
+            }
+            members {
+                member {
+                    slug
+                    name
+                }
+            }
+            groups {
+                group {
+                    slug
+                    name
                 }
             }
             resources {

@@ -34,13 +34,16 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
     }
 
     async function selectAllFrom(table, isPivot = false) {
-        let sql = `SELECT * FROM ${table}`;
+        let sql = `SELECT ${table}.* FROM ${table}`;
 
         if (!isPivot) {
             sql += " WHERE deleted_at IS NULL";
         } else {
-            const [ a, b ] = table.split("_");
-            sql += ` INNER JOIN ${a} ON (${table}.${a}_id = ${a}.${a}_id) INNER JOIN ${b} ON (${table}.${b}_id = ${b}.${b}_id) WHERE ${a}.deleted_at IS NULL AND ${b}.deleted_at IS NULL`;
+            const [ tableA, tableB ] = getTablesFromPivot(table);
+            const [ columnA, columnB ] = table.split("_");
+            sql += ` INNER JOIN ${tableA} AS ${columnA} ON (${table}.${columnA}_id = ${columnA}.${tableA}_id)
+                     INNER JOIN ${tableB} AS ${columnB} ON (${table}.${columnB}_id = ${columnB}.${tableB}_id) 
+                     WHERE ${columnA}.deleted_at IS NULL AND ${columnB}.deleted_at IS NULL`;
         }
 
         return await query(sql);
@@ -180,6 +183,15 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "Performance", helpers);
     }
 
+    for (const artistMember of await selectAllFrom("artist_member", true)) {
+        createNodeFromData({
+            id: `${artistMember.artist_id}-${artistMember.member_id}`,
+            group: createNodeId(`Artist-${artistMember.artist_id}`),
+            member: createNodeId(`Artist-${artistMember.member_id}`),
+            as: artistMember.as
+        }, "ArtistMembership", helpers);
+    }
+
     for (const animeSeries of await selectAllFrom("anime_series", true)) {
         createNodeFromData({
             id: `${animeSeries.anime_id}-${animeSeries.series_id}`,
@@ -247,6 +259,13 @@ function createNodeFromData(item, nodeType, helpers) {
     helpers.createNode(node)
 
     return node;
+}
+
+function getTablesFromPivot(pivotTable) {
+    if (pivotTable === "artist_member") {
+        return [ "artist", "artist" ];
+    }
+    return pivotTable.split("_");
 }
 
 // function isPluginNode(node) {
