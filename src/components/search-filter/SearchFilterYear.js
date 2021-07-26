@@ -3,7 +3,7 @@ import { Listbox } from "components/listbox";
 import { Flex } from "components/box";
 import { graphql, useStaticQuery } from "gatsby";
 
-export function YearFilter({ value, setValue }) {
+export function SearchFilterYear({ value, setValue }) {
     const yearList = useStaticQuery(graphql`
         query {
             allAnime {

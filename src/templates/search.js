@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { Link, navigate } from "gatsby";
 import { useDebounce } from "use-debounce";
 import { SearchInput } from "components/input";
-import { EntitySearch, GlobalSearch } from "components/search";
+import { SearchAnime, SearchArtist, SearchGlobal, SearchTheme } from "components/search";
 import { gapsColumn, gapsRow } from "styles/mixins";
 import { Box, Flex } from "components/box";
 import { Switcher } from "components/switcher";
@@ -52,8 +52,18 @@ export default function SearchPage({ pageContext: { entity }, location: { search
             url += `?${params}`;
         }
 
-        navigate(url, { replace: true });
+        navigate(url, { replace: true, state });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ entity, searchQuery ]);
+
+    const inputRef = useRef();
+
+    useEffect(() => {
+        // If the device has no mouse (e.g. mobile), don't focus the input
+        if (!window.matchMedia("(any-hover: none)").matches) {
+            inputRef.current?.focus();
+        }
+    }, []);
 
     return (
         <Box gapsColumn="1.5rem">
@@ -65,7 +75,7 @@ export default function SearchPage({ pageContext: { entity }, location: { search
                         query={searchQuery}
                         setQuery={setSearchQuery}
                         inputProps={{
-                            autoFocus: !state?.noAutoFocus,
+                            ref: inputRef,
                             spellCheck: false
                         }}
                     />
@@ -76,14 +86,14 @@ export default function SearchPage({ pageContext: { entity }, location: { search
                 >
                     {({ Button, item, selected, content }) => item.value === null ? (
                         !!entity ? (
-                            <Link key={null} to={`/search${urlSuffix}`} state={{ noAutoFocus: true }}>
+                            <Link key={null} to={`/search${urlSuffix}`}>
                                 <Button>
                                     <Icon icon={faTimes}/>
                                 </Button>
                             </Link>
                         ) : null
                     ) : (
-                        <Link key={item.value} to={`/search/${item.value}${urlSuffix}`} state={{ noAutoFocus: true }}>
+                        <Link key={item.value} to={`/search/${item.value}${urlSuffix}`}>
                             <Button variant={selected && "primary"}>
                                 {content}
                             </Button>
@@ -98,9 +108,19 @@ export default function SearchPage({ pageContext: { entity }, location: { search
 
 function Search({ searchQuery, searchEntity }) {
     if (searchEntity) {
-        return <EntitySearch searchQuery={searchQuery} searchEntity={searchEntity}/>;
+        switch (searchEntity) {
+            case "anime":
+                return <SearchAnime searchQuery={searchQuery}/>;
+            case "theme":
+                return <SearchTheme searchQuery={searchQuery}/>;
+            case "artist":
+                return <SearchArtist searchQuery={searchQuery}/>;
+            default:
+                // Should never happen
+                return null;
+        }
     } else if (searchQuery) {
-        return <GlobalSearch searchQuery={searchQuery}/>;
+        return <SearchGlobal searchQuery={searchQuery}/>;
     } else {
         return (
             <Box gapsColumn="1rem">
