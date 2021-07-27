@@ -4,11 +4,9 @@ import {
     SearchFilterSortBy,
     SearchFilterYear
 } from "components/search-filter";
-import { useEffect, useState } from "react";
 import useEntitySearch from "hooks/useEntitySearch";
 import { SearchEntity } from "components/search";
 import { navigate } from "gatsby";
-import { useLocation } from "@reach/router";
 
 const sortByFields = new Map([
     [ "Relevance", null ],
@@ -20,22 +18,21 @@ const sortByFields = new Map([
 ]);
 const sortByOptions = [ ...sortByFields.keys() ];
 
-export function SearchAnime({ searchQuery }) {
-    const location = useLocation();
+export function SearchAnime({ searchQuery, locationState }) {
+    const filterFirstLetter = locationState?.filterFirstLetter || null;
+    const filterSeason = locationState?.filterSeason || null;
+    const filterYear = locationState?.filterYear || null;
+    const sortBy = locationState?.sortBy || sortByOptions[0];
 
-    console.log(location);
-
-    const [ filterFirstLetter, setFilterFirstLetter ] = useState(location.state?.filterFirstLetter || null);
-    const [ filterSeason, setFilterSeason ] = useState(location.state?.filterSeason || null);
-    const [ filterYear, setFilterYear ] = useState(location.state?.filterYear || null);
-    const [ sortBy, setSortBy ] = useState(location.state?.sortBy || sortByOptions[0]);
-
-    useEffect(() => {
-        navigate("/search/anime", {
-            state: { filterFirstLetter, filterSeason, filterYear, sortBy },
+    const updateState = (field) => (newValue) => {
+        navigate("", {
+            state: {
+                ...locationState,
+                [field]: newValue
+            },
             replace: true
         });
-    }, [ filterFirstLetter, filterSeason, filterYear, sortBy ]);
+    };
 
     const {
         data,
@@ -59,10 +56,10 @@ export function SearchAnime({ searchQuery }) {
             searchEntity="anime"
             filters={
                 <>
-                    <SearchFilterFirstLetter value={filterFirstLetter} setValue={setFilterFirstLetter}/>
-                    <SearchFilterSeason value={filterSeason} setValue={setFilterSeason}/>
-                    <SearchFilterYear value={filterYear} setValue={setFilterYear}/>
-                    <SearchFilterSortBy options={sortByOptions} value={sortBy} setValue={setSortBy}/>
+                    <SearchFilterFirstLetter value={filterFirstLetter} setValue={updateState("filterFirstLetter")}/>
+                    <SearchFilterSeason value={filterSeason} setValue={updateState("filterSeason")}/>
+                    <SearchFilterYear value={filterYear} setValue={updateState("filterYear")}/>
+                    <SearchFilterSortBy options={sortByOptions} value={sortBy} setValue={updateState("sortBy")}/>
                 </>
             }
             data={data}

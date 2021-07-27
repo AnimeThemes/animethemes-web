@@ -1,8 +1,6 @@
 import { SearchFilterSortBy, SearchFilterThemeType } from "components/search-filter";
-import { useEffect, useState } from "react";
 import useEntitySearch from "hooks/useEntitySearch";
 import { SearchEntity } from "components/search";
-import { useLocation } from "@reach/router";
 import { navigate } from "gatsby";
 
 const sortByFields = new Map([
@@ -11,18 +9,19 @@ const sortByFields = new Map([
 ]);
 const sortByOptions = [ ...sortByFields.keys() ];
 
-export function SearchTheme({ searchQuery }) {
-    const location = useLocation();
+export function SearchTheme({ searchQuery, locationState }) {
+    const filterType = locationState?.filterType || null;
+    const sortBy = locationState?.sortBy || sortByOptions[0];
 
-    const [ filterType, setFilterType ] = useState(location.state?.filterType || null);
-    const [ sortBy, setSortBy ] = useState(location.state?.sortBy || sortByOptions[0]);
-
-    useEffect(() => {
+    const updateState = (field) => (newValue) => {
         navigate("", {
-            state: { filterType, sortBy },
+            state: {
+                ...locationState,
+                [field]: newValue
+            },
             replace: true
         });
-    }, [ filterType, sortBy ]);
+    };
 
     const {
         data,
@@ -44,8 +43,8 @@ export function SearchTheme({ searchQuery }) {
             searchEntity="theme"
             filters={
                 <>
-                    <SearchFilterThemeType value={filterType} setValue={setFilterType}/>
-                    <SearchFilterSortBy options={sortByOptions} value={sortBy} setValue={setSortBy}/>
+                    <SearchFilterThemeType value={filterType} setValue={updateState("filterType")}/>
+                    <SearchFilterSortBy options={sortByOptions} value={sortBy} setValue={updateState("sortBy")}/>
                 </>
             }
             data={data}
