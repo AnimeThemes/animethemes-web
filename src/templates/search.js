@@ -61,7 +61,9 @@ export default function SearchPage({ pageContext: { entity }, location: { search
     useEffect(() => {
         // If the device has no mouse (e.g. mobile), don't focus the input
         if (!window.matchMedia("(any-hover: none)").matches) {
-            inputRef.current?.focus();
+            inputRef.current?.focus({
+                preventScroll: true
+            });
         }
     }, []);
 
@@ -101,20 +103,20 @@ export default function SearchPage({ pageContext: { entity }, location: { search
                     )}
                 </Switcher>
             </StyledSearchOptions>
-            <Search searchEntity={entity} searchQuery={debouncedSearchQuery}/>
+            <Search searchEntity={entity} searchQuery={debouncedSearchQuery} locationState={state}/>
         </Box>
     );
 }
 
-function Search({ searchQuery, searchEntity }) {
+function Search({ searchQuery, searchEntity, locationState }) {
     if (searchEntity) {
         switch (searchEntity) {
             case "anime":
-                return <SearchAnime searchQuery={searchQuery}/>;
+                return <SearchAnime searchQuery={searchQuery} locationState={locationState}/>;
             case "theme":
-                return <SearchTheme searchQuery={searchQuery}/>;
+                return <SearchTheme searchQuery={searchQuery} locationState={locationState}/>;
             case "artist":
-                return <SearchArtist searchQuery={searchQuery}/>;
+                return <SearchArtist searchQuery={searchQuery} locationState={locationState}/>;
             default:
                 // Should never happen
                 return null;

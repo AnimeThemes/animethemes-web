@@ -1,8 +1,6 @@
 import { SearchFilterFirstLetter, SearchFilterSortBy } from "components/search-filter";
-import { useEffect, useState } from "react";
 import useEntitySearch from "hooks/useEntitySearch";
 import { SearchEntity } from "components/search";
-import { useLocation } from "@reach/router";
 import { navigate } from "gatsby";
 
 const sortByFields = new Map([
@@ -13,18 +11,19 @@ const sortByFields = new Map([
 ]);
 const sortByOptions = [ ...sortByFields.keys() ];
 
-export function SearchArtist({ searchQuery }) {
-    const location = useLocation();
+export function SearchArtist({ searchQuery, locationState }) {
+    const filterFirstLetter = locationState?.filterFirstLetter || null;
+    const sortBy = locationState?.sortBy || sortByOptions[0];
 
-    const [ filterFirstLetter, setFilterFirstLetter ] = useState(location.state?.filterFirstLetter || null);
-    const [ sortBy, setSortBy ] = useState(location.state?.sortBy || sortByOptions[0]);
-
-    useEffect(() => {
+    const updateState = (field) => (newValue) => {
         navigate("", {
-            state: { filterFirstLetter, sortBy },
+            state: {
+                ...locationState,
+                [field]: newValue
+            },
             replace: true
         });
-    }, [ filterFirstLetter, sortBy ]);
+    };
 
     const {
         data,
@@ -46,8 +45,8 @@ export function SearchArtist({ searchQuery }) {
             searchEntity="artist"
             filters={
                 <>
-                    <SearchFilterFirstLetter value={filterFirstLetter} setValue={setFilterFirstLetter}/>
-                    <SearchFilterSortBy options={sortByOptions} value={sortBy} setValue={setSortBy}/>
+                    <SearchFilterFirstLetter value={filterFirstLetter} setValue={updateState("filterFirstLetter")}/>
+                    <SearchFilterSortBy options={sortByOptions} value={sortBy} setValue={updateState("sortBy")}/>
                 </>
             }
             data={data}
