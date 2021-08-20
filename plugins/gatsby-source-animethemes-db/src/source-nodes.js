@@ -33,17 +33,15 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }));
     }
 
-    async function selectAllFrom(table, isPivot = false) {
+    async function selectAllFrom(table, isPivot = false, tableToA, columnFromA, columnToA, tableToB, columnFromB, columnToB) {
         let sql = `SELECT ${table}.* FROM ${table}`;
 
         if (!isPivot) {
             sql += " WHERE deleted_at IS NULL";
         } else {
-            const [ tableA, tableB ] = getTablesFromPivot(table);
-            const [ columnA, columnB ] = table.split("_");
-            sql += ` INNER JOIN ${tableA} AS ${columnA} ON (${table}.${columnA}_id = ${columnA}.${tableA}_id)
-                     INNER JOIN ${tableB} AS ${columnB} ON (${table}.${columnB}_id = ${columnB}.${tableB}_id) 
-                     WHERE ${columnA}.deleted_at IS NULL AND ${columnB}.deleted_at IS NULL`;
+            sql += ` INNER JOIN ${tableToA} AS a ON (${table}.${columnFromA} = a.${columnToA})
+                     INNER JOIN ${tableToB} AS b ON (${table}.${columnFromB} = b.${columnToB}) 
+                     WHERE a.deleted_at IS NULL AND b.deleted_at IS NULL`;
         }
 
         return await query(sql);
@@ -63,7 +61,7 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "Anime", helpers);
     }
 
-    for (const synonym of await selectAllFrom("synonym")) {
+    for (const synonym of await selectAllFrom("anime_synonyms")) {
         createNodeFromData({
             id: synonym.synonym_id,
             idRaw: synonym.synonym_id,
@@ -72,7 +70,7 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "Synonym", helpers);
     }
 
-    for (const theme of await selectAllFrom("theme")) {
+    for (const theme of await selectAllFrom("anime_themes")) {
         createNodeFromData({
             id: theme.theme_id,
             idRaw: theme.theme_id,
@@ -83,7 +81,7 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "Theme", helpers);
     }
 
-    for (const entry of await selectAllFrom("entry")) {
+    for (const entry of await selectAllFrom("anime_theme_entries")) {
         createNodeFromData({
             id: entry.entry_id,
             idRaw: entry.entry_id,
@@ -96,7 +94,7 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "Entry", helpers);
     }
 
-    for (const video of await selectAllFrom("video")) {
+    for (const video of await selectAllFrom("videos")) {
         createNodeFromData({
             id: video.video_id,
             idRaw: video.video_id,
@@ -115,7 +113,7 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "Video", helpers);
     }
 
-    for (const song of await selectAllFrom("song")) {
+    for (const song of await selectAllFrom("songs")) {
         createNodeFromData({
             id: song.song_id,
             idRaw: song.song_id,
@@ -123,7 +121,7 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "Song", helpers);
     }
 
-    for (const artist of await selectAllFrom("artist")) {
+    for (const artist of await selectAllFrom("artists")) {
         createNodeFromData({
             id: artist.artist_id,
             idRaw: artist.artist_id,
@@ -143,7 +141,7 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "Series", helpers);
     }
 
-    for (const resource of await selectAllFrom("resource")) {
+    for (const resource of await selectAllFrom("resources")) {
         createNodeFromData({
             id: resource.resource_id,
             idRaw: resource.resource_id,
@@ -152,7 +150,7 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "Resource", helpers);
     }
 
-    for (const image of await selectAllFrom("image")) {
+    for (const image of await selectAllFrom("images")) {
         createNodeFromData({
             id: image.image_id,
             idRaw: image.image_id,
@@ -161,7 +159,7 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
     }
 
     try {
-        for (const announcement of await selectAllFrom("announcement")) {
+        for (const announcement of await selectAllFrom("announcements")) {
             createNodeFromData({
                 id: announcement.announcement_id,
                 idRaw: announcement.announcement_id,
@@ -174,7 +172,11 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
 
     // Pivot types
 
-    for (const performance of await selectAllFrom("artist_song", true)) {
+    for (const performance of await selectAllFrom(
+        "artist_song", true,
+        "artists", "artist_id", "artist_id",
+        "songs", "song_id", "song_id"
+    )) {
         createNodeFromData({
             id: `${performance.song_id}-${performance.artist_id}`,
             song: createNodeId(`Song-${performance.song_id}`),
@@ -183,7 +185,11 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "Performance", helpers);
     }
 
-    for (const artistMember of await selectAllFrom("artist_member", true)) {
+    for (const artistMember of await selectAllFrom(
+        "artist_member", true,
+        "artists", "artist_id", "artist_id",
+        "artists", "member_id", "artist_id",
+    )) {
         createNodeFromData({
             id: `${artistMember.artist_id}-${artistMember.member_id}`,
             group: createNodeId(`Artist-${artistMember.artist_id}`),
@@ -192,7 +198,11 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "ArtistMembership", helpers);
     }
 
-    for (const animeSeries of await selectAllFrom("anime_series", true)) {
+    for (const animeSeries of await selectAllFrom(
+        "anime_series", true,
+        "anime", "anime_id", "anime_id",
+        "series", "series_id", "series_id"
+    )) {
         createNodeFromData({
             id: `${animeSeries.anime_id}-${animeSeries.series_id}`,
             anime: createNodeId(`Anime-${animeSeries.anime_id}`),
@@ -200,7 +210,11 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "AnimeSeries", helpers);
     }
 
-    for (const animeResource of await selectAllFrom("anime_resource", true)) {
+    for (const animeResource of await selectAllFrom(
+        "anime_resource", true,
+        "anime", "anime_id", "anime_id",
+        "resources", "resource_id", "resource_id"
+    )) {
         createNodeFromData({
             id: `${animeResource.anime_id}-${animeResource.resource_id}`,
             anime: createNodeId(`Anime-${animeResource.anime_id}`),
@@ -208,7 +222,11 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "AnimeResource", helpers);
     }
 
-    for (const animeImage of await selectAllFrom("anime_image", true)) {
+    for (const animeImage of await selectAllFrom(
+        "anime_image", true,
+        "anime", "anime_id", "anime_id",
+        "images", "image_id", "image_id"
+    )) {
         createNodeFromData({
             id: `${animeImage.anime_id}-${animeImage.image_id}`,
             anime: createNodeId(`Anime-${animeImage.anime_id}`),
@@ -216,7 +234,11 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "AnimeImage", helpers);
     }
 
-    for (const artistResource of await selectAllFrom("artist_resource", true)) {
+    for (const artistResource of await selectAllFrom(
+        "artist_resource", true,
+        "artists", "artist_id", "artist_id",
+        "resources", "resource_id", "resource_id"
+    )) {
         createNodeFromData({
             id: `${artistResource.artist_id}-${artistResource.resource_id}`,
             artist: createNodeId(`Artist-${artistResource.artist_id}`),
@@ -224,7 +246,11 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "ArtistResource", helpers);
     }
 
-    for (const artistImage of await selectAllFrom("artist_image", true)) {
+    for (const artistImage of await selectAllFrom(
+        "artist_image", true,
+        "artists", "artist_id", "artist_id",
+        "images", "image_id", "image_id"
+    )) {
         createNodeFromData({
             id: `${artistImage.artist_id}-${artistImage.image_id}`,
             artist: createNodeId(`Artist-${artistImage.artist_id}`),
@@ -232,7 +258,11 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "ArtistImage", helpers);
     }
 
-    for (const entryVideo of await selectAllFrom("entry_video", true)) {
+    for (const entryVideo of await selectAllFrom(
+        "anime_theme_entry_video", true,
+        "anime_theme_entries", "entry_id", "entry_id",
+        "videos", "video_id", "video_id"
+    )) {
         createNodeFromData({
             id: `${entryVideo.entry_id}-${entryVideo.video_id}`,
             entry: createNodeId(`Entry-${entryVideo.entry_id}`),
@@ -259,13 +289,6 @@ function createNodeFromData(item, nodeType, helpers) {
     helpers.createNode(node)
 
     return node;
-}
-
-function getTablesFromPivot(pivotTable) {
-    if (pivotTable === "artist_member") {
-        return [ "artist", "artist" ];
-    }
-    return pivotTable.split("_");
 }
 
 // function isPluginNode(node) {

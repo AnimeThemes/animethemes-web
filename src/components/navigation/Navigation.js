@@ -1,6 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, withPrefix } from "gatsby";
-import { faBars, faLightbulb, faMoon, faSearch, faSpinner, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+    faBars,
+    faLightbulb,
+    faMoon,
+    faRandom,
+    faSearch,
+    faSpinner,
+    faTimes,
+    faTv
+} from "@fortawesome/free-solid-svg-icons";
 import {
     StyledLogo,
     StyledLogoContainer,
@@ -14,11 +23,15 @@ import { Icon } from "components/icon";
 import { Text } from "components/text";
 import { Flex } from "components/box";
 import { useLocation } from "@reach/router";
+import useCurrentSeason from "hooks/useCurrentSeason";
+import navigateToRandomTheme from "utils/navigateToRandomTheme";
 
 export function Navigation() {
     const [ show, setShow ] = useState(false);
     const { colorTheme, toggleColorTheme } = useContext(ColorThemeContext);
     const location = useLocation();
+
+    const { currentYear, currentSeason } = useCurrentSeason();
 
     // If the user clicks on a link which sends them to another page,
     // we want to close the modal navigation.
@@ -33,15 +46,29 @@ export function Navigation() {
                     <StyledLogoContainer to="/">
                         <StyledLogo className="navigation__logo-image" src={withPrefix("/img/logo.svg")} alt="Logo" />
                     </StyledLogoContainer>
-                    <Flex gapsRow="0.5rem">
-                        {/* Other links */}
+                    <Flex
+                        flexDirection={[ "column", "row" ]}
+                        gapsRow={[ 0, "0.5rem" ]}
+                        gapsColumn={[ "0.5rem", 0 ]}
+                        alignItems="flex-start"
+                    >
                         <Link to="/search">
                             <Button variant="on-card" silent gapsRow="0.5rem">
                                 <Icon icon={faSearch}/>
                                 <Text>Search</Text>
                             </Button>
                         </Link>
-                        <Button variant="on-card" silent onClick={toggleColorTheme}>
+                        <Button variant="on-card" silent gapsRow="0.5rem" onClick={navigateToRandomTheme}>
+                            <Icon icon={faRandom}/>
+                            <Text>Play Random</Text>
+                        </Button>
+                        <Link to={`/year/${currentYear}/${currentSeason}`}>
+                            <Button variant="on-card" silent gapsRow="0.5rem">
+                                <Icon icon={faTv}/>
+                                <Text>Current Season</Text>
+                            </Button>
+                        </Link>
+                        <Button variant="on-card" silent onClick={toggleColorTheme} alignSelf="center">
                             <Icon icon={colorTheme === null ? faSpinner : colorTheme === "dark" ? faLightbulb : faMoon} spin={colorTheme === null} />
                         </Button>
                     </Flex>

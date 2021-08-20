@@ -3,7 +3,7 @@ import { baseUrl } from "gatsby-source-animethemes/src";
 const entityConfigs = {
     anime: {
         includes: [
-            "themes.entries.videos",
+            "animethemes.animethemeentries.videos",
             "images"
         ],
         fields: {
@@ -13,12 +13,12 @@ const entityConfigs = {
                 "year",
                 "season"
             ],
-            theme: [
+            animetheme: [
                 "type",
                 "sequence",
                 "slug"
             ],
-            entry: [
+            animethemeentry: [
                 "version"
             ],
             video: [
@@ -31,9 +31,10 @@ const entityConfigs = {
         }
     },
     theme: {
-        plural: "themes",
+        singular: "animetheme",
+        plural: "animethemes",
         includes: [
-            "entries.videos",
+            "animethemeentries.videos",
             "anime.images",
             "song.artists"
         ],
@@ -44,12 +45,12 @@ const entityConfigs = {
                 "year",
                 "season"
             ],
-            theme: [
+            animetheme: [
                 "type",
                 "sequence",
                 "slug"
             ],
-            entry: [
+            animethemeentry: [
                 "version"
             ],
             video: [
@@ -96,8 +97,11 @@ export async function fetchGlobalSearchResults(query, limit, entities) {
     const res = await fetch(`${baseUrl}/api/search?${parameters.join("&")}&limit=${limit}&q=${encodeURIComponent(query)}`);
     const json = await res.json();
 
-    if (json.search.themes) {
-        applyThemeSchema(json.search.themes);
+    if (json.search.anime) {
+        applyAnimeSchema(json.search.anime);
+    }
+    if (json.search.animethemes) {
+        applyThemeSchema(json.search.animethemes);
     }
     if (json.search.artists) {
         applyArtistSchema(json.search.artists);
@@ -119,7 +123,7 @@ export async function fetchEntitySearchResults({
         ...generateFilterAndSortParameters(filters, sortBy)
     ];
 
-    let url = `${baseUrl}/api/${entity}?${parameters.join("&")}&page[size]=${limit}&page[number]=${page}`;
+    let url = `${baseUrl}/api/${entityConfigs[entity].singular || entity}?${parameters.join("&")}&page[size]=${limit}&page[number]=${page}`;
     if (query) {
         url += `&q=${encodeURIComponent(query)}`;
     }
@@ -130,7 +134,9 @@ export async function fetchEntitySearchResults({
     const results = json[entityConfigs[entity].plural || entity];
     const hasNext = !!json.links.next;
 
-    if (entity === "theme") {
+    if (entity === "anime") {
+        applyAnimeSchema(results);
+    } else if (entity === "theme") {
         applyThemeSchema(results);
     } else if (entity === "artist") {
         applyArtistSchema(results);
@@ -161,7 +167,7 @@ function generateEntitySearchParameters(entity) {
     const config = entityConfigs[entity];
 
     if (config.includes) {
-        parameters.push(`include[${entity}]=${config.includes.join(",")}`);
+        parameters.push(`include[${config.singular || entity}]=${config.includes.join(",")}`);
     }
 
     if (config.fields) {
@@ -176,7 +182,7 @@ function generateFilterAndSortParameters(filters, sortBy) {
 
     for (const [ key, value ] of Object.entries(filters)) {
         if (value) {
-            parameters.push(`filter[${key}]=${value}`);
+            parameters.push(`filter[${key}]=${encodeURIComponent(value)}`);
         }
     }
 
@@ -187,6 +193,18 @@ function generateFilterAndSortParameters(filters, sortBy) {
     return parameters;
 }
 
+function applyAnimeSchema(allAnime) {
+    for (const anime of allAnime) {
+        anime.themes = anime.animethemes;
+        delete anime.animethemes;
+
+        for (const theme of anime.themes) {
+            theme.entries = theme.animethemeentries;
+            delete theme.animethemeentries;
+        }
+    }
+}
+
 // Map artists and songs to performances to comply with the application schema
 function applyThemeSchema(themes) {
     for (const theme of themes) {
@@ -194,8 +212,10 @@ function applyThemeSchema(themes) {
             artist,
             as: artist.as
         }));
-    }
 
+        theme.entries = theme.animethemeentries;
+        delete theme.animethemeentries;
+    }
 }
 
 function applyArtistSchema(artists) {

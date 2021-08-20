@@ -8,6 +8,13 @@ import { Box } from "components/box";
 import { Text } from "components/text";
 import { AspectRatio } from "components/utils";
 
+const seasonOrder = [
+    "winter",
+    "spring",
+    "summer",
+    "fall"
+];
+
 const StyledCoverContainer = styled.div`
     display: flex;
     flex-direction: row;
@@ -27,11 +34,16 @@ const StyledCover = styled.img`
 `;
 
 export default function SeriesDetailPage({ data: { series } }) {
+    const anime = series.anime.sort(
+        (a, b) =>
+            a.year - b.year ||
+            seasonOrder.indexOf(a.season.toLowerCase()) - seasonOrder.indexOf(b.season.toLowerCase())
+    );
     const images = [
-        useImage(series.anime[0]),
-        useImage(series.anime[1]),
-        useImage(series.anime[2]),
-        useImage(series.anime[3])
+        useImage(anime[0]),
+        useImage(anime[1]),
+        useImage(anime[2]),
+        useImage(anime[3])
     ].map((images) => images.largeCover).filter((image) => !!image);
 
     return (
@@ -53,7 +65,7 @@ export default function SeriesDetailPage({ data: { series } }) {
                 <Box gapsColumn="1.5rem">
                     <Text variant="h2">Anime</Text>
                     <Box gapsColumn="1rem">
-                        {series.anime.map((anime) => (
+                        {anime.map((anime) => (
                             <AnimeSummaryCard key={anime.slug} anime={anime}/>
                         ))}
                     </Box>
@@ -71,6 +83,8 @@ export const query = graphql`
             anime {
                 slug
                 name
+                year
+                season
                 themes {
                     slug
                     ...VideoSlug
