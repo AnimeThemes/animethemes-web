@@ -2,6 +2,7 @@ import styled, { css } from "styled-components";
 import { gaps } from "utils/gaps";
 import { Icon } from "components/icon";
 import theme from "theme";
+import { flexbox } from "styled-system";
 
 export const Button = styled.button.attrs(({ children, circle }) => ({
     circle: (typeof children === "object" && "type" in children && children.type === Icon) || circle
@@ -48,6 +49,7 @@ export const Button = styled.button.attrs(({ children, circle }) => ({
         opacity: 0.5;
     `}
     
+    ${flexbox}
     ${gaps}
 `;
 

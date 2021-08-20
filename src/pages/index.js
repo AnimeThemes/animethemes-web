@@ -1,198 +1,202 @@
 import { graphql, Link } from "gatsby";
+import { ThemeSummaryCard } from "components/card";
+import { Box, Grid } from "components/box";
 import { Text } from "components/text";
 import styled from "styled-components";
-import { Card } from "components/card";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfo } from "@fortawesome/free-solid-svg-icons";
-import { Box, Flex, Grid } from "components/box";
-import { ExternalLink } from "components/external-link";
+import { Button } from "components/button";
+import { Icon } from "components/icon";
+import { faArrowRight, faRandom, faSearch, faTv } from "@fortawesome/free-solid-svg-icons";
 import theme from "theme";
-import moment from "moment";
-import { useEffect, useState } from "react";
+import { ExternalLink } from "components/external-link";
+import useCurrentSeason from "hooks/useCurrentSeason";
+import navigateToRandomTheme from "utils/navigateToRandomTheme";
 
-const StyledAnnouncement = styled(Text)`
-    & a {
-        color: ${theme.colors["text-primary"]};
-        font-weight: 600;
-      
-        &:hover {
-            text-decoration: underline;
+const videoBaseUrl = process.env.GATSBY_VIDEO_URL || "https://animethemes.moe";
+
+const FeaturedTheme = styled(Box)`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    max-height: 200px;
+    position: relative;
+    overflow: hidden;
+    
+    @media (min-width: ${theme.breakpoints[0]}) {
+        border-radius: 0.5rem;
+    }
+    
+    & > :last-child {
+        position: absolute;
+        
+        @media (max-width: ${theme.breakpoints[0]}) {
+            left: 1rem;
+            right: 1rem;   
         }
     }
 `;
-const StyledLink = styled(Link)`
-    max-width: 100%;
+
+const FeaturedVideo = styled.video`
+    width: 100%;
+    filter: blur(5px);
 `;
 
-export default function IndexPage({ data: { site, allAnnouncement } }) {
-    const [ timeSinceBuild, setTimeSinceBuild ] = useState();
+const BigButton = styled(Button).attrs({
+    gapsRow: "0.5rem"
+})`
+    overflow: hidden;
+    border-radius: 0.5rem;
+    height: ${(props) => props.height || "4rem"};
+    justify-content: flex-end;
+`;
 
-    useEffect(() => {
-        setTimeSinceBuild(moment(site.buildTime).fromNow());
-    }, [ site.buildTime ]);
+const BigIcon = styled(Icon)`
+    margin: 0 auto -1rem -2rem;
+    
+    font-size: 4rem;
+    color: ${theme.colors["text-disabled"]};
+`;
+
+export default function HomePage({ data: { featuredTheme, recentlyAdded } }) {
+    const featuredVideo = featuredTheme.entries[0].videos[0];
+
+    const { currentYear, currentSeason } = useCurrentSeason();
 
     return (
         <Box gapsColumn="1.5rem">
             <Text variant="h1">Welcome, to AnimeThemes.moe!</Text>
-            <Text as="p" color="text-disabled">
-                <span>This site was last updated: </span>
-                <Text fontWeight="700">{site.buildTimeFormatted}</Text>
-                {!!timeSinceBuild && (
-                    <span> ({timeSinceBuild})</span>
-                )}
-            </Text>
-            <Text as="p">
-                <span>This page is still activily being worked on. If you are a developer and interested in contributing feel free to contact us on </span>
-                <ExternalLink href="https://discordapp.com/invite/m9zbVyQ">Discord</ExternalLink>
-                <span>.</span>
-            </Text>
-            <Text as="p">
-                <span>The source code for this page can be found on </span>
-                <ExternalLink href="https://github.com/AnimeThemes/animethemes-web">GitHub</ExternalLink>
-                <span>. For our other open source projects we also have a </span>
-                <ExternalLink href="https://github.com/AnimeThemes">GitHub organization</ExternalLink>
-                <span>.</span>
-            </Text>
-            {!!allAnnouncement.totalCount && (
-                <>
-                    <Text variant="h2">Announcements</Text>
-                    <Text as="p">These are for demo purposes only. The content may not be accurate.</Text>
-                    {allAnnouncement.nodes.map((announcement) => (
-                        <Card key={announcement.id}>
-                            <Flex gapsRow="1rem">
-                                <Text link>
-                                    <FontAwesomeIcon icon={faInfo}/>
-                                </Text>
-                                <StyledAnnouncement dangerouslySetInnerHTML={{ __html: announcement.content }}/>
-                            </Flex>
-                        </Card>
-                    ))}
-                </>
-            )}
-            <Text variant="h2">Pages</Text>
-            <Box gapsColumn={["2rem", "1.5rem"]}>
-                <PageGridItem
-                    path="/"
-                    description="This page!"
+            <Text variant="h2">Featured Theme</Text>
+            <FeaturedTheme mx={[ "-1rem", 0 ]}>
+                <FeaturedVideo
+                    src={`${videoBaseUrl}/video/${featuredVideo.basename}`}
+                    autoPlay
+                    muted
+                    loop
                 />
-                <PageGridItem
-                    path="/design"
-                    description={
-                        <Text>
-                            <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
-                            A page listing various design components!
-                        </Text>
-                    }
-                    isNew
-                />
-                <PageGridItem
-                    path="/search"
-                    description="Search the AnimeThemes database. You can also use the search bar in the navigation."
-                />
-                <PageGridItem
-                    path="/year"
-                    description="Browse all years present in the database."
-                />
-                <PageGridItem
-                    path="/year/2009"
-                    description="Browse all seasons of a specific year."
-                    otherPaths={{
-                        "/year/1963": "Every year has a page, even 60s, 70s, etc."
-                    }}
-                />
-                <PageGridItem
-                    path="/year/2009/summer"
-                    description="Browse all anime of a specific season."
-                />
-                <PageGridItem
-                    path="/series/monogatari"
-                    description="Browse all anime which belong to the same series."
-                    otherPaths={{
-                        "/series/precure": "A lot of anime.",
-                        "/series/clannad": "Only three anime.",
-                        "/series/fma": "Only two anime."
-                    }}
-                />
-                <PageGridItem
-                    path="/artist/kana_hanazawa"
-                    description="Browse all songs an artist has performed."
-                    otherPaths={{
-                        "/artist/vickeblanka": "Very few songs."
-                    }}
-                />
-                <PageGridItem
-                    path="/anime/bakemonogatari"
-                    description="Browse all themes of a specific anime."
-                    otherPaths={{
-                        "/anime/etotama": "Many themes with a lot of artists.",
-                        "/anime/gintama": "Theme groups with many themes.",
-                        "/anime/bleach": "Many themes and many variants.",
-                        "/anime/tales_of_phantasia_the_animation": "Many sources.",
-                        "/anime/isekai_quartet": "Multiple series."
-                    }}
-                />
-                <PageGridItem
-                    path="/anime/bakemonogatari/OP1-NCBD1080"
-                    description="Watch themes."
-                    otherPaths={{
-                        "/anime/uma_musume_pretty_derby/ED5": "Many artists.",
-                        "/anime/girls_und_panzer/ED-NCBD1080": "Many alternative versions.",
-                        "/anime/fatekaleid_liner_prismaillya_2wei_herz/OP": "Many alternative sources.",
-                        "/anime/shingeki_no_kyojin/ED1-NCBD1080": "Same video for two entries.",
-                        "/anime/shingeki_no_kyojin_ova/ED1-NCBD1080": "See above."
-                    }}
-                />
-            </Box>
-            {!!process.env.GATSBY_CI && (
-                <>
-                    <Text variant="h2">GitHub Pages</Text>
+                <ThemeSummaryCard theme={featuredTheme}/>
+            </FeaturedTheme>
+            <Grid gridTemplateColumns={[ "1fr", "1fr 1fr 1fr" ]} gridGap="1.5rem">
+                <Box gridColumn={[ "1", "1 / 3" ]}>
+                    <Text variant="h2">Explore The Database</Text>
+                </Box>
+                <Box gridRow={[ "6", "auto" ]}>
+                    <Text variant="h2">Recently Added</Text>
+                </Box>
+                <BigButton as={Link} to="/search">
+                    <BigIcon icon={faSearch} flip="horizontal"/>
+                    <Text>Search</Text>
+                    <Icon icon={faArrowRight} color="text-primary"/>
+                </BigButton>
+                <BigButton onClick={navigateToRandomTheme}>
+                    <BigIcon icon={faRandom}/>
+                    <Text>Play Random</Text>
+                    <Icon icon={faArrowRight} color="text-primary"/>
+                </BigButton>
+                <BigButton as={Link} to={`/year/${currentYear}/${currentSeason}`}>
+                    <BigIcon icon={faTv}/>
+                    <Text>Current Season</Text>
+                    <Icon icon={faArrowRight} color="text-primary"/>
+                </BigButton>
+                <Box gridColumn={[ "1", "1 / 3" ]} gapsColumn="1.5rem">
+                    <Grid gridTemplateColumns={[ "1fr 1fr", "1fr 1fr 1fr" ]} gridGap="1rem">
+                        <BigButton as={Link} to="/search/anime" height="3rem">
+                            <Text>Anime Index</Text>
+                            <Icon icon={faArrowRight} color="text-primary"/>
+                        </BigButton>
+                        <BigButton as={Link} to="/search/artist" height="3rem">
+                            <Text>Artist Index</Text>
+                            <Icon icon={faArrowRight} color="text-primary"/>
+                        </BigButton>
+                        <BigButton as={Link} to="/year" height="3rem">
+                            <Text>Year Index</Text>
+                            <Icon icon={faArrowRight} color="text-primary"/>
+                        </BigButton>
+                    </Grid>
+                    <Text variant="h2">About The Project</Text>
                     <Text as="p">
-                        <span>You are browsing this site on GitHub Pages. On every commit in the </span>
-                        <Text as="a" variant="code" link href="https://github.com/AnimeThemes/animethemes-web">animethemes-web</Text>
-                        <span> repository this site gets updated.</span>
+                        A simple and consistent repository of anime opening and ending themes.
+                        We provide high quality WebMs of your favorite OPs and EDs for your listening and discussion needs.
                     </Text>
-                    <Text as="p">Don&apos;t expect everything on this site to work the same way as on the staging/production sites.</Text>
-                </>
-            )}
+                    <Text as="p">
+                        <span>This page is still activily being worked on. If you are a developer and interested in contributing feel free to contact us on </span>
+                        <ExternalLink href="https://discordapp.com/invite/m9zbVyQ">Discord</ExternalLink>
+                        <span>.</span>
+                    </Text>
+                    <Text as="p">
+                        <span>The source code for this page can be found on </span>
+                        <ExternalLink href="https://github.com/AnimeThemes/animethemes-web">GitHub</ExternalLink>
+                        <span>. For our other open source projects we also have a </span>
+                        <ExternalLink href="https://github.com/AnimeThemes">GitHub organization</ExternalLink>
+                        <span>.</span>
+                    </Text>
+                </Box>
+                <Box gapsColumn="1rem">
+                    {recentlyAdded.nodes.map((theme, index) => (
+                        <ThemeSummaryCard key={index} theme={theme}/>
+                    ))}
+                </Box>
+            </Grid>
         </Box>
     );
 }
 
-function PageGridItem({ path, otherPaths = {}, description }) {
-    return (
-        <Grid gridTemplateColumns={["minmax(0, 1fr)", "minmax(0, 1fr) 1fr"]} gridColumnGap="1rem" gridRowGap="0.5rem" alignItems="center" justifyItems="flex-start">
-            <PageLink path={path}/>
-            <Text>{description}</Text>
-            {Object.entries(otherPaths).map(([path, description]) => (
-                <>
-                    <PageLink path={path}/>
-                    <Text color="text-muted">{description}</Text>
-                </>
-            ))}
-        </Grid>
-    );
-}
-
-function PageLink({ path }) {
-    return (
-        <StyledLink key={path} to={path}>
-            <Text variant="code" link maxLines={1}>{path}</Text>
-        </StyledLink>
-    )
-}
-
 export const query = graphql`
-    query IndexPageQuery {
-        site {
-            buildTime
-            buildTimeFormatted: buildTime(formatString: "LLL")
-        }
-        allAnnouncement {
-            nodes {
-                id
-                content
+    query HomePageQuery {
+        featuredTheme: theme(idRaw: { eq: 10388 }) {
+            slug
+            anime {
+                slug
+                name
+                images {
+                    facet
+                    link
+                }
             }
-            totalCount
+            song {
+                title
+                performances {
+                    artist {
+                        slug
+                        name
+                    }
+                    as
+                }
+            }
+            entries {
+                videos {
+                    basename
+                }
+            }
+            ...VideoSlug
+        }
+        recentlyAdded: allTheme(sort: { fields: idRaw, order: DESC }, limit: 10) {
+            nodes {
+                slug
+                anime {
+                    slug
+                    name
+                    images {
+                        facet
+                        link
+                    }
+                }
+                song {
+                    title
+                    performances {
+                        artist {
+                            slug
+                            name
+                        }
+                        as
+                    }
+                }
+                entries {
+                    videos {
+                        basename
+                    }
+                }
+                ...VideoSlug
+            }
         }
     }
 `;
