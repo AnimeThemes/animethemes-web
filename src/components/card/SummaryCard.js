@@ -14,10 +14,12 @@ const StyledCover = styled.img.attrs({
 
 export function SummaryCard({ title, description, image, to, children, ...props }) {
     return (
-        <Card display="flex" flexDirection="row" alignItems="center" p={0} pr="1rem" {...props}>
-            <Link to={to}>
-                <StyledCover alt="Cover" src={image}/>
-            </Link>
+        <Card display="flex" flexDirection="row" alignItems="center" p={0} pr="1rem" height="64px" {...props}>
+            {!!image && (
+                <Link to={to}>
+                    <StyledCover alt="Cover" src={image} loading="lazy"/>
+                </Link>
+            )}
             <Flex flex={1} flexDirection="column" justifyContent="center" gapsColumn="0.25rem" px="1rem">
                 <Text fontWeight="600" maxLines={1}>
                     {typeof title === "string" ? (

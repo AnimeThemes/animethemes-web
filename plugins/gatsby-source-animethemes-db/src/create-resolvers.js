@@ -9,7 +9,8 @@ module.exports = ({ createResolvers }) => {
             ...pivotResolver({
                 series: { type: "AnimeSeries", from: "anime", to: "series" },
                 resources: { type: "AnimeResource", from: "anime", to: "resource" },
-                images: { type: "AnimeImage", from: "anime", to: "image" }
+                images: { type: "AnimeImage", from: "anime", to: "image" },
+                studios: { type: "AnimeStudio", from: "anime", to: "studio" }
             })
         },
         Artist: {
@@ -41,6 +42,11 @@ module.exports = ({ createResolvers }) => {
         Series: {
             ...pivotResolver({
                 anime: { type: "AnimeSeries", from: "series", to: "anime" }
+            })
+        },
+        Studio: {
+            ...pivotResolver({
+                anime: { type: "AnimeStudio", from: "studio", to: "anime" }
             })
         },
         Video: {

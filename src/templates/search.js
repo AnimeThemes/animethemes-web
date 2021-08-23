@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Link, navigate } from "gatsby";
 import { useDebounce } from "use-debounce";
 import { SearchInput } from "components/input";
-import { SearchAnime, SearchArtist, SearchGlobal, SearchTheme } from "components/search";
+import { SearchAnime, SearchArtist, SearchGlobal, SearchTheme, SearchSeries, SearchStudio } from "components/search";
 import { gapsColumn, gapsRow } from "styles/mixins";
 import { Box, Flex } from "components/box";
 import { Switcher } from "components/switcher";
@@ -117,6 +117,10 @@ function Search({ searchQuery, searchEntity, locationState }) {
                 return <SearchTheme searchQuery={searchQuery} locationState={locationState}/>;
             case "artist":
                 return <SearchArtist searchQuery={searchQuery} locationState={locationState}/>;
+            case "series":
+                return <SearchSeries searchQuery={searchQuery} locationState={locationState}/>;
+            case "studio":
+                return <SearchStudio searchQuery={searchQuery} locationState={locationState}/>;
             default:
                 // Should never happen
                 return null;

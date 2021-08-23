@@ -49,7 +49,7 @@ export default function AnimeDetailPage({ data: { anime } }) {
                                 </Text>
                             </Link>
                         </DescriptionList.Item>
-                        {!!anime.series && !!anime.series.length && (
+                        {!!anime.series?.length && (
                             <DescriptionList.Item title="Series">
                                 <StyledList>
                                     {anime.series.map((series) =>
@@ -62,7 +62,20 @@ export default function AnimeDetailPage({ data: { anime } }) {
                                 </StyledList>
                             </DescriptionList.Item>
                         )}
-                        {!!anime.resources && !!anime.resources.length && (
+                        {!!anime.studios?.length && (
+                            <DescriptionList.Item title="Studios">
+                                <StyledList>
+                                    {anime.studios.map((studio) =>
+                                        <Link key={studio.slug} to={`/studio/${studio.slug}`}>
+                                            <Text link>
+                                                {studio.name}
+                                            </Text>
+                                        </Link>
+                                    )}
+                                </StyledList>
+                            </DescriptionList.Item>
+                        )}
+                        {!!anime.resources?.length && (
                             <DescriptionList.Item title="Links">
                                 <StyledList>
                                     {anime.resources.map((resource) => (
@@ -105,6 +118,10 @@ export const query = graphql`
                 text
             }
             series {
+                slug
+                name
+            }
+            studios {
                 slug
                 name
             }

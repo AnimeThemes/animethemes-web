@@ -7,6 +7,7 @@ import {
 import useEntitySearch from "hooks/useEntitySearch";
 import { SearchEntity } from "components/search";
 import { navigate } from "gatsby";
+import { AnimeSummaryCard } from "components/card";
 
 const sortByFields = new Map([
     [ "Relevance", null ],
@@ -53,7 +54,6 @@ export function SearchAnime({ searchQuery, locationState }) {
     return (
         <SearchEntity
             searchQuery={searchQuery}
-            searchEntity="anime"
             filters={
                 <>
                     <SearchFilterFirstLetter value={filterFirstLetter} setValue={updateState("filterFirstLetter")}/>
@@ -68,6 +68,7 @@ export function SearchAnime({ searchQuery, locationState }) {
             isFetchingNextPage={isFetchingNextPage}
             isLoading={isLoading}
             isPlaceholderData={isPlaceholderData}
+            renderSummaryCard={(anime) => <AnimeSummaryCard key={anime.slug} anime={anime}/>}
         />
     );
 }

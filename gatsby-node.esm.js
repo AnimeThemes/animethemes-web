@@ -36,6 +36,11 @@ export async function createPages({ actions: { createPage }, graphql }) {
                     slug
                 }
             }
+            allStudio {
+                nodes {
+                    slug
+                }
+            }
             allArtist {
                 nodes {
                     slug
@@ -103,6 +108,14 @@ export async function createPages({ actions: { createPage }, graphql }) {
         });
     }
 
+    for (const { slug } of data.allStudio.nodes) {
+        createPage({
+            path: `/studio/${slug}`,
+            component: require.resolve("./src/templates/studio.js"),
+            context: { slug }
+        });
+    }
+
     for (const { slug } of data.allArtist.nodes) {
         createPage({
             path: `/artist/${slug}`,
@@ -119,7 +132,7 @@ export async function createPages({ actions: { createPage }, graphql }) {
         });
     }
 
-    for (const entity of [ null, "anime", "theme", "artist" ]) {
+    for (const entity of [ null, "anime", "theme", "artist", "series", "studio" ]) {
         createPage({
             path: `/search${entity ? `/${entity}` : ``}`,
             component: require.resolve("./src/templates/search.js"),

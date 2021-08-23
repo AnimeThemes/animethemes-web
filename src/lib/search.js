@@ -88,6 +88,23 @@ const entityConfigs = {
             // TODO: Wait till we can specify deep field property lists
             // song: []
         }
+    },
+    series: {
+        fields: {
+            series: [
+                "name",
+                "slug"
+            ]
+        }
+    },
+    studio: {
+        plural: "studios",
+        fields: {
+            studio: [
+                "name",
+                "slug"
+            ]
+        }
     }
 };
 

@@ -1,17 +1,19 @@
-import { SearchFilterSortBy, SearchFilterThemeType } from "components/search-filter";
+import { SearchFilterFirstLetter, SearchFilterSortBy } from "components/search-filter";
 import useEntitySearch from "hooks/useEntitySearch";
 import { SearchEntity } from "components/search";
 import { navigate } from "gatsby";
-import { ThemeSummaryCard } from "components/card";
+import { SummaryCard } from "components/card";
 
 const sortByFields = new Map([
     [ "Relevance", null ],
+    [ "A ➜ Z", "name" ],
+    [ "Z ➜ A", "-name" ],
     [ "Last Added", "-created_at" ]
 ]);
 const sortByOptions = [ ...sortByFields.keys() ];
 
-export function SearchTheme({ searchQuery, locationState }) {
-    const filterType = locationState?.filterType || null;
+export function SearchStudio({ searchQuery, locationState }) {
+    const filterFirstLetter = locationState?.filterFirstLetter || null;
     const sortBy = locationState?.sortBy || sortByOptions[0];
 
     const updateState = (field) => (newValue) => {
@@ -31,9 +33,9 @@ export function SearchTheme({ searchQuery, locationState }) {
         isFetchingNextPage,
         isLoading,
         isPlaceholderData
-    } = useEntitySearch("theme", searchQuery, {
+    } = useEntitySearch("studio", searchQuery, {
         filters: {
-            type: filterType
+            "name][like": filterFirstLetter ? `${filterFirstLetter}%` : null,
         },
         sortBy: sortByFields.get(sortBy)
     });
@@ -43,7 +45,7 @@ export function SearchTheme({ searchQuery, locationState }) {
             searchQuery={searchQuery}
             filters={
                 <>
-                    <SearchFilterThemeType value={filterType} setValue={updateState("filterType")}/>
+                    <SearchFilterFirstLetter value={filterFirstLetter} setValue={updateState("filterFirstLetter")}/>
                     <SearchFilterSortBy options={sortByOptions} value={sortBy} setValue={updateState("sortBy")}/>
                 </>
             }
@@ -53,7 +55,7 @@ export function SearchTheme({ searchQuery, locationState }) {
             isFetchingNextPage={isFetchingNextPage}
             isLoading={isLoading}
             isPlaceholderData={isPlaceholderData}
-            renderSummaryCard={(theme) => <ThemeSummaryCard key={theme.anime.slug + theme.slug} theme={theme}/>}
+            renderSummaryCard={(studio) => <SummaryCard key={studio.slug} title={studio.name} description="Studio" to={`/studio/${studio.slug}`} />}
         />
     );
 }

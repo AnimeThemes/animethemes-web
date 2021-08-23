@@ -6,7 +6,7 @@ import { Text } from "components/text";
 import useSiteMeta from "hooks/useSiteMeta";
 import { SongTitleWithArtists, ThemeEntryTags, VideoTags } from "components/utils";
 import { VideoButton } from "components/button";
-import { AnimeSummaryCard, ArtistSummaryCard } from "components/card";
+import { AnimeSummaryCard, ArtistSummaryCard, SummaryCard } from "components/card";
 import { SEO } from "components/seo";
 import useImage from "hooks/useImage";
 
@@ -105,8 +105,14 @@ export default function VideoPage({ data: { video, entry } }) {
                     <Box gapsColumn="1rem">
                         <Text variant="h2">Related entries</Text>
                         <Flex flexDirection={["column", "row"]} gapsColumn={["1rem", 0]} gapsRow={[0, "1rem"]}>
-                            <Box flex="1">
+                            <Box flex="1" gapsColumn="1rem">
                                 <AnimeSummaryCard anime={anime} hideThemes/>
+                                {!!anime.series?.length && anime.series.map((series) => (
+                                    <SummaryCard key={series.slug} title={series.name} description="Series" to={`/series/${series.slug}`} />
+                                ))}
+                                {!!anime.studios?.length && anime.studios.map((studio) => (
+                                    <SummaryCard key={studio.slug} title={studio.name} description="Studio" to={`/studio/${studio.slug}`} />
+                                ))}
                             </Box>
                             <Box flex="1">
                                 <Box gapsColumn="1rem">
@@ -192,6 +198,14 @@ export const query = graphql`
                     images {
                         facet
                         link
+                    }
+                    series {
+                        slug
+                        name
+                    }
+                    studios {
+                        slug
+                        name
                     }
                 }
                 song {

@@ -42,7 +42,7 @@ export default function DevelopmentPage({ data: { site, allAnnouncement } }) {
                 )}
             </Text>
             <Text as="p">
-                <span>This page is still activily being worked on. If you are a developer and interested in contributing feel free to contact us on </span>
+                <span>This page is still actively being worked on. If you are a developer and interested in contributing feel free to contact us on </span>
                 <ExternalLink href="https://discordapp.com/invite/m9zbVyQ">Discord</ExternalLink>
                 <span>.</span>
             </Text>
@@ -73,21 +73,30 @@ export default function DevelopmentPage({ data: { site, allAnnouncement } }) {
             <Box gapsColumn={["2rem", "1.5rem"]}>
                 <PageGridItem
                     path="/"
+                    description={
+                        <Text>
+                            <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
+                            The new home page of AnimeThemes.
+                        </Text>
+                    }
+                />
+                <PageGridItem
+                    path="/dev"
                     description="This page!"
                 />
                 <PageGridItem
                     path="/design"
-                    description={
-                        <Text>
-                            <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
-                            A page listing various design components!
-                        </Text>
-                    }
+                    description="A page listing various design components."
                     isNew
                 />
                 <PageGridItem
                     path="/search"
-                    description="Search the AnimeThemes database. You can also use the search bar in the navigation."
+                    description="Search the AnimeThemes database."
+                    otherPaths={{
+                        "/search/anime": "Search only for anime or explore the list of all anime.",
+                        "/search/theme": "Search only for themes or explore the list of all themes.",
+                        "/search/artist": "Search only for artists or explore the list of all artists.",
+                    }}
                 />
                 <PageGridItem
                     path="/year"
@@ -112,6 +121,15 @@ export default function DevelopmentPage({ data: { site, allAnnouncement } }) {
                         "/series/clannad": "Only three anime.",
                         "/series/fma": "Only two anime."
                     }}
+                />
+                <PageGridItem
+                    path="/studio/kyoto_animation"
+                    description={
+                        <Text>
+                            <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
+                            Browse all anime which were produced by the same studio.
+                        </Text>
+                    }
                 />
                 <PageGridItem
                     path="/artist/kana_hanazawa"
@@ -141,6 +159,15 @@ export default function DevelopmentPage({ data: { site, allAnnouncement } }) {
                         "/anime/shingeki_no_kyojin/ED1-NCBD1080": "Same video for two entries.",
                         "/anime/shingeki_no_kyojin_ova/ED1-NCBD1080": "See above."
                     }}
+                />
+                <PageGridItem
+                    path="/bracket/best-anime-opening-ix-salty-arrow"
+                    description={
+                        <Text>
+                            <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
+                            Explore every theme competing in one of the brackets hosted at AnimeBracket.
+                        </Text>
+                    }
                 />
             </Box>
             {!!process.env.GATSBY_CI && (

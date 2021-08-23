@@ -50,10 +50,11 @@ const BigButton = styled(Button).attrs({
     justify-content: flex-end;
 `;
 
-const BigIcon = styled(Icon)`
+const BigIcon = styled(Icon).attrs({
+    size: "4x"
+})`
     margin: 0 auto -1rem -2rem;
     
-    font-size: 4rem;
     color: ${theme.colors["text-disabled"]};
 `;
 
@@ -118,7 +119,7 @@ export default function HomePage({ data: { featuredTheme, recentlyAdded } }) {
                         We provide high quality WebMs of your favorite OPs and EDs for your listening and discussion needs.
                     </Text>
                     <Text as="p">
-                        <span>This page is still activily being worked on. If you are a developer and interested in contributing feel free to contact us on </span>
+                        <span>This page is still actively being worked on. If you are a developer and interested in contributing feel free to contact us on </span>
                         <ExternalLink href="https://discordapp.com/invite/m9zbVyQ">Discord</ExternalLink>
                         <span>.</span>
                     </Text>
