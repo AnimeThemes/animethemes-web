@@ -17,6 +17,7 @@ module.exports = ({ actions }) => {
             series: [Series]
             resources: [Resource]
             images: [Image]
+            studios: [Studio]
         }
         
         type Synonym implements Node & Entity {
@@ -93,7 +94,7 @@ module.exports = ({ actions }) => {
         type Series implements Node & Entity {
             idRaw: Int
             slug: String!
-            name: String!            
+            name: String!
             anime: [Anime]
         }
         
@@ -107,6 +108,13 @@ module.exports = ({ actions }) => {
             idRaw: Int
             facet: String!
             link: String
+        }
+        
+        type Studio implements Node & Entity {
+            idRaw: Int
+            slug: String!
+            name: String!
+            anime: [Anime]
         }
         
         type AnimeSeries implements Node {
@@ -137,6 +145,11 @@ module.exports = ({ actions }) => {
         type ArtistImage implements Node {
             artist: Artist! @link(by: "id")
             image: Image! @link(by: "id")
+        }
+        
+        type AnimeStudio implements Node {
+            anime: Anime! @link(by: "id")
+            studio: Studio! @link(by: "id")
         }
         
         type Announcement implements Node & Entity {

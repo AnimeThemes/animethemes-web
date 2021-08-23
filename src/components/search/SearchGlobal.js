@@ -5,9 +5,9 @@ import { Text } from "components/text";
 import { Box, Flex } from "components/box";
 import { Link } from "gatsby";
 import { Icon } from "components/icon";
-import { SearchResultList } from "components/search";
 import { useQuery } from "react-query";
 import { fetchGlobalSearchResults } from "lib/search";
+import { AnimeSummaryCard, ArtistSummaryCard, ThemeSummaryCard } from "components/card";
 
 export function SearchGlobal({ searchQuery }) {
     const fetchSearchResults = () => fetchGlobalSearchResults(
@@ -48,14 +48,29 @@ export function SearchGlobal({ searchQuery }) {
 
     return (
         <Box gapsColumn="1.5rem">
-            <GlobalSearchSection entity="anime" title="Anime" results={animeResults}/>
-            <GlobalSearchSection entity="theme" title="Themes" results={themeResults}/>
-            <GlobalSearchSection entity="artist" title="Artist" results={artistResults}/>
+            <GlobalSearchSection
+                entity="anime"
+                title="Anime"
+                results={animeResults}
+                renderSummaryCard={(anime) => <AnimeSummaryCard key={anime.slug} anime={anime}/>}
+            />
+            <GlobalSearchSection
+                entity="theme"
+                title="Themes"
+                results={themeResults}
+                renderSummaryCard={(theme) => <ThemeSummaryCard key={theme.anime.slug + theme.slug} theme={theme}/>}
+            />
+            <GlobalSearchSection
+                entity="artist"
+                title="Artist"
+                results={artistResults}
+                renderSummaryCard={(artist) => <ArtistSummaryCard key={artist.slug} artist={artist}/>}
+            />
         </Box>
     );
 }
 
-function GlobalSearchSection({ entity, title, results }) {
+function GlobalSearchSection({ entity, title, results, renderSummaryCard }) {
     const { search, hash } = useLocation();
     const urlSuffix = search + hash;
 
@@ -70,7 +85,7 @@ function GlobalSearchSection({ entity, title, results }) {
         <>
             <Text variant="h2">{title}</Text>
             <Box gapsColumn="1rem">
-                <SearchResultList results={resultsPreview} entity={entity}/>
+                {resultsPreview.map(renderSummaryCard)}
             </Box>
             {hasMoreResults && (
                 <Flex justifyContent="center">

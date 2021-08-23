@@ -158,6 +158,15 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "Image", helpers);
     }
 
+    for (const studio of await selectAllFrom("studios")) {
+        createNodeFromData({
+            id: studio.studio_id,
+            idRaw: studio.studio_id,
+            slug: studio.slug,
+            name: studio.name
+        }, "Studio", helpers);
+    }
+
     try {
         for (const announcement of await selectAllFrom("announcements")) {
             createNodeFromData({
@@ -268,6 +277,18 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
             entry: createNodeId(`Entry-${entryVideo.entry_id}`),
             video: createNodeId(`Video-${entryVideo.video_id}`)
         }, "EntryVideo", helpers);
+    }
+
+    for (const animeStudio of await selectAllFrom(
+        "anime_studio", true,
+        "anime", "anime_id", "anime_id",
+        "studios", "studio_id", "studio_id"
+    )) {
+        createNodeFromData({
+            id: `${animeStudio.anime_id}-${animeStudio.studio_id}`,
+            anime: createNodeId(`Anime-${animeStudio.anime_id}`),
+            studio: createNodeId(`Studio-${animeStudio.studio_id}`)
+        }, "AnimeStudio", helpers);
     }
 
     // await cache.set("last-fetched", now);

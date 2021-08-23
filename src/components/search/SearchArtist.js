@@ -2,6 +2,7 @@ import { SearchFilterFirstLetter, SearchFilterSortBy } from "components/search-f
 import useEntitySearch from "hooks/useEntitySearch";
 import { SearchEntity } from "components/search";
 import { navigate } from "gatsby";
+import { ArtistSummaryCard } from "components/card";
 
 const sortByFields = new Map([
     [ "Relevance", null ],
@@ -42,7 +43,6 @@ export function SearchArtist({ searchQuery, locationState }) {
     return (
         <SearchEntity
             searchQuery={searchQuery}
-            searchEntity="artist"
             filters={
                 <>
                     <SearchFilterFirstLetter value={filterFirstLetter} setValue={updateState("filterFirstLetter")}/>
@@ -55,6 +55,7 @@ export function SearchArtist({ searchQuery, locationState }) {
             isFetchingNextPage={isFetchingNextPage}
             isLoading={isLoading}
             isPlaceholderData={isPlaceholderData}
+            renderSummaryCard={(artist) => <ArtistSummaryCard key={artist.slug} artist={artist}/>}
         />
     );
 }

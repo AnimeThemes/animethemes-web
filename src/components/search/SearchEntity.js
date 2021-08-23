@@ -3,19 +3,18 @@ import { Button } from "components/button";
 import { Text } from "components/text";
 import { Box, Flex } from "components/box";
 import { Icon } from "components/icon";
-import { SearchResultList } from "components/search";
 import { SearchFilterGroup } from "components/search-filter";
 
 export function SearchEntity({
     searchQuery,
-    searchEntity,
     filters,
     data,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-    isPlaceholderData
+    isPlaceholderData,
+    renderSummaryCard
 }) {
     return (
         <Box gapsColumn="1.5rem">
@@ -50,7 +49,7 @@ export function SearchEntity({
                 return (
                     <>
                         <Box gapsColumn="1rem">
-                            <SearchResultList results={results} entity={searchEntity}/>
+                            {results.map(renderSummaryCard)}
                         </Box>
                         {(hasNextPage || isPlaceholderData) && (
                             <Flex justifyContent="center">
