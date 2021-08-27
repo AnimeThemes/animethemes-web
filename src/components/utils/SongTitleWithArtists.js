@@ -4,16 +4,18 @@ import { Text } from "components/text";
 
 // Specify an artist if you want to display this in an artist context (e.g. artist page)
 export function SongTitleWithArtists({ song, songTitleLinkTo, artist }) {
+    const songTitle = song.title || "T.B.A.";
+
     return (
         <Text>
             {songTitleLinkTo
                 ? (
                     <Link to={songTitleLinkTo}>
-                        <Text link>{song.title}</Text>
+                        <Text link italics={!song.title}>{songTitle}</Text>
                     </Link>
                 )
                 : (
-                    <Text color="text-primary" fontWeight="600">{song.title}</Text>
+                    <Text color="text-primary" fontWeight="600" italics={!song.title}>{songTitle}</Text>
                 )
             }
             {artist ? (() => {

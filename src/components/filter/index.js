@@ -1,1 +1,1 @@
-export { ThemeGroupFilter } from "./ThemeGroupFilter";
+export { AnimeThemeFilter } from "./AnimeThemeFilter";

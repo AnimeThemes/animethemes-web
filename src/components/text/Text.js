@@ -70,6 +70,10 @@ export const Text = styled.span.attrs(getAttributes)`
     ${(props) => props.tabularNums && css`
         font-variant-numeric: tabular-nums;
     `}
+
+    ${(props) => props.italics && css`
+        font-style: italic;
+    `}
     
     // Typography and color props can override variant styles
     ${typography}

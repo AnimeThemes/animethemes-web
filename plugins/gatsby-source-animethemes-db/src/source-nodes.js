@@ -75,6 +75,7 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
             id: theme.theme_id,
             idRaw: theme.theme_id,
             slug: theme.slug,
+            type: theme.type,
             group: theme.group,
             song: createNodeId(`Song-${theme.song_id}`),
             anime: createNodeId(`Anime-${theme.anime_id}`)
@@ -108,7 +109,6 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
             uncen: video.uncen,
             source: video.source,
             overlap: video.overlap,
-            // tags: video.tags, TODO: Add tags algorithm
             entries: []
         }, "Video", helpers);
     }

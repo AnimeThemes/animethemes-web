@@ -11,7 +11,7 @@ import { SEO } from "components/seo";
 import { Card } from "components/card";
 import { HeightTransition } from "components/utils";
 import { CoverImage } from "components/image";
-import { ThemeGroupFilter } from "components/filter";
+import { AnimeThemeFilter } from "components/filter";
 
 const StyledList = styled.div`
     display: flex;
@@ -95,10 +95,13 @@ export default function AnimeDetailPage({ data: { anime } }) {
                             <Text as="p" maxLines={collapseSynopsis ? 2 : null} dangerouslySetInnerHTML={{ __html: anime.synopsis }}/>
                         </HeightTransition>
                     </Card>
-                    <Text variant="h2">Themes</Text>
+                    <Text variant="h2">
+                        Themes
+                        <Text color="text-disabled"> ({anime.themes?.length || 0})</Text>
+                    </Text>
                     {
-                        !!anime.themes && anime.themes.length
-                            ? <ThemeGroupFilter themes={anime.themes}/>
+                        !!anime.themes?.length
+                            ? <AnimeThemeFilter themes={anime.themes}/>
                             : <Text>There are no themes for this anime.</Text>
                     }
                 </Box>
@@ -128,6 +131,7 @@ export const query = graphql`
             themes {
                 group
                 slug
+                type
                 song {
                     title
                     performances {
