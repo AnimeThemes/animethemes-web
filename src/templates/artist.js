@@ -76,7 +76,10 @@ export default function ArtistDetailPage({ data: { artist } }) {
                     </DescriptionList>
                 </Box>
                 <Box gapsColumn="1.5rem">
-                    <Text variant="h2">Song Perfomances</Text>
+                    <Text variant="h2">
+                        Song Performances
+                        <Text color="text-disabled"> ({themes.length})</Text>
+                    </Text>
                     <Box gapsColumn="1rem">
                         {themes.map((theme, index) => (
                             <ThemeSummaryCard key={index} theme={theme} artist={artist}/>

@@ -36,3 +36,8 @@ exports.resourceSite = new Map([
     [ 7, "MyAnimeList" ],
     [ 8, "Wiki" ]
 ]);
+
+exports.themeType = new Map([
+    [ 0, "OP" ],
+    [ 1, "ED" ]
+]);

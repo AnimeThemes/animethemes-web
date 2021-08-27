@@ -63,7 +63,10 @@ export default function SeriesDetailPage({ data: { series } }) {
                     </AspectRatio>
                 </Box>
                 <Box gapsColumn="1.5rem">
-                    <Text variant="h2">Anime</Text>
+                    <Text variant="h2">
+                        Anime
+                        <Text color="text-disabled"> ({anime.length})</Text>
+                    </Text>
                     <Box gapsColumn="1rem">
                         {anime.map((anime) => (
                             <AnimeSummaryCard key={anime.slug} anime={anime}/>

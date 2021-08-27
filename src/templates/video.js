@@ -77,7 +77,7 @@ export default function VideoPage({ data: { video, entry } }) {
     return (
         <StyledVideoInfo>
             <SEO title={pageTitle} description={pageDesc} />
-            <Flex flexDirection={["column", "row"]} alignItems={["flex-start", "center"]} gapsRow={[0, "1rem"]} gapsColumn={["1rem", 0]}>
+            <Flex flexDirection={["column", "row"]} alignItems={["stretch", "center"]} gapsRow={[0, "1rem"]} gapsColumn={["1rem", 0]}>
                 <Box flex="1">
                     <Flex flexDirection="column" justifyContent="center" gapsColumn="0.25rem">
                         <Text fontWeight="700">
@@ -92,11 +92,14 @@ export default function VideoPage({ data: { video, entry } }) {
                     </Flex>
                 </Box>
                 <Text variant="small" color="text-muted">
-                    <Flex alignItems="center" gapsRow="1rem">
-                        <Text>Version {entry.version || 1}</Text>
-                        <ThemeEntryTags entry={entry}/>
-                        <Text color="text-primary">&bull;</Text>
-                        <VideoTags video={video}/>
+                    <Flex flexDirection="column" gapsColumn="0.25rem">
+                        <Flex alignItems="center" justifyContent={["space-between", "flex-end"]} gapsRow="1rem">
+                            <Text>Version {entry.version || 1}</Text>
+                            <ThemeEntryTags entry={entry}/>
+                        </Flex>
+                        <Box alignSelf="flex-end">
+                            <VideoTags video={video}/>
+                        </Box>
                     </Flex>
                 </Text>
             </Flex>

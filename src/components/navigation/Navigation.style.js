@@ -8,7 +8,7 @@ import theme from "theme";
 export const StyledNavigation = styled.nav`
     background-color: ${theme.colors["solid"]};
     
-    z-index: 1;
+    z-index: ${theme.zIndices.navigation};
 
     @media (max-width: 720px) {
         display: flex;
@@ -83,7 +83,7 @@ export const StyledMobileToggle = styled(Button)`
     right: 1rem;
     
     padding: 1rem;
-    z-index: 2;
+    z-index: ${theme.zIndices.navigation};
 
     @media (min-width: 721px) {
         display: none;

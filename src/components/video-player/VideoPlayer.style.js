@@ -2,6 +2,7 @@ import styled, { css } from "styled-components";
 import { motion } from "framer-motion";
 import { gapsRow } from "styles/mixins";
 import { Button } from "components/button";
+import theme from "theme";
 
 export const StyledPlayer = styled(motion.div)`
     ${(props) => props.background ? css`
@@ -9,7 +10,7 @@ export const StyledPlayer = styled(motion.div)`
         width: 352px;
         bottom: 1rem;
         left: 1rem;
-        z-index: 10;
+        z-index: ${theme.zIndices.videoPlayer};
 
         @media (max-width: 720px) {
             width: calc(50vw - 2rem);
@@ -50,7 +51,7 @@ export const StyledOverlay = styled(motion.div)`
     height: 100%;
     top: 0;
     left: 0;
-    z-index: 20;
+    z-index: ${theme.zIndices.videoPlayerOverlay};
 
     opacity: ${(props) => props.force ? 1 : 0};
 

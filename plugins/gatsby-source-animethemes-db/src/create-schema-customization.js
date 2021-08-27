@@ -29,6 +29,7 @@ module.exports = ({ actions }) => {
         type Theme implements Node & Entity {
             idRaw: Int
             slug: String!
+            type: String!
             group: String
             song: Song! @link(by: "id")
             anime: Anime! @link(by: "id")

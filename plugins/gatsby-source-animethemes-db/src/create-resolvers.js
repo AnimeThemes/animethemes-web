@@ -1,4 +1,4 @@
-const { animeSeason, videoSource, imageFacet, resourceSite, videoOverlap } = require("./enums");
+const { animeSeason, videoSource, imageFacet, resourceSite, videoOverlap, themeType } = require("./enums");
 
 module.exports = ({ createResolvers }) => {
     createResolvers({
@@ -47,6 +47,11 @@ module.exports = ({ createResolvers }) => {
         Studio: {
             ...pivotResolver({
                 anime: { type: "AnimeStudio", from: "studio", to: "anime" }
+            })
+        },
+        Theme: {
+            ...enumResolver({
+                type: themeType
             })
         },
         Video: {

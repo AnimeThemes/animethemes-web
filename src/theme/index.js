@@ -8,7 +8,14 @@ const theme = {
         low: "0 3px 6px rgb(0 0 0 / .15), 0 2px 4px rgb(0 0 0 / .12)",
         high: "0 3px 3px 5px rgb(0 0 0 / .15), 0 2px 9px 5px rgb(0 0 0 / .12)"
     },
-    colors: createThemeDefinition()
+    colors: createThemeDefinition(),
+    zIndices: {
+        navigation: 10,
+        switcherButton: 1,
+        switcherText: 2,
+        videoPlayer: 5,
+        videoPlayerOverlay: 6
+    }
 };
 
 export default theme;

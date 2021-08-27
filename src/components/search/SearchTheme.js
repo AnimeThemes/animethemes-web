@@ -6,6 +6,10 @@ import { ThemeSummaryCard } from "components/card";
 
 const sortByFields = new Map([
     [ "Relevance", null ],
+    [ "A ➜ Z", "song.title" ],
+    [ "Z ➜ A", "-song.title" ],
+    [ "Old ➜ New", "anime.year,anime.season,song.title" ],
+    [ "New ➜ Old", "-anime.year,-anime.season,song.title" ],
     [ "Last Added", "-created_at" ]
 ]);
 const sortByOptions = [ ...sortByFields.keys() ];

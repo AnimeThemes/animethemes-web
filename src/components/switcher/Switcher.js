@@ -28,7 +28,7 @@ const StyledButton = styled(Button)`
 `;
 const StyledButtonBackground = styled(motion.div)`
     position: absolute;
-    z-index: 1;
+    z-index: ${theme.zIndices.switcherButton};
     top: 0;
     left: 0;
     width: 100%;
@@ -37,7 +37,7 @@ const StyledButtonBackground = styled(motion.div)`
     border-radius: 2rem;
 `;
 const Top = styled.span`
-    z-index: 2;
+    z-index: ${theme.zIndices.switcherText};
 `;
 
 export function Switcher({ items, selectedItem, onChange, children, ...props }) {

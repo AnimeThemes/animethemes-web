@@ -8,11 +8,14 @@ import theme from "theme";
 import { Box } from "components/box";
 import { AnimatePresence, motion } from "framer-motion";
 import useResizeObserver from "@react-hook/resize-observer";
+import { gapsRow } from "styles/mixins";
 
 const StyledListbox = styled(Box)`
     display: inline-block;
 `;
-const StyledListboxButton = styled(Button)`
+const StyledListboxButton = styled(Button).attrs({
+    gapsRow: "0.5rem"
+})`
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -52,6 +55,7 @@ const StyledListboxOption = styled.li`
     justify-content: space-between;
     
     padding: 0.5rem 1rem;
+    ${gapsRow("0.5rem")}
     
     color: ${theme.colors["text-muted"]};
     
