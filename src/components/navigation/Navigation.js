@@ -44,7 +44,7 @@ export function Navigation() {
             <StyledNavigation show={show} onClick={() => setShow(false)}>
                 <StyledNavigationContainer onClick={(event) => event.stopPropagation()}>
                     <StyledLogoContainer to="/">
-                        <StyledLogo className="navigation__logo-image" src={withPrefix("/img/logo.svg")} alt="Logo" />
+                        <StyledLogo src={withPrefix("/img/logo.svg")} alt="Logo" />
                     </StyledLogoContainer>
                     <Flex
                         flexDirection={[ "column", "row" ]}
