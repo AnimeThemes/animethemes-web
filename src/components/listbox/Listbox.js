@@ -6,7 +6,6 @@ import { Text } from "components/text";
 import theme from "theme";
 import { gapsRow } from "styles/mixins";
 import { ListboxButton, ListboxInput, ListboxList, ListboxOption, ListboxPopover } from "@reach/listbox";
-import "@reach/listbox/styles.css";
 
 const StyledListbox = styled(ListboxInput)`
     display: inline-block;
@@ -19,7 +18,6 @@ const StyledListboxButton = styled(Button).attrs({
     justify-content: space-between;
 
     width: 100%;
-    border: none;
 `;
 const StyledListboxPopover = styled(ListboxPopover)`
     @keyframes flip-down {
@@ -35,7 +33,6 @@ const StyledListboxPopover = styled(ListboxPopover)`
     
     margin-top: 0.5rem;
     padding: 0;
-    border: 0;
     border-radius: 1rem;
     overflow: hidden;
     
@@ -45,11 +42,6 @@ const StyledListboxPopover = styled(ListboxPopover)`
     transform-origin: top;
     will-change: transform, opacity;
     animation: flip-down 200ms ease-out;
-    
-    &:focus-within {
-        outline: none;
-        box-shadow: ${theme.shadows.high};
-    }
 `;
 const StyledListboxList = styled(ListboxList)`
     max-height: 33vh;
