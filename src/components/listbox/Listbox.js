@@ -1,29 +1,37 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faSort, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "components/button";
 import { Text } from "components/text";
-import { useEffect, useRef, useState } from "react";
 import theme from "theme";
-import { Box } from "components/box";
-import { AnimatePresence, motion } from "framer-motion";
-import useResizeObserver from "@react-hook/resize-observer";
 import { gapsRow } from "styles/mixins";
+import { ListboxButton, ListboxInput, ListboxList, ListboxOption, ListboxPopover } from "@reach/listbox";
+import "@reach/listbox/styles.css";
 
-const StyledListbox = styled(Box)`
+const StyledListbox = styled(ListboxInput)`
     display: inline-block;
 `;
 const StyledListboxButton = styled(Button).attrs({
     gapsRow: "0.5rem"
-})`
+})`    
     display: flex;
     align-items: center;
     justify-content: space-between;
 
     width: 100%;
+    border: none;
 `;
-const StyledListboxPopover = styled(motion.div)`
-    position: absolute;
+const StyledListboxPopover = styled(ListboxPopover)`
+    @keyframes flip-down {
+        0% {
+            opacity: 0;
+            transform: perspective(1000px) rotateX(-45deg);
+        }
+        100% {
+            opacity: 1;
+            transform: perspective(1000px) rotateX(0deg);
+        }
+    }
     
     margin-top: 0.5rem;
     padding: 0;
@@ -31,119 +39,89 @@ const StyledListboxPopover = styled(motion.div)`
     border-radius: 1rem;
     overflow: hidden;
     
-    will-change: transform, opacity;
-    
     background-color: ${theme.colors["solid"]};
     box-shadow: ${theme.shadows.high};
     
-    transition: none;
+    transform-origin: top;
+    will-change: transform, opacity;
+    animation: flip-down 200ms ease-out;
+    
+    &:focus-within {
+        outline: none;
+        box-shadow: ${theme.shadows.high};
+    }
 `;
-const StyledListboxList = styled.ul`
+const StyledListboxList = styled(ListboxList)`
     max-height: 33vh;
     margin: 0;
     padding: 0;
     list-style: none;
     overflow: auto;
-    
-    &:focus {
-        outline: none;
-    }
 `;
-const StyledListboxOption = styled.li`
+const StyledListboxOption = styled(ListboxOption)`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    
+
     padding: 0.5rem 1rem;
     ${gapsRow("0.5rem")}
-    
-    color: ${theme.colors["text-muted"]};
-    
-    &:hover, &:focus {
+
+    color: ${(props) => theme.colors[props.selected ? "text-primary" : "text-muted"]};
+
+    &:hover, &[data-current-nav] {
         background-color: ${theme.colors["solid-on-card"]};
-        color: ${theme.colors["text"]};
+        color: ${(props) => theme.colors[props.selected ? "text-primary" : "text"]};
         cursor: pointer;
     }
-    
-    ${(props) => props.selected && css`
-        color: ${theme.colors["text-primary"]};
-    `}
 `;
 
 export function Listbox({ options, nullLabel, selectedValue, onSelect, noReset, disabled, defaultValue, ...props }) {
-    const [showPopover, setShowPopover] = useState(false);
-    const [buttonWidth, setButtonWidth] = useState(0);
-
-    const buttonRef = useRef(null);
-    const listRef = useRef(null);
-
-    useResizeObserver(buttonRef, (entry) => setButtonWidth(entry.target.getBoundingClientRect().width));
-
-    useEffect(() => {
-        if (showPopover) {
-            listRef.current.focus();
-        }
-    }, [ showPopover ]);
-
-    function handleButtonClick() {
-        if (!disabled) {
-            setShowPopover(true);
-        }
-    }
-
-    function handleOptionClick(value) {
-        if (!disabled) {
-            onSelect(value);
-            setShowPopover(false);
-        }
-    }
-
     function handleResetClick(event) {
         event.stopPropagation();
         if (!disabled) {
             onSelect(null);
-            setShowPopover(false);
         }
     }
 
     return (
-        <StyledListbox {...props}>
+        <StyledListbox
+            // Reach UI listbox can't handle null values so we use an empty string instead
+            value={selectedValue || ""}
+            onChange={onSelect}
+            {...props}
+        >
             <StyledListboxButton
-                ref={buttonRef}
+                as={ListboxButton}
                 variant={selectedValue !== null && selectedValue !== defaultValue && "primary"}
-                onClick={handleButtonClick}
-                onMouseDown={(event) => event.preventDefault()}
                 disabled={disabled}
             >
                 <Text>{selectedValue !== null ? selectedValue : nullLabel}</Text>
                 {(selectedValue !== null && !noReset) ? (
-                    <FontAwesomeIcon icon={faTimes} fixedWidth onClick={handleResetClick}/>
+                    <FontAwesomeIcon
+                        icon={faTimes}
+                        fixedWidth
+                        onMouseDown={handleResetClick}
+                    />
                 ) : (
                     <FontAwesomeIcon icon={faSort} fixedWidth/>
                 )}
             </StyledListboxButton>
-            <AnimatePresence>
-                {showPopover && (
-                    <StyledListboxPopover
-                        style={{ width: buttonWidth }}
-                        initial={{ rotateX: -45, originY: 0, transformPerspective: 1000 }}
-                        animate={{ rotateX: 0 }}
-                        exit={{ rotateX: -45, opacity: 0 }}
-                        transition={{ duration: 0.2, ease: "easeOut" }}
-                    >
-                        <StyledListboxList ref={listRef} tabIndex={-1} onBlur={() => setShowPopover(false)}>
-                            {options.map((value) => (
-                                <StyledListboxOption key={value} selected={value === selectedValue} onClick={() => handleOptionClick(value)}>
-                                    <Text>{value}</Text>
-                                    {value === selectedValue && (
-                                        <FontAwesomeIcon icon={faCheck} fixedWidth/>
-                                    )}
-                                </StyledListboxOption>
-                            ))}
-                        </StyledListboxList>
-                    </StyledListboxPopover>
-                )}
-            </AnimatePresence>
+            <StyledListboxPopover>
+                <StyledListboxList>
+                    {options.map((value) => (
+                        <StyledListboxOption
+                            key={value}
+                            selected={value === selectedValue}
+                            value={value}
+                        >
+                            <Text>{value}</Text>
+                            {value === selectedValue && (
+                                <FontAwesomeIcon icon={faCheck} fixedWidth/>
+                            )}
+                        </StyledListboxOption>
+                    ))}
+                </StyledListboxList>
+            </StyledListboxPopover>
         </StyledListbox>
     );
 }

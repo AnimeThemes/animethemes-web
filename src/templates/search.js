@@ -11,6 +11,7 @@ import { SEO } from "components/seo";
 import { faCompass, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { Text } from "components/text";
 import { Icon } from "components/icon";
+import { HorizontalScroll } from "components/utils";
 
 const StyledSearchOptions = styled(Flex)`
     align-items: center;
@@ -82,26 +83,32 @@ export default function SearchPage({ pageContext: { entity }, location: { search
                         }}
                     />
                 </Box>
-                <Switcher
-                    items={[ null, "anime", "theme", "artist" ]}
-                    selectedItem={entity}
-                >
-                    {({ Button, item, selected, content }) => item.value === null ? (
-                        !!entity ? (
-                            <Link key={null} to={`/search${urlSuffix}`}>
-                                <Button>
-                                    <Icon icon={faTimes}/>
-                                </Button>
-                            </Link>
-                        ) : null
-                    ) : (
-                        <Link key={item.value} to={`/search/${item.value}${urlSuffix}`}>
-                            <Button variant={selected && "primary"}>
-                                {content}
-                            </Button>
-                        </Link>
-                    )}
-                </Switcher>
+                <div>
+                    <HorizontalScroll>
+                        <div>
+                            <Switcher
+                                items={[ null, "anime", "theme", "artist", "series", "studio" ]}
+                                selectedItem={entity}
+                            >
+                                {({ Button, item, selected, content }) => item.value === null ? (
+                                    !!entity ? (
+                                        <Link key={null} to={`/search${urlSuffix}`}>
+                                            <Button>
+                                                <Icon icon={faTimes}/>
+                                            </Button>
+                                        </Link>
+                                    ) : null
+                                ) : (
+                                    <Link key={item.value} to={`/search/${item.value}${urlSuffix}`}>
+                                        <Button variant={selected && "primary"}>
+                                            {content}
+                                        </Button>
+                                    </Link>
+                                )}
+                            </Switcher>
+                        </div>
+                    </HorizontalScroll>
+                </div>
             </StyledSearchOptions>
             <Search searchEntity={entity} searchQuery={debouncedSearchQuery} locationState={state}/>
         </Box>

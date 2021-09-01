@@ -1,4 +1,4 @@
-import { SearchFilterSortBy, SearchFilterThemeType } from "components/search-filter";
+import { SearchFilterFirstLetter, SearchFilterSortBy, SearchFilterThemeType } from "components/search-filter";
 import useEntitySearch from "hooks/useEntitySearch";
 import { SearchEntity } from "components/search";
 import { navigate } from "gatsby";
@@ -15,6 +15,7 @@ const sortByFields = new Map([
 const sortByOptions = [ ...sortByFields.keys() ];
 
 export function SearchTheme({ searchQuery, locationState }) {
+    const filterFirstLetter = locationState?.filterFirstLetter || null;
     const filterType = locationState?.filterType || null;
     const sortBy = locationState?.sortBy || sortByOptions[0];
 
@@ -37,6 +38,8 @@ export function SearchTheme({ searchQuery, locationState }) {
         isPlaceholderData
     } = useEntitySearch("theme", searchQuery, {
         filters: {
+            has: "song",
+            "song][title][like": filterFirstLetter ? `${filterFirstLetter}%` : null,
             type: filterType
         },
         sortBy: sortByFields.get(sortBy)
@@ -47,6 +50,7 @@ export function SearchTheme({ searchQuery, locationState }) {
             searchQuery={searchQuery}
             filters={
                 <>
+                    <SearchFilterFirstLetter value={filterFirstLetter} setValue={updateState("filterFirstLetter")}/>
                     <SearchFilterThemeType value={filterType} setValue={updateState("filterType")}/>
                     <SearchFilterSortBy options={sortByOptions} value={sortBy} setValue={updateState("sortBy")}/>
                 </>
