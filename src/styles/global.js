@@ -75,4 +75,8 @@ export default createGlobalStyle`
     img {
         display: block;
     }
+    
+    pre {
+        margin: 0;
+    }
 `;

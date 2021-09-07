@@ -44,7 +44,12 @@ export function Navigation() {
             <StyledNavigation show={show} onClick={() => setShow(false)}>
                 <StyledNavigationContainer onClick={(event) => event.stopPropagation()}>
                     <StyledLogoContainer to="/">
-                        <StyledLogo src={withPrefix("/img/logo.svg")} alt="Logo" />
+                        <StyledLogo
+                            src={withPrefix("/img/logo.svg")}
+                            alt="Logo"
+                            width="277"
+                            height="150"
+                        />
                     </StyledLogoContainer>
                     <Flex
                         flexDirection={[ "column", "row" ]}
@@ -68,7 +73,13 @@ export function Navigation() {
                                 <Text>Current Season</Text>
                             </Button>
                         </Link>
-                        <Button variant="on-card" silent onClick={toggleColorTheme} alignSelf="center">
+                        <Button
+                            variant="on-card"
+                            silent
+                            onClick={toggleColorTheme}
+                            alignSelf="center"
+                            title="Toggle color theme"
+                        >
                             <Icon icon={colorTheme === null ? faSpinner : colorTheme === "dark" ? faLightbulb : faMoon} spin={colorTheme === null} />
                         </Button>
                     </Flex>

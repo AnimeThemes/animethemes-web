@@ -32,10 +32,6 @@ import { codeBlock } from "common-tags";
 import { color } from "styled-system";
 import { Listbox } from "components/listbox";
 
-const Pre = styled.pre`
-    margin: 0;
-`;
-
 const ColorBox = styled(Box)`
     width: 3rem;
     height: 3rem;
@@ -149,7 +145,7 @@ export default function DesignPage() {
                 <Text variant="code" className="language-jsx">{`<Text color="text-warning">This is colored text.</Text>`}</Text>
                 <Text color="text-warning">This is colored text.</Text>
 
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             <ExternalLink href="https://reddit.com/r/AnimeThemes">
@@ -157,7 +153,7 @@ export default function DesignPage() {
                             </ExternalLink>
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 <ExternalLink href="https://reddit.com/r/AnimeThemes">
                     This is an external link.
                 </ExternalLink>
@@ -178,7 +174,7 @@ export default function DesignPage() {
                 <Text variant="code" className="language-jsx">{`<Tag icon={faTag}>Tag</Tag>`}</Text>
                 <Tag icon={faTag}>Tag</Tag>
 
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             <Tag icon={
@@ -188,7 +184,7 @@ export default function DesignPage() {
                             </Tag>
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 <Tag icon={
                     <Icon icon={faExclamationTriangle} color="text-warning"/>
                 }>
@@ -206,7 +202,7 @@ export default function DesignPage() {
                 <Text variant="code" className="language-jsx">{`<Button silent>Silent</Button>`}</Text>
                 <Button silent>Silent</Button>
 
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             <Button>
@@ -214,12 +210,12 @@ export default function DesignPage() {
                             </Button>
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 <Button>
                     <Icon icon={faLightbulb}/>
                 </Button>
 
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             <Button variant="primary">
@@ -227,12 +223,12 @@ export default function DesignPage() {
                             </Button>
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 <Button variant="primary">
                     <Icon icon={faLightbulb}/>
                 </Button>
 
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             <Button silent>
@@ -240,12 +236,12 @@ export default function DesignPage() {
                             </Button>
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 <Button silent>
                     <Icon icon={faLightbulb}/>
                 </Button>
 
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             <Button>
@@ -256,7 +252,7 @@ export default function DesignPage() {
                             </Button>
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 <Button>
                     <Button as="span" variant="primary">
                         <Icon icon={faPlay}/>
@@ -264,7 +260,7 @@ export default function DesignPage() {
                     Play
                 </Button>
 
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             <Button>
@@ -275,7 +271,7 @@ export default function DesignPage() {
                             </Button>
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 <Button>
                     <Button as="span" variant="primary">
                         <Icon icon={faCompactDisc} spin/>
@@ -283,7 +279,7 @@ export default function DesignPage() {
                     Playing
                 </Button>
 
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             <VideoButton
@@ -299,7 +295,7 @@ export default function DesignPage() {
                             />
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 <VideoButton
                     anime={{ slug: "bakemonogatari" }}
                     theme={{ slug: "OP1" }}
@@ -314,7 +310,7 @@ export default function DesignPage() {
             </Grid>
             <Text variant="h2">Switcher</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             // At the top of the component
@@ -328,13 +324,13 @@ export default function DesignPage() {
                             />
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 <Switcher
                     items={[ "anime", "themes", "artists" ]}
                     selectedItem={selectedItem}
                     onChange={setSelectedItem}
                 />
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             // At the top of the component
@@ -347,12 +343,12 @@ export default function DesignPage() {
                             {entitySwitcher}
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 {entitySwitcher}
             </Grid>
             <Text variant="h2">Card</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             <Card>
@@ -360,12 +356,12 @@ export default function DesignPage() {
                             </Card>
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 <Card>
                     <Text>This is text inside a card.</Text>
                 </Card>
 
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             <Card hoverable>
@@ -373,12 +369,12 @@ export default function DesignPage() {
                             </Card>
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 <Card hoverable>
                     <Text>This is a hoverable card.</Text>
                 </Card>
 
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             <StaticQuery query={graphql\`
@@ -398,7 +394,7 @@ export default function DesignPage() {
                             </StaticQuery>
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 <AnimeSummaryCard
                     anime={demoData.anime}
                     maxThemes={1}
@@ -413,7 +409,7 @@ export default function DesignPage() {
             </Grid>
             <Text variant="h2">Image</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             <StaticQuery query={graphql\`
@@ -434,14 +430,14 @@ export default function DesignPage() {
                             </StaticQuery>
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 <Box width="200px">
                     <CoverImage resourceWithImages={demoData.anime}/>
                 </Box>
             </Grid>
             <Text variant="h2">Description List</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             <DescriptionList>
@@ -456,7 +452,7 @@ export default function DesignPage() {
                             </DescriptionList>
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 <DescriptionList>
                     <DescriptionList.Item title="Topic">
                         Description
@@ -470,7 +466,7 @@ export default function DesignPage() {
             </Grid>
             <Text variant="h2">Experimental</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             // At the top of the component
@@ -491,7 +487,7 @@ export default function DesignPage() {
                             />
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 <Listbox
                     options={[
                         "Winter",
@@ -507,7 +503,7 @@ export default function DesignPage() {
             </Grid>
             <Text variant="h2">Utils</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             // At the top of the component
@@ -529,7 +525,7 @@ export default function DesignPage() {
                             </Card>
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 <Card gapsColumn="1rem">
                     <HeightTransition>
                         <Text maxLines={maxLines}>
@@ -540,7 +536,7 @@ export default function DesignPage() {
                         Toggle text length
                     </Button>
                 </Card>
-                <Pre>
+                <pre>
                     <Text variant="code" block className="language-jsx">
                         {codeBlock`
                             // At the top of the component
@@ -559,7 +555,7 @@ export default function DesignPage() {
                             </Card>
                         `}
                     </Text>
-                </Pre>
+                </pre>
                 <Card gapsColumn="1rem">
                     <Collapse collapse={collapse}>
                         <Text>

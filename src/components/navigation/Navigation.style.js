@@ -70,6 +70,7 @@ export const StyledLogoContainer = styled(Link)`
 `;
 
 export const StyledLogo = styled.img`
+    width: auto;
     height: 2rem;
 
     [theme="dark"] & {

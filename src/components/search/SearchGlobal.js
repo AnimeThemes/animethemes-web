@@ -7,7 +7,7 @@ import { Link } from "gatsby";
 import { Icon } from "components/icon";
 import { useQuery } from "react-query";
 import { fetchGlobalSearchResults } from "lib/search";
-import { AnimeSummaryCard, ArtistSummaryCard, ThemeSummaryCard } from "components/card";
+import { AnimeSummaryCard, ArtistSummaryCard, ErrorCard, ThemeSummaryCard } from "components/card";
 
 export function SearchGlobal({ searchQuery }) {
     const fetchSearchResults = () => fetchGlobalSearchResults(
@@ -18,7 +18,9 @@ export function SearchGlobal({ searchQuery }) {
 
     const {
         data,
-        isLoading
+        error,
+        isLoading,
+        isError
     } = useQuery(
         [ "searchGlobal", searchQuery ],
         fetchSearchResults,
@@ -26,6 +28,12 @@ export function SearchGlobal({ searchQuery }) {
             keepPreviousData: true
         }
     );
+
+    if (isError) {
+        return (
+            <ErrorCard error={error}/>
+        );
+    }
 
     if (isLoading) {
         return (

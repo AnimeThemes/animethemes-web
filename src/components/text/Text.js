@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { color, typography } from "styled-system";
+import { color, layout, typography } from "styled-system";
 import theme from "theme";
 
 export const Text = styled.span.attrs(getAttributes)`
@@ -74,6 +74,8 @@ export const Text = styled.span.attrs(getAttributes)`
     ${(props) => props.italics && css`
         font-style: italic;
     `}
+    
+    ${layout}
     
     // Typography and color props can override variant styles
     ${typography}

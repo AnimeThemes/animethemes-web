@@ -4,13 +4,16 @@ import { Text } from "components/text";
 import { Box, Flex } from "components/box";
 import { Icon } from "components/icon";
 import { SearchFilterGroup } from "components/search-filter";
+import { ErrorCard } from "components/card";
 
 export function SearchEntity({
     searchQuery,
     filters,
     data,
+    error,
     fetchNextPage,
     hasNextPage,
+    isError,
     isFetchingNextPage,
     isLoading,
     isPlaceholderData,
@@ -24,6 +27,12 @@ export function SearchEntity({
                 </SearchFilterGroup>
             )}
             {(() => {
+                if (isError) {
+                    return (
+                        <ErrorCard error={error}/>
+                    );
+                }
+
                 if (isLoading) {
                     return (
                         <Text block>Searching...</Text>

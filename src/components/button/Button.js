@@ -4,8 +4,9 @@ import { Icon } from "components/icon";
 import theme from "theme";
 import { flexbox } from "styled-system";
 
-export const Button = styled.button.attrs(({ children, circle }) => ({
-    circle: (typeof children === "object" && "type" in children && children.type === Icon) || circle
+export const Button = styled.button.attrs(({ children, circle, title }) => ({
+    circle: (typeof children === "object" && "type" in children && children.type === Icon) || circle,
+    "aria-label": title
 }))`
     display: inline-flex;
     align-items: center;

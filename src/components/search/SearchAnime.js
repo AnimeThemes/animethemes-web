@@ -35,14 +35,7 @@ export function SearchAnime({ searchQuery, locationState }) {
         });
     };
 
-    const {
-        data,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-        isLoading,
-        isPlaceholderData
-    } = useEntitySearch("anime", searchQuery, {
+    const entitySearch = useEntitySearch("anime", searchQuery, {
         filters: {
             "name][like": filterFirstLetter ? `${filterFirstLetter}%` : null,
             season: filterSeason,
@@ -62,13 +55,8 @@ export function SearchAnime({ searchQuery, locationState }) {
                     <SearchFilterSortBy options={sortByOptions} value={sortBy} setValue={updateState("sortBy")}/>
                 </>
             }
-            data={data}
-            fetchNextPage={fetchNextPage}
-            hasNextPage={hasNextPage}
-            isFetchingNextPage={isFetchingNextPage}
-            isLoading={isLoading}
-            isPlaceholderData={isPlaceholderData}
             renderSummaryCard={(anime) => <AnimeSummaryCard key={anime.slug} anime={anime}/>}
+            {...entitySearch}
         />
     );
 }

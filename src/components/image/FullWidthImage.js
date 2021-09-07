@@ -7,4 +7,7 @@ export const FullWidthImage = styled.img`
     object-fit: cover;
     border-radius: 0.5rem;
     box-shadow: ${theme.shadows.low};
+    
+    background-size: cover;
+    background-position: center;
 `;

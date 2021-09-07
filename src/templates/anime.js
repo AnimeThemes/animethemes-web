@@ -89,12 +89,16 @@ export default function AnimeDetailPage({ data: { anime } }) {
                     </DescriptionList>
                 </Box>
                 <Box gapsColumn="1.5rem">
-                    <Text variant="h2">Synopsis</Text>
-                    <Card hoverable onClick={() => setCollapseSynopsis(!collapseSynopsis)}>
-                        <HeightTransition>
-                            <Text as="p" maxLines={collapseSynopsis ? 2 : null} dangerouslySetInnerHTML={{ __html: anime.synopsis }}/>
-                        </HeightTransition>
-                    </Card>
+                    {!!anime.synopsis && (
+                        <>
+                            <Text variant="h2">Synopsis</Text>
+                            <Card hoverable onClick={() => setCollapseSynopsis(!collapseSynopsis)}>
+                                <HeightTransition>
+                                    <Text as="p" maxLines={collapseSynopsis ? 2 : null} dangerouslySetInnerHTML={{ __html: anime.synopsis }}/>
+                                </HeightTransition>
+                            </Card>
+                        </>
+                    )}
                     <Text variant="h2">
                         Themes
                         <Text color="text-disabled"> ({anime.themes?.length || 0})</Text>
@@ -102,7 +106,7 @@ export default function AnimeDetailPage({ data: { anime } }) {
                     {
                         !!anime.themes?.length
                             ? <AnimeThemeFilter themes={anime.themes}/>
-                            : <Text>There are no themes for this anime.</Text>
+                            : <Text as="p">There are no themes for this anime, yet.</Text>
                     }
                 </Box>
             </SidebarContainer>

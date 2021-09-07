@@ -114,6 +114,10 @@ export async function fetchGlobalSearchResults(query, limit, entities) {
     const res = await fetch(`${baseUrl}/api/search?${parameters.join("&")}&limit=${limit}&q=${encodeURIComponent(query)}`);
     const json = await res.json();
 
+    if (!res.ok) {
+        throw json;
+    }
+
     if (json.search.anime) {
         applyAnimeSchema(json.search.anime);
     }
@@ -147,6 +151,10 @@ export async function fetchEntitySearchResults({
 
     const res = await fetch(url);
     const json = await res.json();
+
+    if (!res.ok) {
+        throw json;
+    }
 
     const results = json[entityConfigs[entity].plural || entity];
     const hasNext = !!json.links.next;
