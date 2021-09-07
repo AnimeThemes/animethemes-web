@@ -4,7 +4,7 @@ import { Icon } from "components/icon";
 
 export function ExternalLink({ href, children, ...props }) {
     return (
-        <Text as="a" link href={href} target="_blank" {...props}>
+        <Text as="a" link href={href} target="_blank" rel="noopener" {...props}>
             <Text>{children}</Text>
             &nbsp;
             <Icon icon={faChevronCircleRight}/>

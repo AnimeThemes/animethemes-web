@@ -40,8 +40,7 @@ export default function Layout({ children, data, pageContext }) {
                         <SEO />
                         <Helmet>
                             <meta name="theme-color" content={darkColors["background"]}/>
-                            <link rel="preconnect" href="https://fonts.gstatic.com"/>
-                            <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=fallback" rel="stylesheet"/>
+                            <link rel="preload" as="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=optional"/>
                         </Helmet>
                         <GlobalStyle/>
                         <Flex flexDirection="column" minHeight="100vh" bg="background">

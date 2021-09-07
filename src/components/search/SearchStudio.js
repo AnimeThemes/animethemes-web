@@ -26,14 +26,7 @@ export function SearchStudio({ searchQuery, locationState }) {
         });
     };
 
-    const {
-        data,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-        isLoading,
-        isPlaceholderData
-    } = useEntitySearch("studio", searchQuery, {
+    const entitySearch = useEntitySearch("studio", searchQuery, {
         filters: {
             "name][like": filterFirstLetter ? `${filterFirstLetter}%` : null,
         },
@@ -49,13 +42,8 @@ export function SearchStudio({ searchQuery, locationState }) {
                     <SearchFilterSortBy options={sortByOptions} value={sortBy} setValue={updateState("sortBy")}/>
                 </>
             }
-            data={data}
-            fetchNextPage={fetchNextPage}
-            hasNextPage={hasNextPage}
-            isFetchingNextPage={isFetchingNextPage}
-            isLoading={isLoading}
-            isPlaceholderData={isPlaceholderData}
             renderSummaryCard={(studio) => <SummaryCard key={studio.slug} title={studio.name} description="Studio" to={`/studio/${studio.slug}`} />}
+            {...entitySearch}
         />
     );
 }

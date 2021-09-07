@@ -7,8 +7,6 @@ import { faInfo } from "@fortawesome/free-solid-svg-icons";
 import { Box, Flex, Grid } from "components/box";
 import { ExternalLink } from "components/external-link";
 import theme from "theme";
-import moment from "moment";
-import { useEffect, useState } from "react";
 
 const StyledAnnouncement = styled(Text)`
     & a {
@@ -25,21 +23,12 @@ const StyledLink = styled(Link)`
 `;
 
 export default function DevelopmentPage({ data: { site, allAnnouncement } }) {
-    const [ timeSinceBuild, setTimeSinceBuild ] = useState();
-
-    useEffect(() => {
-        setTimeSinceBuild(moment(site.buildTime).fromNow());
-    }, [ site.buildTime ]);
-
     return (
         <Box gapsColumn="1.5rem">
             <Text variant="h1">Development Hub</Text>
             <Text as="p" color="text-disabled">
                 <span>This site was last updated: </span>
                 <Text fontWeight="700">{site.buildTimeFormatted}</Text>
-                {!!timeSinceBuild && (
-                    <span> ({timeSinceBuild})</span>
-                )}
             </Text>
             <Text as="p">
                 <span>This page is still actively being worked on. If you are a developer and interested in contributing feel free to contact us on </span>
@@ -211,7 +200,6 @@ function PageLink({ path }) {
 export const query = graphql`
     query IndexPageQuery {
         site {
-            buildTime
             buildTimeFormatted: buildTime(formatString: "LLL")
         }
         allAnnouncement {

@@ -26,14 +26,7 @@ export function SearchArtist({ searchQuery, locationState }) {
         });
     };
 
-    const {
-        data,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-        isLoading,
-        isPlaceholderData
-    } = useEntitySearch("artist", searchQuery, {
+    const entitySearch = useEntitySearch("artist", searchQuery, {
         filters: {
             "name][like": filterFirstLetter ? `${filterFirstLetter}%` : null,
         },
@@ -49,13 +42,8 @@ export function SearchArtist({ searchQuery, locationState }) {
                     <SearchFilterSortBy options={sortByOptions} value={sortBy} setValue={updateState("sortBy")}/>
                 </>
             }
-            data={data}
-            fetchNextPage={fetchNextPage}
-            hasNextPage={hasNextPage}
-            isFetchingNextPage={isFetchingNextPage}
-            isLoading={isLoading}
-            isPlaceholderData={isPlaceholderData}
             renderSummaryCard={(artist) => <ArtistSummaryCard key={artist.slug} artist={artist}/>}
+            {...entitySearch}
         />
     );
 }

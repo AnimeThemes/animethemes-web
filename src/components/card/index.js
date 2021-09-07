@@ -4,3 +4,4 @@ export { ThemeSummaryCard } from "./ThemeSummaryCard";
 export { ArtistSummaryCard } from "./ArtistSummaryCard";
 export { SummaryCard } from "./SummaryCard";
 export { ThemeDetailCard } from "./ThemeDetailCard";
+export { ErrorCard } from "./ErrorCard";

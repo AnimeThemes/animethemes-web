@@ -29,14 +29,7 @@ export function SearchTheme({ searchQuery, locationState }) {
         });
     };
 
-    const {
-        data,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-        isLoading,
-        isPlaceholderData
-    } = useEntitySearch("theme", searchQuery, {
+    const entitySearch = useEntitySearch("theme", searchQuery, {
         filters: {
             has: "song",
             "song][title][like": filterFirstLetter ? `${filterFirstLetter}%` : null,
@@ -55,13 +48,8 @@ export function SearchTheme({ searchQuery, locationState }) {
                     <SearchFilterSortBy options={sortByOptions} value={sortBy} setValue={updateState("sortBy")}/>
                 </>
             }
-            data={data}
-            fetchNextPage={fetchNextPage}
-            hasNextPage={hasNextPage}
-            isFetchingNextPage={isFetchingNextPage}
-            isLoading={isLoading}
-            isPlaceholderData={isPlaceholderData}
             renderSummaryCard={(theme) => <ThemeSummaryCard key={theme.anime.slug + theme.slug} theme={theme}/>}
+            {...entitySearch}
         />
     );
 }

@@ -41,23 +41,23 @@ export function Footer() {
                         </FooterTextLink>
                     </Box>
                     <Flex flex="2" justifyContent={[ "flex-start", "flex-end" ]} alignItems="flex-end">
-                        <FooterLink href="https://reddit.com/r/AnimeThemes" title="Reddit">
-                            <StyledSocialButton>
+                        <FooterLink href="https://reddit.com/r/AnimeThemes">
+                            <StyledSocialButton title="Reddit">
                                 <Icon icon={faReddit}/>
                             </StyledSocialButton>
                         </FooterLink>
-                        <FooterLink href="https://discordapp.com/invite/m9zbVyQ" title="Discord">
-                            <StyledSocialButton>
+                        <FooterLink href="https://discordapp.com/invite/m9zbVyQ">
+                            <StyledSocialButton title="Discord">
                                 <Icon icon={faDiscord}/>
                             </StyledSocialButton>
                         </FooterLink>
-                        <FooterLink href="https://twitter.com/AnimeThemesMoe" title="Twitter">
-                            <StyledSocialButton>
+                        <FooterLink href="https://twitter.com/AnimeThemesMoe">
+                            <StyledSocialButton title="Twitter">
                                 <Icon icon={faTwitter}/>
                             </StyledSocialButton>
                         </FooterLink>
-                        <FooterLink href="https://github.com/AnimeThemes" title="GitHub">
-                            <StyledSocialButton>
+                        <FooterLink href="https://github.com/AnimeThemes">
+                            <StyledSocialButton title="GitHub">
                                 <Icon icon={faGithub}/>
                             </StyledSocialButton>
                         </FooterLink>
@@ -70,7 +70,7 @@ export function Footer() {
 
 function FooterLink({ children, ...props }) {
     return (
-        <Text as="a" target="_blank" {...props}>
+        <Text as="a" target="_blank" rel="noopener" {...props}>
             {children}
         </Text>
     );
