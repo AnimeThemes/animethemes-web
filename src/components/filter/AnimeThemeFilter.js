@@ -30,28 +30,30 @@ export function AnimeThemeFilter({ themes }) {
 
     return (
         <Box gapsColumn="1rem">
-            <HorizontalScroll>
-                <Flex gapsRow="1rem">
-                    {groups.length > 1 && (
-                        <Switcher
-                            items={groups.map((group) => group.name)}
-                            selectedItem={activeGroup}
-                            onChange={setActiveGroup}
-                        />
-                    )}
-                    {hasMultipleTypes && (
-                        <Listbox
-                            selectedValue={filterType}
-                            onSelect={setFilterType}
-                            options={[
-                                "OP",
-                                "ED"
-                            ]}
-                            nullLabel="OP & ED"
-                        />
-                    )}
-                </Flex>
-            </HorizontalScroll>
+            {(groups.length > 1 || hasMultipleTypes) && (
+                <HorizontalScroll>
+                    <Flex gapsRow="1rem">
+                        {groups.length > 1 && (
+                            <Switcher
+                                items={groups.map((group) => group.name)}
+                                selectedItem={activeGroup}
+                                onChange={setActiveGroup}
+                            />
+                        )}
+                        {hasMultipleTypes && (
+                            <Listbox
+                                selectedValue={filterType}
+                                onSelect={setFilterType}
+                                options={[
+                                    "OP",
+                                    "ED"
+                                ]}
+                                nullLabel="OP & ED"
+                            />
+                        )}
+                    </Flex>
+                </HorizontalScroll>
+            )}
             {filteredThemes.map((theme, index) => (
                 <ThemeDetailCard key={index} theme={theme} />
             ))}

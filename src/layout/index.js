@@ -14,6 +14,7 @@ import { Box, Flex } from "components/box";
 import { darkColors } from "theme/colors/dark";
 import { Footer } from "components/footer";
 import { QueryClient, QueryClientProvider } from "react-query";
+import "styles/fonts.scss";
 
 const queryClient = new QueryClient();
 
@@ -40,7 +41,6 @@ export default function Layout({ children, data, pageContext }) {
                         <SEO />
                         <Helmet>
                             <meta name="theme-color" content={darkColors["background"]}/>
-                            <link rel="preload" as="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=optional"/>
                         </Helmet>
                         <GlobalStyle/>
                         <Flex flexDirection="column" minHeight="100vh" bg="background">

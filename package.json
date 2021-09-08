@@ -7,6 +7,7 @@
         "build-with-paths": "gatsby build --prefix-paths"
     },
     "dependencies": {
+        "@fontsource/nunito": "^4.5.0",
         "@fortawesome/fontawesome-svg-core": "^1.2.34",
         "@fortawesome/free-brands-svg-icons": "^5.15.2",
         "@fortawesome/free-solid-svg-icons": "^5.15.2",

@@ -1,0 +1,19 @@
+@use "~@fontsource/nunito/scss/mixins" as Nunito;
+
+@include Nunito.fontFace(
+    $weight: 400,
+    $display: fallback,
+    $fontDir: "~@fontsource/nunito/files"
+);
+
+@include Nunito.fontFace(
+    $weight: 600,
+    $display: fallback,
+    $fontDir: "~@fontsource/nunito/files"
+);
+
+@include Nunito.fontFace(
+    $weight: 700,
+    $display: fallback,
+    $fontDir: "~@fontsource/nunito/files"
+);
