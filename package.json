@@ -31,6 +31,7 @@
         "gatsby-plugin-styled-components": "^4.3.0",
         "gatsby-source-animethemes": "file:plugins/gatsby-source-animethemes",
         "gatsby-source-animethemes-db": "file:plugins/gatsby-source-animethemes-db",
+        "luxon": "^2.0.2",
         "node-fetch": "^2.6.1",
         "prismjs": "^1.24.1",
         "react": "^17.0.1",
