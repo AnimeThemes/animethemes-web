@@ -180,19 +180,24 @@ function generateGlobalSearchParameters(entities) {
 
     parameters.push(
         ...entities
-            .flatMap(generateEntitySearchParameters)
+            .flatMap((entity) => generateEntitySearchParameters(entity, true))
             .filter((parameter, index, parameters) => parameters.indexOf(parameter) === index)
     );
 
     return parameters;
 }
 
-function generateEntitySearchParameters(entity) {
+function generateEntitySearchParameters(entity, includeScoped = false) {
     const parameters = [];
     const config = entityConfigs[entity];
 
     if (config.includes) {
-        parameters.push(`include[${config.singular || entity}]=${config.includes.join(",")}`);
+        const includesJoined = config.includes.join(",");
+        if (includeScoped) {
+            parameters.push(`include[${config.singular || entity}]=${includesJoined}`);
+        } else {
+            parameters.push(`include=${includesJoined}`);
+        }
     }
 
     if (config.fields) {

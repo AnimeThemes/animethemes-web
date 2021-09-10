@@ -84,7 +84,7 @@ export function Listbox({ options, nullLabel, selectedValue, onSelect, noReset, 
         >
             <StyledListboxButton
                 as={ListboxButton}
-                variant={selectedValue !== null && selectedValue !== defaultValue && "primary"}
+                variant={selectedValue !== null && selectedValue !== defaultValue ? "primary" : undefined}
                 disabled={disabled}
             >
                 <Text>{selectedValue !== null ? selectedValue : nullLabel}</Text>

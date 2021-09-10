@@ -6,7 +6,9 @@ import { Box } from "components/box";
 
 export default function SeasonDetailPage({ data: { allAnime }, pageContext: { year, season } }) {
     const pageTitle = `${season} ${year} Anime`;
-    const animeList = allAnime.nodes;
+    const animeList = allAnime.nodes
+        .filter((anime) => anime.name)
+        .sort((a, b) => a.name.localeCompare(b.name));
 
     return (
         <Box gapsColumn="1.5rem">

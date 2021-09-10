@@ -6,7 +6,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfo } from "@fortawesome/free-solid-svg-icons";
 import { Box, Flex, Grid } from "components/box";
 import { ExternalLink } from "components/external-link";
+import { DateTime } from "luxon";
 import theme from "theme";
+import React, { useEffect, useState } from "react";
 
 const StyledAnnouncement = styled(Text)`
     & a {
@@ -23,12 +25,22 @@ const StyledLink = styled(Link)`
 `;
 
 export default function DevelopmentPage({ data: { site, allAnnouncement } }) {
+    const buildDateTime = DateTime.fromISO(site.buildTime).setLocale("en");
+    const [ timeSinceBuild, setTimeSinceBuild ] = useState();
+
+    useEffect(() => {
+        setTimeSinceBuild(buildDateTime.toRelative());
+    }, [ buildDateTime ]);
+
     return (
         <Box gapsColumn="1.5rem">
             <Text variant="h1">Development Hub</Text>
             <Text as="p" color="text-disabled">
                 <span>This site was last updated: </span>
-                <Text fontWeight="700">{site.buildTimeFormatted}</Text>
+                <Text fontWeight="700">{buildDateTime.toLocaleString(DateTime.DATETIME_FULL)}</Text>
+                {!!timeSinceBuild && (
+                    <span> ({timeSinceBuild})</span>
+                )}
             </Text>
             <Text as="p">
                 <span>This page is still actively being worked on. If you are a developer and interested in contributing feel free to contact us on </span>
@@ -180,10 +192,10 @@ function PageGridItem({ path, otherPaths = {}, description }) {
             <PageLink path={path}/>
             <Text>{description}</Text>
             {Object.entries(otherPaths).map(([path, description]) => (
-                <>
+                <React.Fragment key={path}>
                     <PageLink path={path}/>
                     <Text color="text-muted">{description}</Text>
-                </>
+                </React.Fragment>
             ))}
         </Grid>
     );
@@ -200,7 +212,7 @@ function PageLink({ path }) {
 export const query = graphql`
     query IndexPageQuery {
         site {
-            buildTimeFormatted: buildTime(formatString: "LLL")
+            buildTime
         }
         allAnnouncement {
             nodes {

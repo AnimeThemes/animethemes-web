@@ -6,8 +6,10 @@ export function ExternalLink({ href, children, ...props }) {
     return (
         <Text as="a" link href={href} target="_blank" rel="noopener" {...props}>
             <Text>{children}</Text>
-            &nbsp;
-            <Icon icon={faChevronCircleRight}/>
+            <Text noWrap>
+                &nbsp;
+                <Icon icon={faChevronCircleRight}/>
+            </Text>
         </Text>
     );
 }
