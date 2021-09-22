@@ -11,7 +11,7 @@ export const Card = styled(Box).attrs((props) => ({
     border-left-style: solid;
     border-radius: 0 0.5rem 0.5rem 0;
 
-    box-shadow: ${theme.shadows.low};
+    box-shadow: ${theme.shadows.medium};
 
     ${(props) => props.hoverable && css`
         cursor: pointer;

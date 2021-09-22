@@ -8,6 +8,7 @@ export function SearchFilterSeason({ value, setValue }) {
             <Text variant="h2">Season</Text>
             <Listbox
                 options={[
+                    [ null, "Any" ],
                     "Winter",
                     "Spring",
                     "Summer",
@@ -15,7 +16,7 @@ export function SearchFilterSeason({ value, setValue }) {
                 ]}
                 selectedValue={value}
                 onSelect={setValue}
-                nullLabel="Any"
+                resettable
             />
         </Flex>
     );

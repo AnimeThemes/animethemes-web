@@ -24,13 +24,21 @@ const StyledLink = styled(Link)`
     max-width: 100%;
 `;
 
-export default function DevelopmentPage({ data: { site, allAnnouncement } }) {
+export default function DevelopmentPage({ data: { site, allAnnouncement, allSitePage } }) {
     const buildDateTime = DateTime.fromISO(site.buildTime).setLocale("en");
     const [ timeSinceBuild, setTimeSinceBuild ] = useState();
 
     useEffect(() => {
         setTimeSinceBuild(buildDateTime.toRelative());
     }, [ buildDateTime ]);
+
+    const totalAnimePages = getPageCount(allSitePage, "component---src-templates-anime-js");
+    const totalArtistPages = getPageCount(allSitePage, "component---src-templates-artist-js");
+    const totalSeasonPages = getPageCount(allSitePage, "component---src-templates-season-js");
+    const totalSeriesPages = getPageCount(allSitePage, "component---src-templates-series-js");
+    const totalStudioPages = getPageCount(allSitePage, "component---src-templates-studio-js");
+    const totalVideoPages = getPageCount(allSitePage, "component---src-templates-video-js");
+    const totalYearPages = getPageCount(allSitePage, "component---src-templates-year-js");
 
     return (
         <Box gapsColumn="1.5rem">
@@ -97,6 +105,18 @@ export default function DevelopmentPage({ data: { site, allAnnouncement } }) {
                         "/search/anime": "Search only for anime or explore the list of all anime.",
                         "/search/theme": "Search only for themes or explore the list of all themes.",
                         "/search/artist": "Search only for artists or explore the list of all artists.",
+                        "/search/series": (
+                            <Text>
+                                <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
+                                Search only for series or explore the list of all series.
+                            </Text>
+                        ),
+                        "/search/studio": (
+                            <Text>
+                                <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
+                                Search only for studios or explore the list of all studios.
+                            </Text>
+                        ),
                     }}
                 />
                 <PageGridItem
@@ -105,18 +125,33 @@ export default function DevelopmentPage({ data: { site, allAnnouncement } }) {
                 />
                 <PageGridItem
                     path="/year/2009"
-                    description="Browse all seasons of a specific year."
+                    description={(
+                        <Text>
+                            Browse all seasons of a specific year.
+                            <Text color="text-disabled"> ({ totalYearPages } pages)</Text>
+                        </Text>
+                    )}
                     otherPaths={{
                         "/year/1963": "Every year has a page, even 60s, 70s, etc."
                     }}
                 />
                 <PageGridItem
                     path="/year/2009/summer"
-                    description="Browse all anime of a specific season."
+                    description={(
+                        <Text>
+                            Browse all anime of a specific season.
+                            <Text color="text-disabled"> ({ totalSeasonPages } pages)</Text>
+                        </Text>
+                    )}
                 />
                 <PageGridItem
                     path="/series/monogatari"
-                    description="Browse all anime which belong to the same series."
+                    description={(
+                        <Text>
+                            Browse all anime which belong to the same series.
+                            <Text color="text-disabled"> ({ totalSeriesPages } pages)</Text>
+                        </Text>
+                    )}
                     otherPaths={{
                         "/series/precure": "A lot of anime.",
                         "/series/clannad": "Only three anime.",
@@ -129,19 +164,30 @@ export default function DevelopmentPage({ data: { site, allAnnouncement } }) {
                         <Text>
                             <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
                             Browse all anime which were produced by the same studio.
+                            <Text color="text-disabled"> ({ totalStudioPages } pages)</Text>
                         </Text>
                     }
                 />
                 <PageGridItem
                     path="/artist/kana_hanazawa"
-                    description="Browse all songs an artist has performed."
+                    description={(
+                        <Text>
+                            Browse all songs an artist has performed.
+                            <Text color="text-disabled"> ({ totalArtistPages } pages)</Text>
+                        </Text>
+                    )}
                     otherPaths={{
                         "/artist/vickeblanka": "Very few songs."
                     }}
                 />
                 <PageGridItem
                     path="/anime/bakemonogatari"
-                    description="Browse all themes of a specific anime."
+                    description={(
+                        <Text>
+                            Browse all themes of a specific anime.
+                            <Text color="text-disabled"> ({ totalAnimePages } pages)</Text>
+                        </Text>
+                    )}
                     otherPaths={{
                         "/anime/etotama": "Many themes with a lot of artists.",
                         "/anime/gintama": "Theme groups with many themes.",
@@ -152,7 +198,12 @@ export default function DevelopmentPage({ data: { site, allAnnouncement } }) {
                 />
                 <PageGridItem
                     path="/anime/bakemonogatari/OP1-NCBD1080"
-                    description="Watch themes."
+                    description={(
+                        <Text>
+                            Watch themes.
+                            <Text color="text-disabled"> ({ totalVideoPages } pages)</Text>
+                        </Text>
+                    )}
                     otherPaths={{
                         "/anime/uma_musume_pretty_derby/ED5": "Many artists.",
                         "/anime/girls_und_panzer/ED-NCBD1080": "Many alternative versions.",
@@ -209,6 +260,10 @@ function PageLink({ path }) {
     )
 }
 
+function getPageCount(allSitePage, component) {
+    return allSitePage.groupedByComponent.find(({ fieldValue }) => fieldValue === component).totalCount;
+}
+
 export const query = graphql`
     query IndexPageQuery {
         site {
@@ -220,6 +275,12 @@ export const query = graphql`
                 content
             }
             totalCount
+        }
+        allSitePage {
+            groupedByComponent: group(field: componentChunkName) {
+                fieldValue
+                totalCount
+            }
         }
     }
 `;

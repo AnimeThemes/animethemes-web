@@ -18,9 +18,9 @@ export const StyledSequence = styled(Text).attrs((props) => ({
     variant: "small",
     color: props.secondary ? "text-muted" : "text"
 }))`
-    flex: 0 0 2.5rem;
-
     display: flex;
+
+    width: 2.5rem;
 
     ${(props) => props.secondary && css`
         @media (max-width: 720px) {
@@ -34,8 +34,6 @@ export const StyledHeader = styled.div`
 `;
 
 export const StyledVersion = styled.div`
-    flex: 1;
-
     display: flex;
     flex-direction: row;
     align-items: center;

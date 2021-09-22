@@ -11,11 +11,8 @@ export const StyledNavigation = styled.nav`
     z-index: ${theme.zIndices.navigation};
 
     @media (max-width: 720px) {
-        display: flex;
+        display: none;
         align-items: center;
-
-        opacity: 0;
-        pointer-events: none;
 
         position: fixed;
         top: 0;
@@ -26,22 +23,24 @@ export const StyledNavigation = styled.nav`
         background-color: rgba(0, 0, 0, 0.5);
 
         ${(props) => props.show && css`
-            opacity: 1;
-            pointer-events: initial;
+            display: flex;
         `}
     }
 `;
 
 export const StyledNavigationContainer = styled(Container)`
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
-    align-items: stretch;
 
-    ${gapsRow("1rem")}
+    @media (min-width: 721px) {
+        flex-direction: row;
+        align-items: stretch;
+        
+        ${gapsRow("1rem")}
 
-    padding: 0.5rem 1rem;
-
+        padding: 0.5rem 1rem;
+    }
+    
     @media (max-width: 720px) {
         flex-direction: column;
         align-items: center;

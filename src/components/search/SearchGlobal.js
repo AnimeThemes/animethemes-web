@@ -7,13 +7,13 @@ import { Link } from "gatsby";
 import { Icon } from "components/icon";
 import { useQuery } from "react-query";
 import { fetchGlobalSearchResults } from "lib/search";
-import { AnimeSummaryCard, ArtistSummaryCard, ErrorCard, ThemeSummaryCard } from "components/card";
+import { AnimeSummaryCard, ArtistSummaryCard, ErrorCard, SummaryCard, ThemeSummaryCard } from "components/card";
 
 export function SearchGlobal({ searchQuery }) {
     const fetchSearchResults = () => fetchGlobalSearchResults(
         searchQuery,
         4,
-        [ "anime", "theme", "artist" ]
+        [ "anime", "theme", "artist", "series", "studio" ]
     );
 
     const {
@@ -44,9 +44,17 @@ export function SearchGlobal({ searchQuery }) {
     const {
         anime: animeResults = [],
         theme: themeResults = [],
-        artist: artistResults = []
+        artist: artistResults = [],
+        series: seriesResults = [],
+        studio: studioResults = []
     } = data;
-    const totalResults = animeResults.length + themeResults.length + artistResults.length;
+
+    const totalResults =
+        animeResults.length +
+        themeResults.length +
+        artistResults.length +
+        seriesResults.length +
+        studioResults.length;
 
     if (!totalResults) {
         return (
@@ -73,6 +81,22 @@ export function SearchGlobal({ searchQuery }) {
                 title="Artist"
                 results={artistResults}
                 renderSummaryCard={(artist) => <ArtistSummaryCard key={artist.slug} artist={artist}/>}
+            />
+            <GlobalSearchSection
+                entity="series"
+                title="Series"
+                results={seriesResults}
+                renderSummaryCard={(series) => (
+                    <SummaryCard key={series.slug} title={series.name} description="Series" to={`/series/${series.slug}`} />
+                )}
+            />
+            <GlobalSearchSection
+                entity="studio"
+                title="Studios"
+                results={studioResults}
+                renderSummaryCard={(studio) => (
+                    <SummaryCard key={studio.slug} title={studio.name} description="Studio" to={`/studio/${studio.slug}`} />
+                )}
             />
         </Box>
     );

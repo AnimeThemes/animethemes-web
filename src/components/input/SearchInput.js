@@ -19,7 +19,11 @@ const StyledSearchInput = styled.div`
     color: ${theme.colors["text-muted"]};
     
     &:focus-within {
-        box-shadow: inset ${theme.shadows.low};
+        box-shadow: ${theme.shadows.low};
+
+        [theme="dark"] & {
+            box-shadow: 0 0 0 2px ${theme.colors["text-primary"]};
+        }
     }
 `;
 const StyledForm = styled.form`

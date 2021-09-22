@@ -40,7 +40,7 @@ export function VideoTags({ video }) {
                 )}
 
                 {video.overlap !== "None" && (
-                    <Tag icon={faStream} title="Overlap">
+                    <Tag icon={faStream} title="Overlap" hideTextOnMobile>
                         {video.overlap.toUpperCase()}
                     </Tag>
                 )}

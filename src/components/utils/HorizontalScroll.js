@@ -1,12 +1,21 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const HorizontalScroll = styled.div`
-    overflow-x: auto;
+    display: flex;
+    overflow: auto;
     max-width: 100vw;
-    margin: 0 -1rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
     
-    & > * {
-        width: max-content;
-        padding: 0 1rem;
-    }
+    ${(props) => !!props.fixShadows && css`
+        margin-top: -1rem;
+        margin-bottom: -1rem;
+        
+        & > * {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+    `}
 `;

@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { Box, Flex } from "components/box";
-import { Switcher } from "components/switcher";
 import { ThemeDetailCard } from "components/card";
 import { Listbox } from "components/listbox";
 import { HorizontalScroll } from "components/utils";
@@ -31,13 +30,14 @@ export function AnimeThemeFilter({ themes }) {
     return (
         <Box gapsColumn="1rem">
             {(groups.length > 1 || hasMultipleTypes) && (
-                <HorizontalScroll>
+                <HorizontalScroll fixShadows>
                     <Flex gapsRow="1rem">
                         {groups.length > 1 && (
-                            <Switcher
-                                items={groups.map((group) => group.name)}
-                                selectedItem={activeGroup}
-                                onChange={setActiveGroup}
+                            <Listbox
+                                selectedValue={activeGroup}
+                                onSelect={setActiveGroup}
+                                options={groups.map((group) => group.name)}
+                                defaultValue={groups[0].name}
                             />
                         )}
                         {hasMultipleTypes && (
@@ -45,10 +45,11 @@ export function AnimeThemeFilter({ themes }) {
                                 selectedValue={filterType}
                                 onSelect={setFilterType}
                                 options={[
+                                    [ null, "OP & ED" ],
                                     "OP",
                                     "ED"
                                 ]}
-                                nullLabel="OP & ED"
+                                resettable
                             />
                         )}
                     </Flex>

@@ -1,7 +1,7 @@
 import { createGlobalStyle } from "styled-components";
-import { colors, createCssDefinition } from "theme/colors";
-import { darkColors } from "theme/colors/dark";
-import theme from "theme";
+import { colors, shadows } from "theme/colors";
+import { darkColors, darkShadows } from "theme/colors/dark";
+import theme, { createCssDefinition } from "theme";
 
 export default createGlobalStyle`
     * {
@@ -11,19 +11,22 @@ export default createGlobalStyle`
 
     [theme="light"] {
         ${createCssDefinition(colors)}
+        ${createCssDefinition(shadows)}
     }
 
     [theme="dark"] {
         ${createCssDefinition(darkColors)}
+        ${createCssDefinition(darkShadows)}
     }
 
     html {
+        // Always show a vertical scroll bar, even if the page 
+        // is not scrollable to prevent layout shift.
         overflow-y: scroll;
     }
 
     body {
         margin: 0;
-        overflow-x: hidden;
 
         background-color: ${theme.colors["background"]};
         color: ${theme.colors["text"]};
@@ -33,11 +36,18 @@ export default createGlobalStyle`
         -moz-osx-font-smoothing: grayscale;
     }
 
+    html, body, #___gatsby, #gatsby-focus-wrapper {
+        // Every container in the page hierarchy needs to have the 
+        // maximum height of the viewport. Using 100vh on innermost container 
+        // would break certain layouts on mobile devices.
+        height: 100%;
+    }
+
     a {
         color: inherit;
         text-decoration: inherit;
     }
-    
+
     p {
         line-height: 1.5;
     }
@@ -71,12 +81,32 @@ export default createGlobalStyle`
             color: ${theme.colors["text-muted"]};
         }
     }
-    
+
     img {
         display: block;
     }
-    
+
     pre {
         margin: 0;
+    }
+
+    @media (min-device-width: 600px) {
+        html {
+            scrollbar-color: ${theme.colors["gray-700"]} transparent;
+            scrollbar-width: thin;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            background-color: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: ${theme.colors["gray-700"]};
+
+            &:hover {
+                background-color: ${theme.colors["gray-500"]};
+            }
+        }
     }
 `;
