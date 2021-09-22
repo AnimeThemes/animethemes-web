@@ -1,35 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import styled from "styled-components";
-import { Link, navigate } from "gatsby";
+import { useMemo } from "react";
 import { useDebounce } from "use-debounce";
-import { SearchInput } from "components/input";
-import { SearchAnime, SearchArtist, SearchGlobal, SearchTheme, SearchSeries, SearchStudio } from "components/search";
-import { gapsColumn, gapsRow } from "styles/mixins";
-import { Box, Flex } from "components/box";
-import { Switcher } from "components/switcher";
+import { SearchAnime, SearchArtist, SearchGlobal, SearchSeries, SearchStudio, SearchTheme } from "components/search";
+import { Box } from "components/box";
 import { SEO } from "components/seo";
-import { faCompass, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faCompass, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Text } from "components/text";
 import { Icon } from "components/icon";
-import { HorizontalScroll } from "components/utils";
 
-const StyledSearchOptions = styled(Flex)`
-    align-items: center;
-    @media (min-width: 721px) {
-        flex-direction: row;
-        ${gapsRow("1rem")}
-    }
-    @media (max-width: 720px) {
-        flex-direction: column;
-        ${gapsColumn("1rem")}
-    }
-`;
-
-export default function SearchPage({ pageContext: { entity }, location: { search, hash, state } }) {
+export default function SearchPage({ pageContext: { entity }, location: { search, state } }) {
     const urlParams = useMemo(() => new URLSearchParams(search), [ search ]);
-    const urlSuffix = search + hash;
+    const searchQuery = urlParams.get("q") || "";
 
-    const [ searchQuery, setSearchQuery ] = useState(urlParams.get("q") || "");
     const [ debouncedSearchQuery ] = useDebounce(searchQuery, 500);
 
     // Generates page title based on search query
@@ -37,79 +18,9 @@ export default function SearchPage({ pageContext: { entity }, location: { search
         ? `${searchQuery} - Search`
         : "Search";
 
-    useEffect(() => {
-        // Update URL to maintain the searchQuery on page navigation.
-        const newUrlParams = new URLSearchParams();
-        if (searchQuery) {
-            newUrlParams.set("q", searchQuery);
-        }
-        const params = newUrlParams.toString();
-
-        let url = "/search";
-        if (entity) {
-            url += `/${entity}`;
-        }
-        if (params) {
-            url += `?${params}`;
-        }
-
-        navigate(url, { replace: true, state });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ entity, searchQuery ]);
-
-    const inputRef = useRef();
-
-    useEffect(() => {
-        // If the device has no mouse (e.g. mobile), don't focus the input
-        if (!window.matchMedia("(any-hover: none)").matches) {
-            inputRef.current?.focus({
-                preventScroll: true
-            });
-        }
-    }, []);
-
     return (
         <Box gapsColumn="1.5rem">
             <SEO title={pageTitle} />
-            <Text variant="h1">Search</Text>
-            <StyledSearchOptions>
-                <Box flex="1">
-                    <SearchInput
-                        query={searchQuery}
-                        setQuery={setSearchQuery}
-                        inputProps={{
-                            ref: inputRef,
-                            spellCheck: false
-                        }}
-                    />
-                </Box>
-                <div>
-                    <HorizontalScroll>
-                        <div>
-                            <Switcher
-                                items={[ null, "anime", "theme", "artist", "series", "studio" ]}
-                                selectedItem={entity}
-                            >
-                                {({ Button, item, selected, content }) => item.value === null ? (
-                                    !!entity ? (
-                                        <Link key={null} to={`/search${urlSuffix}`}>
-                                            <Button>
-                                                <Icon icon={faTimes}/>
-                                            </Button>
-                                        </Link>
-                                    ) : null
-                                ) : (
-                                    <Link key={item.value} to={`/search/${item.value}${urlSuffix}`}>
-                                        <Button variant={selected && "primary"}>
-                                            {content}
-                                        </Button>
-                                    </Link>
-                                )}
-                            </Switcher>
-                        </div>
-                    </HorizontalScroll>
-                </div>
-            </StyledSearchOptions>
             <Search searchEntity={entity} searchQuery={debouncedSearchQuery} locationState={state}/>
         </Box>
     );

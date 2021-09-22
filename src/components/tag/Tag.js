@@ -1,24 +1,36 @@
-import styled from "styled-components";
-import { gapsRow } from "styles/mixins";
+import styled, { css } from "styled-components";
 import { Text } from "components/text";
 import { Icon } from "components/icon";
 
 const StyledTag = styled.span`
-    display: inline-flex;
+    display: flex;
     flex-direction: row;
     align-items: center;
+`;
+const StyledText = styled(Text)`
+    &:not(:first-child) {
+        margin-left: 0.25rem;
+    }
     
-    ${gapsRow("0.25rem")}
+    ${(props) => props.hideTextOnMobile && css`
+        @media (max-width: 720px) {
+            display: none;
+            
+            &:not(:first-child) {
+                margin-left: 0;
+            }
+        }
+    `}
 `;
 
-export function Tag({ icon, variant, children, ...props }) {
+export function Tag({ icon, variant, children, hideTextOnMobile = false, ...props }) {
     return (
         <StyledTag {...props}>
             {!!icon && (isIcon(icon) ? icon : <Icon icon={icon} color="text-disabled"/>)}
             {!!children && (
-                <Text variant="small">
+                <StyledText variant="small" hideTextOnMobile={hideTextOnMobile}>
                     {children}
-                </Text>
+                </StyledText>
             )}
         </StyledTag>
     );

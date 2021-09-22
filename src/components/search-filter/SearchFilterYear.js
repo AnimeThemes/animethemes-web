@@ -21,10 +21,13 @@ export function SearchFilterYear({ value, setValue }) {
         <Flex flexDirection="column" alignItems="stretch" gapsColumn="0.5rem">
             <Text variant="h2">Year</Text>
             <Listbox
-                options={yearList}
+                options={[
+                    [ null, "Any" ],
+                    ...yearList
+                ]}
                 selectedValue={value}
                 onSelect={setValue}
-                nullLabel="Any"
+                resettable
             />
         </Flex>
     );

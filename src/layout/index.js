@@ -3,7 +3,7 @@ import { ThemeProvider } from "styled-components";
 import { Helmet } from "react-helmet";
 import GlobalStyle from "styles/global";
 import theme from "theme";
-import { Navigation, SeasonNavigation, YearNavigation } from "components/navigation";
+import { Navigation, SearchNavigation, SeasonNavigation, YearNavigation } from "components/navigation";
 import { Container } from "components/container";
 import { VideoPlayer } from "components/video-player";
 import PlayerContext from "context/playerContext";
@@ -18,7 +18,7 @@ import "styles/fonts.scss";
 
 const queryClient = new QueryClient();
 
-export default function Layout({ children, data, pageContext }) {
+export default function Layout({ children, data, pageContext, location }) {
     const video = data ? data.video : null;
     const entry = data ? data.entry : null;
 
@@ -43,7 +43,7 @@ export default function Layout({ children, data, pageContext }) {
                             <meta name="theme-color" content={darkColors["background"]}/>
                         </Helmet>
                         <GlobalStyle/>
-                        <Flex flexDirection="column" minHeight="100vh" bg="background">
+                        <Flex flexDirection="column" minHeight="100%" bg="background">
                             <Navigation/>
                             {currentVideo && (
                                 <VideoPlayer
@@ -57,6 +57,11 @@ export default function Layout({ children, data, pageContext }) {
                                     <Box gapsColumn="1rem" mb="1.5rem">
                                         <YearNavigation year={pageContext.year} />
                                         <SeasonNavigation year={pageContext.year} season={pageContext.season} seasonList={pageContext.seasonList} />
+                                    </Box>
+                                )}
+                                {"entity" in pageContext && (
+                                    <Box mb="1.5rem">
+                                        <SearchNavigation entity={pageContext.entity} location={location} />
                                     </Box>
                                 )}
                                 {children}

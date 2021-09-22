@@ -43,18 +43,20 @@ export const colors = {
     "text-on-primary":      baseColors["primary-100"]
 };
 
-export function createCssDefinition(colorDefinition) {
-    const css = {};
-    for (const [name, color] of Object.entries(colorDefinition)) {
-        css[`--${name}`] = color;
-    }
-    return css;
-}
-
-export function createThemeDefinition() {
-    const theme = {};
-    for (const name of Object.keys(colors)) {
-        theme[name] = `var(--${name})`;
-    }
-    return theme;
-}
+export const shadows = {
+    low: `
+        1px 2px 2px hsl(262deg 20% 50% / 0.4)
+    `,
+    medium: `
+        1px 2px 2px hsl(262deg 20% 50% / 0.15),
+        2px 4px 4px hsl(262deg 20% 50% / 0.15),
+        3px 6px 6px hsl(262deg 20% 50% / 0.15)
+    `,
+    high: `
+        1px 2px 2px hsl(262deg 20% 50% / 0.1),
+        2px 4px 4px hsl(262deg 20% 50% / 0.1),
+        4px 8px 8px hsl(262deg 20% 50% / 0.1),
+        8px 16px 16px hsl(262deg 20% 50% / 0.1),
+        16px 32px 32px hsl(262deg 20% 50% / 0.1)
+    `
+};

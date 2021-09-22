@@ -143,7 +143,7 @@ export default function HomePage({ data: { featuredTheme, recentlyAdded } }) {
 
 export const query = graphql`
     query HomePageQuery {
-        featuredTheme: theme(idRaw: { eq: 10388 }) {
+        featuredTheme: theme(idRaw: { eq: 767 }) {
             slug
             anime {
                 slug

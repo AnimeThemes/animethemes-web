@@ -8,12 +8,13 @@ export function SearchFilterThemeType({ value, setValue }) {
             <Text variant="h2">Type</Text>
             <Listbox
                 options={[
+                    [ null, "Any" ],
                     "OP",
                     "ED"
                 ]}
                 selectedValue={value}
                 onSelect={setValue}
-                nullLabel="Any"
+                resettable
             />
         </Flex>
     );

@@ -473,8 +473,9 @@ export default function DesignPage() {
                             const [season, setSeason] = useState(null);
                             
                             // Inside the render output
-                            <Listbox 
+                            <Listbox
                                 options={[
+                                    [ null, "Any" ],
                                     "Winter",
                                     "Spring",
                                     "Summer",
@@ -482,7 +483,7 @@ export default function DesignPage() {
                                 ]}
                                 selectedValue={season}
                                 onSelect={setSeason}
-                                nullLabel="Any"
+                                resettable
                                 width="150px"
                             />
                         `}
@@ -490,6 +491,7 @@ export default function DesignPage() {
                 </pre>
                 <Listbox
                     options={[
+                        [ null, "Any" ],
                         "Winter",
                         "Spring",
                         "Summer",
@@ -497,7 +499,7 @@ export default function DesignPage() {
                     ]}
                     selectedValue={season}
                     onSelect={setSeason}
-                    nullLabel="Any"
+                    resettable
                     width="150px"
                 />
             </Grid>

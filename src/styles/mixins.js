@@ -7,7 +7,7 @@ export const fullWidth = css`
 export function gapsRow(gapSize = "1rem") {
     return css`
         & > :not(:first-child) {
-            margin: 0 0 0 ${gapSize};
+            margin-left: ${gapSize};
         }
     `;
 }
@@ -15,7 +15,7 @@ export function gapsRow(gapSize = "1rem") {
 export function gapsColumn(gapSize = "1rem") {
     return css`
         & > :not(:first-child) {
-            margin: ${gapSize} 0 0 0;
+            margin-top: ${gapSize};
         }
     `;
 }

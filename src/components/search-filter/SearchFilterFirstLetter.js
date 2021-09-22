@@ -9,10 +9,13 @@ export function SearchFilterFirstLetter({ value, setValue }) {
         <Flex flexDirection="column" alignItems="stretch" gapsColumn="0.5rem">
             <Text variant="h2">First Letter</Text>
             <Listbox
-                options={letters}
+                options={[
+                    [ null, "Any" ],
+                    ...letters
+                ]}
                 selectedValue={value}
                 onSelect={setValue}
-                nullLabel="Any"
+                resettable
             />
         </Flex>
     );
