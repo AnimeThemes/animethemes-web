@@ -9,7 +9,7 @@ import {
 import { Tag } from "components/tag";
 import { Flex } from "components/box";
 
-export function VideoTags({ video }) {
+export function VideoTags({ video, hideTextOnMobile }) {
     return (
         <div>
             <Flex flexWrap="wrap" gapsBoth="0.5rem">
@@ -40,7 +40,7 @@ export function VideoTags({ video }) {
                 )}
 
                 {video.overlap !== "None" && (
-                    <Tag icon={faStream} title="Overlap" hideTextOnMobile>
+                    <Tag icon={faStream} title="Overlap" hideTextOnMobile={hideTextOnMobile}>
                         {video.overlap.toUpperCase()}
                     </Tag>
                 )}

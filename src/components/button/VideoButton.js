@@ -18,7 +18,7 @@ export function VideoButton({ anime, theme, entry, video, ...props }) {
                 <Button as="span" variant="primary">
                     <Icon icon={isPlaying ? faCompactDisc : faPlay} spin={isPlaying}/>
                 </Button>
-                <VideoTags video={video}/>
+                <VideoTags video={video} hideTextOnMobile/>
             </Button>
         </Link>
     );
