@@ -26,7 +26,7 @@ export default function VideoPage({ data: { video, entry } }) {
     const { smallCover } = useImage(anime);
 
     useEffect(() => {
-        if (theme && smallCover) {
+        if (theme && smallCover && navigator.mediaSession) {
             // eslint-disable-next-line no-undef
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: `${theme.slug} • ${theme.song.title}`,
