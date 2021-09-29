@@ -28,8 +28,8 @@ export function VideoPlayer({ video, entry, background, ...props }) {
     const videoUrl = `${videoBaseUrl}/video/${video.basename}`;
 
     useEffect(() => {
-        if (playerRef.current) {
-            setCanPlay(!!playerRef.current.canPlayType("video/webm"));
+        if (playerRef.current?.canPlayType) {
+            setCanPlay(!!playerRef.current.canPlayType(`video/webm; codecs="vp8, vp9, opus"`));
         }
     }, []);
 
@@ -50,6 +50,11 @@ export function VideoPlayer({ video, entry, background, ...props }) {
         if (event.detail > 1) {
             event.preventDefault();
         }
+    }
+
+    // We don't want the mini player if there's no video to play.
+    if (background && !canPlay) {
+        return null;
     }
 
     return (
