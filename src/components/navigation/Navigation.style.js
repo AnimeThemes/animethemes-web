@@ -79,7 +79,7 @@ export const StyledLogo = styled.img`
 
 export const StyledMobileToggle = styled(Button)`
     position: fixed;
-    bottom: 1rem;
+    bottom: ${(props) => props.offsetToggleButton ? "5rem" : "1rem"};
     right: 1rem;
     
     padding: 1rem;
