@@ -65,6 +65,11 @@ export const Text = styled.span.attrs(getAttributes)`
 
     ${(props) => props.noWrap && css`
         white-space: nowrap;
+        
+        ${(props) => props.noWrap === "ellipsis" && css`
+            overflow: hidden;
+            text-overflow: ellipsis;
+        `}
     `}
 
     ${(props) => props.tabularNums && css`

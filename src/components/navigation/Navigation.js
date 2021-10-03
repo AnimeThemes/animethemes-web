@@ -26,7 +26,7 @@ import { useLocation } from "@reach/router";
 import useCurrentSeason from "hooks/useCurrentSeason";
 import navigateToRandomTheme from "utils/navigateToRandomTheme";
 
-export function Navigation() {
+export function Navigation({ offsetToggleButton = false }) {
     const [ show, setShow ] = useState(false);
     const { colorTheme, toggleColorTheme } = useContext(ColorThemeContext);
     const location = useLocation();
@@ -86,7 +86,11 @@ export function Navigation() {
                 </StyledNavigationContainer>
             </StyledNavigation>
 
-            <StyledMobileToggle variant={show ? "default" : "primary"} onClick={() => setShow(!show)}>
+            <StyledMobileToggle
+                variant={show ? "default" : "primary"}
+                offsetToggleButton={offsetToggleButton}
+                onClick={() => setShow(!show)}
+            >
                 <Icon icon={show ? faTimes : faBars}/>
             </StyledMobileToggle>
         </>

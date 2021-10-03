@@ -44,7 +44,7 @@ export default function Layout({ children, data, pageContext, location }) {
                         </Helmet>
                         <GlobalStyle/>
                         <Flex flexDirection="column" minHeight="100%" bg="background">
-                            <Navigation/>
+                            <Navigation offsetToggleButton={!!currentVideo && !video}/>
                             {currentVideo && (
                                 <VideoPlayer
                                     video={currentVideo}

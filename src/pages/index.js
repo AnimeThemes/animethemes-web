@@ -18,7 +18,7 @@ const FeaturedTheme = styled(Box)`
     justify-content: center;
     align-items: center;
     
-    max-height: 200px;
+    height: 200px;
     position: relative;
     overflow: hidden;
     

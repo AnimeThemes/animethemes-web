@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { graphql, Link } from "gatsby";
 import { Box, Flex } from "components/box";
-import styled from "styled-components";
 import { Text } from "components/text";
 import useSiteMeta from "hooks/useSiteMeta";
 import { SongTitleWithArtists, ThemeEntryTags, VideoTags } from "components/utils";
@@ -9,14 +8,6 @@ import { VideoButton } from "components/button";
 import { AnimeSummaryCard, ArtistSummaryCard, SummaryCard } from "components/card";
 import { SEO } from "components/seo";
 import useImage from "hooks/useImage";
-
-const StyledVideoInfo = styled(Box).attrs({
-    gapsColumn: "2rem"
-})`
-    @media (min-width: 721px) {
-        padding: 0 1rem;
-    }
-`;
 
 export default function VideoPage({ data: { video, entry } }) {
     const theme = entry.theme;
@@ -75,7 +66,7 @@ export default function VideoPage({ data: { video, entry } }) {
     })();
 
     return (
-        <StyledVideoInfo>
+        <Box gapsColumn="1.5rem">
             <SEO title={pageTitle} description={pageDesc} />
             <Flex flexDirection={["column", "row"]} alignItems={["stretch", "center"]} gapsRow={[0, "1rem"]} gapsColumn={["1rem", 0]}>
                 <Box flex="1">
@@ -160,7 +151,7 @@ export default function VideoPage({ data: { video, entry } }) {
                     )}
                 </Box>
             </Flex>
-        </StyledVideoInfo>
+        </Box>
     );
 }
 
