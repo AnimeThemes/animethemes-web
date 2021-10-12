@@ -1,10 +1,10 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faSort, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "components/button";
 import { Text } from "components/text";
 import theme from "theme";
-import { gapsRow } from "styles/mixins";
+import { gapsRow, withHover } from "styles/mixins";
 import { ListboxButton, ListboxInput, ListboxList, ListboxOption, ListboxPopover } from "@reach/listbox";
 
 const StyledListbox = styled(ListboxInput)`
@@ -41,7 +41,6 @@ const StyledListboxPopover = styled(ListboxPopover)`
     box-shadow: ${theme.shadows.high};
     
     transform-origin: top;
-    will-change: transform, opacity;
     animation: flip-down 200ms ease-out;
 `;
 const StyledListboxList = styled(ListboxList)`
@@ -60,17 +59,20 @@ const StyledListboxOption = styled(ListboxOption)`
     ${gapsRow("0.5rem")}
 
     color: ${(props) => theme.colors[props.selected ? "text-primary" : "text-muted"]};
+    cursor: pointer;
 
-    &:hover, &[data-current-nav] {
+    &[data-current-nav] {
         background-color: ${theme.colors["solid-on-card"]};
         color: ${(props) => theme.colors[props.selected ? "text-primary" : "text"]};
-        cursor: pointer;
     }
+    
+    ${withHover(css`
+        background-color: ${theme.colors["solid-on-card"]};
+        color: ${(props) => theme.colors[props.selected ? "text-primary" : "text"]};
+    `)}
 `;
 
-export function ListboxReach({ options, selectedValue, onSelect, resettable, defaultValue, disabled, ...props }) {
-    const selectedLabel = options.get(selectedValue);
-
+export function ListboxReach({ options, selectedValue, onSelect, resettable, defaultValue, nullValue, disabled, ...props }) {
     function handleResetClick(event) {
         event.stopPropagation();
         if (!disabled) {
@@ -90,7 +92,7 @@ export function ListboxReach({ options, selectedValue, onSelect, resettable, def
                 variant={selectedValue !== defaultValue ? "primary" : undefined}
                 disabled={disabled}
             >
-                <Text>{selectedLabel}</Text>
+                <Text>{selectedValue || nullValue}</Text>
                 {(selectedValue !== defaultValue && resettable) ? (
                     <FontAwesomeIcon
                         icon={faTimes}
@@ -103,13 +105,13 @@ export function ListboxReach({ options, selectedValue, onSelect, resettable, def
             </StyledListboxButton>
             <StyledListboxPopover>
                 <StyledListboxList>
-                    {[ ...options.entries() ].filter(([ value ]) => !resettable || value !== null).map(([ value, label ]) => (
+                    {options.filter((value) => !resettable || value !== defaultValue).map((value) => (
                         <StyledListboxOption
                             key={value}
                             selected={value === selectedValue}
                             value={value}
                         >
-                            <Text>{label}</Text>
+                            <Text>{value || nullValue}</Text>
                             {value === selectedValue && (
                                 <FontAwesomeIcon icon={faCheck} fixedWidth/>
                             )}

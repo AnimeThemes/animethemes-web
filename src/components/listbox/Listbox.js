@@ -2,7 +2,7 @@ import { useMedia } from "use-media";
 import { ListboxNative, ListboxReach } from "components/listbox";
 
 export function Listbox({
-    // Either array, object or map. An array can also contain tuples.
+    // An array of options. An option should be a string and is also used as the label.
     options,
 
     // Data binding.
@@ -15,36 +15,22 @@ export function Listbox({
     // Only used when resettable is true. The value to return to after a reset.
     defaultValue = null,
 
+    // If your options include null you can change how it's displayed.
+    nullValue = "Any",
+
     disabled = false,
     ...props
 }) {
-    let optionsMap;
-
-    if (options instanceof Map) {
-        optionsMap = new Map(options);
-    } else if (Array.isArray(options)) {
-        optionsMap = new Map(
-            options.map((option) =>
-                Array.isArray(option)
-                    ? [ option[0], option[1] ]
-                    : [ option, option ]
-            )
-        );
-    } else if (typeof options === "object" && !!options) {
-        optionsMap = new Map(Object.entries(options));
-    } else {
-        optionsMap = new Map();
-    }
-
     const isMobile = useMedia({ maxWidth: "720px" });
 
     if (isMobile) {
         return (
             <ListboxNative
-                options={optionsMap}
+                options={options}
                 selectedValue={selectedValue}
                 onSelect={onSelect}
                 defaultValue={defaultValue}
+                nullValue={nullValue}
                 disabled={disabled}
                 {...props}
             />
@@ -53,11 +39,12 @@ export function Listbox({
 
     return (
         <ListboxReach
-            options={optionsMap}
+            options={options}
             selectedValue={selectedValue}
             onSelect={onSelect}
             resettable={resettable}
             defaultValue={defaultValue}
+            nullValue={nullValue}
             disabled={disabled}
             {...props}
         />

@@ -52,8 +52,6 @@ export const StyledPlayer = styled(motion.div)`
             max-width: 1100px;
         }
     `}
-    
-    will-change: transform;
 `;
 
 export const StyledVideo = styled.video`

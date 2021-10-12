@@ -5,7 +5,6 @@ import { navigate } from "gatsby";
 import { ThemeSummaryCard } from "components/card";
 
 const sortByFields = new Map([
-    [ "Relevance", null ],
     [ "A ➜ Z", "song.title" ],
     [ "Z ➜ A", "-song.title" ],
     [ "Old ➜ New", "anime.year,anime.season,song.title" ],
@@ -35,7 +34,7 @@ export function SearchTheme({ searchQuery, locationState }) {
             "song][title][like": filterFirstLetter ? `${filterFirstLetter}%` : null,
             type: filterType
         },
-        sortBy: sortByFields.get(sortBy)
+        sortBy: searchQuery ? null : sortByFields.get(sortBy)
     });
 
     return (
@@ -45,7 +44,11 @@ export function SearchTheme({ searchQuery, locationState }) {
                 <>
                     <SearchFilterFirstLetter value={filterFirstLetter} setValue={updateState("filterFirstLetter")}/>
                     <SearchFilterThemeType value={filterType} setValue={updateState("filterType")}/>
-                    <SearchFilterSortBy options={sortByOptions} value={sortBy} setValue={updateState("sortBy")}/>
+                    <SearchFilterSortBy
+                        options={searchQuery ? [ "Relevance" ] : sortByOptions}
+                        value={searchQuery ? "Relevance" : sortBy}
+                        setValue={updateState("sortBy")}
+                    />
                 </>
             }
             renderSummaryCard={(theme) => <ThemeSummaryCard key={theme.anime.slug + theme.slug} theme={theme}/>}

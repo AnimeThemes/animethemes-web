@@ -1,27 +1,17 @@
-import { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-
-const StyledCollapse = styled.div`
-    height: ${(props) => props.height};
-    overflow: hidden;
-    transition: height 250ms;
-`;
+import { motion } from "framer-motion";
 
 export function Collapse({ collapse, children }) {
-    const [height, setHeight] = useState(collapse ? 0 : -1);
-    const ref = useRef(null);
-
-    useEffect(() => {
-        if (collapse) {
-            setHeight(0);
-        } else {
-            setHeight(ref.current.children[0].offsetHeight);
-        }
-    }, [collapse, children]);
+    if (collapse) {
+        return null;
+    }
 
     return (
-        <StyledCollapse ref={ref} height={height < 0 ? "auto" : `${height}px`}>
+        <motion.div
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ type: "tween", duration: 0.35, ease: [ 0, 0.66, 0.46, 0.98 ] }}
+        >
             {children}
-        </StyledCollapse>
+        </motion.div>
     );
 }

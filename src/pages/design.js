@@ -475,7 +475,7 @@ export default function DesignPage() {
                             // Inside the render output
                             <Listbox
                                 options={[
-                                    [ null, "Any" ],
+                                    null,
                                     "Winter",
                                     "Spring",
                                     "Summer",
@@ -483,6 +483,7 @@ export default function DesignPage() {
                                 ]}
                                 selectedValue={season}
                                 onSelect={setSeason}
+                                nullValue="Any"
                                 resettable
                                 width="150px"
                             />
@@ -491,7 +492,7 @@ export default function DesignPage() {
                 </pre>
                 <Listbox
                     options={[
-                        [ null, "Any" ],
+                        null,
                         "Winter",
                         "Spring",
                         "Summer",
@@ -499,6 +500,7 @@ export default function DesignPage() {
                     ]}
                     selectedValue={season}
                     onSelect={setSeason}
+                    nullValue="Any"
                     resettable
                     width="150px"
                 />

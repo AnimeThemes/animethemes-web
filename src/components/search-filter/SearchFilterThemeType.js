@@ -8,7 +8,7 @@ export function SearchFilterThemeType({ value, setValue }) {
             <Text variant="h2">Type</Text>
             <Listbox
                 options={[
-                    [ null, "Any" ],
+                    null,
                     "OP",
                     "ED"
                 ]}

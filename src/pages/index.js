@@ -10,6 +10,7 @@ import theme from "theme";
 import { ExternalLink } from "components/external-link";
 import useCurrentSeason from "hooks/useCurrentSeason";
 import navigateToRandomTheme from "utils/navigateToRandomTheme";
+import useCompatability from "hooks/useCompatability";
 
 const videoBaseUrl = process.env.GATSBY_VIDEO_URL || "https://animethemes.moe";
 
@@ -62,18 +63,21 @@ export default function HomePage({ data: { featuredTheme, recentlyAdded } }) {
     const featuredVideo = featuredTheme.entries[0].videos[0];
 
     const { currentYear, currentSeason } = useCurrentSeason();
+    const { canPlayVideo } = useCompatability({ canPlayVideo: false });
 
     return (
         <Box gapsColumn="1.5rem">
             <Text variant="h1">Welcome, to AnimeThemes.moe!</Text>
             <Text variant="h2">Featured Theme</Text>
             <FeaturedTheme mx={[ "-1rem", 0 ]}>
-                <FeaturedVideo
-                    src={`${videoBaseUrl}/video/${featuredVideo.basename}`}
-                    autoPlay
-                    muted
-                    loop
-                />
+                {canPlayVideo && (
+                    <FeaturedVideo
+                        src={`${videoBaseUrl}/video/${featuredVideo.basename}`}
+                        autoPlay
+                        muted
+                        loop
+                    />
+                )}
                 <ThemeSummaryCard theme={featuredTheme}/>
             </FeaturedTheme>
             <Grid gridTemplateColumns={[ "1fr", "1fr 1fr 1fr" ]} gridGap="1.5rem">

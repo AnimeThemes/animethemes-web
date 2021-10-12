@@ -4,6 +4,14 @@ export const fullWidth = css`
     width: 100%;
 `;
 
+export const withHover = (content) => css`
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            ${content}
+        }
+    }
+`;
+
 export function gapsRow(gapSize = "1rem") {
     return css`
         & > :not(:first-child) {
