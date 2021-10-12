@@ -3,6 +3,7 @@ import { gaps } from "utils/gaps";
 import { Icon } from "components/icon";
 import theme from "theme";
 import { flexbox } from "styled-system";
+import { withHover } from "styles/mixins";
 
 export const Button = styled.button.attrs(({ children, circle, title }) => ({
     circle: (typeof children === "object" && "type" in children && children.type === Icon) || circle,
@@ -25,10 +26,10 @@ export const Button = styled.button.attrs(({ children, circle, title }) => ({
     border-radius: 999px;
     padding: ${(props) => props.circle ? "0.5rem" : "0.5rem 1rem"};
     
-    &:hover {
+    ${withHover(css`
         background-color: ${(props) => getBackgroundColor(props, true)};
         color: ${(props) => getColor(props, true)};
-    }
+    `)}
 
     & > &:first-child {
         margin: -0.5rem 0.5rem -0.5rem -1rem;

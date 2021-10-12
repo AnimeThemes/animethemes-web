@@ -45,11 +45,12 @@ export function AnimeThemeFilter({ themes }) {
                                 selectedValue={filterType}
                                 onSelect={setFilterType}
                                 options={[
-                                    [ null, "OP & ED" ],
+                                    null,
                                     "OP",
                                     "ED"
                                 ]}
                                 resettable
+                                nullValue="OP & ED"
                             />
                         )}
                     </Flex>

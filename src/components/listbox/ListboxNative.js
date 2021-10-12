@@ -30,9 +30,7 @@ const StyledSelect = styled.select`
     color: ${theme.colors["text-muted"]};
 `;
 
-export function ListboxNative({ options, selectedValue, onSelect, defaultValue, disabled, ...props }) {
-    const selectedLabel = options.get(selectedValue);
-
+export function ListboxNative({ options, selectedValue, onSelect, defaultValue, nullValue, disabled, ...props }) {
     return (
         <StyledListbox
             {...props}
@@ -41,12 +39,12 @@ export function ListboxNative({ options, selectedValue, onSelect, defaultValue, 
                 value={selectedValue || ""}
                 onChange={(event) => onSelect(event.target.value || null)}
             >
-                {[ ...options.entries() ].map(([ value, label ]) => (
+                {options.map((value) => (
                     <option
                         key={value}
                         value={value || ""}
                     >
-                        {label}
+                        {value || nullValue}
                     </option>
                 ))}
             </StyledSelect>
@@ -54,7 +52,7 @@ export function ListboxNative({ options, selectedValue, onSelect, defaultValue, 
                 variant={selectedValue !== null && selectedValue !== defaultValue ? "primary" : undefined}
                 disabled={disabled}
             >
-                <Text>{selectedLabel}</Text>
+                <Text>{selectedValue || nullValue}</Text>
                 <FontAwesomeIcon icon={faSort} fixedWidth/>
             </StyledListboxButton>
         </StyledListbox>

@@ -10,7 +10,6 @@ import { navigate } from "gatsby";
 import { AnimeSummaryCard } from "components/card";
 
 const sortByFields = new Map([
-    [ "Relevance", null ],
     [ "A ➜ Z", "name" ],
     [ "Z ➜ A", "-name" ],
     [ "Old ➜ New", "year,season,name" ],
@@ -41,7 +40,7 @@ export function SearchAnime({ searchQuery, locationState }) {
             season: filterSeason,
             year: filterYear
         },
-        sortBy: sortByFields.get(sortBy)
+        sortBy: searchQuery ? null : sortByFields.get(sortBy)
     });
 
     return (
@@ -52,7 +51,11 @@ export function SearchAnime({ searchQuery, locationState }) {
                     <SearchFilterFirstLetter value={filterFirstLetter} setValue={updateState("filterFirstLetter")}/>
                     <SearchFilterSeason value={filterSeason} setValue={updateState("filterSeason")}/>
                     <SearchFilterYear value={filterYear} setValue={updateState("filterYear")}/>
-                    <SearchFilterSortBy options={sortByOptions} value={sortBy} setValue={updateState("sortBy")}/>
+                    <SearchFilterSortBy
+                        options={searchQuery ? [ "Relevance" ] : sortByOptions}
+                        value={searchQuery ? "Relevance" : sortBy}
+                        setValue={updateState("sortBy")}
+                    />
                 </>
             }
             renderSummaryCard={(anime) => <AnimeSummaryCard key={anime.slug} anime={anime}/>}

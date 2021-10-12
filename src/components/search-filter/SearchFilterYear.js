@@ -22,7 +22,7 @@ export function SearchFilterYear({ value, setValue }) {
             <Text variant="h2">Year</Text>
             <Listbox
                 options={[
-                    [ null, "Any" ],
+                    null,
                     ...yearList
                 ]}
                 selectedValue={value}

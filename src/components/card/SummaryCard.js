@@ -1,8 +1,13 @@
 import { Link, withPrefix } from "gatsby";
 import { Text } from "components/text";
-import styled, { css } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import { Card } from "components/card";
 import { Flex } from "components/box";
+
+const loadingAnimation = keyframes`
+    0% { background-position: 0 0; }
+    100% { background-position: 100% 100%; }
+`;
 
 const StyledCover = styled.img.attrs({
     loading: "lazy"
@@ -10,7 +15,14 @@ const StyledCover = styled.img.attrs({
     width: 48px;
     height: 64px;
     object-fit: cover;
+
+    background: radial-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.25)) no-repeat;
+    background-size: 500% 500%;
     
+    @media (prefers-reduced-motion: no-preference) {
+        animation: ${loadingAnimation} 2s infinite alternate linear;
+    }
+
     ${(props) => props.placeholder && css`
         padding: 0.5rem;
         object-fit: contain;

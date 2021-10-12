@@ -5,7 +5,6 @@ import { navigate } from "gatsby";
 import { ArtistSummaryCard } from "components/card";
 
 const sortByFields = new Map([
-    [ "Relevance", null ],
     [ "A ➜ Z", "name" ],
     [ "Z ➜ A", "-name" ],
     [ "Last Added", "-created_at" ]
@@ -30,7 +29,7 @@ export function SearchArtist({ searchQuery, locationState }) {
         filters: {
             "name][like": filterFirstLetter ? `${filterFirstLetter}%` : null,
         },
-        sortBy: sortByFields.get(sortBy)
+        sortBy: searchQuery ? null : sortByFields.get(sortBy)
     });
 
     return (
@@ -39,7 +38,11 @@ export function SearchArtist({ searchQuery, locationState }) {
             filters={
                 <>
                     <SearchFilterFirstLetter value={filterFirstLetter} setValue={updateState("filterFirstLetter")}/>
-                    <SearchFilterSortBy options={sortByOptions} value={sortBy} setValue={updateState("sortBy")}/>
+                    <SearchFilterSortBy
+                        options={searchQuery ? [ "Relevance" ] : sortByOptions}
+                        value={searchQuery ? "Relevance" : sortBy}
+                        setValue={updateState("sortBy")}
+                    />
                 </>
             }
             renderSummaryCard={(artist) => <ArtistSummaryCard key={artist.slug} artist={artist}/>}

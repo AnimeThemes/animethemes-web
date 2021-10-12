@@ -10,7 +10,7 @@ export function SearchFilterFirstLetter({ value, setValue }) {
             <Text variant="h2">First Letter</Text>
             <Listbox
                 options={[
-                    [ null, "Any" ],
+                    null,
                     ...letters
                 ]}
                 selectedValue={value}

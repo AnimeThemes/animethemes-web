@@ -8,7 +8,7 @@ export function SearchFilterSeason({ value, setValue }) {
             <Text variant="h2">Season</Text>
             <Listbox
                 options={[
-                    [ null, "Any" ],
+                    null,
                     "Winter",
                     "Spring",
                     "Summer",

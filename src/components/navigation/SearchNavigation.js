@@ -54,8 +54,8 @@ export function SearchNavigation({ entity, location: { search, hash, state } }) 
     const inputRef = useRef();
 
     useEffect(() => {
-        // If the device has no mouse (e.g. mobile), don't focus the input
-        if (!window.matchMedia("(any-hover: none)").matches) {
+        // Only focus the input on desktop devices
+        if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
             inputRef.current?.focus({
                 preventScroll: true
             });

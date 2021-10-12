@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import {
     StyledPlayer,
     StyledPlayerButton,
@@ -16,23 +16,18 @@ import { Card } from "components/card";
 import { Text } from "components/text";
 import { Flex } from "components/box";
 import { Container } from "components/container";
+import useCompatability from "hooks/useCompatability";
 
 const videoBaseUrl = process.env.GATSBY_VIDEO_URL || "https://animethemes.moe";
 
 export function VideoPlayer({ video, entry, background, ...props }) {
     const [isPlaying, setPlaying] = useState(false);
-    const [canPlay, setCanPlay] = useState(true);
+    const { canPlayVideo } = useCompatability();
     const playerRef = useRef();
     const progressRef = useRef();
     const { setCurrentVideo } = useContext(PlayerContext);
     const isMobile = useMedia({ maxWidth: "720px" });
     const videoUrl = `${videoBaseUrl}/video/${video.basename}`;
-
-    useEffect(() => {
-        if (playerRef.current?.canPlayType) {
-            setCanPlay(!!playerRef.current.canPlayType(`video/webm; codecs="vp8, vp9, opus"`));
-        }
-    }, []);
 
     function togglePlay() {
         if (isPlaying) {
@@ -61,7 +56,7 @@ export function VideoPlayer({ video, entry, background, ...props }) {
         }
     }
 
-    if (!canPlay) {
+    if (!canPlayVideo) {
         // We don't want the mini player if there's no video to play.
         if (background) {
             return null;

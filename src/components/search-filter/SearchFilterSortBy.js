@@ -10,7 +10,7 @@ export function SearchFilterSortBy({ options, value, setValue }) {
                 options={options}
                 selectedValue={value}
                 onSelect={setValue}
-                defaultValue={options[0]}
+                defaultValue={value}
             />
         </Flex>
     );
