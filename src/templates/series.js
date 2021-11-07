@@ -32,10 +32,10 @@ const StyledCover = styled.img`
 `;
 
 const sortByComparators = new Map([
-    [ "A ➜ Z", animeNameComparator ],
-    [ "Z ➜ A", reverse(animeNameComparator) ],
     [ "Old ➜ New", chain(animePremiereComparator, animeNameComparator) ],
-    [ "New ➜ Old", chain(reverse(animePremiereComparator), animeNameComparator) ]
+    [ "New ➜ Old", chain(reverse(animePremiereComparator), animeNameComparator) ],
+    [ "A ➜ Z", animeNameComparator ],
+    [ "Z ➜ A", reverse(animeNameComparator) ]
 ]);
 const sortByOptions = [ ...sortByComparators.keys() ];
 
@@ -104,22 +104,8 @@ export const query = graphql`
             slug
             name
             anime {
-                slug
-                name
-                year
-                season
-                themes {
-                    slug
-                    ...VideoSlug
-                }
-                resources {
-                    link
-                    site
-                }
-                images {
-                    facet
-                    link
-                }
+                ...AnimeCard
+                ...AnimeCardThemes
             }
         }
     }

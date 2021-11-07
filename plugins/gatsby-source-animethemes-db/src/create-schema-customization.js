@@ -30,6 +30,7 @@ module.exports = ({ actions }) => {
             idRaw: Int
             slug: String!
             type: String!
+            sequence: Int!
             group: String
             song: Song! @link(by: "id")
             anime: Anime! @link(by: "id")

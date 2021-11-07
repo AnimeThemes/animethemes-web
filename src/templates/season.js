@@ -30,20 +30,8 @@ export const query = graphql`
     query($year: Int!, $season: String) {
         allAnime(filter: {year: {eq: $year}, season: {eq: $season}}) {
             nodes {
-                slug
-                name
-                themes {
-                    slug
-                    ...VideoSlug
-                }
-                resources {
-                    link
-                    site
-                }
-                images {
-                    facet
-                    link
-                }
+                ...AnimeCard
+                ...AnimeCardThemes
             }
         }
     }

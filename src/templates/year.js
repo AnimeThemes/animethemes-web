@@ -49,20 +49,8 @@ export const query = graphql`
             groupedBySeason: group(field: season, limit: 3) {
                 fieldValue
                 nodes {
-                    slug
-                    name
-                    themes {
-                        slug
-                        ...VideoSlug
-                    }
-                    resources {
-                        link
-                        site
-                    }
-                    images {
-                        facet
-                        link
-                    }
+                    ...AnimeCard
+                    ...AnimeCardThemes
                 }
             }
         }

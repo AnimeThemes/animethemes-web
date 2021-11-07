@@ -49,7 +49,7 @@ export default function StudioDetailPage({ data: { studio } }) {
     ].map((images) => images.largeCover).filter((image) => !!image);
 
     const [ showFilter, toggleShowFilter ] = useToggle();
-    const [ sortBy, setSortBy ] = useState(sortByComparators[0]);
+    const [ sortBy, setSortBy ] = useState(sortByOptions[0]);
 
     const animeSorted = [ ...anime ].sort(sortByComparators.get(sortBy));
 
@@ -103,22 +103,8 @@ export const query = graphql`
             slug
             name
             anime {
-                slug
-                name
-                year
-                season
-                themes {
-                    slug
-                    ...VideoSlug
-                }
-                resources {
-                    link
-                    site
-                }
-                images {
-                    facet
-                    link
-                }
+                ...AnimeCard
+                ...AnimeCardThemes
             }
         }
     }

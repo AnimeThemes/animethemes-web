@@ -76,6 +76,7 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
             idRaw: theme.theme_id,
             slug: theme.slug,
             type: theme.type,
+            sequence: theme.sequence || 0,
             group: theme.group,
             song: createNodeId(`Song-${theme.song_id}`),
             anime: createNodeId(`Anime-${theme.anime_id}`)
