@@ -7,6 +7,7 @@ import createVideoSlug from "utils/createVideoSlug";
 import { Flex } from "components/box";
 import { Icon } from "components/icon";
 import { SummaryCard } from "components/card";
+import { chain, themeSequenceComparator, themeTypeComparator } from "utils/comparators";
 
 export function AnimeSummaryCard({ anime, hideThemes = false, maxThemes = 4 }) {
     const { smallCover } = useImage(anime);
@@ -42,8 +43,9 @@ export function AnimeSummaryCard({ anime, hideThemes = false, maxThemes = 4 }) {
             {!hideThemes && (
                 <Flex display={[ "none", "flex" ]} flexWrap="wrap" gapsBoth="0.75rem">
                     {anime.themes
-                        .slice(0, maxThemes)
                         .filter((theme) => "entries" in theme && theme.entries.length && theme.entries[0].videos.length)
+                        .sort(chain(themeTypeComparator, themeSequenceComparator))
+                        .slice(0, maxThemes)
                         .map((theme) => {
                             const entry = theme.entries[0];
                             const video = entry.videos[0];
@@ -81,6 +83,8 @@ export const query = graphql`
         year
         season
         themes {
+            type
+            sequence
             slug
         }
         resources {

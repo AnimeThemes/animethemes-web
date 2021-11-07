@@ -3,6 +3,7 @@ import { Box, Flex } from "components/box";
 import { ThemeDetailCard } from "components/card";
 import { Listbox } from "components/listbox";
 import { HorizontalScroll } from "components/utils";
+import { chain, themeSequenceComparator, themeTypeComparator } from "utils/comparators";
 
 export function AnimeThemeFilter({ themes }) {
     const groups = useMemo(() => themes.reduce((groups, theme) => {
@@ -25,7 +26,9 @@ export function AnimeThemeFilter({ themes }) {
     const hasMultipleTypes = activeThemes.find((theme) => theme.type === "OP") && activeThemes.find((theme) => theme.type === "ED");
     const [ filterType, setFilterType ] = useState(null);
 
-    const filteredThemes = activeThemes.filter((theme) => !filterType || theme.type === filterType);
+    const filteredThemes = activeThemes
+        .filter((theme) => !filterType || theme.type === filterType)
+        .sort(chain(themeTypeComparator, themeSequenceComparator));
 
     return (
         <Box gapsColumn="1rem">

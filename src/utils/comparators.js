@@ -4,6 +4,10 @@ const seasonOrder = [
     "summer",
     "fall"
 ];
+const themeTypeOrder = [
+    "op",
+    "ed"
+];
 
 export const reverse = (comparator) => (a, b) => comparator(b, a);
 export const chain = (...comparators) => (a, b) => {
@@ -21,3 +25,5 @@ export const animeYearComparator = (a, b) => a.year - b.year;
 export const animeSeasonComparator = (a, b) => seasonOrder.indexOf(a.season.toLowerCase()) - seasonOrder.indexOf(b.season.toLowerCase());
 export const animePremiereComparator = chain(animeYearComparator, animeSeasonComparator);
 export const songTitleComparator = (a, b) => a.song.title.localeCompare(b.song.title);
+export const themeTypeComparator = (a, b) => themeTypeOrder.indexOf(a.type.toLowerCase()) - themeTypeOrder.indexOf(b.type.toLowerCase());
+export const themeSequenceComparator = (a, b) => a.sequence - b.sequence;
