@@ -117,6 +117,7 @@ module.exports = ({ actions }) => {
             slug: String!
             name: String!
             anime: [Anime]
+            resources: [Resource]
         }
         
         type AnimeSeries implements Node {
@@ -152,6 +153,11 @@ module.exports = ({ actions }) => {
         type AnimeStudio implements Node {
             anime: Anime! @link(by: "id")
             studio: Studio! @link(by: "id")
+        }
+        
+        type StudioResource implements Node {
+            studio: Studio! @link(by: "id")
+            resource: Resource! @link(by: "id")
         }
         
         type Announcement implements Node & Entity {

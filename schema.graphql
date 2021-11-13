@@ -540,6 +540,7 @@ type Studio implements Node & Entity {
   slug: String!
   name: String!
   anime: [Anime]
+  resources: [Resource]
   id: ID!
   parent: Node
   children: [Node!]!
@@ -603,6 +604,15 @@ type ArtistImage implements Node {
 type AnimeStudio implements Node {
   anime: Anime!
   studio: Studio!
+  id: ID!
+  parent: Node
+  children: [Node!]!
+  internal: Internal!
+}
+
+type StudioResource implements Node {
+  studio: Studio!
+  resource: Resource!
   id: ID!
   parent: Node
   children: [Node!]!
@@ -799,7 +809,7 @@ type Query {
   allResource(filter: ResourceFilterInput, sort: ResourceSortInput, skip: Int, limit: Int): ResourceConnection!
   image(idRaw: IntQueryOperatorInput, facet: StringQueryOperatorInput, link: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Image
   allImage(filter: ImageFilterInput, sort: ImageSortInput, skip: Int, limit: Int): ImageConnection!
-  studio(idRaw: IntQueryOperatorInput, slug: StringQueryOperatorInput, name: StringQueryOperatorInput, anime: AnimeFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Studio
+  studio(idRaw: IntQueryOperatorInput, slug: StringQueryOperatorInput, name: StringQueryOperatorInput, anime: AnimeFilterListInput, resources: ResourceFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Studio
   allStudio(filter: StudioFilterInput, sort: StudioSortInput, skip: Int, limit: Int): StudioConnection!
   animeSeries(anime: AnimeFilterInput, series: SeriesFilterInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): AnimeSeries
   allAnimeSeries(filter: AnimeSeriesFilterInput, sort: AnimeSeriesSortInput, skip: Int, limit: Int): AnimeSeriesConnection!
@@ -815,6 +825,8 @@ type Query {
   allArtistImage(filter: ArtistImageFilterInput, sort: ArtistImageSortInput, skip: Int, limit: Int): ArtistImageConnection!
   animeStudio(anime: AnimeFilterInput, studio: StudioFilterInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): AnimeStudio
   allAnimeStudio(filter: AnimeStudioFilterInput, sort: AnimeStudioSortInput, skip: Int, limit: Int): AnimeStudioConnection!
+  studioResource(studio: StudioFilterInput, resource: ResourceFilterInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): StudioResource
+  allStudioResource(filter: StudioResourceFilterInput, sort: StudioResourceSortInput, skip: Int, limit: Int): StudioResourceConnection!
   announcement(idRaw: IntQueryOperatorInput, content: StringQueryOperatorInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Announcement
   allAnnouncement(filter: AnnouncementFilterInput, sort: AnnouncementSortInput, skip: Int, limit: Int): AnnouncementConnection!
   bracket(slug: StringQueryOperatorInput, name: StringQueryOperatorInput, currentRound: BracketRoundFilterInput, currentGroup: IntQueryOperatorInput, rounds: BracketRoundFilterListInput, id: StringQueryOperatorInput, parent: NodeFilterInput, children: NodeFilterListInput, internal: InternalFilterInput): Bracket
@@ -2136,6 +2148,7 @@ input StudioFilterInput {
   slug: StringQueryOperatorInput
   name: StringQueryOperatorInput
   anime: AnimeFilterListInput
+  resources: ResourceFilterListInput
   id: StringQueryOperatorInput
   parent: NodeFilterInput
   children: NodeFilterListInput
@@ -2214,6 +2227,7 @@ enum AnimeFieldsEnum {
   synonyms___anime___studios___slug
   synonyms___anime___studios___name
   synonyms___anime___studios___anime
+  synonyms___anime___studios___resources
   synonyms___anime___studios___id
   synonyms___anime___studios___children
   synonyms___anime___id
@@ -2347,6 +2361,7 @@ enum AnimeFieldsEnum {
   themes___anime___studios___slug
   themes___anime___studios___name
   themes___anime___studios___anime
+  themes___anime___studios___resources
   themes___anime___studios___id
   themes___anime___studios___children
   themes___anime___id
@@ -2494,6 +2509,7 @@ enum AnimeFieldsEnum {
   series___anime___studios___slug
   series___anime___studios___name
   series___anime___studios___anime
+  series___anime___studios___resources
   series___anime___studios___id
   series___anime___studios___children
   series___anime___id
@@ -2681,6 +2697,7 @@ enum AnimeFieldsEnum {
   studios___anime___studios___slug
   studios___anime___studios___name
   studios___anime___studios___anime
+  studios___anime___studios___resources
   studios___anime___studios___id
   studios___anime___studios___children
   studios___anime___id
@@ -2697,6 +2714,24 @@ enum AnimeFieldsEnum {
   studios___anime___internal___mediaType
   studios___anime___internal___owner
   studios___anime___internal___type
+  studios___resources
+  studios___resources___idRaw
+  studios___resources___link
+  studios___resources___site
+  studios___resources___id
+  studios___resources___parent___id
+  studios___resources___parent___children
+  studios___resources___children
+  studios___resources___children___id
+  studios___resources___children___children
+  studios___resources___internal___content
+  studios___resources___internal___contentDigest
+  studios___resources___internal___description
+  studios___resources___internal___fieldOwners
+  studios___resources___internal___ignoreType
+  studios___resources___internal___mediaType
+  studios___resources___internal___owner
+  studios___resources___internal___type
   studios___id
   studios___parent___id
   studios___parent___parent___id
@@ -3032,6 +3067,12 @@ enum SynonymFieldsEnum {
   anime___studios___anime___studios
   anime___studios___anime___id
   anime___studios___anime___children
+  anime___studios___resources
+  anime___studios___resources___idRaw
+  anime___studios___resources___link
+  anime___studios___resources___site
+  anime___studios___resources___id
+  anime___studios___resources___children
   anime___studios___id
   anime___studios___parent___id
   anime___studios___parent___children
@@ -3505,6 +3546,12 @@ enum ThemeFieldsEnum {
   anime___studios___anime___studios
   anime___studios___anime___id
   anime___studios___anime___children
+  anime___studios___resources
+  anime___studios___resources___idRaw
+  anime___studios___resources___link
+  anime___studios___resources___site
+  anime___studios___resources___id
+  anime___studios___resources___children
   anime___studios___id
   anime___studios___parent___id
   anime___studios___parent___children
@@ -3889,6 +3936,7 @@ enum EntryFieldsEnum {
   theme___anime___studios___slug
   theme___anime___studios___name
   theme___anime___studios___anime
+  theme___anime___studios___resources
   theme___anime___studios___id
   theme___anime___studios___children
   theme___anime___id
@@ -4545,6 +4593,7 @@ enum SongFieldsEnum {
   themes___anime___studios___slug
   themes___anime___studios___name
   themes___anime___studios___anime
+  themes___anime___studios___resources
   themes___anime___studios___id
   themes___anime___studios___children
   themes___anime___id
@@ -6522,6 +6571,12 @@ enum SeriesFieldsEnum {
   anime___studios___anime___studios
   anime___studios___anime___id
   anime___studios___anime___children
+  anime___studios___resources
+  anime___studios___resources___idRaw
+  anime___studios___resources___link
+  anime___studios___resources___site
+  anime___studios___resources___id
+  anime___studios___resources___children
   anime___studios___id
   anime___studios___parent___id
   anime___studios___parent___children
@@ -7121,6 +7176,12 @@ enum StudioFieldsEnum {
   anime___studios___anime___studios
   anime___studios___anime___id
   anime___studios___anime___children
+  anime___studios___resources
+  anime___studios___resources___idRaw
+  anime___studios___resources___link
+  anime___studios___resources___site
+  anime___studios___resources___id
+  anime___studios___resources___children
   anime___studios___id
   anime___studios___parent___id
   anime___studios___parent___children
@@ -7173,6 +7234,48 @@ enum StudioFieldsEnum {
   anime___internal___mediaType
   anime___internal___owner
   anime___internal___type
+  resources
+  resources___idRaw
+  resources___link
+  resources___site
+  resources___id
+  resources___parent___id
+  resources___parent___parent___id
+  resources___parent___parent___children
+  resources___parent___children
+  resources___parent___children___id
+  resources___parent___children___children
+  resources___parent___internal___content
+  resources___parent___internal___contentDigest
+  resources___parent___internal___description
+  resources___parent___internal___fieldOwners
+  resources___parent___internal___ignoreType
+  resources___parent___internal___mediaType
+  resources___parent___internal___owner
+  resources___parent___internal___type
+  resources___children
+  resources___children___id
+  resources___children___parent___id
+  resources___children___parent___children
+  resources___children___children
+  resources___children___children___id
+  resources___children___children___children
+  resources___children___internal___content
+  resources___children___internal___contentDigest
+  resources___children___internal___description
+  resources___children___internal___fieldOwners
+  resources___children___internal___ignoreType
+  resources___children___internal___mediaType
+  resources___children___internal___owner
+  resources___children___internal___type
+  resources___internal___content
+  resources___internal___contentDigest
+  resources___internal___description
+  resources___internal___fieldOwners
+  resources___internal___ignoreType
+  resources___internal___mediaType
+  resources___internal___owner
+  resources___internal___type
   id
   parent___id
   parent___parent___id
@@ -7468,6 +7571,12 @@ enum AnimeSeriesFieldsEnum {
   anime___studios___anime___studios
   anime___studios___anime___id
   anime___studios___anime___children
+  anime___studios___resources
+  anime___studios___resources___idRaw
+  anime___studios___resources___link
+  anime___studios___resources___site
+  anime___studios___resources___id
+  anime___studios___resources___children
   anime___studios___id
   anime___studios___parent___id
   anime___studios___parent___children
@@ -7568,6 +7677,7 @@ enum AnimeSeriesFieldsEnum {
   series___anime___studios___slug
   series___anime___studios___name
   series___anime___studios___anime
+  series___anime___studios___resources
   series___anime___studios___id
   series___anime___studios___children
   series___anime___id
@@ -8277,6 +8387,12 @@ enum AnimeResourceFieldsEnum {
   anime___studios___anime___studios
   anime___studios___anime___id
   anime___studios___anime___children
+  anime___studios___resources
+  anime___studios___resources___idRaw
+  anime___studios___resources___link
+  anime___studios___resources___site
+  anime___studios___resources___id
+  anime___studios___resources___children
   anime___studios___id
   anime___studios___parent___id
   anime___studios___parent___children
@@ -9026,6 +9142,12 @@ enum AnimeImageFieldsEnum {
   anime___studios___anime___studios
   anime___studios___anime___id
   anime___studios___anime___children
+  anime___studios___resources
+  anime___studios___resources___idRaw
+  anime___studios___resources___link
+  anime___studios___resources___site
+  anime___studios___resources___id
+  anime___studios___resources___children
   anime___studios___id
   anime___studios___parent___id
   anime___studios___parent___children
@@ -9775,6 +9897,12 @@ enum AnimeStudioFieldsEnum {
   anime___studios___anime___studios
   anime___studios___anime___id
   anime___studios___anime___children
+  anime___studios___resources
+  anime___studios___resources___idRaw
+  anime___studios___resources___link
+  anime___studios___resources___site
+  anime___studios___resources___id
+  anime___studios___resources___children
   anime___studios___id
   anime___studios___parent___id
   anime___studios___parent___children
@@ -9875,6 +10003,7 @@ enum AnimeStudioFieldsEnum {
   studio___anime___studios___slug
   studio___anime___studios___name
   studio___anime___studios___anime
+  studio___anime___studios___resources
   studio___anime___studios___id
   studio___anime___studios___children
   studio___anime___id
@@ -9891,6 +10020,24 @@ enum AnimeStudioFieldsEnum {
   studio___anime___internal___mediaType
   studio___anime___internal___owner
   studio___anime___internal___type
+  studio___resources
+  studio___resources___idRaw
+  studio___resources___link
+  studio___resources___site
+  studio___resources___id
+  studio___resources___parent___id
+  studio___resources___parent___children
+  studio___resources___children
+  studio___resources___children___id
+  studio___resources___children___children
+  studio___resources___internal___content
+  studio___resources___internal___contentDigest
+  studio___resources___internal___description
+  studio___resources___internal___fieldOwners
+  studio___resources___internal___ignoreType
+  studio___resources___internal___mediaType
+  studio___resources___internal___owner
+  studio___resources___internal___type
   studio___id
   studio___parent___id
   studio___parent___parent___id
@@ -10037,6 +10184,298 @@ input AnimeStudioFilterInput {
 
 input AnimeStudioSortInput {
   fields: [AnimeStudioFieldsEnum]
+  order: [SortOrderEnum] = [ASC]
+}
+
+type StudioResourceConnection {
+  totalCount: Int!
+  edges: [StudioResourceEdge!]!
+  nodes: [StudioResource!]!
+  pageInfo: PageInfo!
+  distinct(field: StudioResourceFieldsEnum!): [String!]!
+  max(field: StudioResourceFieldsEnum!): Float
+  min(field: StudioResourceFieldsEnum!): Float
+  sum(field: StudioResourceFieldsEnum!): Float
+  group(skip: Int, limit: Int, field: StudioResourceFieldsEnum!): [StudioResourceGroupConnection!]!
+}
+
+type StudioResourceEdge {
+  next: StudioResource
+  node: StudioResource!
+  previous: StudioResource
+}
+
+enum StudioResourceFieldsEnum {
+  studio___idRaw
+  studio___slug
+  studio___name
+  studio___anime
+  studio___anime___idRaw
+  studio___anime___name
+  studio___anime___slug
+  studio___anime___year
+  studio___anime___season
+  studio___anime___synopsis
+  studio___anime___synonyms
+  studio___anime___synonyms___idRaw
+  studio___anime___synonyms___text
+  studio___anime___synonyms___id
+  studio___anime___synonyms___children
+  studio___anime___themes
+  studio___anime___themes___idRaw
+  studio___anime___themes___slug
+  studio___anime___themes___type
+  studio___anime___themes___sequence
+  studio___anime___themes___group
+  studio___anime___themes___entries
+  studio___anime___themes___id
+  studio___anime___themes___children
+  studio___anime___series
+  studio___anime___series___idRaw
+  studio___anime___series___slug
+  studio___anime___series___name
+  studio___anime___series___anime
+  studio___anime___series___id
+  studio___anime___series___children
+  studio___anime___resources
+  studio___anime___resources___idRaw
+  studio___anime___resources___link
+  studio___anime___resources___site
+  studio___anime___resources___id
+  studio___anime___resources___children
+  studio___anime___images
+  studio___anime___images___idRaw
+  studio___anime___images___facet
+  studio___anime___images___link
+  studio___anime___images___id
+  studio___anime___images___children
+  studio___anime___studios
+  studio___anime___studios___idRaw
+  studio___anime___studios___slug
+  studio___anime___studios___name
+  studio___anime___studios___anime
+  studio___anime___studios___resources
+  studio___anime___studios___id
+  studio___anime___studios___children
+  studio___anime___id
+  studio___anime___parent___id
+  studio___anime___parent___children
+  studio___anime___children
+  studio___anime___children___id
+  studio___anime___children___children
+  studio___anime___internal___content
+  studio___anime___internal___contentDigest
+  studio___anime___internal___description
+  studio___anime___internal___fieldOwners
+  studio___anime___internal___ignoreType
+  studio___anime___internal___mediaType
+  studio___anime___internal___owner
+  studio___anime___internal___type
+  studio___resources
+  studio___resources___idRaw
+  studio___resources___link
+  studio___resources___site
+  studio___resources___id
+  studio___resources___parent___id
+  studio___resources___parent___children
+  studio___resources___children
+  studio___resources___children___id
+  studio___resources___children___children
+  studio___resources___internal___content
+  studio___resources___internal___contentDigest
+  studio___resources___internal___description
+  studio___resources___internal___fieldOwners
+  studio___resources___internal___ignoreType
+  studio___resources___internal___mediaType
+  studio___resources___internal___owner
+  studio___resources___internal___type
+  studio___id
+  studio___parent___id
+  studio___parent___parent___id
+  studio___parent___parent___children
+  studio___parent___children
+  studio___parent___children___id
+  studio___parent___children___children
+  studio___parent___internal___content
+  studio___parent___internal___contentDigest
+  studio___parent___internal___description
+  studio___parent___internal___fieldOwners
+  studio___parent___internal___ignoreType
+  studio___parent___internal___mediaType
+  studio___parent___internal___owner
+  studio___parent___internal___type
+  studio___children
+  studio___children___id
+  studio___children___parent___id
+  studio___children___parent___children
+  studio___children___children
+  studio___children___children___id
+  studio___children___children___children
+  studio___children___internal___content
+  studio___children___internal___contentDigest
+  studio___children___internal___description
+  studio___children___internal___fieldOwners
+  studio___children___internal___ignoreType
+  studio___children___internal___mediaType
+  studio___children___internal___owner
+  studio___children___internal___type
+  studio___internal___content
+  studio___internal___contentDigest
+  studio___internal___description
+  studio___internal___fieldOwners
+  studio___internal___ignoreType
+  studio___internal___mediaType
+  studio___internal___owner
+  studio___internal___type
+  resource___idRaw
+  resource___link
+  resource___site
+  resource___id
+  resource___parent___id
+  resource___parent___parent___id
+  resource___parent___parent___children
+  resource___parent___children
+  resource___parent___children___id
+  resource___parent___children___children
+  resource___parent___internal___content
+  resource___parent___internal___contentDigest
+  resource___parent___internal___description
+  resource___parent___internal___fieldOwners
+  resource___parent___internal___ignoreType
+  resource___parent___internal___mediaType
+  resource___parent___internal___owner
+  resource___parent___internal___type
+  resource___children
+  resource___children___id
+  resource___children___parent___id
+  resource___children___parent___children
+  resource___children___children
+  resource___children___children___id
+  resource___children___children___children
+  resource___children___internal___content
+  resource___children___internal___contentDigest
+  resource___children___internal___description
+  resource___children___internal___fieldOwners
+  resource___children___internal___ignoreType
+  resource___children___internal___mediaType
+  resource___children___internal___owner
+  resource___children___internal___type
+  resource___internal___content
+  resource___internal___contentDigest
+  resource___internal___description
+  resource___internal___fieldOwners
+  resource___internal___ignoreType
+  resource___internal___mediaType
+  resource___internal___owner
+  resource___internal___type
+  id
+  parent___id
+  parent___parent___id
+  parent___parent___parent___id
+  parent___parent___parent___children
+  parent___parent___children
+  parent___parent___children___id
+  parent___parent___children___children
+  parent___parent___internal___content
+  parent___parent___internal___contentDigest
+  parent___parent___internal___description
+  parent___parent___internal___fieldOwners
+  parent___parent___internal___ignoreType
+  parent___parent___internal___mediaType
+  parent___parent___internal___owner
+  parent___parent___internal___type
+  parent___children
+  parent___children___id
+  parent___children___parent___id
+  parent___children___parent___children
+  parent___children___children
+  parent___children___children___id
+  parent___children___children___children
+  parent___children___internal___content
+  parent___children___internal___contentDigest
+  parent___children___internal___description
+  parent___children___internal___fieldOwners
+  parent___children___internal___ignoreType
+  parent___children___internal___mediaType
+  parent___children___internal___owner
+  parent___children___internal___type
+  parent___internal___content
+  parent___internal___contentDigest
+  parent___internal___description
+  parent___internal___fieldOwners
+  parent___internal___ignoreType
+  parent___internal___mediaType
+  parent___internal___owner
+  parent___internal___type
+  children
+  children___id
+  children___parent___id
+  children___parent___parent___id
+  children___parent___parent___children
+  children___parent___children
+  children___parent___children___id
+  children___parent___children___children
+  children___parent___internal___content
+  children___parent___internal___contentDigest
+  children___parent___internal___description
+  children___parent___internal___fieldOwners
+  children___parent___internal___ignoreType
+  children___parent___internal___mediaType
+  children___parent___internal___owner
+  children___parent___internal___type
+  children___children
+  children___children___id
+  children___children___parent___id
+  children___children___parent___children
+  children___children___children
+  children___children___children___id
+  children___children___children___children
+  children___children___internal___content
+  children___children___internal___contentDigest
+  children___children___internal___description
+  children___children___internal___fieldOwners
+  children___children___internal___ignoreType
+  children___children___internal___mediaType
+  children___children___internal___owner
+  children___children___internal___type
+  children___internal___content
+  children___internal___contentDigest
+  children___internal___description
+  children___internal___fieldOwners
+  children___internal___ignoreType
+  children___internal___mediaType
+  children___internal___owner
+  children___internal___type
+  internal___content
+  internal___contentDigest
+  internal___description
+  internal___fieldOwners
+  internal___ignoreType
+  internal___mediaType
+  internal___owner
+  internal___type
+}
+
+type StudioResourceGroupConnection {
+  totalCount: Int!
+  edges: [StudioResourceEdge!]!
+  nodes: [StudioResource!]!
+  pageInfo: PageInfo!
+  field: String!
+  fieldValue: String
+}
+
+input StudioResourceFilterInput {
+  studio: StudioFilterInput
+  resource: ResourceFilterInput
+  id: StringQueryOperatorInput
+  parent: NodeFilterInput
+  children: NodeFilterListInput
+  internal: InternalFilterInput
+}
+
+input StudioResourceSortInput {
+  fields: [StudioResourceFieldsEnum]
   order: [SortOrderEnum] = [ASC]
 }
 
@@ -11637,6 +12076,7 @@ enum BracketCharacterFieldsEnum {
   theme___anime___studios___slug
   theme___anime___studios___name
   theme___anime___studios___anime
+  theme___anime___studios___resources
   theme___anime___studios___id
   theme___anime___studios___children
   theme___anime___id

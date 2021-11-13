@@ -12,6 +12,9 @@ import { SearchFilterGroup, SearchFilterSortBy } from "components/search-filter"
 import useToggle from "hooks/useToggle";
 import { FilterToggleButton } from "components/button";
 import { animeNameComparator, animePremiereComparator, chain, reverse } from "utils/comparators";
+import { DescriptionList } from "components/description-list";
+import { ExternalLink } from "components/external-link";
+import { gapsColumn } from "styles/mixins";
 
 const StyledCoverContainer = styled.div`
     display: flex;
@@ -29,6 +32,14 @@ const StyledCover = styled.img`
     width: 100%;
     height: 100%;
     object-fit: cover;
+`;
+const StyledList = styled.div`
+    display: flex;
+    flex-direction: column;
+
+    ${gapsColumn("0.5rem")}
+
+    text-align: center;
 `;
 
 const sortByComparators = new Map([
@@ -68,6 +79,19 @@ export default function StudioDetailPage({ data: { studio } }) {
                             ))}
                         </StyledCoverContainer>
                     </AspectRatio>
+                    <DescriptionList>
+                        {!!studio.resources && !!studio.resources.length && (
+                            <DescriptionList.Item title="Links">
+                                <StyledList>
+                                    {studio.resources.map((resource) => (
+                                        <ExternalLink key={resource.link} href={resource.link}>
+                                            {resource.site}
+                                        </ExternalLink>
+                                    ))}
+                                </StyledList>
+                            </DescriptionList.Item>
+                        )}
+                    </DescriptionList>
                 </Box>
                 <Box gapsColumn="1.5rem">
                     <Flex justifyContent="space-between" alignItems="center">
@@ -105,6 +129,10 @@ export const query = graphql`
             anime {
                 ...AnimeCard
                 ...AnimeCardThemes
+            }
+            resources {
+                link
+                site
             }
         }
     }
