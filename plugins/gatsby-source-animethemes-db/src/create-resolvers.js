@@ -46,7 +46,8 @@ module.exports = ({ createResolvers }) => {
         },
         Studio: {
             ...pivotResolver({
-                anime: { type: "AnimeStudio", from: "studio", to: "anime" }
+                anime: { type: "AnimeStudio", from: "studio", to: "anime" },
+                resources: { type: "StudioResource", from: "studio", to: "resource" }
             })
         },
         Theme: {

@@ -292,6 +292,18 @@ module.exports = async ({ actions, createNodeId, createContentDigest, reporter }
         }, "AnimeStudio", helpers);
     }
 
+    for (const studioResource of await selectAllFrom(
+        "studio_resource", true,
+        "studios", "studio_id", "studio_id",
+        "resources", "resource_id", "resource_id"
+    )) {
+        createNodeFromData({
+            id: `${studioResource.studio_id}-${studioResource.resource_id}`,
+            studio: createNodeId(`Studio-${studioResource.studio_id}`),
+            resource: createNodeId(`Resource-${studioResource.resource_id}`)
+        }, "StudioResource", helpers);
+    }
+
     // await cache.set("last-fetched", now);
 };
 
