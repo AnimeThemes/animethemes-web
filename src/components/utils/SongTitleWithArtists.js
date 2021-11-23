@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { Link } from "gatsby";
+import Link from "next/link";
 import { Text } from "components/text";
 
 // Specify an artist if you want to display this in an artist context (e.g. artist page)
@@ -10,8 +10,8 @@ export function SongTitleWithArtists({ song, songTitleLinkTo, artist }) {
         <Text>
             {songTitleLinkTo
                 ? (
-                    <Link to={songTitleLinkTo}>
-                        <Text link italics={!song.title}>{songTitle}</Text>
+                    <Link href={songTitleLinkTo} passHref>
+                        <Text as="a" link italics={!song.title}>{songTitle}</Text>
                     </Link>
                 )
                 : (
@@ -27,8 +27,8 @@ export function SongTitleWithArtists({ song, songTitleLinkTo, artist }) {
                         {!!performedAs.as && (
                             <>
                                 <Text variant="small" color="text-muted"> as </Text>
-                                <Link to={`/artist/${performedAs.artist.slug}`}>
-                                    <Text link>
+                                <Link href={`/artist/${performedAs.artist.slug}`} passHref>
+                                    <Text as="a" link>
                                         {performedAs.as}
                                     </Text>
                                 </Link>
@@ -39,8 +39,8 @@ export function SongTitleWithArtists({ song, songTitleLinkTo, artist }) {
                                 <Text variant="small" color="text-muted"> with </Text>
                                 {performedWith.map((performance, index) => (
                                     <Fragment key={performance.artist.slug}>
-                                        <Link to={`/artist/${performance.artist.slug}`}>
-                                            <Text link>
+                                        <Link href={`/artist/${performance.artist.slug}`} passHref>
+                                            <Text as="a" link>
                                                 {performance.as || performance.artist.name}
                                             </Text>
                                         </Link>
@@ -60,8 +60,8 @@ export function SongTitleWithArtists({ song, songTitleLinkTo, artist }) {
                     <Text variant="small" color="text-muted"> by </Text>
                     {song.performances.map((performance, index) => (
                         <Fragment key={performance.artist.slug}>
-                            <Link to={`/artist/${performance.artist.slug}`}>
-                                <Text link>
+                            <Link href={`/artist/${performance.artist.slug}`} passHref>
+                                <Text as="a" link>
                                     {performance.as || performance.artist.name}
                                 </Text>
                             </Link>

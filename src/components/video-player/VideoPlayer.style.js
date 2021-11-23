@@ -1,5 +1,5 @@
 import styled, { css, keyframes } from "styled-components";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { gapsColumn, gapsRow } from "styles/mixins";
 import { Button } from "components/button";
 import theme from "theme";
@@ -14,7 +14,7 @@ const slideIn = keyframes`
     }
 `;
 
-export const StyledPlayer = styled(motion.div)`
+export const StyledPlayer = styled(m.div)`
     ${(props) => props.background ? css`
         position: fixed;
         z-index: ${theme.zIndices.videoPlayer};

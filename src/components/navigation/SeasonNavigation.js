@@ -1,6 +1,6 @@
 import { Box } from "components/box";
 import { Switcher } from "components/switcher";
-import { Link } from "gatsby";
+import Link from "next/link";
 
 export function SeasonNavigation({ year, season, seasonList }) {
     return (
@@ -11,8 +11,8 @@ export function SeasonNavigation({ year, season, seasonList }) {
                 mx="auto"
             >
                 {({ Button, item, selected, content }) => (
-                    <Link key={item.value} to={`/year/${year}/${item.value}`}>
-                        <Button variant={selected && "primary"}>
+                    <Link key={item.value} href={`/year/${year}/${item.value}`} passHref>
+                        <Button as="a" variant={selected && "primary"}>
                             {content}
                         </Button>
                     </Link>

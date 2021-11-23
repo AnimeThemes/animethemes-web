@@ -1,8 +1,8 @@
 import { SearchFilterFirstLetter, SearchFilterSortBy } from "components/search-filter";
 import useEntitySearch from "hooks/useEntitySearch";
 import { SearchEntity } from "components/search";
-import { navigate } from "gatsby";
 import { SummaryCard } from "components/card";
+import useSessionStorage from "hooks/useSessionStorage";
 
 const sortByFields = new Map([
     [ "A ➜ Z", "name" ],
@@ -11,25 +11,19 @@ const sortByFields = new Map([
 ]);
 const sortByOptions = [ ...sortByFields.keys() ];
 
-export function SearchSeries({ searchQuery, locationState }) {
-    const filterFirstLetter = locationState?.filterFirstLetter || null;
-    const sortBy = locationState?.sortBy || sortByOptions[0];
+const initialFilter = {
+    firstLetter: null,
+    sortBy: sortByOptions[0]
+};
 
-    const updateState = (field) => (newValue) => {
-        navigate("", {
-            state: {
-                ...locationState,
-                [field]: newValue
-            },
-            replace: true
-        });
-    };
+export function SearchSeries({ searchQuery }) {
+    const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter", initialFilter);
 
     const entitySearch = useEntitySearch("series", searchQuery, {
         filters: {
-            "name][like": filterFirstLetter ? `${filterFirstLetter}%` : null,
+            "name][like": filter.firstLetter ? `${filter.firstLetter}%` : null,
         },
-        sortBy: searchQuery ? null : sortByFields.get(sortBy)
+        sortBy: searchQuery ? null : sortByFields.get(filter.sortBy)
     });
 
     return (
@@ -37,11 +31,11 @@ export function SearchSeries({ searchQuery, locationState }) {
             searchQuery={searchQuery}
             filters={
                 <>
-                    <SearchFilterFirstLetter value={filterFirstLetter} setValue={updateState("filterFirstLetter")}/>
+                    <SearchFilterFirstLetter value={filter.firstLetter} setValue={updateFilter("firstLetter")}/>
                     <SearchFilterSortBy
                         options={searchQuery ? [ "Relevance" ] : sortByOptions}
-                        value={searchQuery ? "Relevance" : sortBy}
-                        setValue={updateState("sortBy")}
+                        value={searchQuery ? "Relevance" : filter.sortBy}
+                        setValue={updateFilter("sortBy")}
                     />
                 </>
             }

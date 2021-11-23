@@ -28,7 +28,7 @@ const StyledSearchInput = styled.div`
 `;
 const StyledForm = styled.form`
     flex: 1;
-`
+`;
 const StyledInput = styled.input`
     width: 100%;
 `;

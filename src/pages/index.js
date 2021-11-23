@@ -1,4 +1,4 @@
-import { graphql, Link } from "gatsby";
+import Link from "next/link";
 import { ThemeSummaryCard } from "components/card";
 import { Box, Grid } from "components/box";
 import { Text } from "components/text";
@@ -11,8 +11,10 @@ import { ExternalLink } from "components/external-link";
 import useCurrentSeason from "hooks/useCurrentSeason";
 import navigateToRandomTheme from "utils/navigateToRandomTheme";
 import useCompatability from "hooks/useCompatability";
+import { fetchData } from "lib/server";
+import { SEO } from "components/seo";
 
-const videoBaseUrl = process.env.GATSBY_VIDEO_URL || "https://animethemes.moe";
+const videoBaseUrl = process.env.NEXT_PUBLIC_VIDEO_URL || "https://animethemes.moe";
 
 const FeaturedTheme = styled(Box)`
     display: flex;
@@ -59,7 +61,7 @@ const BigIcon = styled(Icon).attrs({
     color: ${theme.colors["text-disabled"]};
 `;
 
-export default function HomePage({ data: { featuredTheme, recentlyAdded } }) {
+export default function HomePage({ featuredTheme, recentlyAdded }) {
     const featuredVideo = featuredTheme.entries[0].videos[0];
 
     const { currentYear, currentSeason } = useCurrentSeason();
@@ -67,6 +69,7 @@ export default function HomePage({ data: { featuredTheme, recentlyAdded } }) {
 
     return (
         <Box gapsColumn="1.5rem">
+            <SEO/>
             <Text variant="h1">Welcome, to AnimeThemes.moe!</Text>
             <Text variant="h2">Featured Theme</Text>
             <FeaturedTheme mx={[ "-1rem", 0 ]}>
@@ -87,35 +90,45 @@ export default function HomePage({ data: { featuredTheme, recentlyAdded } }) {
                 <Box gridRow={[ "6", "auto" ]}>
                     <Text variant="h2">Recently Added</Text>
                 </Box>
-                <BigButton as={Link} to="/search">
-                    <BigIcon icon={faSearch} flip="horizontal"/>
-                    <Text>Search</Text>
-                    <Icon icon={faArrowRight} color="text-primary"/>
-                </BigButton>
+                <Link href="/search" passHref>
+                    <BigButton as="a">
+                        <BigIcon icon={faSearch} flip="horizontal"/>
+                        <Text>Search</Text>
+                        <Icon icon={faArrowRight} color="text-primary"/>
+                    </BigButton>
+                </Link>
                 <BigButton onClick={navigateToRandomTheme}>
                     <BigIcon icon={faRandom}/>
                     <Text>Play Random</Text>
                     <Icon icon={faArrowRight} color="text-primary"/>
                 </BigButton>
-                <BigButton as={Link} to={`/year/${currentYear}/${currentSeason}`}>
-                    <BigIcon icon={faTv}/>
-                    <Text>Current Season</Text>
-                    <Icon icon={faArrowRight} color="text-primary"/>
-                </BigButton>
+                <Link href={(currentYear && currentSeason) ? `/year/${currentYear}/${currentSeason}` : "/"} passHref>
+                    <BigButton as="a">
+                        <BigIcon icon={faTv}/>
+                        <Text>Current Season</Text>
+                        <Icon icon={faArrowRight} color="text-primary"/>
+                    </BigButton>
+                </Link>
                 <Box gridColumn={[ "1", "1 / 3" ]} gapsColumn="1.5rem">
                     <Grid gridTemplateColumns={[ "1fr 1fr", "1fr 1fr 1fr" ]} gridGap="1rem">
-                        <BigButton as={Link} to="/search/anime" height="3rem">
-                            <Text>Anime Index</Text>
-                            <Icon icon={faArrowRight} color="text-primary"/>
-                        </BigButton>
-                        <BigButton as={Link} to="/search/artist" height="3rem">
-                            <Text>Artist Index</Text>
-                            <Icon icon={faArrowRight} color="text-primary"/>
-                        </BigButton>
-                        <BigButton as={Link} to="/year" height="3rem">
-                            <Text>Year Index</Text>
-                            <Icon icon={faArrowRight} color="text-primary"/>
-                        </BigButton>
+                        <Link href="/search/anime" passHref>
+                            <BigButton as="a" height="3rem">
+                                <Text>Anime Index</Text>
+                                <Icon icon={faArrowRight} color="text-primary"/>
+                            </BigButton>
+                        </Link>
+                        <Link href="/search/artist" passHref>
+                            <BigButton as="a" height="3rem">
+                                <Text>Artist Index</Text>
+                                <Icon icon={faArrowRight} color="text-primary"/>
+                            </BigButton>
+                        </Link>
+                        <Link href="/year" passHref>
+                            <BigButton as="a" height="3rem">
+                                <Text>Year Index</Text>
+                                <Icon icon={faArrowRight} color="text-primary"/>
+                            </BigButton>
+                        </Link>
                     </Grid>
                     <Text variant="h2">About The Project</Text>
                     <Text as="p">
@@ -136,7 +149,7 @@ export default function HomePage({ data: { featuredTheme, recentlyAdded } }) {
                     </Text>
                 </Box>
                 <Box gapsColumn="1rem">
-                    {recentlyAdded.nodes.map((theme, index) => (
+                    {recentlyAdded.map((theme, index) => (
                         <ThemeSummaryCard key={index} theme={theme}/>
                     ))}
                 </Box>
@@ -145,37 +158,12 @@ export default function HomePage({ data: { featuredTheme, recentlyAdded } }) {
     );
 }
 
-export const query = graphql`
-    query HomePageQuery {
-        featuredTheme: theme(idRaw: { eq: 767 }) {
-            slug
-            anime {
-                slug
-                name
-                images {
-                    facet
-                    link
-                }
-            }
-            song {
-                title
-                performances {
-                    artist {
-                        slug
-                        name
-                    }
-                    as
-                }
-            }
-            entries {
-                videos {
-                    basename
-                }
-            }
-            ...VideoSlug
-        }
-        recentlyAdded: allTheme(sort: { fields: idRaw, order: DESC }, limit: 10) {
-            nodes {
+export async function getStaticProps() {
+    const { data } = await fetchData(`
+        #graphql
+
+        query {
+            featuredTheme: theme(id: 767) {
                 slug
                 anime {
                     slug
@@ -196,12 +184,49 @@ export const query = graphql`
                     }
                 }
                 entries {
+                    version
                     videos {
                         basename
+                        tags
                     }
                 }
-                ...VideoSlug
+            }
+            recentlyAdded: themeAll(orderBy: "theme_id", orderDesc: true, limit: 10) {
+                slug
+                anime {
+                    slug
+                    name
+                    images {
+                        facet
+                        link
+                    }
+                }
+                song {
+                    title
+                    performances {
+                        artist {
+                            slug
+                            name
+                        }
+                        as
+                    }
+                }
+                entries {
+                    version
+                    videos {
+                        basename
+                        tags
+                    }
+                }
             }
         }
-    }
-`;
+    `);
+
+    return {
+        props: {
+            featuredTheme: data.featuredTheme,
+            recentlyAdded: data.recentlyAdded
+        },
+        revalidate: 60
+    };
+}
