@@ -1,46 +1,47 @@
 {
-    "globals": {
-        "__PATH_PREFIX__": true
-    },
-    "extends": [
-        "react-app",
-        "plugin:react/recommended"
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:react/recommended"
+  ],
+  "rules": {
+    "semi": [
+      "error",
+      "always"
     ],
-    "rules": {
-        "quotes": [
-            "error",
-            "double",
-            {
-                "allowTemplateLiterals": true
-            }
-        ],
-        "curly": [
-            "error",
-            "all"
-        ],
-        "object-curly-spacing": [
-            "error",
-            "always"
-        ],
-        "indent": [
-            "error",
-            4,
-            {
-                "SwitchCase": 1
-            }
-        ],
-        "no-duplicate-imports": "error",
-        "no-restricted-imports": [
-            "error",
-            {
-                "patterns": [
-                    "components/*/*"
-                ]
-            }
-        ],
-        "react/react-in-jsx-scope": "off",
-        "react/self-closing-comp": "error",
-        // For now we don't habe prop-types validation
-        "react/prop-types": "off"
-    }
+    "quotes": [
+      "error",
+      "double",
+      {
+        "allowTemplateLiterals": true
+      }
+    ],
+    "curly": [
+      "error",
+      "all"
+    ],
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ],
+    "indent": [
+      "error",
+      4,
+      {
+        "SwitchCase": 1
+      }
+    ],
+    "no-duplicate-imports": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          "components/*/*"
+        ]
+      }
+    ],
+    "react/react-in-jsx-scope": "off",
+    "react/self-closing-comp": "error",
+    // For now we don't habe prop-types validation
+    "react/prop-types": "off"
+  }
 }

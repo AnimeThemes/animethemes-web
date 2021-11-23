@@ -1,29 +1,26 @@
-import { graphql, useStaticQuery } from "gatsby";
+import { useEffect, useState } from "react";
+import { fetchCurrentSeason } from "lib/client/currentSeason";
 
-const seasonOrder = [
-    "winter",
-    "spring",
-    "summer",
-    "fall"
-];
+let cache = null;
 
 export default function useCurrentSeason() {
-    const { currentSeasonAnime } = useStaticQuery(graphql`
-        query {
-            currentSeasonAnime: allAnime {
-                groupedByYear: group(field: year) {
-                    year: fieldValue
-                    nodes {
-                        season
-                    }
-                }
-            }
+    const [ current, setCurrent ] = useState(null);
+
+    useEffect(() => {
+        if (!cache) {
+            fetchCurrentSeason()
+                .then((current) => {
+                    cache = current;
+
+                    setCurrent(current);
+                });
+        } else {
+            setCurrent(cache);
         }
-    `);
+    }, []);
 
-    const currentYearGroup = currentSeasonAnime.groupedByYear.sort((a, b) => b.year - a.year)[0];
-    const currentYear = currentYearGroup.year;
-    const currentSeason = seasonOrder[currentYearGroup.nodes.map(({ season }) => seasonOrder.indexOf(season.toLowerCase())).sort().pop()];
-
-    return { currentYear, currentSeason };
+    return {
+        currentYear: current?.year,
+        currentSeason: current?.season.toLowerCase()
+    };
 }

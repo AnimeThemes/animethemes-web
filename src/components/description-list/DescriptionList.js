@@ -36,4 +36,4 @@ DescriptionList.Item = function DescriptionListItem({ title, children }) {
             <StyledValue>{children}</StyledValue>
         </>
     );
-}
+};

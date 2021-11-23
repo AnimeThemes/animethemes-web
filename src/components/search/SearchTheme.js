@@ -1,8 +1,8 @@
 import { SearchFilterFirstLetter, SearchFilterSortBy, SearchFilterThemeType } from "components/search-filter";
 import useEntitySearch from "hooks/useEntitySearch";
 import { SearchEntity } from "components/search";
-import { navigate } from "gatsby";
 import { ThemeSummaryCard } from "components/card";
+import useSessionStorage from "hooks/useSessionStorage";
 
 const sortByFields = new Map([
     [ "A ➜ Z", "song.title" ],
@@ -13,28 +13,22 @@ const sortByFields = new Map([
 ]);
 const sortByOptions = [ ...sortByFields.keys() ];
 
-export function SearchTheme({ searchQuery, locationState }) {
-    const filterFirstLetter = locationState?.filterFirstLetter || null;
-    const filterType = locationState?.filterType || null;
-    const sortBy = locationState?.sortBy || sortByOptions[0];
+const initialFilter = {
+    firstLetter: null,
+    type: null,
+    sortBy: sortByOptions[0]
+};
 
-    const updateState = (field) => (newValue) => {
-        navigate("", {
-            state: {
-                ...locationState,
-                [field]: newValue
-            },
-            replace: true
-        });
-    };
+export function SearchTheme({ searchQuery }) {
+    const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter", initialFilter);
 
     const entitySearch = useEntitySearch("theme", searchQuery, {
         filters: {
             has: "song",
-            "song][title][like": filterFirstLetter ? `${filterFirstLetter}%` : null,
-            type: filterType
+            "song][title][like": filter.firstLetter ? `${filter.firstLetter}%` : null,
+            type: filter.type
         },
-        sortBy: searchQuery ? null : sortByFields.get(sortBy)
+        sortBy: searchQuery ? null : sortByFields.get(filter.sortBy)
     });
 
     return (
@@ -42,12 +36,12 @@ export function SearchTheme({ searchQuery, locationState }) {
             searchQuery={searchQuery}
             filters={
                 <>
-                    <SearchFilterFirstLetter value={filterFirstLetter} setValue={updateState("filterFirstLetter")}/>
-                    <SearchFilterThemeType value={filterType} setValue={updateState("filterType")}/>
+                    <SearchFilterFirstLetter value={filter.firstLetter} setValue={updateFilter("firstLetter")}/>
+                    <SearchFilterThemeType value={filter.type} setValue={updateFilter("type")}/>
                     <SearchFilterSortBy
                         options={searchQuery ? [ "Relevance" ] : sortByOptions}
-                        value={searchQuery ? "Relevance" : sortBy}
-                        setValue={updateState("sortBy")}
+                        value={searchQuery ? "Relevance" : filter.sortBy}
+                        setValue={updateFilter("sortBy")}
                     />
                 </>
             }

@@ -1,55 +1,18 @@
-import { graphql, Link } from "gatsby";
+import React from "react";
+import Link from "next/link";
 import { Text } from "components/text";
 import styled from "styled-components";
-import { Card } from "components/card";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfo } from "@fortawesome/free-solid-svg-icons";
-import { Box, Flex, Grid } from "components/box";
+import { Box, Grid } from "components/box";
 import { ExternalLink } from "components/external-link";
-import { DateTime } from "luxon";
-import theme from "theme";
-import React, { useEffect, useState } from "react";
 
-const StyledAnnouncement = styled(Text)`
-    & a {
-        color: ${theme.colors["text-primary"]};
-        font-weight: 600;
-      
-        &:hover {
-            text-decoration: underline;
-        }
-    }
-`;
-const StyledLink = styled(Link)`
+const StyledLink = styled.a`
     max-width: 100%;
 `;
 
-export default function DevelopmentPage({ data: { site, allAnnouncement, allSitePage } }) {
-    const buildDateTime = DateTime.fromISO(site.buildTime).setLocale("en");
-    const [ timeSinceBuild, setTimeSinceBuild ] = useState();
-
-    useEffect(() => {
-        setTimeSinceBuild(buildDateTime.toRelative());
-    }, [ buildDateTime ]);
-
-    const totalAnimePages = getPageCount(allSitePage, "component---src-templates-anime-js");
-    const totalArtistPages = getPageCount(allSitePage, "component---src-templates-artist-js");
-    const totalSeasonPages = getPageCount(allSitePage, "component---src-templates-season-js");
-    const totalSeriesPages = getPageCount(allSitePage, "component---src-templates-series-js");
-    const totalStudioPages = getPageCount(allSitePage, "component---src-templates-studio-js");
-    const totalVideoPages = getPageCount(allSitePage, "component---src-templates-video-js");
-    const totalYearPages = getPageCount(allSitePage, "component---src-templates-year-js");
-
+export default function DevelopmentPage() {
     return (
         <Box gapsColumn="1.5rem">
             <Text variant="h1">Development Hub</Text>
-            <Text as="p" color="text-disabled">
-                <span>This site was last updated: </span>
-                <Text fontWeight="700">{buildDateTime.toLocaleString(DateTime.DATETIME_FULL)}</Text>
-                {!!timeSinceBuild && (
-                    <span> ({timeSinceBuild})</span>
-                )}
-            </Text>
             <Text as="p">
                 <span>This page is still actively being worked on. If you are a developer and interested in contributing feel free to contact us on </span>
                 <ExternalLink href="https://discordapp.com/invite/m9zbVyQ">Discord</ExternalLink>
@@ -62,22 +25,6 @@ export default function DevelopmentPage({ data: { site, allAnnouncement, allSite
                 <ExternalLink href="https://github.com/AnimeThemes">GitHub organization</ExternalLink>
                 <span>.</span>
             </Text>
-            {!!allAnnouncement.totalCount && (
-                <>
-                    <Text variant="h2">Announcements</Text>
-                    <Text as="p">These are for demo purposes only. The content may not be accurate.</Text>
-                    {allAnnouncement.nodes.map((announcement) => (
-                        <Card key={announcement.id}>
-                            <Flex gapsRow="1rem">
-                                <Text link>
-                                    <FontAwesomeIcon icon={faInfo}/>
-                                </Text>
-                                <StyledAnnouncement dangerouslySetInnerHTML={{ __html: announcement.content }}/>
-                            </Flex>
-                        </Card>
-                    ))}
-                </>
-            )}
             <Text variant="h2">Pages</Text>
             <Box gapsColumn={["2rem", "1.5rem"]}>
                 <PageGridItem
@@ -125,33 +72,18 @@ export default function DevelopmentPage({ data: { site, allAnnouncement, allSite
                 />
                 <PageGridItem
                     path="/year/2009"
-                    description={(
-                        <Text>
-                            Browse all seasons of a specific year.
-                            <Text color="text-disabled"> ({ totalYearPages } pages)</Text>
-                        </Text>
-                    )}
+                    description="Browse all seasons of a specific year."
                     otherPaths={{
                         "/year/1963": "Every year has a page, even 60s, 70s, etc."
                     }}
                 />
                 <PageGridItem
                     path="/year/2009/summer"
-                    description={(
-                        <Text>
-                            Browse all anime of a specific season.
-                            <Text color="text-disabled"> ({ totalSeasonPages } pages)</Text>
-                        </Text>
-                    )}
+                    description="Browse all anime of a specific season."
                 />
                 <PageGridItem
                     path="/series/monogatari"
-                    description={(
-                        <Text>
-                            Browse all anime which belong to the same series.
-                            <Text color="text-disabled"> ({ totalSeriesPages } pages)</Text>
-                        </Text>
-                    )}
+                    description="Browse all anime which belong to the same series."
                     otherPaths={{
                         "/series/precure": "A lot of anime.",
                         "/series/clannad": "Only three anime.",
@@ -164,30 +96,19 @@ export default function DevelopmentPage({ data: { site, allAnnouncement, allSite
                         <Text>
                             <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
                             Browse all anime which were produced by the same studio.
-                            <Text color="text-disabled"> ({ totalStudioPages } pages)</Text>
                         </Text>
                     }
                 />
                 <PageGridItem
                     path="/artist/kana_hanazawa"
-                    description={(
-                        <Text>
-                            Browse all songs an artist has performed.
-                            <Text color="text-disabled"> ({ totalArtistPages } pages)</Text>
-                        </Text>
-                    )}
+                    description="Browse all songs an artist has performed."
                     otherPaths={{
                         "/artist/vickeblanka": "Very few songs."
                     }}
                 />
                 <PageGridItem
                     path="/anime/bakemonogatari"
-                    description={(
-                        <Text>
-                            Browse all themes of a specific anime.
-                            <Text color="text-disabled"> ({ totalAnimePages } pages)</Text>
-                        </Text>
-                    )}
+                    description="Browse all themes of a specific anime."
                     otherPaths={{
                         "/anime/etotama": "Many themes with a lot of artists.",
                         "/anime/gintama": "Theme groups with many themes.",
@@ -198,12 +119,7 @@ export default function DevelopmentPage({ data: { site, allAnnouncement, allSite
                 />
                 <PageGridItem
                     path="/anime/bakemonogatari/OP1-NCBD1080"
-                    description={(
-                        <Text>
-                            Watch themes.
-                            <Text color="text-disabled"> ({ totalVideoPages } pages)</Text>
-                        </Text>
-                    )}
+                    description="Watch themes."
                     otherPaths={{
                         "/anime/uma_musume_pretty_derby/ED5": "Many artists.",
                         "/anime/girls_und_panzer/ED-NCBD1080": "Many alternative versions.",
@@ -222,17 +138,6 @@ export default function DevelopmentPage({ data: { site, allAnnouncement, allSite
                     }
                 />
             </Box>
-            {!!process.env.GATSBY_CI && (
-                <>
-                    <Text variant="h2">GitHub Pages</Text>
-                    <Text as="p">
-                        <span>You are browsing this site on GitHub Pages. On every commit in the </span>
-                        <Text as="a" variant="code" link href="https://github.com/AnimeThemes/animethemes-web">animethemes-web</Text>
-                        <span> repository this site gets updated.</span>
-                    </Text>
-                    <Text as="p">Don&apos;t expect everything on this site to work the same way as on the staging/production sites.</Text>
-                </>
-            )}
         </Box>
     );
 }
@@ -254,33 +159,10 @@ function PageGridItem({ path, otherPaths = {}, description }) {
 
 function PageLink({ path }) {
     return (
-        <StyledLink key={path} to={path}>
-            <Text variant="code" link maxLines={1}>{path}</Text>
-        </StyledLink>
-    )
+        <Link key={path} href={path} passHref>
+            <StyledLink to={path}>
+                <Text variant="code" link maxLines={1}>{path}</Text>
+            </StyledLink>
+        </Link>
+    );
 }
-
-function getPageCount(allSitePage, component) {
-    return allSitePage.groupedByComponent.find(({ fieldValue }) => fieldValue === component).totalCount;
-}
-
-export const query = graphql`
-    query IndexPageQuery {
-        site {
-            buildTime
-        }
-        allAnnouncement {
-            nodes {
-                id
-                content
-            }
-            totalCount
-        }
-        allSitePage {
-            groupedByComponent: group(field: componentChunkName) {
-                fieldValue
-                totalCount
-            }
-        }
-    }
-`;

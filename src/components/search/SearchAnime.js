@@ -6,8 +6,8 @@ import {
 } from "components/search-filter";
 import useEntitySearch from "hooks/useEntitySearch";
 import { SearchEntity } from "components/search";
-import { navigate } from "gatsby";
 import { AnimeSummaryCard } from "components/card";
+import useSessionStorage from "hooks/useSessionStorage";
 
 const sortByFields = new Map([
     [ "A ➜ Z", "name" ],
@@ -18,29 +18,23 @@ const sortByFields = new Map([
 ]);
 const sortByOptions = [ ...sortByFields.keys() ];
 
-export function SearchAnime({ searchQuery, locationState }) {
-    const filterFirstLetter = locationState?.filterFirstLetter || null;
-    const filterSeason = locationState?.filterSeason || null;
-    const filterYear = locationState?.filterYear || null;
-    const sortBy = locationState?.sortBy || sortByOptions[0];
+const initialFilter = {
+    firstLetter: null,
+    season: null,
+    year: null,
+    sortBy: sortByOptions[0]
+};
 
-    const updateState = (field) => (newValue) => {
-        navigate("", {
-            state: {
-                ...locationState,
-                [field]: newValue
-            },
-            replace: true
-        });
-    };
+export function SearchAnime({ searchQuery }) {
+    const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter", initialFilter);
 
     const entitySearch = useEntitySearch("anime", searchQuery, {
         filters: {
-            "name][like": filterFirstLetter ? `${filterFirstLetter}%` : null,
-            season: filterSeason,
-            year: filterYear
+            "name][like": filter.firstLetter ? `${filter.firstLetter}%` : null,
+            season: filter.season,
+            year: filter.year
         },
-        sortBy: searchQuery ? null : sortByFields.get(sortBy)
+        sortBy: searchQuery ? null : sortByFields.get(filter.sortBy)
     });
 
     return (
@@ -48,13 +42,13 @@ export function SearchAnime({ searchQuery, locationState }) {
             searchQuery={searchQuery}
             filters={
                 <>
-                    <SearchFilterFirstLetter value={filterFirstLetter} setValue={updateState("filterFirstLetter")}/>
-                    <SearchFilterSeason value={filterSeason} setValue={updateState("filterSeason")}/>
-                    <SearchFilterYear value={filterYear} setValue={updateState("filterYear")}/>
+                    <SearchFilterFirstLetter value={filter.firstLetter} setValue={updateFilter("firstLetter")}/>
+                    <SearchFilterSeason value={filter.season} setValue={updateFilter("season")}/>
+                    <SearchFilterYear value={filter.year} setValue={updateFilter("year")}/>
                     <SearchFilterSortBy
                         options={searchQuery ? [ "Relevance" ] : sortByOptions}
-                        value={searchQuery ? "Relevance" : sortBy}
-                        setValue={updateState("sortBy")}
+                        value={searchQuery ? "Relevance" : filter.sortBy}
+                        setValue={updateFilter("sortBy")}
                     />
                 </>
             }

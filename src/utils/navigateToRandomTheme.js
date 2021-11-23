@@ -1,6 +1,6 @@
-import { fetchRandomTheme } from "lib/randomTheme";
+import { fetchRandomTheme } from "lib/client/randomTheme";
 import createVideoSlug from "utils/createVideoSlug";
-import { navigate } from "gatsby";
+import Router from "next/router";
 
 export default function navigateToRandomTheme() {
     fetchRandomTheme()
@@ -11,7 +11,7 @@ export default function navigateToRandomTheme() {
         ))
         .then((randomVideoPath) => {
             if (randomVideoPath) {
-                navigate(randomVideoPath);
+                Router.push(randomVideoPath);
             }
         });
 }
