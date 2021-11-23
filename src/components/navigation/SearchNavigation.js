@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, navigate } from "gatsby";
+import { useEffect, useRef } from "react";
+import Link from "next/link";
 import { Box, Flex } from "components/box";
-import { SEO } from "components/seo";
 import { Text } from "components/text";
 import { SearchInput } from "components/input";
 import { HorizontalScroll } from "components/utils";
@@ -10,6 +9,7 @@ import { Icon } from "components/icon";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
 import theme from "theme";
+import { useRouter } from "next/router";
 
 const StyledSearchOptions = styled(Flex)`
     flex-wrap: wrap;
@@ -20,36 +20,41 @@ const StyledSearchOptions = styled(Flex)`
     }
 `;
 
-export function SearchNavigation({ entity, location: { search, hash, state } }) {
-    const urlParams = useMemo(() => new URLSearchParams(search), [ search ]);
-    const urlSuffix = search + hash;
-
-    const [ searchQuery, setSearchQuery ] = useState(urlParams.get("q") || "");
+export function SearchNavigation() {
+    const router = useRouter();
+    const { entity, ...urlParams } = router.query;
+    const searchQuery = urlParams.q || "";
 
     // Generates page title based on search query
     const pageTitle = searchQuery && searchQuery.trim()
         ? `${searchQuery} - Search`
         : "Search";
 
-    useEffect(() => {
+    const updateSearchQuery = (newSearchQuery) => {
         // Update URL to maintain the searchQuery on page navigation.
-        const newUrlParams = new URLSearchParams();
-        if (searchQuery) {
-            newUrlParams.set("q", searchQuery);
+        const newUrlParams = {
+            ...urlParams
+        };
+
+        if (newSearchQuery) {
+            newUrlParams.q = newSearchQuery;
+        } else {
+            delete newUrlParams.q;
         }
-        const params = newUrlParams.toString();
 
         let url = "/search";
         if (entity) {
             url += `/${entity}`;
         }
-        if (params) {
-            url += `?${params}`;
-        }
 
-        navigate(url, { replace: true, state });
+        router.replace({
+            pathname: url,
+            query: newUrlParams
+        }, null, {
+            shallow: true
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ entity, searchQuery ]);
+    };
 
     const inputRef = useRef();
 
@@ -64,13 +69,12 @@ export function SearchNavigation({ entity, location: { search, hash, state } }) 
 
     return (
         <Box gapsColumn="1.5rem">
-            <SEO title={pageTitle} />
             <Text variant="h1">Search</Text>
             <StyledSearchOptions>
                 <Box flex="1" minWidth="33%">
                     <SearchInput
                         query={searchQuery}
-                        setQuery={setSearchQuery}
+                        setQuery={updateSearchQuery}
                         inputProps={{
                             ref: inputRef,
                             spellCheck: false
@@ -84,15 +88,15 @@ export function SearchNavigation({ entity, location: { search, hash, state } }) 
                     >
                         {({ Button, item, selected, content }) => item.value === null ? (
                             !!entity ? (
-                                <Link key={null} to={`/search${urlSuffix}`}>
-                                    <Button>
+                                <Link key={null} href={{ pathname: "/search", query: urlParams }} passHref>
+                                    <Button as="a">
                                         <Icon icon={faTimes}/>
                                     </Button>
                                 </Link>
                             ) : null
                         ) : (
-                            <Link key={item.value} to={`/search/${item.value}${urlSuffix}`}>
-                                <Button variant={selected && "primary"}>
+                            <Link key={item.value} href={{ pathname: `/search/${item.value}`, query: urlParams }} passHref>
+                                <Button as="a" variant={selected && "primary"}>
                                     {content}
                                 </Button>
                             </Link>

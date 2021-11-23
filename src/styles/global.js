@@ -36,7 +36,7 @@ export default createGlobalStyle`
         -moz-osx-font-smoothing: grayscale;
     }
 
-    html, body, #___gatsby, #gatsby-focus-wrapper {
+    html, body, #__next {
         // Every container in the page hierarchy needs to have the 
         // maximum height of the viewport. Using 100vh on innermost container 
         // would break certain layouts on mobile devices.

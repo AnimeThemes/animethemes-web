@@ -1,19 +1,19 @@
-import { useLocation } from "@reach/router";
+import Link from "next/link";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "components/button";
 import { Text } from "components/text";
 import { Box, Flex } from "components/box";
-import { Link } from "gatsby";
 import { Icon } from "components/icon";
 import { useQuery } from "react-query";
-import { fetchGlobalSearchResults } from "lib/search";
+import { fetchGlobalSearchResults } from "lib/client/search";
 import { AnimeSummaryCard, ArtistSummaryCard, ErrorCard, SummaryCard, ThemeSummaryCard } from "components/card";
+import { useRouter } from "next/router";
 
 export function SearchGlobal({ searchQuery }) {
     const fetchSearchResults = () => fetchGlobalSearchResults(
         searchQuery,
         4,
-        [ "anime", "theme", "artist", "series", "studio" ]
+        ["anime", "theme", "artist", "series", "studio"]
     );
 
     const {
@@ -22,7 +22,7 @@ export function SearchGlobal({ searchQuery }) {
         isLoading,
         isError
     } = useQuery(
-        [ "searchGlobal", searchQuery ],
+        ["searchGlobal", searchQuery],
         fetchSearchResults,
         {
             keepPreviousData: true
@@ -87,7 +87,8 @@ export function SearchGlobal({ searchQuery }) {
                 title="Series"
                 results={seriesResults}
                 renderSummaryCard={(series) => (
-                    <SummaryCard key={series.slug} title={series.name} description="Series" to={`/series/${series.slug}`} />
+                    <SummaryCard key={series.slug} title={series.name} description="Series"
+                        to={`/series/${series.slug}`}/>
                 )}
             />
             <GlobalSearchSection
@@ -95,7 +96,8 @@ export function SearchGlobal({ searchQuery }) {
                 title="Studios"
                 results={studioResults}
                 renderSummaryCard={(studio) => (
-                    <SummaryCard key={studio.slug} title={studio.name} description="Studio" to={`/studio/${studio.slug}`} />
+                    <SummaryCard key={studio.slug} title={studio.name} description="Studio"
+                        to={`/studio/${studio.slug}`}/>
                 )}
             />
         </Box>
@@ -103,8 +105,8 @@ export function SearchGlobal({ searchQuery }) {
 }
 
 function GlobalSearchSection({ entity, title, results, renderSummaryCard }) {
-    const { search, hash } = useLocation();
-    const urlSuffix = search + hash;
+    const router = useRouter();
+    const urlParams = router.query;
 
     if (!results.length) {
         return null;
@@ -121,8 +123,8 @@ function GlobalSearchSection({ entity, title, results, renderSummaryCard }) {
             </Box>
             {hasMoreResults && (
                 <Flex justifyContent="center">
-                    <Link to={`/search/${entity}${urlSuffix}`}>
-                        <Button silent title="See all results">
+                    <Link href={{ pathname: `/search/${entity}`, query: urlParams }} passHref>
+                        <Button as="a" silent title="See all results">
                             <Icon icon={faChevronDown}/>
                         </Button>
                     </Link>

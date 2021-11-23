@@ -1,59 +1,23 @@
-import PropTypes from "prop-types";
-import { useLocation } from "@reach/router";
-import { Helmet } from "react-helmet";
-import useSiteMeta from "hooks/useSiteMeta";
+import Head from "next/head";
+import withBasePath from "utils/withBasePath";
 
-export function SEO({ title, description, meta = [], lang }) {
-    const { pathname } = useLocation();
-
-    const {
-        description: defaultDescription,
-        lang: defaultLanguage,
-        titleTemplate,
-        siteName,
-        siteUrl
-    } = useSiteMeta();
-
-    const seo = {
-        url:         `${siteUrl}${pathname}`,
-        lang:        lang || defaultLanguage,
-        title:       title || siteName,
-        description: description || defaultDescription
-    }
+export function SEO({
+    title,
+    description = "AnimeThemes is a simple and consistent repository of anime opening and ending themes.",
+    image = withBasePath("/img/logo.svg"),
+    children
+}) {
+    const titleWithSuffix = title ? `${title} · AnimeThemes` : "AnimeThemes";
 
     return (
-        <Helmet
-            htmlAttributes={{
-                lang: seo.lang
-            }}
-
-            title={seo.title}
-            titleTemplate={title ? titleTemplate : null}
-            meta={[
-                {
-                    name: "description",
-                    content: seo.description
-                },
-                {
-                    property: "og:site_name",
-                    content: siteName
-                },
-                {
-                    property: "og:title",
-                    content: title ? titleTemplate.replace(/%s/g, title) : seo.title
-                },
-                {
-                    property: "og:description",
-                    content: seo.description
-                }
-            ].concat(meta)}
-        />
-    )
-}
-
-SEO.propTypes = {
-    title: PropTypes.string,
-    description: PropTypes.string,
-    meta: PropTypes.arrayOf(PropTypes.object),
-    lang: PropTypes.string
+        <Head>
+            <title>{titleWithSuffix}</title>
+            <meta property="description" content={description}/>
+            <meta property="og:title" content={titleWithSuffix}/>
+            <meta property="og:description" content={description}/>
+            <meta property="og:image" content={image}/>
+            <meta property="og:site_name" content="AnimeThemes"/>
+            {children}
+        </Head>
+    );
 }

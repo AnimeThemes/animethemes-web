@@ -1,4 +1,4 @@
-import { fetchEntitySearchResults } from "lib/search";
+import { fetchEntitySearchResults } from "lib/client/search";
 import { useInfiniteQuery, useQueryClient } from "react-query";
 
 export default function useEntitySearch(entity, query, params = {}) {

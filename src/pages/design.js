@@ -1,4 +1,3 @@
-import { graphql, useStaticQuery } from "gatsby";
 import { useContext, useEffect, useState } from "react";
 import { Box, Flex, Grid } from "components/box";
 import { Card, AnimeSummaryCard } from "components/card";
@@ -14,8 +13,6 @@ import {
     faSpinner,
     faStar, faTag
 } from "@fortawesome/free-solid-svg-icons";
-import Prism from "prismjs";
-import "styles/prism.scss";
 import { Icon } from "components/icon";
 import styled from "styled-components";
 import theme from "theme";
@@ -31,6 +28,9 @@ import { DescriptionList } from "components/description-list";
 import { codeBlock } from "common-tags";
 import { color } from "styled-system";
 import { Listbox } from "components/listbox";
+import { fetchData } from "lib/server";
+import Prism from "prismjs";
+import "prismjs/components/prism-jsx";
 
 const ColorBox = styled(Box)`
     width: 3rem;
@@ -42,7 +42,7 @@ const ColorBox = styled(Box)`
     ${color}
 `;
 
-export default function DesignPage() {
+export default function DesignPage({ demoData }) {
     const { colorTheme, toggleColorTheme } = useContext(ColorThemeContext);
     const [moreColors, setMoreColors] = useState(false);
 
@@ -54,23 +54,6 @@ export default function DesignPage() {
 
     const [maxLines, toggleMaxLines] = useToggle(1, 0);
     const [collapse, toggleCollapse] = useToggle();
-
-    const demoData = useStaticQuery(graphql`
-        query {
-            anime(slug: { eq: "bakemonogatari" }) {
-                images {
-                    facet
-                    link
-                }
-                ...AnimeCard
-                ...AnimeCardThemes
-            }
-        } 
-    `);
-
-    useEffect(() => {
-        Prism.highlightAll();
-    });
 
     return (
         <Box gapsColumn="3rem">
@@ -97,24 +80,24 @@ export default function DesignPage() {
             </Flex>
             <Text variant="h2">Typography</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
-                <Text variant="code" className="language-jsx">{`<Text>This is normal text.</Text>`}</Text>
+                <Highlight>{`<Text>This is normal text.</Text>`}</Highlight>
                 <Text>This is normal text.</Text>
 
                 <Flex gridColumn="1 / 3" gapsRow="0.5rem">
                     <Icon icon={faArrowRight} color="text-primary" />
-                    <Text as="p" color="text-muted">Always wrap text in a <Text variant="code" className="language-jsx">{`<Text>`}</Text> component. This way basic styling is applied and default browser values get overridden.</Text>
+                    <Text as="p" color="text-muted">Always wrap text in a <Highlight>{`<Text>`}</Highlight> component. This way basic styling is applied and default browser values get overridden.</Text>
                 </Flex>
 
-                <Text variant="code" className="language-jsx">{`<Text variant="h1">This is a page title.</Text>`}</Text>
+                <Highlight>{`<Text variant="h1">This is a page title.</Text>`}</Highlight>
                 <Text variant="h1">This is a page title.</Text>
 
-                <Text variant="code" className="language-jsx">{`<Text variant="h2">This is a section title.</Text>`}</Text>
+                <Highlight>{`<Text variant="h2">This is a section title.</Text>`}</Highlight>
                 <Text variant="h2">This is a section title.</Text>
 
-                <Text variant="code" className="language-jsx">{`<Text variant="small">This is small text.</Text>`}</Text>
+                <Highlight>{`<Text variant="small">This is small text.</Text>`}</Highlight>
                 <Text variant="small">This is small text.</Text>
 
-                <Text variant="code" className="language-jsx">{`<Text variant="code">This is code.</Text>`}</Text>
+                <Highlight>{`<Text variant="code">This is code.</Text>`}</Highlight>
                 <Text variant="code">This is code.</Text>
 
                 <Flex gridColumn="1 / 3" gapsRow="0.5rem">
@@ -122,10 +105,10 @@ export default function DesignPage() {
                     <Text as="p" color="text-muted">Use the <Text variant="code">variant</Text> prop to apply pre-defined styles to your text.</Text>
                 </Flex>
 
-                <Text variant="code" className="language-jsx">{`<Text maxLines={1}>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</Text>`}</Text>
+                <Highlight>{`<Text maxLines={1}>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</Text>`}</Highlight>
                 <Text maxLines={1}>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</Text>
 
-                <Text variant="code" className="language-jsx">{`<Text maxLines={3}>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</Text>`}</Text>
+                <Highlight>{`<Text maxLines={3}>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</Text>`}</Highlight>
                 <Text maxLines={3}>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</Text>
 
                 <Flex gridColumn="1 / 3" gapsRow="0.5rem">
@@ -133,26 +116,26 @@ export default function DesignPage() {
                     <Text as="p" color="text-muted">Use the <Text variant="code">maxLines</Text> prop to add a limit to the number of lines a text should have. Overflowing text will get replaced with three dots (<Text variant="code">...</Text>)</Text>
                 </Flex>
 
-                <Text variant="code" className="language-jsx">{`<Text color="text">This is colored text.</Text>`}</Text>
+                <Highlight>{`<Text color="text">This is colored text.</Text>`}</Highlight>
                 <Text color="text">This is colored text.</Text>
 
-                <Text variant="code" className="language-jsx">{`<Text color="text-muted">This is colored text.</Text>`}</Text>
+                <Highlight>{`<Text color="text-muted">This is colored text.</Text>`}</Highlight>
                 <Text color="text-muted">This is colored text.</Text>
 
-                <Text variant="code" className="language-jsx">{`<Text color="text-disabled">This is colored text.</Text>`}</Text>
+                <Highlight>{`<Text color="text-disabled">This is colored text.</Text>`}</Highlight>
                 <Text color="text-disabled">This is colored text.</Text>
 
-                <Text variant="code" className="language-jsx">{`<Text color="text-warning">This is colored text.</Text>`}</Text>
+                <Highlight>{`<Text color="text-warning">This is colored text.</Text>`}</Highlight>
                 <Text color="text-warning">This is colored text.</Text>
 
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             <ExternalLink href="https://reddit.com/r/AnimeThemes">
                                 This is an external link.
                             </ExternalLink>
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 <ExternalLink href="https://reddit.com/r/AnimeThemes">
                     This is an external link.
@@ -160,22 +143,22 @@ export default function DesignPage() {
             </Grid>
             <Text variant="h2">Iconography</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
-                <Text variant="code" className="language-jsx">{`<Icon icon={faRocket}/>`}</Text>
+                <Highlight>{`<Icon icon={faRocket}/>`}</Highlight>
                 <Icon icon={faRocket}/>
 
-                <Text variant="code" className="language-jsx">{`<Icon icon={faStar} color="text-primary"/>`}</Text>
+                <Highlight>{`<Icon icon={faStar} color="text-primary"/>`}</Highlight>
                 <Icon icon={faStar} color="text-primary"/>
 
-                <Text variant="code" className="language-jsx">{`<Icon icon={faSpinner} spin/>`}</Text>
+                <Highlight>{`<Icon icon={faSpinner} spin/>`}</Highlight>
                 <Icon icon={faSpinner} spin/>
             </Grid>
             <Text variant="h2">Tag</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
-                <Text variant="code" className="language-jsx">{`<Tag icon={faTag}>Tag</Tag>`}</Text>
+                <Highlight>{`<Tag icon={faTag}>Tag</Tag>`}</Highlight>
                 <Tag icon={faTag}>Tag</Tag>
 
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             <Tag icon={
                                 <Icon icon={faExclamationTriangle} color="text-warning"/>
@@ -183,7 +166,7 @@ export default function DesignPage() {
                                 <Text color="text-warning">Warning</Text>
                             </Tag>
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 <Tag icon={
                     <Icon icon={faExclamationTriangle} color="text-warning"/>
@@ -193,56 +176,56 @@ export default function DesignPage() {
             </Grid>
             <Text variant="h2">Button</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
-                <Text variant="code" className="language-jsx">{`<Button>Button</Button>`}</Text>
+                <Highlight>{`<Button>Button</Button>`}</Highlight>
                 <Button>Button</Button>
 
-                <Text variant="code" className="language-jsx">{`<Button variant="primary">Primary</Button>`}</Text>
+                <Highlight>{`<Button variant="primary">Primary</Button>`}</Highlight>
                 <Button variant="primary">Primary</Button>
 
-                <Text variant="code" className="language-jsx">{`<Button silent>Silent</Button>`}</Text>
+                <Highlight>{`<Button silent>Silent</Button>`}</Highlight>
                 <Button silent>Silent</Button>
 
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             <Button>
                                 <Icon icon={faLightbulb}/>
                             </Button>
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 <Button>
                     <Icon icon={faLightbulb}/>
                 </Button>
 
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             <Button variant="primary">
                                 <Icon icon={faLightbulb}/>
                             </Button>
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 <Button variant="primary">
                     <Icon icon={faLightbulb}/>
                 </Button>
 
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             <Button silent>
                                 <Icon icon={faLightbulb}/>
                             </Button>
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 <Button silent>
                     <Icon icon={faLightbulb}/>
                 </Button>
 
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             <Button>
                                 <Button as="span" variant="primary">
@@ -251,7 +234,7 @@ export default function DesignPage() {
                                 Play
                             </Button>
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 <Button>
                     <Button as="span" variant="primary">
@@ -261,7 +244,7 @@ export default function DesignPage() {
                 </Button>
 
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             <Button>
                                 <Button as="span" variant="primary">
@@ -270,7 +253,7 @@ export default function DesignPage() {
                                 Playing
                             </Button>
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 <Button>
                     <Button as="span" variant="primary">
@@ -280,7 +263,7 @@ export default function DesignPage() {
                 </Button>
 
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             <VideoButton
                                 anime={{ slug: "bakemonogatari" }}
@@ -294,7 +277,7 @@ export default function DesignPage() {
                                 }}
                             />
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 <VideoButton
                     anime={{ slug: "bakemonogatari" }}
@@ -311,7 +294,7 @@ export default function DesignPage() {
             <Text variant="h2">Switcher</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             // At the top of the component
                             const [selectedItem, setSelectedItem] = useState("anime");
@@ -323,7 +306,7 @@ export default function DesignPage() {
                                 onChange={setSelectedItem}
                             />
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 <Switcher
                     items={[ "anime", "themes", "artists" ]}
@@ -331,7 +314,7 @@ export default function DesignPage() {
                     onChange={setSelectedItem}
                 />
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             // At the top of the component
                             const [selectedEntity, entitySwitcher] = useSwitcher(
@@ -342,40 +325,40 @@ export default function DesignPage() {
                             // Inside the render output
                             {entitySwitcher}
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 {entitySwitcher}
             </Grid>
             <Text variant="h2">Card</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             <Card>
                                 <Text>This is text inside a card.</Text>
                             </Card>
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 <Card>
                     <Text>This is text inside a card.</Text>
                 </Card>
 
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             <Card hoverable>
                                 <Text>This is a hoverable card.</Text>
                             </Card>
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 <Card hoverable>
                     <Text>This is a hoverable card.</Text>
                 </Card>
 
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             <StaticQuery query={graphql\`
                                 query {
@@ -393,7 +376,7 @@ export default function DesignPage() {
                                 )}
                             </StaticQuery>
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 <AnimeSummaryCard
                     anime={demoData.anime}
@@ -402,15 +385,15 @@ export default function DesignPage() {
             </Grid>
             <Text variant="h2">Input</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
-                <Text variant="code" className="language-jsx">
+                <Highlight>
                     {`<SearchInput/>`}
-                </Text>
+                </Highlight>
                 <SearchInput/>
             </Grid>
             <Text variant="h2">Image</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             <StaticQuery query={graphql\`
                                 query {
@@ -429,7 +412,7 @@ export default function DesignPage() {
                                 )}
                             </StaticQuery>
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 <Box width="200px">
                     <CoverImage resourceWithImages={demoData.anime}/>
@@ -438,7 +421,7 @@ export default function DesignPage() {
             <Text variant="h2">Description List</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             <DescriptionList>
                                 <DescriptionList.Item title="Topic">
@@ -451,7 +434,7 @@ export default function DesignPage() {
                                 </DescriptionList.Item>
                             </DescriptionList>
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 <DescriptionList>
                     <DescriptionList.Item title="Topic">
@@ -467,7 +450,7 @@ export default function DesignPage() {
             <Text variant="h2">Experimental</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             // At the top of the component
                             const [season, setSeason] = useState(null);
@@ -488,7 +471,7 @@ export default function DesignPage() {
                                 width="150px"
                             />
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 <Listbox
                     options={[
@@ -508,7 +491,7 @@ export default function DesignPage() {
             <Text variant="h2">Utils</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             // At the top of the component
                             const [maxLines, toggleMaxLines] = useToggle(1, 0);
@@ -528,7 +511,7 @@ export default function DesignPage() {
                                 </Button>
                             </Card>
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 <Card gapsColumn="1rem">
                     <HeightTransition>
@@ -541,7 +524,7 @@ export default function DesignPage() {
                     </Button>
                 </Card>
                 <pre>
-                    <Text variant="code" block className="language-jsx">
+                    <Highlight block>
                         {codeBlock`
                             // At the top of the component
                             const [collapse, toggleCollapse] = useToggle();
@@ -558,7 +541,7 @@ export default function DesignPage() {
                                 </Button>
                             </Card>
                         `}
-                    </Text>
+                    </Highlight>
                 </pre>
                 <Card gapsColumn="1rem">
                     <Collapse collapse={collapse}>
@@ -582,4 +565,66 @@ function Color({ color }) {
             <Text variant="code">{color}</Text>
         </Flex>
     );
+}
+
+function Highlight({ children, block = false }) {
+    const codeHighlighted = Prism.highlight(children, Prism.languages.jsx, "jsx");
+    const codeBlock = (
+        <Text
+            variant="code"
+            block={block}
+            className="language-jsx"
+            dangerouslySetInnerHTML={{ __html: codeHighlighted }}
+        />
+    );
+
+    if (block) {
+        return (
+            <pre>
+                {codeBlock}
+            </pre>
+        );
+    }
+
+    return codeBlock;
+}
+
+export async function getStaticProps() {
+    const { data } = await fetchData(`
+        #graphql
+
+        query {
+            anime(slug: "bakemonogatari") {
+                name
+                slug
+                year
+                season
+                themes {
+                    slug
+                    type
+                    sequence
+                    entries {
+                        version
+                        videos {
+                            tags
+                        }
+                    }
+                }
+                resources {
+                    site
+                    link
+                }
+                images {
+                    facet
+                    link
+                }
+            }
+        }
+    `);
+
+    return {
+        props: {
+            demoData: data
+        }
+    };
 }

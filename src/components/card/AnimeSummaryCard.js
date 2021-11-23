@@ -1,4 +1,4 @@
-import { graphql, Link } from "gatsby";
+import Link from "next/link";
 import { faEllipsisH, faPlay } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "components/button";
 import { Text } from "components/text";
@@ -7,7 +7,7 @@ import createVideoSlug from "utils/createVideoSlug";
 import { Flex } from "components/box";
 import { Icon } from "components/icon";
 import { SummaryCard } from "components/card";
-import { chain, themeSequenceComparator, themeTypeComparator } from "utils/comparators";
+import { chain, themeIndexComparator, themeTypeComparator } from "utils/comparators";
 
 export function AnimeSummaryCard({ anime, hideThemes = false, maxThemes = 4 }) {
     const { smallCover } = useImage(anime);
@@ -25,8 +25,8 @@ export function AnimeSummaryCard({ anime, hideThemes = false, maxThemes = 4 }) {
         <SummaryCard.Description>
             <span>Anime</span>
             {!!anime.year && (
-                <Link to={premiereLink}>
-                    <Text link>{premiere}</Text>
+                <Link href={premiereLink} passHref>
+                    <Text as="a" link>{premiere}</Text>
                 </Link>
             )}
             <span>{anime.themes.length} themes</span>
@@ -41,10 +41,10 @@ export function AnimeSummaryCard({ anime, hideThemes = false, maxThemes = 4 }) {
             to={animeLink}
         >
             {!hideThemes && (
-                <Flex display={[ "none", "flex" ]} flexWrap="wrap" gapsBoth="0.75rem">
+                <Flex display={["none", "flex"]} flexWrap="wrap" gapsBoth="0.75rem">
                     {anime.themes
                         .filter((theme) => "entries" in theme && theme.entries.length && theme.entries[0].videos.length)
-                        .sort(chain(themeTypeComparator, themeSequenceComparator))
+                        .sort(chain(themeTypeComparator, themeIndexComparator))
                         .slice(0, maxThemes)
                         .map((theme) => {
                             const entry = theme.entries[0];
@@ -52,8 +52,8 @@ export function AnimeSummaryCard({ anime, hideThemes = false, maxThemes = 4 }) {
                             const videoSlug = createVideoSlug(theme, entry, video);
 
                             return (
-                                <Link key={theme.slug} to={`/anime/${anime.slug}/${videoSlug}`}>
-                                    <Button variant="on-card">
+                                <Link key={theme.slug} href={`/anime/${anime.slug}/${videoSlug}`} passHref>
+                                    <Button as="a" variant="on-card">
                                         <Button as="span" variant="primary">
                                             <Icon icon={faPlay}/>
                                         </Button>
@@ -64,8 +64,8 @@ export function AnimeSummaryCard({ anime, hideThemes = false, maxThemes = 4 }) {
                         })
                     }
                     {anime.themes.length > 4 && (
-                        <Link to={animeLink}>
-                            <Button variant="on-card" title="Show all themes">
+                        <Link href={animeLink} passHref>
+                            <Button as="a" variant="on-card" title="Show all themes">
                                 <Icon icon={faEllipsisH}/>
                             </Button>
                         </Link>
@@ -75,31 +75,3 @@ export function AnimeSummaryCard({ anime, hideThemes = false, maxThemes = 4 }) {
         </SummaryCard>
     );
 }
-
-export const query = graphql`
-    fragment AnimeCard on Anime {
-        name
-        slug
-        year
-        season
-        themes {
-            type
-            sequence
-            slug
-        }
-        resources {
-            site
-            link
-        }
-        images {
-            facet
-            link
-        }
-    }
-
-    fragment AnimeCardThemes on Anime {
-        themes {
-            ...VideoSlug
-        }
-    }
-`;

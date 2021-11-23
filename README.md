@@ -1,41 +1,58 @@
 # AnimeThemes Web Client
 
-## Development
-
-1. `npm install`
-2. `npm run develop`
-
-## Deployment
-
-### Hosting on root path
-
-1. `npm run build`
-2. Upload the contents of `public` to your server.
-
-### Hosting on sub-path
-
-1. Adjust `pathPrefix` in `gatsby-config.js` to your server environment.
-2. `npm run build-with-paths`
-3. Upload the contents of `public` to your server.
+1. [Configuration](#configuration)
+2. [Development](#development)
+3. [Deployment](#deployment)
+4. [Used technologies](#used-technologies)
 
 ## Configuration
 
-You can configure certain settings by creating a `.env.development` (for development) or `.env.production` (for deployment)
-in the client root directory and include the following:
+To get started you need to define some environment variables. This can be done by creating a `.env.local` file in the 
+root directory.
+
+This is a list of all available options:
 
 ```ini
-; The URL to the AnimeThemes API to use.
-; If not specified, "https://staging.animethemes.moe" is used as a default.
-GATSBY_API_URL = http://localhost
+; Datebase configuration
+;   Only username and password are required.
+;   All other fields take the specified values by default, but can be changed if wanted.
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=...
+DB_PASSWORD=...
+DB_DATABASE=animethemes
+
+; (Optional) The URL to the AnimeThemes API to use.
+;   For development this is "http://localhost" by default.
+;   For production this is "https://staging.animethemes.moe" by default.
+NEXT_PUBLIC_API_URL=http://localhost
+
+; (Optional) The URL from which video files should be served.
+;   By default this is "https://animethemes.moe". 
+NEXT_PUBLIC_VIDEO_URL=https://animethemes.moe
+
+; (Optional) The base path the app should be hosted on.
+;   By default the app is hosted on the root path (/).
+NEXT_PUBLIC_BASE_PATH=/wiki
 ```
 
-### Apache Configuration
+For more information on environment variables see the [Next.js documentation](https://nextjs.org/docs/basic-features/environment-variables).
 
-`.htaccess` files can be placed in `static` and will be copied to the `public` folder during build.
+## Development
+
+1. `npm install`
+2. `npm run dev`
+
+## Deployment
+
+1. `npm install` (If not done already.)
+2. `npm run build` generates all static pages and produces a production ready bundle.
+3. `npm run start` starts the server.
+4. The server is now listening on port 3000 for incoming requests.
 
 ## Used technologies
 
-- [Gatsby](https://www.gatsbyjs.com/)
+- [Next.js](https://www.nextjs.org/)
 - [styled-components](https://styled-components.com/)
 - [react-query](https://react-query.tanstack.com/)
 - [Font Awesome](https://fontawesome.com/)

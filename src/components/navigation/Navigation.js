@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Link, withPrefix } from "gatsby";
+import Link from "next/link";
 import {
     faBars,
     faLightbulb,
@@ -22,14 +22,15 @@ import ColorThemeContext from "context/colorThemeContext";
 import { Icon } from "components/icon";
 import { Text } from "components/text";
 import { Flex } from "components/box";
-import { useLocation } from "@reach/router";
 import useCurrentSeason from "hooks/useCurrentSeason";
 import navigateToRandomTheme from "utils/navigateToRandomTheme";
+import { useRouter } from "next/router";
+import withBasePath from "utils/withBasePath";
 
 export function Navigation({ offsetToggleButton = false }) {
     const [ show, setShow ] = useState(false);
     const { colorTheme, toggleColorTheme } = useContext(ColorThemeContext);
-    const location = useLocation();
+    const router = useRouter();
 
     const { currentYear, currentSeason } = useCurrentSeason();
 
@@ -37,28 +38,30 @@ export function Navigation({ offsetToggleButton = false }) {
     // we want to close the modal navigation.
     useEffect(() => {
         setShow(false);
-    }, [location]);
+    }, [router.pathname]);
 
     return (
         <>
             <StyledNavigation show={show} onClick={() => setShow(false)}>
                 <StyledNavigationContainer onClick={(event) => event.stopPropagation()}>
-                    <StyledLogoContainer to="/">
-                        <StyledLogo
-                            src={withPrefix("/img/logo.svg")}
-                            alt="Logo"
-                            width="277"
-                            height="150"
-                        />
-                    </StyledLogoContainer>
+                    <Link href="/" passHref>
+                        <StyledLogoContainer>
+                            <StyledLogo
+                                src={withBasePath("/img/logo.svg")}
+                                alt="Logo"
+                                width="277"
+                                height="150"
+                            />
+                        </StyledLogoContainer>
+                    </Link>
                     <Flex
                         flexDirection={[ "column", "row" ]}
                         gapsRow={[ 0, "0.5rem" ]}
                         gapsColumn={[ "0.5rem", 0 ]}
                         alignItems="flex-start"
                     >
-                        <Link to="/search">
-                            <Button variant="on-card" silent gapsRow="0.5rem">
+                        <Link href="/search" passHref>
+                            <Button as="a" variant="on-card" silent gapsRow="0.5rem">
                                 <Icon icon={faSearch}/>
                                 <Text>Search</Text>
                             </Button>
@@ -67,8 +70,8 @@ export function Navigation({ offsetToggleButton = false }) {
                             <Icon icon={faRandom}/>
                             <Text>Play Random</Text>
                         </Button>
-                        <Link to={`/year/${currentYear}/${currentSeason}`}>
-                            <Button variant="on-card" silent gapsRow="0.5rem">
+                        <Link href={(currentYear && currentSeason) ? `/year/${currentYear}/${currentSeason}` : "/"} passHref>
+                            <Button as="a" variant="on-card" silent gapsRow="0.5rem">
                                 <Icon icon={faTv}/>
                                 <Text>Current Season</Text>
                             </Button>

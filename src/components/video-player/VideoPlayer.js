@@ -6,7 +6,6 @@ import {
     StyledOverlay, StyledPlayerInfo, StyledPlayerProgress, StyledPlayerProgressBar
 } from "./VideoPlayer.style";
 import { faDownload, faExpandAlt, faPause, faPlay, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { navigate } from "gatsby";
 import PlayerContext from "context/playerContext";
 import createVideoSlug from "utils/createVideoSlug";
 import { useMedia } from "use-media";
@@ -17,8 +16,9 @@ import { Text } from "components/text";
 import { Flex } from "components/box";
 import { Container } from "components/container";
 import useCompatability from "hooks/useCompatability";
+import { useRouter } from "next/router";
 
-const videoBaseUrl = process.env.GATSBY_VIDEO_URL || "https://animethemes.moe";
+const videoBaseUrl = process.env.NEXT_PUBLIC_VIDEO_URL || "https://animethemes.moe";
 
 export function VideoPlayer({ video, entry, background, ...props }) {
     const [isPlaying, setPlaying] = useState(false);
@@ -28,6 +28,7 @@ export function VideoPlayer({ video, entry, background, ...props }) {
     const { setCurrentVideo } = useContext(PlayerContext);
     const isMobile = useMedia({ maxWidth: "720px" });
     const videoUrl = `${videoBaseUrl}/video/${video.basename}`;
+    const router = useRouter();
 
     function togglePlay() {
         if (isPlaying) {
@@ -39,7 +40,7 @@ export function VideoPlayer({ video, entry, background, ...props }) {
 
     function maximize() {
         const videoSlug = createVideoSlug(entry.theme, entry, video);
-        navigate(`/anime/${entry.theme.anime.slug}/${videoSlug}`);
+        router.push(`/anime/${entry.theme.anime.slug}/${videoSlug}`);
     }
 
     function preventTextSelection(event) {

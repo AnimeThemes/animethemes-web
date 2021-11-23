@@ -1,7 +1,6 @@
 import styled, { css } from "styled-components";
 import { Container } from "components/container";
 import { gapsColumn, gapsRow } from "styles/mixins";
-import { Link } from "gatsby";
 import { Button } from "components/button";
 import theme from "theme";
 
@@ -59,7 +58,7 @@ export const StyledNavigationContainer = styled(Container)`
     }
 `;
 
-export const StyledLogoContainer = styled(Link)`
+export const StyledLogoContainer = styled.a`
     display: flex;
     align-items: center;
 

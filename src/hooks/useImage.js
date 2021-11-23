@@ -5,10 +5,10 @@ export default function useImage(resourceWithImages) {
         for (const image of resourceWithImages.images) {
             switch (image.facet) {
                 case "Small Cover":
-                    images.smallCover = image.link;
+                    images.smallCover = image.link.replace("localhost", "staging.animethemes.moe");
                     break;
                 case "Large Cover":
-                    images.largeCover = image.link;
+                    images.largeCover = image.link.replace("localhost", "staging.animethemes.moe");
                     break;
                 default:
                 // Ignore
