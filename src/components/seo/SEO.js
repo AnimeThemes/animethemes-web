@@ -11,12 +11,12 @@ export function SEO({
 
     return (
         <Head>
-            <title>{titleWithSuffix}</title>
-            <meta property="description" content={description}/>
-            <meta property="og:title" content={titleWithSuffix}/>
-            <meta property="og:description" content={description}/>
-            <meta property="og:image" content={image}/>
-            <meta property="og:site_name" content="AnimeThemes"/>
+            <title key="title">{titleWithSuffix}</title>
+            <meta key="description" name="description" content={description}/>
+            <meta key="og:title" name="og:title" content={titleWithSuffix}/>
+            <meta key="og:description" name="og:description" content={description}/>
+            <meta key="og:image" name="og:image" content={image}/>
+            <meta key="og:site_name" name="og:site_name" content="AnimeThemes"/>
             {children}
         </Head>
     );
