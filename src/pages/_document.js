@@ -1,6 +1,27 @@
 import Document, { Html, Head, Main, NextScript } from "next/document";
 import { ServerStyleSheet } from "styled-components";
 
+const ThemeInjection = () => {
+    // language=JavaScript
+    const injectTheme = `
+        (function() {
+            let theme = window.localStorage.getItem("theme");
+            if (!theme && window.matchMedia("(prefers-color-scheme: light)").matches) {
+                theme = "light";
+            }
+            if (theme) {
+                document.body.setAttribute("theme", theme);
+            }
+        })();
+    `;
+
+    return (
+        <script
+            dangerouslySetInnerHTML={{ __html: injectTheme }}
+        />
+    );
+};
+
 export default class MyDocument extends Document {
 
     static async getInitialProps(ctx) {
@@ -31,9 +52,10 @@ export default class MyDocument extends Document {
 
     render() {
         return (
-            <Html>
+            <Html lang="en">
                 <Head/>
                 <body theme="dark">
+                    <ThemeInjection/>
                     <Main/>
                     <NextScript/>
                 </body>

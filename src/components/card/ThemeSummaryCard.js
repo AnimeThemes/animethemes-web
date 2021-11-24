@@ -4,21 +4,6 @@ import { Text } from "components/text";
 import useImage from "hooks/useImage";
 import createVideoSlug from "utils/createVideoSlug";
 import { SummaryCard } from "components/card";
-import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
-import { Icon } from "components/icon";
-import { Button } from "components/button";
-import styled from "styled-components";
-
-const StyledSummaryCard = styled(SummaryCard)``;
-const StyledShowOnHover = styled.div`
-    display: none;
-
-    @media (hover: hover) and (pointer: fine) {
-        ${StyledSummaryCard}:hover & {
-            display: initial;
-        }
-    }
-`;
 
 // Specify an artist if you want to display this in an artist context (e.g. artist page)
 export function ThemeSummaryCard({ theme, artist }) {
@@ -49,17 +34,11 @@ export function ThemeSummaryCard({ theme, artist }) {
     );
 
     return (
-        <StyledSummaryCard
+        <SummaryCard
             title={<SongTitleWithArtists song={theme.song} songTitleLinkTo={to} artist={artist}/>}
             description={description}
             image={smallCover}
             to={to}
-        >
-            <StyledShowOnHover>
-                <Button variant="on-card" circle silent>
-                    <Icon icon={faEllipsisV}/>
-                </Button>
-            </StyledShowOnHover>
-        </StyledSummaryCard>
+        />
     );
 }
