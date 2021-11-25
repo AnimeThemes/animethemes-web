@@ -9,9 +9,11 @@ import useImage from "hooks/useImage";
 import { fetchData } from "lib/server";
 import createVideoSlug from "utils/createVideoSlug";
 import { SEO } from "components/seo";
+import { videoBaseUrl } from "lib/client/api";
 
 export default function VideoPage({ anime, theme, entry, video }) {
     const { smallCover, largeCover } = useImage(anime);
+    const videoUrl = `${videoBaseUrl}/video/${video.basename}`;
 
     useEffect(() => {
         if (theme && smallCover && navigator.mediaSession) {
@@ -63,7 +65,14 @@ export default function VideoPage({ anime, theme, entry, video }) {
 
     return (
         <Box gapsColumn="1.5rem">
-            <SEO title={pageTitle} description={pageDesc} image={largeCover}/>
+            <SEO title={pageTitle} description={pageDesc} image={largeCover}>
+                <meta name="og:video" content={videoUrl}/>
+                <meta name="og:video:url" content={videoUrl}/>
+                <meta name="og:video:secure_url" content={videoUrl}/>
+                <meta name="og:video:type" content="video/webm"/>
+                <meta name="og:video:width" content="1280"/>
+                <meta name="og:video:height" content="720"/>
+            </SEO>
             <Flex flexDirection={["column", "row"]} alignItems={["stretch", "center"]} gapsRow={[0, "1rem"]} gapsColumn={["1rem", 0]}>
                 <Box flex="1">
                     <Flex flexDirection="column" justifyContent="center" gapsColumn="0.25rem">
