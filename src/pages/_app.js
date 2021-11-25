@@ -17,6 +17,9 @@ import "styles/prism.scss";
 import Head from "next/head";
 import withBasePath from "utils/withBasePath";
 import { SEO } from "components/seo";
+import { config } from "@fortawesome/fontawesome-svg-core";
+
+config.autoAddCss = false;
 
 const queryClient = new QueryClient();
 

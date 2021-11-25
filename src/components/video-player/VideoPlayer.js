@@ -17,8 +17,7 @@ import { Flex } from "components/box";
 import { Container } from "components/container";
 import useCompatability from "hooks/useCompatability";
 import { useRouter } from "next/router";
-
-const videoBaseUrl = process.env.NEXT_PUBLIC_VIDEO_URL || "https://animethemes.moe";
+import { videoBaseUrl } from "lib/client/api";
 
 export function VideoPlayer({ video, entry, background, ...props }) {
     const [isPlaying, setPlaying] = useState(false);
