@@ -190,6 +190,10 @@ module.exports = {
     },
     Artist: {
         performances: (artist) => knex("artist_song").where({ artist_id: artist.artist_id }).select(),
+        resources: (artist) => knex("resources")
+            .innerJoin("artist_resource", "artist_resource.resource_id", "resources.resource_id")
+            .where({ "artist_resource.artist_id": artist.artist_id })
+            .select("resources.*"),
         images: (artist) => knex("images")
             .innerJoin("artist_image", "artist_image.image_id", "images.image_id")
             .where({ "artist_image.artist_id": artist.artist_id })

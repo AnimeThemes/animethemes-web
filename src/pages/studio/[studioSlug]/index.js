@@ -64,13 +64,15 @@ export default function StudioDetailPage({ studio }) {
 
     const animeSorted = [ ...anime ].sort(sortByComparators.get(sortBy));
 
+    const hasDescriptionList = !!studio.resources && !!studio.resources.length;
+
     return (
         <Box gapsColumn="1.5rem">
             <SEO title={studio.name}/>
             <Text variant="h1">{studio.name}</Text>
             <SidebarContainer>
-                <Box display={[ "none", "block" ]} gapsColumn="1.5rem">
-                    <AspectRatio ratio={2 / 3}>
+                <Box display={[ hasDescriptionList ? "block" : "none", "block" ]}>
+                    <AspectRatio display={[ "none", "block" ]} mb="1.5rem" ratio={2 / 3}>
                         <StyledCoverContainer>
                             {images.map((image) => (
                                 <StyledCoverItemContainer key={image}>
