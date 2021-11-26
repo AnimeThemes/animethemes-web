@@ -16,6 +16,7 @@ module.exports = `
         yearAll: [Year]
         season(year: Int!, value: String!): Season
         seasonAll(year: Int): [Season]
+        counter: Counter
     }
 
     type Year {
@@ -27,6 +28,16 @@ module.exports = `
         value: String!
         year: Year
         anime: [Anime]
+    }
+    
+    type Counter {
+        anime: Int!
+        artist: Int!
+        series: Int!
+        studio: Int!
+        video: Int!
+        year: Int!
+        season: Int!
     }
     
     type Anime {

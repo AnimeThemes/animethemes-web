@@ -18,6 +18,7 @@ import Head from "next/head";
 import withBasePath from "utils/withBasePath";
 import { SEO } from "components/seo";
 import { config } from "@fortawesome/fontawesome-svg-core";
+import { AnnouncementToast } from "components/toast";
 
 config.autoAddCss = false;
 
@@ -65,7 +66,7 @@ function MyApp({ Component, pageProps }) {
                                 <meta name="theme-color" content="#1c1823"/>
                             </Head>
                             <Flex flexDirection="column" minHeight="100%" bg="background">
-                                <Navigation/>
+                                <Navigation offsetToggleButton={!!currentVideo && !video}/>
                                 {currentVideo && (
                                     <VideoPlayer
                                         video={currentVideo}
@@ -89,6 +90,7 @@ function MyApp({ Component, pageProps }) {
                                 </Container>
                                 <Footer/>
                             </Flex>
+                            <AnnouncementToast/>
                         </LazyMotion>
                     </QueryClientProvider>
                 </PlayerContext.Provider>
