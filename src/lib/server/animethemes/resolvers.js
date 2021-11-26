@@ -139,6 +139,7 @@ module.exports = {
             .groupBy([ "season", "year" ])
             .select([ "season", "year" ])
             .then((results) => results.map((anime) => ({ value: anime.season, year: { value: year } }))),
+        counter: () => ({})
     },
     Year: {
         seasons: (year) =>  knex("anime")
@@ -158,6 +159,15 @@ module.exports = {
                 }
             })
             .select(),
+    },
+    Counter: {
+        anime: () => knex("anime").count({ count: "*" }).first().then((first) => first.count),
+        artist: () => knex("artists").count({ count: "*" }).first().then((first) => first.count),
+        series: () => knex("series").count({ count: "*" }).first().then((first) => first.count),
+        studio: () => knex("studios").count({ count: "*" }).first().then((first) => first.count),
+        video: () => knex("videos").count({ count: "*" }).first().then((first) => first.count),
+        year: () => knex("anime").countDistinct({ count: "year" }).first().then((first) => first.count),
+        season: () => knex("anime").countDistinct({ count: [ "year", "season" ] }).first().then((first) => first.count)
     },
     Anime: {
         id: (anime) => anime.anime_id,

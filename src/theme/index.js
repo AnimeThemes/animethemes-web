@@ -11,7 +11,8 @@ const theme = {
         switcherButton: 1,
         switcherText: 2,
         videoPlayer: 5,
-        videoPlayerOverlay: 6
+        videoPlayerOverlay: 6,
+        toast: 20
     }
 };
 

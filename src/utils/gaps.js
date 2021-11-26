@@ -40,3 +40,10 @@ export const gaps = css`
         ${gapsBothItemSystem}
     }
 `;
+
+export const gapsModern = system({
+    gap: {
+        property: "gap",
+        scale: "space"
+    }
+});

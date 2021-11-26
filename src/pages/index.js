@@ -163,7 +163,7 @@ export async function getStaticProps() {
         #graphql
 
         query {
-            featuredTheme: theme(id: 767) {
+            featuredTheme: theme(id: 10778) {
                 slug
                 anime {
                     slug
