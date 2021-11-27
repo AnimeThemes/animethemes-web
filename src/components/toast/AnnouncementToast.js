@@ -3,13 +3,16 @@ import { Toast } from "components/toast";
 import { Text } from "components/text";
 import { fetchAnnouncements } from "lib/client/announcement";
 import { Box, Flex } from "components/box";
+import { showAnnouncementsSetting } from "utils/settings";
 
 export function AnnouncementToast() {
     const [ announcements, setAnnouncements ] = useState([]);
 
     useEffect(() => {
-        fetchAnnouncements()
-            .then(setAnnouncements);
+        if (window.localStorage.getItem(showAnnouncementsSetting.key) !== showAnnouncementsSetting.values.disabled) {
+            fetchAnnouncements()
+                .then(setAnnouncements);
+        }
     }, []);
 
     if (!announcements.length) {

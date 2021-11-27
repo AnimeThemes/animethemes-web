@@ -15,6 +15,7 @@ module.exports = {
     Query: {
         anime: (_, { id, slug }) => knex("anime")
             .where((builder) => {
+                builder.where("deleted_at", null);
                 if (id) {
                     builder.where("anime_id", id);
                 }
@@ -25,6 +26,8 @@ module.exports = {
             .first(),
         animeAll: (_, { limit, year, season }) => {
             const query = knex("anime");
+
+            query.where("deleted_at", null);
 
             if (year) {
                 query.where("year", year);
@@ -45,6 +48,7 @@ module.exports = {
         },
         theme: (_, { id }) => knex("anime_themes")
             .where((builder) => {
+                builder.where("deleted_at", null);
                 if (id) {
                     builder.where("theme_id", id);
                 }
@@ -52,6 +56,8 @@ module.exports = {
             .first(),
         themeAll: (_, { limit, orderBy, orderDesc }) => {
             const query = knex("anime_themes");
+
+            query.where("deleted_at", null);
 
             if (orderBy) {
                 query.orderBy(orderBy, orderDesc ? "desc" : "asc");
@@ -65,6 +71,7 @@ module.exports = {
         },
         artist: (_, { id, slug }) => knex("artists")
             .where((builder) => {
+                builder.where("deleted_at", null);
                 if (id) {
                     builder.where("artist_id", id);
                 }
@@ -76,6 +83,8 @@ module.exports = {
         artistAll: (_, { limit }) => {
             const query = knex("artists");
 
+            query.where("deleted_at", null);
+
             if (limit) {
                 query.limit(limit);
             }
@@ -84,6 +93,7 @@ module.exports = {
         },
         series: (_, { id, slug }) => knex("series")
             .where((builder) => {
+                builder.where("deleted_at", null);
                 if (id) {
                     builder.where("series_id", id);
                 }
@@ -95,6 +105,8 @@ module.exports = {
         seriesAll: (_, { limit }) => {
             const query = knex("series");
 
+            query.where("deleted_at", null);
+
             if (limit) {
                 query.limit(limit);
             }
@@ -103,6 +115,7 @@ module.exports = {
         },
         studio: (_, { id, slug }) => knex("studios")
             .where((builder) => {
+                builder.where("deleted_at", null);
                 if (id) {
                     builder.where("studio_id", id);
                 }
@@ -114,6 +127,8 @@ module.exports = {
         studioAll: (_, { limit }) => {
             const query = knex("studios");
 
+            query.where("deleted_at", null);
+
             if (limit) {
                 query.limit(limit);
             }
@@ -122,6 +137,7 @@ module.exports = {
         },
         year: (_, { value }) => ({ value }),
         yearAll: () => knex("anime")
+            .where("deleted_at", null)
             .groupBy("year")
             .select("year")
             .then((results) => results.map((anime) => ({ value: anime.year }))),
@@ -132,6 +148,7 @@ module.exports = {
         }),
         seasonAll: (_, { year }) => knex("anime")
             .where((builder) => {
+                builder.where("deleted_at", null);
                 if (year) {
                     builder.where("year", year);
                 }
@@ -143,6 +160,7 @@ module.exports = {
     },
     Year: {
         seasons: (year) =>  knex("anime")
+            .where("deleted_at", null)
             .where("year", year.value)
             .groupBy("season")
             .select("season")
@@ -152,6 +170,8 @@ module.exports = {
         value: (season) => animeSeason.get(season.value),
         anime: (season) => knex("anime")
             .where((builder) => {
+                builder.where("deleted_at", null);
+
                 builder.where("season", season.value);
 
                 if (season.year) {
@@ -161,66 +181,73 @@ module.exports = {
             .select(),
     },
     Counter: {
-        anime: () => knex("anime").count({ count: "*" }).first().then((first) => first.count),
-        artist: () => knex("artists").count({ count: "*" }).first().then((first) => first.count),
-        series: () => knex("series").count({ count: "*" }).first().then((first) => first.count),
-        studio: () => knex("studios").count({ count: "*" }).first().then((first) => first.count),
-        video: () => knex("videos").count({ count: "*" }).first().then((first) => first.count),
-        year: () => knex("anime").countDistinct({ count: "year" }).first().then((first) => first.count),
-        season: () => knex("anime").countDistinct({ count: [ "year", "season" ] }).first().then((first) => first.count)
+        anime: () => knex("anime").where("deleted_at", null).count({ count: "*" }).first().then((first) => first.count),
+        artist: () => knex("artists").where("deleted_at", null).count({ count: "*" }).first().then((first) => first.count),
+        series: () => knex("series").where("deleted_at", null).count({ count: "*" }).first().then((first) => first.count),
+        studio: () => knex("studios").where("deleted_at", null).count({ count: "*" }).first().then((first) => first.count),
+        video: () => knex("videos").where("deleted_at", null).count({ count: "*" }).first().then((first) => first.count),
+        year: () => knex("anime").where("deleted_at", null).countDistinct({ count: "year" }).first().then((first) => first.count),
+        season: () => knex("anime").where("deleted_at", null).countDistinct({ count: [ "year", "season" ] }).first().then((first) => first.count)
     },
     Anime: {
         id: (anime) => anime.anime_id,
         season: (anime) => animeSeason.get(anime.season),
-        synonyms: (anime) => knex("anime_synonyms").where({ anime_id: anime.anime_id }).select(),
-        themes: (anime) => knex("anime_themes").where({ anime_id: anime.anime_id }).select(),
+        synonyms: (anime) => knex("anime_synonyms").where("deleted_at", null).where({ anime_id: anime.anime_id }).select(),
+        themes: (anime) => knex("anime_themes").where("deleted_at", null).where({ anime_id: anime.anime_id }).select(),
         series: (anime) => knex("series")
             .innerJoin("anime_series", "anime_series.series_id", "series.series_id")
+            .where("deleted_at", null)
             .where({ "anime_series.anime_id": anime.anime_id })
             .select("series.*"),
         studios: (anime) => knex("studios")
             .innerJoin("anime_studio", "anime_studio.studio_id", "studios.studio_id")
+            .where("deleted_at", null)
             .where({ "anime_studio.anime_id": anime.anime_id })
             .select("studios.*"),
         resources: (anime) => knex("resources")
             .innerJoin("anime_resource", "anime_resource.resource_id", "resources.resource_id")
+            .where("deleted_at", null)
             .where({ "anime_resource.anime_id": anime.anime_id })
             .select("resources.*"),
         images: (anime) => knex("images")
             .innerJoin("anime_image", "anime_image.image_id", "images.image_id")
+            .where("deleted_at", null)
             .where({ "anime_image.anime_id": anime.anime_id })
             .select("images.*")
     },
     Theme: {
         type: (theme) => themeType.get(theme.type),
         sequence: (theme) => theme.sequence || 0,
-        song: (theme) => knex("songs").where({ song_id: theme.song_id }).first(),
-        anime: (theme) => knex("anime").where({ anime_id: theme.anime_id }).first(),
-        entries: (theme) => knex("anime_theme_entries").where({ theme_id: theme.theme_id }).select()
+        song: (theme) => knex("songs").where("deleted_at", null).where({ song_id: theme.song_id }).first(),
+        anime: (theme) => knex("anime").where("deleted_at", null).where({ anime_id: theme.anime_id }).first(),
+        entries: (theme) => knex("anime_theme_entries").where("deleted_at", null).where({ theme_id: theme.theme_id }).select()
     },
     Artist: {
         performances: (artist) => knex("artist_song").where({ artist_id: artist.artist_id }).select(),
         resources: (artist) => knex("resources")
             .innerJoin("artist_resource", "artist_resource.resource_id", "resources.resource_id")
+            .where("deleted_at", null)
             .where({ "artist_resource.artist_id": artist.artist_id })
             .select("resources.*"),
         images: (artist) => knex("images")
             .innerJoin("artist_image", "artist_image.image_id", "images.image_id")
+            .where("deleted_at", null)
             .where({ "artist_image.artist_id": artist.artist_id })
             .select("images.*")
     },
     Song: {
-        themes: (song) => knex("anime_themes").where({ song_id: song.song_id }).select(),
+        themes: (song) => knex("anime_themes").where("deleted_at", null).where({ song_id: song.song_id }).select(),
         performances: (song) => knex("artist_song").where({ song_id: song.song_id }).select(),
     },
     Performance: {
-        artist: (performance) => knex("artists").where({ artist_id: performance.artist_id }).first(),
-        song: (performance) => knex("songs").where({ song_id: performance.song_id }).first()
+        artist: (performance) => knex("artists").where("deleted_at", null).where({ artist_id: performance.artist_id }).first(),
+        song: (performance) => knex("songs").where("deleted_at", null).where({ song_id: performance.song_id }).first()
     },
     Entry: {
         version: (entry) => entry.version || 1,
         videos: (entry) => knex("videos")
             .innerJoin("anime_theme_entry_video", "anime_theme_entry_video.video_id", "videos.video_id")
+            .where("deleted_at", null)
             .where({ "anime_theme_entry_video.entry_id": entry.entry_id })
             .select("videos.*")
     },
@@ -259,21 +286,25 @@ module.exports = {
     Series: {
         anime: (series) => knex("anime")
             .innerJoin("anime_series", "anime_series.anime_id", "anime.anime_id")
+            .where("deleted_at", null)
             .where({ "anime_series.series_id": series.series_id })
             .select("anime.*")
     },
     Studio: {
         anime: (studio) => knex("anime")
             .innerJoin("anime_studio", "anime_studio.anime_id", "anime.anime_id")
+            .where("deleted_at", null)
             .where({ "anime_studio.studio_id": studio.studio_id })
             .select("anime.*"),
         resources: (studio) => knex("resources")
             .innerJoin("studio_resource", "studio_resource.resource_id", "resources.resource_id")
+            .where("deleted_at", null)
             .where({ "studio_resource.studio_id": studio.studio_id })
             .select("resources.*")
     },
     BracketCharacter: {
         theme: (character) => knex("anime_themes")
+            .where("deleted_at", null)
             .where("theme_id", character.theme)
             .first()
     }

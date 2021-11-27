@@ -2,15 +2,21 @@ import React from "react";
 import Link from "next/link";
 import { Text } from "components/text";
 import styled from "styled-components";
-import { Box, Grid } from "components/box";
+import { Box, Flex, Grid } from "components/box";
 import { ExternalLink } from "components/external-link";
 import { fetchData } from "lib/server";
+import { Listbox } from "components/listbox";
+import { SearchFilterGroup } from "components/search-filter";
+import useSetting from "hooks/useSetting";
+import { showAnnouncementsSetting } from "utils/settings";
 
 const StyledLink = styled.a`
     max-width: 100%;
 `;
 
 export default function DevelopmentPage({ counter }) {
+    const [showAnnouncements, setShowAnnouncements] = useSetting(showAnnouncementsSetting);
+
     return (
         <Box gapsColumn="1.5rem">
             <Text variant="h1">Development Hub</Text>
@@ -170,6 +176,18 @@ export default function DevelopmentPage({ counter }) {
                     }
                 />
             </Box>
+            <Text variant="h2">Settings</Text>
+            <SearchFilterGroup>
+                <Flex flexDirection="column" alignItems="stretch" gapsColumn="0.5rem">
+                    <Text>Show Announcements</Text>
+                    <Listbox
+                        options={Object.values(showAnnouncementsSetting.values)}
+                        selectedValue={showAnnouncements}
+                        defaultValue={showAnnouncements}
+                        onSelect={setShowAnnouncements}
+                    />
+                </Flex>
+            </SearchFilterGroup>
         </Box>
     );
 }
