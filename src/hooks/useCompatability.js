@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 export default function useCompatability(initialValues = {}) {
-    const [canPlayVideo, setCanPlayVideo] = useState(initialValues.canPlayVideo || true);
+    const [canPlayVideo, setCanPlayVideo] = useState(initialValues.canPlayVideo ?? true);
 
     useEffect(() => {
         if (document?.createElement) {
