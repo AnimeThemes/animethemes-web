@@ -223,7 +223,11 @@ module.exports = {
         entries: (theme) => knex("anime_theme_entries").where("deleted_at", null).where({ theme_id: theme.theme_id }).select()
     },
     Artist: {
-        performances: (artist) => knex("artist_song").where({ artist_id: artist.artist_id }).select(),
+        performances: (artist) => knex("artist_song")
+            .innerJoin("songs", "artist_song.song_id", "songs.song_id")
+            .where("deleted_at", null)
+            .where({ "artist_song.artist_id": artist.artist_id })
+            .select("artist_song.*"),
         resources: (artist) => knex("resources")
             .innerJoin("artist_resource", "artist_resource.resource_id", "resources.resource_id")
             .where("deleted_at", null)
@@ -237,7 +241,11 @@ module.exports = {
     },
     Song: {
         themes: (song) => knex("anime_themes").where("deleted_at", null).where({ song_id: song.song_id }).select(),
-        performances: (song) => knex("artist_song").where({ song_id: song.song_id }).select(),
+        performances: (song) => knex("artist_song")
+            .innerJoin("artists", "artist_song.artist_id", "artists.artist_id")
+            .where("deleted_at", null)
+            .where({ "artist_song.song_id": song.song_id })
+            .select("artist_song.*"),
     },
     Performance: {
         artist: (performance) => knex("artists").where("deleted_at", null).where({ artist_id: performance.artist_id }).first(),
