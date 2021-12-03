@@ -5,6 +5,7 @@ import theme from "theme";
 export const Text = styled.span.attrs(getAttributes)`
     // Reset margin for elements like <p>
     margin: 0;
+    scroll-margin-top: 4rem;
     
     ${(props) => props.variant === "h1" && css`
         font-size: 2rem;

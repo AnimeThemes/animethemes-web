@@ -3,17 +3,18 @@
     "short_name": "AnimeThemes",
     "icons": [
         {
-            "src": "/android-chrome-192x192.png",
+            "src": "/wiki-next/android-chrome-192x192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "/android-chrome-512x512.png",
+            "src": "/wiki-next/android-chrome-512x512.png",
             "sizes": "512x512",
             "type": "image/png"
         }
     ],
     "theme_color": "#ffffff",
+    "start_url": "/wiki-next/",
     "background_color": "#ffffff",
     "display": "standalone"
 }

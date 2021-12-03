@@ -9,7 +9,13 @@ import { useState } from "react";
 import { SearchFilterGroup, SearchFilterSortBy } from "components/search-filter";
 import useToggle from "hooks/useToggle";
 import { FilterToggleButton } from "components/button";
-import { animeNameComparator, animePremiereComparator, chain, reverse } from "utils/comparators";
+import {
+    animeNameComparator,
+    animePremiereComparator,
+    chain,
+    resourceSiteComparator,
+    reverse
+} from "utils/comparators";
 import { fetchData } from "lib/server";
 import { DescriptionList } from "components/description-list";
 import { ExternalLink } from "components/external-link";
@@ -85,7 +91,7 @@ export default function StudioDetailPage({ studio }) {
                         {!!studio.resources && !!studio.resources.length && (
                             <DescriptionList.Item title="Links">
                                 <StyledList>
-                                    {studio.resources.map((resource) => (
+                                    {studio.resources.sort(resourceSiteComparator).map((resource) => (
                                         <ExternalLink key={resource.link} href={resource.link}>
                                             {resource.site}
                                         </ExternalLink>

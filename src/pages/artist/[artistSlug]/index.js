@@ -14,7 +14,14 @@ import { FilterToggleButton } from "components/button";
 import { SearchFilterGroup, SearchFilterSortBy } from "components/search-filter";
 import { Collapse } from "components/utils";
 import { Listbox } from "components/listbox";
-import { animeNameComparator, animePremiereComparator, chain, reverse, songTitleComparator } from "utils/comparators";
+import {
+    animeNameComparator,
+    animePremiereComparator,
+    chain,
+    resourceSiteComparator,
+    reverse,
+    songTitleComparator
+} from "utils/comparators";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import useImage from "hooks/useImage";
@@ -115,7 +122,7 @@ export default function ArtistDetailPage({ artist }) {
                         {!!artist.resources && !!artist.resources.length && (
                             <DescriptionList.Item title="Links">
                                 <StyledList>
-                                    {artist.resources.map((resource) => (
+                                    {artist.resources.sort(resourceSiteComparator).map((resource) => (
                                         <ExternalLink key={resource.link} href={resource.link}>
                                             {resource.site}
                                         </ExternalLink>
