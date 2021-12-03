@@ -14,6 +14,7 @@ import { AnimeThemeFilter } from "components/filter";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import useImage from "hooks/useImage";
+import { resourceSiteComparator, seriesNameComparator, studioNameComparator } from "utils/comparators";
 
 const StyledList = styled.div`
   display: flex;
@@ -55,7 +56,7 @@ export default function AnimeDetailPage({ anime }) {
                         {!!anime.series?.length && (
                             <DescriptionList.Item title="Series">
                                 <StyledList>
-                                    {anime.series.map((series) =>
+                                    {anime.series.sort(seriesNameComparator).map((series) =>
                                         <Link key={series.slug} href={`/series/${series.slug}`} passHref>
                                             <Text link>
                                                 {series.name}
@@ -68,7 +69,7 @@ export default function AnimeDetailPage({ anime }) {
                         {!!anime.studios?.length && (
                             <DescriptionList.Item title="Studios">
                                 <StyledList>
-                                    {anime.studios.map((studio) =>
+                                    {anime.studios.sort(studioNameComparator).map((studio) =>
                                         <Link key={studio.slug} href={`/studio/${studio.slug}`} passHref>
                                             <Text link>
                                                 {studio.name}
@@ -81,7 +82,7 @@ export default function AnimeDetailPage({ anime }) {
                         {!!anime.resources?.length && (
                             <DescriptionList.Item title="Links">
                                 <StyledList>
-                                    {anime.resources.map((resource) => (
+                                    {anime.resources.sort(resourceSiteComparator).map((resource) => (
                                         <ExternalLink key={resource.link} href={resource.link}>
                                             {resource.site}
                                         </ExternalLink>

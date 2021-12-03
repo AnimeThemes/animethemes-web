@@ -27,3 +27,6 @@ export const animePremiereComparator = chain(animeYearComparator, animeSeasonCom
 export const songTitleComparator = (a, b) => a.song.title.localeCompare(b.song.title);
 export const themeTypeComparator = (a, b) => themeTypeOrder.indexOf(a.type.toLowerCase()) - themeTypeOrder.indexOf(b.type.toLowerCase());
 export const themeIndexComparator = (a, b) => a.sequence - b.sequence;
+export const studioNameComparator = (a, b) => a.name.localeCompare(b.name);
+export const seriesNameComparator = (a, b) => a.name.localeCompare(b.name);
+export const resourceSiteComparator = (a, b) => a.site.localeCompare(b.site);
