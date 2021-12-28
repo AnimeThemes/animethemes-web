@@ -4,6 +4,7 @@ import styled, { css, keyframes } from "styled-components";
 import { Card } from "components/card";
 import { Flex } from "components/box";
 import withBasePath from "utils/withBasePath";
+import { useEffect, useRef, useState } from "react";
 
 const loadingAnimation = keyframes`
   0% {
@@ -36,14 +37,27 @@ const StyledCover = styled.img.attrs({
 `;
 
 export function SummaryCard({ title, description, image, to, children, ...props }) {
+    const [ imageNotFound, setImageNotFound ] = useState(false);
+    const imageRef = useRef();
+
+    useEffect(() => {
+        const imageEl = imageRef.current;
+        const listener = () => setImageNotFound(true);
+
+        imageEl.addEventListener("error", listener);
+
+        return () => imageEl.removeEventListener("error", listener);
+    }, []);
+
     return (
         <Card display="flex" flexDirection="row" alignItems="center" p={0} pr="1rem" height="64px" {...props}>
             <Link href={to}>
                 <a>
                     <StyledCover
+                        ref={imageRef}
                         alt="Cover"
-                        src={image || withBasePath("/img/logo.svg")}
-                        isPlaceholder={!image}
+                        src={(!imageNotFound && image) || withBasePath("/img/logo.svg")}
+                        isPlaceholder={!image || imageNotFound}
                         loading="lazy"
                     />
                 </a>

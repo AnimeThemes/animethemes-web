@@ -216,6 +216,7 @@ module.exports = {
             .select("images.*")
     },
     Theme: {
+        id: (theme) => theme.theme_id,
         type: (theme) => themeType.get(theme.type),
         sequence: (theme) => theme.sequence || 0,
         song: (theme) => knex("songs").where("deleted_at", null).where({ song_id: theme.song_id }).first(),

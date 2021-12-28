@@ -8,7 +8,7 @@ import {
     faSearch,
     faSpinner,
     faTimes,
-    faTv
+    faTv, faUser
 } from "@fortawesome/free-solid-svg-icons";
 import {
     StyledLogo,
@@ -74,6 +74,12 @@ export function Navigation({ offsetToggleButton = false }) {
                             <Button as="a" variant="on-card" silent gapsRow="0.5rem">
                                 <Icon icon={faTv}/>
                                 <Text>Current Season</Text>
+                            </Button>
+                        </Link>
+                        <Link href="/profile" passHref>
+                            <Button as="a" variant="on-card" silent gapsRow="0.5rem">
+                                <Icon icon={faUser}/>
+                                <Text>My Profile</Text>
                             </Button>
                         </Link>
                         <Button
