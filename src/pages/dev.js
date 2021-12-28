@@ -15,7 +15,7 @@ const StyledLink = styled.a`
 `;
 
 export default function DevelopmentPage({ counter }) {
-    const [showAnnouncements, setShowAnnouncements] = useSetting(showAnnouncementsSetting);
+    const [showAnnouncementsSettingValue, setShowAnnouncementsSettingValue] = useSetting(showAnnouncementsSetting);
 
     return (
         <Box gapsColumn="1.5rem">
@@ -182,9 +182,9 @@ export default function DevelopmentPage({ counter }) {
                     <Text>Show Announcements</Text>
                     <Listbox
                         options={Object.values(showAnnouncementsSetting.values)}
-                        selectedValue={showAnnouncements}
-                        defaultValue={showAnnouncements}
-                        onSelect={setShowAnnouncements}
+                        selectedValue={showAnnouncementsSettingValue}
+                        defaultValue={showAnnouncementsSettingValue}
+                        onSelect={setShowAnnouncementsSettingValue}
                     />
                 </Flex>
             </SearchFilterGroup>

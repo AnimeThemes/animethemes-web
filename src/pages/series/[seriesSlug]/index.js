@@ -43,11 +43,11 @@ export default function SeriesDetailPage({ series }) {
     const anime = series.anime;
 
     const images = [
-        useImage(anime[0]),
-        useImage(anime[1]),
-        useImage(anime[2]),
-        useImage(anime[3])
-    ].map((images) => images.largeCover).filter((image) => !!image);
+        [ useImage(anime[0]), anime[0] ],
+        [ useImage(anime[1]), anime[1] ],
+        [ useImage(anime[2]), anime[2] ],
+        [ useImage(anime[3]), anime[3] ]
+    ].map(([ images, anime ]) => [ images.largeCover, anime ]).filter(([ image ]) => !!image);
 
     const [ showFilter, toggleShowFilter ] = useToggle();
     const [ sortBy, setSortBy ] = useState(sortByOptions[0]);
@@ -62,9 +62,9 @@ export default function SeriesDetailPage({ series }) {
                 <Box display={[ "none", "block" ]} gapsColumn="1.5rem">
                     <AspectRatio ratio={2 / 3}>
                         <StyledCoverContainer>
-                            {images.map((image) => (
+                            {images.map(([ image, anime ]) => (
                                 <StyledCoverItemContainer key={image}>
-                                    <StyledCover loading="lazy" src={image}/>
+                                    <StyledCover loading="lazy" src={image} alt={`Cover image of ${anime.name}`} title={anime.name}/>
                                 </StyledCoverItemContainer>
                             ))}
                         </StyledCoverContainer>

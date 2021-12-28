@@ -3,17 +3,25 @@ import Link from "next/link";
 import { Box, Flex } from "components/box";
 import { Text } from "components/text";
 import { SongTitleWithArtists, ThemeEntryTags, VideoTags } from "components/utils";
-import { VideoButton } from "components/button";
+import { Button, VideoButton } from "components/button";
 import { AnimeSummaryCard, ArtistSummaryCard, SummaryCard } from "components/card";
 import useImage from "hooks/useImage";
 import { fetchData } from "lib/server";
 import createVideoSlug from "utils/createVideoSlug";
 import { SEO } from "components/seo";
 import { videoBaseUrl } from "lib/client/api";
+import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { Icon } from "components/icon";
+import useLocalPlaylist from "hooks/useLocalPlaylist";
+import useHistory from "hooks/useHistory";
 
 export default function VideoPage({ anime, theme, entry, video }) {
     const { smallCover, largeCover } = useImage(anime);
     const videoUrl = `${videoBaseUrl}/video/${video.basename}`;
+    const { addToPlaylist, removeFromPlaylist, isInPlaylist } = useLocalPlaylist();
+    const { addToHistory } = useHistory();
+
+    useEffect(() => addToHistory({ ...theme, anime }), [ addToHistory, anime, theme ]);
 
     useEffect(() => {
         if (theme && smallCover && navigator.mediaSession) {
@@ -99,6 +107,19 @@ export default function VideoPage({ anime, theme, entry, video }) {
                     </Flex>
                 </Text>
             </Flex>
+            <Flex>
+                {isInPlaylist(theme) ? (
+                    <Button variant="primary" gapsRow="0.5rem" onClick={() => removeFromPlaylist(theme)}>
+                        <Icon icon={faMinus}/>
+                        <Text>Remove from Playlist</Text>
+                    </Button>
+                ) : (
+                    <Button gapsRow="0.5rem" onClick={() => addToPlaylist({ ...theme, anime })}>
+                        <Icon icon={faPlus}/>
+                        <Text>Add to Playlist</Text>
+                    </Button>
+                )}
+            </Flex>
             <Flex flexDirection={["column", "row"]} gapsColumn={["2rem", 0]} gapsRow={[0, "2rem"]}>
                 <Box flex="2">
                     <Box gapsColumn="1rem">
@@ -171,6 +192,7 @@ export async function getStaticProps({ params: { animeSlug, videoSlug } }) {
                 year
                 season
                 themes {
+                    id
                     slug
                     song {
                         title

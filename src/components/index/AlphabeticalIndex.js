@@ -31,7 +31,7 @@ export function AlphabeticalIndex({ items, children }) {
             {itemsByFirstLetter.map(([ firstLetter, itemsWithFirstLetter ]) => (
                 <React.Fragment key={firstLetter}>
                     <Text id={firstLetter} variant="h2">{firstLetter}</Text>
-                    <Grid gridTemplateColumns={[ "1fr", "1fr 1fr" ]} gridGap="1rem">
+                    <Grid gridTemplateColumns={[ "1fr", "1fr 1fr" ]} gridGap="1rem" justifyItems="flex-start">
                         {itemsWithFirstLetter.map((item) => children(item))}
                     </Grid>
                 </React.Fragment>
