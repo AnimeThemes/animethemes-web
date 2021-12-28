@@ -91,7 +91,7 @@ export default function ArtistDetailPage({ artist }) {
             <Text variant="h1">{artist.name}</Text>
             <SidebarContainer>
                 <Box gapsColumn="1.5rem">
-                    <CoverImage resourceWithImages={artist}/>
+                    <CoverImage resourceWithImages={artist} alt={`Picture of ${artist.name}`}/>
                     <DescriptionList>
                         {!!artist.members?.length && (
                             <DescriptionList.Item title="Members">

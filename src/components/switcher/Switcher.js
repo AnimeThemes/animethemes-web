@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { AnimateSharedLayout, m } from "framer-motion";
+import { m } from "framer-motion";
 import { Box } from "components/box";
 import { Button } from "components/button";
 import theme from "theme";
@@ -63,20 +63,18 @@ export function Switcher({ items, selectedItem, onChange, children, ...props }) 
 
     return (
         <StyledSwitcher {...props}>
-            <AnimateSharedLayout>
-                {itemsArray.map((item) => getButtonWrapper(
-                    item,
-                    !!selectedItem && item.value === selectedItem,
-                    (
-                        <>
-                            {selectedItem && item.value === selectedItem && (
-                                <StyledButtonBackground transition={{ duration: 0.250 }} layoutId="button-bg"/>
-                            )}
-                            <Top>{item.name}</Top>
-                        </>
-                    )
-                ))}
-            </AnimateSharedLayout>
+            {itemsArray.map((item) => getButtonWrapper(
+                item,
+                !!selectedItem && item.value === selectedItem,
+                (
+                    <>
+                        {selectedItem && item.value === selectedItem && (
+                            <StyledButtonBackground transition={{ duration: 0.250 }} layoutId="button-bg"/>
+                        )}
+                        <Top>{item.name}</Top>
+                    </>
+                )
+            ))}
         </StyledSwitcher>
     );
 }

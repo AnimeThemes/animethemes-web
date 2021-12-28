@@ -6,7 +6,6 @@ import theme, { createCssDefinition } from "theme";
 export default createGlobalStyle`
     * {
         box-sizing: border-box;
-        transition: opacity 250ms, box-shadow 250ms, background-color 250ms;
     }
 
     [theme="light"] {
@@ -28,7 +27,7 @@ export default createGlobalStyle`
     body {
         margin: 0;
 
-        background-color: ${theme.colors["solid"]};
+        background-color: ${theme.colors["background"]};
         color: ${theme.colors["text"]};
 
         font-family: "Nunito", sans-serif;

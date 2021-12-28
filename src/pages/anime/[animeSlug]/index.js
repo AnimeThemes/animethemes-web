@@ -35,7 +35,7 @@ export default function AnimeDetailPage({ anime }) {
             <Text variant="h1">{anime.name}</Text>
             <SidebarContainer>
                 <Box gapsColumn="1.5rem">
-                    <CoverImage resourceWithImages={anime}/>
+                    <CoverImage resourceWithImages={anime} alt={`Cover image of ${anime.name}`}/>
                     <DescriptionList>
                         {!!anime.synonyms.length && (
                             <DescriptionList.Item title="Alternative Titles">
@@ -48,7 +48,7 @@ export default function AnimeDetailPage({ anime }) {
                         )}
                         <DescriptionList.Item title="Premiere">
                             <Link href={`/year/${anime.year}${anime.season ? `/${anime.season.toLowerCase()}` : ""}`} passHref>
-                                <Text link>
+                                <Text as="a" link>
                                     {(anime.season ? anime.season + " " : "") + anime.year}
                                 </Text>
                             </Link>
@@ -58,7 +58,7 @@ export default function AnimeDetailPage({ anime }) {
                                 <StyledList>
                                     {anime.series.sort(seriesNameComparator).map((series) =>
                                         <Link key={series.slug} href={`/series/${series.slug}`} passHref>
-                                            <Text link>
+                                            <Text as="a" link>
                                                 {series.name}
                                             </Text>
                                         </Link>
@@ -71,7 +71,7 @@ export default function AnimeDetailPage({ anime }) {
                                 <StyledList>
                                     {anime.studios.sort(studioNameComparator).map((studio) =>
                                         <Link key={studio.slug} href={`/studio/${studio.slug}`} passHref>
-                                            <Text link>
+                                            <Text as="a" link>
                                                 {studio.name}
                                             </Text>
                                         </Link>

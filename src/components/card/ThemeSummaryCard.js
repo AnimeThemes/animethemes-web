@@ -6,7 +6,7 @@ import createVideoSlug from "utils/createVideoSlug";
 import { SummaryCard } from "components/card";
 
 // Specify an artist if you want to display this in an artist context (e.g. artist page)
-export function ThemeSummaryCard({ theme, artist }) {
+export function ThemeSummaryCard({ theme, artist, children }) {
     const { smallCover } = useImage(theme.anime);
 
     if (!theme.entries.length) {
@@ -39,6 +39,8 @@ export function ThemeSummaryCard({ theme, artist }) {
             description={description}
             image={smallCover}
             to={to}
-        />
+        >
+            {children}
+        </SummaryCard>
     );
 }
