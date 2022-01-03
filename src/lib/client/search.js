@@ -46,6 +46,7 @@ const entityConfigs = {
                 "season"
             ],
             animetheme: [
+                "id",
                 "type",
                 "sequence",
                 "slug"

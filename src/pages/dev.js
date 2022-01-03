@@ -36,12 +36,7 @@ export default function DevelopmentPage({ counter }) {
             <Box gapsColumn={["2rem", "1.5rem"]}>
                 <PageGridItem
                     path="/"
-                    description={
-                        <Text>
-                            <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
-                            The new home page of AnimeThemes.
-                        </Text>
-                    }
+                    description="The home page of AnimeThemes."
                 />
                 <PageGridItem
                     path="/dev"
@@ -50,7 +45,18 @@ export default function DevelopmentPage({ counter }) {
                 <PageGridItem
                     path="/design"
                     description="A page listing various design components."
-                    isNew
+                />
+                <PageGridItem
+                    path="/profile"
+                    description={(
+                        <Text>
+                            <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
+                            A personal profile page listing own playlists and recently watched themes.
+                        </Text>
+                    )}
+                    otherPaths={{
+                        "/profile/playlist": "Experimental. Currently a local playlist saved to the browser's storage."
+                    }}
                 />
                 <PageGridItem
                     path="/search"
@@ -59,18 +65,8 @@ export default function DevelopmentPage({ counter }) {
                         "/search/anime": "Search only for anime or explore the list of all anime.",
                         "/search/theme": "Search only for themes or explore the list of all themes.",
                         "/search/artist": "Search only for artists or explore the list of all artists.",
-                        "/search/series": (
-                            <Text>
-                                <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
-                                Search only for series or explore the list of all series.
-                            </Text>
-                        ),
-                        "/search/studio": (
-                            <Text>
-                                <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
-                                Search only for studios or explore the list of all studios.
-                            </Text>
-                        ),
+                        "/search/series": "Search only for series or explore the list of all series.",
+                        "/search/studio": "Search only for studios or explore the list of all studios.",
                     }}
                 />
                 <PageGridItem
@@ -116,7 +112,6 @@ export default function DevelopmentPage({ counter }) {
                     path="/studio/kyoto_animation"
                     description={
                         <Text>
-                            <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
                             Browse all anime which were produced by the same studio.
                             <Text color="text-disabled"> ({ counter.studio } pages)</Text>
                         </Text>
@@ -167,13 +162,22 @@ export default function DevelopmentPage({ counter }) {
                     }}
                 />
                 <PageGridItem
-                    path="/bracket/best-anime-opening-ix-salty-arrow"
-                    description={
+                    path="/index/anime"
+                    description={(
                         <Text>
                             <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
-                            Explore every theme competing in one of the brackets hosted at AnimeBracket.
+                            An index of all anime in the database.
                         </Text>
-                    }
+                    )}
+                    otherPaths={{
+                        "/index/artist": "An index of all artists in the database.",
+                        "/index/series": "An index of all series in the database.",
+                        "/index/studio": "An index of all studios in the database."
+                    }}
+                />
+                <PageGridItem
+                    path="/bracket/best-anime-opening-ix-salty-arrow"
+                    description="Explore every theme competing in one of the brackets hosted at AnimeBracket."
                 />
             </Box>
             <Text variant="h2">Settings</Text>
