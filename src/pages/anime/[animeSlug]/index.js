@@ -141,6 +141,7 @@ export async function getStaticProps({ params: { animeSlug } }) {
                     name
                 }
                 themes {
+                    id
                     group
                     slug
                     type
@@ -157,6 +158,11 @@ export async function getStaticProps({ params: { animeSlug } }) {
                     }
                     anime {
                         slug
+                        name
+                        images {
+                            facet
+                            link
+                        }
                     }
                     entries {
                         episodes

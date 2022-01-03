@@ -163,7 +163,8 @@ export async function getStaticProps() {
         #graphql
 
         query {
-            featuredTheme: theme(id: 10778) {
+            featuredTheme: theme(id: 10968) {
+                id
                 slug
                 anime {
                     slug
@@ -192,6 +193,7 @@ export async function getStaticProps() {
                 }
             }
             recentlyAdded: themeAll(orderBy: "theme_id", orderDesc: true, limit: 10) {
+                id
                 slug
                 anime {
                     slug

@@ -31,6 +31,7 @@ import { Listbox } from "components/listbox";
 import { fetchData } from "lib/server";
 import Prism from "prismjs";
 import "prismjs/components/prism-jsx";
+import { Menu } from "components/menu";
 
 const ColorBox = styled(Box)`
     width: 3rem;
@@ -487,6 +488,22 @@ export default function DesignPage({ demoData }) {
                     resettable
                     width="150px"
                 />
+                <pre>
+                    <Highlight block>
+                        {codeBlock`
+                            <Menu>
+                                <button>Option 1</button>
+                                <button>Option 2</button>
+                                <button>Option 3</button>
+                            </Menu>
+                        `}
+                    </Highlight>
+                </pre>
+                <Menu>
+                    <button>Option 1</button>
+                    <button>Option 2</button>
+                    <button>Option 3</button>
+                </Menu>
             </Grid>
             <Text variant="h2">Utils</Text>
             <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">

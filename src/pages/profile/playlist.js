@@ -5,16 +5,14 @@ import { SidebarContainer } from "components/container";
 import { ThemeSummaryCard } from "components/card";
 import useToggle from "hooks/useToggle";
 import { useState } from "react";
-import { Button, FilterToggleButton } from "components/button";
+import { FilterToggleButton } from "components/button";
 import { SearchFilterGroup, SearchFilterSortBy } from "components/search-filter";
 import { AspectRatio, Collapse } from "components/utils";
 import { animeNameComparator, animePremiereComparator, chain, reverse, songTitleComparator } from "utils/comparators";
 import { SEO } from "components/seo";
 import useImage from "hooks/useImage";
-import useLocalPlaylist from "hooks/useLocalPlaylist";
 import { Reorder } from "framer-motion";
-import { Icon } from "components/icon";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { useLocalPlaylist } from "context/localPlaylistContext";
 
 const StyledCoverContainer = styled.div`
     display: flex;
@@ -55,7 +53,7 @@ const sortByComparators = new Map([
 const sortByOptions = [ ...sortByComparators.keys() ];
 
 export default function PlaylistPage() {
-    const { localPlaylist, removeFromPlaylist, setPlaylist } = useLocalPlaylist();
+    const { localPlaylist, setPlaylist } = useLocalPlaylist();
 
     const images = [
         useImage(localPlaylist[0]?.anime),
@@ -74,8 +72,8 @@ export default function PlaylistPage() {
             <SEO title="Local Playlist"/>
             <Text variant="h1">Local Playlist</Text>
             <SidebarContainer>
-                <Box gapsColumn="1.5rem">
-                    <AspectRatio display={[ "none", "block" ]} mb="1.5rem" ratio={2 / 3}>
+                <Box display={[ "none", "block" ]} gapsColumn="1.5rem">
+                    <AspectRatio mb="1.5rem" ratio={2 / 3}>
                         <StyledCoverContainer>
                             {images.map((image) => (
                                 <StyledCoverItemContainer key={image}>
@@ -106,11 +104,7 @@ export default function PlaylistPage() {
                         <Reorder.Group as="div" axis="y" values={themes} onReorder={setPlaylist}>
                             {themes.map((theme) => (
                                 <Reorder.Item as="div" key={theme.anime.slug + theme.slug + theme.group} value={theme}>
-                                    <ThemeSummaryCard theme={theme}>
-                                        <Button variant="on-card" silent circle onClick={() => removeFromPlaylist(theme)}>
-                                            <Icon icon={faTrash}/>
-                                        </Button>
-                                    </ThemeSummaryCard>
+                                    <ThemeSummaryCard theme={theme}/>
                                 </Reorder.Item>
                             ))}
                         </Reorder.Group>

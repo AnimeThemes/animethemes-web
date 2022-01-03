@@ -12,7 +12,9 @@ const theme = {
         switcherText: 2,
         videoPlayer: 5,
         videoPlayerOverlay: 6,
-        toast: 20
+        toast: 20,
+        menuOverlay: 2,
+        menuPopover: 1
     }
 };
 
