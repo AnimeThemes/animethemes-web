@@ -200,6 +200,7 @@ export async function getStaticProps({ params: { artistSlug } }) {
                             as
                         }
                         themes {
+                            id
                             slug
                             group
                             anime {

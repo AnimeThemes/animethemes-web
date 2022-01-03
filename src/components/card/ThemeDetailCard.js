@@ -10,6 +10,7 @@ import {
 import { VideoButton } from "components/button";
 import { SongTitleWithArtists, ThemeEntryTags } from "components/utils";
 import { Text } from "components/text";
+import { ThemeMenu } from "components/menu";
 
 export function ThemeDetailCard({ theme }) {
     return (
@@ -19,6 +20,7 @@ export function ThemeDetailCard({ theme }) {
                 <StyledHeader>
                     <SongTitleWithArtists song={theme.song}/>
                 </StyledHeader>
+                <ThemeMenu theme={theme}/>
             </StyledRow>
             {theme.entries.map(entry => (
                 <StyledVersion key={entry.version || 0}>

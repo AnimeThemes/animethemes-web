@@ -2,16 +2,16 @@ import { SEO } from "components/seo";
 import { Box, Flex, Grid } from "components/box";
 import { Text } from "components/text";
 import { SummaryCard, ThemeSummaryCard } from "components/card";
-import useLocalPlaylist from "hooks/useLocalPlaylist";
-import useHistory from "hooks/useHistory";
 import { Button } from "components/button";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "components/icon";
 import { useMedia } from "use-media";
+import { useWatchHistory } from "context/watchHistoryContext";
+import { useLocalPlaylist } from "context/localPlaylistContext";
 
 export default function ProfilePage() {
     const { localPlaylist } = useLocalPlaylist();
-    const { history, clearHistory } = useHistory();
+    const { history, clearHistory } = useWatchHistory();
     const isMobile = useMedia({ maxWidth: "720px" });
 
     return (

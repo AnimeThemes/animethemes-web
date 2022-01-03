@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import Link from "next/link";
 import { Box, Flex } from "components/box";
 import { Text } from "components/text";
@@ -12,14 +12,14 @@ import { SEO } from "components/seo";
 import { videoBaseUrl } from "lib/client/api";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "components/icon";
-import useLocalPlaylist from "hooks/useLocalPlaylist";
-import useHistory from "hooks/useHistory";
+import { useWatchHistory } from "context/watchHistoryContext";
+import { useLocalPlaylist } from "context/localPlaylistContext";
 
 export default function VideoPage({ anime, theme, entry, video }) {
     const { smallCover, largeCover } = useImage(anime);
     const videoUrl = `${videoBaseUrl}/video/${video.basename}`;
     const { addToPlaylist, removeFromPlaylist, isInPlaylist } = useLocalPlaylist();
-    const { addToHistory } = useHistory();
+    const { addToHistory } = useWatchHistory();
 
     useEffect(() => addToHistory({ ...theme, anime }), [ addToHistory, anime, theme ]);
 

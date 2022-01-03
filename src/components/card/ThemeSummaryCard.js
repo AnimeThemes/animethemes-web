@@ -4,6 +4,7 @@ import { Text } from "components/text";
 import useImage from "hooks/useImage";
 import createVideoSlug from "utils/createVideoSlug";
 import { SummaryCard } from "components/card";
+import { ThemeMenu } from "components/menu";
 
 // Specify an artist if you want to display this in an artist context (e.g. artist page)
 export function ThemeSummaryCard({ theme, artist, children }) {
@@ -41,6 +42,7 @@ export function ThemeSummaryCard({ theme, artist, children }) {
             to={to}
         >
             {children}
+            <ThemeMenu theme={theme}/>
         </SummaryCard>
     );
 }

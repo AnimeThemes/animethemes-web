@@ -18,12 +18,14 @@ import withBasePath from "utils/withBasePath";
 import { SEO } from "components/seo";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import { AnnouncementToast } from "components/toast";
+import { WatchHistoryProvider } from "context/watchHistoryContext";
+import { LocalPlaylistProvider } from "context/localPlaylistContext";
 
 config.autoAddCss = false;
 
 const queryClient = new QueryClient();
 
-function MyApp({ Component, pageProps }) {
+export default function MyApp({ Component, pageProps }) {
     const [colorTheme, toggleColorTheme] = useColorTheme();
 
     const { video, entry, theme: animeTheme, anime } = pageProps;
@@ -46,52 +48,59 @@ function MyApp({ Component, pageProps }) {
     }, [ video, entry, animeTheme, anime ]);
 
     return (
-        <ThemeProvider theme={theme}>
-            <ColorThemeContext.Provider value={{ colorTheme, toggleColorTheme }}>
-                <PlayerContext.Provider value={{ currentVideo, setCurrentVideo }}>
-                    <QueryClientProvider client={queryClient}>
-                        <GlobalStyle/>
-                        <SEO/>
-                        <Head>
-                            <link rel="apple-touch-icon" sizes="180x180" href={withBasePath("/apple-touch-icon.png")}/>
-                            <link rel="icon" type="image/png" sizes="32x32" href={withBasePath("/favicon-32x32.png")}/>
-                            <link rel="icon" type="image/png" sizes="16x16" href={withBasePath("/favicon-16x16.png")}/>
-                            <link rel="manifest" href={withBasePath("/site.webmanifest")}/>
-                            <link rel="mask-icon" href={withBasePath("/safari-pinned-tab.svg")} color="#ffffff"/>
-                            <meta name="msapplication-TileColor" content="#ffffff"/>
-                            <meta name="theme-color" content="#1c1823"/>
-                        </Head>
-                        <Flex flexDirection="column" minHeight="100%">
-                            <Navigation offsetToggleButton={!!currentVideo && !video}/>
-                            {currentVideo && (
-                                <VideoPlayer
-                                    video={currentVideo}
-                                    entry={currentEntry}
-                                    background={!video}
-                                />
-                            )}
-                            <Container mb="2rem">
-                                {!!pageProps.year && (
-                                    <Box gapsColumn="1rem" mb="1.5rem">
-                                        <YearNavigation year={pageProps.year} yearList={pageProps.yearList} />
-                                        <SeasonNavigation year={pageProps.year} season={pageProps.season} seasonList={pageProps.seasonList} />
-                                    </Box>
-                                )}
-                                {pageProps.isSearch && (
-                                    <Box mb="1.5rem">
-                                        <SearchNavigation/>
-                                    </Box>
-                                )}
-                                <Component {...pageProps}/>
-                            </Container>
-                            <Footer/>
-                        </Flex>
-                        <AnnouncementToast/>
-                    </QueryClientProvider>
-                </PlayerContext.Provider>
-            </ColorThemeContext.Provider>
-        </ThemeProvider>
+        <MultiContextProvider providers={[
+            [ ThemeProvider, { theme } ],
+            [ ColorThemeContext.Provider, { value: { colorTheme, toggleColorTheme } } ],
+            [ PlayerContext.Provider, { value: { currentVideo, setCurrentVideo } } ],
+            [ QueryClientProvider, { client: queryClient } ],
+            [ WatchHistoryProvider ],
+            [ LocalPlaylistProvider ]
+        ]}>
+            <GlobalStyle/>
+            <SEO/>
+            <Head>
+                <link rel="apple-touch-icon" sizes="180x180" href={withBasePath("/apple-touch-icon.png")}/>
+                <link rel="icon" type="image/png" sizes="32x32" href={withBasePath("/favicon-32x32.png")}/>
+                <link rel="icon" type="image/png" sizes="16x16" href={withBasePath("/favicon-16x16.png")}/>
+                <link rel="manifest" href={withBasePath("/site.webmanifest")}/>
+                <link rel="mask-icon" href={withBasePath("/safari-pinned-tab.svg")} color="#ffffff"/>
+                <meta name="msapplication-TileColor" content="#ffffff"/>
+                <meta name="theme-color" content="#1c1823"/>
+            </Head>
+            <Flex flexDirection="column" minHeight="100%">
+                <Navigation offsetToggleButton={!!currentVideo && !video}/>
+                {currentVideo && (
+                    <VideoPlayer
+                        video={currentVideo}
+                        entry={currentEntry}
+                        background={!video}
+                    />
+                )}
+                <Container mb="2rem">
+                    {!!pageProps.year && (
+                        <Box gapsColumn="1rem" mb="1.5rem">
+                            <YearNavigation year={pageProps.year} yearList={pageProps.yearList} />
+                            <SeasonNavigation year={pageProps.year} season={pageProps.season} seasonList={pageProps.seasonList} />
+                        </Box>
+                    )}
+                    {pageProps.isSearch && (
+                        <Box mb="1.5rem">
+                            <SearchNavigation/>
+                        </Box>
+                    )}
+                    <Component {...pageProps}/>
+                </Container>
+                <Footer/>
+            </Flex>
+            <AnnouncementToast/>
+        </MultiContextProvider>
     );
 }
 
-export default MyApp;
+function MultiContextProvider({ providers = [], children }) {
+    return providers.reduce((previousValue, [ Provider, props = {} ]) => (
+        <Provider {...props}>
+            {previousValue}
+        </Provider>
+    ), children);
+}
