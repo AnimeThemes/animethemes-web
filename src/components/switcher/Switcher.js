@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { m } from "framer-motion";
+import { motion } from "framer-motion";
 import { Box } from "components/box";
 import { Button } from "components/button";
 import theme from "theme";
@@ -26,7 +26,7 @@ const StyledButton = styled(Button)`
         background-color: transparent;
     }
 `;
-const StyledButtonBackground = styled(m.div)`
+const StyledButtonBackground = styled(motion.div)`
     position: absolute;
     z-index: ${theme.zIndices.switcherButton};
     top: 0;
