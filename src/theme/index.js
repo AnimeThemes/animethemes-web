@@ -2,7 +2,8 @@ import { colors, shadows } from "theme/colors";
 
 const theme = {
     breakpoints: [
-        "721px"
+        "721px",
+        "870px",
     ],
     shadows: createThemeDefinition(shadows),
     colors: createThemeDefinition(colors),

@@ -1,8 +1,12 @@
 import styled from "styled-components";
-import { motion } from "framer-motion";
+import { LayoutGroup, motion } from "framer-motion";
 import { Box } from "components/box";
 import { Button } from "components/button";
 import theme from "theme";
+import { uniqueId as createUniqueId } from "lodash-es";
+import { useMemo } from "react";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { Icon } from "components/icon";
 
 const StyledSwitcher = styled(Box).attrs((props) => ({
     bg: props.bg || props.backgroundColor || theme.colors["solid"]
@@ -41,6 +45,7 @@ const Top = styled.span`
 `;
 
 export function Switcher({ items, selectedItem, onChange, children, ...props }) {
+    const uniqueId = useMemo(createUniqueId, []);
     const itemsArray = Array.isArray(items)
         ? items.map((item) => ({ value: item, name: item }))
         : Object.entries(items).map(([value, name]) => ({ value, name }));
@@ -63,18 +68,29 @@ export function Switcher({ items, selectedItem, onChange, children, ...props }) 
 
     return (
         <StyledSwitcher {...props}>
-            {itemsArray.map((item) => getButtonWrapper(
-                item,
-                !!selectedItem && item.value === selectedItem,
-                (
-                    <>
-                        {selectedItem && item.value === selectedItem && (
-                            <StyledButtonBackground transition={{ duration: 0.250 }} layoutId="button-bg"/>
-                        )}
-                        <Top>{item.name}</Top>
-                    </>
-                )
-            ))}
+            <LayoutGroup id={uniqueId}>
+                {itemsArray.map((item) => {
+                    if (item.value === null && selectedItem === null) {
+                        // Don't show a clear button if nothing is selected
+                        return null;
+                    }
+
+                    return getButtonWrapper(
+                        item,
+                        !!selectedItem && item.value === selectedItem,
+                        item.value !== null ? (
+                            <>
+                                {selectedItem && item.value === selectedItem && (
+                                    <StyledButtonBackground transition={{ duration: 0.250 }} layoutId="button-bg"/>
+                                )}
+                                <Top>{item.name}</Top>
+                            </>
+                        ) : (
+                            <Icon icon={faTimes}/>
+                        )
+                    );
+                })}
+            </LayoutGroup>
         </StyledSwitcher>
     );
 }

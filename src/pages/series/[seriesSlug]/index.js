@@ -59,7 +59,7 @@ export default function SeriesDetailPage({ series }) {
             <SEO title={series.name}/>
             <Text variant="h1">{series.name}</Text>
             <SidebarContainer>
-                <Box display={[ "none", "block" ]} gapsColumn="1.5rem">
+                <Box display={[ "none", undefined, "block" ]} gapsColumn="1.5rem">
                     <AspectRatio ratio={2 / 3}>
                         <StyledCoverContainer>
                             {images.map(([ image, anime ]) => (

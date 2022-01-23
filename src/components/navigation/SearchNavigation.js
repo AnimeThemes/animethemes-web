@@ -25,11 +25,6 @@ export function SearchNavigation() {
     const { entity, ...urlParams } = router.query;
     const searchQuery = urlParams.q || "";
 
-    // Generates page title based on search query
-    const pageTitle = searchQuery && searchQuery.trim()
-        ? `${searchQuery} - Search`
-        : "Search";
-
     const updateSearchQuery = (newSearchQuery) => {
         // Update URL to maintain the searchQuery on page navigation.
         const newUrlParams = {

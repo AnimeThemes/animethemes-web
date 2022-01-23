@@ -5,7 +5,7 @@ export const SidebarContainer = styled.div`
     grid-template-columns: 1fr 3fr;
     grid-gap: 2rem 1.5rem;
 
-    @media (max-width: 720px) {
+    @media (max-width: 870px) {
         grid-template-columns: 1fr;
     }
 `;

@@ -5,7 +5,7 @@ import { Text } from "components/text";
 import styled from "styled-components";
 import { Button } from "components/button";
 import { Icon } from "components/icon";
-import { faArrowRight, faRandom, faSearch, faTv } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faAward, faRandom, faSearch, faTv, faUser } from "@fortawesome/free-solid-svg-icons";
 import theme from "theme";
 import { ExternalLink } from "components/external-link";
 import useCurrentSeason from "hooks/useCurrentSeason";
@@ -126,6 +126,22 @@ export default function HomePage({ featuredTheme, recentlyAdded }) {
                         <Link href="/year" passHref>
                             <BigButton as="a" height="3rem">
                                 <Text>Year Index</Text>
+                                <Icon icon={faArrowRight} color="text-primary"/>
+                            </BigButton>
+                        </Link>
+                    </Grid>
+                    <Grid gridTemplateColumns={[ "1fr", "1fr 1fr" ]} gridGap="1rem">
+                        <Link href="/event" passHref>
+                            <BigButton as="a">
+                                <BigIcon icon={faAward}/>
+                                <Text>Events</Text>
+                                <Icon icon={faArrowRight} color="text-primary"/>
+                            </BigButton>
+                        </Link>
+                        <Link href="/profile" passHref>
+                            <BigButton as="a">
+                                <BigIcon icon={faUser}/>
+                                <Text>My Profile</Text>
                                 <Icon icon={faArrowRight} color="text-primary"/>
                             </BigButton>
                         </Link>

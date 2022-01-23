@@ -58,7 +58,7 @@ export function Navigation({ offsetToggleButton = false }) {
                         flexDirection={[ "column", "row" ]}
                         gapsRow={[ 0, "0.5rem" ]}
                         gapsColumn={[ "0.5rem", 0 ]}
-                        alignItems="flex-start"
+                        alignItems={[ "flex-start", "center" ]}
                     >
                         <Link href="/search" passHref>
                             <Button as="a" variant="on-card" silent gapsRow="0.5rem">
@@ -77,9 +77,15 @@ export function Navigation({ offsetToggleButton = false }) {
                             </Button>
                         </Link>
                         <Link href="/profile" passHref>
-                            <Button as="a" variant="on-card" silent gapsRow="0.5rem">
+                            <Button
+                                as="a"
+                                variant="on-card"
+                                silent
+                                title="My Profile"
+                                gapsRow="0.5rem"
+                            >
                                 <Icon icon={faUser}/>
-                                <Text>My Profile</Text>
+                                <Text display={[ "initial", "none", "initial" ]}>My Profile</Text>
                             </Button>
                         </Link>
                         <Button
