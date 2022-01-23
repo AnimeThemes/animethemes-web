@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Flex, Grid } from "components/box";
-import { groupBy } from "lodash";
+import { groupBy } from "lodash-es";
 import { Text } from "components/text";
 
 export function AlphabeticalIndex({ items, children }) {
