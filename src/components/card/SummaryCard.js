@@ -63,7 +63,7 @@ export function SummaryCard({ title, description, image, to, children, ...props 
                 </a>
             </Link>
             <Flex flex={1} flexDirection="column" justifyContent="center" gapsColumn="0.25rem" px="1rem">
-                <Text fontWeight="600" maxLines={1}>
+                <Text fontWeight="600" maxLines={1} title={title}>
                     {typeof title === "string" ? (
                         <Link href={to} passHref>
                             <Text as="a" link>{title}</Text>

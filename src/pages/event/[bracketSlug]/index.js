@@ -106,6 +106,7 @@ function BracketPairings({ pairings, isCurrent }) {
         <Flex key={index} flexDirection={[ "column", "row" ]} alignItems={[ "stretch", "center" ]}>
             <Box flex="1">
                 <ContestantCard
+                    key={pairing.characterA.id}
                     contestant={pairing.characterA}
                     opponent={pairing.characterB}
                     contestantVotes={pairing.votesA}
@@ -118,6 +119,7 @@ function BracketPairings({ pairings, isCurrent }) {
             </Box>
             <Box flex="1">
                 <ContestantCard
+                    key={pairing.characterA.id}
                     contestant={pairing.characterB}
                     opponent={pairing.characterA}
                     contestantVotes={pairing.votesB}

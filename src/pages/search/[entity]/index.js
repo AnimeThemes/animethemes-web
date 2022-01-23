@@ -3,7 +3,7 @@ import { SearchAnime, SearchArtist, SearchSeries, SearchStudio, SearchTheme } fr
 import { Box } from "components/box";
 import { useRouter } from "next/router";
 import { SEO } from "components/seo";
-import { capitalize } from "lodash";
+import { capitalize } from "lodash-es";
 
 export default function SearchEntityPage({ entity }) {
     const router = useRouter();

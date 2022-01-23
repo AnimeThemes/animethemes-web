@@ -1,8 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { fetchData } from "lib/server";
-import { Box, Flex, Grid } from "components/box";
-import { groupBy } from "lodash";
+import { Box } from "components/box";
 import { Text } from "components/text";
 import { AlphabeticalIndex } from "components/index";
 

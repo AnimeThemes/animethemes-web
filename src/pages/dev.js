@@ -176,8 +176,17 @@ export default function DevelopmentPage({ counter }) {
                     }}
                 />
                 <PageGridItem
-                    path="/bracket/best-anime-opening-ix-salty-arrow"
-                    description="Explore every theme competing in one of the brackets hosted at AnimeBracket."
+                    path="/event"
+                    description={(
+                        <Text>
+                            <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
+                            Explore themes featured in awards or brackets.
+                        </Text>
+                    )}
+                    otherPaths={{
+                        "/event/anime-awards": "Page for the annual /r/anime Awards.",
+                        "/event/best-anime-opening-ix-salty-arrow": "Page for an anime opening bracket hosted on AnimeBracket."
+                    }}
                 />
             </Box>
             <Text variant="h2">Settings</Text>
