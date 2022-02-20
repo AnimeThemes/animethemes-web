@@ -3,28 +3,108 @@
         "year": 2021,
         "nominees": {
             "openings": [
-                10388,
-                10778,
-                10145,
-                10237,
-                9465,
-                10804,
-                10698,
-                10839,
-                10229,
-                10224
+                {
+                    "id": 10388,
+                    "votesPublic": 760,
+                    "rankJury": 5
+                },
+                {
+                    "id": 10778,
+                    "votesPublic": 810,
+                    "rankJury": 1
+                },
+                {
+                    "id": 10145,
+                    "votesPublic": 1517,
+                    "rankJury": 6
+                },
+                {
+                    "id": 10237,
+                    "votesPublic": 1300,
+                    "rankJury": 10
+                },
+                {
+                    "id": 9465,
+                    "votesPublic": 1383,
+                    "rankJury": 9
+                },
+                {
+                    "id": 10804,
+                    "votesPublic": 471,
+                    "rankJury": 3
+                },
+                {
+                    "id": 10698,
+                    "votesPublic": 225,
+                    "rankJury": 4
+                },
+                {
+                    "id": 10839,
+                    "votesPublic": 52,
+                    "rankJury": 8
+                },
+                {
+                    "id": 10229,
+                    "votesPublic": 226,
+                    "rankJury": 7
+                },
+                {
+                    "id": 10224,
+                    "votesPublic": 377,
+                    "rankJury": 2
+                }
             ],
             "endings": [
-                9790,
-                9467,
-                10766,
-                10184,
-                9777,
-                10550,
-                10389,
-                10830,
-                10823,
-                9722
+                {
+                    "id": 9790,
+                    "votesPublic": 1044,
+                    "rankJury": 10
+                },
+                {
+                    "id": 9467,
+                    "votesPublic": 1509,
+                    "rankJury": 5
+                },
+                {
+                    "id": 10766,
+                    "votesPublic": 716,
+                    "rankJury": 8
+                },
+                {
+                    "id": 10184,
+                    "votesPublic": 1057,
+                    "rankJury": 7
+                },
+                {
+                    "id": 9777,
+                    "votesPublic": 616,
+                    "rankJury": 9
+                },
+                {
+                    "id": 10550,
+                    "votesPublic": 100,
+                    "rankJury": 6
+                },
+                {
+                    "id": 10389,
+                    "votesPublic": 626,
+                    "rankJury": 4
+                },
+                {
+                    "id": 10830,
+                    "votesPublic": 104,
+                    "rankJury": 3
+                },
+                {
+                    "id": 10823,
+                    "votesPublic": 204,
+                    "rankJury": 2
+                },
+                {
+                    "id": 9722,
+                    "votesPublic": 574,
+                    "rankJury": 1
+                }
             ]
         }
     }
