@@ -95,7 +95,7 @@ export function Navigation({ offsetToggleButton = false }) {
             </StyledNavigation>
 
             <StyledMobileToggle
-                variant={show ? "default" : "primary"}
+                variant={show ? "solid" : "primary"}
                 isCircle
                 offsetToggleButton={offsetToggleButton}
                 onClick={() => setShow(!show)}

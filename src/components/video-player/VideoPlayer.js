@@ -72,13 +72,13 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
                             <Text as="p">You can try one of the options below to still watch the video:</Text>
                             <Row wrap style={{ "--gap": "16px" }}>
                                 <IconTextButton
-                                    variant="default"
+                                    variant="solid"
                                     forwardedAs="a"
                                     href={`vlc-x-callback://x-callback-url/stream?url=${videoUrl}`}
                                     icon={faPlay}
                                 >Play in VLC</IconTextButton>
                                 <IconTextButton
-                                    variant="default"
+                                    variant="solid"
                                     forwardedAs="a"
                                     href={videoUrl}
                                     download
