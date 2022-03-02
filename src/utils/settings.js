@@ -1,6 +1,6 @@
 export const showAnnouncementsSetting = {
     key: "showAnnouncements",
-    initialValue: "Enabled",
+    initialValue: "enabled",
     values: {
         enabled: "Enabled",
         disabled: "Disabled"
@@ -9,7 +9,7 @@ export const showAnnouncementsSetting = {
 
 export const featuredThemePreviewSetting = {
     key: "featuredThemePreview",
-    initialValue: "Video",
+    initialValue: "video",
     values: {
         video: "Video",
         cover: "Cover",
