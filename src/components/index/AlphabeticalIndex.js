@@ -1,8 +1,22 @@
 import React from "react";
 import Link from "next/link";
-import { Flex, Grid } from "components/box";
 import { groupBy } from "lodash-es";
 import { Text } from "components/text";
+import styled from "styled-components";
+
+const StyledLetterList = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+`;
+
+const StyledItemGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    justify-content: flex-start;
+    grid-gap: 16px;
+`;
 
 export function AlphabeticalIndex({ items, children }) {
     const itemsByFirstLetter = Object.entries(
@@ -21,19 +35,19 @@ export function AlphabeticalIndex({ items, children }) {
 
     return (
         <>
-            <Flex justifyContent="center" gap="0.5rem" flexWrap="wrap">
+            <StyledLetterList>
                 {itemsByFirstLetter.map(([ firstLetter ]) => (
                     <Link key={firstLetter} href={`#${firstLetter}`} passHref>
                         <Text as="a" link>{firstLetter.toUpperCase()} </Text>
                     </Link>
                 ))}
-            </Flex>
+            </StyledLetterList>
             {itemsByFirstLetter.map(([ firstLetter, itemsWithFirstLetter ]) => (
                 <React.Fragment key={firstLetter}>
                     <Text id={firstLetter} variant="h2">{firstLetter}</Text>
-                    <Grid gridTemplateColumns={[ "1fr", "1fr 1fr" ]} gridGap="1rem" justifyItems="flex-start">
+                    <StyledItemGrid>
                         {itemsWithFirstLetter.map((item) => children(item))}
-                    </Grid>
+                    </StyledItemGrid>
                 </React.Fragment>
             ))}
         </>

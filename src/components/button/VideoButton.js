@@ -15,7 +15,7 @@ export function VideoButton({ anime, theme, entry, video, ...props }) {
     return (
         <Link href={`/anime/${anime.slug}/${videoSlug}`} passHref>
             <Button as="a" {...props}>
-                <Button as="span" variant="primary">
+                <Button as="span" variant="primary" isCircle>
                     <Icon icon={isPlaying ? faCompactDisc : faPlay} spin={isPlaying}/>
                 </Button>
                 <VideoTags video={video} hideTextOnMobile/>

@@ -7,7 +7,7 @@ import { SummaryCard } from "components/card";
 import { ThemeMenu } from "components/menu";
 
 // Specify an artist if you want to display this in an artist context (e.g. artist page)
-export function ThemeSummaryCard({ theme, artist, children }) {
+export function ThemeSummaryCard({ theme, artist, children, ...props }) {
     const { smallCover } = useImage(theme.anime);
 
     if (!theme.entries.length) {
@@ -40,6 +40,7 @@ export function ThemeSummaryCard({ theme, artist, children }) {
             description={description}
             image={smallCover}
             to={to}
+            {...props}
         >
             {children}
             <ThemeMenu theme={theme}/>

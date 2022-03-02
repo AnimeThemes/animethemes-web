@@ -1,7 +1,7 @@
 import { faChevronDown, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "components/button";
 import { Text } from "components/text";
-import { Box, Flex } from "components/box";
+import { Column, Row } from "components/box";
 import { Icon } from "components/icon";
 import { SearchFilterGroup } from "components/search-filter";
 import { ErrorCard } from "components/card";
@@ -20,7 +20,7 @@ export function SearchEntity({
     renderSummaryCard
 }) {
     return (
-        <Box gapsColumn="1.5rem">
+        <>
             {!!filters && (
                 <SearchFilterGroup>
                     {filters}
@@ -57,19 +57,19 @@ export function SearchEntity({
 
                 return (
                     <>
-                        <Box gapsColumn="1rem">
+                        <Column style={{ "--gap": "16px" }}>
                             {results.map(renderSummaryCard)}
-                        </Box>
+                        </Column>
                         {(hasNextPage || isPlaceholderData) && (
-                            <Flex justifyContent="center">
-                                <Button silent onClick={() => !isLoadingMore && fetchNextPage()} title="Load more">
+                            <Row style={{ "--justify-content": "center" }}>
+                                <Button variant="silent" isCircle onClick={() => !isLoadingMore && fetchNextPage()} title="Load more">
                                     <Icon icon={isLoadingMore ? faSpinner : faChevronDown} spin={isLoadingMore}/>
                                 </Button>
-                            </Flex>
+                            </Row>
                         )}
                     </>
                 );
             })()}
-        </Box>
+        </>
     );
 }

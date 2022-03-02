@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ThemeSummaryCard } from "components/card";
-import { Box, Grid } from "components/box";
+import { Column } from "components/box";
 import { Text } from "components/text";
 import styled from "styled-components";
 import { Button } from "components/button";
@@ -10,142 +10,164 @@ import theme from "theme";
 import { ExternalLink } from "components/external-link";
 import useCurrentSeason from "hooks/useCurrentSeason";
 import navigateToRandomTheme from "utils/navigateToRandomTheme";
-import useCompatability from "hooks/useCompatability";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
+import { FeaturedTheme } from "components/featured-theme";
 
-const videoBaseUrl = process.env.NEXT_PUBLIC_VIDEO_URL || "https://animethemes.moe";
-
-const FeaturedTheme = styled(Box)`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    height: 200px;
-    position: relative;
-    overflow: hidden;
-    
-    @media (min-width: ${theme.breakpoints[0]}) {
-        border-radius: 0.5rem;
-    }
-    
-    & > :last-child {
-        position: absolute;
-        
-        @media (max-width: ${theme.breakpoints[0]}) {
-            left: 1rem;
-            right: 1rem;   
-        }
-    }
-`;
-
-const FeaturedVideo = styled.video`
-    width: 100%;
-    filter: blur(5px);
-`;
-
-const BigButton = styled(Button).attrs({
-    gapsRow: "0.5rem"
-})`
-    overflow: hidden;
-    border-radius: 0.5rem;
-    height: ${(props) => props.height || "4rem"};
+const BigButton = styled(Button)`
     justify-content: flex-end;
+    height: var(--height, 64px);
+    border-radius: 0.5rem;
+    gap: 8px;
+    overflow: hidden;
 `;
 
-const BigIcon = styled(Icon).attrs({
-    size: "4x"
-})`
+const BigIcon = styled(Icon)`
     margin: 0 auto -1rem -2rem;
     
+    font-size: 56px;
     color: ${theme.colors["text-disabled"]};
 `;
 
-export default function HomePage({ featuredTheme, recentlyAdded }) {
-    const featuredVideo = featuredTheme.entries[0].videos[0];
+const MainGrid = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas: "a . b"
+                         "c d e"
+                         "f f g"
+                         "h i g"
+                         "j j g"
+                         ". . g";
+    grid-gap: 24px;
+    
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        grid-template-columns: 1fr;
+        grid-template-areas: "a" "c" "d" "e" "h" "i" "f" "b" "g" "j";
+    }
+`;
 
+const MainGridArea = styled.div`
+    grid-area: ${(props) => props.area};
+    
+    display: flex;
+    flex-direction: column;
+`;
+
+const SmallButtonGrid = styled.div`
+    grid-area: f;
+    
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 16px;
+
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        grid-template-columns: 1fr 1fr;
+    }
+`;
+
+const RecentlyAdded = styled(Column)`
+    grid-area: g;
+    
+    gap: 16px;
+`;
+
+const About = styled(Column)`
+    grid-area: j;
+    
+    gap: 24px;
+`;
+
+export default function HomePage({ featuredTheme, recentlyAdded }) {
     const { currentYear, currentSeason } = useCurrentSeason();
-    const { canPlayVideo } = useCompatability({ canPlayVideo: false });
 
     return (
-        <Box gapsColumn="1.5rem">
+        <>
             <SEO/>
             <Text variant="h1">Welcome, to AnimeThemes.moe!</Text>
+
             <Text variant="h2">Featured Theme</Text>
-            <FeaturedTheme mx={[ "-1rem", 0 ]}>
-                {canPlayVideo && (
-                    <FeaturedVideo
-                        src={`${videoBaseUrl}/video/${featuredVideo.basename}`}
-                        autoPlay
-                        muted
-                        loop
-                    />
-                )}
-                <ThemeSummaryCard theme={featuredTheme}/>
-            </FeaturedTheme>
-            <Grid gridTemplateColumns={[ "1fr", "1fr 1fr 1fr" ]} gridGap="1.5rem">
-                <Box gridColumn={[ "1", "1 / 3" ]}>
+            <FeaturedTheme theme={featuredTheme}/>
+
+            <MainGrid style={{ "--gap": "16px" }}>
+                <MainGridArea area="a">
                     <Text variant="h2">Explore The Database</Text>
-                </Box>
-                <Box gridRow={[ "6", "auto" ]}>
+                </MainGridArea>
+                <MainGridArea area="b">
                     <Text variant="h2">Recently Added</Text>
-                </Box>
-                <Link href="/search" passHref>
-                    <BigButton as="a">
-                        <BigIcon icon={faSearch} flip="horizontal"/>
-                        <Text>Search</Text>
+                </MainGridArea>
+
+                <RecentlyAdded>
+                    {recentlyAdded.map((theme, index) => (
+                        <ThemeSummaryCard key={index} theme={theme}/>
+                    ))}
+                </RecentlyAdded>
+
+                <MainGridArea area="c">
+                    <Link href="/search" passHref>
+                        <BigButton forwardedAs="a">
+                            <BigIcon icon={faSearch} flip="horizontal"/>
+                            <Text>Search</Text>
+                            <Icon icon={faArrowRight} color="text-primary"/>
+                        </BigButton>
+                    </Link>
+                </MainGridArea>
+                <MainGridArea area="d">
+                    <BigButton onClick={navigateToRandomTheme}>
+                        <BigIcon icon={faRandom}/>
+                        <Text>Play Random</Text>
                         <Icon icon={faArrowRight} color="text-primary"/>
                     </BigButton>
-                </Link>
-                <BigButton onClick={navigateToRandomTheme}>
-                    <BigIcon icon={faRandom}/>
-                    <Text>Play Random</Text>
-                    <Icon icon={faArrowRight} color="text-primary"/>
-                </BigButton>
-                <Link href={(currentYear && currentSeason) ? `/year/${currentYear}/${currentSeason}` : "/"} passHref>
-                    <BigButton as="a">
-                        <BigIcon icon={faTv}/>
-                        <Text>Current Season</Text>
-                        <Icon icon={faArrowRight} color="text-primary"/>
-                    </BigButton>
-                </Link>
-                <Box gridColumn={[ "1", "1 / 3" ]} gapsColumn="1.5rem">
-                    <Grid gridTemplateColumns={[ "1fr 1fr", "1fr 1fr 1fr" ]} gridGap="1rem">
-                        <Link href="/search/anime" passHref>
-                            <BigButton as="a" height="3rem">
-                                <Text>Anime Index</Text>
-                                <Icon icon={faArrowRight} color="text-primary"/>
-                            </BigButton>
-                        </Link>
-                        <Link href="/search/artist" passHref>
-                            <BigButton as="a" height="3rem">
-                                <Text>Artist Index</Text>
-                                <Icon icon={faArrowRight} color="text-primary"/>
-                            </BigButton>
-                        </Link>
-                        <Link href="/year" passHref>
-                            <BigButton as="a" height="3rem">
-                                <Text>Year Index</Text>
-                                <Icon icon={faArrowRight} color="text-primary"/>
-                            </BigButton>
-                        </Link>
-                    </Grid>
-                    <Grid gridTemplateColumns={[ "1fr", "1fr 1fr" ]} gridGap="1rem">
-                        <Link href="/event" passHref>
-                            <BigButton as="a">
-                                <BigIcon icon={faAward}/>
-                                <Text>Events</Text>
-                                <Icon icon={faArrowRight} color="text-primary"/>
-                            </BigButton>
-                        </Link>
-                        <Link href="/profile" passHref>
-                            <BigButton as="a">
-                                <BigIcon icon={faUser}/>
-                                <Text>My Profile</Text>
-                                <Icon icon={faArrowRight} color="text-primary"/>
-                            </BigButton>
-                        </Link>
-                    </Grid>
+                </MainGridArea>
+                <MainGridArea area="e">
+                    <Link href={(currentYear && currentSeason) ? `/year/${currentYear}/${currentSeason}` : "/"} passHref>
+                        <BigButton forwardedAs="a">
+                            <BigIcon icon={faTv}/>
+                            <Text>Current Season</Text>
+                            <Icon icon={faArrowRight} color="text-primary"/>
+                        </BigButton>
+                    </Link>
+                </MainGridArea>
+                <MainGridArea area="h">
+                    <Link href="/event" passHref>
+                        <BigButton forwardedAs="a">
+                            <BigIcon icon={faAward}/>
+                            <Text>Events</Text>
+                            <Icon icon={faArrowRight} color="text-primary"/>
+                        </BigButton>
+                    </Link>
+                </MainGridArea>
+                <MainGridArea area="i">
+                    <Link href="/profile" passHref>
+                        <BigButton forwardedAs="a">
+                            <BigIcon icon={faUser}/>
+                            <Text>My Profile</Text>
+                            <Icon icon={faArrowRight} color="text-primary"/>
+                        </BigButton>
+                    </Link>
+                </MainGridArea>
+
+                <SmallButtonGrid>
+                    <Link href="/search/anime" passHref>
+                        <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
+                            <Text>Anime Index</Text>
+                            <Icon icon={faArrowRight} color="text-primary"/>
+                        </BigButton>
+                    </Link>
+                    <Link href="/search/artist" passHref>
+                        <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
+                            <Text>Artist Index</Text>
+                            <Icon icon={faArrowRight} color="text-primary"/>
+                        </BigButton>
+                    </Link>
+                    <Link href="/year" passHref>
+                        <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
+                            <Text>Year Index</Text>
+                            <Icon icon={faArrowRight} color="text-primary"/>
+                        </BigButton>
+                    </Link>
+                </SmallButtonGrid>
+
+                <About>
                     <Text variant="h2">About The Project</Text>
                     <Text as="p">
                         A simple and consistent repository of anime opening and ending themes.
@@ -163,14 +185,9 @@ export default function HomePage({ featuredTheme, recentlyAdded }) {
                         <ExternalLink href="https://github.com/AnimeThemes">GitHub organization</ExternalLink>
                         <span>.</span>
                     </Text>
-                </Box>
-                <Box gapsColumn="1rem">
-                    {recentlyAdded.map((theme, index) => (
-                        <ThemeSummaryCard key={index} theme={theme}/>
-                    ))}
-                </Box>
-            </Grid>
-        </Box>
+                </About>
+            </MainGrid>
+        </>
     );
 }
 

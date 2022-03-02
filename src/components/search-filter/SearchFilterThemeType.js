@@ -1,21 +1,16 @@
 import { Text } from "components/text";
 import { Listbox } from "components/listbox";
-import { Flex } from "components/box";
+import { SearchFilter } from "components/search-filter";
 
 export function SearchFilterThemeType({ value, setValue }) {
     return (
-        <Flex flexDirection="column" alignItems="stretch" gapsColumn="0.5rem">
+        <SearchFilter>
             <Text variant="h2">Type</Text>
-            <Listbox
-                options={[
-                    null,
-                    "OP",
-                    "ED"
-                ]}
-                selectedValue={value}
-                onSelect={setValue}
-                resettable
-            />
-        </Flex>
+            <Listbox value={value} onChange={setValue} resettable highlightNonDefault>
+                <Listbox.Option value={null} hidden>Any</Listbox.Option>
+                <Listbox.Option value="OP">OP</Listbox.Option>
+                <Listbox.Option value="ED">ED</Listbox.Option>
+            </Listbox>
+        </SearchFilter>
     );
 }

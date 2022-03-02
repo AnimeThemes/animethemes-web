@@ -1,23 +1,20 @@
 import { Text } from "components/text";
 import { Listbox } from "components/listbox";
-import { Flex } from "components/box";
+import { SearchFilter } from "components/search-filter";
 
 const letters = createLetters();
 
 export function SearchFilterFirstLetter({ value, setValue }) {
     return (
-        <Flex flexDirection="column" alignItems="stretch" gapsColumn="0.5rem">
+        <SearchFilter>
             <Text variant="h2">First Letter</Text>
-            <Listbox
-                options={[
-                    null,
-                    ...letters
-                ]}
-                selectedValue={value}
-                onSelect={setValue}
-                resettable
-            />
-        </Flex>
+            <Listbox value={value} onChange={setValue} resettable highlightNonDefault>
+                <Listbox.Option value={null} hidden>Any</Listbox.Option>
+                {letters.map((letter) => (
+                    <Listbox.Option key={letter} value={letter}>{letter}</Listbox.Option>
+                ))}
+            </Listbox>
+        </SearchFilter>
     );
 }
 

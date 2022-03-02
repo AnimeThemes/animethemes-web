@@ -1,23 +1,18 @@
 import { Text } from "components/text";
 import { Listbox } from "components/listbox";
-import { Flex } from "components/box";
+import { SearchFilter } from "components/search-filter";
 
 export function SearchFilterSeason({ value, setValue }) {
     return (
-        <Flex flexDirection="column" alignItems="stretch" gapsColumn="0.5rem">
+        <SearchFilter>
             <Text variant="h2">Season</Text>
-            <Listbox
-                options={[
-                    null,
-                    "Winter",
-                    "Spring",
-                    "Summer",
-                    "Fall"
-                ]}
-                selectedValue={value}
-                onSelect={setValue}
-                resettable
-            />
-        </Flex>
+            <Listbox value={value} onChange={setValue} resettable highlightNonDefault>
+                <Listbox.Option value={null} hidden>Any</Listbox.Option>
+                <Listbox.Option value="Winter">Winter</Listbox.Option>
+                <Listbox.Option value="Spring">Spring</Listbox.Option>
+                <Listbox.Option value="Summer">Summer</Listbox.Option>
+                <Listbox.Option value="Fall">Fall</Listbox.Option>
+            </Listbox>
+        </SearchFilter>
     );
 }

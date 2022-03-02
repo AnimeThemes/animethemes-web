@@ -5,7 +5,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 module.exports = withBundleAnalyzer({
     basePath: process.env.NEXT_PUBLIC_BASE_PATH || "",
     reactStrictMode: true,
-    experimental: {
+    compiler: {
         styledComponents: true
     },
     swcMinify: true

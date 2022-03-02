@@ -1,36 +1,34 @@
 import styled from "styled-components";
 import { Text } from "components/text";
-import { Box, Flex } from "components/box";
+import { Column } from "components/box";
 import { SidebarContainer } from "components/container";
 import { ThemeSummaryCard } from "components/card";
 import useToggle from "hooks/useToggle";
 import { useState } from "react";
 import { FilterToggleButton } from "components/button";
 import { SearchFilterGroup, SearchFilterSortBy } from "components/search-filter";
-import { AspectRatio, Collapse } from "components/utils";
+import { Collapse } from "components/utils";
 import { animeNameComparator, animePremiereComparator, chain, reverse, songTitleComparator } from "utils/comparators";
 import { SEO } from "components/seo";
-import useImage from "hooks/useImage";
 import { Reorder } from "framer-motion";
 import { useLocalPlaylist } from "context/localPlaylistContext";
+import theme from "theme";
+import { MultiCoverImage } from "components/image";
 
-const StyledCoverContainer = styled.div`
+const StyledDesktopOnly = styled.div`
+    gap: 24px;
+    
+    @media (max-width: ${theme.breakpoints.tabletMax}) {
+        display: none;
+    }
+`;
+
+const StyledHeader = styled.div`
     display: flex;
-    flex-direction: row;
-    height: 100%;
-    border-radius: 0.5rem;
-    overflow: hidden;
+    justify-content: space-between;
+    align-items: center;
 `;
-const StyledCoverItemContainer = styled.div`
-    flex: 1;
-    width: 100%;
-    height: 100%;
-`;
-const StyledCover = styled.img`
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-`;
+
 const StyledReorderContainer = styled.div`
     // Hack to style the framer motion reorder component
     & > div {
@@ -55,42 +53,27 @@ const sortByOptions = [ ...sortByComparators.keys() ];
 export default function PlaylistPage() {
     const { localPlaylist, setPlaylist } = useLocalPlaylist();
 
-    const images = [
-        useImage(localPlaylist[0]?.anime),
-        useImage(localPlaylist[1]?.anime),
-        useImage(localPlaylist[2]?.anime),
-        useImage(localPlaylist[3]?.anime)
-    ].map((images) => images.largeCover).filter((image) => !!image);
-
     const [ showFilter, toggleShowFilter ] = useToggle();
     const [ sortBy, setSortBy ] = useState(sortByOptions[0]);
 
     const themes = localPlaylist.sort(sortByComparators.get(sortBy));
 
     return (
-        <Box gapsColumn="1.5rem">
+        <>
             <SEO title="Local Playlist"/>
             <Text variant="h1">Local Playlist</Text>
             <SidebarContainer>
-                <Box display={[ "none", "block" ]} gapsColumn="1.5rem">
-                    <AspectRatio mb="1.5rem" ratio={2 / 3}>
-                        <StyledCoverContainer>
-                            {images.map((image) => (
-                                <StyledCoverItemContainer key={image}>
-                                    <StyledCover loading="lazy" src={image}/>
-                                </StyledCoverItemContainer>
-                            ))}
-                        </StyledCoverContainer>
-                    </AspectRatio>
-                </Box>
-                <Box gapsColumn="1.5rem">
-                    <Flex justifyContent="space-between" alignItems="center">
+                <StyledDesktopOnly>
+                    <MultiCoverImage resourcesWithImages={localPlaylist.map((theme) => theme?.anime)}/>
+                </StyledDesktopOnly>
+                <Column style={{ "--gap": "24px" }}>
+                    <StyledHeader>
                         <Text variant="h2">
                             Themes
                             <Text color="text-disabled"> ({themes.length})</Text>
                         </Text>
                         <FilterToggleButton onClick={toggleShowFilter}/>
-                    </Flex>
+                    </StyledHeader>
                     <Collapse collapse={!showFilter}>
                         <SearchFilterGroup>
                             <SearchFilterSortBy
@@ -109,8 +92,8 @@ export default function PlaylistPage() {
                             ))}
                         </Reorder.Group>
                     </StyledReorderContainer>
-                </Box>
+                </Column>
             </SidebarContainer>
-        </Box>
+        </>
     );
 }

@@ -2,23 +2,18 @@ import React from "react";
 import Link from "next/link";
 import { Text } from "components/text";
 import styled from "styled-components";
-import { Box, Flex, Grid } from "components/box";
+import { Column } from "components/box";
 import { ExternalLink } from "components/external-link";
 import { fetchData } from "lib/server";
-import { Listbox } from "components/listbox";
-import { SearchFilterGroup } from "components/search-filter";
-import useSetting from "hooks/useSetting";
-import { showAnnouncementsSetting } from "utils/settings";
+import theme from "theme";
 
 const StyledLink = styled.a`
     max-width: 100%;
 `;
 
 export default function DevelopmentPage({ counter }) {
-    const [showAnnouncementsSettingValue, setShowAnnouncementsSettingValue] = useSetting(showAnnouncementsSetting);
-
     return (
-        <Box gapsColumn="1.5rem">
+        <>
             <Text variant="h1">Development Hub</Text>
             <Text as="p">
                 <span>This page is still actively being worked on. If you are a developer and interested in contributing feel free to contact us on </span>
@@ -33,7 +28,7 @@ export default function DevelopmentPage({ counter }) {
                 <span>.</span>
             </Text>
             <Text variant="h2">Pages</Text>
-            <Box gapsColumn={["2rem", "1.5rem"]}>
+            <Column style={{ "--gap": "24px" }}>
                 <PageGridItem
                     path="/"
                     description="The home page of AnimeThemes."
@@ -50,7 +45,7 @@ export default function DevelopmentPage({ counter }) {
                     path="/profile"
                     description={(
                         <Text>
-                            <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
+                            <TagNew>NEW: </TagNew>
                             A personal profile page listing own playlists and recently watched themes.
                         </Text>
                     )}
@@ -165,7 +160,7 @@ export default function DevelopmentPage({ counter }) {
                     path="/index/anime"
                     description={(
                         <Text>
-                            <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
+                            <TagNew/>
                             An index of all anime in the database.
                         </Text>
                     )}
@@ -179,7 +174,7 @@ export default function DevelopmentPage({ counter }) {
                     path="/event"
                     description={(
                         <Text>
-                            <Text variant="small" color="text-primary" letterSpacing="0.1rem">NEW: </Text>
+                            <TagNew/>
                             Explore themes featured in awards or brackets.
                         </Text>
                     )}
@@ -188,26 +183,26 @@ export default function DevelopmentPage({ counter }) {
                         "/event/best-anime-opening-ix-salty-arrow": "Page for an anime opening bracket hosted on AnimeBracket."
                     }}
                 />
-            </Box>
-            <Text variant="h2">Settings</Text>
-            <SearchFilterGroup>
-                <Flex flexDirection="column" alignItems="stretch" gapsColumn="0.5rem">
-                    <Text>Show Announcements</Text>
-                    <Listbox
-                        options={Object.values(showAnnouncementsSetting.values)}
-                        selectedValue={showAnnouncementsSettingValue}
-                        defaultValue={showAnnouncementsSettingValue}
-                        onSelect={setShowAnnouncementsSettingValue}
-                    />
-                </Flex>
-            </SearchFilterGroup>
-        </Box>
+            </Column>
+        </>
     );
 }
 
+const StyledPageGridItem = styled.div`
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 1fr;
+    justify-items: flex-start;
+    align-items: center;
+    grid-gap: 8px 16px;
+    
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+`;
+
 function PageGridItem({ path, otherPaths = {}, description }) {
     return (
-        <Grid gridTemplateColumns={["minmax(0, 1fr)", "minmax(0, 1fr) 1fr"]} gridColumnGap="1rem" gridRowGap="0.5rem" alignItems="center" justifyItems="flex-start">
+        <StyledPageGridItem>
             <PageLink path={path}/>
             <Text>{description}</Text>
             {Object.entries(otherPaths).map(([path, description]) => (
@@ -216,7 +211,7 @@ function PageGridItem({ path, otherPaths = {}, description }) {
                     <Text color="text-muted">{description}</Text>
                 </React.Fragment>
             ))}
-        </Grid>
+        </StyledPageGridItem>
     );
 }
 
@@ -227,6 +222,16 @@ function PageLink({ path }) {
                 <Text variant="code" link maxLines={1}>{path}</Text>
             </StyledLink>
         </Link>
+    );
+}
+
+const StyledTagNew = styled(Text).attrs({ variant: "small", color: "text-primary" })`
+    letter-spacing: 0.1rem;
+`;
+
+function TagNew() {
+    return (
+        <StyledTagNew>NEW: </StyledTagNew>
     );
 }
 

@@ -1,24 +1,19 @@
 import styled, { css } from "styled-components";
 import { Text } from "components/text";
 import { Icon } from "components/icon";
+import theme from "theme";
 
 const StyledTag = styled.span`
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: 4px;
 `;
-const StyledText = styled(Text)`
-    &:not(:first-child) {
-        margin-left: 0.25rem;
-    }
-    
+
+const StyledText = styled(Text)`    
     ${(props) => props.hideTextOnMobile && css`
-        @media (max-width: 720px) {
+        @media (max-width: ${theme.breakpoints.mobileMax}) {
             display: none;
-            
-            &:not(:first-child) {
-                margin-left: 0;
-            }
         }
     `}
 `;

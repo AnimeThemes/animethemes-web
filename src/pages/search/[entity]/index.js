@@ -1,6 +1,5 @@
 import { useDebounce } from "use-debounce";
 import { SearchAnime, SearchArtist, SearchSeries, SearchStudio, SearchTheme } from "components/search";
-import { Box } from "components/box";
 import { useRouter } from "next/router";
 import { SEO } from "components/seo";
 import { capitalize } from "lodash-es";
@@ -17,10 +16,10 @@ export default function SearchEntityPage({ entity }) {
     }
 
     return (
-        <Box gapsColumn="1.5rem">
+        <>
             <SEO title={`${searchQuery ? `${searchQuery} - ` : ""}${capitalize(entity)} Index`}/>
             <Index searchEntity={entity} searchQuery={debouncedSearchQuery}/>
-        </Box>
+        </>
     );
 }
 

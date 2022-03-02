@@ -1,11 +1,10 @@
 import Link from "next/link";
-import { Box } from "components/box";
 import { Text } from "components/text";
 import { SEO } from "components/seo";
 
 export default function NotFoundPage() {
     return (
-        <Box gapsColumn="1.5rem">
+        <>
             <SEO title="Page not found"/>
             <Text variant="h1">Page not found</Text>
             <Text as="p">
@@ -17,6 +16,6 @@ export default function NotFoundPage() {
                 </Link>
                 <span>.</span>
             </Text>
-        </Box>
+        </>
     );
 }

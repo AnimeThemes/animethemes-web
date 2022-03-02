@@ -2,7 +2,7 @@ import Link from "next/link";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "components/button";
 import { Text } from "components/text";
-import { Box, Flex } from "components/box";
+import { Column, Row } from "components/box";
 import { Icon } from "components/icon";
 import { useQuery } from "react-query";
 import { fetchGlobalSearchResults } from "lib/client/search";
@@ -63,7 +63,7 @@ export function SearchGlobal({ searchQuery }) {
     }
 
     return (
-        <Box gapsColumn="1.5rem">
+        <>
             <GlobalSearchSection
                 entity="anime"
                 title="Anime"
@@ -100,7 +100,7 @@ export function SearchGlobal({ searchQuery }) {
                         to={`/studio/${studio.slug}`}/>
                 )}
             />
-        </Box>
+        </>
     );
 }
 
@@ -118,17 +118,17 @@ function GlobalSearchSection({ entity, title, results, renderSummaryCard }) {
     return (
         <>
             <Text variant="h2">{title}</Text>
-            <Box gapsColumn="1rem">
+            <Column style={{ "--gap": "16px" }}>
                 {resultsPreview.map(renderSummaryCard)}
-            </Box>
+            </Column>
             {hasMoreResults && (
-                <Flex justifyContent="center">
+                <Row style={{ "--justify-content": "center" }}>
                     <Link href={{ pathname: `/search/${entity}`, query: urlParams }} passHref>
-                        <Button as="a" silent title="See all results">
+                        <Button as="a" variant="silent" isCircle title="See all results">
                             <Icon icon={faChevronDown}/>
                         </Button>
                     </Link>
-                </Flex>
+                </Row>
             )}
         </>
     );

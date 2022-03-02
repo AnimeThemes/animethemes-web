@@ -1,4 +1,3 @@
-import { Flex } from "components/box";
 import { Icon } from "components/icon";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Text } from "components/text";
@@ -10,15 +9,15 @@ export function ThemeMenu({ theme }) {
 
     const options = [
         !!theme.id && (isInPlaylist(theme) ? (
-            <Flex as="button" gapsRow="0.5rem" alignItems="center" onClick={() => removeFromPlaylist(theme)}>
+            <Menu.Option key="add" onSelect={() => removeFromPlaylist(theme)}>
                 <Icon icon={faMinus}/>
                 <Text>Remove from Playlist</Text>
-            </Flex>
+            </Menu.Option>
         ) : (
-            <Flex as="button" gapsRow="0.5rem" alignItems="center" onClick={() => addToPlaylist(theme)}>
+            <Menu.Option key="remove" onSelect={() => addToPlaylist(theme)}>
                 <Icon icon={faPlus}/>
                 <Text>Add to Playlist</Text>
-            </Flex>
+            </Menu.Option>
         ))
     ].filter((option) => option);
 

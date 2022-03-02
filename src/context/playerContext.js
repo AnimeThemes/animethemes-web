@@ -2,7 +2,7 @@ import { createContext } from "react";
 
 const PlayerContext = createContext({
     currentVideo: null,
-    setCurrentVideo: () => {}
+    clearCurrentVideo: () => {}
 });
 
 export default PlayerContext;

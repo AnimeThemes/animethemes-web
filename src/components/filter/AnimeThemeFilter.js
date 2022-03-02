@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Box, Flex } from "components/box";
+import { Column, Row } from "components/box";
 import { ThemeDetailCard } from "components/card";
 import { Listbox } from "components/listbox";
 import { HorizontalScroll } from "components/utils";
@@ -31,37 +31,30 @@ export function AnimeThemeFilter({ themes }) {
         .sort(chain(themeTypeComparator, themeIndexComparator));
 
     return (
-        <Box gapsColumn="1rem">
+        <Column style={{ "--gap": "16px" }}>
             {(groups.length > 1 || hasMultipleTypes) && (
                 <HorizontalScroll fixShadows>
-                    <Flex gapsRow="1rem">
+                    <Row style={{ "--gap": "16px" }}>
                         {groups.length > 1 && (
-                            <Listbox
-                                selectedValue={activeGroup}
-                                onSelect={setActiveGroup}
-                                options={groups.map((group) => group.name)}
-                                defaultValue={groups[0].name}
-                            />
+                            <Listbox value={activeGroup} onChange={setActiveGroup}>
+                                {groups.map((group) => (
+                                    <Listbox.Option key={group.name} value={group.name}>{group.name}</Listbox.Option>
+                                ))}
+                            </Listbox>
                         )}
                         {hasMultipleTypes && (
-                            <Listbox
-                                selectedValue={filterType}
-                                onSelect={setFilterType}
-                                options={[
-                                    null,
-                                    "OP",
-                                    "ED"
-                                ]}
-                                resettable
-                                nullValue="OP & ED"
-                            />
+                            <Listbox value={filterType} onChange={setFilterType} resettable highlightNonDefault>
+                                <Listbox.Option value={null} hidden>OP & ED</Listbox.Option>
+                                <Listbox.Option value="OP">OP</Listbox.Option>
+                                <Listbox.Option value="ED">ED</Listbox.Option>
+                            </Listbox>
                         )}
-                    </Flex>
+                    </Row>
                 </HorizontalScroll>
             )}
             {filteredThemes.map((theme, index) => (
                 <ThemeDetailCard key={index} theme={theme} />
             ))}
-        </Box>
+        </Column>
     );
 }

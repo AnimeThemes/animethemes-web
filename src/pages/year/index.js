@@ -1,6 +1,5 @@
 import Link from "next/link";
 import styled from "styled-components";
-import { Flex } from "components/box";
 import { Button } from "components/button";
 import { Text } from "components/text";
 import { fetchData } from "lib/server";
@@ -10,6 +9,8 @@ const StyledYearPage = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
     grid-auto-rows: 8rem;
+    justify-items: center;
+    align-items: center;
 `;
 
 export default function YearIndexPage({ years }) {
@@ -17,13 +18,11 @@ export default function YearIndexPage({ years }) {
         <StyledYearPage>
             <SEO title="Browse by Year"/>
             {years.map((year) => (
-                <Flex key={year} alignItems="center" justifyContent="center">
-                    <Link href={`/year/${year}`} passHref>
-                        <Button as="a">
-                            <Text variant="h1">{year}</Text>
-                        </Button>
-                    </Link>
-                </Flex>
+                <Link key={year} href={`/year/${year}`} passHref>
+                    <Button as="a">
+                        <Text variant="h1">{year}</Text>
+                    </Button>
+                </Link>
             ))}
         </StyledYearPage>
     );

@@ -1,34 +1,44 @@
 import styled from "styled-components";
 import { LayoutGroup, motion } from "framer-motion";
-import { Box } from "components/box";
-import { Button } from "components/button";
 import theme from "theme";
 import { uniqueId as createUniqueId } from "lodash-es";
-import { useMemo } from "react";
+import { createContext, useContext, useMemo } from "react";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "components/icon";
 
-const StyledSwitcher = styled(Box).attrs((props) => ({
-    bg: props.bg || props.backgroundColor || theme.colors["solid"]
-}))`
+const SwitcherContext = createContext();
+
+const StyledSwitcher = styled.div`
     display: flex;
     align-items: stretch;
     
     width: fit-content;
-    border-radius: 1rem;
+    border-radius: 2rem;
     white-space: nowrap;
     
+    background-color: ${theme.colors["solid"]};
     box-shadow: ${theme.shadows.low};
 `;
-const StyledButton = styled(Button)`
-    position: relative;
-    background-color: transparent;
-    box-shadow: none;
-    transition: 500ms;
+const StyledButton = styled.button`
+    --color: ${theme.colors["text-muted"]};
     
-    &:hover {
-        background-color: transparent;
-    }
+    position: relative;
+    
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: ${(props) => props.isCircle ? "8px" : "8px 16px"};
+    aspect-ratio: ${(props) => props.isCircle && "1 / 1"};
+    
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    cursor: pointer;
+    color: var(--color);
+    
+    transition: color 500ms;
 `;
 const StyledButtonBackground = styled(motion.div)`
     position: absolute;
@@ -40,57 +50,65 @@ const StyledButtonBackground = styled(motion.div)`
     background-color: ${theme.colors["solid-primary"]};
     border-radius: 2rem;
 `;
-const Top = styled.span`
+const StyledTop = styled.span`
     z-index: ${theme.zIndices.switcherText};
 `;
 
-export function Switcher({ items, selectedItem, onChange, children, ...props }) {
+export function Switcher({ selectedItem, onChange, children, ...props }) {
     const uniqueId = useMemo(createUniqueId, []);
-    const itemsArray = Array.isArray(items)
-        ? items.map((item) => ({ value: item, name: item }))
-        : Object.entries(items).map(([value, name]) => ({ value, name }));
 
-    function getButtonWrapper(item, selected, content) {
-        if (children && typeof children === "function") {
-            return children({ item, selected, content, Button: StyledButton });
-        }
-
-        return (
-            <StyledButton
-                key={item.value}
-                variant={selected && "primary"}
-                onClick={() => onChange(item.value)}
-            >
-                {content}
-            </StyledButton>
-        );
-    }
+    const context = useMemo(() => ({ selectedItem, select: onChange }), [onChange, selectedItem]);
 
     return (
         <StyledSwitcher {...props}>
-            <LayoutGroup id={uniqueId}>
-                {itemsArray.map((item) => {
-                    if (item.value === null && selectedItem === null) {
-                        // Don't show a clear button if nothing is selected
-                        return null;
-                    }
-
-                    return getButtonWrapper(
-                        item,
-                        !!selectedItem && item.value === selectedItem,
-                        item.value !== null ? (
-                            <>
-                                {selectedItem && item.value === selectedItem && (
-                                    <StyledButtonBackground transition={{ duration: 0.250 }} layoutId="button-bg"/>
-                                )}
-                                <Top>{item.name}</Top>
-                            </>
-                        ) : (
-                            <Icon icon={faTimes}/>
-                        )
-                    );
-                })}
-            </LayoutGroup>
+            <SwitcherContext.Provider value={context}>
+                <LayoutGroup id={uniqueId}>
+                    {children}
+                </LayoutGroup>
+            </SwitcherContext.Provider>
         </StyledSwitcher>
     );
 }
+
+Switcher.Option = function SwitcherItem({ children, value, ...props }) {
+    const context = useContext(SwitcherContext);
+    const isSelected = context.selectedItem === value;
+
+    return (
+        <StyledButton
+            style={{ "--color": isSelected && theme.colors["text-on-primary"] }}
+            onClick={() => context.select(value)}
+            {...props}
+        >
+            {isSelected && (
+                <StyledButtonBackground
+                    layout
+                    layoutId="button-bg"
+                    layoutDependency={value}
+                    transition={{ duration: 0.250 }}
+                />
+            )}
+            <StyledTop>{children}</StyledTop>
+        </StyledButton>
+    );
+};
+
+Switcher.Reset = function SwitcherReset(props) {
+    const context = useContext(SwitcherContext);
+
+    if (context.selectedItem === null) {
+        // Don't show a clear button if nothing is selected
+        return null;
+    }
+
+    return (
+        <StyledButton
+            style={{ "--color": theme.colors["text-disabled"] }}
+            isCircle
+            onClick={() => context.select(null)}
+            {...props}
+        >
+            <Icon icon={faTimes}/>
+        </StyledButton>
+    );
+};

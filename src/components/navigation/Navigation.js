@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import Link from "next/link";
 import {
     faBars,
@@ -8,20 +8,22 @@ import {
     faSearch,
     faSpinner,
     faTimes,
-    faTv, faUser
+    faTv,
+    faUser
 } from "@fortawesome/free-solid-svg-icons";
 import {
+    StyledCollapsibleLink,
     StyledLogo,
     StyledLogoContainer,
     StyledMobileToggle,
     StyledNavigation,
-    StyledNavigationContainer
+    StyledNavigationContainer,
+    StyledNavigationLinks
 } from "./Navigation.style";
 import { Button } from "components/button";
 import ColorThemeContext from "context/colorThemeContext";
 import { Icon } from "components/icon";
 import { Text } from "components/text";
-import { Flex } from "components/box";
 import useCurrentSeason from "hooks/useCurrentSeason";
 import navigateToRandomTheme from "utils/navigateToRandomTheme";
 import { useRouter } from "next/router";
@@ -30,15 +32,17 @@ import withBasePath from "utils/withBasePath";
 export function Navigation({ offsetToggleButton = false }) {
     const [ show, setShow ] = useState(false);
     const { colorTheme, toggleColorTheme } = useContext(ColorThemeContext);
-    const router = useRouter();
-
     const { currentYear, currentSeason } = useCurrentSeason();
+
+    const router = useRouter();
+    const [ prevPathname, setPrevPathname ] = useState(router.pathname);
 
     // If the user clicks on a link which sends them to another page,
     // we want to close the modal navigation.
-    useEffect(() => {
+    if (router.pathname !== prevPathname) {
         setShow(false);
-    }, [router.pathname]);
+        setPrevPathname(router.pathname);
+    }
 
     return (
         <>
@@ -54,55 +58,45 @@ export function Navigation({ offsetToggleButton = false }) {
                             />
                         </StyledLogoContainer>
                     </Link>
-                    <Flex
-                        flexDirection={[ "column", "row" ]}
-                        gapsRow={[ 0, "0.5rem" ]}
-                        gapsColumn={[ "0.5rem", 0 ]}
-                        alignItems={[ "flex-start", "center" ]}
-                    >
+                    <StyledNavigationLinks>
                         <Link href="/search" passHref>
-                            <Button as="a" variant="on-card" silent gapsRow="0.5rem">
+                            <Button as="a" variant="silent" style={{ "--gap": "8px" }}>
                                 <Icon icon={faSearch}/>
                                 <Text>Search</Text>
                             </Button>
                         </Link>
-                        <Button variant="on-card" silent gapsRow="0.5rem" onClick={navigateToRandomTheme}>
+                        <Button variant="silent" style={{ "--gap": "8px" }} onClick={navigateToRandomTheme}>
                             <Icon icon={faRandom}/>
                             <Text>Play Random</Text>
                         </Button>
                         <Link href={(currentYear && currentSeason) ? `/year/${currentYear}/${currentSeason}` : "/"} passHref>
-                            <Button as="a" variant="on-card" silent gapsRow="0.5rem">
+                            <Button as="a" variant="silent" style={{ "--gap": "8px" }}>
                                 <Icon icon={faTv}/>
                                 <Text>Current Season</Text>
                             </Button>
                         </Link>
                         <Link href="/profile" passHref>
-                            <Button
-                                as="a"
-                                variant="on-card"
-                                silent
-                                title="My Profile"
-                                gapsRow="0.5rem"
-                            >
+                            <StyledCollapsibleLink forwardedAs="a" title="My Profile">
                                 <Icon icon={faUser}/>
-                                <Text display={[ "initial", "none", "initial" ]}>My Profile</Text>
-                            </Button>
+                                <span>My Profile</span>
+                            </StyledCollapsibleLink>
                         </Link>
                         <Button
-                            variant="on-card"
-                            silent
+                            variant="silent"
+                            isCircle
                             onClick={toggleColorTheme}
                             alignSelf="center"
                             title="Toggle color theme"
                         >
                             <Icon icon={colorTheme === null ? faSpinner : colorTheme === "dark" ? faLightbulb : faMoon} spin={colorTheme === null} />
                         </Button>
-                    </Flex>
+                    </StyledNavigationLinks>
                 </StyledNavigationContainer>
             </StyledNavigation>
 
             <StyledMobileToggle
                 variant={show ? "default" : "primary"}
+                isCircle
                 offsetToggleButton={offsetToggleButton}
                 onClick={() => setShow(!show)}
             >

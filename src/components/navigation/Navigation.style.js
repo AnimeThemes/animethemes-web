@@ -1,36 +1,11 @@
-import styled, { css, keyframes } from "styled-components";
+import styled, { css } from "styled-components";
 import { Container } from "components/container";
-import { gapsColumn, gapsRow } from "styles/mixins";
 import { Button } from "components/button";
 import theme from "theme";
+import { blurOut, zoomIn } from "styles/animations";
+import { Solid } from "components/box";
 
-const fadeIn = keyframes`
-    0% {
-        background-color: rgba(0, 0, 0, 0);
-        backdrop-filter: blur(0px);
-    }
-    
-    100% {
-        background-color: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(5px);
-    }
-`;
-
-const zoomIn = keyframes`
-    0% {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-    
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-`;
-
-export const StyledNavigation = styled.nav`
-    background-color: ${theme.colors["solid"]};
-
+export const StyledNavigation = styled(Solid).attrs({ as: "nav" })`
     position: sticky;
     top: 0;
     z-index: ${theme.zIndices.navigation};
@@ -45,11 +20,11 @@ export const StyledNavigation = styled.nav`
         left: 0;
         width: 100%;
         height: 100%;
-        
+
         ${(props) => props.show && css`
             display: flex;
 
-            animation: ${fadeIn} 250ms ease forwards;
+            animation: ${blurOut} 250ms ease forwards;
         `}
     }
 `;
@@ -57,21 +32,18 @@ export const StyledNavigation = styled.nav`
 export const StyledNavigationContainer = styled(Container)`
     display: flex;
     justify-content: space-between;
+    gap: 16px;
 
     @media (min-width: 721px) {
         flex-direction: row;
         align-items: stretch;
-        
-        ${gapsRow("1rem")}
 
         padding: 0.5rem 1rem;
     }
-    
+
     @media (max-width: 720px) {
         flex-direction: column;
         align-items: center;
-
-        ${gapsColumn("1rem")}
 
         padding: 1rem;
         border-radius: 1rem;
@@ -82,6 +54,32 @@ export const StyledNavigationContainer = styled(Container)`
 
         [theme="dark"] & {
             border: 2px solid ${theme.colors["text-disabled"]};
+        }
+    }
+`;
+
+export const StyledNavigationLinks = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        flex-direction: column;
+        align-items: flex-start;
+
+        & :last-child {
+            align-self: center;
+        }
+    }
+`;
+
+export const StyledCollapsibleLink = styled(Button).attrs({ variant: "silent" })`
+    gap: 8px;
+
+    @media (min-width: ${theme.breakpoints.tabletMin}) and (max-width: ${theme.breakpoints.tabletMax}) {
+        & > :last-child {
+            display: none;
         }
     }
 `;
@@ -108,7 +106,7 @@ export const StyledMobileToggle = styled(Button)`
     position: fixed;
     bottom: ${(props) => props.offsetToggleButton ? "5rem" : "1rem"};
     right: 1rem;
-    
+
     padding: 1rem;
     z-index: ${theme.zIndices.navigation};
 

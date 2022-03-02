@@ -1,23 +1,39 @@
 import { Card } from "components/card";
-import { Flex } from "components/box";
+import { Row } from "components/box";
 import { Text } from "components/text";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamation } from "@fortawesome/free-solid-svg-icons";
+import styled from "styled-components";
+import theme from "theme";
+
+const StyledCard = styled(Card)`
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    
+    border-color: ${theme.colors["text-warning"]};
+`;
+
+const StyledErrorMessage = styled(Text).attrs({ variant: "code" })`
+    display: block;
+    background-color: ${theme.colors["solid-on-card"]};
+    overflow: auto;
+`;
 
 export function ErrorCard({ error }) {
     return (
-        <Card gapsColumn="1.5rem" borderColor="text-warning">
-            <Flex gapsRow="1rem">
+        <StyledCard>
+            <Row style={{ "--gap": "1rem" }}>
                 <Text color="text-warning">
                     <FontAwesomeIcon icon={faExclamation}/>
                 </Text>
                 <Text block>An error occurred while searching! Help improving the site by sending us the following error message:</Text>
-            </Flex>
+            </Row>
             <pre>
-                <Text variant="code" block bg="solid-on-card" overflow="auto">
+                <StyledErrorMessage>
                     {JSON.stringify(error, null, 2)}
-                </Text>
+                </StyledErrorMessage>
             </pre>
-        </Card>
+        </StyledCard>
     );
 }

@@ -1,52 +1,65 @@
 import { useMedia } from "use-media";
-import { ListboxNative, ListboxReach } from "components/listbox";
+import { ListboxCustom, ListboxNative } from "components/listbox";
+import theme from "theme";
+import { createContext, useContext } from "react";
+
+const ListboxContext = createContext();
 
 export function Listbox({
-    // An array of options. An option should be a string and is also used as the label.
-    options,
-
-    // Data binding.
-    selectedValue,
-    onSelect,
+    value,
+    onChange,
 
     // Adds a reset button to the list box once a non-default value has been selected.
     resettable = false,
 
-    // Only used when resettable is true. The value to return to after a reset.
+    // The value to return to after a reset.
     defaultValue = null,
 
-    // If your options include null you can change how it's displayed.
-    nullValue = "Any",
+    // Highlights the listbox if an option other than defaultValue is selected.
+    highlightNonDefault = false,
 
     disabled = false,
     ...props
 }) {
-    const isMobile = useMedia({ maxWidth: "720px" });
+    const isMobile = useMedia({ maxWidth: theme.breakpoints.mobileMax });
 
     if (isMobile) {
         return (
-            <ListboxNative
-                options={options}
-                selectedValue={selectedValue}
-                onSelect={onSelect}
-                defaultValue={defaultValue}
-                nullValue={nullValue}
-                disabled={disabled}
-                {...props}
-            />
+            <ListboxContext.Provider value={{ isMobile }}>
+                <ListboxNative
+                    value={value}
+                    onChange={onChange}
+                    resettable={resettable}
+                    defaultValue={defaultValue}
+                    highlightNonDefault={highlightNonDefault}
+                    disabled={disabled}
+                    {...props}
+                />
+            </ListboxContext.Provider>
         );
     }
 
     return (
-        <ListboxReach
-            options={options}
-            selectedValue={selectedValue}
-            onSelect={onSelect}
-            resettable={resettable}
-            defaultValue={defaultValue}
-            nullValue={nullValue}
-            disabled={disabled}
-            {...props}
-        />
+        <ListboxContext.Provider value={{ isMobile }}>
+            <ListboxCustom
+                value={value}
+                onChange={onChange}
+                resettable={resettable}
+                defaultValue={defaultValue}
+                highlightNonDefault={highlightNonDefault}
+                disabled={disabled}
+                {...props}
+            />
+        </ListboxContext.Provider>
     );
 }
+
+Listbox.Option = function ListboxOption(props) {
+    const { isMobile } = useContext(ListboxContext);
+
+    if (isMobile) {
+        return <ListboxNative.Option {...props}/>;
+    }
+
+    return <ListboxCustom.Option {...props}/>;
+};

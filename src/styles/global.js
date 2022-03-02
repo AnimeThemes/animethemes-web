@@ -81,7 +81,7 @@ export default createGlobalStyle`
         }
     }
 
-    img {
+    img, video {
         display: block;
     }
 

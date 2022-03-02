@@ -1,10 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
+const StyledShadowFix = styled.div`
+    overflow: hidden;
+    margin-bottom: -32px;
+`;
+
 const StyledHeightTransition = styled.div`
     height: ${(props) => props.height};
-    overflow: hidden;
     transition: height 250ms;
+    margin-bottom: 32px;
 `;
 
 export function HeightTransition({ children }) {
@@ -16,8 +21,10 @@ export function HeightTransition({ children }) {
     }, [children]);
 
     return (
-        <StyledHeightTransition ref={ref} height={height ? `${height}px` : "auto"}>
-            {children}
-        </StyledHeightTransition>
+        <StyledShadowFix>
+            <StyledHeightTransition ref={ref} height={height ? `${height}px` : "auto"}>
+                {children}
+            </StyledHeightTransition>
+        </StyledShadowFix>
     );
 }

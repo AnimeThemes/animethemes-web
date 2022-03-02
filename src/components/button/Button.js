@@ -1,83 +1,106 @@
 import styled, { css } from "styled-components";
-import { gaps } from "utils/gaps";
-import { Icon } from "components/icon";
 import theme from "theme";
-import { flexbox } from "styled-system";
 import { withHover } from "styles/mixins";
+import { Solid } from "components/box";
+import { forwardRef } from "react";
 
-export const Button = styled.button.attrs(({ children, circle, title }) => ({
-    circle: (typeof children === "object" && "type" in children && children.type === Icon) || circle,
-    "aria-label": title
-}))`
+export const Button = forwardRef(ButtonWithRef);
+
+function ButtonWithRef({
+    children,
+    variant = "solid",
+    isCircle = false,
+    disabled = false,
+    title,
+    ...props
+}, ref) {
+    let Component;
+    if (variant === "solid") {
+        Component = SolidButton;
+    } else if (variant === "primary") {
+        Component = PrimaryButton;
+    } else if (variant === "silent") {
+        Component = SilentButton;
+    } else {
+        throw new Error(`Unknown button variant "${variant}"!`);
+    }
+
+    return (
+        <Component
+            $isCircle={isCircle}
+            disabled={disabled}
+            title={title}
+            aria-label={title}
+            ref={ref}
+            {...props}
+        >{children}</Component>
+    );
+}
+
+const BaseButton = styled.button`
+    --gap: 0;
+    
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    cursor: ${(props) => props.disabled ? "not-allowed" : "pointer"};
 
     font-size: 0.9rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1rem;
     
-    background-color: ${getBackgroundColor};
-    color: ${getColor};
-    box-shadow: ${theme.shadows.low};
-
+    padding: ${(props) => props.$isCircle ? "8px" : "8px 16px"};
     border-radius: 999px;
-    padding: ${(props) => props.circle ? "0.5rem" : "0.5rem 1rem"};
+    gap: var(--gap, 0);
+    aspect-ratio: ${(props) => props.$isCircle && "1 / 1"};
     
-    ${withHover(css`
-        background-color: ${(props) => getBackgroundColor(props, true)};
-        color: ${(props) => getColor(props, true)};
-    `)}
-
-    & > &:first-child {
-        margin: -0.5rem 0.5rem -0.5rem -1rem;
+    opacity: ${(props) => props.disabled && "0.5"};
+    box-shadow: ${theme.shadows.low};
+    transition: background-color 250ms;
+    
+    // Buttons within other buttons should have a special margin and no shadow.
+    & & {
         box-shadow: none;
+        margin: -8px 8px -8px -16px;
     }
-    
-    ${(props) => props.circle && css`
-        aspect-ratio: 1 / 1;
-    `}
-    
-    ${(props) => props.silent && css`
-        &:not(:hover) {
-            box-shadow: none;
-        }
-    `}
-
-    ${(props) => props.disabled && css`
-        cursor: not-allowed;
-        opacity: 0.5;
-    `}
-    
-    ${flexbox}
-    ${gaps}
 `;
 
-function getColor({ variant, theme }, hover = false) {
-    switch (variant) {
-        case "primary":
-            return theme.colors["text-on-primary"];
-        case "on-card":
-        case "default":
-        default:
-            return hover ? theme.colors["text"] : theme.colors["text-muted"];
-    }
-}
+const PrimaryButton = styled(BaseButton)`
+    background-color: ${theme.colors["solid-primary"]};
+    color: ${theme.colors["text-on-primary"]};
+`;
 
-function getBackgroundColor({ variant, silent, theme }, hover = false) {
-    if (silent && !hover) {
-        return "transparent";
+const SolidButton = styled(BaseButton)`
+    background-color: ${theme.colors["solid"]};
+    color: ${theme.colors["text-muted"]};
+
+    ${withHover(css`
+        color: ${theme.colors["text"]};
+    `)}
+    
+    ${Solid} & {
+        background-color: ${theme.colors["solid-on-card"]};
+    }
+`;
+
+const SilentButton = styled(BaseButton)`
+    background-color: transparent;
+    color: ${theme.colors["text-muted"]};
+
+    ${withHover(css`
+        background-color: ${theme.colors["solid"]};
+        color: ${theme.colors["text"]};
+    `)}
+
+    &:not(:hover) {
+        box-shadow: none;
     }
 
-    switch (variant) {
-        case "primary":
-            return theme.colors["solid-primary"];
-        case "on-card":
-            return theme.colors["solid-on-card"];
-        case "default":
-        default:
-            return theme.colors["solid"];
+    ${Solid} & {
+        ${withHover(css`
+            background-color: ${theme.colors["solid-on-card"]};
+        `)}
     }
-}
+`;
+

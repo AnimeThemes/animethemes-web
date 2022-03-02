@@ -1,18 +1,8 @@
-import styled, { css, keyframes } from "styled-components";
+import styled, { css } from "styled-components";
 import { motion } from "framer-motion";
-import { gapsColumn, gapsRow } from "styles/mixins";
 import { Button } from "components/button";
 import theme from "theme";
-
-const slideIn = keyframes`
-    from {
-        transform: translateY(100%);
-    }
-
-    to {
-        transform: translateY(0);
-    }
-`;
+import { slideIn } from "styles/animations";
 
 export const StyledPlayer = styled(motion.div)`
     ${(props) => props.background ? css`
@@ -40,6 +30,8 @@ export const StyledPlayer = styled(motion.div)`
             width: 352px;
             bottom: 1rem;
             left: 1rem;
+            
+            box-shadow: ${theme.shadows.high};
         }
     ` : css`
         @media (max-width: 720px) and (orientation: portrait) {
@@ -78,20 +70,22 @@ export const StyledOverlay = styled.div`
         left: 0;
         z-index: ${theme.zIndices.videoPlayerOverlay};
 
-        ${gapsRow("0.5rem")}
+        gap: 8px;
         
         opacity: ${(props) => props.force ? 1 : 0};
+        background-color: hsla(0 0% 0% / 0.5);
 
+        transition: opacity 500ms 1000ms;
+        
         &:hover {
             opacity: 1;
+
+            transition: opacity 250ms;
         }
     }
 `;
 
-export const StyledPlayerButton = styled(Button).attrs({
-    variant: "on-card",
-    silent: true
-})`
+export const StyledPlayerButton = styled(Button).attrs({ variant: "silent", isCircle: true })`
     padding: 1rem;
     
     @media (max-width: 720px) {
@@ -103,11 +97,6 @@ export const StyledPlayerButton = styled(Button).attrs({
     }
     @media (min-width: 721px) {
         font-size: ${(props) => props.size || "1rem"};
-        opacity: 0.5;
-
-        &:hover {
-            opacity: 1;
-        }
     }
 `;
 
@@ -118,10 +107,9 @@ export const StyledPlayerInfo = styled.div`
     flex-direction: column;
     justify-content: center;
     
-    ${gapsColumn("0.25rem")}
-    
     min-width: 0;
     padding: 0.5rem 1rem;
+    gap: 4px;
     
     @media (min-width: 721px) {
         display: none;

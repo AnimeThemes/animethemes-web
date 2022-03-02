@@ -4,9 +4,8 @@ import styled from "styled-components";
 import { ExternalLink } from "components/external-link";
 import { DescriptionList } from "components/description-list";
 import { Text } from "components/text";
-import { Box } from "components/box";
+import { Column } from "components/box";
 import { SidebarContainer } from "components/container";
-import { gapsColumn } from "styles/mixins";
 import { Card } from "components/card";
 import { HeightTransition } from "components/utils";
 import { CoverImage } from "components/image";
@@ -17,12 +16,11 @@ import useImage from "hooks/useImage";
 import { resourceSiteComparator, seriesNameComparator, studioNameComparator } from "utils/comparators";
 
 const StyledList = styled.div`
-  display: flex;
-  flex-direction: column;
-
-  ${gapsColumn("0.5rem")}
-
-  text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    
+    text-align: center;
 `;
 
 export default function AnimeDetailPage({ anime }) {
@@ -30,11 +28,11 @@ export default function AnimeDetailPage({ anime }) {
     const { largeCover } = useImage(anime);
 
     return (
-        <Box gapsColumn="1.5rem">
+        <>
             <SEO title={anime.name} image={largeCover}/>
             <Text variant="h1">{anime.name}</Text>
             <SidebarContainer>
-                <Box gapsColumn="1.5rem">
+                <Column style={{ "--gap": "24px" }}>
                     <CoverImage resourceWithImages={anime} alt={`Cover image of ${anime.name}`}/>
                     <DescriptionList>
                         {!!anime.synonyms.length && (
@@ -91,15 +89,18 @@ export default function AnimeDetailPage({ anime }) {
                             </DescriptionList.Item>
                         )}
                     </DescriptionList>
-                </Box>
-                <Box gapsColumn="1.5rem">
+                </Column>
+                <Column style={{ "--gap": "24px" }}>
                     {!!anime.synopsis && (
                         <>
                             <Text variant="h2">Synopsis</Text>
                             <Card hoverable onClick={() => setCollapseSynopsis(!collapseSynopsis)}>
                                 <HeightTransition>
-                                    <Text as="p" maxLines={collapseSynopsis ? 2 : null}
-                                        dangerouslySetInnerHTML={{ __html: anime.synopsis }}/>
+                                    <Text
+                                        as="p"
+                                        maxLines={collapseSynopsis ? 2 : null}
+                                        dangerouslySetInnerHTML={{ __html: anime.synopsis }}
+                                    />
                                 </HeightTransition>
                             </Card>
                         </>
@@ -113,9 +114,9 @@ export default function AnimeDetailPage({ anime }) {
                             ? <AnimeThemeFilter themes={anime.themes}/>
                             : <Text as="p">There are no themes for this anime, yet.</Text>
                     }
-                </Box>
+                </Column>
             </SidebarContainer>
-        </Box>
+        </>
     );
 }
 

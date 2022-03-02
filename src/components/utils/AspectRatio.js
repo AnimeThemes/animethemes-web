@@ -1,7 +1,6 @@
 import styled from "styled-components";
-import { Box } from "components/box";
 
-export const AspectRatio = styled(Box)`
+export const AspectRatio = styled.div`
     position: relative;
     height: 0;
     padding-top: ${(props) => 1 / props.ratio * 100}%;

@@ -1,11 +1,11 @@
 import { Tag } from "components/tag";
 import { faBomb, faExclamationTriangle, faFilm } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "components/icon";
-import { Flex } from "components/box";
+import { Row } from "components/box";
 
 export function ThemeEntryTags({ entry }) {
     return (
-        <Flex gapsRow="0.5rem">
+        <Row style={{ "--gap": "8px" }}>
             <Tag icon={faFilm}>
                 {entry.episodes || "—"}
             </Tag>
@@ -19,6 +19,6 @@ export function ThemeEntryTags({ entry }) {
                     NSFW
                 </Tag>
             )}
-        </Flex>
+        </Row>
     );
 }
