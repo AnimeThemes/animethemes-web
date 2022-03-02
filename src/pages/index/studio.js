@@ -1,13 +1,12 @@
 import React from "react";
 import Link from "next/link";
 import { fetchData } from "lib/server";
-import { Box } from "components/box";
 import { Text } from "components/text";
 import { AlphabeticalIndex } from "components/index";
 
 export default function StudioIndexPage({ studioAll }) {
     return (
-        <Box gapsColumn="1.5rem">
+        <>
             <Text variant="h1">Studio Index</Text>
             <AlphabeticalIndex items={studioAll}>
                 {(studio) => (
@@ -16,7 +15,7 @@ export default function StudioIndexPage({ studioAll }) {
                     </Link>
                 )}
             </AlphabeticalIndex>
-        </Box>
+        </>
     );
 }
 

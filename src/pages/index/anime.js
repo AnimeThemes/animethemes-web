@@ -1,13 +1,12 @@
 import React from "react";
 import Link from "next/link";
 import { fetchData } from "lib/server";
-import { Box } from "components/box";
 import { Text } from "components/text";
 import { AlphabeticalIndex } from "components/index";
 
 export default function AnimeIndexPage({ animeAll }) {
     return (
-        <Box gapsColumn="1.5rem">
+        <>
             <Text variant="h1">Anime Index</Text>
             <AlphabeticalIndex items={animeAll}>
                 {(anime) => (
@@ -16,7 +15,7 @@ export default function AnimeIndexPage({ animeAll }) {
                     </Link>
                 )}
             </AlphabeticalIndex>
-        </Box>
+        </>
     );
 }
 

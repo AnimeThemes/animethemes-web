@@ -1,3 +1,2 @@
-export { Box } from "./Box";
-export { Flex } from "./Flex";
-export { Grid } from "./Grid";
+export { Row, Column } from "./Flex";
+export { Solid } from "./Solid";

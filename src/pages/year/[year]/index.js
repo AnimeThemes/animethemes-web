@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { AnimeSummaryCard } from "components/card";
 import { Button } from "components/button";
-import { Box, Flex } from "components/box";
+import { Column, Row } from "components/box";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "components/icon";
 import { Text } from "components/text";
@@ -12,12 +12,12 @@ const seasonOrder = [ "Winter", "Spring", "Summer", "Fall" ];
 
 export default function YearDetailPage({ seasons, year }) {
     return (
-        <Box gapsColumn="1.5rem">
+        <>
             <SEO title={year}/>
             {seasons.map(({ season, anime }) => (
                 <SeasonPreview key={season} season={season} year={year} animeList={anime}/>
             ))}
-        </Box>
+        </>
     );
 }
 
@@ -25,18 +25,18 @@ function SeasonPreview({ season, year, animeList }) {
     return (
         <>
             <Text variant="h2">{season}</Text>
-            <Box gapsColumn="1rem">
+            <Column style={{ "--gap": "16px" }}>
                 {animeList.map((anime) => (
                     <AnimeSummaryCard key={anime.slug} anime={anime}/>
                 ))}
-            </Box>
-            <Flex justifyContent="center">
+            </Column>
+            <Row style={{ "--justify-content": "center" }}>
                 <Link href={`/year/${year}/${season.toLowerCase()}`} passHref>
-                    <Button as="a" silent>
+                    <Button as="a" variant="silent" isCircle>
                         <Icon icon={faChevronDown}/>
                     </Button>
                 </Link>
-            </Flex>
+            </Row>
         </>
     );
 }

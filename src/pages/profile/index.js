@@ -1,48 +1,91 @@
+import styled from "styled-components";
 import { SEO } from "components/seo";
-import { Box, Flex, Grid } from "components/box";
+import { Column } from "components/box";
 import { Text } from "components/text";
 import { SummaryCard, ThemeSummaryCard } from "components/card";
-import { Button } from "components/button";
+import { IconTextButton } from "components/button";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import { Icon } from "components/icon";
-import { useMedia } from "use-media";
 import { useWatchHistory } from "context/watchHistoryContext";
 import { useLocalPlaylist } from "context/localPlaylistContext";
+import theme from "theme";
+import { SearchFilter, SearchFilterGroup } from "components/search-filter";
+import { Listbox } from "components/listbox";
+import { featuredThemePreviewSetting, showAnnouncementsSetting } from "utils/settings";
+import useSetting from "hooks/useSetting";
+
+const StyledProfileGrid = styled.div`
+    --columns: 2;
+    --rows: 2;
+    
+    display: grid;
+    grid-template-columns: repeat(var(--columns), 1fr);
+    grid-template-rows: repeat(var(--rows), auto);
+    grid-auto-flow: column;
+    grid-gap: 16px 32px;
+    
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        --columns: 1;
+        --rows: 4;
+    }
+`;
+
+const StyledHeader = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+`;
 
 export default function ProfilePage() {
     const { localPlaylist } = useLocalPlaylist();
     const { history, clearHistory } = useWatchHistory();
-    const isMobile = useMedia({ maxWidth: "720px" });
+
+    const [showAnnouncementsSettingValue, setShowAnnouncementsSettingValue] = useSetting(showAnnouncementsSetting);
+    const [featuredThemePreviewSettingValue, setFeaturedThemePreviewSettingValue] = useSetting(featuredThemePreviewSetting);
 
     return (
-        <Box gapsColumn="1.5rem">
+        <>
             <SEO title="My Profile"/>
             <Text variant="h1">My Profile</Text>
-            <Grid
-                gridTemplateColumns={[ "1fr", "1fr 1fr" ]}
-                gridTemplateRows={[ "repeat(4, auto)", "repeat(2, auto)" ]}
-                gridAutoFlow="column"
-                gridGap="1rem 2rem"
-            >
-                <Box alignSelf="center">
+            <StyledProfileGrid>
+                <StyledHeader>
                     <Text variant="h2">Playlists</Text>
-                </Box>
-                <Flex flexDirection="column" gap="1rem">
+                </StyledHeader>
+                <Column style={{ "--gap": "24px" }}>
                     <SummaryCard title="Local Playlist" description={`${localPlaylist.length} themes`} to="/profile/playlist"/>
-                </Flex>
-                <Flex justifyContent="space-between" alignItems="center">
+                    <Text variant="h2">Settings</Text>
+                    <SearchFilterGroup>
+                        <SearchFilter>
+                            <Text>Show Announcements</Text>
+                            <Listbox value={showAnnouncementsSettingValue} onChange={setShowAnnouncementsSettingValue}>
+                                {Object.entries(showAnnouncementsSetting.values).map(([ value, label ]) => (
+                                    <Listbox.Option key={value} value={value}>{label}</Listbox.Option>
+                                ))}
+                            </Listbox>
+                        </SearchFilter>
+                        <SearchFilter>
+                            <Text>Featured Theme Preview</Text>
+                            <Listbox value={featuredThemePreviewSettingValue} onChange={setFeaturedThemePreviewSettingValue}>
+                                {Object.entries(featuredThemePreviewSetting.values).map(([ value, label ]) => (
+                                    <Listbox.Option key={value} value={value}>{label}</Listbox.Option>
+                                ))}
+                            </Listbox>
+                        </SearchFilter>
+                    </SearchFilterGroup>
+                </Column>
+                <StyledHeader>
                     <Text variant="h2">Recently Watched</Text>
-                    <Button silent circle={isMobile} gapsRow="0.5rem" onClick={clearHistory}>
-                        <Icon icon={faTrash} color="text-disabled"/>
-                        <Text display={[ "none", "inline" ]}>Clear</Text>
-                    </Button>
-                </Flex>
-                <Flex flexDirection="column" gap="1rem">
+                    <IconTextButton
+                        icon={faTrash}
+                        collapsible
+                        onClick={clearHistory}
+                    >Clear</IconTextButton>
+                </StyledHeader>
+                <Column style={{ "--gap": "16px" }}>
                     {[...history].reverse().map((theme) => (
                         <ThemeSummaryCard key={theme.id} theme={theme}/>
                     ))}
-                </Flex>
-            </Grid>
-        </Box>
+                </Column>
+            </StyledProfileGrid>
+        </>
     );
 }

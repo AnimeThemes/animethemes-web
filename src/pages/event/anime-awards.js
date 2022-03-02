@@ -3,7 +3,6 @@ import event from "lib/server/animeawards/index.json";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import { Text } from "components/text";
-import { Box, Flex, Grid } from "components/box";
 import { SummaryCard } from "components/card";
 import { Switcher } from "components/switcher";
 import styled from "styled-components";
@@ -16,6 +15,37 @@ import { Icon } from "components/icon";
 import { faAward, faHashtag, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 
+const StyledHeader = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        flex-direction: column;
+        align-items: stretch;
+    }
+`;
+
+const StyledSwitchers = styled.div`
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+`;
+
+const StyledNomineeGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(var(--columns), 1fr);
+    grid-template-rows: repeat(10, auto);
+    grid-auto-flow: column;
+    grid-gap: 16px 32px;
+
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(var(--rows), auto);
+    }
+`;
+
 const CornerIcon = styled(Icon).attrs({
     size: "2x"
 })`
@@ -26,8 +56,6 @@ const CornerIcon = styled(Icon).attrs({
     transform: translate(50%, -33%) rotate(10deg);
 `;
 
-const MotionThemeSummaryCard = motion(ThemeSummaryCard);
-
 export default function AnimeAwardsPage({ awards }) {
     const [ judgeFilter, setJudgeFilter ] = useState("public");
     const [ typeFilter, setTypeFilter ] = useState(null);
@@ -37,61 +65,84 @@ export default function AnimeAwardsPage({ awards }) {
         : (a, b) => a.rankJury - b.rankJury;
 
     return (
-        <Box gapsColumn="1.5rem">
+        <>
             <SEO title="/r/anime Awards" description="Listen to all themes nominated for the /r/anime Awards."/>
             <Text variant="h1">/r/anime Awards</Text>
             {awards.map((award) => (
                 <Fragment key={award.year}>
-                    <Flex flexDirection={[ "column", "row" ]} alignItems={[ "stretch", "center" ]} justifyContent="space-between" gap="1rem">
+                    <StyledHeader>
                         <Text variant="h2">{award.year} Results</Text>
-                        <Flex justifyContent="space-between" gap="1rem">
-                            <Switcher
-                                items={[ "public", "jury" ]}
-                                selectedItem={judgeFilter}
-                                onChange={setJudgeFilter}
-                            />
-                            <Switcher
-                                items={[ null, "op", "ed" ]}
-                                selectedItem={typeFilter}
-                                onChange={setTypeFilter}
-                            />
-                        </Flex>
-                    </Flex>
-                    <Grid
-                        gridTemplateColumns={[ "1fr", typeFilter ? "1fr" : "1fr 1fr" ]}
-                        gridTemplateRows={[ typeFilter ? "repeat(10, auto)" : "repeat(20, auto)", "repeat(10, auto)" ]}
-                        gridAutoFlow="column"
-                        gridGap="1rem 2rem"
-                    >
+                        <StyledSwitchers>
+                            <Switcher selectedItem={judgeFilter} onChange={setJudgeFilter}>
+                                <Switcher.Option value="public">Public</Switcher.Option>
+                                <Switcher.Option value="jury">Jury</Switcher.Option>
+                            </Switcher>
+                            <Switcher selectedItem={typeFilter} onChange={setTypeFilter}>
+                                <Switcher.Reset/>
+                                <Switcher.Option value="op">OP</Switcher.Option>
+                                <Switcher.Option value="ed">ED</Switcher.Option>
+                            </Switcher>
+                        </StyledSwitchers>
+                    </StyledHeader>
+                    <StyledNomineeGrid style={{ "--columns": typeFilter ? 1 : 2, "--rows": typeFilter ? 10 : 20 }}>
                         {(typeFilter === null || typeFilter === "op") && (
                             [...award.nominees.openings].sort(sortFn).map((nominee, rank) => (
-                                <MotionThemeSummaryCard
+                                <motion.div
                                     layout="position"
-                                    theme={nominee.theme}
+                                    layoutId={nominee.theme.anime.slug + nominee.theme.slug + nominee.theme.group}
+                                    layoutDependency={judgeFilter}
                                     key={nominee.theme.anime.slug + nominee.theme.slug + nominee.theme.group}
-                                    rank={judgeFilter === "public" ? rank + 1 : nominee.rankJury}
-                                    votes={judgeFilter === "public" && nominee.votesPublic}
-                                />
+                                >
+                                    <ThemeSummaryCard
+                                        theme={nominee.theme}
+                                        rank={judgeFilter === "public" ? rank + 1 : nominee.rankJury}
+                                        votes={judgeFilter === "public" && nominee.votesPublic}
+                                    />
+                                </motion.div>
                             ))
                         )}
                         {(typeFilter === null || typeFilter === "ed") && (
                             [...award.nominees.endings].sort(sortFn).map((nominee, rank) => (
-                                <MotionThemeSummaryCard
+                                <motion.div
                                     layout="position"
-                                    theme={nominee.theme}
+                                    layoutId={nominee.theme.anime.slug + nominee.theme.slug + nominee.theme.group}
+                                    layoutDependency={judgeFilter}
                                     key={nominee.theme.anime.slug + nominee.theme.slug + nominee.theme.group}
-                                    rank={judgeFilter === "public" ? rank + 1 : nominee.rankJury}
-                                    votes={judgeFilter === "public" && nominee.votesPublic}
-                                />
+                                >
+                                    <ThemeSummaryCard
+                                        theme={nominee.theme}
+                                        rank={judgeFilter === "public" ? rank + 1 : nominee.rankJury}
+                                        votes={judgeFilter === "public" && nominee.votesPublic}
+                                    />
+                                </motion.div>
                             ))
                         )}
-                    </Grid>
+                    </StyledNomineeGrid>
                 </Fragment>
             ))}
 
-        </Box>
+        </>
     );
 }
+
+const StyledSummaryCard = styled(SummaryCard)`
+    position: relative;
+    
+    width: 100%;
+    padding-inline-end: 24px;
+`;
+
+const StyledRankInfo = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 48px;
+`;
+
+const StyledRank = styled(Text)`
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 1px;
+`;
 
 function ThemeSummaryCard({ theme, rank, votes, ...props }) {
     const { smallCover } = useImage(theme.anime);
@@ -120,33 +171,29 @@ function ThemeSummaryCard({ theme, rank, votes, ...props }) {
     );
 
     return (
-        <SummaryCard
+        <StyledSummaryCard
             title={<SongTitleWithArtists song={theme.song} songTitleLinkTo={to}/>}
             description={description}
             image={smallCover}
             to={to}
-            position="relative"
-            pr="1.5rem"
             {...props}
         >
-            <Flex flexDirection="column" gapsColumn="0.5rem" width="3rem">
+            <StyledRankInfo>
                 <Text variant="small" color="text-muted" noWrap title="Jury Rank">
                     <Icon icon={faHashtag}/>
-                    <Text tabularNums letterSpacing="1px"> {rank}</Text>
+                    <StyledRank> {rank}</StyledRank>
                 </Text>
                 {!!votes && (
                     <Text variant="small" color="text-muted" noWrap title="Public Votes">
                         <Icon icon={faUsers}/>
-                        <Text tabularNums letterSpacing="1px"> {votes}</Text>
+                        <StyledRank> {votes}</StyledRank>
                     </Text>
                 )}
-            </Flex>
+            </StyledRankInfo>
             {rank === 1 && (
-                <Box position="absolute" right="0" top="0">
-                    <CornerIcon icon={faAward} title="Winner"/>
-                </Box>
+                <CornerIcon icon={faAward} title="Winner"/>
             )}
-        </SummaryCard>
+        </StyledSummaryCard>
     );
 }
 

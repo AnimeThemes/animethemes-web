@@ -1,8 +1,11 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { useToasts } from "context/toastContext";
+import { PlaylistAddToast } from "components/toast";
 
 const LocalPlaylistContext = createContext();
 
 export function LocalPlaylistProvider({ children }) {
+    const { dispatchToast } = useToasts();
     const [ localPlaylist, setLocalPlaylist ] = useState([]);
 
     const reload = useCallback(() => setLocalPlaylist(load()), [ setLocalPlaylist ]);
@@ -14,7 +17,9 @@ export function LocalPlaylistProvider({ children }) {
 
         save(localPlaylist);
         reload();
-    }, [ reload ]);
+
+        dispatchToast(theme.song.title, <PlaylistAddToast theme={theme}/>);
+    }, [ dispatchToast, reload ]);
 
     const removeFromPlaylist = useCallback((theme) => {
         const localPlaylist = load();

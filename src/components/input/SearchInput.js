@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { gapsRow } from "styles/mixins";
 import theme from "theme";
 import { Icon } from "components/icon";
 import { Button } from "components/button";
@@ -10,10 +9,9 @@ const StyledSearchInput = styled.div`
     flex-direction: row;
     align-items: center;
 
-    ${gapsRow("0.5rem")}
-
     padding: 0.5rem 1rem;
     border-radius: 2rem;
+    gap: 8px;
     
     background-color: ${theme.colors["solid-on-card"]};
     color: ${theme.colors["text-muted"]};
@@ -32,8 +30,8 @@ const StyledForm = styled.form`
 const StyledInput = styled.input`
     width: 100%;
 `;
-const StyledResetButton = styled(Button)`
-    padding: 0;
+const StyledResetButton = styled(Button).attrs({ variant: "silent", isCircle: true })`
+    margin: -8px;
     
     &:hover {
         background-color: transparent;
@@ -60,7 +58,7 @@ export function SearchInput({ query, setQuery, onSubmit, inputProps = {}, ...pro
                 />
             </StyledForm>
             {!!query && (
-                <StyledResetButton silent circle>
+                <StyledResetButton>
                     <Icon icon={faTimes} onClick={() => setQuery && setQuery("")}/>
                 </StyledResetButton>
             )}

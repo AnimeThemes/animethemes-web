@@ -1,17 +1,20 @@
-import { useContext, useEffect, useState } from "react";
-import { Box, Flex, Grid } from "components/box";
-import { Card, AnimeSummaryCard } from "components/card";
+import { useContext, useState } from "react";
+import { Column, Row } from "components/box";
+import { AnimeSummaryCard, Card } from "components/card";
 import { Text } from "components/text";
-import { Button, VideoButton } from "components/button";
+import { Button, IconTextButton, VideoButton } from "components/button";
 import { SearchInput } from "components/input";
 import {
-    faArrowRight, faChevronDown,
-    faCompactDisc, faExclamationTriangle,
-    faLightbulb, faMoon,
+    faArrowRight,
+    faChevronDown,
+    faExclamationTriangle,
+    faLightbulb,
+    faMoon,
     faPlay,
     faRocket,
     faSpinner,
-    faStar, faTag
+    faStar,
+    faTag
 } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "components/icon";
 import styled from "styled-components";
@@ -20,27 +23,46 @@ import { Collapse, HeightTransition } from "components/utils";
 import ColorThemeContext from "context/colorThemeContext";
 import { ExternalLink } from "components/external-link";
 import { Switcher } from "components/switcher";
-import useSwitcher from "hooks/useSwitcher";
 import useToggle from "hooks/useToggle";
 import { Tag } from "components/tag";
 import { CoverImage } from "components/image";
 import { DescriptionList } from "components/description-list";
 import { codeBlock } from "common-tags";
-import { color } from "styled-system";
 import { Listbox } from "components/listbox";
 import { fetchData } from "lib/server";
 import Prism from "prismjs";
 import "prismjs/components/prism-jsx";
 import { Menu } from "components/menu";
+import { Toast } from "components/toast";
+import { useToasts } from "context/toastContext";
 
-const ColorBox = styled(Box)`
+const ColorGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20ch, 1fr));
+    grid-gap: 16px;
+    justify-content: space-around;
+`;
+const ColorBox = styled.div`
     width: 3rem;
     height: 3rem;
     border: 2px solid ${theme.colors["primaryTitle"]};
     border-radius: 0.5rem;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+    background-color: var(--color);
+`;
+
+const ExampleGrid = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: flex-start;
+    align-items: center;
+    grid-gap: 32px;
+`;
+const ExampleFullWidth = styled.div`
+    grid-column: 1 / 3;
     
-    ${color}
+    display: flex;
+    gap: 8px;
 `;
 
 export default function DesignPage({ demoData }) {
@@ -49,45 +71,47 @@ export default function DesignPage({ demoData }) {
 
     const colors = Object.keys(theme.colors);
 
-    const [selectedItem, setSelectedItem] = useState("anime");
+    const [selectedItem, setSelectedItem] = useState(null);
     const [season, setSeason] = useState(null);
-    const [, entitySwitcher] = useSwitcher([ "anime", "themes", "artists" ], "anime");
 
     const [maxLines, toggleMaxLines] = useToggle(1, 0);
     const [collapse, toggleCollapse] = useToggle();
 
+    const { dispatchToast, closeToast } = useToasts();
+
     return (
-        <Box gapsColumn="3rem">
+        <Column style={{ "--gap": "48px" }}>
             <Text variant="h1">Design Documentation</Text>
-            <Flex justifyContent="space-between" alignItems="center">
+            <Row style={{ "--justify-content": "space-between", "--align-items": "center" }}>
                 <Text variant="h2">Color</Text>
-                <Button silent gapsRow="0.5rem" onClick={toggleColorTheme}>
-                    <Icon icon={colorTheme === null ? faSpinner : colorTheme === "dark" ? faLightbulb : faMoon} spin={colorTheme === null}/>
-                    <span>Switch Theme</span>
-                </Button>
-            </Flex>
-            <HeightTransition>
-                <Grid gridTemplateColumns="repeat(auto-fit, minmax(20ch, 1fr))" gridGap="1rem" justifyContent="space-around">
+                <IconTextButton
+                    icon={colorTheme === null ? faSpinner : colorTheme === "dark" ? faLightbulb : faMoon}
+                    onClick={toggleColorTheme}
+                >Switch Theme</IconTextButton>
+            </Row>
+            <HeightTransition fixShadows>
+                <ColorGrid>
                     {colors.slice(0, moreColors ? colors.length : Math.min(15, colors.length)).map((color) => (
                         <Color key={color} color={color}/>
                     ))}
-                </Grid>
+                </ColorGrid>
             </HeightTransition>
-            <Flex justifyContent="flex-end">
-                <Button silent gapsRow="0.5rem" onClick={() => setMoreColors((val) => !val)}>
-                    <Icon icon={faChevronDown} rotation={moreColors ? 180 : undefined}/>
-                    <span>{moreColors ? "Show less" : "Show more"}</span>
-                </Button>
-            </Flex>
+            <Row style={{ "--justify-content": "flex-end" }}>
+                <IconTextButton
+                    icon={faChevronDown} rotation={moreColors ? 180 : undefined}
+                    onClick={() => setMoreColors((val) => !val)}
+                >{moreColors ? "Show less" : "Show more"}</IconTextButton>
+            </Row>
+
             <Text variant="h2">Typography</Text>
-            <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
+            <ExampleGrid>
                 <Highlight>{`<Text>This is normal text.</Text>`}</Highlight>
                 <Text>This is normal text.</Text>
 
-                <Flex gridColumn="1 / 3" gapsRow="0.5rem">
+                <ExampleFullWidth>
                     <Icon icon={faArrowRight} color="text-primary" />
                     <Text as="p" color="text-muted">Always wrap text in a <Highlight>{`<Text>`}</Highlight> component. This way basic styling is applied and default browser values get overridden.</Text>
-                </Flex>
+                </ExampleFullWidth>
 
                 <Highlight>{`<Text variant="h1">This is a page title.</Text>`}</Highlight>
                 <Text variant="h1">This is a page title.</Text>
@@ -101,10 +125,10 @@ export default function DesignPage({ demoData }) {
                 <Highlight>{`<Text variant="code">This is code.</Text>`}</Highlight>
                 <Text variant="code">This is code.</Text>
 
-                <Flex gridColumn="1 / 3" gapsRow="0.5rem">
+                <ExampleFullWidth>
                     <Icon icon={faArrowRight} color="text-primary" />
                     <Text as="p" color="text-muted">Use the <Text variant="code">variant</Text> prop to apply pre-defined styles to your text.</Text>
-                </Flex>
+                </ExampleFullWidth>
 
                 <Highlight>{`<Text maxLines={1}>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</Text>`}</Highlight>
                 <Text maxLines={1}>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</Text>
@@ -112,10 +136,10 @@ export default function DesignPage({ demoData }) {
                 <Highlight>{`<Text maxLines={3}>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</Text>`}</Highlight>
                 <Text maxLines={3}>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</Text>
 
-                <Flex gridColumn="1 / 3" gapsRow="0.5rem">
+                <ExampleFullWidth>
                     <Icon icon={faArrowRight} color="text-primary" />
                     <Text as="p" color="text-muted">Use the <Text variant="code">maxLines</Text> prop to add a limit to the number of lines a text should have. Overflowing text will get replaced with three dots (<Text variant="code">...</Text>)</Text>
-                </Flex>
+                </ExampleFullWidth>
 
                 <Highlight>{`<Text color="text">This is colored text.</Text>`}</Highlight>
                 <Text color="text">This is colored text.</Text>
@@ -141,9 +165,10 @@ export default function DesignPage({ demoData }) {
                 <ExternalLink href="https://reddit.com/r/AnimeThemes">
                     This is an external link.
                 </ExternalLink>
-            </Grid>
+            </ExampleGrid>
+
             <Text variant="h2">Iconography</Text>
-            <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
+            <ExampleGrid>
                 <Highlight>{`<Icon icon={faRocket}/>`}</Highlight>
                 <Icon icon={faRocket}/>
 
@@ -152,9 +177,10 @@ export default function DesignPage({ demoData }) {
 
                 <Highlight>{`<Icon icon={faSpinner} spin/>`}</Highlight>
                 <Icon icon={faSpinner} spin/>
-            </Grid>
+            </ExampleGrid>
+
             <Text variant="h2">Tag</Text>
-            <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
+            <ExampleGrid>
                 <Highlight>{`<Tag icon={faTag}>Tag</Tag>`}</Highlight>
                 <Tag icon={faTag}>Tag</Tag>
 
@@ -174,54 +200,72 @@ export default function DesignPage({ demoData }) {
                 }>
                     <Text color="text-warning">Warning</Text>
                 </Tag>
-            </Grid>
+            </ExampleGrid>
+
             <Text variant="h2">Button</Text>
-            <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
+            <ExampleGrid>
                 <Highlight>{`<Button>Button</Button>`}</Highlight>
                 <Button>Button</Button>
 
                 <Highlight>{`<Button variant="primary">Primary</Button>`}</Highlight>
                 <Button variant="primary">Primary</Button>
 
-                <Highlight>{`<Button silent>Silent</Button>`}</Highlight>
-                <Button silent>Silent</Button>
+                <Highlight>{`<Button variant="silent">Silent</Button>`}</Highlight>
+                <Button variant="silent">Silent</Button>
 
                 <pre>
                     <Highlight block>
                         {codeBlock`
-                            <Button>
+                            <Card>
+                                <Button>On Card</Button>
+                                <Button variant="silent">On Card</Button>
+                            </Card>
+                        `}
+                    </Highlight>
+                </pre>
+                <Card>
+                    <Row style={{ "--gap": "8px" }}>
+                        <Button>On Card</Button>
+                        <Button variant="silent">Silent On Card</Button>
+                    </Row>
+                </Card>
+
+                <pre>
+                    <Highlight block>
+                        {codeBlock`
+                            <Button isCircle>
                                 <Icon icon={faLightbulb}/>
                             </Button>
                         `}
                     </Highlight>
                 </pre>
-                <Button>
+                <Button isCircle>
                     <Icon icon={faLightbulb}/>
                 </Button>
 
                 <pre>
                     <Highlight block>
                         {codeBlock`
-                            <Button variant="primary">
+                            <Button variant="primary" isCircle>
                                 <Icon icon={faLightbulb}/>
                             </Button>
                         `}
                     </Highlight>
                 </pre>
-                <Button variant="primary">
+                <Button variant="primary" isCircle>
                     <Icon icon={faLightbulb}/>
                 </Button>
 
                 <pre>
                     <Highlight block>
                         {codeBlock`
-                            <Button silent>
+                            <Button variant="silent" isCircle>
                                 <Icon icon={faLightbulb}/>
                             </Button>
                         `}
                     </Highlight>
                 </pre>
-                <Button silent>
+                <Button variant="silent" isCircle>
                     <Icon icon={faLightbulb}/>
                 </Button>
 
@@ -230,26 +274,26 @@ export default function DesignPage({ demoData }) {
                         {codeBlock`
                             <Button>
                                 <Button as="span" variant="primary">
-                                    <Icon icon={faPlay}/>
+                                    Prefixed
                                 </Button>
-                                Play
+                                Button
                             </Button>
                         `}
                     </Highlight>
                 </pre>
                 <Button>
                     <Button as="span" variant="primary">
-                        <Icon icon={faPlay}/>
+                        Prefixed
                     </Button>
-                    Play
+                    Button
                 </Button>
 
                 <pre>
                     <Highlight block>
                         {codeBlock`
                             <Button>
-                                <Button as="span" variant="primary">
-                                    <Icon icon={faCompactDisc} spin/>
+                                <Button as="span" variant="primary" isCircle>
+                                    <Icon icon={faPlay}/>
                                 </Button>
                                 Playing
                             </Button>
@@ -257,10 +301,10 @@ export default function DesignPage({ demoData }) {
                     </Highlight>
                 </pre>
                 <Button>
-                    <Button as="span" variant="primary">
-                        <Icon icon={faCompactDisc} spin/>
+                    <Button as="span" variant="primary" isCircle>
+                        <Icon icon={faPlay}/>
                     </Button>
-                    Playing
+                    Play
                 </Button>
 
                 <pre>
@@ -291,47 +335,36 @@ export default function DesignPage({ demoData }) {
                         overlap: "None"
                     }}
                 />
-            </Grid>
+            </ExampleGrid>
+
             <Text variant="h2">Switcher</Text>
-            <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
+            <ExampleGrid>
                 <pre>
                     <Highlight block>
                         {codeBlock`
                             // At the top of the component
-                            const [selectedItem, setSelectedItem] = useState("anime");
+                            const [selectedItem, setSelectedItem] = useState(null);
                             
                             // Inside the render output
-                            <Switcher
-                                items={[ "anime", "themes", "artists" ]}
-                                selectedItem={selectedItem}
-                                onChange={setSelectedItem}
-                            />
+                            <Switcher selectedItem={selectedItem} onChange={setSelectedItem}>
+                                <Switcher.Reset/>
+                                <Switcher.Option value="anime">Anime</Switcher.Option>
+                                <Switcher.Option value="theme">Themes</Switcher.Option>
+                                <Switcher.Option value="artists">Artists</Switcher.Option>
+                            </Switcher>
                         `}
                     </Highlight>
                 </pre>
-                <Switcher
-                    items={[ "anime", "themes", "artists" ]}
-                    selectedItem={selectedItem}
-                    onChange={setSelectedItem}
-                />
-                <pre>
-                    <Highlight block>
-                        {codeBlock`
-                            // At the top of the component
-                            const [selectedEntity, entitySwitcher] = useSwitcher(
-                                [ "anime", "themes", "artists" ], 
-                                "anime"
-                            );
-                            
-                            // Inside the render output
-                            {entitySwitcher}
-                        `}
-                    </Highlight>
-                </pre>
-                {entitySwitcher}
-            </Grid>
+                <Switcher selectedItem={selectedItem} onChange={setSelectedItem}>
+                    <Switcher.Reset/>
+                    <Switcher.Option value="anime">Anime</Switcher.Option>
+                    <Switcher.Option value="theme">Themes</Switcher.Option>
+                    <Switcher.Option value="artists">Artists</Switcher.Option>
+                </Switcher>
+            </ExampleGrid>
+
             <Text variant="h2">Card</Text>
-            <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
+            <ExampleGrid>
                 <pre>
                     <Highlight block>
                         {codeBlock`
@@ -361,21 +394,14 @@ export default function DesignPage({ demoData }) {
                 <pre>
                     <Highlight block>
                         {codeBlock`
-                            <StaticQuery query={graphql\`
-                                query {
-                                    anime(slug: { eq: "bakemonogatari" }) {
-                                        ...AnimeCard
-                                        ...AnimeCardThemes
-                                    }
-                                }    
-                            \`}>
-                                {(data) => (
-                                    <AnimeSummaryCard
-                                        anime={data.anime}
-                                        maxThemes={1}
-                                    />
-                                )}
-                            </StaticQuery>
+                            // At the top of the component
+                            const anime = /* ... */
+                            
+                            // Inside the render output
+                            <AnimeSummaryCard
+                                anime={anime}
+                                maxThemes={1}
+                            />
                         `}
                     </Highlight>
                 </pre>
@@ -383,44 +409,38 @@ export default function DesignPage({ demoData }) {
                     anime={demoData.anime}
                     maxThemes={1}
                 />
-            </Grid>
+            </ExampleGrid>
+
             <Text variant="h2">Input</Text>
-            <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
+            <ExampleGrid>
                 <Highlight>
                     {`<SearchInput/>`}
                 </Highlight>
                 <SearchInput/>
-            </Grid>
+            </ExampleGrid>
+
             <Text variant="h2">Image</Text>
-            <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
+            <ExampleGrid>
                 <pre>
                     <Highlight block>
                         {codeBlock`
-                            <StaticQuery query={graphql\`
-                                query {
-                                    anime(slug: { eq: "bakemonogatari" }) {
-                                        images {
-                                            facet
-                                            link
-                                        }
-                                    }
-                                }    
-                            \`}>
-                                {(data) => (
-                                    <Box width="200px">
-                                        <CoverImage resourceWithImages={data.anime}/>
-                                    </Box>
-                                )}
-                            </StaticQuery>
+                            // At the top of the component
+                            const anime = /* ... */
+                            
+                            // Inside the render output
+                            <div style={{ width: "200px" }}>
+                                <CoverImage resourceWithImages={anime}/>
+                            </div>
                         `}
                     </Highlight>
                 </pre>
-                <Box width="200px">
+                <div style={{ width: "200px" }}>
                     <CoverImage resourceWithImages={demoData.anime}/>
-                </Box>
-            </Grid>
+                </div>
+            </ExampleGrid>
+
             <Text variant="h2">Description List</Text>
-            <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
+            <ExampleGrid>
                 <pre>
                     <Highlight block>
                         {codeBlock`
@@ -447,9 +467,10 @@ export default function DesignPage({ demoData }) {
                         </ExternalLink>
                     </DescriptionList.Item>
                 </DescriptionList>
-            </Grid>
+            </ExampleGrid>
+
             <Text variant="h2">Experimental</Text>
-            <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
+            <ExampleGrid>
                 <pre>
                     <Highlight block>
                         {codeBlock`
@@ -475,38 +496,73 @@ export default function DesignPage({ demoData }) {
                     </Highlight>
                 </pre>
                 <Listbox
-                    options={[
-                        null,
-                        "Winter",
-                        "Spring",
-                        "Summer",
-                        "Fall"
-                    ]}
-                    selectedValue={season}
-                    onSelect={setSeason}
-                    nullValue="Any"
+                    value={season}
+                    onChange={setSeason}
                     resettable
                     width="150px"
-                />
+                >
+                    <Listbox.Option value={null} hidden>Any</Listbox.Option>
+                    <Listbox.Option value="winter">Winter</Listbox.Option>
+                    <Listbox.Option value="spring">Spring</Listbox.Option>
+                    <Listbox.Option value="summer">Summer</Listbox.Option>
+                    <Listbox.Option value="fall">Fall</Listbox.Option>
+                </Listbox>
                 <pre>
                     <Highlight block>
                         {codeBlock`
                             <Menu>
-                                <button>Option 1</button>
-                                <button>Option 2</button>
-                                <button>Option 3</button>
+                                <Menu.Option onSelect={() => alert("1")}>Option 1</Menu.Option>
+                                <Menu.Option onSelect={() => alert("2")}>Option 2</Menu.Option>
+                                <Menu.Option onSelect={() => alert("3")}>Option 3</Menu.Option>
                             </Menu>
                         `}
                     </Highlight>
                 </pre>
                 <Menu>
-                    <button>Option 1</button>
-                    <button>Option 2</button>
-                    <button>Option 3</button>
+                    <Menu.Option onSelect={() => alert("1")}>Option 1</Menu.Option>
+                    <Menu.Option onSelect={() => alert("2")}>Option 2</Menu.Option>
+                    <Menu.Option onSelect={() => alert("3")}>Option 3</Menu.Option>
                 </Menu>
-            </Grid>
+                <pre>
+                    <Highlight block>
+                        {codeBlock`
+                            // At the top of the component
+                            const { dispatchToast, closeToast } = useToasts();
+                            
+                            // Inside the render output
+                            <Button onClick={() => dispatchToast(
+                                "example-toast",
+                                <Toast
+                                    hoverable
+                                    onClick={() => closeToast("example-toast")}
+                                >
+                                    This is a toast. 
+                                    It will close in 10 seconds or if you click on it.
+                                </Toast>,
+                                10_000
+                            )}>
+                                Show Toast
+                            </Button>
+                        `}
+                    </Highlight>
+                </pre>
+                <Button onClick={() => dispatchToast(
+                    "example-toast",
+                    <Toast
+                        hoverable
+                        onClick={() => closeToast("example-toast")}
+                    >
+                        This is a toast.
+                        It will close in 10 seconds or if you click on it.
+                    </Toast>,
+                    10_000
+                )}>
+                    Show Toast
+                </Button>
+            </ExampleGrid>
+
             <Text variant="h2">Utils</Text>
-            <Grid gridTemplateColumns="1fr 1fr" gridGap="2rem" alignItems="center" justifyItems="flex-start">
+            <ExampleGrid>
                 <pre>
                     <Highlight block>
                         {codeBlock`
@@ -514,29 +570,26 @@ export default function DesignPage({ demoData }) {
                             const [maxLines, toggleMaxLines] = useToggle(1, 0);
                             
                             // Inside the render output
-                            <Card gapsColumn="1rem">
+                            <Card style={{ "--gap": "16px" }}>
                                 <HeightTransition>
                                     <Text maxLines={maxLines}>
                                         Lorem ipsum dolor sit amet ...
                                     </Text>
                                 </HeightTransition>
-                                <Button
-                                    variant="on-card"
-                                    onClick={toggleMaxLines}
-                                >
+                                <Button onClick={toggleMaxLines}>
                                     Toggle text length
                                 </Button>
                             </Card>
                         `}
                     </Highlight>
                 </pre>
-                <Card gapsColumn="1rem">
+                <Card style={{ "--gap": "16px" }}>
                     <HeightTransition>
                         <Text maxLines={maxLines}>
                             Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
                         </Text>
                     </HeightTransition>
-                    <Button variant="on-card" onClick={toggleMaxLines}>
+                    <Button onClick={toggleMaxLines}>
                         Toggle text length
                     </Button>
                 </Card>
@@ -547,40 +600,40 @@ export default function DesignPage({ demoData }) {
                             const [collapse, toggleCollapse] = useToggle();
                             
                             // Inside the render output
-                            <Card gapsColumn="1rem">
+                            <Card style={{ "--gap": "16px" }}>
                                 <Collapse collapse={collapse}>
                                     <Text>
                                         Lorem ipsum dolor sit amet ...
                                     </Text>
                                 </Collapse>
-                                <Button variant="on-card" onClick={toggleCollapse}>
+                                <Button onClick={toggleCollapse}>
                                     Toggle collapse
                                 </Button>
                             </Card>
                         `}
                     </Highlight>
                 </pre>
-                <Card gapsColumn="1rem">
+                <Card style={{ "--gap": "16px" }}>
                     <Collapse collapse={collapse}>
                         <Text>
                             Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
                         </Text>
                     </Collapse>
-                    <Button variant="on-card" onClick={toggleCollapse}>
+                    <Button onClick={toggleCollapse}>
                         Toggle collapse
                     </Button>
                 </Card>
-            </Grid>
-        </Box>
+            </ExampleGrid>
+        </Column>
     );
 }
 
 function Color({ color }) {
     return (
-        <Flex flexDirection="column" alignItems="center" gapsColumn="0.5rem">
-            <ColorBox bg={color}/>
+        <Column style={{ "--align-items": "center", "--gap": "8px" }}>
+            <ColorBox style={{ "--color": theme.colors[color] }}/>
             <Text variant="code">{color}</Text>
-        </Flex>
+        </Column>
     );
 }
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "components/button";
 import styled from "styled-components";
-import { Flex } from "components/box";
+import { Row } from "components/box";
 import { Text } from "components/text";
 
 const StyledYear = styled.div`
@@ -23,26 +23,26 @@ export function YearNavigation({ year, yearList }) {
     const nextYear = yearList.indexOf(year) < yearList.length - 1 ? yearList[yearList.indexOf(year) + 1] : null;
 
     return (
-        <Flex alignItems="center">
+        <Row style={{ "--align-items": "center" }}>
             <StyledYearPrevious>
                 {previousYear && (
                     <Link href={`/year/${previousYear}`} passHref>
-                        <Button as="a" silent>{previousYear}</Button>
+                        <Button as="a" variant="silent">{previousYear}</Button>
                     </Link>
                 )}
             </StyledYearPrevious>
             <Link href={`/year`} passHref>
-                <Button as="a" silent>
+                <Button as="a" variant="silent">
                     <Text variant="h1">{year}</Text>
                 </Button>
             </Link>
             <StyledYearNext>
                 {nextYear && (
                     <Link href={`/year/${nextYear}`} passHref>
-                        <Button as="a" silent>{nextYear}</Button>
+                        <Button as="a" variant="silent">{nextYear}</Button>
                     </Link>
                 )}
             </StyledYearNext>
-        </Flex>
+        </Row>
     );
 }

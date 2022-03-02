@@ -6,3 +6,13 @@ export const showAnnouncementsSetting = {
         disabled: "Disabled"
     }
 };
+
+export const featuredThemePreviewSetting = {
+    key: "featuredThemePreview",
+    initialValue: "Video",
+    values: {
+        video: "Video",
+        cover: "Cover",
+        disabled: "Disabled"
+    }
+};

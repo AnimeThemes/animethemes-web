@@ -1,17 +1,16 @@
 import { Text } from "components/text";
 import { Listbox } from "components/listbox";
-import { Flex } from "components/box";
+import { SearchFilter } from "components/search-filter";
 
 export function SearchFilterSortBy({ options, value, setValue }) {
     return (
-        <Flex flexDirection="column" alignItems="stretch" gapsColumn="0.5rem">
+        <SearchFilter>
             <Text variant="h2">Sort by</Text>
-            <Listbox
-                options={options}
-                selectedValue={value}
-                onSelect={setValue}
-                defaultValue={value}
-            />
-        </Flex>
+            <Listbox value={value} onChange={setValue}>
+                {options.map((option) => (
+                    <Listbox.Option key={option} value={option}>{option}</Listbox.Option>
+                ))}
+            </Listbox>
+        </SearchFilter>
     );
 }

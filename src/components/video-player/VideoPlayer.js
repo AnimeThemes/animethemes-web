@@ -1,30 +1,33 @@
 import { useContext, useRef, useState } from "react";
 import {
+    StyledOverlay,
     StyledPlayer,
     StyledPlayerButton,
-    StyledVideo,
-    StyledOverlay, StyledPlayerInfo, StyledPlayerProgress, StyledPlayerProgressBar
+    StyledPlayerInfo,
+    StyledPlayerProgress,
+    StyledPlayerProgressBar,
+    StyledVideo
 } from "./VideoPlayer.style";
 import { faDownload, faExpandAlt, faPause, faPlay, faTimes } from "@fortawesome/free-solid-svg-icons";
 import PlayerContext from "context/playerContext";
 import createVideoSlug from "utils/createVideoSlug";
 import { useMedia } from "use-media";
 import { Icon } from "components/icon";
-import { Button } from "components/button";
+import { IconTextButton } from "components/button";
 import { Card } from "components/card";
 import { Text } from "components/text";
-import { Flex } from "components/box";
+import { Column, Row } from "components/box";
 import { Container } from "components/container";
 import useCompatability from "hooks/useCompatability";
 import { useRouter } from "next/router";
 import { videoBaseUrl } from "lib/client/api";
 
-export function VideoPlayer({ video, entry, background, ...props }) {
+export function VideoPlayer({ anime, theme, entry, video, background, ...props }) {
     const [isPlaying, setPlaying] = useState(false);
     const { canPlayVideo } = useCompatability();
     const playerRef = useRef();
     const progressRef = useRef();
-    const { setCurrentVideo } = useContext(PlayerContext);
+    const { clearCurrentVideo } = useContext(PlayerContext);
     const isMobile = useMedia({ maxWidth: "720px" });
     const videoUrl = `${videoBaseUrl}/video/${video.basename}`;
     const router = useRouter();
@@ -38,8 +41,8 @@ export function VideoPlayer({ video, entry, background, ...props }) {
     }
 
     function maximize() {
-        const videoSlug = createVideoSlug(entry.theme, entry, video);
-        router.push(`/anime/${entry.theme.anime.slug}/${videoSlug}`);
+        const videoSlug = createVideoSlug(theme, entry, video);
+        router.push(`/anime/${anime.slug}/${videoSlug}`);
     }
 
     function preventTextSelection(event) {
@@ -62,33 +65,27 @@ export function VideoPlayer({ video, entry, background, ...props }) {
             return null;
         } else {
             return (
-                <Container pb="0">
-                    <Card gapsColumn="1rem">
-                        <Text as="p">Your browser or device doesn&apos;t seem to support WebM video which is required to play video files.</Text>
-                        <Text as="p">You can try one of the options below to still watch the video:</Text>
-                        <div>
-                            <Flex gapsBoth="1rem" flexWrap="wrap">
-                                <Button
-                                    as="a"
-                                    variant="on-card"
+                <Container>
+                    <Card>
+                        <Column style={{ "--gap": "16px" }}>
+                            <Text as="p">Your browser or device doesn&apos;t seem to support WebM video which is required to play video files.</Text>
+                            <Text as="p">You can try one of the options below to still watch the video:</Text>
+                            <Row wrap style={{ "--gap": "16px" }}>
+                                <IconTextButton
+                                    variant="default"
+                                    forwardedAs="a"
                                     href={`vlc-x-callback://x-callback-url/stream?url=${videoUrl}`}
-                                    gapsRow="0.5rem"
-                                >
-                                    <Icon icon={faPlay} color="text-disabled"/>
-                                    <Text>Play in VLC</Text>
-                                </Button>
-                                <Button
-                                    as="a"
-                                    variant="on-card"
+                                    icon={faPlay}
+                                >Play in VLC</IconTextButton>
+                                <IconTextButton
+                                    variant="default"
+                                    forwardedAs="a"
                                     href={videoUrl}
                                     download
-                                    gapsRow="0.5rem"
-                                >
-                                    <Icon icon={faDownload} color="text-disabled"/>
-                                    <Text>Download</Text>
-                                </Button>
-                            </Flex>
-                        </div>
+                                    icon={faDownload}
+                                >Download</IconTextButton>
+                            </Row>
+                        </Column>
                     </Card>
                 </Container>
             );
@@ -128,21 +125,21 @@ export function VideoPlayer({ video, entry, background, ...props }) {
                             color="text-primary"
                             noWrap="ellipsis"
                         >
-                            {entry.theme.song.title}
+                            {theme.song.title}
                         </Text>
                         <Text
                             variant="small"
                             color="text-muted"
                             noWrap="ellipsis"
                         >
-                            {entry.theme.anime.name}
+                            {anime.name}
                         </Text>
                     </StyledPlayerInfo>
                     <StyledOverlay force={!isPlaying}>
-                        <StyledPlayerButton onClick={() => setCurrentVideo(null)}>
+                        <StyledPlayerButton onClick={clearCurrentVideo}>
                             <Icon icon={faTimes} />
                         </StyledPlayerButton>
-                        <StyledPlayerButton size="2rem" onClick={togglePlay}>
+                        <StyledPlayerButton size="32px" onClick={togglePlay}>
                             <Icon icon={isPlaying ? faPause : faPlay} />
                         </StyledPlayerButton>
                         <StyledPlayerButton onClick={maximize} hideOnMobile>

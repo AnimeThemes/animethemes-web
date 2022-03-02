@@ -1,10 +1,12 @@
 import { colors, shadows } from "theme/colors";
 
 const theme = {
-    breakpoints: [
-        "721px",
-        "870px",
-    ],
+    breakpoints: {
+        mobileMax: "720px",
+        tabletMin: "721px",
+        tabletMax: "870px",
+        desktopMin: "871px",
+    },
     shadows: createThemeDefinition(shadows),
     colors: createThemeDefinition(colors),
     zIndices: {

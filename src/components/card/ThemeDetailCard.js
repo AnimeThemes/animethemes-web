@@ -1,9 +1,7 @@
 import {
-    StyledHeader,
     StyledRow,
     StyledSequence,
     StyledThemeCard,
-    StyledVersion,
     StyledVideoList,
     StyledVideoListContainer
 } from "./ThemeDetailCard.style";
@@ -17,21 +15,17 @@ export function ThemeDetailCard({ theme }) {
         <StyledThemeCard>
             <StyledRow>
                 <StyledSequence>{theme.slug}</StyledSequence>
-                <StyledHeader>
-                    <SongTitleWithArtists song={theme.song}/>
-                </StyledHeader>
+                <SongTitleWithArtists song={theme.song}/>
                 <ThemeMenu theme={theme}/>
             </StyledRow>
             {theme.entries.map(entry => (
-                <StyledVersion key={entry.version || 0}>
-                    <StyledRow>
-                        <StyledSequence secondary>{!!entry.version && `v${entry.version}`}</StyledSequence>
-                        <Text color="text-muted">
-                            <ThemeEntryTags entry={entry}/>
-                        </Text>
-                    </StyledRow>
-                    {!!entry.videos && (
-                        <StyledVideoListContainer>
+                <StyledRow key={entry.version || 0}>
+                    <StyledSequence secondary>{!!entry.version && `v${entry.version}`}</StyledSequence>
+                    <Text color="text-muted">
+                        <ThemeEntryTags entry={entry}/>
+                    </Text>
+                    <StyledVideoListContainer>
+                        {!!entry.videos && (
                             <StyledVideoList>
                                 {entry.videos.map((video, index) => (
                                     <VideoButton
@@ -40,13 +34,12 @@ export function ThemeDetailCard({ theme }) {
                                         theme={theme}
                                         entry={entry}
                                         video={video}
-                                        variant="on-card"
                                     />
                                 ))}
                             </StyledVideoList>
-                        </StyledVideoListContainer>
-                    )}
-                </StyledVersion>
+                        )}
+                    </StyledVideoListContainer>
+                </StyledRow>
             ))}
         </StyledThemeCard>
     );

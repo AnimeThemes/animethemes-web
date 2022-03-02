@@ -1,18 +1,19 @@
 import Link from "next/link";
 import { Text } from "components/text";
-import styled, { css, keyframes } from "styled-components";
+import styled, { css } from "styled-components";
 import { Card } from "components/card";
-import { Flex } from "components/box";
+import { Column } from "components/box";
 import withBasePath from "utils/withBasePath";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { loadingAnimation } from "styles/mixins";
 
-const loadingAnimation = keyframes`
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 100% 100%;
-  }
+const StyledSummaryCard = styled(Card)`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    height: 64px;
+    padding: 0 1rem 0 0;
 `;
 
 const StyledCover = styled.img.attrs({
@@ -22,12 +23,7 @@ const StyledCover = styled.img.attrs({
   height: 64px;
   object-fit: cover;
 
-  background: radial-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.25)) no-repeat;
-  background-size: 500% 500%;
-
-  @media (prefers-reduced-motion: no-preference) {
-    animation: ${loadingAnimation} 2s infinite alternate linear;
-  }
+  ${loadingAnimation}
 
   ${(props) => props.isPlaceholder && css`
     padding: 0.5rem;
@@ -36,34 +32,32 @@ const StyledCover = styled.img.attrs({
   `}
 `;
 
+const StyledBody = styled(Column)`
+    flex: 1;
+    justify-content: center;
+    
+    padding: 0 1rem;
+    gap: 0.25rem;
+`;
+
 export function SummaryCard({ title, description, image, to, children, ...props }) {
     const [ imageNotFound, setImageNotFound ] = useState(false);
-    const imageRef = useRef();
-
-    useEffect(() => {
-        const imageEl = imageRef.current;
-        const listener = () => setImageNotFound(true);
-
-        imageEl.addEventListener("error", listener);
-
-        return () => imageEl.removeEventListener("error", listener);
-    }, []);
 
     return (
-        <Card display="flex" flexDirection="row" alignItems="center" p={0} pr="1rem" height="64px" {...props}>
+        <StyledSummaryCard {...props}>
             <Link href={to}>
                 <a>
                     <StyledCover
-                        ref={imageRef}
                         alt="Cover"
                         src={(!imageNotFound && image) || withBasePath("/img/logo.svg")}
                         isPlaceholder={!image || imageNotFound}
                         loading="lazy"
+                        onError={() => setImageNotFound(true)}
                     />
                 </a>
             </Link>
-            <Flex flex={1} flexDirection="column" justifyContent="center" gapsColumn="0.25rem" px="1rem">
-                <Text fontWeight="600" maxLines={1} title={title}>
+            <StyledBody>
+                <Text maxLines={1} title={typeof title === "string" && title}>
                     {typeof title === "string" ? (
                         <Link href={to} passHref>
                             <Text as="a" link>{title}</Text>
@@ -77,9 +71,9 @@ export function SummaryCard({ title, description, image, to, children, ...props 
                         </SummaryCard.Description>
                     ) : description}
                 </Text>
-            </Flex>
+            </StyledBody>
             {children}
-        </Card>
+        </StyledSummaryCard>
     );
 }
 

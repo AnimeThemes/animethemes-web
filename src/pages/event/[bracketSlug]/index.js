@@ -2,8 +2,8 @@ import styled from "styled-components";
 import Link from "next/link";
 import { SEO } from "components/seo";
 import { Text } from "components/text";
-import { Box, Flex } from "components/box";
-import { Card, SummaryCard } from "components/card";
+import { Column } from "components/box";
+import { SummaryCard } from "components/card";
 import { faAward, faSeedling, faStopwatch, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "components/icon";
 import theme from "theme";
@@ -23,7 +23,8 @@ const CornerIcon = styled(Icon).attrs({
     color: ${theme.colors["text-primary"]};
     transform: translate(50%, -33%) rotate(10deg);
 `;
-const CurrentRound = styled(Box)`
+
+const CurrentRound = styled.div`
     position: relative;
     margin: 0 -2rem;
     padding: 2rem;
@@ -31,16 +32,34 @@ const CurrentRound = styled(Box)`
     background-color: ${theme.colors["solid"]};
 `;
 
+const StyledHeader = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+`;
+
+const StyledBracketPairing = styled.div`
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    justify-items: center;
+    align-items: center;
+    grid-gap: 16px 32px;
+    
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        grid-template-columns: 1fr;
+    }
+`;
+
 export default function BracketPage({ bracket }) {
     return (
-        <Box gapsColumn="1.5rem">
+        <>
             <SEO title={bracket.name} />
             <Text variant="h1">{bracket.name}</Text>
             {!!bracket.currentRound && (
                 <BracketRound round={bracket.currentRound} initialGroup={String(bracket.currentGroup)} isCurrent/>
             )}
             {bracket.rounds.sort((a, b) => a.tier - b.tier).map((round) => <BracketRound key={round.tier} round={round}/>)}
-        </Box>
+        </>
     );
 }
 
@@ -66,16 +85,15 @@ function BracketRound({ round, isCurrent = false, initialGroup = "0" }) {
         const content = (
             <>
                 <Text variant="h2">{isCurrent && "Current Vote: "}Round {round.tier}</Text>
-                <Flex alignItems="center" justifyContent="space-between">
+                <StyledHeader>
                     <Text variant="h3">Group {String.fromCharCode(65 + parseInt(currentGroup))}</Text>
-                    <Switcher
-                        items={Object.fromEntries(groups.map((_, index) => [ index, String.fromCharCode(65 + index) ]))}
-                        selectedItem={currentGroup}
-                        onChange={setCurrentGroup}
-                        bg={isCurrent ? "solid-on-card" : "solid"}
-                    />
-                </Flex>
-                <BracketPairings pairings={groups[currentGroup]} isCurrent={isCurrent}/>
+                    <Switcher selectedItem={currentGroup} onChange={setCurrentGroup}>
+                        {groups.map((_, index) => (
+                            <Switcher.Option key={index} value={String(index)}>{String.fromCharCode(65 + index)}</Switcher.Option>
+                        ))}
+                    </Switcher>
+                </StyledHeader>
+                <BracketPairings key={currentGroup} pairings={groups[currentGroup]}/>
             </>
         );
 
@@ -83,9 +101,9 @@ function BracketRound({ round, isCurrent = false, initialGroup = "0" }) {
             return (
                 <CurrentRound>
                     <CornerIcon icon={faStopwatch}/>
-                    <Box gapsColumn="1.5rem">
+                    <Column style={{ "--gap": "24px" }}>
                         {content}
-                    </Box>
+                    </Column>
                 </CurrentRound>
             );
         }
@@ -101,76 +119,56 @@ function BracketRound({ round, isCurrent = false, initialGroup = "0" }) {
     );
 }
 
-function BracketPairings({ pairings, isCurrent }) {
+function BracketPairings({ pairings }) {
     return pairings.sort((a, b) => a.order - b.order).map((pairing, index) => (
-        <Flex key={index} flexDirection={[ "column", "row" ]} alignItems={[ "stretch", "center" ]}>
-            <Box flex="1">
-                <ContestantCard
-                    key={pairing.characterA.id}
-                    contestant={pairing.characterA}
-                    opponent={pairing.characterB}
-                    contestantVotes={pairing.votesA}
-                    opponentVotes={pairing.votesB}
-                    isCurrent={isCurrent}
-                />
-            </Box>
-            <Box p="1rem 2rem" alignSelf="center">
-                <Text variant="small">VS</Text>
-            </Box>
-            <Box flex="1">
-                <ContestantCard
-                    key={pairing.characterA.id}
-                    contestant={pairing.characterB}
-                    opponent={pairing.characterA}
-                    contestantVotes={pairing.votesB}
-                    opponentVotes={pairing.votesA}
-                    isCurrent={isCurrent}
-                />
-            </Box>
-        </Flex>
+        <StyledBracketPairing key={index}>
+            <ContestantCard
+                key={pairing.characterA.id}
+                contestant={pairing.characterA}
+                opponent={pairing.characterB}
+                contestantVotes={pairing.votesA}
+                opponentVotes={pairing.votesB}
+            />
+            <Text variant="small">VS</Text>
+            <ContestantCard
+                key={pairing.characterA.id}
+                contestant={pairing.characterB}
+                opponent={pairing.characterA}
+                contestantVotes={pairing.votesB}
+                opponentVotes={pairing.votesA}
+            />
+        </StyledBracketPairing>
     ));
 }
 
-function ContestantCard({ contestant, opponent, contestantVotes, opponentVotes, isCurrent }) {
+function ContestantCard({ contestant, opponent, contestantVotes, opponentVotes }) {
     const isVoted = !!contestantVotes;
     const isWinner = isVoted && (contestantVotes !== opponentVotes ? contestantVotes > opponentVotes : contestant.seed < opponent.seed);
 
-    if (contestant.theme) {
-        return (
-            <ThemeSummaryCard
-                theme={contestant.theme}
-                isVoted={isVoted}
-                isWinner={isWinner}
-                seed={contestant.seed}
-                votes={contestantVotes}
-                bg={isCurrent ? "solid-on-card" : "solid"}
-            />
-        );
-    }
-
     return (
-        <Card opacity={!isVoted || isWinner ? 1 : 0.5} position="relative" bg={isCurrent ? "solid-on-card" : "solid"}>
-            <Flex alignItems="center" justifyContent="space-between" gapsRow="1rem">
-                <Text>{contestant.id} &bull; {contestant.name} &bull; {contestant.source}</Text>
-                <Flex flexDirection="column" gapsColumn="0.5rem">
-                    <Text variant="small" color="text-muted" noWrap title="Seed">
-                        <Icon icon={faSeedling}/>
-                        <Text tabularNums letterSpacing="1px"> {contestant.seed}</Text>
-                    </Text>
-                    {isVoted && (
-                        <Text variant="small" color={isWinner ? "text-primary" : "text-muted"} noWrap title="Votes">
-                            <Icon icon={faUsers}/>
-                            <Text tabularNums letterSpacing="1px"> {contestantVotes}</Text>
-                        </Text>
-                    )}
-                </Flex>
-            </Flex>
-            {isWinner && (
-                <CornerIcon icon={faAward} title="Winner"/>
-            )}
-        </Card>
+        <ThemeSummaryCard
+            theme={contestant.theme}
+            isVoted={isVoted}
+            isWinner={isWinner}
+            seed={contestant.seed}
+            votes={contestantVotes}
+        />
     );
 }
+
+const StyledSummaryCard = styled(SummaryCard)`
+    position: relative;
+    
+    width: 100%;
+    padding-inline-end: 24px;
+    
+    opacity: var(--opacity);
+`;
+
+const StyledRank = styled(Text)`
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 1px;
+`;
 
 function ThemeSummaryCard({ theme, isVoted, isWinner, seed, votes, ...props }) {
     const { smallCover } = useImage(theme.anime);
@@ -199,34 +197,30 @@ function ThemeSummaryCard({ theme, isVoted, isWinner, seed, votes, ...props }) {
     );
 
     return (
-        <SummaryCard
+        <StyledSummaryCard
             title={<SongTitleWithArtists song={theme.song} songTitleLinkTo={to}/>}
             description={description}
             image={smallCover}
             to={to}
-            opacity={!isVoted || isWinner ? 1 : 0.5}
-            position="relative"
-            pr="1.5rem"
+            style={{ "--opacity": !isVoted || isWinner ? 1 : 0.5 }}
             {...props}
         >
-            <Flex flexDirection="column" gapsColumn="0.5rem">
+            <Column style={{ "--gap": "8px" }}>
                 <Text variant="small" color="text-muted" noWrap title="Seed">
                     <Icon icon={faSeedling}/>
-                    <Text tabularNums letterSpacing="1px"> {seed}</Text>
+                    <StyledRank> {seed}</StyledRank>
                 </Text>
                 {isVoted && (
                     <Text variant="small" color={isWinner ? "text-primary" : "text-muted"} noWrap title="Votes">
                         <Icon icon={faUsers}/>
-                        <Text tabularNums letterSpacing="1px"> {votes}</Text>
+                        <StyledRank> {votes}</StyledRank>
                     </Text>
                 )}
-            </Flex>
+            </Column>
             {isWinner && (
-                <Box position="absolute" right="0" top="0">
-                    <CornerIcon icon={faAward} title="Winner"/>
-                </Box>
+                <CornerIcon icon={faAward} title="Winner"/>
             )}
-        </SummaryCard>
+        </StyledSummaryCard>
     );
 }
 

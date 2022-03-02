@@ -1,7 +1,7 @@
-import { ThemeProvider } from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
 import GlobalStyle from "styles/global";
 import theme from "theme";
-import { Box, Flex } from "components/box";
+import { Column } from "components/box";
 import { Container } from "components/container";
 import { Footer } from "components/footer";
 import { Navigation, SearchNavigation, SeasonNavigation, YearNavigation } from "components/navigation";
@@ -9,7 +9,7 @@ import ColorThemeContext from "context/colorThemeContext";
 import useColorTheme from "hooks/useColorTheme";
 import { VideoPlayer } from "components/video-player";
 import PlayerContext from "context/playerContext";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "styles/prism.scss";
@@ -17,44 +17,54 @@ import Head from "next/head";
 import withBasePath from "utils/withBasePath";
 import { SEO } from "components/seo";
 import { config } from "@fortawesome/fontawesome-svg-core";
-import { AnnouncementToast } from "components/toast";
 import { WatchHistoryProvider } from "context/watchHistoryContext";
 import { LocalPlaylistProvider } from "context/localPlaylistContext";
+import { ToastProvider } from "context/toastContext";
+import { AnnouncementToast, ToastHub } from "components/toast";
 
 config.autoAddCss = false;
 
 const queryClient = new QueryClient();
 
+const StyledWrapper = styled(Column)`
+    min-height: 100%;
+`;
+
+const StyledContainer = styled(Container)`
+    display: flex;
+    flex-direction: column;
+    
+    margin-bottom: 32px;
+    gap: 24px;
+`;
+
 export default function MyApp({ Component, pageProps }) {
     const [colorTheme, toggleColorTheme] = useColorTheme();
 
-    const { video, entry, theme: animeTheme, anime } = pageProps;
+    const { isVideoPage = false, ...videoPageProps } = pageProps;
+    const [ lastVideoPageProps, setLastVideoPageProps ] = useState(() => {
+        return isVideoPage ? videoPageProps : null;
+    });
 
-    const [ currentVideo, setCurrentVideo ] = useState(video);
-    const [ currentEntry, setCurrentEntry ] = useState(entry);
-
-    useEffect(() => {
-        if (video && entry) {
-            setCurrentVideo(video);
-            setCurrentEntry({
-                ...entry,
-                // FIXME: Horrible hack
-                theme: {
-                    ...animeTheme,
-                    anime
-                }
-            });
-        }
-    }, [ video, entry, animeTheme, anime ]);
+    if (isVideoPage && lastVideoPageProps?.video?.basename !== videoPageProps?.video?.basename) {
+        setLastVideoPageProps(videoPageProps);
+    }
 
     return (
         <MultiContextProvider providers={[
             [ ThemeProvider, { theme } ],
             [ ColorThemeContext.Provider, { value: { colorTheme, toggleColorTheme } } ],
-            [ PlayerContext.Provider, { value: { currentVideo, setCurrentVideo } } ],
+            [ PlayerContext.Provider, { value: {
+                currentVideo: lastVideoPageProps?.video,
+                clearCurrentVideo: () => setLastVideoPageProps(null)
+            } } ],
             [ QueryClientProvider, { client: queryClient } ],
             [ WatchHistoryProvider ],
-            [ LocalPlaylistProvider ]
+            [ LocalPlaylistProvider ],
+            [ ToastProvider, { initialToasts: [ {
+                id: "announcement",
+                content: <AnnouncementToast/>
+            } ] } ]
         ]}>
             <GlobalStyle/>
             <SEO/>
@@ -67,32 +77,26 @@ export default function MyApp({ Component, pageProps }) {
                 <meta name="msapplication-TileColor" content="#ffffff"/>
                 <meta name="theme-color" content="#1c1823"/>
             </Head>
-            <Flex flexDirection="column" minHeight="100%">
-                <Navigation offsetToggleButton={!!currentVideo && !video}/>
-                {currentVideo && (
-                    <VideoPlayer
-                        video={currentVideo}
-                        entry={currentEntry}
-                        background={!video}
-                    />
+            <StyledWrapper>
+                <Navigation offsetToggleButton={lastVideoPageProps && !isVideoPage}/>
+                {lastVideoPageProps && (
+                    <VideoPlayer {...lastVideoPageProps} background={!isVideoPage}/>
                 )}
-                <Container mb="2rem">
+                <StyledContainer>
                     {!!pageProps.year && (
-                        <Box gapsColumn="1rem" mb="1.5rem">
+                        <Column style={{ "--gap": "16px" }}>
                             <YearNavigation year={pageProps.year} yearList={pageProps.yearList} />
                             <SeasonNavigation year={pageProps.year} season={pageProps.season} seasonList={pageProps.seasonList} />
-                        </Box>
+                        </Column>
                     )}
                     {pageProps.isSearch && (
-                        <Box mb="1.5rem">
-                            <SearchNavigation/>
-                        </Box>
+                        <SearchNavigation/>
                     )}
                     <Component {...pageProps}/>
-                </Container>
+                </StyledContainer>
                 <Footer/>
-            </Flex>
-            <AnnouncementToast/>
+            </StyledWrapper>
+            <ToastHub/>
         </MultiContextProvider>
     );
 }

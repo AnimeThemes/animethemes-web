@@ -1,8 +1,7 @@
 import styled, { css } from "styled-components";
-import { color, layout, typography } from "styled-system";
 import theme from "theme";
 
-export const Text = styled.span.attrs(getAttributes)`
+export const Text = styled.span.attrs(getAttributes)`    
     // Reset margin for elements like <p>
     margin: 0;
     scroll-margin-top: 4rem;
@@ -52,10 +51,6 @@ export const Text = styled.span.attrs(getAttributes)`
             text-decoration: underline;
         }
     `}
-    
-    ${(props) => props.block && css`
-        display: block;
-    `}
 
     ${(props) => props.maxLines && css`
         display: -webkit-box;
@@ -73,19 +68,12 @@ export const Text = styled.span.attrs(getAttributes)`
         `}
     `}
 
-    ${(props) => props.tabularNums && css`
-        font-variant-numeric: tabular-nums;
-    `}
-
-    ${(props) => props.italics && css`
-        font-style: italic;
-    `}
+    // Apply these styles last, so that props can override variant styles.
+    display: ${(props) => props.block && "block"};
     
-    ${layout}
-    
-    // Typography and color props can override variant styles
-    ${typography}
-    ${color}
+    font-style: ${(props) => props.italics && "italic"};
+    font-weight: ${(props) => props.weight};
+    color: ${(props) => theme.colors[props.color] || props.color};
 `;
 
 function getAttributes(props) {

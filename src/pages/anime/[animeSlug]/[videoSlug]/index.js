@@ -1,23 +1,91 @@
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
-import { Box, Flex } from "components/box";
+import { Column, Row } from "components/box";
 import { Text } from "components/text";
 import { SongTitleWithArtists, ThemeEntryTags, VideoTags } from "components/utils";
 import { Button, VideoButton } from "components/button";
 import { AnimeSummaryCard, ArtistSummaryCard, SummaryCard } from "components/card";
 import useImage from "hooks/useImage";
 import { fetchData } from "lib/server";
-import createVideoSlug from "utils/createVideoSlug";
 import { SEO } from "components/seo";
 import { videoBaseUrl } from "lib/client/api";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "components/icon";
 import { useWatchHistory } from "context/watchHistoryContext";
 import { useLocalPlaylist } from "context/localPlaylistContext";
+import styled from "styled-components";
+import theme from "theme";
+import createVideoSlug from "utils/createVideoSlug";
+
+const StyledVideoInfo = styled.div`
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-gap: 16px;
+    align-items: center;
+
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+    }
+`;
+
+const StyledVideoEntryInfo = styled(Row)`
+    justify-content: flex-end;
+    gap: 16px;
+
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        justify-content: space-between;
+    }
+`;
+
+const StyledVideoTagsInfo = styled(Row)`
+    justify-content: flex-end;
+`;
+
+const StyledRelatedGrid = styled.div`
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-gap: 32px;
+
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        grid-template-columns: 1fr;
+    }
+`;
+
+const StyledSummaryCardGrid = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 16px;
+
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        grid-template-columns: 1fr;
+    }
+`;
+
+const StyledRelatedEntries = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 16px;
+
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        align-items: flex-start;
+    }
+`;
+
+const StyledVideoList = styled(Row)`
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    
+    gap: 16px;
+    
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        justify-content: flex-start;
+    }
+`;
 
 export default function VideoPage({ anime, theme, entry, video }) {
     const { smallCover, largeCover } = useImage(anime);
-    const videoUrl = `${videoBaseUrl}/video/${video.basename}`;
     const { addToPlaylist, removeFromPlaylist, isInPlaylist } = useLocalPlaylist();
     const { addToHistory } = useWatchHistory();
 
@@ -56,9 +124,9 @@ export default function VideoPage({ anime, theme, entry, video }) {
 
     const pageDesc = (() => {
         // Generates and returns page description for SEO
-        let song = theme.song,
-            artistStr = "",
-            version = entry.version ? ` Version ${entry.version}` : "";
+        const song = theme.song;
+        const version = entry.version ? ` Version ${entry.version}` : "";
+        let artistStr = "";
         if (song.performances && song.performances.length) {
             artistStr = song.performances.reduce((str, performance, index, { length }) => {
                 str += performance.as || performance.artist.name;
@@ -71,8 +139,10 @@ export default function VideoPage({ anime, theme, entry, video }) {
         return `Watch ${anime.name} ${theme.slug}${version}: ${song.title}${artistStr} on AnimeThemes.`;
     })();
 
+    const videoUrl = `${videoBaseUrl}/video/${video.basename}`;
+
     return (
-        <Box gapsColumn="1.5rem">
+        <>
             <SEO title={pageTitle} description={pageDesc} image={largeCover}>
                 <meta name="og:video" content={videoUrl}/>
                 <meta name="og:video:url" content={videoUrl}/>
@@ -81,103 +151,91 @@ export default function VideoPage({ anime, theme, entry, video }) {
                 <meta name="og:video:width" content="1280"/>
                 <meta name="og:video:height" content="720"/>
             </SEO>
-            <Flex flexDirection={["column", "row"]} alignItems={["stretch", "center"]} gapsRow={[0, "1rem"]} gapsColumn={["1rem", 0]}>
-                <Box flex="1">
-                    <Flex flexDirection="column" justifyContent="center" gapsColumn="0.25rem">
-                        <Text fontWeight="700">
-                            <SongTitleWithArtists song={theme.song}/>
-                        </Text>
-                        <Text variant="small" color="text-muted" maxLines={1}>
-                            <Text>{theme.slug} from </Text>
-                            <Link href={`/anime/${anime.slug}`} passHref>
-                                <Text as="a" link>{anime.name}</Text>
-                            </Link>
-                        </Text>
-                    </Flex>
-                </Box>
+            <StyledVideoInfo>
+                <Column style={{ "--gap": "4px" }}>
+                    <SongTitleWithArtists song={theme.song}/>
+                    <Text variant="small" color="text-muted" maxLines={1}>
+                        <Text>{theme.slug} from </Text>
+                        <Link href={`/anime/${anime.slug}`} passHref>
+                            <Text as="a" link>{anime.name}</Text>
+                        </Link>
+                    </Text>
+                </Column>
                 <Text variant="small" color="text-muted">
-                    <Flex flexDirection="column" gapsColumn="0.25rem">
-                        <Flex alignItems="center" justifyContent={["space-between", "flex-end"]} gapsRow="1rem">
+                    <Column style={{ "--gap": "4px" }}>
+                        <StyledVideoEntryInfo>
                             <Text>Version {entry.version || 1}</Text>
                             <ThemeEntryTags entry={entry}/>
-                        </Flex>
-                        <Box alignSelf="flex-end">
+                        </StyledVideoEntryInfo>
+                        <StyledVideoTagsInfo>
                             <VideoTags video={video}/>
-                        </Box>
-                    </Flex>
+                        </StyledVideoTagsInfo>
+                    </Column>
                 </Text>
-            </Flex>
-            <Flex>
+            </StyledVideoInfo>
+            <Row>
                 {isInPlaylist(theme) ? (
-                    <Button variant="primary" gapsRow="0.5rem" onClick={() => removeFromPlaylist(theme)}>
+                    <Button variant="primary" style={{ "--gap": "8px" }} onClick={() => removeFromPlaylist(theme)}>
                         <Icon icon={faMinus}/>
                         <Text>Remove from Playlist</Text>
                     </Button>
                 ) : (
-                    <Button gapsRow="0.5rem" onClick={() => addToPlaylist({ ...theme, anime })}>
+                    <Button style={{ "--gap": "8px" }} onClick={() => addToPlaylist({ ...theme, anime })}>
                         <Icon icon={faPlus}/>
                         <Text>Add to Playlist</Text>
                     </Button>
                 )}
-            </Flex>
-            <Flex flexDirection={["column", "row"]} gapsColumn={["2rem", 0]} gapsRow={[0, "2rem"]}>
-                <Box flex="2">
-                    <Box gapsColumn="1rem">
-                        <Text variant="h2">Related entries</Text>
-                        <Flex flexDirection={["column", "row"]} gapsColumn={["1rem", 0]} gapsRow={[0, "1rem"]}>
-                            <Box flex="1" gapsColumn="1rem">
-                                <AnimeSummaryCard anime={anime} hideThemes/>
-                                {!!anime.series?.length && anime.series.map((series) => (
-                                    <SummaryCard key={series.slug} title={series.name} description="Series" to={`/series/${series.slug}`} />
-                                ))}
-                                {!!anime.studios?.length && anime.studios.map((studio) => (
-                                    <SummaryCard key={studio.slug} title={studio.name} description="Studio" to={`/studio/${studio.slug}`} />
-                                ))}
-                            </Box>
-                            <Box flex="1">
-                                <Box gapsColumn="1rem">
-                                    {!!theme.song.performances && theme.song.performances.map((performance) => (
-                                        <ArtistSummaryCard key={performance.artist.name} artist={performance.artist} as={performance.as}/>
-                                    ))}
-                                </Box>
-                            </Box>
-                        </Flex>
-                    </Box>
-                </Box>
-                <Box flex="1">
-                    {!!otherEntries.length && (
-                        <Flex flexDirection="column" gapsColumn="1rem" alignItems={["flex-start", "flex-end"]}>
-                            <Text variant="h2">Other versions</Text>
-                            <Box gapsColumn="2rem">
-                                {otherEntries.map((otherEntry) => (
-                                    <Flex key={otherEntry.version} flexDirection="column" gapsColumn="1rem" alignItems={["flex-start", "flex-end"]}>
-                                        <Text variant="small" color="text-muted">
-                                            <Flex alignItems="center" gapsRow="0.5rem">
-                                                <Text>Version {otherEntry.version || 1}</Text>
-                                                <ThemeEntryTags entry={otherEntry}/>
-                                            </Flex>
-                                        </Text>
-                                        <div>
-                                            <Flex flexWrap="wrap" gapsBoth="1rem">
-                                                {otherEntry.videos.map((video, index) => (
-                                                    <VideoButton
-                                                        key={index}
-                                                        anime={anime}
-                                                        theme={theme}
-                                                        entry={otherEntry}
-                                                        video={video}
-                                                    />
-                                                ))}
-                                            </Flex>
-                                        </div>
-                                    </Flex>
-                                ))}
-                            </Box>
-                        </Flex>
-                    )}
-                </Box>
-            </Flex>
-        </Box>
+            </Row>
+            <StyledRelatedGrid>
+                <Column style={{ "--gap": "16px" }}>
+                    <Text variant="h2">Related entries</Text>
+                    <StyledSummaryCardGrid>
+                        <Column style={{ "--gap": "16px" }}>
+                            <AnimeSummaryCard anime={anime} hideThemes/>
+                            {!!anime.series?.length && anime.series.map((series) => (
+                                <SummaryCard key={series.slug} title={series.name} description="Series" to={`/series/${series.slug}`} />
+                            ))}
+                            {!!anime.studios?.length && anime.studios.map((studio) => (
+                                <SummaryCard key={studio.slug} title={studio.name} description="Studio" to={`/studio/${studio.slug}`} />
+                            ))}
+                        </Column>
+                        <Column style={{ "--gap": "16px" }}>
+                            {!!theme.song.performances && theme.song.performances.map((performance) => (
+                                <ArtistSummaryCard key={performance.artist.name} artist={performance.artist} as={performance.as}/>
+                            ))}
+                        </Column>
+                    </StyledSummaryCardGrid>
+                </Column>
+                {!!otherEntries.length && (
+                    <StyledRelatedEntries>
+                        <Text variant="h2">Other versions</Text>
+                        <Column style={{ "--gap": "32px" }}>
+                            {otherEntries.map((otherEntry) => (
+                                <StyledRelatedEntries key={otherEntry.version}>
+                                    <Text variant="small" color="text-muted">
+                                        <Row style={{ "--gap": "8px" }}>
+                                            <Text>Version {otherEntry.version || 1}</Text>
+                                            <ThemeEntryTags entry={otherEntry}/>
+                                        </Row>
+                                    </Text>
+                                    <StyledVideoList>
+                                        {otherEntry.videos.map((video, index) => (
+                                            <VideoButton
+                                                key={index}
+                                                anime={anime}
+                                                theme={theme}
+                                                entry={otherEntry}
+                                                video={video}
+                                            />
+                                        ))}
+                                    </StyledVideoList>
+                                </StyledRelatedEntries>
+                            ))}
+                        </Column>
+                    </StyledRelatedEntries>
+                )}
+            </StyledRelatedGrid>
+        </>
     );
 }
 
@@ -249,18 +307,19 @@ export async function getStaticProps({ params: { animeSlug, videoSlug } }) {
         animeSlug
     });
 
-    if (!data.anime) {
+    const anime = data.anime;
+
+    if (!anime) {
         return {
             notFound: true
         };
     }
 
-    const pageAnime = data.anime;
     let pageTheme = null;
     let pageEntry = null;
     let pageVideo = null;
 
-    themeLoop: for (const theme of pageAnime.themes) {
+    themeLoop: for (const theme of anime.themes) {
         for (const entry of theme.entries) {
             for (const video of entry.videos) {
                 if (createVideoSlug(theme, entry, video) === videoSlug) {
@@ -281,10 +340,11 @@ export async function getStaticProps({ params: { animeSlug, videoSlug } }) {
 
     return {
         props: {
-            anime: pageAnime,
+            anime,
             theme: pageTheme,
             video: pageVideo,
-            entry: pageEntry
+            entry: pageEntry,
+            isVideoPage: true
         },
         revalidate: 5 * 60
     };

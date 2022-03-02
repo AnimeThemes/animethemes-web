@@ -1,22 +1,20 @@
 import { Text } from "components/text";
 import { Listbox } from "components/listbox";
-import { Flex } from "components/box";
+import useYearList from "hooks/useYearList";
+import { SearchFilter } from "components/search-filter";
 
 export function SearchFilterYear({ value, setValue }) {
-    const yearList = [ 2021, 2020, 2019 ];
+    const yearList = useYearList();
 
     return (
-        <Flex flexDirection="column" alignItems="stretch" gapsColumn="0.5rem">
+        <SearchFilter>
             <Text variant="h2">Year</Text>
-            <Listbox
-                options={[
-                    null,
-                    ...yearList
-                ]}
-                selectedValue={value}
-                onSelect={setValue}
-                resettable
-            />
-        </Flex>
+            <Listbox value={value} onChange={setValue} resettable highlightNonDefault>
+                <Listbox.Option value={null}>Any</Listbox.Option>
+                {yearList.map((year) => (
+                    <Listbox.Option key={year} value={year}>{year}</Listbox.Option>
+                ))}
+            </Listbox>
+        </SearchFilter>
     );
 }

@@ -1,6 +1,6 @@
 import { AnimeSummaryCard } from "components/card";
 import { Text } from "components/text";
-import { Box } from "components/box";
+import { Column } from "components/box";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 
@@ -13,18 +13,18 @@ export default function SeasonDetailPage({ animeAll, year, season }) {
     const seasonCapitalized = season[0].toUpperCase() + season.slice(1);
 
     return (
-        <Box gapsColumn="1.5rem">
+        <>
             <SEO title={`${seasonCapitalized} ${year}`}/>
             <Text variant="h2">
                 {`Anime from ${season} of ${year}`}
                 <Text color="text-disabled"> ({animeList.length})</Text>
             </Text>
-            <Box gapsColumn="1rem">
+            <Column style={{ "--gap": "16px" }}>
                 {animeList.map((anime) => (
                     <AnimeSummaryCard key={anime.slug} anime={anime}/>
                 ))}
-            </Box>
-        </Box>
+            </Column>
+        </>
     );
 }
 

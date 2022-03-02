@@ -3,15 +3,14 @@ import styled from "styled-components";
 import { ExternalLink } from "components/external-link";
 import { DescriptionList } from "components/description-list";
 import { Text } from "components/text";
-import { Box, Flex } from "components/box";
+import { Column } from "components/box";
 import { SidebarContainer } from "components/container";
-import { gapsColumn } from "styles/mixins";
 import { ThemeSummaryCard } from "components/card";
 import { CoverImage } from "components/image";
 import useToggle from "hooks/useToggle";
 import { useMemo, useState } from "react";
 import { FilterToggleButton } from "components/button";
-import { SearchFilterGroup, SearchFilterSortBy } from "components/search-filter";
+import { SearchFilter, SearchFilterGroup, SearchFilterSortBy } from "components/search-filter";
 import { Collapse } from "components/utils";
 import { Listbox } from "components/listbox";
 import {
@@ -29,14 +28,19 @@ import useImage from "hooks/useImage";
 const StyledList = styled.div`
     display: flex;
     flex-direction: column;
-
-    ${gapsColumn("0.5rem")}
+    gap: 8px;
 
     text-align: center;
 `;
 
+const StyledHeader = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+`;
+
 const performanceFilters = new Map([
-    [ "Any", () => true ],
+    [ null, () => true ],
     [ "Solo", (performance) => performance.song.performances.length === 1 ],
     [ "Group", (performance) => performance.song.performances.length > 1 ]
 ]);
@@ -60,7 +64,7 @@ export default function ArtistDetailPage({ artist }) {
         const aliases = [ ...new Set(artist.performances.map((performance) => performance.as)) ].filter((alias) => alias);
 
         return [
-            "Any",
+            null,
             artist.name,
             ...aliases
         ];
@@ -78,7 +82,7 @@ export default function ArtistDetailPage({ artist }) {
             )
         )
         .filter((performance) => (
-            filterAlias === "Any" ||
+            filterAlias === null ||
             (filterAlias === artist.name && !performance.as) ||
             performance.as === filterAlias
         ))
@@ -86,11 +90,11 @@ export default function ArtistDetailPage({ artist }) {
         .sort(sortByComparators.get(sortBy));
 
     return (
-        <Box gapsColumn="1.5rem">
+        <>
             <SEO title={artist.name} image={largeCover}/>
             <Text variant="h1">{artist.name}</Text>
             <SidebarContainer>
-                <Box gapsColumn="1.5rem">
+                <Column style={{ "--gap": "24px" }}>
                     <CoverImage resourceWithImages={artist} alt={`Picture of ${artist.name}`}/>
                     <DescriptionList>
                         {!!artist.members?.length && (
@@ -131,37 +135,33 @@ export default function ArtistDetailPage({ artist }) {
                             </DescriptionList.Item>
                         )}
                     </DescriptionList>
-                </Box>
-                <Box gapsColumn="1.5rem">
-                    <Flex justifyContent="space-between" alignItems="center">
+                </Column>
+                <Column style={{ "--gap": "24px" }}>
+                    <StyledHeader>
                         <Text variant="h2">
                             Song Performances
                             <Text color="text-disabled"> ({themes.length})</Text>
                         </Text>
                         <FilterToggleButton onClick={toggleShowFilter}/>
-                    </Flex>
+                    </StyledHeader>
                     <Collapse collapse={!showFilter}>
                         <SearchFilterGroup>
-                            <Flex flexDirection="column" alignItems="stretch" gapsColumn="0.5rem">
+                            <SearchFilter>
                                 <Text variant="h2">Performed with</Text>
-                                <Listbox
-                                    options={performanceFilterOptions}
-                                    selectedValue={filterPerformance}
-                                    onSelect={setFilterPerformance}
-                                    defaultValue={performanceFilterOptions[0]}
-                                    resettable
-                                />
-                            </Flex>
-                            <Flex flexDirection="column" alignItems="stretch" gapsColumn="0.5rem">
+                                <Listbox value={filterPerformance} onChange={setFilterPerformance} resettable highlightNonDefault>
+                                    {performanceFilterOptions.map((option) => (
+                                        <Listbox.Option key={option} value={option} hidden={!option}>{option ?? "Any"}</Listbox.Option>
+                                    ))}
+                                </Listbox>
+                            </SearchFilter>
+                            <SearchFilter>
                                 <Text variant="h2">Performed as</Text>
-                                <Listbox
-                                    options={aliasFilterOptions}
-                                    selectedValue={filterAlias}
-                                    onSelect={setFilterAlias}
-                                    defaultValue={aliasFilterOptions[0]}
-                                    resettable
-                                />
-                            </Flex>
+                                <Listbox value={filterAlias} onChange={setFilterAlias} resettable highlightNonDefault>
+                                    {aliasFilterOptions.map((option) => (
+                                        <Listbox.Option key={option} value={option} hidden={!option}>{option ?? "Any"}</Listbox.Option>
+                                    ))}
+                                </Listbox>
+                            </SearchFilter>
                             <SearchFilterSortBy
                                 options={sortByOptions}
                                 value={sortBy}
@@ -169,14 +169,14 @@ export default function ArtistDetailPage({ artist }) {
                             />
                         </SearchFilterGroup>
                     </Collapse>
-                    <Box gapsColumn="1rem">
+                    <Column style={{ "--gap": "16px" }}>
                         {themes.map((theme) => (
                             <ThemeSummaryCard key={theme.anime.slug + theme.slug + theme.group} theme={theme} artist={artist}/>
                         ))}
-                    </Box>
-                </Box>
+                    </Column>
+                </Column>
             </SidebarContainer>
-        </Box>
+        </>
     );
 }
 
