@@ -14,12 +14,14 @@ import { SearchFilter, SearchFilterGroup, SearchFilterSortBy } from "components/
 import { Collapse } from "components/utils";
 import { Listbox } from "components/listbox";
 import {
-    animeNameComparator,
-    animePremiereComparator,
-    chain,
+    getComparator,
     resourceSiteComparator,
-    reverse,
-    songTitleComparator
+    SONG_A_Z,
+    SONG_A_Z_ANIME,
+    SONG_NEW_OLD,
+    SONG_OLD_NEW,
+    SONG_Z_A,
+    SONG_Z_A_ANIME
 } from "utils/comparators";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
@@ -46,17 +48,6 @@ const performanceFilters = new Map([
 ]);
 const performanceFilterOptions = [ ...performanceFilters.keys() ];
 
-const toAnime = (comparator) => (a, b) => comparator(a.anime, b.anime);
-const sortByComparators = new Map([
-    [ "A ➜ Z (Song)", songTitleComparator ],
-    [ "Z ➜ A (Song)", reverse(songTitleComparator) ],
-    [ "A ➜ Z (Anime)", chain(toAnime(animeNameComparator), songTitleComparator) ],
-    [ "Z ➜ A (Anime)", chain(reverse(toAnime(animeNameComparator)), songTitleComparator) ],
-    [ "Old ➜ New", chain(toAnime(animePremiereComparator), toAnime(animeNameComparator), songTitleComparator) ],
-    [ "New ➜ Old", chain(reverse(toAnime(animePremiereComparator)), toAnime(animeNameComparator), songTitleComparator) ]
-]);
-const sortByOptions = [ ...sortByComparators.keys() ];
-
 export default function ArtistDetailPage({ artist }) {
     const { largeCover } = useImage(artist);
 
@@ -73,7 +64,7 @@ export default function ArtistDetailPage({ artist }) {
     const [ showFilter, toggleShowFilter ] = useToggle();
     const [ filterPerformance, setFilterPerformance ] = useState(performanceFilterOptions[0]);
     const [ filterAlias, setFilterAlias ] = useState(aliasFilterOptions[0]);
-    const [ sortBy, setSortBy ] = useState(sortByOptions[0]);
+    const [ sortBy, setSortBy ] = useState(SONG_A_Z);
 
     const themes = artist.performances
         .flatMap(
@@ -87,7 +78,7 @@ export default function ArtistDetailPage({ artist }) {
             performance.as === filterAlias
         ))
         .filter(performanceFilters.get(filterPerformance))
-        .sort(sortByComparators.get(sortBy));
+        .sort(getComparator(sortBy));
 
     return (
         <>
@@ -162,11 +153,14 @@ export default function ArtistDetailPage({ artist }) {
                                     ))}
                                 </Listbox>
                             </SearchFilter>
-                            <SearchFilterSortBy
-                                options={sortByOptions}
-                                value={sortBy}
-                                setValue={setSortBy}
-                            />
+                            <SearchFilterSortBy value={sortBy} setValue={setSortBy}>
+                                <SearchFilterSortBy.Option value={SONG_A_Z}>A ➜ Z (Song)</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={SONG_Z_A}>Z ➜ A (Song)</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={SONG_A_Z_ANIME}>A ➜ Z (Anime)</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={SONG_Z_A_ANIME}>Z ➜ A (Anime)</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={SONG_OLD_NEW}>Old ➜ New</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={SONG_NEW_OLD}>New ➜ Old</SearchFilterSortBy.Option>
+                            </SearchFilterSortBy>
                         </SearchFilterGroup>
                     </Collapse>
                     <Column style={{ "--gap": "16px" }}>

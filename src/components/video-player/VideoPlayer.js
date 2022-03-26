@@ -11,7 +11,6 @@ import {
 import { faDownload, faExpandAlt, faPause, faPlay, faTimes } from "@fortawesome/free-solid-svg-icons";
 import PlayerContext from "context/playerContext";
 import createVideoSlug from "utils/createVideoSlug";
-import { useMedia } from "use-media";
 import { Icon } from "components/icon";
 import { IconTextButton } from "components/button";
 import { Card } from "components/card";
@@ -21,6 +20,8 @@ import { Container } from "components/container";
 import useCompatability from "hooks/useCompatability";
 import { useRouter } from "next/router";
 import { videoBaseUrl } from "lib/client/api";
+import useMediaQuery from "hooks/useMediaQuery";
+import styledTheme from "theme";
 
 export function VideoPlayer({ anime, theme, entry, video, background, ...props }) {
     const [isPlaying, setPlaying] = useState(false);
@@ -28,7 +29,7 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
     const playerRef = useRef();
     const progressRef = useRef();
     const { clearCurrentVideo } = useContext(PlayerContext);
-    const isMobile = useMedia({ maxWidth: "720px" });
+    const isMobile = useMediaQuery(`(max-width: ${styledTheme.breakpoints.mobileMax})`);
     const videoUrl = `${videoBaseUrl}/video/${video.basename}`;
     const router = useRouter();
 

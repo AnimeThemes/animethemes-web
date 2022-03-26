@@ -9,20 +9,11 @@ import { SearchEntity } from "components/search";
 import { AnimeSummaryCard } from "components/card";
 import useSessionStorage from "hooks/useSessionStorage";
 
-const sortByFields = new Map([
-    [ "A ➜ Z", "name" ],
-    [ "Z ➜ A", "-name" ],
-    [ "Old ➜ New", "year,season,name" ],
-    [ "New ➜ Old", "-year,-season,name" ],
-    [ "Last Added", "-created_at" ]
-]);
-const sortByOptions = [ ...sortByFields.keys() ];
-
 const initialFilter = {
     firstLetter: null,
     season: null,
     year: null,
-    sortBy: sortByOptions[0]
+    sortBy: "name"
 };
 
 export function SearchAnime({ searchQuery }) {
@@ -34,7 +25,7 @@ export function SearchAnime({ searchQuery }) {
             season: filter.season,
             year: filter.year
         },
-        sortBy: searchQuery ? null : sortByFields.get(filter.sortBy)
+        sortBy: searchQuery ? null : filter.sortBy
     });
 
     return (
@@ -45,11 +36,19 @@ export function SearchAnime({ searchQuery }) {
                     <SearchFilterFirstLetter value={filter.firstLetter} setValue={updateFilter("firstLetter")}/>
                     <SearchFilterSeason value={filter.season} setValue={updateFilter("season")}/>
                     <SearchFilterYear value={filter.year} setValue={updateFilter("year")}/>
-                    <SearchFilterSortBy
-                        options={searchQuery ? [ "Relevance" ] : sortByOptions}
-                        value={searchQuery ? "Relevance" : filter.sortBy}
-                        setValue={updateFilter("sortBy")}
-                    />
+                    <SearchFilterSortBy value={searchQuery ? null : filter.sortBy} setValue={updateFilter("sortBy")}>
+                        {searchQuery ? (
+                            <SearchFilterSortBy.Option>Relevance</SearchFilterSortBy.Option>
+                        ) : (
+                            <>
+                                <SearchFilterSortBy.Option value="name">A ➜ Z</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value="-name">Z ➜ A</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value="year,season,name">Old ➜ New</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value="-year,-season,name">New ➜ Old</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value="-created_at">Last Added</SearchFilterSortBy.Option>
+                            </>
+                        )}
+                    </SearchFilterSortBy>
                 </>
             }
             renderSummaryCard={(anime) => <AnimeSummaryCard key={anime.slug} anime={anime}/>}

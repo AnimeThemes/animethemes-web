@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Text } from "components/text";
 import styled from "styled-components";
+import gql from "graphql-tag";
 
 const StyledArtist = styled(Text)`
     &:not(:first-of-type)::before {
@@ -87,3 +88,23 @@ export function SongTitleWithArtists({ song, songTitleLinkTo, artist }) {
         </Text>
     );
 }
+
+SongTitleWithArtists.fragments = {
+    song: gql`
+        fragment SongTitleWithArtists_song on Song {
+            title
+            performances {
+                as
+                artist {
+                    slug
+                    name
+                }
+            }
+        }
+    `,
+    artist: gql`
+        fragment SongTitleWithArtists_artist on Artist {
+            slug
+        }
+    `
+};

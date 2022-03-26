@@ -54,7 +54,7 @@ export function ListboxNative({ children, value, onChange, resettable, defaultVa
         removeLabel: useCallback((value) => {
             setValueLabels((oldMap) => {
                 const newMap = new Map(oldMap);
-                newMap.remove(value);
+                newMap.delete(value);
                 return newMap;
             });
         }, [])

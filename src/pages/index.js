@@ -13,6 +13,7 @@ import navigateToRandomTheme from "utils/navigateToRandomTheme";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import { FeaturedTheme } from "components/featured-theme";
+import gql from "graphql-tag";
 
 const BigButton = styled(Button)`
     justify-content: flex-end;
@@ -192,67 +193,16 @@ export default function HomePage({ featuredTheme, recentlyAdded }) {
 }
 
 export async function getStaticProps() {
-    const { data } = await fetchData(`
-        #graphql
-
+    const { data } = await fetchData(gql`
+        ${FeaturedTheme.fragment}
+        ${ThemeSummaryCard.fragments.theme}
+        
         query {
             featuredTheme: theme(id: 10968) {
-                id
-                slug
-                anime {
-                    slug
-                    name
-                    images {
-                        facet
-                        link
-                    }
-                }
-                song {
-                    title
-                    performances {
-                        artist {
-                            slug
-                            name
-                        }
-                        as
-                    }
-                }
-                entries {
-                    version
-                    videos {
-                        basename
-                        tags
-                    }
-                }
+                ...FeaturedTheme_theme
             }
             recentlyAdded: themeAll(orderBy: "theme_id", orderDesc: true, limit: 10) {
-                id
-                slug
-                anime {
-                    slug
-                    name
-                    images {
-                        facet
-                        link
-                    }
-                }
-                song {
-                    title
-                    performances {
-                        artist {
-                            slug
-                            name
-                        }
-                        as
-                    }
-                }
-                entries {
-                    version
-                    videos {
-                        basename
-                        tags
-                    }
-                }
+                ...ThemeSummaryCard_theme
             }
         }
     `);

@@ -11,6 +11,7 @@ import styled from "styled-components";
 import useToggle from "hooks/useToggle";
 import { motion } from "framer-motion";
 import theme from "theme";
+import gql from "graphql-tag";
 
 const StyledThemeContainerInline = styled.div`
     display: flex;
@@ -110,7 +111,7 @@ function Themes({ anime, maxThemes = false }) {
             const videoSlug = createVideoSlug(theme, entry, video);
 
             return (
-                <Link key={theme.slug} href={`/anime/${anime.slug}/${videoSlug}`} passHref>
+                <Link key={theme.slug + theme.group} href={`/anime/${anime.slug}/${videoSlug}`} passHref>
                     <Button
                         as={motion.a}
                         layoutId={anime.slug + theme.slug}
@@ -134,3 +135,31 @@ function Themes({ anime, maxThemes = false }) {
             );
         });
 }
+
+AnimeSummaryCard.fragment = gql`
+    ${useImage.fragment}
+    ${createVideoSlug.fragments.theme}
+    ${createVideoSlug.fragments.entry}
+    ${createVideoSlug.fragments.video}
+    
+    fragment AnimeSummaryCard_anime on Anime {
+        ...useImage_resourceWithImages
+        slug
+        name
+        year
+        season
+        themes {
+            ...createVideoSlug_theme
+            slug
+            group
+            type
+            sequence
+            entries {
+                ...createVideoSlug_entry
+                videos {
+                    ...createVideoSlug_video
+                }
+            }
+        }
+    }
+`;

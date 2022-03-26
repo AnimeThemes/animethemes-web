@@ -3,6 +3,7 @@ import { Text } from "components/text";
 import { Column } from "components/box";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
+import gql from "graphql-tag";
 
 const seasonOrder = [ "Winter", "Spring", "Summer", "Fall" ];
 
@@ -31,8 +32,8 @@ export default function SeasonDetailPage({ animeAll, year, season }) {
 export async function getStaticProps({ params: { year, season } }) {
     year = +year;
 
-    const { data } = await fetchData(`
-        #graphql
+    const { data } = await fetchData(gql`
+        ${AnimeSummaryCard.fragment}
 
         query($year: Int = 0, $season: String!) {
             yearAll {
@@ -44,26 +45,7 @@ export async function getStaticProps({ params: { year, season } }) {
             season(year: $year, value: $season) {
                 anime {
                     slug
-                    name
-                    themes {
-                        slug
-                        type
-                        sequence
-                        entries {
-                            version
-                            videos {
-                                tags
-                            }
-                        }
-                    }
-                    resources {
-                        link
-                        site
-                    }
-                    images {
-                        facet
-                        link
-                    }
+                    ...AnimeSummaryCard_anime
                 }
             }
             

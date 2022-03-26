@@ -1,3 +1,5 @@
+import gql from "graphql-tag";
+
 export default function useImage(resourceWithImages) {
     const images = {};
 
@@ -18,3 +20,14 @@ export default function useImage(resourceWithImages) {
 
     return images;
 }
+
+useImage.fragment = gql`
+    #graphql
+    
+    fragment useImage_resourceWithImages on ResourceWithImages {
+        images {
+            link
+            facet
+        }
+    }
+`;

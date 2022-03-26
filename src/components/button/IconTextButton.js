@@ -1,8 +1,8 @@
 import { Icon } from "components/icon";
 import { Button } from "components/button";
-import { useMedia } from "use-media";
 import styled, { css } from "styled-components";
 import theme from "theme";
+import useMediaQuery from "hooks/useMediaQuery";
 
 const StyledButton = styled(Button)`
     gap: 8px;
@@ -17,7 +17,7 @@ const StyledText = styled.span`
 `;
 
 export function IconTextButton({ icon, children, collapsible, ...props }) {
-    const isMobile = useMedia({ maxWidth: "720px" });
+    const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
     const isCollapsed = collapsible && isMobile;
 
     return (

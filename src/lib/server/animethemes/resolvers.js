@@ -156,6 +156,24 @@ module.exports = {
             .groupBy([ "season", "year" ])
             .select([ "season", "year" ])
             .then((results) => results.map((anime) => ({ value: anime.season, year: { value: year } }))),
+        page: (_, { id, slug }) => knex("pages")
+            .where((builder) => {
+                builder.where("deleted_at", null);
+                if (id) {
+                    builder.where("page_id", id);
+                }
+                if (slug) {
+                    builder.where("slug", slug);
+                }
+            })
+            .first(),
+        pageAll: () => {
+            const query = knex("pages");
+
+            query.where("deleted_at", null);
+
+            return query.select();
+        },
         counter: () => ({})
     },
     Year: {
@@ -258,7 +276,8 @@ module.exports = {
             .innerJoin("anime_theme_entry_video", "anime_theme_entry_video.video_id", "videos.video_id")
             .where("deleted_at", null)
             .where({ "anime_theme_entry_video.entry_id": entry.entry_id })
-            .select("videos.*")
+            .select("videos.*"),
+        theme: (entry) => knex("anime_themes").where("deleted_at", null).where({ theme_id: entry.theme_id }).first(),
     },
     Video: {
         source: (video) => videoSource.get(video.source),
@@ -283,7 +302,12 @@ module.exports = {
             }
 
             return tags.join("");
-        }
+        },
+        entries: (video) => knex("anime_theme_entries")
+            .innerJoin("anime_theme_entry_video", "anime_theme_entry_video.entry_id", "anime_theme_entries.entry_id")
+            .where("deleted_at", null)
+            .where({ "anime_theme_entry_video.video_id": video.video_id })
+            .select("anime_theme_entries.*")
     },
     Image: {
         facet: (image) => imageFacet.get(image.facet),
@@ -316,5 +340,17 @@ module.exports = {
             .where("deleted_at", null)
             .where("theme_id", character.theme)
             .first()
+    },
+    AnimeListEntry: {
+        anime: (animeListEntry, _, context) => knex("anime")
+            .innerJoin("anime_resource", "anime_resource.anime_id", "anime.anime_id")
+            .innerJoin("resources", "resources.resource_id", "anime_resource.resource_id")
+            .where({
+                "anime.deleted_at": null,
+                "resources.deleted_at": null,
+                "resources.site": context.externalSite,
+                "resources.external_id": animeListEntry.externalId
+            })
+            .first("anime.*")
     }
 };

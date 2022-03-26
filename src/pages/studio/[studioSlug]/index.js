@@ -9,11 +9,12 @@ import { SearchFilterGroup, SearchFilterSortBy } from "components/search-filter"
 import useToggle from "hooks/useToggle";
 import { FilterToggleButton } from "components/button";
 import {
-    animeNameComparator,
-    animePremiereComparator,
-    chain,
+    ANIME_A_Z,
+    ANIME_NEW_OLD,
+    ANIME_OLD_NEW,
+    ANIME_Z_A,
+    getComparator,
     resourceSiteComparator,
-    reverse
 } from "utils/comparators";
 import { fetchData } from "lib/server";
 import { DescriptionList } from "components/description-list";
@@ -36,21 +37,13 @@ const StyledList = styled.div`
     text-align: center;
 `;
 
-const sortByComparators = new Map([
-    [ "A ➜ Z", animeNameComparator ],
-    [ "Z ➜ A", reverse(animeNameComparator) ],
-    [ "Old ➜ New", chain(animePremiereComparator, animeNameComparator) ],
-    [ "New ➜ Old", chain(reverse(animePremiereComparator), animeNameComparator) ]
-]);
-const sortByOptions = [ ...sortByComparators.keys() ];
-
 export default function StudioDetailPage({ studio }) {
     const anime = studio.anime;
 
     const [ showFilter, toggleShowFilter ] = useToggle();
-    const [ sortBy, setSortBy ] = useState(sortByOptions[0]);
+    const [ sortBy, setSortBy ] = useState(ANIME_A_Z);
 
-    const animeSorted = [ ...anime ].sort(sortByComparators.get(sortBy));
+    const animeSorted = [ ...anime ].sort(getComparator(sortBy));
 
     return (
         <>
@@ -85,11 +78,12 @@ export default function StudioDetailPage({ studio }) {
                     </Row>
                     <Collapse collapse={!showFilter}>
                         <SearchFilterGroup>
-                            <SearchFilterSortBy
-                                options={sortByOptions}
-                                value={sortBy}
-                                setValue={setSortBy}
-                            />
+                            <SearchFilterSortBy value={sortBy} setValue={setSortBy}>
+                                <SearchFilterSortBy.Option value={ANIME_A_Z}>A ➜ Z</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={ANIME_Z_A}>Z ➜ A</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={ANIME_OLD_NEW}>Old ➜ New</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={ANIME_NEW_OLD}>New ➜ Old</SearchFilterSortBy.Option>
+                            </SearchFilterSortBy>
                         </SearchFilterGroup>
                     </Collapse>
                     <Column style={{ "--gap": "16px" }}>
