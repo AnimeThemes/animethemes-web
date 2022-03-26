@@ -7,6 +7,7 @@ import { Icon } from "components/icon";
 import { Text } from "components/text";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
+import gql from "graphql-tag";
 
 const seasonOrder = [ "Winter", "Spring", "Summer", "Fall" ];
 
@@ -44,8 +45,8 @@ function SeasonPreview({ season, year, animeList }) {
 export async function getStaticProps({ params: { year } }) {
     year = +year;
 
-    const { data } = await fetchData(`
-        #graphql
+    const { data } = await fetchData(gql`
+        ${AnimeSummaryCard.fragment}
 
         query($year: Int!) {
             yearAll {
@@ -56,26 +57,7 @@ export async function getStaticProps({ params: { year } }) {
                     value
                     anime {
                         slug
-                        name
-                        themes {
-                            slug
-                            type
-                            sequence
-                            entries {
-                                version
-                                videos {
-                                    tags
-                                }
-                            }
-                        }
-                        resources {
-                            link
-                            site
-                        }
-                        images {
-                            facet
-                            link
-                        }
+                        ...AnimeSummaryCard_anime
                     }
                 }
             }

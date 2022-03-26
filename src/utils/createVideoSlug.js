@@ -3,7 +3,9 @@
  *
  * `<OP|ED>[v#][-[Tags]]`
  */
-function createVideoSlug(theme, entry, video) {
+import gql from "graphql-tag";
+
+export default function createVideoSlug(theme, entry, video) {
     let slug = theme.slug;
 
     if (entry.version && entry.version !== 1) {
@@ -17,4 +19,20 @@ function createVideoSlug(theme, entry, video) {
     return slug;
 }
 
-export default createVideoSlug;
+createVideoSlug.fragments = {
+    theme: gql`
+        fragment createVideoSlug_theme on Theme {
+            slug
+        }
+    `,
+    entry: gql`
+        fragment createVideoSlug_entry on Entry {
+            version
+        }
+    `,
+    video: gql`
+        fragment createVideoSlug_video on Video {
+            tags
+        }
+    `
+};

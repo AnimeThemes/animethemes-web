@@ -27,7 +27,6 @@ import { Text } from "components/text";
 import useCurrentSeason from "hooks/useCurrentSeason";
 import navigateToRandomTheme from "utils/navigateToRandomTheme";
 import { useRouter } from "next/router";
-import withBasePath from "utils/withBasePath";
 
 export function Navigation({ offsetToggleButton = false }) {
     const [ show, setShow ] = useState(false);
@@ -50,12 +49,7 @@ export function Navigation({ offsetToggleButton = false }) {
                 <StyledNavigationContainer onClick={(event) => event.stopPropagation()}>
                     <Link href="/" passHref>
                         <StyledLogoContainer>
-                            <StyledLogo
-                                src={withBasePath("/img/logo.svg")}
-                                alt="Logo"
-                                width="277"
-                                height="150"
-                            />
+                            <StyledLogo width="277" height="150"/>
                         </StyledLogoContainer>
                     </Link>
                     <StyledNavigationLinks>

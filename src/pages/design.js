@@ -3,7 +3,6 @@ import { Column, Row } from "components/box";
 import { AnimeSummaryCard, Card } from "components/card";
 import { Text } from "components/text";
 import { Button, IconTextButton, VideoButton } from "components/button";
-import { SearchInput } from "components/input";
 import {
     faArrowRight,
     faChevronDown,
@@ -19,7 +18,7 @@ import {
 import { Icon } from "components/icon";
 import styled from "styled-components";
 import theme from "theme";
-import { Collapse, HeightTransition } from "components/utils";
+import { Collapse, HeightTransition, Highlight } from "components/utils";
 import ColorThemeContext from "context/colorThemeContext";
 import { ExternalLink } from "components/external-link";
 import { Switcher } from "components/switcher";
@@ -30,11 +29,11 @@ import { DescriptionList } from "components/description-list";
 import { codeBlock } from "common-tags";
 import { Listbox } from "components/listbox";
 import { fetchData } from "lib/server";
-import Prism from "prismjs";
-import "prismjs/components/prism-jsx";
 import { Menu } from "components/menu";
 import { Toast } from "components/toast";
 import { useToasts } from "context/toastContext";
+import { Input } from "components/input";
+import gql from "graphql-tag";
 
 const ColorGrid = styled.div`
     display: grid;
@@ -414,9 +413,9 @@ export default function DesignPage({ demoData }) {
             <Text variant="h2">Input</Text>
             <ExampleGrid>
                 <Highlight>
-                    {`<SearchInput/>`}
+                    {`<Input/>`}
                 </Highlight>
-                <SearchInput/>
+                <Input/>
             </ExampleGrid>
 
             <Text variant="h2">Image</Text>
@@ -637,57 +636,13 @@ function Color({ color }) {
     );
 }
 
-function Highlight({ children, block = false }) {
-    const codeHighlighted = Prism.highlight(children, Prism.languages.jsx, "jsx");
-    const codeBlock = (
-        <Text
-            variant="code"
-            block={block}
-            className="language-jsx"
-            dangerouslySetInnerHTML={{ __html: codeHighlighted }}
-        />
-    );
-
-    if (block) {
-        return (
-            <pre>
-                {codeBlock}
-            </pre>
-        );
-    }
-
-    return codeBlock;
-}
-
 export async function getStaticProps() {
-    const { data } = await fetchData(`
-        #graphql
-
+    const { data } = await fetchData(gql`
+        ${AnimeSummaryCard.fragment}
+        
         query {
             anime(slug: "bakemonogatari") {
-                name
-                slug
-                year
-                season
-                themes {
-                    slug
-                    type
-                    sequence
-                    entries {
-                        version
-                        videos {
-                            tags
-                        }
-                    }
-                }
-                resources {
-                    site
-                    link
-                }
-                images {
-                    facet
-                    link
-                }
+                ...AnimeSummaryCard_anime
             }
         }
     `);

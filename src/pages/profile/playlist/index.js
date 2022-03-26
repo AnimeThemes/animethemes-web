@@ -8,7 +8,16 @@ import { useState } from "react";
 import { FilterToggleButton } from "components/button";
 import { SearchFilterGroup, SearchFilterSortBy } from "components/search-filter";
 import { Collapse } from "components/utils";
-import { animeNameComparator, animePremiereComparator, chain, reverse, songTitleComparator } from "utils/comparators";
+import {
+    getComparator,
+    SONG_A_Z,
+    SONG_A_Z_ANIME,
+    SONG_NEW_OLD,
+    SONG_OLD_NEW,
+    SONG_Z_A,
+    SONG_Z_A_ANIME,
+    UNSORTED
+} from "utils/comparators";
 import { SEO } from "components/seo";
 import { Reorder } from "framer-motion";
 import { useLocalPlaylist } from "context/localPlaylistContext";
@@ -38,25 +47,13 @@ const StyledReorderContainer = styled.div`
     }
 `;
 
-const toAnime = (comparator) => (a, b) => comparator(a.anime, b.anime);
-const sortByComparators = new Map([
-    [ "Recently added", () => 0 ],
-    [ "A ➜ Z (Song)", songTitleComparator ],
-    [ "Z ➜ A (Song)", reverse(songTitleComparator) ],
-    [ "A ➜ Z (Anime)", chain(toAnime(animeNameComparator), songTitleComparator) ],
-    [ "Z ➜ A (Anime)", chain(reverse(toAnime(animeNameComparator)), songTitleComparator) ],
-    [ "Old ➜ New", chain(toAnime(animePremiereComparator), toAnime(animeNameComparator), songTitleComparator) ],
-    [ "New ➜ Old", chain(reverse(toAnime(animePremiereComparator)), toAnime(animeNameComparator), songTitleComparator) ]
-]);
-const sortByOptions = [ ...sortByComparators.keys() ];
-
 export default function PlaylistPage() {
     const { localPlaylist, setPlaylist } = useLocalPlaylist();
 
     const [ showFilter, toggleShowFilter ] = useToggle();
-    const [ sortBy, setSortBy ] = useState(sortByOptions[0]);
+    const [ sortBy, setSortBy ] = useState(UNSORTED);
 
-    const themes = localPlaylist.sort(sortByComparators.get(sortBy));
+    const themes = localPlaylist.sort(getComparator(sortBy));
 
     return (
         <>
@@ -76,11 +73,15 @@ export default function PlaylistPage() {
                     </StyledHeader>
                     <Collapse collapse={!showFilter}>
                         <SearchFilterGroup>
-                            <SearchFilterSortBy
-                                options={sortByOptions}
-                                value={sortBy}
-                                setValue={setSortBy}
-                            />
+                            <SearchFilterSortBy value={sortBy} setValue={setSortBy}>
+                                <SearchFilterSortBy.Option value={UNSORTED}>Recently Added</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={SONG_A_Z}>A ➜ Z (Song)</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={SONG_Z_A}>Z ➜ A (Song)</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={SONG_A_Z_ANIME}>A ➜ Z (Anime)</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={SONG_Z_A_ANIME}>Z ➜ A (Anime)</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={SONG_OLD_NEW}>Old ➜ New</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={SONG_NEW_OLD}>New ➜ Old</SearchFilterSortBy.Option>
+                            </SearchFilterSortBy>
                         </SearchFilterGroup>
                     </Collapse>
                     <StyledReorderContainer>

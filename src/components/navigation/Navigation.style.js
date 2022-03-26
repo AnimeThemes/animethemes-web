@@ -4,6 +4,7 @@ import { Button } from "components/button";
 import theme from "theme";
 import { blurOut, zoomIn } from "styles/animations";
 import { Solid } from "components/box";
+import { Logo } from "components/image";
 
 export const StyledNavigation = styled(Solid).attrs({ as: "nav" })`
     position: sticky;
@@ -93,13 +94,10 @@ export const StyledLogoContainer = styled.a`
     }
 `;
 
-export const StyledLogo = styled.img`
+export const StyledLogo = styled(Logo)`
     width: auto;
     height: 2rem;
-
-    [theme="dark"] & {
-        filter: invert();
-    }
+    color: ${theme.colors["text"]};
 `;
 
 export const StyledMobileToggle = styled(Button)`

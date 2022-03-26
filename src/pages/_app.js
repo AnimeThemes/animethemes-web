@@ -11,8 +11,6 @@ import { VideoPlayer } from "components/video-player";
 import PlayerContext from "context/playerContext";
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import "@fortawesome/fontawesome-svg-core/styles.css";
-import "styles/prism.scss";
 import Head from "next/head";
 import withBasePath from "utils/withBasePath";
 import { SEO } from "components/seo";
@@ -21,6 +19,9 @@ import { WatchHistoryProvider } from "context/watchHistoryContext";
 import { LocalPlaylistProvider } from "context/localPlaylistContext";
 import { ToastProvider } from "context/toastContext";
 import { AnnouncementToast, ToastHub } from "components/toast";
+
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import "styles/prism.scss";
 
 config.autoAddCss = false;
 
@@ -72,7 +73,6 @@ export default function MyApp({ Component, pageProps }) {
                 <link rel="apple-touch-icon" sizes="180x180" href={withBasePath("/apple-touch-icon.png")}/>
                 <link rel="icon" type="image/png" sizes="32x32" href={withBasePath("/favicon-32x32.png")}/>
                 <link rel="icon" type="image/png" sizes="16x16" href={withBasePath("/favicon-16x16.png")}/>
-                <link rel="manifest" href={withBasePath("/site.webmanifest")}/>
                 <link rel="mask-icon" href={withBasePath("/safari-pinned-tab.svg")} color="#ffffff"/>
                 <meta name="msapplication-TileColor" content="#ffffff"/>
                 <meta name="theme-color" content="#1c1823"/>

@@ -1,13 +1,14 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { Text } from "components/text";
-import { SearchInput } from "components/input";
+import { Input } from "components/input";
 import { HorizontalScroll } from "components/utils";
 import { Switcher } from "components/switcher";
 import styled from "styled-components";
 import theme from "theme";
 import { useRouter } from "next/router";
 import { capitalize } from "lodash-es";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const StyledSearchOptions = styled.div`
     display: grid;
@@ -66,13 +67,16 @@ export function SearchNavigation() {
         <>
             <Text variant="h1">Search</Text>
             <StyledSearchOptions>
-                <SearchInput
-                    query={searchQuery}
-                    setQuery={updateSearchQuery}
+                <Input
+                    value={searchQuery}
+                    onChange={updateSearchQuery}
                     inputProps={{
                         ref: inputRef,
-                        spellCheck: false
+                        spellCheck: false,
+                        placeholder: "Search"
                     }}
+                    resettable
+                    icon={faSearch}
                 />
                 <HorizontalScroll fixShadows>
                     <Switcher selectedItem={entity || null}>

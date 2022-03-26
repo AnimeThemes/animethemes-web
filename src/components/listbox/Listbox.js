@@ -1,7 +1,7 @@
-import { useMedia } from "use-media";
 import { ListboxCustom, ListboxNative } from "components/listbox";
 import theme from "theme";
 import { createContext, useContext } from "react";
+import useMediaQuery from "hooks/useMediaQuery";
 
 const ListboxContext = createContext();
 
@@ -21,7 +21,7 @@ export function Listbox({
     disabled = false,
     ...props
 }) {
-    const isMobile = useMedia({ maxWidth: theme.breakpoints.mobileMax });
+    const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
 
     if (isMobile) {
         return (

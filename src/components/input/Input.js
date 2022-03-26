@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import theme from "theme";
 import { Icon } from "components/icon";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "components/button";
 
 const StyledSearchInput = styled.div`
@@ -39,10 +39,12 @@ const StyledResetButton = styled(Button).attrs({ variant: "silent", isCircle: tr
     }
 `;
 
-export function SearchInput({ query, setQuery, onSubmit, inputProps = {}, ...props }) {
+export function Input({ value, onChange, onSubmit, resettable = false, icon = null, inputProps = {}, ...props }) {
     return (
         <StyledSearchInput {...props}>
-            <Icon icon={faSearch} color="text-disabled"/>
+            {icon && (
+                <Icon icon={icon} color="text-disabled"/>
+            )}
             <StyledForm onSubmit={(event) => {
                 event.preventDefault();
                 if (onSubmit) {
@@ -51,15 +53,14 @@ export function SearchInput({ query, setQuery, onSubmit, inputProps = {}, ...pro
             }}>
                 <StyledInput
                     type="text"
-                    placeholder="Search"
-                    value={query}
-                    onChange={(e) => setQuery && setQuery(e.target.value)}
+                    value={value}
+                    onChange={(event) => onChange && onChange(event.target.value)}
                     {...inputProps}
                 />
             </StyledForm>
-            {!!query && (
+            {resettable && !!value && (
                 <StyledResetButton>
-                    <Icon icon={faTimes} onClick={() => setQuery && setQuery("")}/>
+                    <Icon icon={faTimes} onClick={() => onChange && onChange("")}/>
                 </StyledResetButton>
             )}
         </StyledSearchInput>

@@ -14,7 +14,7 @@ export function ThemeDetailCard({ theme }) {
     return (
         <StyledThemeCard>
             <StyledRow>
-                <StyledSequence>{theme.slug}</StyledSequence>
+                <StyledSequence>{theme.type}{theme.sequence || null}</StyledSequence>
                 <SongTitleWithArtists song={theme.song}/>
                 <ThemeMenu theme={theme}/>
             </StyledRow>

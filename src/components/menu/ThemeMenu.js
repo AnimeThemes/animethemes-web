@@ -3,6 +3,7 @@ import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Text } from "components/text";
 import { Menu } from "components/menu";
 import { useLocalPlaylist } from "context/localPlaylistContext";
+import gql from "graphql-tag";
 
 export function ThemeMenu({ theme }) {
     const { addToPlaylist, removeFromPlaylist, isInPlaylist } = useLocalPlaylist();
@@ -31,3 +32,13 @@ export function ThemeMenu({ theme }) {
         </Menu>
     );
 }
+
+ThemeMenu.fragment = gql`    
+    fragment ThemeMenu_theme on Theme {
+        id
+        # Hidden inside local playlist context
+        song {
+            title
+        }
+    }
+`;

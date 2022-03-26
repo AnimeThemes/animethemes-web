@@ -49,7 +49,8 @@ const entityConfigs = {
                 "id",
                 "type",
                 "sequence",
-                "slug"
+                "slug",
+                "group"
             ],
             animethemeentry: [
                 "version"

@@ -4,16 +4,9 @@ import { SearchEntity } from "components/search";
 import { SummaryCard } from "components/card";
 import useSessionStorage from "hooks/useSessionStorage";
 
-const sortByFields = new Map([
-    [ "A ➜ Z", "name" ],
-    [ "Z ➜ A", "-name" ],
-    [ "Last Added", "-created_at" ]
-]);
-const sortByOptions = [ ...sortByFields.keys() ];
-
 const initialFilter = {
     firstLetter: null,
-    sortBy: sortByOptions[0]
+    sortBy: "name"
 };
 
 export function SearchStudio({ searchQuery }) {
@@ -23,7 +16,7 @@ export function SearchStudio({ searchQuery }) {
         filters: {
             "name][like": filter.firstLetter ? `${filter.firstLetter}%` : null,
         },
-        sortBy: searchQuery ? null : sortByFields.get(filter.sortBy)
+        sortBy: searchQuery ? null : filter.sortBy
     });
 
     return (
@@ -32,11 +25,17 @@ export function SearchStudio({ searchQuery }) {
             filters={
                 <>
                     <SearchFilterFirstLetter value={filter.firstLetter} setValue={updateFilter("firstLetter")}/>
-                    <SearchFilterSortBy
-                        options={searchQuery ? [ "Relevance" ] : sortByOptions}
-                        value={searchQuery ? "Relevance" : filter.sortBy}
-                        setValue={updateFilter("sortBy")}
-                    />
+                    <SearchFilterSortBy value={searchQuery ? null : filter.sortBy} setValue={updateFilter("sortBy")}>
+                        {searchQuery ? (
+                            <SearchFilterSortBy.Option>Relevance</SearchFilterSortBy.Option>
+                        ) : (
+                            <>
+                                <SearchFilterSortBy.Option value="name">A ➜ Z</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value="-name">Z ➜ A</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value="-created_at">Last Added</SearchFilterSortBy.Option>
+                            </>
+                        )}
+                    </SearchFilterSortBy>
                 </>
             }
             renderSummaryCard={(studio) => <SummaryCard key={studio.slug} title={studio.name} description="Studio" to={`/studio/${studio.slug}`} />}

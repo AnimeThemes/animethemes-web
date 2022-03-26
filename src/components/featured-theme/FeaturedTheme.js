@@ -3,9 +3,10 @@ import styled, { keyframes } from "styled-components";
 import theme from "theme";
 import { ThemeSummaryCard } from "components/card";
 import useImage from "hooks/useImage";
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import useSetting from "hooks/useSetting";
 import useCompatability from "hooks/useCompatability";
+import gql from "graphql-tag";
 
 const videoBaseUrl = process.env.NEXT_PUBLIC_VIDEO_URL || "https://animethemes.moe";
 const grills = [
@@ -116,9 +117,12 @@ const Box = styled.div``;
 export function FeaturedTheme({ theme }) {
     const featuredVideo = theme.entries[0].videos[0];
     const { smallCover: featuredCover } = useImage(theme.anime);
-    const grill = useMemo(() => grills[Math.floor(Math.random() * grills.length)], []);
+    const [ grill, setGrill ] = useState(null);
     const [ featuredThemePreviewSettingValue ] = useSetting(featuredThemePreviewSetting);
     const { canPlayVideo } = useCompatability({ canPlayVideo: false });
+    const [ fallbackToCover, setFallbackToCover ] = useState(false);
+
+    useEffect(() => setGrill(grills[Math.floor(Math.random() * grills.length)]), []);
 
     const FeaturedThemeWrapper = featuredThemePreviewSettingValue !== "disabled"
         ? StyledWrapper
@@ -129,22 +133,23 @@ export function FeaturedTheme({ theme }) {
 
     return (
         <FeaturedThemeWrapper>
-            {featuredThemePreviewSettingValue === "video" && canPlayVideo && (
+            {featuredThemePreviewSettingValue === "video" && canPlayVideo && !fallbackToCover && (
                 <StyledOverflowHidden>
                     <StyledVideo
                         src={`${videoBaseUrl}/video/${featuredVideo.basename}`}
                         autoPlay
                         muted
                         loop
+                        onError={() => setFallbackToCover(true)}
                     />
                 </StyledOverflowHidden>
             )}
-            {featuredThemePreviewSettingValue === "cover" && (
+            {(featuredThemePreviewSettingValue === "cover" || fallbackToCover) && (
                 <StyledOverflowHidden>
                     <StyledCover src={featuredCover}/>
                 </StyledOverflowHidden>
             )}
-            {featuredThemePreviewSettingValue !== "disabled" && (
+            {featuredThemePreviewSettingValue !== "disabled" && grill && (
                 <StyledGrillContainer>
                     <StyledGrill src={grill}/>
                 </StyledGrillContainer>
@@ -153,3 +158,20 @@ export function FeaturedTheme({ theme }) {
         </FeaturedThemeWrapper>
     );
 }
+
+FeaturedTheme.fragment = gql`    
+    ${ThemeSummaryCard.fragments.theme}
+    ${useImage.fragment}
+    
+    fragment FeaturedTheme_theme on Theme {
+        ...ThemeSummaryCard_theme
+        anime {
+            ...useImage_resourceWithImages
+        }
+        entries {
+            videos {
+                basename
+            }
+        }
+    }
+`;

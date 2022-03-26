@@ -16,9 +16,15 @@ module.exports = `
         yearAll: [Year]
         season(year: Int!, value: String!): Season
         seasonAll(year: Int): [Season]
+        page(id: Int, slug: String): Page
+        pageAll: [Page]
         counter: Counter
     }
 
+    interface ResourceWithImages {
+        images: [Image]
+    }
+    
     type Year {
         value: Int!
         seasons: [Season]
@@ -40,7 +46,7 @@ module.exports = `
         season: Int!
     }
     
-    type Anime {
+    type Anime implements ResourceWithImages {
         id: Int
         name: String!
         slug: String!
@@ -111,7 +117,7 @@ module.exports = `
         as: String
     }
     
-    type Artist {
+    type Artist implements ResourceWithImages {
         id: Int
         slug: String!
         name: String!            
@@ -158,6 +164,13 @@ module.exports = `
     type Announcement {
         id: Int
         content: String!
+    }
+
+    type Page {
+        id: Int
+        slug: String!
+        name: String!
+        body: String!
     }
     
     schema {

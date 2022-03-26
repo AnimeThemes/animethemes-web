@@ -1,21 +1,22 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Column, Row } from "components/box";
 import { Text } from "components/text";
 import { SongTitleWithArtists, ThemeEntryTags, VideoTags } from "components/utils";
 import { Button, VideoButton } from "components/button";
-import { AnimeSummaryCard, ArtistSummaryCard, SummaryCard } from "components/card";
+import { AnimeSummaryCard, ArtistSummaryCard, SummaryCard, ThemeSummaryCard } from "components/card";
 import useImage from "hooks/useImage";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import { videoBaseUrl } from "lib/client/api";
-import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "components/icon";
 import { useWatchHistory } from "context/watchHistoryContext";
 import { useLocalPlaylist } from "context/localPlaylistContext";
 import styled from "styled-components";
 import theme from "theme";
 import createVideoSlug from "utils/createVideoSlug";
+import gql from "graphql-tag";
 
 const StyledVideoInfo = styled.div`
     display: grid;
@@ -44,18 +45,8 @@ const StyledVideoTagsInfo = styled(Row)`
 
 const StyledRelatedGrid = styled.div`
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    grid-gap: 32px;
-
-    @media (max-width: ${theme.breakpoints.mobileMax}) {
-        grid-template-columns: 1fr;
-    }
-`;
-
-const StyledSummaryCardGrid = styled.div`
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 16px;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 16px 32px;
 
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         grid-template-columns: 1fr;
@@ -88,6 +79,15 @@ export default function VideoPage({ anime, theme, entry, video }) {
     const { smallCover, largeCover } = useImage(anime);
     const { addToPlaylist, removeFromPlaylist, isInPlaylist } = useLocalPlaylist();
     const { addToHistory } = useWatchHistory();
+    const [ showMoreRelatedThemes, setShowMoreRelatedThemes ] = useState(false);
+
+    const relatedThemes = anime.themes
+        .filter((relatedTheme) => relatedTheme.slug !== theme.slug)
+        .slice(0, showMoreRelatedThemes ? undefined : 6);
+
+    const usedAlsoAs = video.entries
+        .map((entry) => entry.theme)
+        .filter((otherTheme) => otherTheme.anime.slug !== anime.slug);
 
     useEffect(() => addToHistory({ ...theme, anime }), [ addToHistory, anime, theme ]);
 
@@ -188,23 +188,51 @@ export default function VideoPage({ anime, theme, entry, video }) {
             </Row>
             <StyledRelatedGrid>
                 <Column style={{ "--gap": "16px" }}>
-                    <Text variant="h2">Related entries</Text>
-                    <StyledSummaryCardGrid>
-                        <Column style={{ "--gap": "16px" }}>
-                            <AnimeSummaryCard anime={anime} hideThemes/>
-                            {!!anime.series?.length && anime.series.map((series) => (
-                                <SummaryCard key={series.slug} title={series.name} description="Series" to={`/series/${series.slug}`} />
+                    <Text variant="h2">Information</Text>
+                    <AnimeSummaryCard anime={anime} hideThemes/>
+                    {!!anime.series?.length && anime.series.map((series) => (
+                        <SummaryCard key={series.slug} title={series.name} description="Series" to={`/series/${series.slug}`} />
+                    ))}
+                    {!!anime.studios?.length && anime.studios.map((studio) => (
+                        <SummaryCard key={studio.slug} title={studio.name} description="Studio" to={`/studio/${studio.slug}`} />
+                    ))}
+                    {!!theme.song.performances?.length && (
+                        <>
+                            <Text variant="h2">Artists</Text>
+                            {theme.song.performances.map((performance) => (
+                                <ArtistSummaryCard
+                                    key={performance.artist.name}
+                                    artist={performance.artist}
+                                    as={performance.as}
+                                />
                             ))}
-                            {!!anime.studios?.length && anime.studios.map((studio) => (
-                                <SummaryCard key={studio.slug} title={studio.name} description="Studio" to={`/studio/${studio.slug}`} />
+                        </>
+                    )}
+                    {!!usedAlsoAs.length && (
+                        <>
+                            <Text variant="h2">Also Used As</Text>
+                            {usedAlsoAs.map((theme) => (
+                                <ThemeSummaryCard key={theme.anime.slug} theme={theme}/>
                             ))}
-                        </Column>
-                        <Column style={{ "--gap": "16px" }}>
-                            {!!theme.song.performances && theme.song.performances.map((performance) => (
-                                <ArtistSummaryCard key={performance.artist.name} artist={performance.artist} as={performance.as}/>
+                        </>
+                    )}
+                </Column>
+                <Column style={{ "--gap": "16px" }}>
+                    {!!relatedThemes.length && (
+                        <>
+                            <Text variant="h2">Related themes</Text>
+                            {relatedThemes.map((theme) => (
+                                <ThemeSummaryCard key={theme.slug} theme={theme}/>
                             ))}
-                        </Column>
-                    </StyledSummaryCardGrid>
+                            {!showMoreRelatedThemes && anime.themes.length > 6 && (
+                                <Row style={{ "--justify-content": "center" }}>
+                                    <Button variant="silent" isCircle onClick={() => setShowMoreRelatedThemes(true)}>
+                                        <Icon icon={faChevronDown}/>
+                                    </Button>
+                                </Row>
+                            )}
+                        </>
+                    )}
                 </Column>
                 {!!otherEntries.length && (
                     <StyledRelatedEntries>
@@ -240,9 +268,9 @@ export default function VideoPage({ anime, theme, entry, video }) {
 }
 
 export async function getStaticProps({ params: { animeSlug, videoSlug } }) {
-    const { data } = await fetchData(`
-        #graphql
-
+    const { data } = await fetchData(gql`
+        ${ThemeSummaryCard.fragments.theme}
+        
         query($animeSlug: String!) {
             anime(slug: $animeSlug) {
                 name
@@ -250,6 +278,7 @@ export async function getStaticProps({ params: { animeSlug, videoSlug } }) {
                 year
                 season
                 themes {
+                    ...ThemeSummaryCard_theme
                     id
                     slug
                     song {
@@ -282,6 +311,11 @@ export async function getStaticProps({ params: { animeSlug, videoSlug } }) {
                             subbed
                             uncen
                             tags
+                            entries {
+                                theme {
+                                    ...ThemeSummaryCard_theme
+                                }
+                            }
                         }
                     }
                 }

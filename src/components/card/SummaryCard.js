@@ -64,13 +64,15 @@ export function SummaryCard({ title, description, image, to, children, ...props 
                         </Link>
                     ) : title}
                 </Text>
-                <Text variant="small" maxLines={1}>
-                    {typeof description === "string" ? (
-                        <SummaryCard.Description>
-                            {[description]}
-                        </SummaryCard.Description>
-                    ) : description}
-                </Text>
+                {!!description && (
+                    <Text variant="small" maxLines={1}>
+                        {typeof description === "string" ? (
+                            <SummaryCard.Description>
+                                {[description]}
+                            </SummaryCard.Description>
+                        ) : description}
+                    </Text>
+                )}
             </StyledBody>
             {children}
         </StyledSummaryCard>

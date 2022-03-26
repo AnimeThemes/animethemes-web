@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { LayoutGroup, motion } from "framer-motion";
 import theme from "theme";
 import { uniqueId as createUniqueId } from "lodash-es";
-import { createContext, useContext, useMemo } from "react";
+import { createContext, forwardRef, useContext, useMemo } from "react";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "components/icon";
 
@@ -70,7 +70,7 @@ export function Switcher({ selectedItem, onChange, children, ...props }) {
     );
 }
 
-Switcher.Option = function SwitcherItem({ children, value, ...props }) {
+Switcher.Option = forwardRef(function SwitcherItem({ children, value, ...props }, ref) {
     const context = useContext(SwitcherContext);
     const isSelected = context.selectedItem === value;
 
@@ -78,6 +78,7 @@ Switcher.Option = function SwitcherItem({ children, value, ...props }) {
         <StyledButton
             style={{ "--color": isSelected && theme.colors["text-on-primary"] }}
             onClick={() => context.select(value)}
+            ref={ref}
             {...props}
         >
             {isSelected && (
@@ -91,9 +92,9 @@ Switcher.Option = function SwitcherItem({ children, value, ...props }) {
             <StyledTop>{children}</StyledTop>
         </StyledButton>
     );
-};
+});
 
-Switcher.Reset = function SwitcherReset(props) {
+Switcher.Reset = forwardRef(function SwitcherReset(props, ref) {
     const context = useContext(SwitcherContext);
 
     if (context.selectedItem === null) {
@@ -106,9 +107,10 @@ Switcher.Reset = function SwitcherReset(props) {
             style={{ "--color": theme.colors["text-disabled"] }}
             isCircle
             onClick={() => context.select(null)}
+            ref={ref}
             {...props}
         >
             <Icon icon={faTimes}/>
         </StyledButton>
     );
-};
+});

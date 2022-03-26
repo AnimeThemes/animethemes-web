@@ -5,3 +5,4 @@ export { SongTitleWithArtists } from "./SongTitleWithArtists";
 export { ThemeEntryTags } from "./ThemeEntryTags";
 export { VideoTags } from "./VideoTags";
 export { HorizontalScroll } from "./HorizontalScroll";
+export { Highlight } from "./Highlight";

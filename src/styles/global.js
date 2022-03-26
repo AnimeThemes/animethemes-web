@@ -33,6 +33,8 @@ export default createGlobalStyle`
         font-family: "Nunito", sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+
+        line-height: 1.5;
     }
 
     html, body, #__next {
@@ -48,7 +50,7 @@ export default createGlobalStyle`
     }
 
     p {
-        line-height: 1.5;
+        line-height: inherit;
     }
 
     button {
@@ -87,6 +89,11 @@ export default createGlobalStyle`
 
     pre {
         margin: 0;
+    }
+
+    hr {
+        margin: 16px 0;
+        border-color: ${theme.colors["text-disabled"]};
     }
 
     @media (min-device-width: 600px) {
