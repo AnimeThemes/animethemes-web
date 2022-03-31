@@ -1,37 +1,27 @@
-import { unified } from "unified";
-import remarkParse from "remark-parse";
-import remarkRehype from "remark-rehype";
-import rehypePrism from "@mapbox/rehype-prism";
-import rehypeSlug from "rehype-slug";
-import rehypeStringify from "rehype-stringify";
-import remarkGfm from "remark-gfm";
+import { marked } from "marked";
+import Prism from "prismjs";
+import "prismjs/components/prism-powershell";
+import "prismjs/components/prism-json";
 
 export default function markdownToHtml(markdown) {
-    const html = unified()
-        .use(remarkParse)
-        .use(remarkGfm)
-        .use(remarkRehype)
-        .use(rehypePrism)
-        .use(rehypeSlug)
-        .use(rehypeStringify)
-        .processSync(markdown)
-        .toString();
+    const headings = [];
 
-    const headings = getHeadings(markdown);
+    const html = marked.parse(markdown, {
+        highlight(code, lang) {
+            if (lang) {
+                return Prism.highlight(code, Prism.languages[lang], lang);
+            }
+            return code;
+        },
+        walkTokens(token) {
+            if (token.type === "heading" && token.depth === 2) {
+                headings.push({ text: token.text, level: token.depth });
+            }
+        }
+    });
 
     return {
         html,
         headings
     };
-}
-
-function getHeadings(markdown) {
-    return [...markdown.matchAll(/^(##) (.*)$/gm)].map(([, prefix, text]) => ({
-        text: stripMarkdown(text),
-        level: prefix.length
-    }));
-}
-
-function stripMarkdown(markdown) {
-    return markdown.replaceAll(/\[(.*?)]\(.*?\)/g, "$1");
 }

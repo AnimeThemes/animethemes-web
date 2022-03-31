@@ -38,7 +38,7 @@ const StyledCoverItemContainer = styled.div`
     width: 100%;
     height: 100%;
 
-    ${(props) => props.$itemCount && css`
+    ${(props) => props.$itemCount > 1 && css`
         &:nth-child(1) {
             --translate-x: ${getTranslationX(1, props.$itemCount)}%;
             clip-path: polygon(
