@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Column, Row, Solid } from "components/box";
 import { Container } from "components/container";
 import { Text } from "components/text";
@@ -6,6 +7,7 @@ import { faDiscord, faGithub, faReddit, faTwitter } from "@fortawesome/free-bran
 import { Button } from "components/button";
 import styled from "styled-components";
 import theme from "theme";
+import { forwardRef } from "react";
 
 const StyledFooter = styled(Solid)`
     margin-top: auto;
@@ -46,12 +48,16 @@ export function Footer() {
                     <FooterTextLink href="https://staging.animethemes.moe/transparency">
                         Transparency
                     </FooterTextLink>
-                    <FooterTextLink href="https://staging.animethemes.moe/donate">
-                        Donate
-                    </FooterTextLink>
-                    <FooterTextLink href="https://staging.animethemes.moe/faq">
-                        FAQ
-                    </FooterTextLink>
+                    <Link href="/page/donate" passHref>
+                        <FooterTextLink target="_self">
+                            Donate
+                        </FooterTextLink>
+                    </Link>
+                    <Link href="/page/faq" passHref>
+                        <FooterTextLink target="_self">
+                            FAQ
+                        </FooterTextLink>
+                    </Link>
                 </StyledLinkList>
                 <StyledLinkList>
                     <FooterTextLink href="https://staging.animethemes.moe/terms-of-service">
@@ -91,18 +97,18 @@ export function Footer() {
     );
 }
 
-function FooterLink({ children, ...props }) {
+const FooterLink = forwardRef(function FooterLink({ children, ...props }, ref) {
     return (
-        <Text as="a" target="_blank" rel="noopener" {...props}>
+        <Text ref={ref} as="a" target="_blank" rel="noopener" {...props}>
             {children}
         </Text>
     );
-}
+});
 
-function FooterTextLink({ children, ...props }) {
+const FooterTextLink = forwardRef(function FooterTextLink({ children, ...props }, ref) {
     return (
-        <FooterLink link block color="text-muted" noWrap {...props}>
+        <FooterLink ref={ref} link block color="text-muted" noWrap {...props}>
             {children}
         </FooterLink>
     );
-}
+});
