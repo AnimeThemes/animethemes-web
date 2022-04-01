@@ -311,7 +311,7 @@ module.exports = {
     },
     Image: {
         facet: (image) => imageFacet.get(image.facet),
-        link: (image) => `https://staging.animethemes.moe/image/${image.image_id}`
+        link: (image) => `https://animethemes-stag-images.fra1.cdn.digitaloceanspaces.com/${image.path}`
     },
     Resource: {
         site: (resource) => resourceSite.get(resource.site)
