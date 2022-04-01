@@ -7,7 +7,6 @@ import { Text } from "components/text";
 import { createElement, Fragment, useEffect, useState } from "react";
 import rehypeParse from "rehype-parse";
 import styled from "styled-components";
-import { slug } from "github-slugger";
 import { motion } from "framer-motion";
 import theme from "theme";
 import { SEO } from "components/seo";
@@ -99,6 +98,7 @@ const StyledMarkdown = styled.div`
     }
     
     & pre {
+        margin-bottom: 16px;
         overflow-x: auto;
     }
     
@@ -177,7 +177,7 @@ export default function DocumentPage({ page }) {
 }
 
 function TableOfContents({ headings }) {
-    const [currentHeading, setCurrentHeading] = useState();
+    const [currentSlug, setCurrentSlug] = useState();
 
     useEffect(() => {
         function onScroll() {
@@ -193,7 +193,7 @@ function TableOfContents({ headings }) {
                     break;
                 }
             }
-            setCurrentHeading(currentHeading?.id);
+            setCurrentSlug(currentHeading?.id);
         }
 
         window.addEventListener("scroll", onScroll);
@@ -203,12 +203,12 @@ function TableOfContents({ headings }) {
 
     return (
         <StyledTableOfContents>
-            {headings.map(({ text }) => (
+            {headings.map(({ text, slug }) => (
                 <li key={text}>
-                    {slug(text) === currentHeading && (
+                    {slug === currentSlug && (
                         <StyledDot layoutId="dot"/>
                     )}
-                    <Text as="a" link color={slug(text) === currentHeading ? "text-muted" : "text-disabled"} href={`#${slug(text)}`}>{text}</Text>
+                    <Text as="a" link color={slug === currentSlug ? "text-muted" : "text-disabled"} href={`#${slug}`}>{text}</Text>
                 </li>
             ))}
         </StyledTableOfContents>
