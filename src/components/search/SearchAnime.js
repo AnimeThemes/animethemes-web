@@ -51,7 +51,7 @@ export function SearchAnime({ searchQuery }) {
                     </SearchFilterSortBy>
                 </>
             }
-            renderSummaryCard={(anime) => <AnimeSummaryCard key={anime.slug} anime={anime}/>}
+            renderSummaryCard={(anime) => <AnimeSummaryCard key={anime.slug} anime={anime} previewThemes expandable/>}
             {...entitySearch}
         />
     );

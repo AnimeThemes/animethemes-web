@@ -31,6 +31,7 @@ const StyledGrid = styled.div`
 
 const StyledMarkdown = styled.div`
     line-height: 1.75;
+    word-break: break-word;
     
     & h1 {
         margin-bottom: 32px;

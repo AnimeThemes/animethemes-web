@@ -26,6 +26,7 @@ import {
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import useImage from "hooks/useImage";
+import gql from "graphql-tag";
 
 const StyledList = styled.div`
     display: flex;
@@ -175,11 +176,13 @@ export default function ArtistDetailPage({ artist }) {
 }
 
 export async function getStaticProps({ params: { artistSlug } }) {
-    const { data } = await fetchData(`
-        #graphql
+    const { data } = await fetchData(gql`
+        ${ThemeSummaryCard.fragments.theme}
+        ${ThemeSummaryCard.fragments.artist}
 
         query($artistSlug: String!) {
             artist(slug: $artistSlug) {
+                ...ThemeSummaryCard_artist
                 slug
                 name
                 performances {
@@ -194,24 +197,12 @@ export async function getStaticProps({ params: { artistSlug } }) {
                             as
                         }
                         themes {
+                            ...ThemeSummaryCard_theme
                             id
                             slug
                             group
                             anime {
                                 slug
-                                name
-                                year
-                                season
-                                images {
-                                    facet
-                                    link
-                                }
-                            }
-                            entries {
-                                version
-                                videos {
-                                    tags
-                                }
                             }
                         }
                     }

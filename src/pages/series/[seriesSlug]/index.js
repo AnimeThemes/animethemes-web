@@ -13,6 +13,7 @@ import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import theme from "theme";
 import { MultiCoverImage } from "components/image";
+import gql from "graphql-tag";
 
 const StyledDesktopOnly = styled.div`
     gap: 24px;
@@ -58,7 +59,7 @@ export default function SeriesDetailPage({ series }) {
                     </Collapse>
                     <Column style={{ "--gap": "16px" }}>
                         {animeSorted.map((anime) => (
-                            <AnimeSummaryCard key={anime.slug} anime={anime}/>
+                            <AnimeSummaryCard key={anime.slug} anime={anime} previewThemes expandable/>
                         ))}
                     </Column>
                 </Column>
@@ -68,14 +69,19 @@ export default function SeriesDetailPage({ series }) {
 }
 
 export async function getStaticProps({ params: { seriesSlug } }) {
-    const { data } = await fetchData(`
-        #graphql
+    const { data } = await fetchData(gql`
+        ${AnimeSummaryCard.fragments.anime}
+        ${AnimeSummaryCard.fragments.previewThemes}
+        ${AnimeSummaryCard.fragments.expandable}
 
         query($seriesSlug: String!) {
             series(slug: $seriesSlug) {
                 slug
                 name
                 anime {
+                    ...AnimeSummaryCard_anime
+                    ...AnimeSummaryCard_anime_previewThemes
+                    ...AnimeSummaryCard_anime_expandable
                     name
                     slug
                     year

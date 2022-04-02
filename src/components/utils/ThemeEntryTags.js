@@ -2,10 +2,11 @@ import { Tag } from "components/tag";
 import { faBomb, faExclamationTriangle, faFilm } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "components/icon";
 import { Row } from "components/box";
+import gql from "graphql-tag";
 
 export function ThemeEntryTags({ entry }) {
     return (
-        <Row style={{ "--gap": "8px" }}>
+        <Row style={{ "--gap": "8px", "--align-items": "baseline" }}>
             <Tag icon={faFilm}>
                 {entry.episodes || "—"}
             </Tag>
@@ -22,3 +23,11 @@ export function ThemeEntryTags({ entry }) {
         </Row>
     );
 }
+
+ThemeEntryTags.fragment = gql`
+    fragment ThemeEntryTags_entry on Entry {
+        episodes
+        spoiler
+        nsfw
+    }
+`;

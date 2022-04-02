@@ -40,6 +40,7 @@ export const Text = styled.span.attrs(getAttributes)`
         border-radius: 0.25rem;
         background-color: ${theme.colors["solid"]};
         box-shadow: ${theme.shadows.low};
+        box-decoration-break: clone;
     `}
 
     ${(props) => props.link && css`

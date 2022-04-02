@@ -1,9 +1,11 @@
 import { baseUrl } from "lib/client/api";
+import { uniq } from "lodash-es";
 
 const entityConfigs = {
     anime: {
         includes: [
             "animethemes.animethemeentries.videos",
+            "animethemes.song",
             "images"
         ],
         fields: {
@@ -16,17 +18,31 @@ const entityConfigs = {
             animetheme: [
                 "type",
                 "sequence",
-                "slug"
+                "slug",
+                "group"
             ],
             animethemeentry: [
-                "version"
+                "version",
+                "episodes",
+                "spoiler",
+                "nsfw"
             ],
             video: [
-                "tags"
+                "tags",
+                "resolution",
+                "nc",
+                "subbed",
+                "lyrics",
+                "uncen",
+                "source",
+                "overlap"
             ],
             image: [
                 "facet",
                 "link"
+            ],
+            song: [
+                "title"
             ]
         }
     },
@@ -178,35 +194,58 @@ export async function fetchEntitySearchResults({
 function generateGlobalSearchParameters(entities) {
     const parameters = [];
 
-    parameters.push(`fields[search]=${entities.map((entity) => entityConfigs[entity].plural || entity)}`);
+    parameters.push(...generateSparseFieldsetParameters({
+        search: entities.map((entity) => entityConfigs[entity].plural || entity)
+    }));
 
     parameters.push(
         ...entities
-            .flatMap((entity) => generateEntitySearchParameters(entity, true))
-            .filter((parameter, index, parameters) => parameters.indexOf(parameter) === index)
+            .filter((entity) => entityConfigs[entity].includes)
+            .map((entity) => generateIncludeParameter(entityConfigs[entity].includes, entityConfigs[entity].singular || entity))
     );
+
+    // Merge sparse fieldsets of nested fields
+    const fields = entities.reduce((fields, entity) => {
+        const config = entityConfigs[entity];
+        for (const [fieldName, configFields] of Object.entries(config.fields)) {
+            if (!(fieldName in fields)) {
+                fields[fieldName] = [];
+            }
+            fields[fieldName] = uniq([...fields[fieldName], ...configFields]);
+        }
+        return fields;
+    }, {});
+
+    parameters.push(...generateSparseFieldsetParameters(fields));
 
     return parameters;
 }
 
-function generateEntitySearchParameters(entity, includeScoped = false) {
+function generateEntitySearchParameters(entity) {
     const parameters = [];
     const config = entityConfigs[entity];
 
     if (config.includes) {
-        const includesJoined = config.includes.join(",");
-        if (includeScoped) {
-            parameters.push(`include[${config.singular || entity}]=${includesJoined}`);
-        } else {
-            parameters.push(`include=${includesJoined}`);
-        }
+        parameters.push(generateIncludeParameter(config.includes));
     }
 
     if (config.fields) {
-        parameters.push(...Object.entries(config.fields).map(([key, fields]) => `fields[${key}]=${fields.join(",")}`));
+        parameters.push(...generateSparseFieldsetParameters(config.fields));
     }
 
     return parameters;
+}
+
+function generateIncludeParameter(includes, scope = null) {
+    const includesJoined = includes.join(",");
+    if (scope) {
+        return `include[${scope}]=${includesJoined}`;
+    }
+    return `include=${includesJoined}`;
+}
+
+function generateSparseFieldsetParameters(fields) {
+    return Object.entries(fields).map(([key, fields]) => `fields[${key}]=${fields.join(",")}`);
 }
 
 function generateFilterAndSortParameters(filters, sortBy) {

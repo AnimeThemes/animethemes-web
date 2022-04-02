@@ -22,7 +22,7 @@ export default function SeasonDetailPage({ animeAll, year, season }) {
             </Text>
             <Column style={{ "--gap": "16px" }}>
                 {animeList.map((anime) => (
-                    <AnimeSummaryCard key={anime.slug} anime={anime}/>
+                    <AnimeSummaryCard key={anime.slug} anime={anime} previewThemes expandable/>
                 ))}
             </Column>
         </>
@@ -33,7 +33,9 @@ export async function getStaticProps({ params: { year, season } }) {
     year = +year;
 
     const { data } = await fetchData(gql`
-        ${AnimeSummaryCard.fragment}
+        ${AnimeSummaryCard.fragments.anime}
+        ${AnimeSummaryCard.fragments.previewThemes}
+        ${AnimeSummaryCard.fragments.expandable}
 
         query($year: Int = 0, $season: String!) {
             yearAll {
@@ -46,6 +48,8 @@ export async function getStaticProps({ params: { year, season } }) {
                 anime {
                     slug
                     ...AnimeSummaryCard_anime
+                    ...AnimeSummaryCard_anime_previewThemes
+                    ...AnimeSummaryCard_anime_expandable
                 }
             }
             

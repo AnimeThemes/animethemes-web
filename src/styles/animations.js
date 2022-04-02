@@ -17,9 +17,9 @@ export const fadeIn = keyframes`
     }
 `;
 
-export const slideIn = keyframes`
+export const slideIn = (y = "100%") => keyframes`
     from {
-        transform: translateY(100%);
+        transform: translateY(${y});
     }
 `;
 

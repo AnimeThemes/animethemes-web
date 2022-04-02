@@ -85,6 +85,7 @@ export default createGlobalStyle`
 
     img, video {
         display: block;
+        max-width: 100%;
     }
 
     pre {

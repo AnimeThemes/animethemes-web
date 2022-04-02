@@ -1,4 +1,11 @@
-import { motion } from "framer-motion";
+import styled from "styled-components";
+import { fadeIn, slideIn } from "styles/animations";
+
+const StyledWrapper = styled.div`
+    animation-name: ${slideIn("-16px")}, ${fadeIn};
+    animation-duration: 350ms;
+    animation-timing-function: ease-out;
+`;
 
 export function Collapse({ collapse, children }) {
     if (collapse) {
@@ -6,12 +13,8 @@ export function Collapse({ collapse, children }) {
     }
 
     return (
-        <motion.div
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ type: "tween", duration: 0.35, ease: [ 0, 0.66, 0.46, 0.98 ] }}
-        >
+        <StyledWrapper>
             {children}
-        </motion.div>
+        </StyledWrapper>
     );
 }

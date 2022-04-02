@@ -32,7 +32,7 @@ const StyledMenuItems = styled(MenuItems)`
         z-index: ${theme.zIndices.toast};
         background-color: ${theme.colors["solid"]};
         box-shadow: ${theme.shadows.high};
-        animation: ${slideIn} 200ms both;
+        animation: ${slideIn()} 200ms both;
     }
 `;
 const StyledMenuItem = styled(MenuItem)`

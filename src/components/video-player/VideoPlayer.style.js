@@ -19,7 +19,7 @@ export const StyledPlayer = styled(motion.div)`
             
             background-color: ${theme.colors["solid"]};
 
-            animation: ${slideIn} 500ms ease;
+            animation: ${slideIn()} 500ms ease;
             
             & ${StyledVideo} {
                 width: auto;
