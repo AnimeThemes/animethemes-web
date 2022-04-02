@@ -8,6 +8,7 @@ import { Text } from "components/text";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import gql from "graphql-tag";
+import { ANIME_A_Z, getComparator } from "utils/comparators";
 
 const seasonOrder = [ "Winter", "Spring", "Summer", "Fall" ];
 
@@ -28,7 +29,7 @@ function SeasonPreview({ season, year, animeList }) {
             <Text variant="h2">{season}</Text>
             <Column style={{ "--gap": "16px" }}>
                 {animeList.map((anime) => (
-                    <AnimeSummaryCard key={anime.slug} anime={anime}/>
+                    <AnimeSummaryCard key={anime.slug} anime={anime} previewThemes expandable/>
                 ))}
             </Column>
             <Row style={{ "--justify-content": "center" }}>
@@ -46,7 +47,9 @@ export async function getStaticProps({ params: { year } }) {
     year = +year;
 
     const { data } = await fetchData(gql`
-        ${AnimeSummaryCard.fragment}
+        ${AnimeSummaryCard.fragments.anime}
+        ${AnimeSummaryCard.fragments.previewThemes}
+        ${AnimeSummaryCard.fragments.expandable}
 
         query($year: Int!) {
             yearAll {
@@ -58,6 +61,8 @@ export async function getStaticProps({ params: { year } }) {
                     anime {
                         slug
                         ...AnimeSummaryCard_anime
+                        ...AnimeSummaryCard_anime_previewThemes
+                        ...AnimeSummaryCard_anime_expandable
                     }
                 }
             }
@@ -75,7 +80,10 @@ export async function getStaticProps({ params: { year } }) {
     const seasons = data.year.seasons
         .map((season) => ({
             season: season.value,
-            anime: season.anime.slice(0, 3)
+            anime: season.anime
+                .filter((anime) => anime.name)
+                .sort(getComparator(ANIME_A_Z))
+                .slice(0, 3)
         }))
         .sort((a, b) => seasonOrder.indexOf(a) - seasonOrder.indexOf(b));
 

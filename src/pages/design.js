@@ -406,7 +406,7 @@ export default function DesignPage({ demoData }) {
                 </pre>
                 <AnimeSummaryCard
                     anime={demoData.anime}
-                    maxThemes={1}
+                    previewThemes={1}
                 />
             </ExampleGrid>
 
@@ -638,11 +638,13 @@ function Color({ color }) {
 
 export async function getStaticProps() {
     const { data } = await fetchData(gql`
-        ${AnimeSummaryCard.fragment}
+        ${AnimeSummaryCard.fragments.anime}
+        ${AnimeSummaryCard.fragments.previewThemes}
         
         query {
             anime(slug: "bakemonogatari") {
                 ...AnimeSummaryCard_anime
+                ...AnimeSummaryCard_anime_previewThemes
             }
         }
     `);

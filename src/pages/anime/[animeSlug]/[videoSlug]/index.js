@@ -31,6 +31,7 @@ const StyledVideoInfo = styled.div`
 `;
 
 const StyledVideoEntryInfo = styled(Row)`
+    align-items: baseline;
     justify-content: flex-end;
     gap: 16px;
 
@@ -40,6 +41,7 @@ const StyledVideoEntryInfo = styled(Row)`
 `;
 
 const StyledVideoTagsInfo = styled(Row)`
+    align-items: baseline;
     justify-content: flex-end;
 `;
 
@@ -161,10 +163,10 @@ export default function VideoPage({ anime, theme, entry, video }) {
                         </Link>
                     </Text>
                 </Column>
-                <Text variant="small" color="text-muted">
+                <Text color="text-muted">
                     <Column style={{ "--gap": "4px" }}>
                         <StyledVideoEntryInfo>
-                            <Text>Version {entry.version || 1}</Text>
+                            <Text variant="small">Version {entry.version || 1}</Text>
                             <ThemeEntryTags entry={entry}/>
                         </StyledVideoEntryInfo>
                         <StyledVideoTagsInfo>
@@ -189,7 +191,7 @@ export default function VideoPage({ anime, theme, entry, video }) {
             <StyledRelatedGrid>
                 <Column style={{ "--gap": "16px" }}>
                     <Text variant="h2">Information</Text>
-                    <AnimeSummaryCard anime={anime} hideThemes/>
+                    <AnimeSummaryCard anime={anime}/>
                     {!!anime.series?.length && anime.series.map((series) => (
                         <SummaryCard key={series.slug} title={series.name} description="Series" to={`/series/${series.slug}`} />
                     ))}
@@ -240,9 +242,9 @@ export default function VideoPage({ anime, theme, entry, video }) {
                         <Column style={{ "--gap": "32px" }}>
                             {otherEntries.map((otherEntry) => (
                                 <StyledRelatedEntries key={otherEntry.version}>
-                                    <Text variant="small" color="text-muted">
-                                        <Row style={{ "--gap": "8px" }}>
-                                            <Text>Version {otherEntry.version || 1}</Text>
+                                    <Text color="text-muted">
+                                        <Row style={{ "--gap": "8px", "--align-items": "baseline" }}>
+                                            <Text variant="small">Version {otherEntry.version || 1}</Text>
                                             <ThemeEntryTags entry={otherEntry}/>
                                         </Row>
                                     </Text>

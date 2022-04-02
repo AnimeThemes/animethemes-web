@@ -108,7 +108,7 @@ export function ListboxNative({ children, value, onChange, resettable, defaultVa
     );
 }
 
-ListboxNative.Option = function ListboxNativeOption({ value, children }) {
+ListboxNative.Option = function ListboxNativeOption({ value = null, children }) {
     const { setLabel, removeLabel } = useContext(ListboxContext);
 
     useEffect(() => {

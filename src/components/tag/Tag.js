@@ -6,8 +6,12 @@ import theme from "theme";
 const StyledTag = styled.span`
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: baseline;
     gap: 4px;
+    
+    & ${Icon} {
+        transform: translateY(0.2rem);
+    }
 `;
 
 const StyledText = styled(Text)`    

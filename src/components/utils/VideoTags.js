@@ -9,8 +9,10 @@ import {
 import { Tag } from "components/tag";
 import { Row } from "components/box";
 import styled from "styled-components";
+import gql from "graphql-tag";
 
 const StyledVideoTags = styled(Row)`
+    align-items: baseline;
     flex-wrap: wrap;
     gap: 8px;
 `;
@@ -52,3 +54,15 @@ export function VideoTags({ video, hideTextOnMobile }) {
         </StyledVideoTags>
     );
 }
+
+VideoTags.fragment = gql`
+    fragment VideoTags_video on Video {
+        resolution
+        nc
+        subbed
+        lyrics
+        uncen
+        source
+        overlap
+    }
+`;
