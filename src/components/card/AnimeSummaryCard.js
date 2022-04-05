@@ -13,7 +13,7 @@ import useToggle from "hooks/useToggle";
 import theme from "theme";
 import gql from "graphql-tag";
 import { uniq } from "lodash-es";
-import { Collapse, ThemeEntryTags, VideoTags } from "components/utils";
+import { Collapse, SongTitle, ThemeEntryTags, VideoTags } from "components/utils";
 import { withHover } from "styles/mixins";
 
 const StyledThemeContainerInline = styled.div`
@@ -161,7 +161,7 @@ function ThemesTable({ anime, group = null }) {
                             <span/>
                         )}
                         {(!entryIndex && !videoIndex) ? (
-                            <Text link>{!entryIndex && !videoIndex && theme.song.title}</Text>
+                            <SongTitle song={theme.song}/>
                         ) : (
                             <span/>
                         )}

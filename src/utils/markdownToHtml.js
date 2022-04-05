@@ -25,10 +25,10 @@ export default function markdownToHtml(markdown) {
                 // Slugger keeps track of seen slugs, so we have to generate a slug for every heading.
                 // This way links will work in the table of contents later.
                 const slug = slugger.slug(text);
-                if (token.depth === 2) {
+                if (token.depth === 2 || token.depth === 3) {
                     headings.push({
                         text: text,
-                        level: token.depth,
+                        depth: token.depth,
                         slug
                     });
                 }

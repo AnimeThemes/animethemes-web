@@ -78,6 +78,7 @@ const StyledVideoList = styled(Row)`
 `;
 
 export default function VideoPage({ anime, theme, entry, video }) {
+    const songTitle = theme.song?.title || "T.B.A.";
     const { smallCover, largeCover } = useImage(anime);
     const { addToPlaylist, removeFromPlaylist, isInPlaylist } = useLocalPlaylist();
     const { addToHistory } = useWatchHistory();
@@ -97,8 +98,8 @@ export default function VideoPage({ anime, theme, entry, video }) {
         if (theme && smallCover && navigator.mediaSession) {
             // eslint-disable-next-line no-undef
             navigator.mediaSession.metadata = new MediaMetadata({
-                title: `${theme.slug} • ${theme.song.title}`,
-                artist: theme.song.performances ? theme.song.performances.map((performance) => performance.as || performance.artist.name).join(", ") : undefined,
+                title: `${theme.slug} • ${songTitle}`,
+                artist: theme.song?.performances ? theme.song.performances.map((performance) => performance.as || performance.artist.name).join(", ") : undefined,
                 album: anime.name,
                 artwork: [
                     { src: smallCover, sizes: "512x512", type: "image/jpeg" }
@@ -121,15 +122,15 @@ export default function VideoPage({ anime, theme, entry, video }) {
     }).filter((otherEntry) => !!otherEntry);
 
     const pageTitle = entry.version
-        ? `${theme.song.title} (${anime.name} ${theme.slug} v${entry.version})`
-        : `${theme.song.title} (${anime.name} ${theme.slug})`;
+        ? `${songTitle} (${anime.name} ${theme.slug} v${entry.version})`
+        : `${songTitle} (${anime.name} ${theme.slug})`;
 
     const pageDesc = (() => {
         // Generates and returns page description for SEO
         const song = theme.song;
         const version = entry.version ? ` Version ${entry.version}` : "";
         let artistStr = "";
-        if (song.performances && song.performances.length) {
+        if (song?.performances?.length) {
             artistStr = song.performances.reduce((str, performance, index, { length }) => {
                 str += performance.as || performance.artist.name;
                 if (index < length - 1) {
@@ -138,7 +139,7 @@ export default function VideoPage({ anime, theme, entry, video }) {
                 return str;
             }, " by ");
         }
-        return `Watch ${anime.name} ${theme.slug}${version}: ${song.title}${artistStr} on AnimeThemes.`;
+        return `Watch ${anime.name} ${theme.slug}${version}: ${songTitle}${artistStr} on AnimeThemes.`;
     })();
 
     const videoUrl = `${videoBaseUrl}/video/${video.basename}`;
@@ -157,7 +158,7 @@ export default function VideoPage({ anime, theme, entry, video }) {
                 <Column style={{ "--gap": "4px" }}>
                     <SongTitleWithArtists song={theme.song}/>
                     <Text variant="small" color="text-muted" maxLines={1}>
-                        <Text>{theme.slug} from </Text>
+                        <Text>{theme.type}{theme.sequence || null}{theme.group && ` (${theme.group})`} from </Text>
                         <Link href={`/anime/${anime.slug}`} passHref>
                             <Text as="a" link>{anime.name}</Text>
                         </Link>
@@ -198,7 +199,7 @@ export default function VideoPage({ anime, theme, entry, video }) {
                     {!!anime.studios?.length && anime.studios.map((studio) => (
                         <SummaryCard key={studio.slug} title={studio.name} description="Studio" to={`/studio/${studio.slug}`} />
                     ))}
-                    {!!theme.song.performances?.length && (
+                    {!!theme.song?.performances?.length && (
                         <>
                             <Text variant="h2">Artists</Text>
                             {theme.song.performances.map((performance) => (
@@ -226,7 +227,7 @@ export default function VideoPage({ anime, theme, entry, video }) {
                             {relatedThemes.map((theme) => (
                                 <ThemeSummaryCard key={theme.slug} theme={theme}/>
                             ))}
-                            {!showMoreRelatedThemes && anime.themes.length > 6 && (
+                            {!showMoreRelatedThemes && anime.themes.length > 7 && (
                                 <Row style={{ "--justify-content": "center" }}>
                                     <Button variant="silent" isCircle onClick={() => setShowMoreRelatedThemes(true)}>
                                         <Icon icon={faChevronDown}/>

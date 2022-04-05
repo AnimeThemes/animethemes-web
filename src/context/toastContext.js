@@ -10,7 +10,7 @@ export function ToastProvider({ children, initialToasts = [] }) {
 
         if (duration > 0) {
             setTimeout(() => {
-                closeToast(id);
+                closeToast({ id });
             }, duration);
         }
     }
