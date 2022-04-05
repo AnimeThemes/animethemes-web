@@ -73,7 +73,7 @@ module.exports = `
         type: String!
         sequence: Int!
         group: String
-        song: Song!
+        song: Song
         anime: Anime!
         entries: [Entry]
     }
@@ -106,7 +106,7 @@ module.exports = `
     
     type Song {
         id: Int
-        title: String!
+        title: String
         themes: [Theme]
         performances: [Performance]
     }

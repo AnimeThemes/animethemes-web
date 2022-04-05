@@ -256,7 +256,21 @@ module.exports = {
             .innerJoin("artist_image", "artist_image.image_id", "images.image_id")
             .where("deleted_at", null)
             .where({ "artist_image.artist_id": artist.artist_id })
-            .select("images.*")
+            .select("images.*"),
+        groups: (artist) => knex("artists")
+            .innerJoin("artist_member", "artist_member.member_id", "artists.artist_id")
+            .where("deleted_at", null)
+            .where({ "artist_member.member_id": artist.artist_id })
+            .select("artist_member.*"),
+        members: (artist) => knex("artists")
+            .innerJoin("artist_member", "artist_member.artist_id", "artists.artist_id")
+            .where("deleted_at", null)
+            .where({ "artist_member.artist_id": artist.artist_id })
+            .select("artist_member.*")
+    },
+    ArtistMembership: {
+        group: (membership) => knex("artists").where("deleted_at", null).where({ artist_id: membership.artist_id }).first(),
+        member: (membership) => knex("artists").where("deleted_at", null).where({ artist_id: membership.member_id }).first(),
     },
     Song: {
         themes: (song) => knex("anime_themes").where("deleted_at", null).where({ song_id: song.song_id }).select(),

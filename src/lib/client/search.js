@@ -279,10 +279,12 @@ function applyAnimeSchema(allAnime) {
 // Map artists and songs to performances to comply with the application schema
 function applyThemeSchema(themes) {
     for (const theme of themes) {
-        theme.song.performances = theme.song.artists.map((artist) => ({
-            artist,
-            as: artist.as
-        }));
+        if (theme.song) {
+            theme.song.performances = theme.song.artists.map((artist) => ({
+                artist,
+                as: artist.as
+            }));
+        }
 
         theme.entries = theme.animethemeentries;
         delete theme.animethemeentries;

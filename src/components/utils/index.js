@@ -1,6 +1,7 @@
 export { AspectRatio } from "./AspectRatio";
 export { Collapse } from "./Collapse";
 export { HeightTransition } from "./HeightTransition";
+export { SongTitle } from "./SongTitle";
 export { SongTitleWithArtists } from "./SongTitleWithArtists";
 export { ThemeEntryTags } from "./ThemeEntryTags";
 export { VideoTags } from "./VideoTags";

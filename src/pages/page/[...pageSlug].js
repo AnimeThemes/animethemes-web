@@ -41,9 +41,17 @@ const StyledMarkdown = styled.div`
         margin-bottom: 24px;
         font-size: 1.2rem;
     }
+
+    & h3 {
+        margin-bottom: 16px;
+    }
     
     & p + h2 {
         margin-top: 48px;
+    }
+
+    & p + h3 {
+        margin-top: 32px;
     }
 
     & p {
@@ -120,9 +128,13 @@ const StyledTableOfContents = styled.ul`
     display: flex;
     flex-direction: column;
     gap: 16px;
+
+    max-height: calc(100vh - 92px);
+    padding-left: 16px;
+    padding-bottom: 16px;
     
     list-style: none;
-    padding-left: 16px;
+    overflow-y: auto;
     
     & > li {
         position: relative;
@@ -130,6 +142,11 @@ const StyledTableOfContents = styled.ul`
         display: flex;
         align-items: center;
     }
+`;
+
+const StyledTableOfContentsHeading = styled.li`
+    padding-left: ${(props) => props.$depth === 3 && "16px"};
+    font-size: ${(props) => props.$depth === 3 && "0.9rem"};
 `;
 
 const StyledDot = styled(motion.div)`
@@ -161,6 +178,7 @@ export default function DocumentPage({ page }) {
                 },
                 h1: ({ children, ...props }) => <Text variant="h1" {...props}>{children}</Text>,
                 h2: ({ children, ...props }) => <Text variant="h2" {...props}>{children}</Text>,
+                h3: ({ children, ...props }) => <Text variant="h2" as="h3" {...props}>{children}</Text>,
                 code: ({ children, ...props }) => <Text variant="code" {...props}>{children}</Text>
             }
         })
@@ -182,7 +200,7 @@ function TableOfContents({ headings }) {
 
     useEffect(() => {
         function onScroll() {
-            const headings = [...document.querySelectorAll("h2")];
+            const headings = [...document.querySelectorAll("h2, h3")];
 
             let currentHeading = null;
             for (const heading of headings) {
@@ -204,13 +222,13 @@ function TableOfContents({ headings }) {
 
     return (
         <StyledTableOfContents>
-            {headings.map(({ text, slug }) => (
-                <li key={text}>
+            {headings.map(({ text, slug, depth }) => (
+                <StyledTableOfContentsHeading key={text} $depth={depth}>
                     {slug === currentSlug && (
                         <StyledDot layoutId="dot"/>
                     )}
                     <Text as="a" link color={slug === currentSlug ? "text-muted" : "text-disabled"} href={`#${slug}`}>{text}</Text>
-                </li>
+                </StyledTableOfContentsHeading>
             ))}
         </StyledTableOfContents>
     );

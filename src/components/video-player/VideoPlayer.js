@@ -22,6 +22,7 @@ import { useRouter } from "next/router";
 import { videoBaseUrl } from "lib/client/api";
 import useMediaQuery from "hooks/useMediaQuery";
 import styledTheme from "theme";
+import { SongTitle } from "components/utils";
 
 export function VideoPlayer({ anime, theme, entry, video, background, ...props }) {
     const [isPlaying, setPlaying] = useState(false);
@@ -126,7 +127,7 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
                             color="text-primary"
                             noWrap="ellipsis"
                         >
-                            {theme.song.title}
+                            <SongTitle song={theme.song}/>
                         </Text>
                         <Text
                             variant="small"

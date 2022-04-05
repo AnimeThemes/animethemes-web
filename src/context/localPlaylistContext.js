@@ -18,7 +18,7 @@ export function LocalPlaylistProvider({ children }) {
         save(localPlaylist);
         reload();
 
-        dispatchToast(theme.song.title, <PlaylistAddToast theme={theme}/>);
+        dispatchToast(theme.id, <PlaylistAddToast theme={theme}/>);
     }, [ dispatchToast, reload ]);
 
     const removeFromPlaylist = useCallback((theme) => {
