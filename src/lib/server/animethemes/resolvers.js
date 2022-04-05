@@ -258,12 +258,12 @@ module.exports = {
             .where({ "artist_image.artist_id": artist.artist_id })
             .select("images.*"),
         groups: (artist) => knex("artists")
-            .innerJoin("artist_member", "artist_member.member_id", "artists.artist_id")
+            .innerJoin("artist_member", "artist_member.artist_id", "artists.artist_id")
             .where("deleted_at", null)
             .where({ "artist_member.member_id": artist.artist_id })
             .select("artist_member.*"),
         members: (artist) => knex("artists")
-            .innerJoin("artist_member", "artist_member.artist_id", "artists.artist_id")
+            .innerJoin("artist_member", "artist_member.member_id", "artists.artist_id")
             .where("deleted_at", null)
             .where({ "artist_member.artist_id": artist.artist_id })
             .select("artist_member.*")
