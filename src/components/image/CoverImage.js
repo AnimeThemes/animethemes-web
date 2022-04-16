@@ -7,7 +7,7 @@ export function CoverImage({ resourceWithImages, ...props }) {
 
     return (
         <AspectRatio ratio={2 / 3}>
-            <FullWidthImage src={largeCover} style={{ backgroundImage: `url(${smallCover})` }} {...props}/>
+            <FullWidthImage key={largeCover} src={largeCover} style={{ backgroundImage: `url(${smallCover})` }} {...props}/>
         </AspectRatio>
     );
 }

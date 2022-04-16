@@ -10,6 +10,8 @@ import styled from "styled-components";
 import { motion } from "framer-motion";
 import theme from "theme";
 import { SEO } from "components/seo";
+import fetchStaticPaths from "utils/fetchStaticPaths";
+import gql from "graphql-tag";
 
 const StyledGrid = styled.div`
     display: flex;
@@ -223,7 +225,7 @@ function TableOfContents({ headings }) {
     return (
         <StyledTableOfContents>
             {headings.map(({ text, slug, depth }) => (
-                <StyledTableOfContentsHeading key={text} $depth={depth}>
+                <StyledTableOfContentsHeading key={slug} $depth={depth}>
                     {slug === currentSlug && (
                         <StyledDot layoutId="dot"/>
                     )}
@@ -266,24 +268,19 @@ export async function getStaticProps({ params: { pageSlug } }) {
 }
 
 export async function getStaticPaths() {
-    const { data } = await fetchData(`
-        #graphql
-
-        query {
-            pageAll {
-                slug
+    return fetchStaticPaths(async () => {
+        const { data } = await fetchData(gql`
+            query {
+                pageAll {
+                    slug
+                }
             }
-        }
-    `);
+        `);
 
-    const paths = data.pageAll.map((page) => ({
-        params: {
-            pageSlug: page.slug.split("/")
-        }
-    }));
-
-    return {
-        paths,
-        fallback: "blocking"
-    };
+        return data.pageAll.map((page) => ({
+            params: {
+                pageSlug: page.slug.split("/")
+            }
+        }));
+    });
 }

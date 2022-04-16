@@ -27,6 +27,7 @@ import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import useImage from "hooks/useImage";
 import gql from "graphql-tag";
+import fetchStaticPaths from "utils/fetchStaticPaths";
 
 const StyledList = styled.div`
     display: flex;
@@ -248,24 +249,19 @@ export async function getStaticProps({ params: { artistSlug } }) {
 }
 
 export async function getStaticPaths() {
-    const { data } = await fetchData(`
-        #graphql
-
-        query {
-            artistAll {
-                slug
+    return fetchStaticPaths(async () => {
+        const { data } = await fetchData(gql`
+            query {
+                artistAll {
+                    slug
+                }
             }
-        }
-    `);
+        `);
 
-    const paths = data.artistAll.map((artist) => ({
-        params: {
-            artistSlug: artist.slug
-        }
-    }));
-
-    return {
-        paths,
-        fallback: "blocking"
-    };
+        return data.artistAll.map((artist) => ({
+            params: {
+                artistSlug: artist.slug
+            }
+        }));
+    });
 }

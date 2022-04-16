@@ -14,6 +14,8 @@ import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import useImage from "hooks/useImage";
 import { resourceSiteComparator, seriesNameComparator, studioNameComparator } from "utils/comparators";
+import fetchStaticPaths from "utils/fetchStaticPaths";
+import gql from "graphql-tag";
 
 const StyledList = styled.div`
     display: flex;
@@ -212,24 +214,27 @@ export async function getStaticProps({ params: { animeSlug } }) {
 }
 
 export async function getStaticPaths() {
-    const { data } = await fetchData(`
-        #graphql
-
-        query {
-            animeAll {
-                slug
+    return fetchStaticPaths(async (isStaging) => {
+        const { data } = await fetchData(gql`
+            query {
+                animeAll {
+                    id
+                    slug
+                }
             }
-        }
-    `);
+        `);
 
-    const paths = data.animeAll.map((anime) => ({
-        params: {
-            animeSlug: anime.slug
-        }
-    }));
+        let anime = data.animeAll;
 
-    return {
-        paths,
-        fallback: "blocking"
-    };
+        if (isStaging) {
+            // In staging, we only want to pre-render the newest 100 anime pages.
+            anime = anime.sort((a, b) => b.id - a.id).slice(0, 100);
+        }
+
+        return anime.map((anime) => ({
+            params: {
+                animeSlug: anime.slug
+            }
+        }));
+    });
 }

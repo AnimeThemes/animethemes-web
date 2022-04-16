@@ -198,10 +198,10 @@ export async function getStaticProps() {
         ${ThemeSummaryCard.fragments.theme}
         
         query {
-            featuredTheme: theme(id: 10968) {
+            featuredTheme: theme(id: 11388) {
                 ...FeaturedTheme_theme
             }
-            recentlyAdded: themeAll(orderBy: "theme_id", orderDesc: true, limit: 10) {
+            recentlyAdded: themeAll(orderBy: "id", orderDesc: true, limit: 10) {
                 ...ThemeSummaryCard_theme
             }
         }

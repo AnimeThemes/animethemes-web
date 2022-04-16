@@ -14,7 +14,7 @@ export function SearchSeries({ searchQuery }) {
 
     const entitySearch = useEntitySearch("series", searchQuery, {
         filters: {
-            "name][like": filter.firstLetter ? `${filter.firstLetter}%` : null,
+            "name-like": filter.firstLetter ? `${filter.firstLetter}%` : null,
         },
         sortBy: searchQuery ? null : filter.sortBy
     });

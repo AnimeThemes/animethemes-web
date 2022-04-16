@@ -16,7 +16,7 @@ export function SearchTheme({ searchQuery }) {
     const entitySearch = useEntitySearch("theme", searchQuery, {
         filters: {
             has: "song",
-            "song][title][like": filter.firstLetter ? `${filter.firstLetter}%` : null,
+            "song][title-like": filter.firstLetter ? `${filter.firstLetter}%` : null,
             type: filter.type
         },
         sortBy: searchQuery ? null : filter.sortBy

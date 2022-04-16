@@ -4,6 +4,7 @@ import { Column } from "components/box";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import gql from "graphql-tag";
+import fetchStaticPaths from "utils/fetchStaticPaths";
 
 const seasonOrder = [ "Winter", "Spring", "Summer", "Fall" ];
 
@@ -82,30 +83,25 @@ export async function getStaticProps({ params: { year, season } }) {
 }
 
 export async function getStaticPaths() {
-    const { data } = await fetchData(`
-        #graphql
-
-        query {
-            yearAll {
-                value
-                seasons {
+    return fetchStaticPaths(async () => {
+        const { data } = await fetchData(gql`
+            query {
+                yearAll {
                     value
+                    seasons {
+                        value
+                    }
                 }
             }
-        }
-    `);
+        `);
 
-    const paths = data.yearAll.flatMap(
-        (year) => year.seasons.map((season) => ({
-            params: {
-                year: String(year.value),
-                season: season.value
-            }
-        }))
-    );
-
-    return {
-        paths,
-        fallback: "blocking"
-    };
+        return data.yearAll.flatMap(
+            (year) => year.seasons.map((season) => ({
+                params: {
+                    year: String(year.value),
+                    season: season.value
+                }
+            }))
+        );
+    });
 }
