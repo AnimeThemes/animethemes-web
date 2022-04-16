@@ -21,7 +21,7 @@ export function SearchAnime({ searchQuery }) {
 
     const entitySearch = useEntitySearch("anime", searchQuery, {
         filters: {
-            "name][like": filter.firstLetter ? `${filter.firstLetter}%` : null,
+            "name-like": filter.firstLetter ? `${filter.firstLetter}%` : null,
             season: filter.season,
             year: filter.year
         },

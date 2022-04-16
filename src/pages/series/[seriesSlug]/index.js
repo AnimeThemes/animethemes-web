@@ -14,6 +14,7 @@ import { SEO } from "components/seo";
 import theme from "theme";
 import { MultiCoverImage } from "components/image";
 import gql from "graphql-tag";
+import fetchStaticPaths from "utils/fetchStaticPaths";
 
 const StyledDesktopOnly = styled.div`
     gap: 24px;
@@ -97,10 +98,6 @@ export async function getStaticProps({ params: { seriesSlug } }) {
                             }
                         }
                     }
-                    resources {
-                        site
-                        link
-                    }
                     images {
                         facet
                         link
@@ -127,24 +124,19 @@ export async function getStaticProps({ params: { seriesSlug } }) {
 }
 
 export async function getStaticPaths() {
-    const { data } = await fetchData(`
-        #graphql
-
-        query {
-            seriesAll {
-                slug
+    return fetchStaticPaths(async () => {
+        const { data } = await fetchData(gql`
+            query {
+                seriesAll {
+                    slug
+                }
             }
-        }
-    `);
+        `);
 
-    const paths = data.seriesAll.map((series) => ({
-        params: {
-            seriesSlug: series.slug
-        }
-    }));
-
-    return {
-        paths,
-        fallback: "blocking"
-    };
+        return data.seriesAll.map((series) => ({
+            params: {
+                seriesSlug: series.slug
+            }
+        }));
+    });
 }

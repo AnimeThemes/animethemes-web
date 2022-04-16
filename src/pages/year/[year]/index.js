@@ -9,6 +9,7 @@ import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import gql from "graphql-tag";
 import { ANIME_A_Z, getComparator } from "utils/comparators";
+import fetchStaticPaths from "utils/fetchStaticPaths";
 
 const seasonOrder = [ "Winter", "Spring", "Summer", "Fall" ];
 
@@ -101,24 +102,19 @@ export async function getStaticProps({ params: { year } }) {
 }
 
 export async function getStaticPaths() {
-    const { data } = await fetchData(`
-        #graphql
-
-        query {
-            yearAll {
-                value
+    return fetchStaticPaths(async () => {
+        const { data } = await fetchData(gql`
+            query {
+                yearAll {
+                    value
+                }
             }
-        }
-    `);
+        `);
 
-    const paths = data.yearAll.map((year) => ({
-        params: {
-            year: String(year.value)
-        }
-    }));
-
-    return {
-        paths,
-        fallback: "blocking"
-    };
+        return data.yearAll.map((year) => ({
+            params: {
+                year: String(year.value)
+            }
+        }));
+    });
 }

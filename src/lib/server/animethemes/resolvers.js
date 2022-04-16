@@ -1,370 +1,506 @@
-const { videoSource, imageFacet, animeSeason, resourceSite, themeType, videoOverlap } = require("lib/server/animethemes/enums");
+const pLimit = require("p-limit");
+const { parseResolveInfo } = require("graphql-parse-resolve-info");
+const devLog = require("utils/devLog");
 
-const knex = require("knex")({
-    client: "mysql2",
-    connection: {
-        host: process.env.DB_HOST || "127.0.0.1",
-        port: process.env.DB_PORT || 3306,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_DATABASE || "animethemes"
+const limit = pLimit(5);
+
+const API_BASE_URL = `${process.env.ANIMETHEMES_API_URL}/api`;
+
+const INCLUDES = {
+    Anime: {
+        synonyms: "animesynonyms",
+        themes: "animethemes",
+        series: "series",
+        studios: "studios",
+        resources: "resources",
+        images: "images"
+    },
+    Theme: {
+        song: "song",
+        anime: "anime",
+        entries: "animethemeentries"
+    },
+    Artist: {
+        performances: "songs",
+        resources: "resources",
+        images: "images",
+        groups: "groups",
+        members: "members"
+    },
+    Song: {
+        themes: "animethemes",
+        performances: "artists"
+    },
+    Entry: {
+        videos: "videos",
+        theme: "animetheme"
+    },
+    Video: {
+        entries: "animethemeentries"
+    },
+    Series: {
+        anime: "anime"
+    },
+    Studio: {
+        anime: "anime",
+        resources: "resources"
+    },
+    ResourceWithImages: {
+        images: "images"
+    },
+    Performance: {
+        song: "_",
+        artist: "_"
     }
-});
+};
+
+const ALLOWED_INCLUDES = {
+    Anime: [
+        "animesynonyms",
+        "series",
+        "animethemes.song.artists",
+        "animethemes.song.artists.images",
+        "images",
+        "resources",
+        "studios",
+        "animethemes.animethemeentries.videos.animethemeentries.animetheme.anime",
+        "animethemes.animethemeentries.videos.animethemeentries.animetheme.anime.images",
+        "animethemes.animethemeentries.videos.animethemeentries.animetheme.animethemeentries.videos",
+        "animethemes.animethemeentries.videos.animethemeentries.animetheme.song.artists"
+    ],
+    Theme: [
+        "anime.images",
+        "animethemeentries.videos",
+        "song.artists"
+    ],
+    Artist: [
+        "songs.animethemes.anime",
+        "members",
+        "groups",
+        "resources",
+        "images",
+        "songs.artists",
+        "songs.animethemes.song",
+        "songs.animethemes.song.artists",
+        "songs.animethemes.anime.images",
+        "songs.animethemes.animethemeentries",
+        "songs.animethemes.animethemeentries.videos"
+    ],
+    Series: [
+        "anime",
+        "anime.images",
+        "anime.animethemes.animethemeentries.videos",
+        "anime.animethemes.song"
+    ],
+    Studio: [
+        "anime",
+        "anime.images",
+        "anime.animethemes.animethemeentries.videos",
+        "anime.animethemes.song",
+        "resources"
+    ],
+    Song: [
+        "animethemes.anime",
+        "artists"
+    ],
+    Video: [
+        "animethemeentries.animetheme.anime"
+    ]
+};
 
 module.exports = {
     Query: {
-        anime: (_, { id, slug }) => knex("anime")
-            .where((builder) => {
-                builder.where("deleted_at", null);
-                if (id) {
-                    builder.where("anime_id", id);
-                }
-                if (slug) {
-                    builder.where("slug", slug);
-                }
-            })
-            .first(),
-        animeAll: (_, { limit, year, season }) => {
-            const query = knex("anime");
-
-            query.where("deleted_at", null);
-
-            if (year) {
-                query.where("year", year);
-            }
-            if (season) {
-                query.where(
-                    "season",
-                    [ ...animeSeason.values() ]
-                        .findIndex((seasonName) => seasonName.toLowerCase() === season.toLowerCase())
-                );
-            }
-
-            if (limit) {
-                query.limit(limit);
-            }
-
-            return query.select();
-        },
-        theme: (_, { id }) => knex("anime_themes")
-            .where((builder) => {
-                builder.where("deleted_at", null);
-                if (id) {
-                    builder.where("theme_id", id);
-                }
-            })
-            .first(),
-        themeAll: (_, { limit, orderBy, orderDesc }) => {
-            const query = knex("anime_themes");
-
-            query.where("deleted_at", null);
-
-            if (orderBy) {
-                query.orderBy(orderBy, orderDesc ? "desc" : "asc");
-            }
-
-            if (limit) {
-                query.limit(limit);
-            }
-
-            return query.select();
-        },
-        artist: (_, { id, slug }) => knex("artists")
-            .where((builder) => {
-                builder.where("deleted_at", null);
-                if (id) {
-                    builder.where("artist_id", id);
-                }
-                if (slug) {
-                    builder.where("slug", slug);
-                }
-            })
-            .first(),
-        artistAll: (_, { limit }) => {
-            const query = knex("artists");
-
-            query.where("deleted_at", null);
-
-            if (limit) {
-                query.limit(limit);
-            }
-
-            return query.select();
-        },
-        series: (_, { id, slug }) => knex("series")
-            .where((builder) => {
-                builder.where("deleted_at", null);
-                if (id) {
-                    builder.where("series_id", id);
-                }
-                if (slug) {
-                    builder.where("slug", slug);
-                }
-            })
-            .first(),
-        seriesAll: (_, { limit }) => {
-            const query = knex("series");
-
-            query.where("deleted_at", null);
-
-            if (limit) {
-                query.limit(limit);
-            }
-
-            return query.select();
-        },
-        studio: (_, { id, slug }) => knex("studios")
-            .where((builder) => {
-                builder.where("deleted_at", null);
-                if (id) {
-                    builder.where("studio_id", id);
-                }
-                if (slug) {
-                    builder.where("slug", slug);
-                }
-            })
-            .first(),
-        studioAll: (_, { limit }) => {
-            const query = knex("studios");
-
-            query.where("deleted_at", null);
-
-            if (limit) {
-                query.limit(limit);
-            }
-
-            return query.select();
-        },
-        year: (_, { value }) => ({ value }),
-        yearAll: () => knex("anime")
-            .where("deleted_at", null)
-            .groupBy("year")
-            .select("year")
-            .then((results) => results.map((anime) => ({ value: anime.year }))),
-        season: (_, { value, year }) => ({
-            value: [ ...animeSeason.values() ]
-                .findIndex((seasonName) => seasonName.toLowerCase() === value.toLowerCase()),
-            year: { value: year }
+        anime: apiResolver({
+            endpoint: (_, { slug }) => `/anime/${slug}`,
+            extractor: (result) => result.anime
         }),
-        seasonAll: (_, { year }) => knex("anime")
-            .where((builder) => {
-                builder.where("deleted_at", null);
-                if (year) {
-                    builder.where("year", year);
-                }
-            })
-            .groupBy([ "season", "year" ])
-            .select([ "season", "year" ])
-            .then((results) => results.map((anime) => ({ value: anime.season, year: { value: year } }))),
-        page: (_, { id, slug }) => knex("pages")
-            .where((builder) => {
-                builder.where("deleted_at", null);
-                if (id) {
-                    builder.where("page_id", id);
-                }
-                if (slug) {
-                    builder.where("slug", slug);
-                }
-            })
-            .first(),
-        pageAll: () => {
-            const query = knex("pages");
-
-            query.where("deleted_at", null);
-
-            return query.select();
-        },
+        animeAll: apiResolver({
+            endpoint: () => `/anime`,
+            extractor: (result) => result.anime,
+            pagination: true
+        }),
+        theme: apiResolver({
+            endpoint: (_, { id }) => `/animetheme/${id}`,
+            extractor: (result) => result.animetheme
+        }),
+        themeAll: apiResolver({
+            endpoint: (_, { limit, orderBy, orderDesc }) => `/animetheme?sort=${orderDesc ? "-" : ""}${orderBy}&page[size]=${limit}`,
+            extractor: (result) => result.animethemes
+        }),
+        artist: apiResolver({
+            endpoint: (_, { slug }) => `/artist/${slug}`,
+            extractor: (result) => result.artist
+        }),
+        artistAll: apiResolver({
+            endpoint: () => `/artist`,
+            extractor: (result) => result.artists,
+            pagination: true
+        }),
+        series: apiResolver({
+            endpoint: (_, { slug }) => `/series/${slug}`,
+            extractor: (result) => result.series
+        }),
+        seriesAll: apiResolver({
+            endpoint: () => `/series`,
+            extractor: (result) => result.series,
+            pagination: true
+        }),
+        studio: apiResolver({
+            endpoint: (_, { slug }) => `/studio/${slug}`,
+            extractor: (result) => result.studio
+        }),
+        studioAll: apiResolver({
+            endpoint: () => `/studio`,
+            extractor: (result) => result.studios,
+            pagination: true
+        }),
+        year: (_, { value }) => ({ value }),
+        yearAll: apiResolver({
+            endpoint: () => `/animeyear`,
+            transformer: (yearList) => yearList.map((year) => ({ value: year }))
+        }),
+        season: (_, { year, value }) => ({ value, year: { value: year } }),
+        seasonAll: apiResolver({
+            endpoint: (_, { year }) => `/animeyear/${year}`,
+            extractor: (result) => Object.keys(result),
+            transformer: (seasons, _, { year }) => seasons.map((season) => ({ value: season, year: { value: year } }))
+        }),
+        page: apiResolver({
+            endpoint: (_, { slug }) => `/page/${slug}`,
+            extractor: (result) => result.page
+        }),
+        pageAll: apiResolver({
+            endpoint: () => `/page`,
+            extractor: (result) => result.pages,
+            pagination: true
+        }),
         counter: () => ({})
     },
     Year: {
-        seasons: (year) =>  knex("anime")
-            .where("deleted_at", null)
-            .where("year", year.value)
-            .groupBy("season")
-            .select("season")
-            .then((results) => results.map((anime) => ({ value: anime.season, year }))),
+        seasons: apiResolver({
+            endpoint: (year) => `/animeyear/${year.value}`,
+            extractor: (result) => Object.keys(result),
+            transformer: (seasons, year) => seasons.map((season) => ({ value: season, year }))
+        }),
     },
     Season: {
-        value: (season) => animeSeason.get(season.value),
-        anime: (season) => knex("anime")
-            .where((builder) => {
-                builder.where("deleted_at", null);
-
-                builder.where("season", season.value);
-
-                if (season.year) {
-                    builder.where("year", season.year.value);
-                }
-            })
-            .select(),
+        anime: apiResolver({
+            endpoint: (season) => `/anime?filter[year]=${season.year.value}&filter[season]=${season.value}`,
+            extractor: (result) => result.anime,
+            pagination: true
+        }),
     },
     Counter: {
-        anime: () => knex("anime").where("deleted_at", null).count({ count: "*" }).first().then((first) => first.count),
-        artist: () => knex("artists").where("deleted_at", null).count({ count: "*" }).first().then((first) => first.count),
-        series: () => knex("series").where("deleted_at", null).count({ count: "*" }).first().then((first) => first.count),
-        studio: () => knex("studios").where("deleted_at", null).count({ count: "*" }).first().then((first) => first.count),
-        video: () => knex("videos").where("deleted_at", null).count({ count: "*" }).first().then((first) => first.count),
-        year: () => knex("anime").where("deleted_at", null).countDistinct({ count: "year" }).first().then((first) => first.count),
-        season: () => knex("anime").where("deleted_at", null).countDistinct({ count: [ "year", "season" ] }).first().then((first) => first.count)
+        anime: () => 0,
+        artist: () => 0,
+        series: () => 0,
+        studio: () => 0,
+        video: () => 0,
+        year: () => 0,
+        season: () => 0,
     },
     Anime: {
-        id: (anime) => anime.anime_id,
-        season: (anime) => animeSeason.get(anime.season),
-        synonyms: (anime) => knex("anime_synonyms").where("deleted_at", null).where({ anime_id: anime.anime_id }).select(),
-        themes: (anime) => knex("anime_themes").where("deleted_at", null).where({ anime_id: anime.anime_id }).select(),
-        series: (anime) => knex("series")
-            .innerJoin("anime_series", "anime_series.series_id", "series.series_id")
-            .where("deleted_at", null)
-            .where({ "anime_series.anime_id": anime.anime_id })
-            .select("series.*"),
-        studios: (anime) => knex("studios")
-            .innerJoin("anime_studio", "anime_studio.studio_id", "studios.studio_id")
-            .where("deleted_at", null)
-            .where({ "anime_studio.anime_id": anime.anime_id })
-            .select("studios.*"),
-        resources: (anime) => knex("resources")
-            .innerJoin("anime_resource", "anime_resource.resource_id", "resources.resource_id")
-            .where("deleted_at", null)
-            .where({ "anime_resource.anime_id": anime.anime_id })
-            .select("resources.*"),
-        images: (anime) => knex("images")
-            .innerJoin("anime_image", "anime_image.image_id", "images.image_id")
-            .where("deleted_at", null)
-            .where({ "anime_image.anime_id": anime.anime_id })
-            .select("images.*")
+        synonyms: apiResolver({
+            endpoint: (anime) => `/anime/${anime.slug}`,
+            field: "animesynonyms",
+            extractor: (result) => result.anime.animesynonyms,
+            type: "Anime",
+            baseInclude: INCLUDES.Anime.synonyms
+        }),
+        themes: apiResolver({
+            endpoint: (anime) => `/anime/${anime.slug}`,
+            field: "animethemes",
+            extractor: (result) => result.anime.animethemes,
+            transformer: (themes, anime) => themes.map((theme) => ({ ...theme, anime })),
+            type: "Anime",
+            baseInclude: INCLUDES.Anime.themes
+        }),
+        series: apiResolver({
+            endpoint: (anime) => `/anime/${anime.slug}`,
+            field: "series",
+            extractor: (result) => result.anime.series,
+            type: "Anime",
+            baseInclude: INCLUDES.Anime.series
+        }),
+        studios: apiResolver({
+            endpoint: (anime) => `/anime/${anime.slug}`,
+            field: "studios",
+            extractor: (result) => result.anime.studios,
+            type: "Anime",
+            baseInclude: INCLUDES.Anime.studios
+        }),
+        resources: apiResolver({
+            endpoint: (anime) => `/anime/${anime.slug}`,
+            field: "resources",
+            extractor: (result) => result.anime.resources,
+            type: "Anime",
+            baseInclude: INCLUDES.Anime.resources
+        }),
+        images: apiResolver({
+            endpoint: (anime) => `/anime/${anime.slug}`,
+            field: "images",
+            extractor: (result) => result.anime.images,
+            type: "Anime",
+            baseInclude: INCLUDES.Anime.images
+        }),
     },
     Theme: {
-        id: (theme) => theme.theme_id,
-        type: (theme) => themeType.get(theme.type),
         sequence: (theme) => theme.sequence || 0,
-        song: (theme) => knex("songs").where("deleted_at", null).where({ song_id: theme.song_id }).first(),
-        anime: (theme) => knex("anime").where("deleted_at", null).where({ anime_id: theme.anime_id }).first(),
-        entries: (theme) => knex("anime_theme_entries").where("deleted_at", null).where({ theme_id: theme.theme_id }).select()
+        song: apiResolver({
+            endpoint: (theme) => `/animetheme/${theme.id}`,
+            field: "song",
+            extractor: (result) => result.animetheme.song,
+            type: "Theme",
+            baseInclude: INCLUDES.Theme.song
+        }),
+        anime: apiResolver({
+            endpoint: (theme) => `/animetheme/${theme.id}`,
+            field: "anime",
+            extractor: (result) => result.animetheme.anime,
+            type: "Theme",
+            baseInclude: INCLUDES.Theme.anime
+        }),
+        entries: apiResolver({
+            endpoint: (theme) => `/animetheme/${theme.id}`,
+            field: "animethemeentries",
+            extractor: (result) => result.animetheme.animethemeentries,
+            type: "Theme",
+            baseInclude: INCLUDES.Theme.entries
+        }),
     },
     Artist: {
-        performances: (artist) => knex("artist_song")
-            .innerJoin("songs", "artist_song.song_id", "songs.song_id")
-            .where("deleted_at", null)
-            .where({ "artist_song.artist_id": artist.artist_id })
-            .select("artist_song.*"),
-        resources: (artist) => knex("resources")
-            .innerJoin("artist_resource", "artist_resource.resource_id", "resources.resource_id")
-            .where("deleted_at", null)
-            .where({ "artist_resource.artist_id": artist.artist_id })
-            .select("resources.*"),
-        images: (artist) => knex("images")
-            .innerJoin("artist_image", "artist_image.image_id", "images.image_id")
-            .where("deleted_at", null)
-            .where({ "artist_image.artist_id": artist.artist_id })
-            .select("images.*"),
-        groups: (artist) => knex("artists")
-            .innerJoin("artist_member", "artist_member.artist_id", "artists.artist_id")
-            .where("deleted_at", null)
-            .where({ "artist_member.member_id": artist.artist_id })
-            .select("artist_member.*"),
-        members: (artist) => knex("artists")
-            .innerJoin("artist_member", "artist_member.member_id", "artists.artist_id")
-            .where("deleted_at", null)
-            .where({ "artist_member.artist_id": artist.artist_id })
-            .select("artist_member.*")
-    },
-    ArtistMembership: {
-        group: (membership) => knex("artists").where("deleted_at", null).where({ artist_id: membership.artist_id }).first(),
-        member: (membership) => knex("artists").where("deleted_at", null).where({ artist_id: membership.member_id }).first(),
+        performances: apiResolver({
+            endpoint: (artist) => `/artist/${artist.slug}`,
+            field: "songs",
+            extractor: (result) => result.artist.songs,
+            transformer: (songs, artist) => songs.map(({ as, ...song }) => ({ as, song, artist })),
+            type: "Artist",
+            baseInclude: INCLUDES.Artist.performances
+        }),
+        resources: apiResolver({
+            endpoint: (artist) => `/artist/${artist.slug}`,
+            field: "resources",
+            extractor: (result) => result.artist.resources,
+            type: "Artist",
+            baseInclude: INCLUDES.Artist.resources
+        }),
+        images: apiResolver({
+            endpoint: (artist) => `/artist/${artist.slug}`,
+            field: "images",
+            extractor: (result) => result.artist.images,
+            type: "Artist",
+            baseInclude: INCLUDES.Artist.images
+        }),
+        groups: apiResolver({
+            endpoint: (artist) => `/artist/${artist.slug}`,
+            field: "groups",
+            extractor: (result) => result.artist.groups,
+            transformer: (groups, artist) => groups.map((group) => ({ group, member: artist })),
+            type: "Artist",
+            baseInclude: INCLUDES.Artist.groups
+        }),
+        members: apiResolver({
+            endpoint: (artist) => `/artist/${artist.slug}`,
+            field: "members",
+            extractor: (result) => result.artist.members,
+            transformer: (members, artist) => members.map((member) => ({ member, group: artist })),
+            type: "Artist",
+            baseInclude: INCLUDES.Artist.members
+        }),
     },
     Song: {
-        themes: (song) => knex("anime_themes").where("deleted_at", null).where({ song_id: song.song_id }).select(),
-        performances: (song) => knex("artist_song")
-            .innerJoin("artists", "artist_song.artist_id", "artists.artist_id")
-            .where("deleted_at", null)
-            .where({ "artist_song.song_id": song.song_id })
-            .select("artist_song.*"),
-    },
-    Performance: {
-        artist: (performance) => knex("artists").where("deleted_at", null).where({ artist_id: performance.artist_id }).first(),
-        song: (performance) => knex("songs").where("deleted_at", null).where({ song_id: performance.song_id }).first()
+        themes: apiResolver({
+            endpoint: (song) => `/song/${song.id}`,
+            field: "animethemes",
+            extractor: (result) => result.song.animethemes,
+            type: "Song",
+            baseInclude: INCLUDES.Song.themes
+        }),
+        performances: apiResolver({
+            endpoint: (song) => `/song/${song.id}`,
+            field: "artists",
+            extractor: (result) => result.song.artists,
+            transformer: (artists, song) => artists.map(({ as, ...artist }) => ({ as, artist, song })),
+            type: "Song",
+            baseInclude: INCLUDES.Song.performances
+        }),
     },
     Entry: {
         version: (entry) => entry.version || 1,
-        videos: (entry) => knex("videos")
-            .innerJoin("anime_theme_entry_video", "anime_theme_entry_video.video_id", "videos.video_id")
-            .where("deleted_at", null)
-            .where({ "anime_theme_entry_video.entry_id": entry.entry_id })
-            .select("videos.*"),
-        theme: (entry) => knex("anime_themes").where("deleted_at", null).where({ theme_id: entry.theme_id }).first(),
+        videos: apiResolver({
+            endpoint: (entry) => `/animethemeentry/${entry.id}`,
+            field: "videos",
+            extractor: (result) => result.animethemeentry.videos,
+            type: "Entry",
+            baseInclude: INCLUDES.Entry.videos
+        }),
+        theme: apiResolver({
+            endpoint: (entry) => `/animethemeentry/${entry.id}`,
+            field: "animetheme",
+            extractor: (result) => result.animethemeentry.animetheme,
+            type: "Entry",
+            baseInclude: INCLUDES.Entry.theme
+        }),
     },
     Video: {
-        source: (video) => videoSource.get(video.source),
-        overlap: (video) => videoOverlap.get(video.overlap),
-        tags: (video) => {
-            const tags = [];
-
-            if (video.nc) {
-                tags.push("NC");
-            }
-            if (video.source === 2 || video.source === 3) {
-                tags.push(videoSource.get(video.source));
-            }
-            if (video.resolution && video.resolution !== 720) {
-                tags.push(video.resolution);
-            }
-
-            if (video.subbed) {
-                tags.push("Subbed");
-            } else if (video.lyrics) {
-                tags.push("Lyrics");
-            }
-
-            return tags.join("");
-        },
-        entries: (video) => knex("anime_theme_entries")
-            .innerJoin("anime_theme_entry_video", "anime_theme_entry_video.entry_id", "anime_theme_entries.entry_id")
-            .where("deleted_at", null)
-            .where({ "anime_theme_entry_video.video_id": video.video_id })
-            .select("anime_theme_entries.*")
-    },
-    Image: {
-        facet: (image) => imageFacet.get(image.facet),
-        link: (image) => `https://animethemes-stag-images.fra1.cdn.digitaloceanspaces.com/${image.path}`
-    },
-    Resource: {
-        site: (resource) => resourceSite.get(resource.site)
+        entries: apiResolver({
+            endpoint: (video) => `/video/${video.basename}`,
+            field: "animethemeentries",
+            extractor: (result) => result.video.animethemeentries,
+            type: "Video",
+            baseInclude: INCLUDES.Video.entries
+        }),
     },
     Series: {
-        anime: (series) => knex("anime")
-            .innerJoin("anime_series", "anime_series.anime_id", "anime.anime_id")
-            .where("deleted_at", null)
-            .where({ "anime_series.series_id": series.series_id })
-            .select("anime.*")
+        anime: apiResolver({
+            endpoint: (series) => `/series/${series.slug}`,
+            field: "anime",
+            extractor: (result) => result.series.anime,
+            type: "Series",
+            baseInclude: INCLUDES.Series.anime
+        }),
     },
     Studio: {
-        anime: (studio) => knex("anime")
-            .innerJoin("anime_studio", "anime_studio.anime_id", "anime.anime_id")
-            .where("deleted_at", null)
-            .where({ "anime_studio.studio_id": studio.studio_id })
-            .select("anime.*"),
-        resources: (studio) => knex("resources")
-            .innerJoin("studio_resource", "studio_resource.resource_id", "resources.resource_id")
-            .where("deleted_at", null)
-            .where({ "studio_resource.studio_id": studio.studio_id })
-            .select("resources.*")
+        anime: apiResolver({
+            endpoint: (studio) => `/studio/${studio.slug}`,
+            field: "anime",
+            extractor: (result) => result.studio.anime,
+            type: "Studio",
+            baseInclude: INCLUDES.Studio.anime
+        }),
+        resources: apiResolver({
+            endpoint: (studio) => `/studio/${studio.slug}`,
+            field: "resources",
+            extractor: (result) => result.studio.resources,
+            type: "Studio",
+            baseInclude: INCLUDES.Studio.resources
+        }),
     },
     BracketCharacter: {
-        theme: (character) => knex("anime_themes")
-            .where("deleted_at", null)
-            .where("theme_id", character.theme)
-            .first()
+        theme: apiResolver({
+            endpoint: (character) => `/animetheme/${character.theme}`,
+            extractor: (result) => result.animetheme
+        }),
     },
     AnimeListEntry: {
-        anime: (animeListEntry, _, context) => knex("anime")
-            .innerJoin("anime_resource", "anime_resource.anime_id", "anime.anime_id")
-            .innerJoin("resources", "resources.resource_id", "anime_resource.resource_id")
-            .where({
-                "anime.deleted_at": null,
-                "resources.deleted_at": null,
-                "resources.site": context.externalSite,
-                "resources.external_id": animeListEntry.externalId
-            })
-            .first("anime.*")
+        anime: () => null,
     }
 };
+
+function apiResolver(config) {
+    const {
+        endpoint,
+        field,
+        extractor = (a) => a,
+        transformer = (a) => a,
+        pagination = false,
+        type: defaultType = null,
+        baseInclude = null
+    } = config;
+
+    return async (parent, args, context, info) => {
+        if (field && parent[field] !== undefined) {
+            return transformer(parent[field], parent, args);
+        }
+
+        const type = defaultType || info.returnType.name || info.returnType.ofType.name;
+        const path = pathToString(info.path);
+
+        if (info.path.prev) {
+            devLog.warn(`Deep fetch at: ${path}`);
+        }
+
+        let url = `${API_BASE_URL}${endpoint(parent, args)}`;
+
+        const includes = getIncludes(info, baseInclude);
+        if (baseInclude) {
+            includes.push(baseInclude);
+        }
+        const allowedIncludes = includes
+            // Remove includes that are not allowed by the API
+            .filter((include) => ALLOWED_INCLUDES[type]?.find((allowedInclude) => allowedInclude === include || allowedInclude.startsWith(include + ".")))
+            // Remove includes which are already included with another include
+            .filter((include, _, includes) => !includes.find((otherInclude) => otherInclude.startsWith(include + ".")))
+            // Remove duplicates
+            .filter((include, index, includes) => includes.lastIndexOf(include) === index);
+        const disallowedIncludes = includes.filter((include) => !ALLOWED_INCLUDES[type]?.find((allowedInclude) => allowedInclude === include || allowedInclude.startsWith(include + ".")));
+
+        if (disallowedIncludes.length) {
+            devLog.warn(`Disallowed includes for ${url}:`);
+            devLog.warn(disallowedIncludes);
+            devLog.warn(`Or at least:`);
+            devLog.warn(disallowedIncludes.filter((include, _, includes) => !includes.find((otherInclude) => otherInclude.startsWith(include + "."))));
+        }
+
+        if (allowedIncludes.length) {
+            url += `${url.includes("?") ? "&" : "?"}include=${allowedIncludes.join()}`;
+        }
+
+        devLog.info(path + ": " + url);
+
+        return await limit(() => (async () => {
+            if (!pagination) {
+                const json = await fetchJson(url);
+
+                return transformer(extractor(json, parent, args), parent, args);
+            } else {
+                devLog.info(`Collecting: ${url}`);
+                const results = [];
+                let nextUrl = `${url}${url.includes("?") ? "&" : "?"}page[size]=100`;
+                while (nextUrl) {
+                    const json = await fetchJson(nextUrl);
+                    results.push(...transformer(extractor(json, parent, args), parent, args));
+                    devLog.info(`Collecting: ${url}, Got ${results.length}`);
+                    nextUrl = json.links.next;
+                }
+
+                return results;
+            }
+        })());
+    };
+}
+
+async function fetchJson(url) {
+    const response = await fetch(url, {
+        headers: {
+            Authorization: `Bearer ${process.env.ANIMETHEMES_API_KEY}`
+        }
+    });
+    if (!response.ok) {
+        throw new Error(`API returned with non-ok status code: ${response.status} (${response.statusText})`);
+    }
+    return await response.json();
+}
+
+function pathToString(path) {
+    let parts = [];
+    for (let part = path; part; part = part.prev) {
+        parts.push(part.key);
+    }
+    return parts.reverse().join(".");
+}
+
+function getIncludes(info, baseInclude = null) {
+    const infoFragment = parseResolveInfo(info);
+    return getIncludesRecursive(infoFragment, baseInclude ? (baseInclude + ".") : "");
+}
+
+function getIncludesRecursive(infoFragment, parent = "") {
+    const includes = [];
+
+    for (const [type, fields] of Object.entries(infoFragment.fieldsByTypeName)) {
+        for (const [fieldName, field] of Object.entries(fields)) {
+            if (INCLUDES[type]?.[fieldName]) {
+                if (INCLUDES[type][fieldName] === "_") {
+                    includes.push(...getIncludesRecursive(field, parent));
+                } else {
+                    const include = parent + INCLUDES[type][fieldName];
+                    includes.push(include);
+                    includes.push(...getIncludesRecursive(field, include + "."));
+                }
+            }
+        }
+    }
+
+    return includes;
+}

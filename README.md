@@ -13,16 +13,12 @@ root directory.
 This is a list of all available options:
 
 ```ini
-; Datebase configuration
-;   Only username and password are required.
-;   All other fields take the specified values by default, but can be changed if wanted.
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_USER=...
-DB_PASSWORD=...
-DB_DATABASE=animethemes
+; Back-end API configuration
+;   These values are required.
+ANIMETHEMES_API_URL=http://localhost
+ANIMETHEMES_API_KEY=...
 
-; (Optional) The URL to the AnimeThemes API to use.
+; (Optional) The URL to the AnimeThemes API to use on the front-end.
 ;   For development this is "http://localhost" by default.
 ;   For production this is "https://staging.animethemes.moe" by default.
 NEXT_PUBLIC_API_URL=http://localhost

@@ -17,6 +17,7 @@ import styled from "styled-components";
 import theme from "theme";
 import createVideoSlug from "utils/createVideoSlug";
 import gql from "graphql-tag";
+import fetchStaticPaths from "utils/fetchStaticPaths";
 
 const StyledVideoInfo = styled.div`
     display: grid;
@@ -106,7 +107,7 @@ export default function VideoPage({ anime, theme, entry, video }) {
                 ]
             });
         }
-    }, [ anime, theme, smallCover ]);
+    }, [ anime, theme, smallCover, songTitle ]);
 
     const otherEntries = theme.entries.map(otherEntry => {
         const videos = otherEntry.videos.filter((otherVideo) => otherVideo.filename !== video.filename);
@@ -388,44 +389,46 @@ export async function getStaticProps({ params: { animeSlug, videoSlug } }) {
 }
 
 export async function getStaticPaths() {
-    const { data } = await fetchData(`
-        #graphql
-
-        query {
-            animeAll {
-                slug
-                themes {
+    return fetchStaticPaths(async (isStaging) => {
+        const { data } = await fetchData(gql`
+            query {
+                animeAll {
                     slug
-                    entries {
-                        id
-                        version
-                        videos {
+                    themes {
+                        slug
+                        entries {
                             id
-                            tags
+                            version
+                            videos {
+                                id
+                                tags
+                            }
                         }
                     }
                 }
             }
-        }
-    `);
+        `);
 
-    const paths = data.animeAll.flatMap(
-        (anime) => anime.themes.flatMap(
-            (theme) => theme.entries.flatMap(
-                (entry) => entry.videos.flatMap(
-                    (video) => ({
-                        params: {
-                            animeSlug: anime.slug,
-                            videoSlug: createVideoSlug(theme, entry, video)
-                        }
-                    })
+        let anime = data.animeAll;
+
+        if (isStaging) {
+            // In staging, we only want to pre-render the video pages for the neweset 100 anime.
+            anime = anime.sort((a, b) => b.id - a.id).slice(0, 100);
+        }
+
+        return anime.flatMap(
+            (anime) => anime.themes.flatMap(
+                (theme) => theme.entries.flatMap(
+                    (entry) => entry.videos.flatMap(
+                        (video) => ({
+                            params: {
+                                animeSlug: anime.slug,
+                                videoSlug: createVideoSlug(theme, entry, video)
+                            }
+                        })
+                    )
                 )
             )
-        )
-    );
-
-    return {
-        paths,
-        fallback: "blocking"
-    };
+        );
+    });
 }

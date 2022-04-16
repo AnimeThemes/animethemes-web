@@ -22,8 +22,6 @@ export default function useImage(resourceWithImages) {
 }
 
 useImage.fragment = gql`
-    #graphql
-    
     fragment useImage_resourceWithImages on ResourceWithImages {
         images {
             link

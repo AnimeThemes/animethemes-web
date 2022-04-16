@@ -14,7 +14,7 @@ export function SearchArtist({ searchQuery }) {
 
     const entitySearch = useEntitySearch("artist", searchQuery, {
         filters: {
-            "name][like": filter.firstLetter ? `${filter.firstLetter}%` : null,
+            "name-like": filter.firstLetter ? `${filter.firstLetter}%` : null,
         },
         sortBy: searchQuery ? null : filter.sortBy
     });

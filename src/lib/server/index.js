@@ -1,21 +1,29 @@
-const { graphql, print } = require("graphql");
-const { makeExecutableSchema } = require("@graphql-tools/schema");
-const { mergeTypeDefs, mergeResolvers } = require("@graphql-tools/merge");
+import { graphql, print } from "graphql";
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import { mergeResolvers, mergeTypeDefs } from "@graphql-tools/merge";
+
+import typeDefsAnimeThemes from "lib/server/animethemes/type-defs";
+import typeDefsAnimeBracket from "lib/server/animebracket/type-defs";
+import typeDefsAnimeList from "lib/server/animelist/type-defs";
+
+import resolversAnimeThemes from "lib/server/animethemes/resolvers";
+import resolversAnimeBracket from "lib/server/animebracket/resolvers";
+import resolversAnimeList from "lib/server/animelist/resolvers";
 
 const schema = makeExecutableSchema({
     typeDefs: mergeTypeDefs([
-        require("lib/server/animethemes/type-defs"),
-        require("lib/server/animebracket/type-defs"),
-        require("lib/server/animelist/type-defs")
+        typeDefsAnimeThemes,
+        typeDefsAnimeBracket,
+        typeDefsAnimeList
     ]),
     resolvers: mergeResolvers([
-        require("lib/server/animethemes/resolvers"),
-        require("lib/server/animebracket/resolvers"),
-        require("lib/server/animelist/resolvers")
+        resolversAnimeThemes,
+        resolversAnimeBracket,
+        resolversAnimeList
     ])
 });
 
-exports.fetchData = async (query, args = {}) => {
+export async function fetchData(query, args = {}) {
     const result = await graphql(schema, typeof query === "string" ? query : print(query), null, {}, args);
 
     if (result.errors) {
@@ -23,4 +31,4 @@ exports.fetchData = async (query, args = {}) => {
     }
 
     return result;
-};
+}
