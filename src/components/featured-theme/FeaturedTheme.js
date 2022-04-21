@@ -50,8 +50,7 @@ const StyledWrapper = styled.div`
     
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         margin-inline-start: -16px;
-        margin-inline-end: -16px;    
-        border-radius: 0;
+        margin-inline-end: -16px;
     }
 `;
 
@@ -60,6 +59,10 @@ const StyledOverflowHidden = styled.div`
     height: 100%;
     border-radius: 0.5rem;
     overflow: hidden;
+
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        border-radius: 0;
+    }
 `;
 
 const StyledThemeSummaryCard = styled(ThemeSummaryCard)`

@@ -1,4 +1,4 @@
-module.exports = `
+const typeDefs = `
     #graphql
     
     type Query {
@@ -32,3 +32,5 @@ module.exports = `
         PLAN_TO_WATCH
     }
 `;
+
+export default typeDefs;

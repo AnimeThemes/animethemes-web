@@ -157,7 +157,7 @@ export default function DevelopmentPage({ counter }) {
                     }}
                 />
                 <PageGridItem
-                    path="/index/anime"
+                    path="/anime"
                     description={(
                         <Text>
                             <TagNew/>
@@ -165,9 +165,9 @@ export default function DevelopmentPage({ counter }) {
                         </Text>
                     )}
                     otherPaths={{
-                        "/index/artist": "An index of all artists in the database.",
-                        "/index/series": "An index of all series in the database.",
-                        "/index/studio": "An index of all studios in the database."
+                        "/artist": "An index of all artists in the database.",
+                        "/series": "An index of all series in the database.",
+                        "/studio": "An index of all studios in the database."
                     }}
                 />
                 <PageGridItem

@@ -4,14 +4,14 @@ import { fetchData } from "lib/server";
 import { Text } from "components/text";
 import { AlphabeticalIndex } from "components/index";
 
-export default function SeriesIndexPage({ seriesAll }) {
+export default function ArtistIndexPage({ artistAll }) {
     return (
         <>
-            <Text variant="h1">Series Index</Text>
-            <AlphabeticalIndex items={seriesAll}>
-                {(series) => (
-                    <Link key={series.slug} href={`/series/${series.slug}`} passHref>
-                        <Text as="a" block link>{series.name}</Text>
+            <Text variant="h1">Artist Index</Text>
+            <AlphabeticalIndex items={artistAll}>
+                {(artist) => (
+                    <Link key={artist.slug} href={`/artist/${artist.slug}`} passHref prefetch={false}>
+                        <Text as="a" block link>{artist.name}</Text>
                     </Link>
                 )}
             </AlphabeticalIndex>
@@ -24,7 +24,7 @@ export async function getStaticProps() {
         #graphql
 
         query {
-            seriesAll {
+            artistAll {
                 slug
                 name
             }
@@ -33,7 +33,7 @@ export async function getStaticProps() {
 
     return {
         props: {
-            seriesAll: data.seriesAll
+            artistAll: data.artistAll
         },
         revalidate: 60 * 60
     };
