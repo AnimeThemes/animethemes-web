@@ -1,4 +1,4 @@
-const log = require("next/dist/build/output/log");
+import * as log from "next/dist/build/output/log";
 
 const devLog = {};
 
@@ -10,4 +10,4 @@ for (const [name, fn] of Object.entries(log)) {
     };
 }
 
-module.exports = devLog;
+export default devLog;

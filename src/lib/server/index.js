@@ -1,12 +1,13 @@
-import { graphql, print } from "graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { mergeResolvers, mergeTypeDefs } from "@graphql-tools/merge";
 
-import typeDefsAnimeThemes from "lib/server/animethemes/type-defs";
+import { buildFetchData } from "lib/common";
+
+import typeDefsAnimeThemes from "lib/common/animethemes/type-defs";
 import typeDefsAnimeBracket from "lib/server/animebracket/type-defs";
 import typeDefsAnimeList from "lib/server/animelist/type-defs";
 
-import resolversAnimeThemes from "lib/server/animethemes/resolvers";
+import resolversAnimeThemes from "lib/common/animethemes/resolvers";
 import resolversAnimeBracket from "lib/server/animebracket/resolvers";
 import resolversAnimeList from "lib/server/animelist/resolvers";
 
@@ -23,12 +24,4 @@ const schema = makeExecutableSchema({
     ])
 });
 
-export async function fetchData(query, args = {}) {
-    const result = await graphql(schema, typeof query === "string" ? query : print(query), null, {}, args);
-
-    if (result.errors) {
-        console.error(JSON.stringify(result.errors, null, 2));
-    }
-
-    return result;
-}
+export const fetchData = buildFetchData(schema);

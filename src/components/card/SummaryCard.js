@@ -38,6 +38,8 @@ const StyledBody = styled(Column)`
     
     padding: 0 1rem;
     gap: 0.25rem;
+    
+    word-break: break-all;
 `;
 
 export function SummaryCard({ title, description, image, to, children, ...props }) {

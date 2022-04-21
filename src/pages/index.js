@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ThemeSummaryCard } from "components/card";
 import { Column } from "components/box";
@@ -14,6 +15,7 @@ import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import { FeaturedTheme } from "components/featured-theme";
 import gql from "graphql-tag";
+import { fetchDataClient } from "lib/client";
 
 const BigButton = styled(Button)`
     justify-content: flex-end;
@@ -78,8 +80,23 @@ const About = styled(Column)`
     gap: 24px;
 `;
 
-export default function HomePage({ featuredTheme, recentlyAdded }) {
+export default function HomePage({ featuredTheme, recentlyAdded: recentlyAddedInitial }) {
+    const [ recentlyAdded, setRecentlyAdded ] = useState(recentlyAddedInitial);
     const { currentYear, currentSeason } = useCurrentSeason();
+
+    useEffect(() => {
+        fetchDataClient(gql`
+            ${ThemeSummaryCard.fragments.theme}
+
+            query {
+                recentlyAdded: themeAll(orderBy: "id", orderDesc: true, limit: 10) {
+                    ...ThemeSummaryCard_theme
+                }
+            }
+        `).then(({ data }) => {
+            setRecentlyAdded(data.recentlyAdded);
+        });
+    }, []);
 
     return (
         <>
@@ -148,13 +165,13 @@ export default function HomePage({ featuredTheme, recentlyAdded }) {
                 </MainGridArea>
 
                 <SmallButtonGrid>
-                    <Link href="/search/anime" passHref>
+                    <Link href="/anime" passHref>
                         <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
                             <Text>Anime Index</Text>
                             <Icon icon={faArrowRight} color="text-primary"/>
                         </BigButton>
                     </Link>
-                    <Link href="/search/artist" passHref>
+                    <Link href="/artist" passHref>
                         <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
                             <Text>Artist Index</Text>
                             <Icon icon={faArrowRight} color="text-primary"/>
@@ -163,6 +180,24 @@ export default function HomePage({ featuredTheme, recentlyAdded }) {
                     <Link href="/year" passHref>
                         <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
                             <Text>Year Index</Text>
+                            <Icon icon={faArrowRight} color="text-primary"/>
+                        </BigButton>
+                    </Link>
+                    <Link href="/series" passHref>
+                        <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
+                            <Text>Series Index</Text>
+                            <Icon icon={faArrowRight} color="text-primary"/>
+                        </BigButton>
+                    </Link>
+                    <Link href="/studio" passHref>
+                        <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
+                            <Text>Studio Index</Text>
+                            <Icon icon={faArrowRight} color="text-primary"/>
+                        </BigButton>
+                    </Link>
+                    <Link href="/page" passHref>
+                        <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
+                            <Text>Page Index</Text>
                             <Icon icon={faArrowRight} color="text-primary"/>
                         </BigButton>
                     </Link>

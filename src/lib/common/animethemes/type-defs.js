@@ -1,4 +1,4 @@
-module.exports = `
+const typeDefs = `
     #graphql
     
     type Query {
@@ -177,3 +177,5 @@ module.exports = `
       query: Query
     }
 `;
+
+export default typeDefs;

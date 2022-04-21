@@ -10,7 +10,7 @@ export default function AnimeIndexPage({ animeAll }) {
             <Text variant="h1">Anime Index</Text>
             <AlphabeticalIndex items={animeAll}>
                 {(anime) => (
-                    <Link key={anime.slug} href={`/anime/${anime.slug}`} passHref>
+                    <Link key={anime.slug} href={`/anime/${anime.slug}`} passHref prefetch={false}>
                         <Text as="a" block link>{anime.name}</Text>
                     </Link>
                 )}

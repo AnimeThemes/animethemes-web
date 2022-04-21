@@ -1,4 +1,4 @@
-module.exports = {
+const resolvers = {
     Query: {
         animeList: async (_, { username, site }, context) => {
             if (site === "MY_ANIME_LIST") {
@@ -91,8 +91,13 @@ module.exports = {
 
             return null;
         }
+    },
+    AnimeListEntry: {
+        anime: () => null,
     }
 };
+
+export default resolvers;
 
 function convertMyAnimeListStatusType(statusType) {
     return statusType.toUpperCase();

@@ -1,6 +1,7 @@
-const mappings = require("./mappings.json");
+import mappings from "./mappings.json";
+import { apiResolver } from "lib/common/animethemes/api";
 
-module.exports = {
+const resolvers = {
     Query: {
         bracket: async (_, { slug }) => {
             const bracket = await fetchJson(`https://animebracket.com/api/bracket/${slug}`);
@@ -68,8 +69,16 @@ module.exports = {
     BracketPairing: {
         characterA: bracketCharacterResolver("characterA"),
         characterB: bracketCharacterResolver("characterB")
+    },
+    BracketCharacter: {
+        theme: apiResolver({
+            endpoint: (character) => `/animetheme/${character.theme}`,
+            extractor: (result) => result.animetheme
+        }),
     }
 };
+
+export default resolvers;
 
 function bracketCharacterResolver(field) {
     return (pairing) => {

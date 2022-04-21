@@ -393,6 +393,7 @@ export async function getStaticPaths() {
         const { data } = await fetchData(gql`
             query {
                 animeAll {
+                    id
                     slug
                     themes {
                         slug

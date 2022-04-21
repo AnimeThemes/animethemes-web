@@ -14,6 +14,5 @@ module.exports = withBundleAnalyzer({
     compiler: {
         styledComponents: true
     },
-    swcMinify: true,
     staticPageGenerationTimeout: 3600
 });
