@@ -10,7 +10,7 @@ import { useLocalPlaylist } from "context/localPlaylistContext";
 import theme from "theme";
 import { SearchFilter, SearchFilterGroup } from "components/search-filter";
 import { Listbox } from "components/listbox";
-import { featuredThemePreviewSetting, showAnnouncementsSetting } from "utils/settings";
+import { devModeSetting, featuredThemePreviewSetting, showAnnouncementsSetting } from "utils/settings";
 import useSetting from "hooks/useSetting";
 
 const StyledProfileGrid = styled.div`
@@ -41,6 +41,7 @@ export default function ProfilePage() {
 
     const [showAnnouncementsSettingValue, setShowAnnouncementsSettingValue] = useSetting(showAnnouncementsSetting);
     const [featuredThemePreviewSettingValue, setFeaturedThemePreviewSettingValue] = useSetting(featuredThemePreviewSetting);
+    const [devModeSettingValue, setDevModeSettingValue] = useSetting(devModeSetting);
 
     return (
         <>
@@ -66,6 +67,14 @@ export default function ProfilePage() {
                             <Text>Featured Theme Preview</Text>
                             <Listbox value={featuredThemePreviewSettingValue} onChange={setFeaturedThemePreviewSettingValue}>
                                 {Object.entries(featuredThemePreviewSetting.values).map(([ value, label ]) => (
+                                    <Listbox.Option key={value} value={value}>{label}</Listbox.Option>
+                                ))}
+                            </Listbox>
+                        </SearchFilter>
+                        <SearchFilter>
+                            <Text>Developer Mode</Text>
+                            <Listbox value={devModeSettingValue} onChange={setDevModeSettingValue}>
+                                {Object.entries(devModeSetting.values).map(([ value, label ]) => (
                                     <Listbox.Option key={value} value={value}>{label}</Listbox.Option>
                                 ))}
                             </Listbox>

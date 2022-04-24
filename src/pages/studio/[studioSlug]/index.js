@@ -24,6 +24,7 @@ import theme from "theme";
 import { MultiCoverImage } from "components/image";
 import gql from "graphql-tag";
 import fetchStaticPaths from "utils/fetchStaticPaths";
+import getSharedPageProps from "utils/getSharedPageProps";
 
 const StyledDesktopOnly = styled.div`    
     @media (max-width: ${theme.breakpoints.tabletMax}) {
@@ -151,9 +152,11 @@ export async function getStaticProps({ params: { studioSlug } }) {
 
     return {
         props: {
+            ...getSharedPageProps(),
             studio: data.studio
         },
-        revalidate: 5 * 60
+        // Revalidate after 1 hour (= 3600 seconds).
+        revalidate: 3600
     };
 }
 

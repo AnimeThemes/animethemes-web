@@ -14,6 +14,7 @@ import { SongTitleWithArtists } from "components/utils";
 import { Icon } from "components/icon";
 import { faAward, faHashtag, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
+import getSharedPageProps from "utils/getSharedPageProps";
 
 const StyledHeader = styled.div`
     display: flex;
@@ -164,7 +165,7 @@ function ThemeSummaryCard({ theme, rank, votes, ...props }) {
     const description = (
         <SummaryCard.Description>
             <span>{theme.slug}</span>
-            <Link href={`/anime/${theme.anime.slug}`} passHref>
+            <Link href={`/anime/${theme.anime.slug}`} passHref prefetch={false}>
                 <Text as="a" link>{theme.anime.name}</Text>
             </Link>
         </SummaryCard.Description>
@@ -218,6 +219,7 @@ export async function getStaticProps() {
 
     return {
         props: {
+            ...getSharedPageProps(),
             awards
         }
     };

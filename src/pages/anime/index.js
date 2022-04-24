@@ -3,6 +3,7 @@ import Link from "next/link";
 import { fetchData } from "lib/server";
 import { Text } from "components/text";
 import { AlphabeticalIndex } from "components/index";
+import getSharedPageProps from "utils/getSharedPageProps";
 
 export default function AnimeIndexPage({ animeAll }) {
     return (
@@ -33,8 +34,10 @@ export async function getStaticProps() {
 
     return {
         props: {
+            ...getSharedPageProps(),
             animeAll: data.animeAll
         },
-        revalidate: 60 * 60
+        // Revalidate after 3 hours (= 10800 seconds).
+        revalidate: 10800
     };
 }

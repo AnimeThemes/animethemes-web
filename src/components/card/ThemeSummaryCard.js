@@ -29,7 +29,7 @@ export function ThemeSummaryCard({ theme, artist, children, ...props }) {
         <SummaryCard.Description>
             <span>Theme</span>
             <span>{theme.type}{theme.sequence || null}{theme.group && ` (${theme.group})`}</span>
-            <Link href={`/anime/${theme.anime.slug}`} passHref>
+            <Link href={`/anime/${theme.anime.slug}`} passHref prefetch={false}>
                 <Text as="a" link>{theme.anime.name}</Text>
             </Link>
         </SummaryCard.Description>

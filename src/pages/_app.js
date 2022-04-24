@@ -22,6 +22,10 @@ import { AnnouncementToast, ToastHub } from "components/toast";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "styles/prism.scss";
+import { Text } from "components/text";
+import { useRouter } from "next/router";
+import useSetting from "hooks/useSetting";
+import { devModeSetting } from "utils/settings";
 
 config.autoAddCss = false;
 
@@ -40,7 +44,9 @@ const StyledContainer = styled(Container)`
 `;
 
 export default function MyApp({ Component, pageProps }) {
+    const router = useRouter();
     const [colorTheme, toggleColorTheme] = useColorTheme();
+    const [devModeSettingValue] = useSetting(devModeSetting);
 
     const { isVideoPage = false, ...videoPageProps } = pageProps;
     const [ lastVideoPageProps, setLastVideoPageProps ] = useState(() => {
@@ -49,6 +55,22 @@ export default function MyApp({ Component, pageProps }) {
 
     if (isVideoPage && lastVideoPageProps?.video?.basename !== videoPageProps?.video?.basename) {
         setLastVideoPageProps(videoPageProps);
+    }
+
+    async function revalidate() {
+        const secret = prompt("Enter the secret token:");
+
+        const res = await fetch(`${router.basePath}/api/revalidate?secret=${secret}&id=${router.asPath}`);
+        if (!res.ok) {
+            throw new Error();
+        }
+
+        const json = await res.json();
+        if (!json.revalidated) {
+            throw new Error();
+        }
+
+        return json;
     }
 
     return (
@@ -93,6 +115,16 @@ export default function MyApp({ Component, pageProps }) {
                         <SearchNavigation/>
                     )}
                     <Component {...pageProps}/>
+                    {devModeSettingValue === "enabled" && pageProps.lastBuildAt && (
+                        <Text
+                            variant="small"
+                            color="text-disabled"
+                            link
+                            onClick={() => revalidate().then(() => alert("Page has been rebuilt!"), () => alert("Page could not be rebuilt!"))}
+                        >
+                            Page was last built {Math.round((Date.now() - pageProps.lastBuildAt) / 60000)} minutes ago. Click to start a rebuild.
+                        </Text>
+                    )}
                 </StyledContainer>
                 <Footer/>
             </StyledWrapper>

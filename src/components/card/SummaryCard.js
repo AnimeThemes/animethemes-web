@@ -47,7 +47,7 @@ export function SummaryCard({ title, description, image, to, children, ...props 
 
     return (
         <StyledSummaryCard {...props}>
-            <Link href={to}>
+            <Link href={to} prefetch={false}>
                 <a>
                     <StyledCover
                         alt="Cover"
@@ -61,7 +61,7 @@ export function SummaryCard({ title, description, image, to, children, ...props 
             <StyledBody>
                 <Text maxLines={1} title={typeof title === "string" && title}>
                     {typeof title === "string" ? (
-                        <Link href={to} passHref>
+                        <Link href={to} passHref prefetch={false}>
                             <Text as="a" link>{title}</Text>
                         </Link>
                     ) : title}

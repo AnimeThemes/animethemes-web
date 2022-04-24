@@ -9,7 +9,7 @@ export function SeasonNavigation({ year, season, seasonList }) {
             <HorizontalScroll fixShadows>
                 <Switcher items={seasonList.map((s) => s.toLowerCase())} selectedItem={season && season.toLowerCase()}>
                     {seasonList.map((season) => (
-                        <Link key={season} href={`/year/${year}/${season.toLowerCase()}`} passHref>
+                        <Link key={season} href={`/year/${year}/${season.toLowerCase()}`} passHref prefetch={false}>
                             <Switcher.Option as="a" value={season.toLowerCase()}>{season}</Switcher.Option>
                         </Link>
                     ))}

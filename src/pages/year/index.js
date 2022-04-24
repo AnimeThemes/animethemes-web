@@ -4,6 +4,7 @@ import { Button } from "components/button";
 import { Text } from "components/text";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
+import getSharedPageProps from "utils/getSharedPageProps";
 
 const StyledYearPage = styled.div`
     display: grid;
@@ -18,7 +19,7 @@ export default function YearIndexPage({ years }) {
         <StyledYearPage>
             <SEO title="Browse by Year"/>
             {years.map((year) => (
-                <Link key={year} href={`/year/${year}`} passHref>
+                <Link key={year} href={`/year/${year}`} passHref prefetch={false}>
                     <Button as="a">
                         <Text variant="h1">{year}</Text>
                     </Button>
@@ -41,10 +42,10 @@ export async function getStaticProps() {
 
     return {
         props: {
+            ...getSharedPageProps(),
             years: data.yearAll
                 .map((year) => year.value)
                 .sort((a, b) => b - a)
-        },
-        revalidate: 60
+        }
     };
 }

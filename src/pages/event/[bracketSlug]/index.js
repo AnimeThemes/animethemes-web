@@ -13,6 +13,7 @@ import { SongTitleWithArtists } from "components/utils";
 import { useState } from "react";
 import { Switcher } from "components/switcher";
 import { fetchData } from "lib/server";
+import getSharedPageProps from "utils/getSharedPageProps";
 
 const CornerIcon = styled(Icon).attrs({
     size: "2x"
@@ -190,7 +191,7 @@ function ThemeSummaryCard({ theme, isVoted, isWinner, seed, votes, ...props }) {
     const description = (
         <SummaryCard.Description>
             <span>{theme.slug}</span>
-            <Link href={`/anime/${theme.anime.slug}`} passHref>
+            <Link href={`/anime/${theme.anime.slug}`} passHref prefetch={false}>
                 <Text as="a" link>{theme.anime.name}</Text>
             </Link>
         </SummaryCard.Description>
@@ -304,6 +305,7 @@ export async function getStaticProps({ params: { bracketSlug } }) {
 
     return {
         props: {
+            ...getSharedPageProps(),
             bracket: data.bracket
         }
     };

@@ -28,6 +28,7 @@ import { SEO } from "components/seo";
 import useImage from "hooks/useImage";
 import gql from "graphql-tag";
 import fetchStaticPaths from "utils/fetchStaticPaths";
+import getSharedPageProps from "utils/getSharedPageProps";
 
 const StyledList = styled.div`
     display: flex;
@@ -94,7 +95,7 @@ export default function ArtistDetailPage({ artist }) {
                             <DescriptionList.Item title="Members">
                                 <StyledList>
                                     {artist.members.map(({ member }) =>
-                                        <Link key={member.slug} href={`/artist/${member.slug}`} passHref>
+                                        <Link key={member.slug} href={`/artist/${member.slug}`} passHref prefetch={false}>
                                             <Text as="a" link>
                                                 {member.name}
                                             </Text>
@@ -107,7 +108,7 @@ export default function ArtistDetailPage({ artist }) {
                             <DescriptionList.Item title="Member of">
                                 <StyledList>
                                     {artist.groups.map(({ group }) =>
-                                        <Link key={group.slug} href={`/artist/${group.slug}`} passHref>
+                                        <Link key={group.slug} href={`/artist/${group.slug}`} passHref prefetch={false}>
                                             <Text as="a" link>
                                                 {group.name}
                                             </Text>
@@ -242,9 +243,11 @@ export async function getStaticProps({ params: { artistSlug } }) {
 
     return {
         props: {
+            ...getSharedPageProps(),
             artist: data.artist
         },
-        revalidate: 5 * 60
+        // Revalidate after 1 hour (= 3600 seconds).
+        revalidate: 3600
     };
 }
 

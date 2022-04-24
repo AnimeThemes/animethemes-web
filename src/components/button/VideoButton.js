@@ -13,7 +13,7 @@ export function VideoButton({ anime, theme, entry, video, ...props }) {
     const isPlaying = currentVideo && currentVideo.filename === video.filename;
 
     return (
-        <Link href={`/anime/${anime.slug}/${videoSlug}`} passHref>
+        <Link href={`/anime/${anime.slug}/${videoSlug}`} passHref prefetch={false}>
             <Button as="a" {...props}>
                 <Button as="span" variant="primary" isCircle>
                     <Icon icon={isPlaying ? faCompactDisc : faPlay} spin={isPlaying}/>

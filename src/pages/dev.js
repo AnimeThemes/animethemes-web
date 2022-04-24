@@ -4,14 +4,13 @@ import { Text } from "components/text";
 import styled from "styled-components";
 import { Column } from "components/box";
 import { ExternalLink } from "components/external-link";
-import { fetchData } from "lib/server";
 import theme from "theme";
 
 const StyledLink = styled.a`
     max-width: 100%;
 `;
 
-export default function DevelopmentPage({ counter }) {
+export default function DevelopmentPage() {
     return (
         <>
             <Text variant="h1">Development Hub</Text>
@@ -70,33 +69,18 @@ export default function DevelopmentPage({ counter }) {
                 />
                 <PageGridItem
                     path="/year/2009"
-                    description={(
-                        <Text>
-                            Browse all seasons of a specific year.
-                            <Text color="text-disabled"> ({ counter.year } pages)</Text>
-                        </Text>
-                    )}
+                    description="Browse all seasons of a specific year."
                     otherPaths={{
                         "/year/1963": "Every year has a page, even 60s, 70s, etc."
                     }}
                 />
                 <PageGridItem
                     path="/year/2009/summer"
-                    description={(
-                        <Text>
-                            Browse all anime of a specific season.
-                            <Text color="text-disabled"> ({ counter.season } pages)</Text>
-                        </Text>
-                    )}
+                    description="Browse all anime of a specific season."
                 />
                 <PageGridItem
                     path="/series/monogatari"
-                    description={(
-                        <Text>
-                            Browse all anime which belong to the same series.
-                            <Text color="text-disabled"> ({ counter.series } pages)</Text>
-                        </Text>
-                    )}
+                    description="Browse all anime which belong to the same series."
                     otherPaths={{
                         "/series/precure": "A lot of anime.",
                         "/series/clannad": "Only three anime.",
@@ -105,33 +89,18 @@ export default function DevelopmentPage({ counter }) {
                 />
                 <PageGridItem
                     path="/studio/kyoto_animation"
-                    description={
-                        <Text>
-                            Browse all anime which were produced by the same studio.
-                            <Text color="text-disabled"> ({ counter.studio } pages)</Text>
-                        </Text>
-                    }
+                    description="Browse all anime which were produced by the same studio."
                 />
                 <PageGridItem
                     path="/artist/kana_hanazawa"
-                    description={(
-                        <Text>
-                            Browse all songs an artist has performed.
-                            <Text color="text-disabled"> ({ counter.artist } pages)</Text>
-                        </Text>
-                    )}
+                    description="Browse all songs an artist has performed."
                     otherPaths={{
                         "/artist/vickeblanka": "Very few songs."
                     }}
                 />
                 <PageGridItem
                     path="/anime/bakemonogatari"
-                    description={(
-                        <Text>
-                            Browse all themes of a specific anime.
-                            <Text color="text-disabled"> ({ counter.anime } pages)</Text>
-                        </Text>
-                    )}
+                    description="Browse all themes of a specific anime."
                     otherPaths={{
                         "/anime/etotama": "Many themes with a lot of artists.",
                         "/anime/gintama": "Theme groups with many themes.",
@@ -142,12 +111,7 @@ export default function DevelopmentPage({ counter }) {
                 />
                 <PageGridItem
                     path="/anime/bakemonogatari/OP1-NCBD1080"
-                    description={(
-                        <Text>
-                            Watch themes.
-                            <Text color="text-disabled"> ({ counter.video } pages)</Text>
-                        </Text>
-                    )}
+                    description="Watch themes."
                     otherPaths={{
                         "/anime/uma_musume_pretty_derby/ED5": "Many artists.",
                         "/anime/girls_und_panzer/ED-NCBD1080": "Many alternative versions.",
@@ -217,7 +181,7 @@ function PageGridItem({ path, otherPaths = {}, description }) {
 
 function PageLink({ path }) {
     return (
-        <Link key={path} href={path} passHref>
+        <Link key={path} href={path} passHref prefetch={false}>
             <StyledLink to={path}>
                 <Text variant="code" link maxLines={1}>{path}</Text>
             </StyledLink>
@@ -233,29 +197,4 @@ function TagNew() {
     return (
         <StyledTagNew>NEW: </StyledTagNew>
     );
-}
-
-export async function getStaticProps() {
-    const { data } = await fetchData(`
-        #graphql
-
-        query {
-            counter {
-                anime
-                artist
-                series
-                studio
-                video
-                year
-                season
-            }
-        }
-    `);
-
-    return {
-        props: {
-            counter: data.counter
-        },
-        revalidate: 60
-    };
 }

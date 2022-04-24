@@ -6,7 +6,7 @@ export function SongTitle({ song, songTitleLinkTo }) {
 
     if (songTitleLinkTo) {
         return (
-            <Link href={songTitleLinkTo} passHref>
+            <Link href={songTitleLinkTo} passHref prefetch={false}>
                 <Text as="a" link title={songTitle} italics={!song?.title}>{songTitle}</Text>
             </Link>
         );
