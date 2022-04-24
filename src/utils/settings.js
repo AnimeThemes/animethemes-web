@@ -16,3 +16,12 @@ export const featuredThemePreviewSetting = {
         disabled: "Disabled"
     }
 };
+
+export const devModeSetting = {
+    key: "devMode",
+    initialValue: "disabled",
+    values: {
+        disabled: "Disabled",
+        enabled: "Enabled"
+    }
+};

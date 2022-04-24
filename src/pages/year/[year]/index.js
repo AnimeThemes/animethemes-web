@@ -10,6 +10,7 @@ import { SEO } from "components/seo";
 import gql from "graphql-tag";
 import { ANIME_A_Z, getComparator } from "utils/comparators";
 import fetchStaticPaths from "utils/fetchStaticPaths";
+import getSharedPageProps from "utils/getSharedPageProps";
 
 const seasonOrder = [ "Winter", "Spring", "Summer", "Fall" ];
 
@@ -34,7 +35,7 @@ function SeasonPreview({ season, year, animeList }) {
                 ))}
             </Column>
             <Row style={{ "--justify-content": "center" }}>
-                <Link href={`/year/${year}/${season.toLowerCase()}`} passHref>
+                <Link href={`/year/${year}/${season.toLowerCase()}`} passHref prefetch={false}>
                     <Button as="a" variant="silent" isCircle>
                         <Icon icon={faChevronDown}/>
                     </Button>
@@ -90,6 +91,7 @@ export async function getStaticProps({ params: { year } }) {
 
     return {
         props: {
+            ...getSharedPageProps(),
             seasons,
             year,
             yearList: data.yearAll
@@ -97,7 +99,8 @@ export async function getStaticProps({ params: { year } }) {
                 .sort((a, b) => a - b),
             seasonList: seasons.map((season) => season.season)
         },
-        revalidate: 5 * 60
+        // Revalidate after 3 hours (= 10800 seconds).
+        revalidate: 10800
     };
 }
 

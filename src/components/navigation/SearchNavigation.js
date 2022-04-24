@@ -80,11 +80,11 @@ export function SearchNavigation() {
                 />
                 <HorizontalScroll fixShadows>
                     <Switcher selectedItem={entity || null}>
-                        <Link href={{ pathname: "/search", query: urlParams }} passHref>
+                        <Link href={{ pathname: "/search", query: urlParams }} passHref prefetch={false}>
                             <Switcher.Reset as="a"/>
                         </Link>
                         {[ "anime", "theme", "artist", "series", "studio" ].map((entity) => (
-                            <Link key={entity} href={{ pathname: `/search/${entity}`, query: urlParams }} passHref>
+                            <Link key={entity} href={{ pathname: `/search/${entity}`, query: urlParams }} passHref prefetch={false}>
                                 <Switcher.Option as="a" value={entity}>
                                     {capitalize(entity)}
                                 </Switcher.Option>

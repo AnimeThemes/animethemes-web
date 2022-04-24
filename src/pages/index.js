@@ -16,6 +16,7 @@ import { SEO } from "components/seo";
 import { FeaturedTheme } from "components/featured-theme";
 import gql from "graphql-tag";
 import { fetchDataClient } from "lib/client";
+import getSharedPageProps from "utils/getSharedPageProps";
 
 const BigButton = styled(Button)`
     justify-content: flex-end;
@@ -80,8 +81,8 @@ const About = styled(Column)`
     gap: 24px;
 `;
 
-export default function HomePage({ featuredTheme, recentlyAdded: recentlyAddedInitial }) {
-    const [ recentlyAdded, setRecentlyAdded ] = useState(recentlyAddedInitial);
+export default function HomePage({ featuredTheme }) {
+    const [ recentlyAdded, setRecentlyAdded ] = useState([]);
     const { currentYear, currentSeason } = useCurrentSeason();
 
     useEffect(() => {
@@ -121,7 +122,7 @@ export default function HomePage({ featuredTheme, recentlyAdded: recentlyAddedIn
                 </RecentlyAdded>
 
                 <MainGridArea area="c">
-                    <Link href="/search" passHref>
+                    <Link href="/search" passHref prefetch={false}>
                         <BigButton forwardedAs="a">
                             <BigIcon icon={faSearch} flip="horizontal"/>
                             <Text>Search</Text>
@@ -137,7 +138,7 @@ export default function HomePage({ featuredTheme, recentlyAdded: recentlyAddedIn
                     </BigButton>
                 </MainGridArea>
                 <MainGridArea area="e">
-                    <Link href={(currentYear && currentSeason) ? `/year/${currentYear}/${currentSeason}` : "/"} passHref>
+                    <Link href={(currentYear && currentSeason) ? `/year/${currentYear}/${currentSeason}` : "/"} passHref prefetch={false}>
                         <BigButton forwardedAs="a">
                             <BigIcon icon={faTv}/>
                             <Text>Current Season</Text>
@@ -146,7 +147,7 @@ export default function HomePage({ featuredTheme, recentlyAdded: recentlyAddedIn
                     </Link>
                 </MainGridArea>
                 <MainGridArea area="h">
-                    <Link href="/event" passHref>
+                    <Link href="/event" passHref prefetch={false}>
                         <BigButton forwardedAs="a">
                             <BigIcon icon={faAward}/>
                             <Text>Events</Text>
@@ -155,7 +156,7 @@ export default function HomePage({ featuredTheme, recentlyAdded: recentlyAddedIn
                     </Link>
                 </MainGridArea>
                 <MainGridArea area="i">
-                    <Link href="/profile" passHref>
+                    <Link href="/profile" passHref prefetch={false}>
                         <BigButton forwardedAs="a">
                             <BigIcon icon={faUser}/>
                             <Text>My Profile</Text>
@@ -165,37 +166,37 @@ export default function HomePage({ featuredTheme, recentlyAdded: recentlyAddedIn
                 </MainGridArea>
 
                 <SmallButtonGrid>
-                    <Link href="/anime" passHref>
+                    <Link href="/anime" passHref prefetch={false}>
                         <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
                             <Text>Anime Index</Text>
                             <Icon icon={faArrowRight} color="text-primary"/>
                         </BigButton>
                     </Link>
-                    <Link href="/artist" passHref>
+                    <Link href="/artist" passHref prefetch={false}>
                         <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
                             <Text>Artist Index</Text>
                             <Icon icon={faArrowRight} color="text-primary"/>
                         </BigButton>
                     </Link>
-                    <Link href="/year" passHref>
+                    <Link href="/year" passHref prefetch={false}>
                         <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
                             <Text>Year Index</Text>
                             <Icon icon={faArrowRight} color="text-primary"/>
                         </BigButton>
                     </Link>
-                    <Link href="/series" passHref>
+                    <Link href="/series" passHref prefetch={false}>
                         <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
                             <Text>Series Index</Text>
                             <Icon icon={faArrowRight} color="text-primary"/>
                         </BigButton>
                     </Link>
-                    <Link href="/studio" passHref>
+                    <Link href="/studio" passHref prefetch={false}>
                         <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
                             <Text>Studio Index</Text>
                             <Icon icon={faArrowRight} color="text-primary"/>
                         </BigButton>
                     </Link>
-                    <Link href="/page" passHref>
+                    <Link href="/page" passHref prefetch={false}>
                         <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
                             <Text>Page Index</Text>
                             <Icon icon={faArrowRight} color="text-primary"/>
@@ -233,20 +234,16 @@ export async function getStaticProps() {
         ${ThemeSummaryCard.fragments.theme}
         
         query {
-            featuredTheme: theme(id: 11388) {
+            theme(id: 11388) {
                 ...FeaturedTheme_theme
-            }
-            recentlyAdded: themeAll(orderBy: "id", orderDesc: true, limit: 10) {
-                ...ThemeSummaryCard_theme
             }
         }
     `);
 
     return {
         props: {
-            featuredTheme: data.featuredTheme,
-            recentlyAdded: data.recentlyAdded
-        },
-        revalidate: 60
+            ...getSharedPageProps(),
+            featuredTheme: data.theme
+        }
     };
 }

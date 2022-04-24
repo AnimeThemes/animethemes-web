@@ -12,6 +12,7 @@ import theme from "theme";
 import { SEO } from "components/seo";
 import fetchStaticPaths from "utils/fetchStaticPaths";
 import gql from "graphql-tag";
+import getSharedPageProps from "utils/getSharedPageProps";
 
 const StyledGrid = styled.div`
     display: flex;
@@ -170,7 +171,7 @@ export default function DocumentPage({ page }) {
                 a: ({ children, href, ...props }) => {
                     if (href.startsWith("/")) {
                         return (
-                            <Link href={href} passHref>
+                            <Link href={href} passHref prefetch={false}>
                                 <Text as="a" link {...props}>{children}</Text>
                             </Link>
                         );
@@ -258,12 +259,14 @@ export async function getStaticProps({ params: { pageSlug } }) {
 
     return {
         props: {
+            ...getSharedPageProps(),
             page: {
                 ...data.page,
                 body: markdownToHtml(data.page.body)
             }
         },
-        revalidate: 5 * 60
+        // Revalidate after 1 hour (= 3600 seconds).
+        revalidate: 3600
     };
 }
 

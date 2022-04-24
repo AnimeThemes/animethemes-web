@@ -37,7 +37,7 @@ export function AlphabeticalIndex({ items, children }) {
         <>
             <StyledLetterList>
                 {itemsByFirstLetter.map(([ firstLetter ]) => (
-                    <Link key={firstLetter} href={`#${firstLetter}`} passHref>
+                    <Link key={firstLetter} href={`#${firstLetter}`} passHref prefetch={false}>
                         <Text as="a" link>{firstLetter.toUpperCase()} </Text>
                     </Link>
                 ))}

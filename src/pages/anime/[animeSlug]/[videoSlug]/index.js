@@ -18,6 +18,7 @@ import theme from "theme";
 import createVideoSlug from "utils/createVideoSlug";
 import gql from "graphql-tag";
 import fetchStaticPaths from "utils/fetchStaticPaths";
+import getSharedPageProps from "utils/getSharedPageProps";
 
 const StyledVideoInfo = styled.div`
     display: grid;
@@ -160,7 +161,7 @@ export default function VideoPage({ anime, theme, entry, video }) {
                     <SongTitleWithArtists song={theme.song}/>
                     <Text variant="small" color="text-muted" maxLines={1}>
                         <Text>{theme.type}{theme.sequence || null}{theme.group && ` (${theme.group})`} from </Text>
-                        <Link href={`/anime/${anime.slug}`} passHref>
+                        <Link href={`/anime/${anime.slug}`} passHref prefetch={false}>
                             <Text as="a" link>{anime.name}</Text>
                         </Link>
                     </Text>
@@ -378,13 +379,15 @@ export async function getStaticProps({ params: { animeSlug, videoSlug } }) {
 
     return {
         props: {
+            ...getSharedPageProps(),
             anime,
             theme: pageTheme,
             video: pageVideo,
             entry: pageEntry,
             isVideoPage: true
         },
-        revalidate: 5 * 60
+        // Revalidate after 1 hour (= 3600 seconds).
+        revalidate: 3600
     };
 }
 

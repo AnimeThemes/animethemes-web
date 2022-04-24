@@ -34,6 +34,7 @@ import { Toast } from "components/toast";
 import { useToasts } from "context/toastContext";
 import { Input } from "components/input";
 import gql from "graphql-tag";
+import getSharedPageProps from "utils/getSharedPageProps";
 
 const ColorGrid = styled.div`
     display: grid;
@@ -651,6 +652,7 @@ export async function getStaticProps() {
 
     return {
         props: {
+            ...getSharedPageProps(),
             demoData: data
         }
     };

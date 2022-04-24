@@ -26,19 +26,19 @@ export function YearNavigation({ year, yearList }) {
         <Row style={{ "--align-items": "center" }}>
             <StyledYearPrevious>
                 {previousYear && (
-                    <Link href={`/year/${previousYear}`} passHref>
+                    <Link href={`/year/${previousYear}`} passHref prefetch={false}>
                         <Button as="a" variant="silent">{previousYear}</Button>
                     </Link>
                 )}
             </StyledYearPrevious>
-            <Link href={`/year`} passHref>
+            <Link href={`/year`} passHref prefetch={false}>
                 <Button as="a" variant="silent">
                     <Text variant="h1">{year}</Text>
                 </Button>
             </Link>
             <StyledYearNext>
                 {nextYear && (
-                    <Link href={`/year/${nextYear}`} passHref>
+                    <Link href={`/year/${nextYear}`} passHref prefetch={false}>
                         <Button as="a" variant="silent">{nextYear}</Button>
                     </Link>
                 )}

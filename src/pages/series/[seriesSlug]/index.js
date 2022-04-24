@@ -15,6 +15,7 @@ import theme from "theme";
 import { MultiCoverImage } from "components/image";
 import gql from "graphql-tag";
 import fetchStaticPaths from "utils/fetchStaticPaths";
+import getSharedPageProps from "utils/getSharedPageProps";
 
 const StyledDesktopOnly = styled.div`
     gap: 24px;
@@ -117,9 +118,11 @@ export async function getStaticProps({ params: { seriesSlug } }) {
 
     return {
         props: {
+            ...getSharedPageProps(),
             series: data.series
         },
-        revalidate: 5 * 60
+        // Revalidate after 1 hour (= 3600 seconds).
+        revalidate: 3600
     };
 }
 

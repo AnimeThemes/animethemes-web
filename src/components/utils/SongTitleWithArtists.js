@@ -43,7 +43,7 @@ function Performances({ song, artist }) {
                     <Text variant="small" color="text-muted">
                         <span> as </span>
                         <span>
-                            <Link href={`/artist/${performedAs.artist.slug}`} passHref>
+                            <Link href={`/artist/${performedAs.artist.slug}`} passHref prefetch={false}>
                                 <StyledArtistLink>
                                     {performedAs.as}
                                 </StyledArtistLink>
@@ -57,7 +57,7 @@ function Performances({ song, artist }) {
                         <span>
                             {performedWith.map((performance) => (
                                 <StyledArtist key={performance.artist.slug}>
-                                    <Link href={`/artist/${performance.artist.slug}`} passHref>
+                                    <Link href={`/artist/${performance.artist.slug}`} passHref prefetch={false}>
                                         <StyledArtistLink>
                                             {performance.as || performance.artist.name}
                                         </StyledArtistLink>
@@ -77,7 +77,7 @@ function Performances({ song, artist }) {
             <span>
                 {song.performances.map((performance) => (
                     <StyledArtist key={performance.artist.slug}>
-                        <Link href={`/artist/${performance.artist.slug}`} passHref>
+                        <Link href={`/artist/${performance.artist.slug}`} passHref prefetch={false}>
                             <StyledArtistLink>
                                 {performance.as || performance.artist.name}
                             </StyledArtistLink>

@@ -5,6 +5,7 @@ import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import gql from "graphql-tag";
 import fetchStaticPaths from "utils/fetchStaticPaths";
+import getSharedPageProps from "utils/getSharedPageProps";
 
 const seasonOrder = [ "Winter", "Spring", "Summer", "Fall" ];
 
@@ -68,6 +69,7 @@ export async function getStaticProps({ params: { year, season } }) {
 
     return {
         props: {
+            ...getSharedPageProps(),
             animeAll: data.season.anime,
             year,
             season,
@@ -78,7 +80,8 @@ export async function getStaticProps({ params: { year, season } }) {
                 .map((season) => season.value)
                 .sort((a, b) => seasonOrder.indexOf(a) - seasonOrder.indexOf(b))
         },
-        revalidate: 5 * 60
+        // Revalidate after 3 hours (= 10800 seconds).
+        revalidate: 10800
     };
 }
 

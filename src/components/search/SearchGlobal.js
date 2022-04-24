@@ -123,7 +123,7 @@ function GlobalSearchSection({ entity, title, results, renderSummaryCard }) {
             </Column>
             {hasMoreResults && (
                 <Row style={{ "--justify-content": "center" }}>
-                    <Link href={{ pathname: `/search/${entity}`, query: urlParams }} passHref>
+                    <Link href={{ pathname: `/search/${entity}`, query: urlParams }} passHref prefetch={false}>
                         <Button as="a" variant="silent" isCircle title="See all results">
                             <Icon icon={faChevronDown}/>
                         </Button>

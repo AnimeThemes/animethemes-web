@@ -47,13 +47,13 @@ export function Navigation({ offsetToggleButton = false }) {
         <>
             <StyledNavigation show={show} onClick={() => setShow(false)}>
                 <StyledNavigationContainer onClick={(event) => event.stopPropagation()}>
-                    <Link href="/" passHref>
+                    <Link href="/" passHref prefetch={false}>
                         <StyledLogoContainer>
                             <StyledLogo width="277" height="150"/>
                         </StyledLogoContainer>
                     </Link>
                     <StyledNavigationLinks>
-                        <Link href="/search" passHref>
+                        <Link href="/search" passHref prefetch={false}>
                             <Button as="a" variant="silent" style={{ "--gap": "8px" }}>
                                 <Icon icon={faSearch}/>
                                 <Text>Search</Text>
@@ -63,13 +63,13 @@ export function Navigation({ offsetToggleButton = false }) {
                             <Icon icon={faRandom}/>
                             <Text>Play Random</Text>
                         </Button>
-                        <Link href={(currentYear && currentSeason) ? `/year/${currentYear}/${currentSeason}` : "/"} passHref>
+                        <Link href={(currentYear && currentSeason) ? `/year/${currentYear}/${currentSeason}` : "/"} passHref prefetch={false}>
                             <Button as="a" variant="silent" style={{ "--gap": "8px" }}>
                                 <Icon icon={faTv}/>
                                 <Text>Current Season</Text>
                             </Button>
                         </Link>
-                        <Link href="/profile" passHref>
+                        <Link href="/profile" passHref prefetch={false}>
                             <StyledCollapsibleLink forwardedAs="a" title="My Profile">
                                 <Icon icon={faUser}/>
                                 <span>My Profile</span>

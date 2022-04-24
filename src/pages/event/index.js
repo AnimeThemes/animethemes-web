@@ -8,6 +8,7 @@ import { fetchData } from "lib/server";
 import { faArrowRight, faAward, faTrophy } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "components/icon";
 import theme from "theme";
+import getSharedPageProps from "utils/getSharedPageProps";
 
 const BigButton = styled(Button)`
     overflow: hidden;
@@ -41,7 +42,7 @@ export default function EventPage({ awards, brackets }) {
                 <Column style={{ "--gap": "16px" }}>
                     <Text variant="h2">Awards</Text>
                     {awards.map(({ name, path }) => (
-                        <Link key={path} href={path} passHref>
+                        <Link key={path} href={path} passHref prefetch={false}>
                             <BigButton forwardedAs="a">
                                 <BigIcon icon={faAward}/>
                                 <Text>{name}</Text>
@@ -53,7 +54,7 @@ export default function EventPage({ awards, brackets }) {
                 <Column style={{ "--gap": "16px" }}>
                     <Text variant="h2">Brackets</Text>
                     {brackets.map(({ name, path }) => (
-                        <Link key={path} href={path} passHref>
+                        <Link key={path} href={path} passHref prefetch={false}>
                             <BigButton forwardedAs="a">
                                 <BigIcon icon={faTrophy}/>
                                 <Text>{name}</Text>
@@ -96,6 +97,7 @@ export async function getStaticProps() {
 
     return {
         props: {
+            ...getSharedPageProps(),
             awards,
             brackets
         }

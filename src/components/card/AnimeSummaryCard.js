@@ -70,7 +70,7 @@ export function AnimeSummaryCard({ anime, previewThemes = false, expandable = fa
         <SummaryCard.Description>
             <span>Anime</span>
             {!!anime.year && (
-                <Link href={premiereLink} passHref>
+                <Link href={premiereLink} passHref prefetch={false}>
                     <Text as="a" link>{premiere}</Text>
                 </Link>
             )}
@@ -129,7 +129,7 @@ function ThemesInline({ anime, maxThemes }) {
             const videoSlug = createVideoSlug(theme, entry, video);
 
             return (
-                <Link key={theme.slug + theme.group} href={`/anime/${anime.slug}/${videoSlug}`} passHref>
+                <Link key={theme.slug + theme.group} href={`/anime/${anime.slug}/${videoSlug}`} passHref prefetch={false}>
                     <Button as="a">
                         <Button as="span" variant="primary" isCircle>
                             <Icon icon={faPlay}/>
@@ -149,7 +149,7 @@ function ThemesTable({ anime, group = null }) {
             const videoSlug = createVideoSlug(theme, entry, video);
 
             return (
-                <Link key={theme.slug + theme.group} href={`/anime/${anime.slug}/${videoSlug}`} passHref>
+                <Link key={theme.slug + theme.group} href={`/anime/${anime.slug}/${videoSlug}`} passHref prefetch={false}>
                     <StyledThemeRow>
                         {!videoIndex ? (
                             entry.version > 1 ? (

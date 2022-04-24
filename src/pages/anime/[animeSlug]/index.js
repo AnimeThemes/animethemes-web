@@ -16,6 +16,7 @@ import useImage from "hooks/useImage";
 import { resourceSiteComparator, seriesNameComparator, studioNameComparator } from "utils/comparators";
 import fetchStaticPaths from "utils/fetchStaticPaths";
 import gql from "graphql-tag";
+import getSharedPageProps from "utils/getSharedPageProps";
 
 const StyledList = styled.div`
     display: flex;
@@ -47,7 +48,7 @@ export default function AnimeDetailPage({ anime }) {
                             </DescriptionList.Item>
                         )}
                         <DescriptionList.Item title="Premiere">
-                            <Link href={`/year/${anime.year}${anime.season ? `/${anime.season.toLowerCase()}` : ""}`} passHref>
+                            <Link href={`/year/${anime.year}${anime.season ? `/${anime.season.toLowerCase()}` : ""}`} passHref prefetch={false}>
                                 <Text as="a" link>
                                     {(anime.season ? anime.season + " " : "") + anime.year}
                                 </Text>
@@ -57,7 +58,7 @@ export default function AnimeDetailPage({ anime }) {
                             <DescriptionList.Item title="Series">
                                 <StyledList>
                                     {anime.series.sort(seriesNameComparator).map((series) =>
-                                        <Link key={series.slug} href={`/series/${series.slug}`} passHref>
+                                        <Link key={series.slug} href={`/series/${series.slug}`} passHref prefetch={false}>
                                             <Text as="a" link>
                                                 {series.name}
                                             </Text>
@@ -70,7 +71,7 @@ export default function AnimeDetailPage({ anime }) {
                             <DescriptionList.Item title="Studios">
                                 <StyledList>
                                     {anime.studios.sort(studioNameComparator).map((studio) =>
-                                        <Link key={studio.slug} href={`/studio/${studio.slug}`} passHref>
+                                        <Link key={studio.slug} href={`/studio/${studio.slug}`} passHref prefetch={false}>
                                             <Text as="a" link>
                                                 {studio.name}
                                             </Text>
@@ -207,9 +208,9 @@ export async function getStaticProps({ params: { animeSlug } }) {
 
     return {
         props: {
+            ...getSharedPageProps(),
             anime: data.anime
-        },
-        revalidate: 5 * 60
+        }
     };
 }
 
