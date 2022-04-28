@@ -48,7 +48,7 @@ export default function MyApp({ Component, pageProps }) {
     const [colorTheme, toggleColorTheme] = useColorTheme();
     const [devModeSettingValue] = useSetting(devModeSetting);
 
-    const { isVideoPage = false, ...videoPageProps } = pageProps;
+    const { lastBuildAt, isVideoPage = false, ...videoPageProps } = pageProps;
     const [ lastVideoPageProps, setLastVideoPageProps ] = useState(() => {
         return isVideoPage ? videoPageProps : null;
     });
@@ -115,14 +115,14 @@ export default function MyApp({ Component, pageProps }) {
                         <SearchNavigation/>
                     )}
                     <Component {...pageProps}/>
-                    {devModeSettingValue === "enabled" && pageProps.lastBuildAt && (
+                    {devModeSettingValue === "enabled" && lastBuildAt && (
                         <Text
                             variant="small"
                             color="text-disabled"
                             link
                             onClick={() => revalidate().then(() => alert("Page has been rebuilt!"), () => alert("Page could not be rebuilt!"))}
                         >
-                            Page was last built {Math.round((Date.now() - pageProps.lastBuildAt) / 60000)} minutes ago. Click to start a rebuild.
+                            Page was last built {Math.round((Date.now() - lastBuildAt) / 60000)} minutes ago. Click to start a rebuild.
                         </Text>
                     )}
                 </StyledContainer>

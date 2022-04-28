@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { ThemeSummaryCard } from "components/card";
 
 const WatchHistoryContext = createContext();
 
@@ -8,25 +9,27 @@ export function WatchHistoryProvider({ children }) {
     const reload = useCallback(() => setHistory(load()), [ setHistory ]);
 
     const addToHistory = useCallback((theme) => {
-        let history = load();
+        ThemeSummaryCard.fetchData(theme.id).then((themeFiltered) => {
+            let history = load();
 
-        // Don't add if the most recent entry is the same as the new one
-        if (history[history.length - 1]?.id === theme.id) {
-            return;
-        }
+            // Don't add if the most recent entry is the same as the new one
+            if (history[history.length - 1]?.id === theme.id) {
+                return;
+            }
 
-        // Remove all previous occurences of the theme to avoid duplicates
-        history = history.filter((t) => t.id !== theme.id);
+            // Remove all previous occurences of the theme to avoid duplicates
+            history = history.filter((t) => t.id !== theme.id);
 
-        history.push(theme);
+            history.push(themeFiltered);
 
-        // Keep history below 100 entries
-        if (history.length > 100) {
-            history.shift();
-        }
+            // Keep history below 100 entries
+            if (history.length > 100) {
+                history.shift();
+            }
 
-        save(history);
-        reload();
+            save(history);
+            reload();
+        });
     }, [ reload ]);
 
     const clearHistory = useCallback(() => {
