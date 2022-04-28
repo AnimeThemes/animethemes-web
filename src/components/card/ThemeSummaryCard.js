@@ -6,6 +6,7 @@ import createVideoSlug from "utils/createVideoSlug";
 import { SummaryCard } from "components/card";
 import { ThemeMenu } from "components/menu";
 import gql from "graphql-tag";
+import { fetchDataClient } from "lib/client";
 
 // Specify an artist if you want to display this in an artist context (e.g. artist page)
 export function ThemeSummaryCard({ theme, artist, children, ...props }) {
@@ -88,4 +89,16 @@ ThemeSummaryCard.fragments = {
             ...SongTitleWithArtists_artist
         }
     `
+};
+
+ThemeSummaryCard.fetchData = async function (id) {
+    return fetchDataClient(gql`
+        ${ThemeSummaryCard.fragments.theme}
+
+        query($themeId: Int!) {
+            theme(id: $themeId) {
+                ...ThemeSummaryCard_theme
+            }
+        }
+    `, { themeId: id }).then((result) => result.data?.theme);
 };

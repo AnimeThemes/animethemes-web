@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import { Text } from "components/text";
-import { Column } from "components/box";
+import { Column, Row } from "components/box";
 import { SidebarContainer } from "components/container";
 import { ThemeSummaryCard } from "components/card";
 import useToggle from "hooks/useToggle";
 import { useState } from "react";
-import { FilterToggleButton } from "components/button";
+import { Button, FilterToggleButton } from "components/button";
 import { SearchFilterGroup, SearchFilterSortBy } from "components/search-filter";
 import { Collapse } from "components/utils";
 import {
@@ -55,6 +55,42 @@ export default function PlaylistPage() {
 
     const themes = localPlaylist.sort(getComparator(sortBy));
 
+    const [ refreshProgress, setRefreshProgess ] = useState(null);
+    const [ refreshError, setRefreshError ] = useState(null);
+
+    function refreshPlaylist() {
+        if (refreshProgress !== null) {
+            return;
+        }
+
+        setRefreshProgess(0);
+        setRefreshError(null);
+
+        refreshPlaylistAsync()
+            .catch((error) => setRefreshError(error.toString()))
+            .finally(() => setRefreshProgess(null));
+    }
+
+    async function refreshPlaylistAsync() {
+        const localPlaylistRefreshed = [];
+
+        for (const theme of localPlaylist) {
+            const themeRefreshed = await ThemeSummaryCard.fetchData(theme.id);
+
+            if (!themeRefreshed) {
+                throw new Error(`Theme could not be refreshed: ${theme.id}`);
+            }
+
+            localPlaylistRefreshed.push(themeRefreshed);
+
+            setRefreshProgess((refreshProgress) => refreshProgress + 1);
+
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+
+        setPlaylist(localPlaylistRefreshed);
+    }
+
     return (
         <>
             <SEO title="Local Playlist"/>
@@ -84,6 +120,15 @@ export default function PlaylistPage() {
                             </SearchFilterSortBy>
                         </SearchFilterGroup>
                     </Collapse>
+                    <Row style={{ "--gap": "16px", "--align-items": "center" }}>
+                        <Button disabled={refreshProgress !== null} onClick={refreshPlaylist}>Refresh</Button>
+                        {refreshProgress !== null && (
+                            <Text color="text-muted">{refreshProgress} / {localPlaylist.length} themes refreshed.</Text>
+                        )}
+                        {refreshError !== null && (
+                            <Text color="text-warning">{refreshError}</Text>
+                        )}
+                    </Row>
                     <StyledReorderContainer>
                         <Reorder.Group as="div" axis="y" values={themes} onReorder={setPlaylist}>
                             {themes.map((theme) => (
