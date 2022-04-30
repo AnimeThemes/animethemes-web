@@ -19,13 +19,13 @@ import { WatchHistoryProvider } from "context/watchHistoryContext";
 import { LocalPlaylistProvider } from "context/localPlaylistContext";
 import { ToastProvider } from "context/toastContext";
 import { AnnouncementToast, ToastHub } from "components/toast";
-
-import "@fortawesome/fontawesome-svg-core/styles.css";
-import "styles/prism.scss";
 import { Text } from "components/text";
 import { useRouter } from "next/router";
 import useSetting from "hooks/useSetting";
-import { devModeSetting } from "utils/settings";
+import { devModeSetting, revalidationTokenSetting } from "utils/settings";
+
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import "styles/prism.scss";
 
 config.autoAddCss = false;
 
@@ -44,7 +44,6 @@ const StyledContainer = styled(Container)`
 `;
 
 export default function MyApp({ Component, pageProps }) {
-    const router = useRouter();
     const [colorTheme, toggleColorTheme] = useColorTheme();
     const [devModeSettingValue] = useSetting(devModeSetting);
 
@@ -55,22 +54,6 @@ export default function MyApp({ Component, pageProps }) {
 
     if (isVideoPage && lastVideoPageProps?.video?.basename !== videoPageProps?.video?.basename) {
         setLastVideoPageProps(videoPageProps);
-    }
-
-    async function revalidate() {
-        const secret = prompt("Enter the secret token:");
-
-        const res = await fetch(`${router.basePath}/api/revalidate?secret=${secret}&id=${router.asPath}`);
-        if (!res.ok) {
-            throw new Error();
-        }
-
-        const json = await res.json();
-        if (!json.revalidated) {
-            throw new Error();
-        }
-
-        return json;
     }
 
     return (
@@ -116,14 +99,7 @@ export default function MyApp({ Component, pageProps }) {
                     )}
                     <Component {...pageProps}/>
                     {devModeSettingValue === "enabled" && lastBuildAt && (
-                        <Text
-                            variant="small"
-                            color="text-disabled"
-                            link
-                            onClick={() => revalidate().then(() => alert("Page has been rebuilt!"), () => alert("Page could not be rebuilt!"))}
-                        >
-                            Page was last built {Math.round((Date.now() - lastBuildAt) / 60000)} minutes ago. Click to start a rebuild.
-                        </Text>
+                        <PageRevalidation lastBuildAt={lastBuildAt}/>
                     )}
                 </StyledContainer>
                 <Footer/>
@@ -139,4 +115,57 @@ function MultiContextProvider({ providers = [], children }) {
             {previousValue}
         </Provider>
     ), children);
+}
+
+function PageRevalidation({ lastBuildAt }) {
+    const router = useRouter();
+    const [secret] = useSetting(revalidationTokenSetting);
+
+    const [isRevalidating, setRevalidating] = useState(false);
+
+    function revalidate() {
+        if (isRevalidating || !secret) {
+            return;
+        }
+
+        setRevalidating(true);
+
+        revalidateAsync()
+            .then(() => location.reload())
+            .catch((err) => alert(`Error while revalidating: ${err.message}`))
+            .finally(() => setRevalidating(false));
+    }
+
+    async function revalidateAsync() {
+        const res = await fetch(`${router.basePath}/api/revalidate?secret=${secret}&id=${router.asPath}`);
+        if (!res.ok) {
+            throw new Error((await res.json()).message);
+        }
+
+        const json = await res.json();
+        if (!json.revalidated) {
+            throw new Error();
+        }
+
+        return json;
+    }
+
+    const minutesSinceLastBuild = Math.round((Date.now() - lastBuildAt) / 60000);
+    const lastBuildDescription = minutesSinceLastBuild
+        ? `${minutesSinceLastBuild} minute${minutesSinceLastBuild === 1 ? "" : "s"}`
+        : "a few seconds";
+
+    const canRebuild = !isRevalidating && !!secret;
+    const rebuildDescription = isRevalidating
+        ? "Rebuild in progress... The page will automatically reload after it's finished."
+        : (secret
+            ? "Click to start a rebuild."
+            : "Setup the revalidation token on your profile to manually start a rebuild."
+        );
+
+    return (
+        <Text variant="small" color="text-disabled" link={canRebuild} onClick={revalidate}>
+            Page was last built {lastBuildDescription} ago. {rebuildDescription}
+        </Text>
+    );
 }

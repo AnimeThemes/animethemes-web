@@ -210,7 +210,9 @@ export async function getStaticProps({ params: { animeSlug } }) {
         props: {
             ...getSharedPageProps(),
             anime: data.anime
-        }
+        },
+        // Revalidate after 1 hour (= 3600 seconds).
+        revalidate: 3600
     };
 }
 

@@ -25,3 +25,8 @@ export const devModeSetting = {
         enabled: "Enabled"
     }
 };
+
+export const revalidationTokenSetting = {
+    key: "revalidationToken",
+    initialValue: undefined
+};

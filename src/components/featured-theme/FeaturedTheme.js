@@ -7,19 +7,9 @@ import { useEffect, useState } from "react";
 import useSetting from "hooks/useSetting";
 import useCompatability from "hooks/useCompatability";
 import gql from "graphql-tag";
+import { fetchRandomGrill } from "lib/client/randomGrill";
 
 const videoBaseUrl = process.env.NEXT_PUBLIC_VIDEO_URL || "https://animethemes.moe";
-const grills = [
-    "https://animethemes.moe/img/grill/2.png",
-    "https://animethemes.moe/img/grill/3.png",
-    "https://animethemes.moe/img/grill/4.png",
-    "https://animethemes.moe/img/grill/5.png",
-    "https://animethemes.moe/img/grill/6.png",
-    "https://animethemes.moe/img/grill/7.png",
-    "https://animethemes.moe/img/grill/8.png",
-    "https://animethemes.moe/img/grill/9.png",
-    "https://animethemes.moe/img/grill/10.png",
-];
 
 const slowPan = keyframes`
     from {
@@ -105,7 +95,7 @@ const StyledGrill = styled.img`
     height: 100%;
     object-fit: contain;
     object-position: bottom;
-    animation: ${slideIn} 2s 5s backwards cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: ${slideIn} 2s 2s backwards cubic-bezier(0.34, 1.56, 0.64, 1);
     
     transition: transform 1s;
     transform: translateY(10%);
@@ -125,7 +115,9 @@ export function FeaturedTheme({ theme }) {
     const { canPlayVideo } = useCompatability({ canPlayVideo: false });
     const [ fallbackToCover, setFallbackToCover ] = useState(false);
 
-    useEffect(() => setGrill(grills[Math.floor(Math.random() * grills.length)]), []);
+    useEffect(() => {
+        fetchRandomGrill().then(setGrill);
+    }, []);
 
     const FeaturedThemeWrapper = featuredThemePreviewSettingValue !== "disabled"
         ? StyledWrapper

@@ -4,14 +4,20 @@ import { Column } from "components/box";
 import { Text } from "components/text";
 import { SummaryCard, ThemeSummaryCard } from "components/card";
 import { IconTextButton } from "components/button";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faKey, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useWatchHistory } from "context/watchHistoryContext";
 import { useLocalPlaylist } from "context/localPlaylistContext";
 import theme from "theme";
 import { SearchFilter, SearchFilterGroup } from "components/search-filter";
 import { Listbox } from "components/listbox";
-import { devModeSetting, featuredThemePreviewSetting, showAnnouncementsSetting } from "utils/settings";
+import {
+    devModeSetting,
+    featuredThemePreviewSetting,
+    revalidationTokenSetting,
+    showAnnouncementsSetting
+} from "utils/settings";
 import useSetting from "hooks/useSetting";
+import { Input } from "components/input";
 
 const StyledProfileGrid = styled.div`
     --columns: 2;
@@ -42,6 +48,7 @@ export default function ProfilePage() {
     const [showAnnouncementsSettingValue, setShowAnnouncementsSettingValue] = useSetting(showAnnouncementsSetting);
     const [featuredThemePreviewSettingValue, setFeaturedThemePreviewSettingValue] = useSetting(featuredThemePreviewSetting);
     const [devModeSettingValue, setDevModeSettingValue] = useSetting(devModeSetting);
+    const [revalidationTokenSettingValue, setRevalidationTokenSettingValue] = useSetting(revalidationTokenSetting);
 
     return (
         <>
@@ -79,6 +86,16 @@ export default function ProfilePage() {
                                 ))}
                             </Listbox>
                         </SearchFilter>
+                        {devModeSettingValue === "enabled" && (
+                            <SearchFilter>
+                                <Text>Revalidation Token</Text>
+                                <Input
+                                    value={revalidationTokenSettingValue}
+                                    onChange={setRevalidationTokenSettingValue}
+                                    icon={faKey}
+                                />
+                            </SearchFilter>
+                        )}
                     </SearchFilterGroup>
                 </Column>
                 <StyledHeader>
