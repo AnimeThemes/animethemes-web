@@ -145,6 +145,7 @@ const typeDefs = `
         id: Int
         link: String!
         site: String!
+        as: String
     }
     
     type Image {

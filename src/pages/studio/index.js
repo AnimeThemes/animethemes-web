@@ -21,7 +21,7 @@ export default function StudioIndexPage({ studioAll }) {
 }
 
 export async function getStaticProps() {
-    const { data } = await fetchData(`
+    const { data, apiRequests } = await fetchData(`
         #graphql
 
         query {
@@ -34,7 +34,7 @@ export async function getStaticProps() {
 
     return {
         props: {
-            ...getSharedPageProps(),
+            ...getSharedPageProps(apiRequests),
             studioAll: data.studioAll
         },
         // Revalidate after 3 hours (= 10800 seconds).

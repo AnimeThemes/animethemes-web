@@ -638,7 +638,7 @@ function Color({ color }) {
 }
 
 export async function getStaticProps() {
-    const { data } = await fetchData(gql`
+    const { data, apiRequests } = await fetchData(gql`
         ${AnimeSummaryCard.fragments.anime}
         ${AnimeSummaryCard.fragments.previewThemes}
         
@@ -652,7 +652,7 @@ export async function getStaticProps() {
 
     return {
         props: {
-            ...getSharedPageProps(),
+            ...getSharedPageProps(apiRequests),
             demoData: data
         }
     };

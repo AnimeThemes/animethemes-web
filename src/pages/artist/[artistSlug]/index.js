@@ -14,7 +14,8 @@ import { SearchFilter, SearchFilterGroup, SearchFilterSortBy } from "components/
 import { Collapse } from "components/utils";
 import { Listbox } from "components/listbox";
 import {
-    getComparator,
+    chain,
+    getComparator, resourceAsComparator,
     resourceSiteComparator,
     SONG_A_Z,
     SONG_A_Z_ANIME,
@@ -67,7 +68,7 @@ export default function ArtistDetailPage({ artist }) {
     const [ showFilter, toggleShowFilter ] = useToggle();
     const [ filterPerformance, setFilterPerformance ] = useState(performanceFilterOptions[0]);
     const [ filterAlias, setFilterAlias ] = useState(aliasFilterOptions[0]);
-    const [ sortBy, setSortBy ] = useState(SONG_A_Z);
+    const [ sortBy, setSortBy ] = useState(SONG_A_Z_ANIME);
 
     const themes = artist.performances
         .flatMap(
@@ -120,9 +121,9 @@ export default function ArtistDetailPage({ artist }) {
                         {!!artist.resources && !!artist.resources.length && (
                             <DescriptionList.Item title="Links">
                                 <StyledList>
-                                    {artist.resources.sort(resourceSiteComparator).map((resource) => (
+                                    {artist.resources.sort(chain(resourceSiteComparator, resourceAsComparator)).map((resource) => (
                                         <ExternalLink key={resource.link} href={resource.link}>
-                                            {resource.site}
+                                            {resource.site}{!!resource.as && ` (${resource.as})`}
                                         </ExternalLink>
                                     ))}
                                 </StyledList>
@@ -157,10 +158,10 @@ export default function ArtistDetailPage({ artist }) {
                                 </Listbox>
                             </SearchFilter>
                             <SearchFilterSortBy value={sortBy} setValue={setSortBy}>
-                                <SearchFilterSortBy.Option value={SONG_A_Z}>A ➜ Z (Song)</SearchFilterSortBy.Option>
-                                <SearchFilterSortBy.Option value={SONG_Z_A}>Z ➜ A (Song)</SearchFilterSortBy.Option>
                                 <SearchFilterSortBy.Option value={SONG_A_Z_ANIME}>A ➜ Z (Anime)</SearchFilterSortBy.Option>
                                 <SearchFilterSortBy.Option value={SONG_Z_A_ANIME}>Z ➜ A (Anime)</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={SONG_A_Z}>A ➜ Z (Song)</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={SONG_Z_A}>Z ➜ A (Song)</SearchFilterSortBy.Option>
                                 <SearchFilterSortBy.Option value={SONG_OLD_NEW}>Old ➜ New</SearchFilterSortBy.Option>
                                 <SearchFilterSortBy.Option value={SONG_NEW_OLD}>New ➜ Old</SearchFilterSortBy.Option>
                             </SearchFilterSortBy>
@@ -178,7 +179,7 @@ export default function ArtistDetailPage({ artist }) {
 }
 
 export async function getStaticProps({ params: { artistSlug } }) {
-    const { data } = await fetchData(gql`
+    const { data, apiRequests } = await fetchData(gql`
         ${ThemeSummaryCard.fragments.theme}
         ${ThemeSummaryCard.fragments.artist}
 
@@ -224,6 +225,7 @@ export async function getStaticProps({ params: { artistSlug } }) {
                 resources {
                     link
                     site
+                    as
                 }
                 images {
                     facet
@@ -243,7 +245,7 @@ export async function getStaticProps({ params: { artistSlug } }) {
 
     return {
         props: {
-            ...getSharedPageProps(),
+            ...getSharedPageProps(apiRequests),
             artist: data.artist
         },
         // Revalidate after 1 hour (= 3600 seconds).

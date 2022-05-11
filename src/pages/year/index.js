@@ -30,7 +30,7 @@ export default function YearIndexPage({ years }) {
 }
 
 export async function getStaticProps() {
-    const { data } = await fetchData(`
+    const { data, apiRequests } = await fetchData(`
         #graphql
 
         query {
@@ -42,7 +42,7 @@ export async function getStaticProps() {
 
     return {
         props: {
-            ...getSharedPageProps(),
+            ...getSharedPageProps(apiRequests),
             years: data.yearAll
                 .map((year) => year.value)
                 .sort((a, b) => b - a)

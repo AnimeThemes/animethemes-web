@@ -7,3 +7,4 @@ export { ThemeEntryTags } from "./ThemeEntryTags";
 export { VideoTags } from "./VideoTags";
 export { HorizontalScroll } from "./HorizontalScroll";
 export { Highlight } from "./Highlight";
+export { Performances } from "./Performances";

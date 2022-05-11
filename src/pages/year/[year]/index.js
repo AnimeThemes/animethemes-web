@@ -48,7 +48,7 @@ function SeasonPreview({ season, year, animeList }) {
 export async function getStaticProps({ params: { year } }) {
     year = +year;
 
-    const { data } = await fetchData(gql`
+    const { data, apiRequests } = await fetchData(gql`
         ${AnimeSummaryCard.fragments.anime}
         ${AnimeSummaryCard.fragments.previewThemes}
         ${AnimeSummaryCard.fragments.expandable}
@@ -91,7 +91,7 @@ export async function getStaticProps({ params: { year } }) {
 
     return {
         props: {
-            ...getSharedPageProps(),
+            ...getSharedPageProps(apiRequests),
             seasons,
             year,
             yearList: data.yearAll

@@ -48,6 +48,7 @@ export const StyledPlayer = styled(motion.div)`
 
 export const StyledVideo = styled.video`
     width: 100%;
+    max-height: calc(100vh - 96px);
     aspect-ratio: 16 / 9;
     outline: none;
     background-color: rgb(0, 0, 0);

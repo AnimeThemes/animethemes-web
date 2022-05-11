@@ -1,4 +1,3 @@
-import { useDebounce } from "use-debounce";
 import { SearchGlobal } from "components/search";
 import { Column, Row } from "components/box";
 import { faCompass, faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -10,19 +9,13 @@ import { SEO } from "components/seo";
 export default function SearchGlobalPage() {
     const router = useRouter();
     const urlParams = router.query;
-    const searchQuery = urlParams.q || "";
-
-    const [ debouncedSearchQuery ] = useDebounce(searchQuery, 500);
-
-    if (!router.isReady) {
-        return null;
-    }
+    const searchQuery = urlParams.q;
 
     return (
         <>
             <SEO title={searchQuery ? `${searchQuery} - Search` : "Search"}/>
-            {debouncedSearchQuery ? (
-                <SearchGlobal searchQuery={debouncedSearchQuery}/>
+            {searchQuery ? (
+                <SearchGlobal searchQuery={searchQuery}/>
             ) : (
                 <Column style={{ "--gap": "16px" }}>
                     <Row style={{ "--gap": "16px" }}>

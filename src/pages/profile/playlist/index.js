@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Text } from "components/text";
 import { Column, Row } from "components/box";
 import { SidebarContainer } from "components/container";
-import { ThemeSummaryCard } from "components/card";
+import { Card, ThemeSummaryCard } from "components/card";
 import useToggle from "hooks/useToggle";
 import { useState } from "react";
 import { Button, FilterToggleButton } from "components/button";
@@ -23,11 +23,13 @@ import { Reorder } from "framer-motion";
 import { useLocalPlaylist } from "context/localPlaylistContext";
 import theme from "theme";
 import { MultiCoverImage } from "components/image";
+import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import { Icon } from "components/icon";
 
 const StyledDesktopOnly = styled.div`
     gap: 24px;
     
-    @media (max-width: ${theme.breakpoints.tabletMax}) {
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
         display: none;
     }
 `;
@@ -129,6 +131,16 @@ export default function PlaylistPage() {
                             <Text color="text-warning">{refreshError}</Text>
                         )}
                     </Row>
+                    <Card color="text-warning">
+                        <Text color="text-warning" weight="bold">
+                            <Icon icon={faExclamationCircle}/> Read this before using the local playlist:
+                        </Text>
+                        <Text as="p">
+                            The local playlist is only saved in your browser&apos;s storage.
+                            You can&apos;t share it between devices and it will be deleted if you clear your browser&apos;s storage (e.g. cookies).
+                            We can&apos;t retrieve a deleted playlist for you.
+                        </Text>
+                    </Card>
                     <StyledReorderContainer>
                         <Reorder.Group as="div" axis="y" values={themes} onReorder={setPlaylist}>
                             {themes.map((theme) => (

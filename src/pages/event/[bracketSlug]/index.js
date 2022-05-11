@@ -226,7 +226,7 @@ function ThemeSummaryCard({ theme, isVoted, isWinner, seed, votes, ...props }) {
 }
 
 export async function getStaticProps({ params: { bracketSlug } }) {
-    const { data } = await fetchData(`
+    const { data, apiRequests } = await fetchData(`
         #graphql
         
         fragment CharacterFragment on BracketCharacter {
@@ -305,7 +305,7 @@ export async function getStaticProps({ params: { bracketSlug } }) {
 
     return {
         props: {
-            ...getSharedPageProps(),
+            ...getSharedPageProps(apiRequests),
             bracket: data.bracket
         }
     };
