@@ -6,7 +6,7 @@ export const SidebarContainer = styled.div`
     grid-template-columns: 1fr 3fr;
     grid-gap: 32px 24px;
 
-    @media (max-width: ${theme.breakpoints.tabletMax}) {
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
         grid-template-columns: 1fr;
     }
 `;

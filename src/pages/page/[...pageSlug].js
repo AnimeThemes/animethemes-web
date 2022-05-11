@@ -238,7 +238,7 @@ function TableOfContents({ headings }) {
 }
 
 export async function getStaticProps({ params: { pageSlug } }) {
-    const { data } = await fetchData(`
+    const { data, apiRequests } = await fetchData(`
         #graphql
 
         query($pageSlug: String!) {
@@ -259,7 +259,7 @@ export async function getStaticProps({ params: { pageSlug } }) {
 
     return {
         props: {
-            ...getSharedPageProps(),
+            ...getSharedPageProps(apiRequests),
             page: {
                 ...data.page,
                 body: markdownToHtml(data.page.body)

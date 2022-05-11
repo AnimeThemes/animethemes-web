@@ -20,7 +20,7 @@ import getSharedPageProps from "utils/getSharedPageProps";
 const StyledDesktopOnly = styled.div`
     gap: 24px;
     
-    @media (max-width: ${theme.breakpoints.tabletMax}) {
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
         display: none;
     }
 `;
@@ -71,7 +71,7 @@ export default function SeriesDetailPage({ series }) {
 }
 
 export async function getStaticProps({ params: { seriesSlug } }) {
-    const { data } = await fetchData(gql`
+    const { data, apiRequests } = await fetchData(gql`
         ${AnimeSummaryCard.fragments.anime}
         ${AnimeSummaryCard.fragments.previewThemes}
         ${AnimeSummaryCard.fragments.expandable}
@@ -118,7 +118,7 @@ export async function getStaticProps({ params: { seriesSlug } }) {
 
     return {
         props: {
-            ...getSharedPageProps(),
+            ...getSharedPageProps(apiRequests),
             series: data.series
         },
         // Revalidate after 1 hour (= 3600 seconds).

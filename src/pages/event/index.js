@@ -75,11 +75,12 @@ export async function getStaticProps() {
             path: "/event/anime-awards"
         }
     ];
+    let totalApiRequests = 0;
 
     const brackets = await Promise.all([
         "best-anime-opening-ix-salty-arrow"
     ].map(async (bracket) => {
-        const { data } = await fetchData(`
+        const { data, apiRequests } = await fetchData(`
             #graphql
 
             query($bracketSlug: String!) {
@@ -89,6 +90,8 @@ export async function getStaticProps() {
             }
         `, { bracketSlug: bracket });
 
+        totalApiRequests += apiRequests;
+
         return {
             name: data.bracket.name,
             path: `/event/${bracket}`
@@ -97,7 +100,7 @@ export async function getStaticProps() {
 
     return {
         props: {
-            ...getSharedPageProps(),
+            ...getSharedPageProps(totalApiRequests),
             awards,
             brackets
         }

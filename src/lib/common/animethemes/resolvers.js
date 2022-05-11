@@ -267,6 +267,14 @@ const resolvers = {
             type: "Studio",
             baseInclude: INCLUDES.Studio.resources
         }),
+    },
+    Performance: {
+        artist: apiResolver({
+            field: "artist"
+        }),
+        song: apiResolver({
+            field: "song"
+        }),
     }
 };
 

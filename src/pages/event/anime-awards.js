@@ -199,34 +199,40 @@ function ThemeSummaryCard({ theme, rank, votes, ...props }) {
 }
 
 export async function getStaticProps() {
+    let totalApiRequests = 0;
+
     const awards = await Promise.all(event.map(async (award) => {
         const { openings, endings } = award.nominees;
+
+        async function populateNominees(nominees) {
+            return Promise.all(nominees.map(async (nominee) => {
+                const { theme, apiRequests } = await fetchTheme(nominee.id);
+
+                totalApiRequests += apiRequests;
+
+                return { ...nominee, theme };
+            }));
+        }
 
         return {
             year: award.year,
             nominees: {
-                openings: await Promise.all(openings.map(async (nominee) => ({
-                    ...nominee,
-                    theme: await fetchTheme(nominee.id)
-                }))),
-                endings: await Promise.all(endings.map(async (nominee) => ({
-                    ...nominee,
-                    theme: await fetchTheme(nominee.id)
-                })))
+                openings: await populateNominees(openings),
+                endings: await populateNominees(endings)
             }
         };
     }));
 
     return {
         props: {
-            ...getSharedPageProps(),
+            ...getSharedPageProps(totalApiRequests),
             awards
         }
     };
 }
 
 async function fetchTheme(opening) {
-    const { data } = await fetchData(`
+    const { data, apiRequests } = await fetchData(`
         #graphql
 
         query ($id: Int) {
@@ -262,5 +268,5 @@ async function fetchTheme(opening) {
         }
     `, { id: opening });
 
-    return data.theme;
+    return { theme: data.theme, apiRequests };
 }

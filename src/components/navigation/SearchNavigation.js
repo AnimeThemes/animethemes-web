@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Text } from "components/text";
 import { Input } from "components/input";
@@ -7,7 +7,7 @@ import { Switcher } from "components/switcher";
 import styled from "styled-components";
 import theme from "theme";
 import { useRouter } from "next/router";
-import { capitalize } from "lodash-es";
+import { capitalize, debounce } from "lodash-es";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const StyledSearchOptions = styled.div`
@@ -22,35 +22,42 @@ const StyledSearchOptions = styled.div`
     }
 `;
 
+const updateSearchQuery = debounce((router, newSearchQuery) => {
+    // Update URL to maintain the searchQuery on page navigation.
+    const newUrlParams = {};
+
+    if (newSearchQuery) {
+        newUrlParams.q = newSearchQuery;
+    }
+
+    router.replace({
+        pathname: router.pathname,
+        query: newUrlParams
+    }, null, {
+        shallow: true
+    });
+}, 500);
+
 export function SearchNavigation() {
     const router = useRouter();
-    const { entity, ...urlParams } = router.query;
-    const searchQuery = urlParams.q || "";
+    const { entity, ...query } = router.query;
+    const { q: initialSearchQuery = "" } = query;
 
-    const updateSearchQuery = (newSearchQuery) => {
-        // Update URL to maintain the searchQuery on page navigation.
-        const newUrlParams = {
-            ...urlParams
-        };
+    const isReady = useRef(false);
+    const [inputSearchQuery, setInputSearchQuery] = useState("");
 
-        if (newSearchQuery) {
-            newUrlParams.q = newSearchQuery;
-        } else {
-            delete newUrlParams.q;
-        }
-
-        let url = "/search";
-        if (entity) {
-            url += `/${entity}`;
-        }
-
-        router.replace({
-            pathname: url,
-            query: newUrlParams
-        }, null, {
-            shallow: true
-        });
+    const updateInputSearchQuery = (newInputSearchQuery) => {
+        setInputSearchQuery(newInputSearchQuery);
+        updateSearchQuery(router, newInputSearchQuery);
     };
+
+    useEffect(() => {
+        if (isReady.current) {
+            setInputSearchQuery(initialSearchQuery);
+        } else {
+            isReady.current = true;
+        }
+    }, [initialSearchQuery]);
 
     const inputRef = useRef();
 
@@ -68,8 +75,8 @@ export function SearchNavigation() {
             <Text variant="h1">Search</Text>
             <StyledSearchOptions>
                 <Input
-                    value={searchQuery}
-                    onChange={updateSearchQuery}
+                    value={inputSearchQuery}
+                    onChange={updateInputSearchQuery}
                     inputProps={{
                         ref: inputRef,
                         spellCheck: false,
@@ -80,11 +87,11 @@ export function SearchNavigation() {
                 />
                 <HorizontalScroll fixShadows>
                     <Switcher selectedItem={entity || null}>
-                        <Link href={{ pathname: "/search", query: urlParams }} passHref prefetch={false}>
+                        <Link href={{ pathname: "/search", query }} passHref prefetch={false}>
                             <Switcher.Reset as="a"/>
                         </Link>
                         {[ "anime", "theme", "artist", "series", "studio" ].map((entity) => (
-                            <Link key={entity} href={{ pathname: `/search/${entity}`, query: urlParams }} passHref prefetch={false}>
+                            <Link key={entity} href={{ pathname: `/search/${entity}`, query }} passHref prefetch={false}>
                                 <Switcher.Option as="a" value={entity}>
                                     {capitalize(entity)}
                                 </Switcher.Option>

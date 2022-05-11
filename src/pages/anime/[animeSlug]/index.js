@@ -13,7 +13,13 @@ import { AnimeThemeFilter } from "components/filter";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import useImage from "hooks/useImage";
-import { resourceSiteComparator, seriesNameComparator, studioNameComparator } from "utils/comparators";
+import {
+    chain,
+    resourceAsComparator,
+    resourceSiteComparator,
+    seriesNameComparator,
+    studioNameComparator
+} from "utils/comparators";
 import fetchStaticPaths from "utils/fetchStaticPaths";
 import gql from "graphql-tag";
 import getSharedPageProps from "utils/getSharedPageProps";
@@ -83,9 +89,9 @@ export default function AnimeDetailPage({ anime }) {
                         {!!anime.resources?.length && (
                             <DescriptionList.Item title="Links">
                                 <StyledList>
-                                    {anime.resources.sort(resourceSiteComparator).map((resource) => (
+                                    {anime.resources.sort(chain(resourceSiteComparator, resourceAsComparator)).map((resource) => (
                                         <ExternalLink key={resource.link} href={resource.link}>
-                                            {resource.site}
+                                            {resource.site}{!!resource.as && ` (${resource.as})`}
                                         </ExternalLink>
                                     ))}
                                 </StyledList>
@@ -124,7 +130,7 @@ export default function AnimeDetailPage({ anime }) {
 }
 
 export async function getStaticProps({ params: { animeSlug } }) {
-    const { data } = await fetchData(`
+    const { data, apiRequests } = await fetchData(`
         #graphql
 
         query($animeSlug: String!) {
@@ -189,6 +195,7 @@ export async function getStaticProps({ params: { animeSlug } }) {
                 resources {
                     link
                     site
+                    as
                 }
                 images {
                     facet
@@ -208,7 +215,7 @@ export async function getStaticProps({ params: { animeSlug } }) {
 
     return {
         props: {
-            ...getSharedPageProps(),
+            ...getSharedPageProps(apiRequests),
             anime: data.anime
         },
         // Revalidate after 1 hour (= 3600 seconds).

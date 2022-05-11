@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Column, Row } from "components/box";
 import { Text } from "components/text";
-import { SongTitleWithArtists, ThemeEntryTags, VideoTags } from "components/utils";
+import { Performances, SongTitle, ThemeEntryTags, VideoTags } from "components/utils";
 import { Button, VideoButton } from "components/button";
 import { AnimeSummaryCard, ArtistSummaryCard, SummaryCard, ThemeSummaryCard } from "components/card";
 import useImage from "hooks/useImage";
@@ -24,7 +24,7 @@ const StyledVideoInfo = styled.div`
     display: grid;
     grid-template-columns: 1fr auto;
     grid-gap: 16px;
-    align-items: center;
+    align-items: baseline;
 
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         grid-template-columns: 1fr;
@@ -157,14 +157,22 @@ export default function VideoPage({ anime, theme, entry, video }) {
                 <meta name="og:video:height" content="720"/>
             </SEO>
             <StyledVideoInfo>
-                <Column style={{ "--gap": "4px" }}>
-                    <SongTitleWithArtists song={theme.song}/>
-                    <Text variant="small" color="text-muted" maxLines={1}>
-                        <Text>{theme.type}{theme.sequence || null}{theme.group && ` (${theme.group})`} from </Text>
+                <Column style={{ "--gap": "8px" }}>
+                    <Text color="text-muted">
+                        <SongTitle song={theme.song}/>
+                        <Text variant="small"> - </Text>
+                        <Text weight={600}>{theme.type}{theme.sequence || null}{theme.group && ` (${theme.group})`}</Text>
+                        <Text variant="small"> from </Text>
                         <Link href={`/anime/${anime.slug}`} passHref prefetch={false}>
                             <Text as="a" link>{anime.name}</Text>
                         </Link>
                     </Text>
+                    {!!theme.song?.performances?.length && (
+                        <Text variant="small" color="text-muted">
+                            <Text>Performed</Text>
+                            <Performances song={theme.song} maxPerformances={null}/>
+                        </Text>
+                    )}
                 </Column>
                 <Text color="text-muted">
                     <Column style={{ "--gap": "4px" }}>
@@ -273,7 +281,7 @@ export default function VideoPage({ anime, theme, entry, video }) {
 }
 
 export async function getStaticProps({ params: { animeSlug, videoSlug } }) {
-    const { data } = await fetchData(gql`
+    const { data, apiRequests } = await fetchData(gql`
         ${ThemeSummaryCard.fragments.theme}
         
         query($animeSlug: String!) {
@@ -324,10 +332,6 @@ export async function getStaticProps({ params: { animeSlug, videoSlug } }) {
                         }
                     }
                 }
-                resources {
-                    site
-                    link
-                }
                 images {
                     facet
                     link
@@ -348,46 +352,31 @@ export async function getStaticProps({ params: { animeSlug, videoSlug } }) {
 
     const anime = data.anime;
 
-    if (!anime) {
-        return {
-            notFound: true
-        };
-    }
-
-    let pageTheme = null;
-    let pageEntry = null;
-    let pageVideo = null;
-
-    themeLoop: for (const theme of anime.themes) {
-        for (const entry of theme.entries) {
-            for (const video of entry.videos) {
-                if (createVideoSlug(theme, entry, video) === videoSlug) {
-                    pageTheme = theme;
-                    pageEntry = entry;
-                    pageVideo = video;
-                    break themeLoop;
+    if (anime) {
+        for (const theme of anime.themes) {
+            for (const entry of theme.entries) {
+                for (const video of entry.videos) {
+                    if (createVideoSlug(theme, entry, video) === videoSlug) {
+                        return {
+                            props: {
+                                ...getSharedPageProps(apiRequests),
+                                anime,
+                                theme,
+                                video,
+                                entry,
+                                isVideoPage: true
+                            },
+                            // Revalidate after 1 hour (= 3600 seconds).
+                            revalidate: 3600
+                        };
+                    }
                 }
             }
         }
     }
 
-    if (!pageVideo) {
-        return {
-            notFound: true
-        };
-    }
-
     return {
-        props: {
-            ...getSharedPageProps(),
-            anime,
-            theme: pageTheme,
-            video: pageVideo,
-            entry: pageEntry,
-            isVideoPage: true
-        },
-        // Revalidate after 1 hour (= 3600 seconds).
-        revalidate: 3600
+        notFound: true
     };
 }
 

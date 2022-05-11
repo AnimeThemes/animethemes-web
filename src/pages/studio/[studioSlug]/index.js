@@ -12,8 +12,8 @@ import {
     ANIME_A_Z,
     ANIME_NEW_OLD,
     ANIME_OLD_NEW,
-    ANIME_Z_A,
-    getComparator,
+    ANIME_Z_A, chain,
+    getComparator, resourceAsComparator,
     resourceSiteComparator,
 } from "utils/comparators";
 import { fetchData } from "lib/server";
@@ -27,7 +27,7 @@ import fetchStaticPaths from "utils/fetchStaticPaths";
 import getSharedPageProps from "utils/getSharedPageProps";
 
 const StyledDesktopOnly = styled.div`    
-    @media (max-width: ${theme.breakpoints.tabletMax}) {
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
         display: none;
     }
 `;
@@ -61,9 +61,9 @@ export default function StudioDetailPage({ studio }) {
                         {!!studio.resources && !!studio.resources.length && (
                             <DescriptionList.Item title="Links">
                                 <StyledList>
-                                    {studio.resources.sort(resourceSiteComparator).map((resource) => (
+                                    {studio.resources.sort(chain(resourceSiteComparator, resourceAsComparator)).map((resource) => (
                                         <ExternalLink key={resource.link} href={resource.link}>
-                                            {resource.site}
+                                            {resource.site}{!!resource.as && ` (${resource.as})`}
                                         </ExternalLink>
                                     ))}
                                 </StyledList>
@@ -101,7 +101,7 @@ export default function StudioDetailPage({ studio }) {
 }
 
 export async function getStaticProps({ params: { studioSlug } }) {
-    const { data } = await fetchData(gql`
+    const { data, apiRequests } = await fetchData(gql`
         ${AnimeSummaryCard.fragments.anime}
         ${AnimeSummaryCard.fragments.previewThemes}
         ${AnimeSummaryCard.fragments.expandable}
@@ -137,6 +137,7 @@ export async function getStaticProps({ params: { studioSlug } }) {
                 resources {
                     link
                     site
+                    as
                 }
             }
         }
@@ -152,7 +153,7 @@ export async function getStaticProps({ params: { studioSlug } }) {
 
     return {
         props: {
-            ...getSharedPageProps(),
+            ...getSharedPageProps(apiRequests),
             studio: data.studio
         },
         // Revalidate after 1 hour (= 3600 seconds).

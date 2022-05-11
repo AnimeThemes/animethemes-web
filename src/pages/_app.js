@@ -47,7 +47,7 @@ export default function MyApp({ Component, pageProps }) {
     const [colorTheme, toggleColorTheme] = useColorTheme();
     const [devModeSettingValue] = useSetting(devModeSetting);
 
-    const { lastBuildAt, isVideoPage = false, ...videoPageProps } = pageProps;
+    const { lastBuildAt, apiRequests, isVideoPage = false, ...videoPageProps } = pageProps;
     const [ lastVideoPageProps, setLastVideoPageProps ] = useState(() => {
         return isVideoPage ? videoPageProps : null;
     });
@@ -99,7 +99,7 @@ export default function MyApp({ Component, pageProps }) {
                     )}
                     <Component {...pageProps}/>
                     {devModeSettingValue === "enabled" && lastBuildAt && (
-                        <PageRevalidation lastBuildAt={lastBuildAt}/>
+                        <PageRevalidation lastBuildAt={lastBuildAt} apiRequests={apiRequests}/>
                     )}
                 </StyledContainer>
                 <Footer/>
@@ -117,7 +117,7 @@ function MultiContextProvider({ providers = [], children }) {
     ), children);
 }
 
-function PageRevalidation({ lastBuildAt }) {
+function PageRevalidation({ lastBuildAt, apiRequests }) {
     const router = useRouter();
     const [secret] = useSetting(revalidationTokenSetting);
 
@@ -155,6 +155,10 @@ function PageRevalidation({ lastBuildAt }) {
         ? `${minutesSinceLastBuild} minute${minutesSinceLastBuild === 1 ? "" : "s"}`
         : "a few seconds";
 
+    const apiRequestsDescription = apiRequests
+        ? ` using ${apiRequests} API request${apiRequests === 1 ? "" : "s"}`
+        : "";
+
     const canRebuild = !isRevalidating && !!secret;
     const rebuildDescription = isRevalidating
         ? "Rebuild in progress... The page will automatically reload after it's finished."
@@ -165,7 +169,7 @@ function PageRevalidation({ lastBuildAt }) {
 
     return (
         <Text variant="small" color="text-disabled" link={canRebuild} onClick={revalidate}>
-            Page was last built {lastBuildDescription} ago. {rebuildDescription}
+            Page was last built {lastBuildDescription} ago{apiRequestsDescription}. {rebuildDescription}
         </Text>
     );
 }

@@ -1,4 +1,3 @@
-import { useDebounce } from "use-debounce";
 import { SearchAnime, SearchArtist, SearchSeries, SearchStudio, SearchTheme } from "components/search";
 import { useRouter } from "next/router";
 import { SEO } from "components/seo";
@@ -7,18 +6,12 @@ import { capitalize } from "lodash-es";
 export default function SearchEntityPage({ entity }) {
     const router = useRouter();
     const urlParams = router.query;
-    const searchQuery = urlParams.q || "";
-
-    const [ debouncedSearchQuery ] = useDebounce(searchQuery, 500);
-
-    if (!router.isReady) {
-        return null;
-    }
+    const searchQuery = urlParams.q;
 
     return (
         <>
             <SEO title={`${searchQuery ? `${searchQuery} - ` : ""}${capitalize(entity)} Index`}/>
-            <Index searchEntity={entity} searchQuery={debouncedSearchQuery}/>
+            <Index searchEntity={entity} searchQuery={searchQuery}/>
         </>
     );
 }

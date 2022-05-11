@@ -30,6 +30,7 @@ export const themeIndexComparator = (a, b) => a.sequence - b.sequence;
 export const studioNameComparator = (a, b) => a.name.localeCompare(b.name);
 export const seriesNameComparator = (a, b) => a.name.localeCompare(b.name);
 export const resourceSiteComparator = (a, b) => a.site.localeCompare(b.site);
+export const resourceAsComparator = (a, b) => (!a.as && -1) || (!b.as && 1) || a.as.localeCompare(b.as);
 
 export const UNSORTED = "unsorted";
 
@@ -55,8 +56,8 @@ const comparators = new Map([
     [ ANIME_NEW_OLD, chain(reverse(animePremiereComparator), animeNameComparator) ],
     [ SONG_A_Z, songTitleComparator ],
     [ SONG_Z_A, reverse(songTitleComparator) ],
-    [ SONG_A_Z_ANIME, chain(toAnime(animeNameComparator), songTitleComparator) ],
-    [ SONG_Z_A_ANIME, chain(reverse(toAnime(animeNameComparator)), songTitleComparator) ],
+    [ SONG_A_Z_ANIME, chain(toAnime(animeNameComparator), themeTypeComparator, themeIndexComparator) ],
+    [ SONG_Z_A_ANIME, chain(reverse(toAnime(animeNameComparator)), themeTypeComparator, themeIndexComparator) ],
     [ SONG_OLD_NEW, chain(toAnime(animePremiereComparator), toAnime(animeNameComparator), songTitleComparator) ],
     [ SONG_NEW_OLD, chain(reverse(toAnime(animePremiereComparator)), toAnime(animeNameComparator), songTitleComparator) ]
 ]);

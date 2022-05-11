@@ -36,8 +36,7 @@
     "rehype-react": "^7.0.4",
     "sass": "^1.43.4",
     "styled-components": "^5.3.3",
-    "unified": "^10.1.2",
-    "use-debounce": "^7.0.0"
+    "unified": "^10.1.2"
   },
   "devDependencies": {
     "eslint": "7.32.0",

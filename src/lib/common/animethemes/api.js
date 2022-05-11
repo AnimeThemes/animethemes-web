@@ -159,9 +159,14 @@ export function apiResolver(config) {
 
         devLog.info(path + ": " + url);
 
+        if (!context.apiRequests) {
+            context.apiRequests = 0;
+        }
+
         return await limit(() => (async () => {
             if (!pagination) {
                 const json = await fetchJson(url);
+                context.apiRequests++;
 
                 return transformer(extractor(json, parent, args), parent, args);
             } else {
@@ -170,6 +175,7 @@ export function apiResolver(config) {
                 let nextUrl = `${url}${url.includes("?") ? "&" : "?"}page[size]=100`;
                 while (nextUrl) {
                     const json = await fetchJson(nextUrl);
+                    context.apiRequests++;
                     results.push(...transformer(extractor(json, parent, args), parent, args));
                     devLog.info(`Collecting: ${url}, Got ${results.length}`);
                     nextUrl = json.links.next;

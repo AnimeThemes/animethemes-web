@@ -229,7 +229,7 @@ export default function HomePage({ featuredTheme }) {
 }
 
 export async function getStaticProps() {
-    const { data } = await fetchData(gql`
+    const { data, apiRequests } = await fetchData(gql`
         ${FeaturedTheme.fragment}
         ${ThemeSummaryCard.fragments.theme}
         
@@ -242,7 +242,7 @@ export async function getStaticProps() {
 
     return {
         props: {
-            ...getSharedPageProps(),
+            ...getSharedPageProps(apiRequests),
             featuredTheme: data.theme
         }
     };
