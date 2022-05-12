@@ -28,7 +28,7 @@ export default async function handler(req, res) {
     }
 
     for (const path of paths) {
-        await res.unstable_revalidate(path);
+        await res.unstable_revalidate(`${process.env.NEXT_PUBLIC_BASE_PATH || ""}${path}`);
     }
 
     return res.json({ revalidated: true, affectedPaths: paths });

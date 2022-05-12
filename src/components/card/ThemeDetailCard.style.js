@@ -14,7 +14,7 @@ export const StyledThemeCard = styled(Card)`
 export const StyledRow = styled.div`
     display: grid;
     grid-template-columns: 2rem 1fr auto;
-    align-items: center;
+    align-items: baseline;
     
     grid-gap: 1rem;
 `;

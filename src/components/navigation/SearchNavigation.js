@@ -24,10 +24,13 @@ const StyledSearchOptions = styled.div`
 
 const updateSearchQuery = debounce((router, newSearchQuery) => {
     // Update URL to maintain the searchQuery on page navigation.
-    const newUrlParams = {};
+    const newUrlParams = {
+        ...router.query,
+        q: newSearchQuery
+    };
 
-    if (newSearchQuery) {
-        newUrlParams.q = newSearchQuery;
+    if (!newUrlParams.q) {
+        delete newUrlParams.q;
     }
 
     router.replace({

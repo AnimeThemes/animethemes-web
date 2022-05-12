@@ -10,7 +10,7 @@ const initialFilter = {
 };
 
 export function SearchStudio({ searchQuery }) {
-    const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter", initialFilter);
+    const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter-studio", initialFilter);
 
     const entitySearch = useEntitySearch("studio", searchQuery, {
         filters: {

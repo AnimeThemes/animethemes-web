@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Text } from "components/text";
 import styled from "styled-components";
+import { useState } from "react";
 
 const StyledArtist = styled(Text)`
     &:not(:first-of-type)::before {
@@ -19,11 +20,13 @@ const StyledArtistLink = styled(Text).attrs({ as: "a", link: true })`
 `;
 
 export function Performances({ song, artist, maxPerformances = 3 }) {
+    const [expandPerformances, setExpandPerformances] = useState(false);
+
     if (!song?.performances?.length) {
         return null;
     }
 
-    if (maxPerformances === null) {
+    if (maxPerformances === null || expandPerformances) {
         maxPerformances = song.performances.length;
     }
 
@@ -83,7 +86,11 @@ export function Performances({ song, artist, maxPerformances = 3 }) {
                     </StyledArtist>
                 ))}
                 {!!performancesHidden.length && (
-                    <StyledArtist>{performancesHidden.length} more</StyledArtist>
+                    <StyledArtist>
+                        <Text link onClick={() => setExpandPerformances(true)}>
+                            {performancesHidden.length} more
+                        </Text>
+                    </StyledArtist>
                 )}
             </Text>
         </Text>
