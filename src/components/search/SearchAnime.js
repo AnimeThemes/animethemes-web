@@ -17,7 +17,7 @@ const initialFilter = {
 };
 
 export function SearchAnime({ searchQuery }) {
-    const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter", initialFilter);
+    const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter-anime", initialFilter);
 
     const entitySearch = useEntitySearch("anime", searchQuery, {
         filters: {

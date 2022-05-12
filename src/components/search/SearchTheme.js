@@ -11,7 +11,7 @@ const initialFilter = {
 };
 
 export function SearchTheme({ searchQuery }) {
-    const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter", initialFilter);
+    const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter-theme", initialFilter);
 
     const entitySearch = useEntitySearch("theme", searchQuery, {
         filters: {

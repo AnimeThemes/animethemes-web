@@ -10,7 +10,7 @@ const initialFilter = {
 };
 
 export function SearchArtist({ searchQuery }) {
-    const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter", initialFilter);
+    const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter-artist", initialFilter);
 
     const entitySearch = useEntitySearch("artist", searchQuery, {
         filters: {
