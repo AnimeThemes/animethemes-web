@@ -7,11 +7,15 @@ import useSessionStorage from "hooks/useSessionStorage";
 const initialFilter = {
     firstLetter: null,
     type: null,
-    sortBy: "song.title"
+    sortBy: null
 };
 
 export function SearchTheme({ searchQuery }) {
     const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter-theme", initialFilter);
+
+    // Use song.title sort by default if not searching.
+    // If searching and no other sort was selected, use null (= by relevance).
+    const sortBy = searchQuery ? filter.sortBy : (filter.sortBy ?? "song.title");
 
     const entitySearch = useEntitySearch("theme", searchQuery, {
         filters: {
@@ -19,7 +23,7 @@ export function SearchTheme({ searchQuery }) {
             "song][title-like": filter.firstLetter ? `${filter.firstLetter}%` : null,
             type: filter.type
         },
-        sortBy: searchQuery ? null : filter.sortBy
+        sortBy
     });
 
     return (
@@ -29,18 +33,15 @@ export function SearchTheme({ searchQuery }) {
                 <>
                     <SearchFilterFirstLetter value={filter.firstLetter} setValue={updateFilter("firstLetter")}/>
                     <SearchFilterThemeType value={filter.type} setValue={updateFilter("type")}/>
-                    <SearchFilterSortBy value={searchQuery ? null : filter.sortBy} setValue={updateFilter("sortBy")}>
+                    <SearchFilterSortBy value={sortBy} setValue={updateFilter("sortBy")}>
                         {searchQuery ? (
                             <SearchFilterSortBy.Option>Relevance</SearchFilterSortBy.Option>
-                        ) : (
-                            <>
-                                <SearchFilterSortBy.Option value="song.title">A ➜ Z</SearchFilterSortBy.Option>
-                                <SearchFilterSortBy.Option value="-song.title">Z ➜ A</SearchFilterSortBy.Option>
-                                <SearchFilterSortBy.Option value="anime.year,anime.season,song.title">Old ➜ New</SearchFilterSortBy.Option>
-                                <SearchFilterSortBy.Option value="-anime.year,-anime.season,song.title">New ➜ Old</SearchFilterSortBy.Option>
-                                <SearchFilterSortBy.Option value="-created_at">Last Added</SearchFilterSortBy.Option>
-                            </>
-                        )}
+                        ) : null}
+                        <SearchFilterSortBy.Option value="song.title">A ➜ Z</SearchFilterSortBy.Option>
+                        <SearchFilterSortBy.Option value="-song.title">Z ➜ A</SearchFilterSortBy.Option>
+                        <SearchFilterSortBy.Option value="anime.year,anime.season,song.title">Old ➜ New</SearchFilterSortBy.Option>
+                        <SearchFilterSortBy.Option value="-anime.year,-anime.season,song.title">New ➜ Old</SearchFilterSortBy.Option>
+                        <SearchFilterSortBy.Option value="-created_at">Last Added</SearchFilterSortBy.Option>
                     </SearchFilterSortBy>
                 </>
             }

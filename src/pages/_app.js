@@ -22,7 +22,7 @@ import { AnnouncementToast, ToastHub } from "components/toast";
 import { Text } from "components/text";
 import { useRouter } from "next/router";
 import useSetting from "hooks/useSetting";
-import { devModeSetting, revalidationTokenSetting } from "utils/settings";
+import { DeveloperMode, RevalidationToken } from "utils/settings";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "styles/prism.scss";
@@ -45,7 +45,7 @@ const StyledContainer = styled(Container)`
 
 export default function MyApp({ Component, pageProps }) {
     const [colorTheme, toggleColorTheme] = useColorTheme();
-    const [devModeSettingValue] = useSetting(devModeSetting);
+    const [developerMode] = useSetting(DeveloperMode);
 
     const { lastBuildAt, apiRequests, isVideoPage = false, ...videoPageProps } = pageProps;
     const [ lastVideoPageProps, setLastVideoPageProps ] = useState(() => {
@@ -98,7 +98,7 @@ export default function MyApp({ Component, pageProps }) {
                         <SearchNavigation/>
                     )}
                     <Component {...pageProps}/>
-                    {devModeSettingValue === "enabled" && lastBuildAt && (
+                    {developerMode === DeveloperMode.ENABLED && lastBuildAt && (
                         <PageRevalidation lastBuildAt={lastBuildAt} apiRequests={apiRequests}/>
                     )}
                 </StyledContainer>
@@ -119,7 +119,7 @@ function MultiContextProvider({ providers = [], children }) {
 
 function PageRevalidation({ lastBuildAt, apiRequests }) {
     const router = useRouter();
-    const [secret] = useSetting(revalidationTokenSetting);
+    const [secret] = useSetting(RevalidationToken);
 
     const [isRevalidating, setRevalidating] = useState(false);
 

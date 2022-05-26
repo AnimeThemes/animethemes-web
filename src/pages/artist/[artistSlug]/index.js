@@ -71,11 +71,7 @@ export default function ArtistDetailPage({ artist }) {
     const [ sortBy, setSortBy ] = useState(SONG_A_Z_ANIME);
 
     const themes = artist.performances
-        .flatMap(
-            (performance) => performance.song.themes.map(
-                (theme) => ({ ...theme, ...performance })
-            )
-        )
+        .flatMap((performance) => performance.song.themes)
         .filter((performance) => (
             filterAlias === null ||
             (filterAlias === artist.name && !performance.as) ||
@@ -169,7 +165,12 @@ export default function ArtistDetailPage({ artist }) {
                     </Collapse>
                     <Column style={{ "--gap": "16px" }}>
                         {themes.map((theme) => (
-                            <ThemeSummaryCard key={theme.anime.slug + theme.slug + theme.group} theme={theme} artist={artist}/>
+                            <ThemeSummaryCard
+                                key={theme.anime.slug + theme.slug + theme.group}
+                                theme={theme}
+                                artist={artist}
+                                expandable
+                            />
                         ))}
                     </Column>
                 </Column>
@@ -206,6 +207,8 @@ export async function getStaticProps({ params: { artistSlug } }) {
                             group
                             anime {
                                 slug
+                                year
+                                season
                             }
                         }
                     }

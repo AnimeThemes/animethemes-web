@@ -1,10 +1,11 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { LayoutGroup, motion } from "framer-motion";
 import theme from "theme";
 import { uniqueId as createUniqueId } from "lodash-es";
 import { createContext, forwardRef, useContext, useMemo } from "react";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "components/icon";
+import { withHover } from "styles/mixins";
 
 const SwitcherContext = createContext();
 
@@ -19,9 +20,7 @@ const StyledSwitcher = styled.div`
     background-color: ${theme.colors["solid"]};
     box-shadow: ${theme.shadows.low};
 `;
-const StyledButton = styled.button`
-    --color: ${theme.colors["text-muted"]};
-    
+const StyledButton = styled.button`    
     position: relative;
     
     display: inline-flex;
@@ -36,9 +35,14 @@ const StyledButton = styled.button`
     text-transform: uppercase;
     letter-spacing: 0.1rem;
     cursor: pointer;
-    color: var(--color);
+    color: ${(props) => props.isSelected ? theme.colors["text-on-primary"] : theme.colors["text-muted"]};
     
     transition: color 500ms;
+
+    ${withHover(css`
+        color: ${(props) => props.isSelected ? theme.colors["text-on-primary"] : theme.colors["text"]};;
+        transition-duration: 250ms;
+    `)}
 `;
 const StyledButtonBackground = styled(motion.div)`
     position: absolute;
@@ -76,9 +80,9 @@ Switcher.Option = forwardRef(function SwitcherItem({ children, value, ...props }
 
     return (
         <StyledButton
-            style={{ "--color": isSelected && theme.colors["text-on-primary"] }}
-            onClick={() => context.select(value)}
             ref={ref}
+            isSelected={isSelected}
+            onClick={() => context.select(value)}
             {...props}
         >
             {isSelected && (

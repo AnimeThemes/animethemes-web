@@ -13,11 +13,15 @@ const initialFilter = {
     firstLetter: null,
     season: null,
     year: null,
-    sortBy: "name"
+    sortBy: null
 };
 
 export function SearchAnime({ searchQuery }) {
     const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter-anime", initialFilter);
+
+    // Use name sort by default if not searching.
+    // If searching and no other sort was selected, use null (= by relevance).
+    const sortBy = searchQuery ? filter.sortBy : (filter.sortBy ?? "name");
 
     const entitySearch = useEntitySearch("anime", searchQuery, {
         filters: {
@@ -25,7 +29,7 @@ export function SearchAnime({ searchQuery }) {
             season: filter.season,
             year: filter.year
         },
-        sortBy: searchQuery ? null : filter.sortBy
+        sortBy
     });
 
     return (
@@ -36,22 +40,19 @@ export function SearchAnime({ searchQuery }) {
                     <SearchFilterFirstLetter value={filter.firstLetter} setValue={updateFilter("firstLetter")}/>
                     <SearchFilterSeason value={filter.season} setValue={updateFilter("season")}/>
                     <SearchFilterYear value={filter.year} setValue={updateFilter("year")}/>
-                    <SearchFilterSortBy value={searchQuery ? null : filter.sortBy} setValue={updateFilter("sortBy")}>
+                    <SearchFilterSortBy value={sortBy} setValue={updateFilter("sortBy")}>
                         {searchQuery ? (
                             <SearchFilterSortBy.Option>Relevance</SearchFilterSortBy.Option>
-                        ) : (
-                            <>
-                                <SearchFilterSortBy.Option value="name">A ➜ Z</SearchFilterSortBy.Option>
-                                <SearchFilterSortBy.Option value="-name">Z ➜ A</SearchFilterSortBy.Option>
-                                <SearchFilterSortBy.Option value="year,season,name">Old ➜ New</SearchFilterSortBy.Option>
-                                <SearchFilterSortBy.Option value="-year,-season,name">New ➜ Old</SearchFilterSortBy.Option>
-                                <SearchFilterSortBy.Option value="-created_at">Last Added</SearchFilterSortBy.Option>
-                            </>
-                        )}
+                        ) : null}
+                        <SearchFilterSortBy.Option value="name">A ➜ Z</SearchFilterSortBy.Option>
+                        <SearchFilterSortBy.Option value="-name">Z ➜ A</SearchFilterSortBy.Option>
+                        <SearchFilterSortBy.Option value="year,season,name">Old ➜ New</SearchFilterSortBy.Option>
+                        <SearchFilterSortBy.Option value="-year,-season,name">New ➜ Old</SearchFilterSortBy.Option>
+                        <SearchFilterSortBy.Option value="-created_at">Last Added</SearchFilterSortBy.Option>
                     </SearchFilterSortBy>
                 </>
             }
-            renderSummaryCard={(anime) => <AnimeSummaryCard key={anime.slug} anime={anime} previewThemes expandable/>}
+            renderSummaryCard={(anime) => <AnimeSummaryCard key={anime.slug} anime={anime} expandable/>}
             {...entitySearch}
         />
     );

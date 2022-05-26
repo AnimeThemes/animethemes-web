@@ -3,9 +3,10 @@ import styled from "styled-components";
 import { Toast } from "components/toast";
 import { Text } from "components/text";
 import { fetchAnnouncements } from "lib/client/announcement";
-import { showAnnouncementsSetting } from "utils/settings";
+import { ShowAnnouncements } from "utils/settings";
 import theme from "theme";
 import { useToasts } from "context/toastContext";
+import useSetting from "hooks/useSetting";
 
 const StyledBody = styled.div`
     display: flex;
@@ -23,13 +24,22 @@ const StyledAnnouncements = styled.div`
 export function AnnouncementToast() {
     const { closeToast } = useToasts();
     const [ announcements, setAnnouncements ] = useState([]);
+    const [ showAnnouncements ] = useSetting(ShowAnnouncements);
 
     useEffect(() => {
-        if (window.localStorage.getItem(showAnnouncementsSetting.key) !== "disabled") {
+        let cancelled = false;
+
+        if (showAnnouncements !== ShowAnnouncements.DISABLED) {
             fetchAnnouncements()
-                .then(setAnnouncements);
+                .then((announcements) => {
+                    if (!cancelled) {
+                        setAnnouncements(announcements);
+                    }
+                });
         }
-    }, []);
+
+        return () => { cancelled = true; };
+    }, [showAnnouncements]);
 
     if (!announcements.length) {
         return null;

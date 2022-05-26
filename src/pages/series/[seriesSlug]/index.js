@@ -61,7 +61,7 @@ export default function SeriesDetailPage({ series }) {
                     </Collapse>
                     <Column style={{ "--gap": "16px" }}>
                         {animeSorted.map((anime) => (
-                            <AnimeSummaryCard key={anime.slug} anime={anime} previewThemes expandable/>
+                            <AnimeSummaryCard key={anime.slug} anime={anime} expandable/>
                         ))}
                     </Column>
                 </Column>

@@ -91,7 +91,7 @@ export default function StudioDetailPage({ studio }) {
                     </Collapse>
                     <Column style={{ "--gap": "16px" }}>
                         {animeSorted.map((anime) => (
-                            <AnimeSummaryCard key={anime.slug} anime={anime} previewThemes expandable/>
+                            <AnimeSummaryCard key={anime.slug} anime={anime} expandable/>
                         ))}
                     </Column>
                 </Column>

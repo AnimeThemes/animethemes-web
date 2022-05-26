@@ -60,12 +60,14 @@ const StyledMenuOverlay = styled(MenuPopover)`
     }
 `;
 
-export function Menu({ children }) {
+export function Menu({ button, children }) {
     return (
         <ReachMenu>
-            <Button as={MenuButton} variant="silent" isCircle>
-                <Icon icon={faEllipsisV}/>
-            </Button>
+            {button ? button(MenuButton) : (
+                <Button as={MenuButton} variant="silent" isCircle>
+                    <Icon icon={faEllipsisV}/>
+                </Button>
+            )}
             <StyledMenuOverlay>
                 <StyledMenuItems>
                     {children}

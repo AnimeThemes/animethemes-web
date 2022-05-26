@@ -97,23 +97,22 @@ export default createGlobalStyle`
         border-color: ${theme.colors["text-disabled"]};
     }
 
-    @media (min-device-width: 600px) {
-        html {
-            scrollbar-color: ${theme.colors["gray-700"]} transparent;
-            scrollbar-width: thin;
-        }
+    html {
+        scrollbar-color: ${theme.colors["gray-700"]} transparent;
+        scrollbar-width: thin;
+    }
 
-        ::-webkit-scrollbar {
-            width: 6px;
-            background-color: transparent;
-        }
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 3px;
+        background-color: transparent;
+    }
 
-        ::-webkit-scrollbar-thumb {
-            background-color: ${theme.colors["gray-700"]};
+    ::-webkit-scrollbar-thumb {
+        background-color: ${theme.colors["gray-700"]};
 
-            &:hover {
-                background-color: ${theme.colors["gray-500"]};
-            }
+        &:hover {
+            background-color: ${theme.colors["gray-500"]};
         }
     }
 `;

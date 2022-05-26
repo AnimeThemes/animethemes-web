@@ -11,10 +11,10 @@ import theme from "theme";
 import { SearchFilter, SearchFilterGroup } from "components/search-filter";
 import { Listbox } from "components/listbox";
 import {
-    devModeSetting,
-    featuredThemePreviewSetting,
-    revalidationTokenSetting,
-    showAnnouncementsSetting
+    DeveloperMode,
+    FeaturedThemePreview,
+    RevalidationToken,
+    ShowAnnouncements
 } from "utils/settings";
 import useSetting from "hooks/useSetting";
 import { Input } from "components/input";
@@ -45,10 +45,10 @@ export default function ProfilePage() {
     const { localPlaylist } = useLocalPlaylist();
     const { history, clearHistory } = useWatchHistory();
 
-    const [showAnnouncementsSettingValue, setShowAnnouncementsSettingValue] = useSetting(showAnnouncementsSetting);
-    const [featuredThemePreviewSettingValue, setFeaturedThemePreviewSettingValue] = useSetting(featuredThemePreviewSetting);
-    const [devModeSettingValue, setDevModeSettingValue] = useSetting(devModeSetting);
-    const [revalidationTokenSettingValue, setRevalidationTokenSettingValue] = useSetting(revalidationTokenSetting);
+    const [showAnnouncements, setShowAnnouncements] = useSetting(ShowAnnouncements);
+    const [featuredThemePreview, setFeaturedThemePreview] = useSetting(FeaturedThemePreview);
+    const [developerMode, setDeveloperMode] = useSetting(DeveloperMode);
+    const [revalidationToken, setRevalidationToken] = useSetting(RevalidationToken);
 
     return (
         <>
@@ -64,34 +64,32 @@ export default function ProfilePage() {
                     <SearchFilterGroup>
                         <SearchFilter>
                             <Text>Show Announcements</Text>
-                            <Listbox value={showAnnouncementsSettingValue} onChange={setShowAnnouncementsSettingValue}>
-                                {Object.entries(showAnnouncementsSetting.values).map(([ value, label ]) => (
-                                    <Listbox.Option key={value} value={value}>{label}</Listbox.Option>
-                                ))}
+                            <Listbox value={showAnnouncements} onChange={setShowAnnouncements}>
+                                <Listbox.Option value={ShowAnnouncements.ENABLED}>Enabled</Listbox.Option>
+                                <Listbox.Option value={ShowAnnouncements.DISABLED}>Disabled</Listbox.Option>
                             </Listbox>
                         </SearchFilter>
                         <SearchFilter>
                             <Text>Featured Theme Preview</Text>
-                            <Listbox value={featuredThemePreviewSettingValue} onChange={setFeaturedThemePreviewSettingValue}>
-                                {Object.entries(featuredThemePreviewSetting.values).map(([ value, label ]) => (
-                                    <Listbox.Option key={value} value={value}>{label}</Listbox.Option>
-                                ))}
+                            <Listbox value={featuredThemePreview} onChange={setFeaturedThemePreview}>
+                                <Listbox.Option value={FeaturedThemePreview.VIDEO}>Video</Listbox.Option>
+                                <Listbox.Option value={FeaturedThemePreview.COVER}>Cover</Listbox.Option>
+                                <Listbox.Option value={FeaturedThemePreview.DISABLED}>Disabled</Listbox.Option>
                             </Listbox>
                         </SearchFilter>
                         <SearchFilter>
                             <Text>Developer Mode</Text>
-                            <Listbox value={devModeSettingValue} onChange={setDevModeSettingValue}>
-                                {Object.entries(devModeSetting.values).map(([ value, label ]) => (
-                                    <Listbox.Option key={value} value={value}>{label}</Listbox.Option>
-                                ))}
+                            <Listbox value={developerMode} onChange={setDeveloperMode}>
+                                <Listbox.Option value={DeveloperMode.DISABLED}>Disabled</Listbox.Option>
+                                <Listbox.Option value={DeveloperMode.ENABLED}>Enabled</Listbox.Option>
                             </Listbox>
                         </SearchFilter>
-                        {devModeSettingValue === "enabled" && (
+                        {developerMode === DeveloperMode.ENABLED && (
                             <SearchFilter>
                                 <Text>Revalidation Token</Text>
                                 <Input
-                                    value={revalidationTokenSettingValue}
-                                    onChange={setRevalidationTokenSettingValue}
+                                    value={revalidationToken}
+                                    onChange={setRevalidationToken}
                                     icon={faKey}
                                 />
                             </SearchFilter>
