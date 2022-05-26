@@ -405,10 +405,7 @@ export default function DesignPage({ demoData }) {
                         `}
                     </Highlight>
                 </pre>
-                <AnimeSummaryCard
-                    anime={demoData.anime}
-                    previewThemes={1}
-                />
+                <AnimeSummaryCard anime={demoData.anime}/>
             </ExampleGrid>
 
             <Text variant="h2">Input</Text>

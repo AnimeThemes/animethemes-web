@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SongTitleWithArtists } from "components/utils";
+import { Collapse, SongTitleWithArtists } from "components/utils";
 import { Text } from "components/text";
 import useImage from "hooks/useImage";
 import createVideoSlug from "utils/createVideoSlug";
@@ -7,10 +7,56 @@ import { SummaryCard } from "components/card";
 import { ThemeMenu } from "components/menu";
 import gql from "graphql-tag";
 import { fetchDataClient } from "lib/client";
+import { Icon } from "components/icon";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { Button } from "components/button";
+import useToggle from "hooks/useToggle";
+import styled from "styled-components";
+import { Table } from "components/table";
+import theme from "theme";
+import useMediaQuery from "hooks/useMediaQuery";
+
+const StyledWrapper = styled.div`
+    position: relative
+`;
+
+const StyledOverlayButtons = styled.div`
+    position: absolute;
+    right: 16px;
+    opacity: 0;
+    transition-property: opacity;
+
+    ${StyledWrapper}:hover & {
+        position: static;
+        opacity: 1;
+        transition-duration: 250ms;
+    }
+
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        position: static;
+        opacity: 1;
+    }
+`;
+
+const StyledExpandButton = styled(Button)`
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        display: none;
+    }
+`;
+
+const StyledPerformedWith = styled.div`
+    margin-top: 8px;
+`;
+
+const useIsMobile = () => useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
 
 // Specify an artist if you want to display this in an artist context (e.g. artist page)
-export function ThemeSummaryCard({ theme, artist, children, ...props }) {
+export function ThemeSummaryCard({ theme, artist, children, expandable: expandableFromContext = false, ...props }) {
+    const expandable = expandableFromContext && !!artist && theme.song?.performances?.length > 1;
+
+    const [isExpanded, toggleExpanded] = useToggle();
     const { smallCover } = useImage(theme.anime);
+    const isMobile = useIsMobile();
 
     if (!theme.entries.length) {
         return null;
@@ -36,17 +82,65 @@ export function ThemeSummaryCard({ theme, artist, children, ...props }) {
         </SummaryCard.Description>
     );
 
+    function handleToggleExpand(event) {
+        if (event.target.href) {
+            event.stopPropagation();
+        } else if (expandable && !isMobile) {
+            toggleExpanded();
+        }
+    }
+
     return (
-        <SummaryCard
-            title={<SongTitleWithArtists song={theme.song} songTitleLinkTo={to} artist={artist}/>}
-            description={description}
-            image={smallCover}
-            to={to}
-            {...props}
-        >
-            {children}
-            <ThemeMenu theme={theme}/>
-        </SummaryCard>
+        <StyledWrapper>
+            <SummaryCard
+                title={<SongTitleWithArtists song={theme.song} songTitleLinkTo={to} artist={artist}/>}
+                description={description}
+                image={smallCover}
+                to={to}
+                onClick={handleToggleExpand}
+                {...props}
+            >
+                {children}
+                <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>
+                    <ThemeMenu theme={theme}/>
+                    {expandable && (
+                        <StyledExpandButton
+                            forwardedAs="a"
+                            variant="silent"
+                            isCircle
+                            title={isExpanded ? "Collapse" : "Expand"}
+                            onClick={handleToggleExpand}
+                        >
+                            <Icon icon={faChevronDown} rotation={isExpanded ? 180 : 0} transition="transform 400ms"/>
+                        </StyledExpandButton>
+                    )}
+                </StyledOverlayButtons>
+            </SummaryCard>
+            {expandable && (
+                <Collapse collapse={!isExpanded}>
+                    <StyledPerformedWith>
+                        <Table style={{ "--columns": "1fr" }}>
+                            <Table.Head>
+                                <Table.HeadCell>Performed With</Table.HeadCell>
+                            </Table.Head>
+                            <Table.Body>
+                                {theme.song?.performances?.filter((performance) => performance.artist.slug !== artist?.slug).map((performance) => (
+                                    <Link key={performance.artist.slug} href={`/artist/${performance.artist.slug}`} passHref prefetch={false}>
+                                        <Table.Row as="a">
+                                            <Table.Cell>
+                                                <Text color="text-primary" weight="600">
+                                                    {performance.as ? `${performance.as} (CV: ${performance.artist.name})` : performance.artist.name}
+                                                </Text>
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    </Link>
+                                ))}
+                            </Table.Body>
+                        </Table>
+                    </StyledPerformedWith>
+                </Collapse>
+            )}
+        </StyledWrapper>
     );
 }
 

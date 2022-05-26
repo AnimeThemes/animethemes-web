@@ -6,6 +6,7 @@ export function buildFetchData(schema) {
 
         if (result.errors) {
             console.error(JSON.stringify(result.errors, null, 2));
+            throw result.errors;
         }
 
         result.apiRequests = context.apiRequests ?? 0;

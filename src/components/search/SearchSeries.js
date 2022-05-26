@@ -6,17 +6,21 @@ import useSessionStorage from "hooks/useSessionStorage";
 
 const initialFilter = {
     firstLetter: null,
-    sortBy: "name"
+    sortBy: null
 };
 
 export function SearchSeries({ searchQuery }) {
     const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter-series", initialFilter);
 
+    // Use name sort by default if not searching.
+    // If searching and no other sort was selected, use null (= by relevance).
+    const sortBy = searchQuery ? filter.sortBy : (filter.sortBy ?? "name");
+
     const entitySearch = useEntitySearch("series", searchQuery, {
         filters: {
             "name-like": filter.firstLetter ? `${filter.firstLetter}%` : null,
         },
-        sortBy: searchQuery ? null : filter.sortBy
+        sortBy
     });
 
     return (
@@ -25,16 +29,13 @@ export function SearchSeries({ searchQuery }) {
             filters={
                 <>
                     <SearchFilterFirstLetter value={filter.firstLetter} setValue={updateFilter("firstLetter")}/>
-                    <SearchFilterSortBy value={searchQuery ? null : filter.sortBy} setValue={updateFilter("sortBy")}>
+                    <SearchFilterSortBy value={sortBy} setValue={updateFilter("sortBy")}>
                         {searchQuery ? (
                             <SearchFilterSortBy.Option>Relevance</SearchFilterSortBy.Option>
-                        ) : (
-                            <>
-                                <SearchFilterSortBy.Option value="name">A ➜ Z</SearchFilterSortBy.Option>
-                                <SearchFilterSortBy.Option value="-name">Z ➜ A</SearchFilterSortBy.Option>
-                                <SearchFilterSortBy.Option value="-created_at">Last Added</SearchFilterSortBy.Option>
-                            </>
-                        )}
+                        ) : null}
+                        <SearchFilterSortBy.Option value="name">A ➜ Z</SearchFilterSortBy.Option>
+                        <SearchFilterSortBy.Option value="-name">Z ➜ A</SearchFilterSortBy.Option>
+                        <SearchFilterSortBy.Option value="-created_at">Last Added</SearchFilterSortBy.Option>
                     </SearchFilterSortBy>
                 </>
             }

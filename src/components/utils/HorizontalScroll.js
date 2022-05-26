@@ -9,6 +9,10 @@ export const HorizontalScroll = styled.div`
     padding-left: 1rem;
     padding-right: 1rem;
     
+    & > * {
+        min-width: max-content;
+    }
+    
     ${(props) => !!props.fixShadows && css`
         margin-top: -1rem;
         margin-bottom: -1rem;

@@ -1,32 +1,31 @@
-export const showAnnouncementsSetting = {
-    key: "showAnnouncements",
-    initialValue: "enabled",
-    values: {
-        enabled: "Enabled",
-        disabled: "Disabled"
-    }
-};
+export const ShowAnnouncements = Object.freeze({
+    __KEY__: "showAnnouncements",
+    __INITIAL_VALUE__: "enabled",
+    ENABLED: "enabled",
+    DISABLED: "disabled",
+});
 
-export const featuredThemePreviewSetting = {
-    key: "featuredThemePreview",
-    initialValue: "video",
-    values: {
-        video: "Video",
-        cover: "Cover",
-        disabled: "Disabled"
-    }
-};
+export const FeaturedThemePreview = Object.freeze({
+    __KEY__: "featuredThemePreview",
+    __INITIAL_VALUE__: "video",
+    VIDEO: "video",
+    COVER: "cover",
+    DISABLED: "disabled",
+});
 
-export const devModeSetting = {
-    key: "devMode",
-    initialValue: "disabled",
-    values: {
-        disabled: "Disabled",
-        enabled: "Enabled"
-    }
-};
+export const DeveloperMode = Object.freeze({
+    __KEY__: "devMode",
+    __INITIAL_VALUE__: "disabled",
+    DISABLED: "disabled",
+    ENABLED: "enabled",
+});
 
-export const revalidationTokenSetting = {
-    key: "revalidationToken",
-    initialValue: undefined
-};
+export const RevalidationToken = Object.freeze({
+    __KEY__: "revalidationToken",
+    __INITIAL_VALUE__: undefined,
+});
+
+export const GlobalVolume = Object.freeze({
+    __KEY__: "volume",
+    __INITIAL_VALUE__: 1
+});

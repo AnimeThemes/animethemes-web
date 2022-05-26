@@ -1,4 +1,4 @@
-import { featuredThemePreviewSetting } from "utils/settings";
+import { FeaturedThemePreview } from "utils/settings";
 import styled, { keyframes } from "styled-components";
 import theme from "theme";
 import { ThemeSummaryCard } from "components/card";
@@ -8,6 +8,8 @@ import useSetting from "hooks/useSetting";
 import useCompatability from "hooks/useCompatability";
 import gql from "graphql-tag";
 import { fetchRandomGrill } from "lib/client/randomGrill";
+import createVideoSlug from "utils/createVideoSlug";
+import Link from "next/link";
 
 const videoBaseUrl = process.env.NEXT_PUBLIC_VIDEO_URL || "https://animethemes.moe";
 
@@ -41,10 +43,11 @@ const StyledWrapper = styled.div`
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         margin-inline-start: -16px;
         margin-inline-end: -16px;
+        margin-bottom: 32px;
     }
 `;
 
-const StyledOverflowHidden = styled.div`
+const StyledOverflowHidden = styled.a`
     width: 100%;
     height: 100%;
     border-radius: 0.5rem;
@@ -55,12 +58,17 @@ const StyledOverflowHidden = styled.div`
     }
 `;
 
-const StyledThemeSummaryCard = styled(ThemeSummaryCard)`
+const StyledCenter = styled.div`
     position: absolute;
+    
+    width: 400px;
 
     @media (max-width: ${theme.breakpoints.mobileMax}) {
+        width: auto;
         left: 16px;
         right: 16px;
+        bottom: 0;
+        transform: translateY(50%);
     }
 `;
 
@@ -86,7 +94,7 @@ const StyledGrillContainer = styled.div`
     overflow: hidden;
     
     @media (max-width: ${theme.breakpoints.mobileMax}) {
-        display: none;
+        right: 0;
     }
 `;
 
@@ -108,50 +116,90 @@ const StyledGrill = styled.img`
 const Box = styled.div``;
 
 export function FeaturedTheme({ theme }) {
-    const featuredVideo = theme.entries[0].videos[0];
-    const { smallCover: featuredCover } = useImage(theme.anime);
     const [ grill, setGrill ] = useState(null);
-    const [ featuredThemePreviewSettingValue ] = useSetting(featuredThemePreviewSetting);
-    const { canPlayVideo } = useCompatability({ canPlayVideo: false });
-    const [ fallbackToCover, setFallbackToCover ] = useState(false);
+    const [ featuredThemePreview ] = useSetting(FeaturedThemePreview);
 
     useEffect(() => {
         fetchRandomGrill().then(setGrill);
     }, []);
 
-    const FeaturedThemeWrapper = featuredThemePreviewSettingValue !== "disabled"
+    const FeaturedThemeWrapper = featuredThemePreview !== FeaturedThemePreview.DISABLED
         ? StyledWrapper
         : Box;
-    const FeaturedThemeSummaryCard = featuredThemePreviewSettingValue !== "disabled"
-        ? StyledThemeSummaryCard
-        : ThemeSummaryCard;
+
+    const featuredThemeSummaryCard = featuredThemePreview !== FeaturedThemePreview.DISABLED
+        ? (
+            <StyledCenter>
+                <ThemeSummaryCard theme={theme}/>
+            </StyledCenter>
+        )
+        : (
+            <ThemeSummaryCard theme={theme}/>
+        );
 
     return (
         <FeaturedThemeWrapper>
-            {featuredThemePreviewSettingValue === "video" && canPlayVideo && !fallbackToCover && (
+            <FeaturedThemeBackground theme={theme}/>
+            {featuredThemePreview !== FeaturedThemePreview.DISABLED && grill && (
+                <StyledGrillContainer>
+                    <StyledGrill src={grill}/>
+                </StyledGrillContainer>
+            )}
+            {featuredThemeSummaryCard}
+        </FeaturedThemeWrapper>
+    );
+}
+
+function FeaturedThemeBackground({ theme }) {
+    const [ featuredThemePreview ] = useSetting(FeaturedThemePreview);
+    const { canPlayVideo } = useCompatability({ canPlayVideo: false });
+    const [ fallbackToCover, setFallbackToCover ] = useState(false);
+    const { smallCover: featuredCover } = useImage(theme.anime);
+
+    if (!theme.entries.length) {
+        return null;
+    }
+
+    const entry = theme.entries[0];
+
+    if (!entry.videos.length) {
+        return null;
+    }
+
+    const video = entry.videos[0];
+    const videoSlug = createVideoSlug(theme, entry, video);
+
+    const linkProps = {
+        href: `/anime/${theme.anime.slug}/${videoSlug}`,
+        passHref: true,
+        prefetch: false
+    };
+
+    if (featuredThemePreview === FeaturedThemePreview.VIDEO && canPlayVideo && !fallbackToCover) {
+        return (
+            <Link {...linkProps}>
                 <StyledOverflowHidden>
                     <StyledVideo
-                        src={`${videoBaseUrl}/video/${featuredVideo.basename}`}
+                        src={`${videoBaseUrl}/video/${video.basename}`}
                         autoPlay
                         muted
                         loop
                         onError={() => setFallbackToCover(true)}
                     />
                 </StyledOverflowHidden>
-            )}
-            {(featuredThemePreviewSettingValue === "cover" || fallbackToCover) && (
+            </Link>
+        );
+    } else if (featuredThemePreview === FeaturedThemePreview.COVER || fallbackToCover) {
+        return (
+            <Link {...linkProps}>
                 <StyledOverflowHidden>
                     <StyledCover src={featuredCover}/>
                 </StyledOverflowHidden>
-            )}
-            {featuredThemePreviewSettingValue !== "disabled" && grill && (
-                <StyledGrillContainer>
-                    <StyledGrill src={grill}/>
-                </StyledGrillContainer>
-            )}
-            <FeaturedThemeSummaryCard theme={theme}/>
-        </FeaturedThemeWrapper>
-    );
+            </Link>
+        );
+    }
+
+    return null;
 }
 
 FeaturedTheme.fragment = gql`    

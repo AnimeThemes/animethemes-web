@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import Link from "next/link";
-import { faChevronDown, faPlay } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "components/button";
 import { Text } from "components/text";
 import useImage from "hooks/useImage";
@@ -8,21 +8,47 @@ import createVideoSlug from "utils/createVideoSlug";
 import { Icon } from "components/icon";
 import { SummaryCard } from "components/card";
 import { chain, themeIndexComparator, themeTypeComparator } from "utils/comparators";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import useToggle from "hooks/useToggle";
 import theme from "theme";
 import gql from "graphql-tag";
 import { uniq } from "lodash-es";
 import { Collapse, SongTitle, ThemeEntryTags, VideoTags } from "components/utils";
-import { withHover } from "styles/mixins";
+import { Table } from "components/table";
+import useMediaQuery from "hooks/useMediaQuery";
+import { ContentWarningTags, EpisodeTag } from "components/tag";
+import { Row } from "components/box";
+
+const StyledWrapper = styled.div`
+    position: relative
+`;
 
 const StyledThemeContainerInline = styled.div`
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
     gap: 12px;
 
-    user-select: none;
+    position: absolute;
+    right: 16px;
+    opacity: 0;
+    transition-property: opacity;
     
+    user-select: none;
+
+    ${StyledWrapper}:hover & {
+        position: static;
+        opacity: 1;
+        transition-duration: 250ms;
+    }
+    
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        position: static;
+        opacity: 1;
+    }
+`;
+
+const StyledExpandButton = styled(Button)`
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         display: none;
     }
@@ -32,28 +58,13 @@ const StyledThemeGroupContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 16px;
-    margin-top: 16px;
-`;
-
-const StyledThemeRow = styled.a`
-    display: grid;
-    grid-template-columns: 56px 2fr 1fr 1fr;
-    grid-gap: 8px;
-    align-items: baseline;
-    padding: 8px 4px;
-    
-    &:not(:last-of-type) {
-        border-bottom: 1px solid ${theme.colors["text-disabled"]};   
-    }
-    
-    ${withHover(css`
-        background-color: ${theme.colors["solid"]};
-    `)}
+    margin-top: 8px;
 `;
 
 export function AnimeSummaryCard({ anime, previewThemes = false, expandable = false, ...props }) {
+    const [isExpanded, toggleExpanded] = useToggle();
     const { smallCover } = useImage(anime);
-    const [ showAllThemes, toggleShowAllThemes ] = useToggle();
+    const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
 
     const groups = uniq(anime.themes.map((theme) => theme.group));
 
@@ -78,30 +89,44 @@ export function AnimeSummaryCard({ anime, previewThemes = false, expandable = fa
         </SummaryCard.Description>
     );
 
+    function handleToggleExpand(event) {
+        if (event.target.href) {
+            event.stopPropagation();
+        } else if (expandable && !isMobile) {
+            toggleExpanded();
+        }
+    }
+
     return (
-        <div>
+        <StyledWrapper>
             <SummaryCard
                 title={anime.name}
                 description={description}
                 image={smallCover}
                 to={animeLink}
+                onClick={handleToggleExpand}
                 {...props}
             >
-                {(previewThemes || expandable) && (
-                    <StyledThemeContainerInline>
-                        {previewThemes && !showAllThemes && (
-                            <ThemesInline anime={anime} maxThemes={previewThemes === true ? 2 : previewThemes}/>
-                        )}
+                {/* TODO: Remove the following line once the context menu is there. */}
+                {expandable && (
+                    <StyledThemeContainerInline onClick={(event) => event.stopPropagation()}>
+                        {/* TODO: Context Menu */}
                         {expandable && (
-                            <Button as="a" variant="silent" isCircle title="Show all themes" onClick={toggleShowAllThemes}>
-                                <Icon icon={faChevronDown} rotation={showAllThemes ? 180 : 0} transition="transform 400ms"/>
-                            </Button>
+                            <StyledExpandButton
+                                forwardedAs="a"
+                                variant="silent"
+                                isCircle
+                                title={isExpanded ? "Collapse" : "Expand"}
+                                onClick={handleToggleExpand}
+                            >
+                                <Icon icon={faChevronDown} rotation={isExpanded ? 180 : 0} transition="transform 400ms"/>
+                            </StyledExpandButton>
                         )}
                     </StyledThemeContainerInline>
                 )}
             </SummaryCard>
             {expandable && (
-                <Collapse collapse={!showAllThemes}>
+                <Collapse collapse={!isExpanded}>
                     <StyledThemeGroupContainer>
                         {groups.map((group) => (
                             <Fragment key={group}>
@@ -114,31 +139,8 @@ export function AnimeSummaryCard({ anime, previewThemes = false, expandable = fa
                     </StyledThemeGroupContainer>
                 </Collapse>
             )}
-        </div>
+        </StyledWrapper>
     );
-}
-
-function ThemesInline({ anime, maxThemes }) {
-    return anime.themes
-        .filter((theme) => "entries" in theme && theme.entries.length && theme.entries[0].videos.length)
-        .sort(chain(themeIndexComparator, themeTypeComparator))
-        .slice(0, maxThemes)
-        .map((theme) => {
-            const entry = theme.entries[0];
-            const video = entry.videos[0];
-            const videoSlug = createVideoSlug(theme, entry, video);
-
-            return (
-                <Link key={theme.slug + theme.group} href={`/anime/${anime.slug}/${videoSlug}`} passHref prefetch={false}>
-                    <Button as="a">
-                        <Button as="span" variant="primary" isCircle>
-                            <Icon icon={faPlay}/>
-                        </Button>
-                        {theme.slug}
-                    </Button>
-                </Link>
-            );
-        });
 }
 
 function ThemesTable({ anime, group = null }) {
@@ -149,37 +151,55 @@ function ThemesTable({ anime, group = null }) {
             const videoSlug = createVideoSlug(theme, entry, video);
 
             return (
-                <Link key={theme.slug + theme.group} href={`/anime/${anime.slug}/${videoSlug}`} passHref prefetch={false}>
-                    <StyledThemeRow>
-                        {!videoIndex ? (
-                            entry.version > 1 ? (
-                                <Text variant="small" color="text-muted">{theme.type}{theme.sequence || null} v{entry.version}</Text>
-                            ) : (
-                                <Text variant="small">{theme.type}{theme.sequence || null}</Text>
-                            )
-                        ) : (
-                            <span/>
-                        )}
-                        {(!entryIndex && !videoIndex) ? (
-                            <SongTitle song={theme.song}/>
-                        ) : (
-                            <span/>
-                        )}
-                        {!videoIndex ? (
-                            <ThemeEntryTags entry={entry}/>
-                        ) : (
-                            <span/>
-                        )}
-                        <VideoTags video={video}/>
-                    </StyledThemeRow>
+                <Link key={anime.slug + videoSlug} href={`/anime/${anime.slug}/${videoSlug}`} passHref prefetch={false}>
+                    <Table.Row as="a">
+                        <Table.Cell>
+                            {!videoIndex && (
+                                entry.version > 1 ? (
+                                    <Text variant="small" color="text-muted">{theme.type}{theme.sequence || null} v{entry.version}</Text>
+                                ) : (
+                                    <Text variant="small">{theme.type}{theme.sequence || null}</Text>
+                                )
+                            )}
+                        </Table.Cell>
+                        <Table.Cell>
+                            {(!entryIndex && !videoIndex) && (
+                                <SongTitle song={theme.song}/>
+                            )}
+                        </Table.Cell>
+                        <Table.Cell>
+                            {!videoIndex && (
+                                <EpisodeTag entry={entry}/>
+                            )}
+                        </Table.Cell>
+                        <Table.Cell>
+                            {!videoIndex && (
+                                <Row wrap style={{ "--gap": "8px", "--align-items": "baseline" }}>
+                                    <ContentWarningTags entry={entry}/>
+                                </Row>
+                            )}
+                        </Table.Cell>
+                        <Table.Cell>
+                            <VideoTags video={video}/>
+                        </Table.Cell>
+                    </Table.Row>
                 </Link>
             );
         })));
 
     return (
-        <div>
-            {rows}
-        </div>
+        <Table style={{ "--columns": "42px 3fr 2fr 2fr 2fr" }}>
+            <Table.Head>
+                <Table.HeadCell>Type</Table.HeadCell>
+                <Table.HeadCell>Song Title</Table.HeadCell>
+                <Table.HeadCell>Episode Count</Table.HeadCell>
+                <Table.HeadCell>Content Warning</Table.HeadCell>
+                <Table.HeadCell>Notes</Table.HeadCell>
+            </Table.Head>
+            <Table.Body>
+                {rows}
+            </Table.Body>
+        </Table>
     );
 }
 

@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Column, Row } from "components/box";
 import { Text } from "components/text";
-import { Performances, SongTitle, ThemeEntryTags, VideoTags } from "components/utils";
+import { HorizontalScroll, Performances, SongTitle, ThemeEntryTags, VideoTags } from "components/utils";
 import { Button, VideoButton } from "components/button";
 import { AnimeSummaryCard, ArtistSummaryCard, SummaryCard, ThemeSummaryCard } from "components/card";
 import useImage from "hooks/useImage";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import { videoBaseUrl } from "lib/client/api";
-import { faChevronDown, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faMinus, faPlus, faShare } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "components/icon";
 import { useWatchHistory } from "context/watchHistoryContext";
 import { useLocalPlaylist } from "context/localPlaylistContext";
@@ -19,6 +19,9 @@ import createVideoSlug from "utils/createVideoSlug";
 import gql from "graphql-tag";
 import fetchStaticPaths from "utils/fetchStaticPaths";
 import getSharedPageProps from "utils/getSharedPageProps";
+import { Menu } from "components/menu";
+import { useToasts } from "context/toastContext";
+import { Toast } from "components/toast";
 
 const StyledVideoInfo = styled.div`
     display: grid;
@@ -85,6 +88,7 @@ export default function VideoPage({ anime, theme, entry, video }) {
     const { addToPlaylist, removeFromPlaylist, isInPlaylist } = useLocalPlaylist();
     const { addToHistory } = useWatchHistory();
     const [ showMoreRelatedThemes, setShowMoreRelatedThemes ] = useState(false);
+    const { dispatchToast } = useToasts();
 
     const relatedThemes = anime.themes
         .filter((relatedTheme) => relatedTheme.slug !== theme.slug)
@@ -144,6 +148,11 @@ export default function VideoPage({ anime, theme, entry, video }) {
         return `Watch ${anime.name} ${theme.slug}${version}: ${songTitle}${artistStr} on AnimeThemes.`;
     })();
 
+    const saveToClipboard = (url) => {
+        navigator.clipboard.writeText(url)
+            .then(() => dispatchToast("clipboard", <Toast>Copied to clipboard!</Toast>));
+    };
+
     const videoUrl = `${videoBaseUrl}/video/${video.basename}`;
 
     return (
@@ -186,19 +195,30 @@ export default function VideoPage({ anime, theme, entry, video }) {
                     </Column>
                 </Text>
             </StyledVideoInfo>
-            <Row>
-                {isInPlaylist(theme) ? (
-                    <Button variant="primary" style={{ "--gap": "8px" }} onClick={() => removeFromPlaylist(theme)}>
-                        <Icon icon={faMinus}/>
-                        <Text>Remove from Playlist</Text>
-                    </Button>
-                ) : (
-                    <Button style={{ "--gap": "8px" }} onClick={() => addToPlaylist({ ...theme, anime })}>
-                        <Icon icon={faPlus}/>
-                        <Text>Add to Playlist</Text>
-                    </Button>
-                )}
-            </Row>
+            <HorizontalScroll fixShadows>
+                <Row style={{ "--gap": "16px" }}>
+                    {isInPlaylist(theme) ? (
+                        <Button variant="primary" style={{ "--gap": "8px" }} onClick={() => removeFromPlaylist(theme)}>
+                            <Icon icon={faMinus}/>
+                            <Text>Remove from Playlist</Text>
+                        </Button>
+                    ) : (
+                        <Button style={{ "--gap": "8px" }} onClick={() => addToPlaylist({ ...theme, anime })}>
+                            <Icon icon={faPlus}/>
+                            <Text>Add to Playlist</Text>
+                        </Button>
+                    )}
+                    <Menu button={(MenuButton) => (
+                        <Button as={MenuButton} style={{ "--gap": "8px" }}>
+                            <Icon icon={faShare}/>
+                            <Text>Share</Text>
+                        </Button>
+                    )}>
+                        <Menu.Option onSelect={() => saveToClipboard(location.href)}>Copy URL to this Page</Menu.Option>
+                        <Menu.Option onSelect={() => saveToClipboard(videoUrl)}>Copy URL to Embeddable Video</Menu.Option>
+                    </Menu>
+                </Row>
+            </HorizontalScroll>
             <StyledRelatedGrid>
                 <Column style={{ "--gap": "16px" }}>
                     <Text variant="h2">Information</Text>

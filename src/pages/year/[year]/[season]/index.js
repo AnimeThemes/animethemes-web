@@ -24,7 +24,7 @@ export default function SeasonDetailPage({ animeAll, year, season }) {
             </Text>
             <Column style={{ "--gap": "16px" }}>
                 {animeList.map((anime) => (
-                    <AnimeSummaryCard key={anime.slug} anime={anime} previewThemes expandable/>
+                    <AnimeSummaryCard key={anime.slug} anime={anime} expandable/>
                 ))}
             </Column>
         </>

@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
     StyledOverlay,
     StyledPlayer,
@@ -23,6 +23,8 @@ import { videoBaseUrl } from "lib/client/api";
 import useMediaQuery from "hooks/useMediaQuery";
 import styledTheme from "theme";
 import { SongTitle } from "components/utils";
+import useSetting from "hooks/useSetting";
+import { GlobalVolume } from "utils/settings";
 
 export function VideoPlayer({ anime, theme, entry, video, background, ...props }) {
     const [isPlaying, setPlaying] = useState(false);
@@ -33,6 +35,9 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
     const isMobile = useMediaQuery(`(max-width: ${styledTheme.breakpoints.mobileMax})`);
     const videoUrl = `${videoBaseUrl}/video/${video.basename}`;
     const router = useRouter();
+    const [globalVolume, setGlobalVolume] = useSetting(GlobalVolume);
+
+    useEffect(() => playerRef.current.volume = globalVolume, [globalVolume]);
 
     function togglePlay() {
         if (isPlaying) {
@@ -115,6 +120,7 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
                 onEnded={() => setPlaying(false)}
                 onClick={background && isMobile ? maximize : undefined}
                 onTimeUpdate={updateProgress}
+                onVolumeChange={(event) => setGlobalVolume(event.target.volume)}
             />
             {background && (
                 <>

@@ -11,6 +11,7 @@ const StyledSummaryCard = styled(Card)`
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: 16px;
 
     height: 64px;
     padding: 0 1rem 0 0;
@@ -35,8 +36,6 @@ const StyledCover = styled.img.attrs({
 const StyledBody = styled(Column)`
     flex: 1;
     justify-content: center;
-    
-    padding: 0 1rem;
     gap: 0.25rem;
     
     word-break: break-all;
