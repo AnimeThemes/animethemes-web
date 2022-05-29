@@ -27,6 +27,7 @@ Table.Row = styled.div`
 `;
 
 Table.Cell = styled.div`
+    grid-column: span var(--span, 1);
     overflow: hidden;
 `;
 

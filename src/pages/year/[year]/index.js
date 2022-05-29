@@ -50,7 +50,6 @@ export async function getStaticProps({ params: { year } }) {
 
     const { data, apiRequests } = await fetchData(gql`
         ${AnimeSummaryCard.fragments.anime}
-        ${AnimeSummaryCard.fragments.previewThemes}
         ${AnimeSummaryCard.fragments.expandable}
 
         query($year: Int!) {
@@ -63,7 +62,6 @@ export async function getStaticProps({ params: { year } }) {
                     anime {
                         slug
                         ...AnimeSummaryCard_anime
-                        ...AnimeSummaryCard_anime_previewThemes
                         ...AnimeSummaryCard_anime_expandable
                     }
                 }

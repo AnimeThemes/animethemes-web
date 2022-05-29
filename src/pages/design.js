@@ -637,12 +637,10 @@ function Color({ color }) {
 export async function getStaticProps() {
     const { data, apiRequests } = await fetchData(gql`
         ${AnimeSummaryCard.fragments.anime}
-        ${AnimeSummaryCard.fragments.previewThemes}
         
         query {
             anime(slug: "bakemonogatari") {
                 ...AnimeSummaryCard_anime
-                ...AnimeSummaryCard_anime_previewThemes
             }
         }
     `);

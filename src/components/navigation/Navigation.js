@@ -41,6 +41,7 @@ export function Navigation({ offsetToggleButton = false }) {
     if (router.pathname !== prevPathname) {
         setShow(false);
         setPrevPathname(router.pathname);
+        return null;
     }
 
     return (

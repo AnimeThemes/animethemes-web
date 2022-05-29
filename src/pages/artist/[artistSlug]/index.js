@@ -183,6 +183,7 @@ export async function getStaticProps({ params: { artistSlug } }) {
     const { data, apiRequests } = await fetchData(gql`
         ${ThemeSummaryCard.fragments.theme}
         ${ThemeSummaryCard.fragments.artist}
+        ${ThemeSummaryCard.fragments.expandable}
 
         query($artistSlug: String!) {
             artist(slug: $artistSlug) {
@@ -202,6 +203,7 @@ export async function getStaticProps({ params: { artistSlug } }) {
                         }
                         themes {
                             ...ThemeSummaryCard_theme
+                            ...ThemeSummaryCard_theme_expandable
                             id
                             slug
                             group

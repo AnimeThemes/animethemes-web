@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Text } from "components/text";
 import styled from "styled-components";
 import { useState } from "react";
+import gql from "graphql-tag";
 
 const StyledArtist = styled(Text)`
     &:not(:first-of-type)::before {
@@ -19,7 +20,7 @@ const StyledArtistLink = styled(Text).attrs({ as: "a", link: true })`
     font-size: 1rem;
 `;
 
-export function Performances({ song, artist, maxPerformances = 3 }) {
+export function Performances({ song, artist, maxPerformances = 3, expandable = false }) {
     const [expandPerformances, setExpandPerformances] = useState(false);
 
     if (!song?.performances?.length) {
@@ -87,7 +88,7 @@ export function Performances({ song, artist, maxPerformances = 3 }) {
                 ))}
                 {!!performancesHidden.length && (
                     <StyledArtist>
-                        <Text link onClick={() => setExpandPerformances(true)}>
+                        <Text link onClick={() => expandable && setExpandPerformances(true)}>
                             {performancesHidden.length} more
                         </Text>
                     </StyledArtist>
@@ -96,3 +97,22 @@ export function Performances({ song, artist, maxPerformances = 3 }) {
         </Text>
     );
 }
+
+Performances.fragments = {
+    song: gql`
+        fragment Performances_song on Song {
+            performances {
+                as
+                artist {
+                    slug
+                    name
+                }
+            }
+        }
+    `,
+    artist: gql`
+        fragment Performances_artist on Artist {
+            slug
+        }
+    `
+};

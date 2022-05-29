@@ -12,7 +12,7 @@ import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "components/button";
 import useToggle from "hooks/useToggle";
 import styled from "styled-components";
-import { Table } from "components/table";
+import { Table, ThemeTable } from "components/table";
 import theme from "theme";
 import useMediaQuery from "hooks/useMediaQuery";
 
@@ -45,15 +45,16 @@ const StyledExpandButton = styled(Button)`
 `;
 
 const StyledPerformedWith = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     margin-top: 8px;
 `;
 
 const useIsMobile = () => useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
 
 // Specify an artist if you want to display this in an artist context (e.g. artist page)
-export function ThemeSummaryCard({ theme, artist, children, expandable: expandableFromContext = false, ...props }) {
-    const expandable = expandableFromContext && !!artist && theme.song?.performances?.length > 1;
-
+export function ThemeSummaryCard({ theme, artist, children, expandable = false, ...props }) {
     const [isExpanded, toggleExpanded] = useToggle();
     const { smallCover } = useImage(theme.anime);
     const isMobile = useIsMobile();
@@ -119,24 +120,30 @@ export function ThemeSummaryCard({ theme, artist, children, expandable: expandab
             {expandable && (
                 <Collapse collapse={!isExpanded}>
                     <StyledPerformedWith>
-                        <Table style={{ "--columns": "1fr" }}>
-                            <Table.Head>
-                                <Table.HeadCell>Performed With</Table.HeadCell>
-                            </Table.Head>
-                            <Table.Body>
-                                {theme.song?.performances?.filter((performance) => performance.artist.slug !== artist?.slug).map((performance) => (
-                                    <Link key={performance.artist.slug} href={`/artist/${performance.artist.slug}`} passHref prefetch={false}>
-                                        <Table.Row as="a">
-                                            <Table.Cell>
-                                                <Text color="text-primary" weight="600">
-                                                    {performance.as ? `${performance.as} (CV: ${performance.artist.name})` : performance.artist.name}
-                                                </Text>
-                                            </Table.Cell>
-                                        </Table.Row>
-                                    </Link>
-                                ))}
-                            </Table.Body>
-                        </Table>
+                        <ThemeTable themes={[theme]}/>
+                        {theme.song?.performances?.length > (artist ? 1 : 0) && (
+                            <Table style={{ "--columns": "1fr" }}>
+                                <Table.Head>
+                                    <Table.HeadCell>Performed {artist ? "With" : "By"}</Table.HeadCell>
+                                </Table.Head>
+                                <Table.Body>
+                                    {theme.song?.performances
+                                        ?.filter((performance) => performance.artist.slug !== artist?.slug)
+                                        .sort((a, b) => a.artist.name.localeCompare(b.artist.name))
+                                        .map((performance) => (
+                                            <Link key={performance.artist.slug} href={`/artist/${performance.artist.slug}`} passHref prefetch={false}>
+                                                <Table.Row as="a">
+                                                    <Table.Cell>
+                                                        <Text color="text-primary" weight="600">
+                                                            {performance.as ? `${performance.as} (CV: ${performance.artist.name})` : performance.artist.name}
+                                                        </Text>
+                                                    </Table.Cell>
+                                                </Table.Row>
+                                            </Link>
+                                        ))}
+                                </Table.Body>
+                            </Table>
+                        )}
                     </StyledPerformedWith>
                 </Collapse>
             )}
@@ -182,6 +189,13 @@ ThemeSummaryCard.fragments = {
         fragment ThemeSummaryCard_artist on Artist {
             ...SongTitleWithArtists_artist
         }
+    `,
+    expandable: gql`
+        ${ThemeTable.fragments.theme}
+
+        fragment ThemeSummaryCard_theme_expandable on Theme {
+            ...ThemeTable_theme
+        }
     `
 };
 
@@ -192,6 +206,10 @@ ThemeSummaryCard.fetchData = async function (id) {
         query($themeId: Int!) {
             theme(id: $themeId) {
                 ...ThemeSummaryCard_theme
+                anime {
+                    year
+                    season
+                }
             }
         }
     `, { themeId: id }).then((result) => result.data?.theme);

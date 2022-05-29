@@ -20,7 +20,9 @@ export const StyledNavigation = styled(Solid).attrs({ as: "nav" })`
         top: 0;
         left: 0;
         width: 100%;
-        height: 100%;
+        height: 100vh;
+            
+        background-color: transparent;
 
         ${(props) => props.show && css`
             display: flex;
@@ -52,6 +54,7 @@ export const StyledNavigationContainer = styled(Container)`
 
         background-color: ${theme.colors["solid"]};
         animation: ${zoomIn} 250ms ease;
+        will-change: transform;
 
         [theme="dark"] & {
             border: 2px solid ${theme.colors["text-disabled"]};

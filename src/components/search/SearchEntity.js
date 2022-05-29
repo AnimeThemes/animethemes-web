@@ -5,20 +5,24 @@ import { Column, Row } from "components/box";
 import { Icon } from "components/icon";
 import { SearchFilterGroup } from "components/search-filter";
 import { ErrorCard } from "components/card";
+import useEntitySearch from "hooks/useEntitySearch";
 
-export function SearchEntity({
-    searchQuery,
-    filters,
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isError,
-    isFetchingNextPage,
-    isLoading,
-    isPlaceholderData,
-    renderSummaryCard
-}) {
+export function SearchEntity({ entity, searchQuery, searchParams, filters, renderResult }) {
+    const {
+        data,
+        error,
+        fetchNextPage,
+        hasNextPage,
+        isError,
+        isFetchingNextPage,
+        isLoading,
+        isPlaceholderData,
+    } = useEntitySearch(
+        entity,
+        searchQuery,
+        searchParams,
+    );
+
     return (
         <>
             {!!filters && (
@@ -58,7 +62,7 @@ export function SearchEntity({
                 return (
                     <>
                         <Column style={{ "--gap": "16px" }}>
-                            {results.map(renderSummaryCard)}
+                            {results.map(renderResult)}
                         </Column>
                         {(hasNextPage || isPlaceholderData) && (
                             <Row style={{ "--justify-content": "center" }}>

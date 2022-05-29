@@ -11,7 +11,9 @@ export default function SearchEntityPage({ entity }) {
     return (
         <>
             <SEO title={`${searchQuery ? `${searchQuery} - ` : ""}${capitalize(entity)} Index`}/>
-            <Index searchEntity={entity} searchQuery={searchQuery}/>
+            {router.isReady ? (
+                <Index searchEntity={entity} searchQuery={searchQuery}/>
+            ) : null}
         </>
     );
 }

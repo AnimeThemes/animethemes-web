@@ -74,7 +74,7 @@ export function SearchGlobal({ searchQuery }) {
                 entity="theme"
                 title="Themes"
                 results={themeResults}
-                renderSummaryCard={(theme) => <ThemeSummaryCard key={theme.anime.slug + theme.slug} theme={theme}/>}
+                renderSummaryCard={(theme) => <ThemeSummaryCard key={theme.anime.slug + theme.slug} theme={theme} expandable/>}
             />
             <GlobalSearchSection
                 entity="artist"

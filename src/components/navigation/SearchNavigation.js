@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Text } from "components/text";
 import { Input } from "components/input";
@@ -46,7 +46,6 @@ export function SearchNavigation() {
     const { entity, ...query } = router.query;
     const { q: initialSearchQuery = "" } = query;
 
-    const isReady = useRef(false);
     const [inputSearchQuery, setInputSearchQuery] = useState("");
 
     const updateInputSearchQuery = (newInputSearchQuery) => {
@@ -55,22 +54,38 @@ export function SearchNavigation() {
     };
 
     useEffect(() => {
-        if (isReady.current) {
+        if (router.isReady) {
             setInputSearchQuery(initialSearchQuery);
-        } else {
-            isReady.current = true;
         }
-    }, [initialSearchQuery]);
+    }, [router.isReady]);
 
     const inputRef = useRef();
 
-    useEffect(() => {
+    const onMountInput = useCallback((input) => {
         // Only focus the input on desktop devices
         if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-            inputRef.current?.focus({
+            input?.focus({
                 preventScroll: true
             });
         }
+
+        inputRef.current = input;
+    }, []);
+
+    useEffect(() => {
+        const hotkeyListener = (event) => {
+            if ((event.key === "s" && event.ctrlKey) || (event.key === "/")) {
+                event.preventDefault();
+                inputRef.current?.focus({
+                    preventScroll: true
+                });
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+        };
+
+        window.addEventListener("keydown", hotkeyListener);
+
+        return () => window.removeEventListener("keydown", hotkeyListener);
     }, []);
 
     return (
@@ -81,7 +96,7 @@ export function SearchNavigation() {
                     value={inputSearchQuery}
                     onChange={updateInputSearchQuery}
                     inputProps={{
-                        ref: inputRef,
+                        ref: onMountInput,
                         spellCheck: false,
                         placeholder: "Search"
                     }}

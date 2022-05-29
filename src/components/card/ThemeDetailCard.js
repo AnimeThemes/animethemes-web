@@ -6,7 +6,7 @@ import {
     StyledVideoListContainer
 } from "./ThemeDetailCard.style";
 import { VideoButton } from "components/button";
-import { SongTitleWithArtists, ThemeEntryTags } from "components/utils";
+import { Performances, SongTitle, ThemeEntryTags } from "components/utils";
 import { Text } from "components/text";
 import { ThemeMenu } from "components/menu";
 
@@ -15,7 +15,10 @@ export function ThemeDetailCard({ theme }) {
         <StyledThemeCard>
             <StyledRow>
                 <StyledSequence>{theme.type}{theme.sequence || null}</StyledSequence>
-                <SongTitleWithArtists song={theme.song}/>
+                <Text>
+                    <SongTitle song={theme.song}/>
+                    <Performances song={theme.song} expandable/>
+                </Text>
                 <ThemeMenu theme={theme}/>
             </StyledRow>
             {theme.entries.map(entry => (

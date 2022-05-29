@@ -8,7 +8,7 @@ export function PlaylistAddToast({ theme }) {
     return (
         <Link href="/profile/playlist" passHref prefetch={false}>
             <Toast as="a" hoverable>
-                <Row wrap style={{ "--justify-content": "space-between", "--gap": "8px" }}>
+                <Row $wrap style={{ "--justify-content": "space-between", "--gap": "8px" }}>
                     <span><SongTitle song={theme.song}/> was added to the playlist!</span>
                     <Text color="text-disabled">(Click to view playlist.)</Text>
                 </Row>

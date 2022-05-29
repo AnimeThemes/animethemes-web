@@ -55,7 +55,7 @@ export default function PlaylistPage() {
     const [ showFilter, toggleShowFilter ] = useToggle();
     const [ sortBy, setSortBy ] = useState(UNSORTED);
 
-    const themes = localPlaylist.sort(getComparator(sortBy));
+    const themes = [...localPlaylist].sort(getComparator(sortBy));
 
     const [ refreshProgress, setRefreshProgess ] = useState(null);
     const [ refreshError, setRefreshError ] = useState(null);
@@ -142,13 +142,22 @@ export default function PlaylistPage() {
                         </Text>
                     </Card>
                     <StyledReorderContainer>
-                        <Reorder.Group as="div" axis="y" values={themes} onReorder={setPlaylist}>
-                            {themes.map((theme) => (
-                                <Reorder.Item as="div" key={theme.anime.slug + theme.slug + theme.group} value={theme}>
-                                    <ThemeSummaryCard theme={theme}/>
-                                </Reorder.Item>
-                            ))}
-                        </Reorder.Group>
+                        {sortBy === UNSORTED ? (
+                            <Reorder.Group as="div" axis="y" values={themes} onReorder={setPlaylist}>
+                                {themes.map((theme) => (
+                                    <Reorder.Item as="div" key={theme.anime.slug + theme.slug + theme.group} value={theme}>
+                                        <ThemeSummaryCard theme={theme}/>
+                                    </Reorder.Item>
+                                ))}
+                            </Reorder.Group>
+                        ) : (
+                            <div>
+                                {themes.map((theme) => (
+                                    <ThemeSummaryCard key={theme.anime.slug + theme.slug + theme.group} theme={theme}/>
+                                ))}
+                            </div>
+                        )}
+
                     </StyledReorderContainer>
                 </Column>
             </SidebarContainer>

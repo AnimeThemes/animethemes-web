@@ -32,11 +32,9 @@ export const zoomIn = keyframes`
 
 export const blurOut = keyframes`
     from {
-        background-color: transparent;
+        backdrop-filter: none;
     }
     to {
-        background-color: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(2px);
-        will-change: backdrop-filter;
+        backdrop-filter: brightness(0.5);
     }
 `;

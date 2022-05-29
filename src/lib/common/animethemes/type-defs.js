@@ -18,7 +18,7 @@ const typeDefs = `
         seasonAll(year: Int): [Season]
         page(id: Int, slug: String): Page
         pageAll: [Page]
-        counter: Counter
+        featuredTheme: FeaturedTheme
     }
 
     interface ResourceWithImages {
@@ -34,16 +34,6 @@ const typeDefs = `
         value: String!
         year: Year
         anime: [Anime]
-    }
-    
-    type Counter {
-        anime: Int!
-        artist: Int!
-        series: Int!
-        studio: Int!
-        video: Int!
-        year: Int!
-        season: Int!
     }
     
     type Anime implements ResourceWithImages {
@@ -172,6 +162,10 @@ const typeDefs = `
         slug: String!
         name: String!
         body: String!
+    }
+
+    type FeaturedTheme {
+        theme: Theme!
     }
     
     schema {

@@ -82,6 +82,18 @@ const StyledVideoList = styled(Row)`
     }
 `;
 
+const StyledTabletOnly = styled.span`
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        display: none;
+    }
+`;
+
+const StyledMobileOnly = styled.span`
+    @media (min-width: ${theme.breakpoints.tabletMin}) {
+        display: none;
+    }
+`;
+
 export default function VideoPage({ anime, theme, entry, video }) {
     const songTitle = theme.song?.title || "T.B.A.";
     const { smallCover, largeCover } = useImage(anime);
@@ -200,12 +212,18 @@ export default function VideoPage({ anime, theme, entry, video }) {
                     {isInPlaylist(theme) ? (
                         <Button variant="primary" style={{ "--gap": "8px" }} onClick={() => removeFromPlaylist(theme)}>
                             <Icon icon={faMinus}/>
-                            <Text>Remove from Playlist</Text>
+                            <Text>
+                                <StyledTabletOnly>Remove from Playlist</StyledTabletOnly>
+                                <StyledMobileOnly>Unsave</StyledMobileOnly>
+                            </Text>
                         </Button>
                     ) : (
                         <Button style={{ "--gap": "8px" }} onClick={() => addToPlaylist({ ...theme, anime })}>
                             <Icon icon={faPlus}/>
-                            <Text>Add to Playlist</Text>
+                            <Text>
+                                <StyledTabletOnly>Add to Playlist</StyledTabletOnly>
+                                <StyledMobileOnly>Save</StyledMobileOnly>
+                            </Text>
                         </Button>
                     )}
                     <Menu button={(MenuButton) => (
@@ -232,7 +250,7 @@ export default function VideoPage({ anime, theme, entry, video }) {
                     {!!theme.song?.performances?.length && (
                         <>
                             <Text variant="h2">Artists</Text>
-                            {theme.song.performances.map((performance) => (
+                            {theme.song.performances.sort((a, b) => a.artist.name.localeCompare(b.artist.name)).map((performance) => (
                                 <ArtistSummaryCard
                                     key={performance.artist.name}
                                     artist={performance.artist}
