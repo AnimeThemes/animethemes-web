@@ -1,11 +1,11 @@
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { Column, Row } from "components/box";
 import { ThemeDetailCard } from "components/card";
 import { Listbox } from "components/listbox";
 import { HorizontalScroll } from "components/utils";
 import { chain, themeIndexComparator, themeTypeComparator } from "utils/comparators";
 
-export function AnimeThemeFilter({ themes }) {
+export const AnimeThemeFilter = memo(function AnimeThemeFilter({ themes }) {
     const groups = useMemo(() => themes.reduce((groups, theme) => {
         const groupName = theme.group || "Original";
         const group = groups.find((group) => group.name === groupName);
@@ -57,4 +57,4 @@ export function AnimeThemeFilter({ themes }) {
             ))}
         </Column>
     );
-}
+});

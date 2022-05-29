@@ -9,7 +9,7 @@ import ColorThemeContext from "context/colorThemeContext";
 import useColorTheme from "hooks/useColorTheme";
 import { VideoPlayer } from "components/video-player";
 import PlayerContext from "context/playerContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Head from "next/head";
 import withBasePath from "utils/withBasePath";
@@ -23,6 +23,7 @@ import { Text } from "components/text";
 import { useRouter } from "next/router";
 import useSetting from "hooks/useSetting";
 import { DeveloperMode, RevalidationToken } from "utils/settings";
+import { ErrorBoundary } from "components/utils";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "styles/prism.scss";
@@ -44,6 +45,7 @@ const StyledContainer = styled(Container)`
 `;
 
 export default function MyApp({ Component, pageProps }) {
+    const router = useRouter();
     const [colorTheme, toggleColorTheme] = useColorTheme();
     const [developerMode] = useSetting(DeveloperMode);
 
@@ -55,6 +57,19 @@ export default function MyApp({ Component, pageProps }) {
     if (isVideoPage && lastVideoPageProps?.video?.basename !== videoPageProps?.video?.basename) {
         setLastVideoPageProps(videoPageProps);
     }
+
+    useEffect(() => {
+        const hotkeyListener = (event) => {
+            if (!pageProps.isSearch && ((event.key === "s" && event.ctrlKey) || event.key === "/")) {
+                event.preventDefault();
+                router.push("/search");
+            }
+        };
+
+        window.addEventListener("keydown", hotkeyListener);
+
+        return () => window.removeEventListener("keydown", hotkeyListener);
+    }, [pageProps.isSearch, router]);
 
     return (
         <MultiContextProvider providers={[
@@ -70,7 +85,8 @@ export default function MyApp({ Component, pageProps }) {
             [ ToastProvider, { initialToasts: [ {
                 id: "announcement",
                 content: <AnnouncementToast/>
-            } ] } ]
+            } ] } ],
+            [ ErrorBoundary ]
         ]}>
             <GlobalStyle/>
             <SEO/>

@@ -231,11 +231,12 @@ export default function HomePage({ featuredTheme }) {
 export async function getStaticProps() {
     const { data, apiRequests } = await fetchData(gql`
         ${FeaturedTheme.fragment}
-        ${ThemeSummaryCard.fragments.theme}
         
         query {
-            theme(id: 11388) {
-                ...FeaturedTheme_theme
+            featuredTheme {
+                theme {
+                    ...FeaturedTheme_theme
+                }
             }
         }
     `);
@@ -243,7 +244,7 @@ export async function getStaticProps() {
     return {
         props: {
             ...getSharedPageProps(apiRequests),
-            featuredTheme: data.theme
+            featuredTheme: data.featuredTheme.theme
         }
     };
 }

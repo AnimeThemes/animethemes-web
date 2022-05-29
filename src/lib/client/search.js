@@ -69,10 +69,20 @@ const entityConfigs = {
                 "group"
             ],
             animethemeentry: [
-                "version"
+                "version",
+                "episodes",
+                "spoiler",
+                "nsfw"
             ],
             video: [
-                "tags"
+                "tags",
+                "resolution",
+                "nc",
+                "subbed",
+                "lyrics",
+                "uncen",
+                "source",
+                "overlap"
             ],
             image: [
                 "facet",
@@ -270,6 +280,7 @@ function applyAnimeSchema(allAnime) {
         delete anime.animethemes;
 
         for (const theme of anime.themes) {
+            theme.anime = anime;
             theme.entries = theme.animethemeentries;
             delete theme.animethemeentries;
         }

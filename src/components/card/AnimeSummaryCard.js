@@ -4,20 +4,16 @@ import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "components/button";
 import { Text } from "components/text";
 import useImage from "hooks/useImage";
-import createVideoSlug from "utils/createVideoSlug";
 import { Icon } from "components/icon";
 import { SummaryCard } from "components/card";
-import { chain, themeIndexComparator, themeTypeComparator } from "utils/comparators";
 import styled from "styled-components";
 import useToggle from "hooks/useToggle";
 import theme from "theme";
 import gql from "graphql-tag";
 import { uniq } from "lodash-es";
-import { Collapse, SongTitle, ThemeEntryTags, VideoTags } from "components/utils";
-import { Table } from "components/table";
+import { Collapse } from "components/utils";
+import { ThemeTable } from "components/table";
 import useMediaQuery from "hooks/useMediaQuery";
-import { ContentWarningTags, EpisodeTag } from "components/tag";
-import { Row } from "components/box";
 
 const StyledWrapper = styled.div`
     position: relative
@@ -133,73 +129,13 @@ export function AnimeSummaryCard({ anime, previewThemes = false, expandable = fa
                                 {!!group && (
                                     <Text variant="h2">{group}</Text>
                                 )}
-                                <ThemesTable anime={anime} group={group}/>
+                                <ThemeTable themes={anime.themes.filter((theme) => theme.group === group)}/>
                             </Fragment>
                         ))}
                     </StyledThemeGroupContainer>
                 </Collapse>
             )}
         </StyledWrapper>
-    );
-}
-
-function ThemesTable({ anime, group = null }) {
-    const rows = anime.themes
-        .filter((theme) => theme.group === group && "entries" in theme && theme.entries.length && theme.entries[0].videos.length)
-        .sort(chain(themeTypeComparator, themeIndexComparator))
-        .map((theme) => theme.entries.map((entry, entryIndex) => entry.videos.map((video, videoIndex) => {
-            const videoSlug = createVideoSlug(theme, entry, video);
-
-            return (
-                <Link key={anime.slug + videoSlug} href={`/anime/${anime.slug}/${videoSlug}`} passHref prefetch={false}>
-                    <Table.Row as="a">
-                        <Table.Cell>
-                            {!videoIndex && (
-                                entry.version > 1 ? (
-                                    <Text variant="small" color="text-muted">{theme.type}{theme.sequence || null} v{entry.version}</Text>
-                                ) : (
-                                    <Text variant="small">{theme.type}{theme.sequence || null}</Text>
-                                )
-                            )}
-                        </Table.Cell>
-                        <Table.Cell>
-                            {(!entryIndex && !videoIndex) && (
-                                <SongTitle song={theme.song}/>
-                            )}
-                        </Table.Cell>
-                        <Table.Cell>
-                            {!videoIndex && (
-                                <EpisodeTag entry={entry}/>
-                            )}
-                        </Table.Cell>
-                        <Table.Cell>
-                            {!videoIndex && (
-                                <Row wrap style={{ "--gap": "8px", "--align-items": "baseline" }}>
-                                    <ContentWarningTags entry={entry}/>
-                                </Row>
-                            )}
-                        </Table.Cell>
-                        <Table.Cell>
-                            <VideoTags video={video}/>
-                        </Table.Cell>
-                    </Table.Row>
-                </Link>
-            );
-        })));
-
-    return (
-        <Table style={{ "--columns": "42px 3fr 2fr 2fr 2fr" }}>
-            <Table.Head>
-                <Table.HeadCell>Type</Table.HeadCell>
-                <Table.HeadCell>Song Title</Table.HeadCell>
-                <Table.HeadCell>Episode Count</Table.HeadCell>
-                <Table.HeadCell>Content Warning</Table.HeadCell>
-                <Table.HeadCell>Notes</Table.HeadCell>
-            </Table.Head>
-            <Table.Body>
-                {rows}
-            </Table.Body>
-        </Table>
     );
 }
 
@@ -215,53 +151,13 @@ AnimeSummaryCard.fragments = {
             season
         }
     `,
-    previewThemes: gql`
-        ${createVideoSlug.fragments.theme}
-        ${createVideoSlug.fragments.entry}
-        ${createVideoSlug.fragments.video}
-
-        fragment AnimeSummaryCard_anime_previewThemes on Anime {
-            themes {
-                ...createVideoSlug_theme
-                slug
-                group
-                type
-                sequence
-                entries {
-                    ...createVideoSlug_entry
-                    videos {
-                        ...createVideoSlug_video
-                    }
-                }
-            }
-        }
-    `,
     expandable: gql`
-        ${createVideoSlug.fragments.theme}
-        ${createVideoSlug.fragments.entry}
-        ${createVideoSlug.fragments.video}
-        ${VideoTags.fragment}
-        ${ThemeEntryTags.fragment}
+        ${ThemeTable.fragments.theme}
 
         fragment AnimeSummaryCard_anime_expandable on Anime {
             themes {
-                ...createVideoSlug_theme
-                slug
+                ...ThemeTable_theme
                 group
-                type
-                sequence
-                entries {
-                    ...createVideoSlug_entry
-                    ...ThemeEntryTags_entry
-                    version
-                    videos {
-                        ...createVideoSlug_video
-                        ...VideoTags_video
-                    }
-                }
-                song {
-                    title
-                }
             }
         }
     `

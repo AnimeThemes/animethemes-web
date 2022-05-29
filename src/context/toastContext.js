@@ -6,21 +6,27 @@ export function ToastProvider({ children, initialToasts = [] }) {
     const [activeToasts, setActiveToasts] = useState(initialToasts);
 
     function dispatchToast(id, toast, duration = 5000) {
-        setActiveToasts((prev) => [...prev, { id, content: toast }]);
+        let timeoutId = null;
 
         if (duration > 0) {
-            setTimeout(() => {
-                closeToast({ id });
-            }, duration);
+            timeoutId = setTimeout(() => closeToast({ id }), duration);
         }
+
+        setActiveToasts((prev) => {
+            const duplicates = prev.filter((other) => id === other.id);
+
+            duplicates.forEach((duplicate) => clearTimeout(duplicate.timeoutId));
+
+            const next = prev.filter((other) => id !== other.id);
+
+            next.push({ id, content: toast, timeoutId });
+
+            return next;
+        });
     }
 
     function closeToast({ id }) {
-        setActiveToasts((prev) => {
-            const next = [...prev];
-            next.splice(prev.findIndex((t) => t.id === id), 1);
-            return next;
-        });
+        setActiveToasts((prev) => prev.filter((toast) => toast.id !== id));
     }
 
     const value = {

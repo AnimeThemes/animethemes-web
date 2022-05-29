@@ -1,39 +1,53 @@
 import { SearchFilterFirstLetter, SearchFilterSortBy, SearchFilterThemeType } from "components/search-filter";
-import useEntitySearch from "hooks/useEntitySearch";
 import { SearchEntity } from "components/search";
 import { ThemeSummaryCard } from "components/card";
 import useSessionStorage from "hooks/useSessionStorage";
+import { useState } from "react";
 
 const initialFilter = {
     firstLetter: null,
     type: null,
-    sortBy: null
+    sortBy: "song.title",
 };
 
 export function SearchTheme({ searchQuery }) {
-    const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter-theme", initialFilter);
-
-    // Use song.title sort by default if not searching.
-    // If searching and no other sort was selected, use null (= by relevance).
-    const sortBy = searchQuery ? filter.sortBy : (filter.sortBy ?? "song.title");
-
-    const entitySearch = useEntitySearch("theme", searchQuery, {
-        filters: {
-            has: "song",
-            "song][title-like": filter.firstLetter ? `${filter.firstLetter}%` : null,
-            type: filter.type
-        },
-        sortBy
+    const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter-theme", {
+        ...initialFilter,
+        sortBy: searchQuery ? null : initialFilter.sortBy,
     });
+    const [ prevSearchQuery, setPrevSearchQuery ] = useState(searchQuery);
+
+    if (!searchQuery && filter.sortBy === null) {
+        updateFilter("sortBy")(initialFilter.sortBy);
+        return null;
+    }
+
+    if (searchQuery !== prevSearchQuery) {
+        // Check if user is switching from non-searching to searching
+        if (searchQuery && !prevSearchQuery) {
+            updateFilter("sortBy")(null);
+        }
+        setPrevSearchQuery(searchQuery);
+        return null;
+    }
 
     return (
         <SearchEntity
+            entity="theme"
             searchQuery={searchQuery}
+            searchParams={{
+                filters: {
+                    has: "song",
+                    "song][title-like": filter.firstLetter ? `${filter.firstLetter}%` : null,
+                    type: filter.type
+                },
+                sortBy: filter.sortBy,
+            }}
             filters={
                 <>
                     <SearchFilterFirstLetter value={filter.firstLetter} setValue={updateFilter("firstLetter")}/>
                     <SearchFilterThemeType value={filter.type} setValue={updateFilter("type")}/>
-                    <SearchFilterSortBy value={sortBy} setValue={updateFilter("sortBy")}>
+                    <SearchFilterSortBy value={filter.sortBy} setValue={updateFilter("sortBy")}>
                         {searchQuery ? (
                             <SearchFilterSortBy.Option>Relevance</SearchFilterSortBy.Option>
                         ) : null}
@@ -45,8 +59,7 @@ export function SearchTheme({ searchQuery }) {
                     </SearchFilterSortBy>
                 </>
             }
-            renderSummaryCard={(theme) => <ThemeSummaryCard key={theme.anime.slug + theme.slug} theme={theme}/>}
-            {...entitySearch}
+            renderResult={(theme) => <ThemeSummaryCard key={theme.anime.slug + theme.slug} theme={theme} expandable/>}
         />
     );
 }

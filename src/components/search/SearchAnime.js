@@ -4,43 +4,57 @@ import {
     SearchFilterSortBy,
     SearchFilterYear
 } from "components/search-filter";
-import useEntitySearch from "hooks/useEntitySearch";
 import { SearchEntity } from "components/search";
 import { AnimeSummaryCard } from "components/card";
 import useSessionStorage from "hooks/useSessionStorage";
+import { useState } from "react";
 
 const initialFilter = {
     firstLetter: null,
     season: null,
     year: null,
-    sortBy: null
+    sortBy: "name",
 };
 
 export function SearchAnime({ searchQuery }) {
-    const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter-anime", initialFilter);
-
-    // Use name sort by default if not searching.
-    // If searching and no other sort was selected, use null (= by relevance).
-    const sortBy = searchQuery ? filter.sortBy : (filter.sortBy ?? "name");
-
-    const entitySearch = useEntitySearch("anime", searchQuery, {
-        filters: {
-            "name-like": filter.firstLetter ? `${filter.firstLetter}%` : null,
-            season: filter.season,
-            year: filter.year
-        },
-        sortBy
+    const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter-anime", {
+        ...initialFilter,
+        sortBy: searchQuery ? null : initialFilter.sortBy,
     });
+    const [ prevSearchQuery, setPrevSearchQuery ] = useState(searchQuery);
+
+    if (!searchQuery && filter.sortBy === null) {
+        updateFilter("sortBy")(initialFilter.sortBy);
+        return null;
+    }
+
+    if (searchQuery !== prevSearchQuery) {
+        // Check if user is switching from non-searching to searching
+        if (searchQuery && !prevSearchQuery) {
+            updateFilter("sortBy")(null);
+        }
+        setPrevSearchQuery(searchQuery);
+        return null;
+    }
 
     return (
         <SearchEntity
+            entity="anime"
             searchQuery={searchQuery}
+            searchParams={{
+                filters: {
+                    "name-like": filter.firstLetter ? `${filter.firstLetter}%` : null,
+                    season: filter.season,
+                    year: filter.year
+                },
+                sortBy: filter.sortBy
+            }}
             filters={
                 <>
                     <SearchFilterFirstLetter value={filter.firstLetter} setValue={updateFilter("firstLetter")}/>
                     <SearchFilterSeason value={filter.season} setValue={updateFilter("season")}/>
                     <SearchFilterYear value={filter.year} setValue={updateFilter("year")}/>
-                    <SearchFilterSortBy value={sortBy} setValue={updateFilter("sortBy")}>
+                    <SearchFilterSortBy value={filter.sortBy} setValue={updateFilter("sortBy")}>
                         {searchQuery ? (
                             <SearchFilterSortBy.Option>Relevance</SearchFilterSortBy.Option>
                         ) : null}
@@ -52,8 +66,7 @@ export function SearchAnime({ searchQuery }) {
                     </SearchFilterSortBy>
                 </>
             }
-            renderSummaryCard={(anime) => <AnimeSummaryCard key={anime.slug} anime={anime} expandable/>}
-            {...entitySearch}
+            renderResult={(anime) => <AnimeSummaryCard key={anime.slug} anime={anime} expandable/>}
         />
     );
 }

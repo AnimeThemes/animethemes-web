@@ -9,10 +9,10 @@ export function SearchFilterYear({ value, setValue }) {
     return (
         <SearchFilter>
             <Text variant="h2">Year</Text>
-            <Listbox value={value} onChange={setValue} resettable highlightNonDefault>
+            <Listbox value={value ? String(value) : null} onChange={setValue} resettable highlightNonDefault>
                 <Listbox.Option value={null}>Any</Listbox.Option>
                 {yearList.map((year) => (
-                    <Listbox.Option key={year} value={year}>{year}</Listbox.Option>
+                    <Listbox.Option key={year} value={year ? String(year) : null}>{year}</Listbox.Option>
                 ))}
             </Listbox>
         </SearchFilter>

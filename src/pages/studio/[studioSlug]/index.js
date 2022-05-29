@@ -103,7 +103,6 @@ export default function StudioDetailPage({ studio }) {
 export async function getStaticProps({ params: { studioSlug } }) {
     const { data, apiRequests } = await fetchData(gql`
         ${AnimeSummaryCard.fragments.anime}
-        ${AnimeSummaryCard.fragments.previewThemes}
         ${AnimeSummaryCard.fragments.expandable}
 
         query($studioSlug: String!) {
@@ -112,7 +111,6 @@ export async function getStaticProps({ params: { studioSlug } }) {
                 name
                 anime {
                     ...AnimeSummaryCard_anime
-                    ...AnimeSummaryCard_anime_previewThemes
                     ...AnimeSummaryCard_anime_expandable
                     name
                     slug

@@ -1,35 +1,49 @@
 import { SearchFilterFirstLetter, SearchFilterSortBy } from "components/search-filter";
-import useEntitySearch from "hooks/useEntitySearch";
 import { SearchEntity } from "components/search";
 import { SummaryCard } from "components/card";
 import useSessionStorage from "hooks/useSessionStorage";
+import { useState } from "react";
 
 const initialFilter = {
     firstLetter: null,
-    sortBy: null
+    sortBy: "name",
 };
 
 export function SearchStudio({ searchQuery }) {
-    const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter-studio", initialFilter);
-
-    // Use name sort by default if not searching.
-    // If searching and no other sort was selected, use null (= by relevance).
-    const sortBy = searchQuery ? filter.sortBy : (filter.sortBy ?? "name");
-
-    const entitySearch = useEntitySearch("studio", searchQuery, {
-        filters: {
-            "name-like": filter.firstLetter ? `${filter.firstLetter}%` : null,
-        },
-        sortBy
+    const { updateDataField: updateFilter, data: filter } = useSessionStorage("filter-studio", {
+        ...initialFilter,
+        sortBy: searchQuery ? null : initialFilter.sortBy,
     });
+    const [ prevSearchQuery, setPrevSearchQuery ] = useState(searchQuery);
+
+    if (!searchQuery && filter.sortBy === null) {
+        updateFilter("sortBy")(initialFilter.sortBy);
+        return null;
+    }
+
+    if (searchQuery !== prevSearchQuery) {
+        // Check if user is switching from non-searching to searching
+        if (searchQuery && !prevSearchQuery) {
+            updateFilter("sortBy")(null);
+        }
+        setPrevSearchQuery(searchQuery);
+        return null;
+    }
 
     return (
         <SearchEntity
+            entity="studio"
             searchQuery={searchQuery}
+            searchParams={{
+                filters: {
+                    "name-like": filter.firstLetter ? `${filter.firstLetter}%` : null,
+                },
+                sortBy: filter.sortBy,
+            }}
             filters={
                 <>
                     <SearchFilterFirstLetter value={filter.firstLetter} setValue={updateFilter("firstLetter")}/>
-                    <SearchFilterSortBy value={sortBy} setValue={updateFilter("sortBy")}>
+                    <SearchFilterSortBy value={filter.sortBy} setValue={updateFilter("sortBy")}>
                         {searchQuery ? (
                             <SearchFilterSortBy.Option>Relevance</SearchFilterSortBy.Option>
                         ) : null}
@@ -39,8 +53,7 @@ export function SearchStudio({ searchQuery }) {
                     </SearchFilterSortBy>
                 </>
             }
-            renderSummaryCard={(studio) => <SummaryCard key={studio.slug} title={studio.name} description="Studio" to={`/studio/${studio.slug}`} />}
-            {...entitySearch}
+            renderResult={(studio) => <SummaryCard key={studio.slug} title={studio.name} description="Studio" to={`/studio/${studio.slug}`} />}
         />
     );
 }

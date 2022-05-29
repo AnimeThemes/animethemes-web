@@ -36,7 +36,6 @@ export async function getStaticProps({ params: { year, season } }) {
 
     const { data, apiRequests } = await fetchData(gql`
         ${AnimeSummaryCard.fragments.anime}
-        ${AnimeSummaryCard.fragments.previewThemes}
         ${AnimeSummaryCard.fragments.expandable}
 
         query($year: Int = 0, $season: String!) {
@@ -50,7 +49,6 @@ export async function getStaticProps({ params: { year, season } }) {
                 anime {
                     slug
                     ...AnimeSummaryCard_anime
-                    ...AnimeSummaryCard_anime_previewThemes
                     ...AnimeSummaryCard_anime_expandable
                 }
             }

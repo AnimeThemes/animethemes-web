@@ -58,7 +58,7 @@ export function SummaryCard({ title, description, image, to, children, ...props 
                 </a>
             </Link>
             <StyledBody>
-                <Text maxLines={1} title={typeof title === "string" && title}>
+                <Text maxLines={1} title={typeof title === "string" ? title : undefined}>
                     {typeof title === "string" ? (
                         <Link href={to} passHref prefetch={false}>
                             <Text as="a" link>{title}</Text>

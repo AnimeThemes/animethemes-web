@@ -5,9 +5,10 @@ import theme from "theme";
 import { slideIn } from "styles/animations";
 
 export const StyledPlayer = styled(motion.div)`
-    ${(props) => props.background ? css`
+    z-index: ${theme.zIndices.videoPlayer};
+    
+    ${(props) => props.$background ? css`
         position: fixed;
-        z-index: ${theme.zIndices.videoPlayer};
 
         @media (max-width: 720px) {
             display: flex;

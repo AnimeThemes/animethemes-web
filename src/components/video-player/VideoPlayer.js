@@ -77,7 +77,7 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
                         <Column style={{ "--gap": "16px" }}>
                             <Text as="p">Your browser or device doesn&apos;t seem to support WebM video which is required to play video files.</Text>
                             <Text as="p">You can try one of the options below to still watch the video:</Text>
-                            <Row wrap style={{ "--gap": "16px" }}>
+                            <Row $wrap style={{ "--gap": "16px" }}>
                                 <IconTextButton
                                     variant="solid"
                                     forwardedAs="a"
@@ -101,7 +101,7 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
 
     return (
         <StyledPlayer
-            background={background}
+            $background={background}
             onDoubleClick={background ? maximize : undefined}
             onMouseDown={preventTextSelection}
 

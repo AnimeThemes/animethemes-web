@@ -73,7 +73,6 @@ export default function SeriesDetailPage({ series }) {
 export async function getStaticProps({ params: { seriesSlug } }) {
     const { data, apiRequests } = await fetchData(gql`
         ${AnimeSummaryCard.fragments.anime}
-        ${AnimeSummaryCard.fragments.previewThemes}
         ${AnimeSummaryCard.fragments.expandable}
 
         query($seriesSlug: String!) {
@@ -82,7 +81,6 @@ export async function getStaticProps({ params: { seriesSlug } }) {
                 name
                 anime {
                     ...AnimeSummaryCard_anime
-                    ...AnimeSummaryCard_anime_previewThemes
                     ...AnimeSummaryCard_anime_expandable
                     name
                     slug

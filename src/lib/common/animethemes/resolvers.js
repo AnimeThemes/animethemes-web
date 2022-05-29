@@ -66,7 +66,23 @@ const resolvers = {
             extractor: (result) => result.pages,
             pagination: true
         }),
-        counter: () => ({})
+        featuredTheme: apiResolver({
+            endpoint: () => `/config/wiki`,
+            extractor: (result) => result.wiki.featured_theme,
+            transformer: (featuredTheme) => ({
+                animetheme: {
+                    ...featuredTheme.animethemeentry.animetheme,
+                    animethemeentries: [
+                        {
+                            ...featuredTheme.animethemeentry,
+                            videos: [
+                                featuredTheme.video
+                            ]
+                        }
+                    ]
+                }
+            })
+        }),
     },
     Year: {
         seasons: apiResolver({
@@ -81,15 +97,6 @@ const resolvers = {
             extractor: (result) => result.anime,
             pagination: true
         }),
-    },
-    Counter: {
-        anime: () => 0,
-        artist: () => 0,
-        series: () => 0,
-        studio: () => 0,
-        video: () => 0,
-        year: () => 0,
-        season: () => 0,
     },
     Anime: {
         synonyms: apiResolver({
@@ -274,6 +281,13 @@ const resolvers = {
         }),
         song: apiResolver({
             field: "song"
+        }),
+    },
+    FeaturedTheme: {
+        theme: apiResolver({
+            endpoint: (featuredTheme) => `/animetheme/${featuredTheme.animetheme.id}`,
+            field: "animetheme",
+            extractor: (result) => result.animetheme
         }),
     }
 };

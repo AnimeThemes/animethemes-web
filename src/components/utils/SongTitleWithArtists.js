@@ -14,20 +14,19 @@ export function SongTitleWithArtists({ song, songTitleLinkTo, artist }) {
 
 SongTitleWithArtists.fragments = {
     song: gql`
+        ${SongTitle.fragments.song}
+        ${Performances.fragments.song}
+        
         fragment SongTitleWithArtists_song on Song {
-            title
-            performances {
-                as
-                artist {
-                    slug
-                    name
-                }
-            }
+            ...SongTitle_song
+            ...Performances_song
         }
     `,
     artist: gql`
+        ${Performances.fragments.artist}
+        
         fragment SongTitleWithArtists_artist on Artist {
-            slug
+            ...Performances_artist
         }
     `
 };
