@@ -48,12 +48,12 @@ export function Footer() {
                     <FooterTextLink href="https://staging.animethemes.moe/transparency">
                         Transparency
                     </FooterTextLink>
-                    <Link href="/page/donate" passHref>
+                    <Link href="/wiki/donate" passHref>
                         <FooterTextLink target="_self">
                             Donate
                         </FooterTextLink>
                     </Link>
-                    <Link href="/page/faq" passHref>
+                    <Link href="/wiki/faq" passHref>
                         <FooterTextLink target="_self">
                             FAQ
                         </FooterTextLink>

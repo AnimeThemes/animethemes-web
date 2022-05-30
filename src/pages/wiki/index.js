@@ -7,10 +7,10 @@ import getSharedPageProps from "utils/getSharedPageProps";
 export default function DocumentIndexPage({ pages }) {
     return (
         <>
-            <SEO title="Pages"/>
-            <Text variant="h1">Pages</Text>
+            <SEO title="Wiki"/>
+            <Text variant="h1">Wiki</Text>
             {pages.map((page) => (
-                <Link key={page.slug} href={`/page/${page.slug}`} passHref prefetch={false}>
+                <Link key={page.slug} href={`/wiki/${page.slug}`} passHref prefetch={false}>
                     <Text as="a" link>{page.name}</Text>
                 </Link>
             ))}
