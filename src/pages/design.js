@@ -398,10 +398,7 @@ export default function DesignPage({ demoData }) {
                             const anime = /* ... */
                             
                             // Inside the render output
-                            <AnimeSummaryCard
-                                anime={anime}
-                                maxThemes={1}
-                            />
+                            <AnimeSummaryCard anime={anime}/>
                         `}
                     </Highlight>
                 </pre>

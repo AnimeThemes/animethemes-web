@@ -149,6 +149,9 @@ AnimeSummaryCard.fragments = {
             name
             year
             season
+            themes {
+                group
+            }
         }
     `,
     expandable: gql`
