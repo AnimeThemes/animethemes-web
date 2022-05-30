@@ -196,9 +196,9 @@ export default function HomePage({ featuredTheme }) {
                             <Icon icon={faArrowRight} color="text-primary"/>
                         </BigButton>
                     </Link>
-                    <Link href="/page" passHref prefetch={false}>
+                    <Link href="/wiki" passHref prefetch={false}>
                         <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
-                            <Text>Page Index</Text>
+                            <Text>Wiki</Text>
                             <Icon icon={faArrowRight} color="text-primary"/>
                         </BigButton>
                     </Link>
