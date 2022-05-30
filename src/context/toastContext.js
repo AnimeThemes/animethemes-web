@@ -9,7 +9,7 @@ export function ToastProvider({ children, initialToasts = [] }) {
         let timeoutId = null;
 
         if (duration > 0) {
-            timeoutId = setTimeout(() => closeToast({ id }), duration);
+            timeoutId = setTimeout(() => closeToast(id), duration);
         }
 
         setActiveToasts((prev) => {
@@ -25,7 +25,7 @@ export function ToastProvider({ children, initialToasts = [] }) {
         });
     }
 
-    function closeToast({ id }) {
+    function closeToast(id) {
         setActiveToasts((prev) => prev.filter((toast) => toast.id !== id));
     }
 
