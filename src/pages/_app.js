@@ -153,7 +153,7 @@ function PageRevalidation({ lastBuildAt, apiRequests }) {
     }
 
     async function revalidateAsync() {
-        const res = await fetch(`${router.basePath}/api/revalidate?secret=${secret}&id=${router.asPath}`);
+        const res = await fetch(`${router.basePath}/revalidate?secret=${secret}&id=${router.asPath}`);
         if (!res.ok) {
             throw new Error((await res.json()).message);
         }
