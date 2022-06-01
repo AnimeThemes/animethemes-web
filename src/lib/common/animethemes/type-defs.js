@@ -5,7 +5,7 @@ const typeDefs = `
         anime(id: Int, slug: String): Anime
         animeAll(limit: Int, year: Int, season: String): [Anime]
         theme(id: Int): Theme
-        themeAll(limit: Int, orderBy: String, orderDesc: Boolean): [Theme]
+        themeAll(limit: Int, orderBy: String, orderDesc: Boolean, has: String): [Theme]
         artist(id: Int, slug: String): Artist
         artistAll(limit: Int): [Artist]
         series(id: Int, slug: String): Series

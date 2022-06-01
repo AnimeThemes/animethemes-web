@@ -90,7 +90,7 @@ export default function HomePage({ featuredTheme }) {
             ${ThemeSummaryCard.fragments.theme}
 
             query {
-                recentlyAdded: themeAll(orderBy: "id", orderDesc: true, limit: 10) {
+                recentlyAdded: themeAll(orderBy: "id", orderDesc: true, limit: 10, has: "animethemeentries.videos,song") {
                     ...ThemeSummaryCard_theme
                 }
             }

@@ -16,7 +16,8 @@ const resolvers = {
             extractor: (result) => result.animetheme
         }),
         themeAll: apiResolver({
-            endpoint: (_, { limit, orderBy, orderDesc }) => `/animetheme?sort=${orderDesc ? "-" : ""}${orderBy}&page[size]=${limit}`,
+            endpoint: (_, { limit, orderBy, orderDesc, has }) =>
+                `/animetheme?sort=${orderDesc ? "-" : ""}${orderBy}&page[size]=${limit}&filter[has]=${has}`,
             extractor: (result) => result.animethemes
         }),
         artist: apiResolver({
