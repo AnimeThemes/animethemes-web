@@ -71,7 +71,11 @@ export default function ArtistDetailPage({ artist }) {
     const [ sortBy, setSortBy ] = useState(SONG_A_Z_ANIME);
 
     const themes = artist.performances
-        .flatMap((performance) => performance.song.themes)
+        .flatMap(
+            (performance) => performance.song.themes.map(
+                (theme) => ({ ...theme, ...performance })
+            )
+        )
         .filter((performance) => (
             filterAlias === null ||
             (filterAlias === artist.name && !performance.as) ||
