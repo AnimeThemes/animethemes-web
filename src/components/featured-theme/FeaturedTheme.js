@@ -180,7 +180,7 @@ function FeaturedThemeBackground({ theme }) {
             <Link {...linkProps}>
                 <StyledOverflowHidden>
                     <StyledVideo
-                        src={`${videoBaseUrl}/video/${video.basename}`}
+                        src={`${videoBaseUrl}/${video.basename}`}
                         autoPlay
                         muted
                         loop
