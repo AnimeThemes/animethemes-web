@@ -33,7 +33,7 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
     const progressRef = useRef();
     const { clearCurrentVideo } = useContext(PlayerContext);
     const isMobile = useMediaQuery(`(max-width: ${styledTheme.breakpoints.mobileMax})`);
-    const videoUrl = `${videoBaseUrl}/video/${video.basename}`;
+    const videoUrl = `${videoBaseUrl}/${video.basename}`;
     const router = useRouter();
     const [globalVolume, setGlobalVolume] = useSetting(GlobalVolume);
 

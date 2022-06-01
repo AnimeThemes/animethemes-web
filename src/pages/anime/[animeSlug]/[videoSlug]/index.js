@@ -165,7 +165,7 @@ export default function VideoPage({ anime, theme, entry, video }) {
             .then(() => dispatchToast("clipboard", <Toast>Copied to clipboard!</Toast>));
     };
 
-    const videoUrl = `${videoBaseUrl}/video/${video.basename}`;
+    const videoUrl = `${videoBaseUrl}/${video.basename}`;
 
     return (
         <>
