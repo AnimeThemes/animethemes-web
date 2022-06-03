@@ -3,8 +3,8 @@ import createVideoSlug from "utils/createVideoSlug";
 import Link from "next/link";
 import { Table } from "components/table";
 import { Text } from "components/text";
-import { SongTitle, ThemeEntryTags, VideoTags } from "components/utils";
-import { ContentWarningTags, EpisodeTag } from "components/tag";
+import { SongTitle } from "components/utils";
+import { ContentWarningTags, EpisodeTag, ThemeEntryTags, VideoTags } from "components/tag";
 import { Row } from "components/box";
 import gql from "graphql-tag";
 

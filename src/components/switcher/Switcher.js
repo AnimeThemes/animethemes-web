@@ -3,7 +3,7 @@ import { LayoutGroup, motion } from "framer-motion";
 import theme from "theme";
 import { uniqueId as createUniqueId } from "lodash-es";
 import { createContext, forwardRef, useContext, useMemo } from "react";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faTimes } from "@fortawesome/pro-solid-svg-icons";
 import { Icon } from "components/icon";
 import { withHover } from "styles/mixins";
 

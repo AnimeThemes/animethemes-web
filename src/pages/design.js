@@ -14,7 +14,7 @@ import {
     faSpinner,
     faStar,
     faTag
-} from "@fortawesome/free-solid-svg-icons";
+} from "@fortawesome/pro-solid-svg-icons";
 import { Icon } from "components/icon";
 import styled from "styled-components";
 import theme from "theme";

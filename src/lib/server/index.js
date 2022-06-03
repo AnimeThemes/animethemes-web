@@ -24,4 +24,4 @@ const schema = makeExecutableSchema({
     ])
 });
 
-export const fetchData = buildFetchData(schema);
+export const fetchData = buildFetchData(schema, false);

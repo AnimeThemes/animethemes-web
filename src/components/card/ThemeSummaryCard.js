@@ -8,7 +8,7 @@ import { ThemeMenu } from "components/menu";
 import gql from "graphql-tag";
 import { fetchDataClient } from "lib/client";
 import { Icon } from "components/icon";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown } from "@fortawesome/pro-solid-svg-icons";
 import { Button } from "components/button";
 import useToggle from "hooks/useToggle";
 import styled from "styled-components";

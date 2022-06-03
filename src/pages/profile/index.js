@@ -4,7 +4,7 @@ import { Column } from "components/box";
 import { Text } from "components/text";
 import { SummaryCard, ThemeSummaryCard } from "components/card";
 import { IconTextButton } from "components/button";
-import { faKey, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faKey, faTrash } from "@fortawesome/pro-solid-svg-icons";
 import { useWatchHistory } from "context/watchHistoryContext";
 import { useLocalPlaylist } from "context/localPlaylistContext";
 import theme from "theme";

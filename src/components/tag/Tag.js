@@ -14,7 +14,9 @@ const StyledTag = styled.span`
     }
 `;
 
-const StyledText = styled(Text)`    
+const StyledText = styled(Text)`
+    letter-spacing: 0.05rem;
+    
     ${(props) => props.hideTextOnMobile && css`
         @media (max-width: ${theme.breakpoints.mobileMax}) {
             display: none;
@@ -22,12 +24,12 @@ const StyledText = styled(Text)`
     `}
 `;
 
-export function Tag({ icon, variant, children, hideTextOnMobile = false, ...props }) {
+export function Tag({ icon, children, hideTextOnMobile = false, textColor, ...props }) {
     return (
         <StyledTag {...props}>
             {!!icon && (isIcon(icon) ? icon : <Icon icon={icon} color="text-disabled"/>)}
             {!!children && (
-                <StyledText variant="small" hideTextOnMobile={hideTextOnMobile}>
+                <StyledText variant="small" hideTextOnMobile={hideTextOnMobile} color={textColor}>
                     {children}
                 </StyledText>
             )}

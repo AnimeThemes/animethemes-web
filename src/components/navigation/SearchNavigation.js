@@ -8,7 +8,7 @@ import styled from "styled-components";
 import theme from "theme";
 import { useRouter } from "next/router";
 import { capitalize, debounce } from "lodash-es";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faSearch } from "@fortawesome/pro-solid-svg-icons";
 
 const StyledSearchOptions = styled.div`
     display: grid;

@@ -8,7 +8,7 @@ import {
     StyledPlayerProgressBar,
     StyledVideo
 } from "./VideoPlayer.style";
-import { faDownload, faExpandAlt, faPause, faPlay, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faDownload, faExpandAlt, faPause, faPlay, faTimes } from "@fortawesome/pro-solid-svg-icons";
 import PlayerContext from "context/playerContext";
 import createVideoSlug from "utils/createVideoSlug";
 import { Icon } from "components/icon";

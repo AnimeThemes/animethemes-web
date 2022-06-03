@@ -39,6 +39,7 @@ export const colors = {
     "text-muted":           baseColors["gray-500"],
     "text-disabled":        baseColors["gray-400"],
     "text-warning":         baseColors["warning-600"],
+    "text-warning-muted":   baseColors["warning-900"],
     "text-primary":         baseColors["primary-600"],
     "text-on-primary":      baseColors["primary-100"]
 };

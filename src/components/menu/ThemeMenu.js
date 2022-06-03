@@ -1,5 +1,5 @@
 import { Icon } from "components/icon";
-import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faPlus } from "@fortawesome/pro-solid-svg-icons";
 import { Text } from "components/text";
 import { Menu } from "components/menu";
 import { useLocalPlaylist } from "context/localPlaylistContext";

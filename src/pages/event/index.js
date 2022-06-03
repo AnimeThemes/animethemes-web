@@ -5,7 +5,7 @@ import { SEO } from "components/seo";
 import styled from "styled-components";
 import { Button } from "components/button";
 import { fetchData } from "lib/server";
-import { faArrowRight, faAward, faTrophy } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faAward, faTrophy } from "@fortawesome/pro-solid-svg-icons";
 import { Icon } from "components/icon";
 import theme from "theme";
 import getSharedPageProps from "utils/getSharedPageProps";

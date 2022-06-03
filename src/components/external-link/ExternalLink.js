@@ -1,4 +1,4 @@
-import { faChevronCircleRight } from "@fortawesome/free-solid-svg-icons";
+import { faChevronCircleRight } from "@fortawesome/pro-solid-svg-icons";
 import { Text } from "components/text";
 import { Icon } from "components/icon";
 

@@ -4,7 +4,7 @@ import devLog from "utils/devLog";
 
 const limit = pLimit(5);
 
-const API_BASE_URL = `${process.env.ANIMETHEMES_API_URL || process.env.NEXT_PUBLIC_API_URL}`;
+export const API_BASE_URL = `${process.env.ANIMETHEMES_API_URL || process.env.NEXT_PUBLIC_API_URL}`;
 
 export const INCLUDES = {
     Anime: {

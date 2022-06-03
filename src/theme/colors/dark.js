@@ -10,6 +10,7 @@ export const darkColors = {
     "text-muted":           colors["gray-300"],
     "text-disabled":        colors["gray-400"],
     "text-warning":         colors["warning-400"],
+    "text-warning-muted":   colors["warning-200"],
     "text-primary":         colors["primary-300"],
     "text-on-primary":      colors["primary-900"]
 };

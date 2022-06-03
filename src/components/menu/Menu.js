@@ -4,7 +4,7 @@ import { Button } from "components/button";
 import theme from "theme";
 import { withHover } from "styles/mixins";
 import { Icon } from "components/icon";
-import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisV } from "@fortawesome/pro-solid-svg-icons";
 import { fadeIn, flipDown, slideIn } from "styles/animations";
 
 const StyledMenuItems = styled(MenuItems)`
