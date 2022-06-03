@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown } from "@fortawesome/pro-solid-svg-icons";
 import { Button } from "components/button";
 import { Text } from "components/text";
 import { Column, Row } from "components/box";

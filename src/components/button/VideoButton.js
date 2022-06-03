@@ -1,11 +1,11 @@
 import { useContext } from "react";
 import Link from "next/link";
-import { faCompactDisc, faPlay } from "@fortawesome/free-solid-svg-icons";
-import { VideoTags } from "components/utils";
+import { faCompactDisc, faPlay } from "@fortawesome/pro-solid-svg-icons";
 import PlayerContext from "context/playerContext";
 import createVideoSlug from "utils/createVideoSlug";
 import { Icon } from "components/icon";
 import { Button } from "components/button";
+import { VideoTags } from "components/tag";
 
 export function VideoButton({ anime, theme, entry, video, ...props }) {
     const { currentVideo } = useContext(PlayerContext);

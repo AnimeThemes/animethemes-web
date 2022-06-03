@@ -2,7 +2,7 @@ import Link from "next/link";
 import { AnimeSummaryCard } from "components/card";
 import { Button } from "components/button";
 import { Column, Row } from "components/box";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown } from "@fortawesome/pro-solid-svg-icons";
 import { Icon } from "components/icon";
 import { Text } from "components/text";
 import { fetchData } from "lib/server";

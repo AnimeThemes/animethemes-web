@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Column, Row } from "components/box";
 import { Text } from "components/text";
-import { HorizontalScroll, Performances, SongTitle, ThemeEntryTags, VideoTags } from "components/utils";
+import { HorizontalScroll, Performances, SongTitle } from "components/utils";
 import { Button, VideoButton } from "components/button";
 import { AnimeSummaryCard, ArtistSummaryCard, SummaryCard, ThemeSummaryCard } from "components/card";
 import useImage from "hooks/useImage";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import { videoBaseUrl } from "lib/client/api";
-import { faChevronDown, faMinus, faPlus, faShare } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faMinus, faPlus, faShare } from "@fortawesome/pro-solid-svg-icons";
 import { Icon } from "components/icon";
 import { useWatchHistory } from "context/watchHistoryContext";
 import { useLocalPlaylist } from "context/localPlaylistContext";
@@ -22,6 +22,7 @@ import getSharedPageProps from "utils/getSharedPageProps";
 import { Menu } from "components/menu";
 import { useToasts } from "context/toastContext";
 import { Toast } from "components/toast";
+import { ThemeEntryTags, VideoTags } from "components/tag";
 
 const StyledVideoInfo = styled.div`
     display: grid;

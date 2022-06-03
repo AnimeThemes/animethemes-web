@@ -6,7 +6,7 @@ import { Text } from "components/text";
 import styled from "styled-components";
 import { Button } from "components/button";
 import { Icon } from "components/icon";
-import { faArrowRight, faAward, faRandom, faSearch, faTv, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faAward, faRandom, faSearch, faTv, faUser } from "@fortawesome/pro-solid-svg-icons";
 import theme from "theme";
 import { ExternalLink } from "components/external-link";
 import useCurrentSeason from "hooks/useCurrentSeason";

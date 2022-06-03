@@ -2,7 +2,7 @@ import { Card } from "components/card";
 import { Row } from "components/box";
 import { Text } from "components/text";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExclamation } from "@fortawesome/free-solid-svg-icons";
+import { faExclamation } from "@fortawesome/pro-solid-svg-icons";
 import styled from "styled-components";
 import theme from "theme";
 

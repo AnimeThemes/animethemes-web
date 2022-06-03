@@ -1,4 +1,4 @@
-import { faChevronDown, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faSpinner } from "@fortawesome/pro-solid-svg-icons";
 import { Button } from "components/button";
 import { Text } from "components/text";
 import { Column, Row } from "components/box";

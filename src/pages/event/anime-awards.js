@@ -12,7 +12,7 @@ import createVideoSlug from "utils/createVideoSlug";
 import Link from "next/link";
 import { SongTitleWithArtists } from "components/utils";
 import { Icon } from "components/icon";
-import { faAward, faHashtag, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faAward, faHashtag, faUsers } from "@fortawesome/pro-solid-svg-icons";
 import { motion } from "framer-motion";
 import getSharedPageProps from "utils/getSharedPageProps";
 

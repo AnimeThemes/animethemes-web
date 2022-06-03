@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import theme from "theme";
 import { Icon } from "components/icon";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faTimes } from "@fortawesome/pro-solid-svg-icons";
 import { Button } from "components/button";
 
 const StyledSearchInput = styled.div`

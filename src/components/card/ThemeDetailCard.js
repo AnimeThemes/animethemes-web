@@ -6,9 +6,10 @@ import {
     StyledVideoListContainer
 } from "./ThemeDetailCard.style";
 import { VideoButton } from "components/button";
-import { Performances, SongTitle, ThemeEntryTags } from "components/utils";
+import { Performances, SongTitle } from "components/utils";
 import { Text } from "components/text";
 import { ThemeMenu } from "components/menu";
+import { ThemeEntryTags } from "components/tag";
 
 export function ThemeDetailCard({ theme }) {
     return (

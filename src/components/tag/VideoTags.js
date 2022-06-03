@@ -1,11 +1,11 @@
 import {
-    faClosedCaptioning,
-    faComment,
+    faAlignSlash,
+    faBringForward,
+    faCommentLines,
+    faCommentMusic,
     faCompactDisc,
-    faEye,
-    faNotEqual,
-    faStream
-} from "@fortawesome/free-solid-svg-icons";
+    faEyes
+} from "@fortawesome/pro-solid-svg-icons";
 import { Tag } from "components/tag";
 import { Row } from "components/box";
 import styled from "styled-components";
@@ -25,19 +25,19 @@ export function VideoTags({ video, hideTextOnMobile }) {
             </Tag>
 
             {!!video.nc && (
-                <Tag icon={faNotEqual} title="No Credits"/>
+                <Tag icon={faAlignSlash} title="No Credits"/>
             )}
 
             {!!video.subbed && (
-                <Tag icon={faClosedCaptioning} title="With Subtitles"/>
+                <Tag icon={faCommentLines} title="With Subtitles"/>
             )}
 
             {!!video.lyrics && (
-                <Tag icon={faComment} title="With Lyrics"/>
+                <Tag icon={faCommentMusic} title="With Lyrics"/>
             )}
 
             {!!video.uncen && (
-                <Tag icon={faEye} title="Uncensored" variant="warning"/>
+                <Tag icon={faEyes} title="Uncensored"/>
             )}
 
             {!!video.source && (
@@ -47,8 +47,8 @@ export function VideoTags({ video, hideTextOnMobile }) {
             )}
 
             {video.overlap !== "None" && (
-                <Tag icon={faStream} title="Overlap" hideTextOnMobile={hideTextOnMobile}>
-                    {video.overlap.toUpperCase()}
+                <Tag icon={faBringForward} title="Overlap" hideTextOnMobile={hideTextOnMobile}>
+                    {video.overlap.toUpperCase().replace("TRANSITION", "TRANS")}
                 </Tag>
             )}
         </StyledVideoTags>

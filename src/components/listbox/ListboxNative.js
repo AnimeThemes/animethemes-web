@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { faSort, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faSort, faTimes } from "@fortawesome/pro-solid-svg-icons";
 import { Button } from "components/button";
 import { Text } from "components/text";
 import theme from "theme";

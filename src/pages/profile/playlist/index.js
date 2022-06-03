@@ -23,7 +23,7 @@ import { Reorder } from "framer-motion";
 import { useLocalPlaylist } from "context/localPlaylistContext";
 import theme from "theme";
 import { MultiCoverImage } from "components/image";
-import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import { faExclamationCircle } from "@fortawesome/pro-solid-svg-icons";
 import { Icon } from "components/icon";
 
 const StyledDesktopOnly = styled.div`

@@ -4,7 +4,7 @@ import { SEO } from "components/seo";
 import { Text } from "components/text";
 import { Column } from "components/box";
 import { SummaryCard } from "components/card";
-import { faAward, faSeedling, faStopwatch, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faAward, faSeedling, faStopwatch, faUsers } from "@fortawesome/pro-solid-svg-icons";
 import { Icon } from "components/icon";
 import theme from "theme";
 import useImage from "hooks/useImage";
