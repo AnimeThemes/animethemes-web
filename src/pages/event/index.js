@@ -12,25 +12,27 @@ import getSharedPageProps from "utils/getSharedPageProps";
 
 const BigButton = styled(Button)`
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: ${theme.scalars.borderRadiusCard};
     width: 100%;
-    height: 64px;
+    height: 48px;
     justify-content: flex-end;
     text-align: end;
-    gap: 8px;
+    gap: 16px;
 `;
 
-const BigIcon = styled(Icon)`
-    margin-right: auto;
-    
-    font-size: 2em;
+const BigIcon = styled(Icon)`    
+    font-size: 1.5em;
     color: ${theme.colors["text-disabled"]};
 `;
 
-const StyledEventGrid = styled.div`
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+const StyledEventList = styled.div`
+    display: flex;
+    flex-direction: column;
     grid-gap: 16px;
+`;
+
+const StyledEventName = styled(Text)`
+    margin-right: auto;
 `;
 
 export default function EventPage({ awards, brackets }) {
@@ -38,14 +40,14 @@ export default function EventPage({ awards, brackets }) {
         <>
             <SEO title="Events" description="Watch themes featured in awards and brackets."/>
             <Text variant="h1">Events</Text>
-            <StyledEventGrid>
+            <StyledEventList>
                 <Column style={{ "--gap": "16px" }}>
                     <Text variant="h2">Awards</Text>
                     {awards.map(({ name, path }) => (
                         <Link key={path} href={path} passHref prefetch={false}>
                             <BigButton forwardedAs="a">
                                 <BigIcon icon={faAward}/>
-                                <Text>{name}</Text>
+                                <StyledEventName>{name}</StyledEventName>
                                 <Icon icon={faArrowRight} color="text-primary"/>
                             </BigButton>
                         </Link>
@@ -57,13 +59,13 @@ export default function EventPage({ awards, brackets }) {
                         <Link key={path} href={path} passHref prefetch={false}>
                             <BigButton forwardedAs="a">
                                 <BigIcon icon={faTrophy}/>
-                                <Text>{name}</Text>
+                                <StyledEventName>{name}</StyledEventName>
                                 <Icon icon={faArrowRight} color="text-primary"/>
                             </BigButton>
                         </Link>
                     ))}
                 </Column>
-            </StyledEventGrid>
+            </StyledEventList>
         </>
     );
 }
@@ -75,32 +77,26 @@ export async function getStaticProps() {
             path: "/event/anime-awards"
         }
     ];
-    let totalApiRequests = 0;
 
-    const brackets = await Promise.all([
-        "best-anime-opening-ix-salty-arrow"
-    ].map(async (bracket) => {
-        const { data, apiRequests } = await fetchData(`
-            #graphql
+    const { data, apiRequests } = await fetchData(`
+        #graphql
 
-            query($bracketSlug: String!) {
-                bracket(slug: $bracketSlug) {
-                    name
-                }
+        query {
+            bracketAll {
+                slug
+                name
             }
-        `, { bracketSlug: bracket });
+        }
+    `);
 
-        totalApiRequests += apiRequests;
-
-        return {
-            name: data.bracket.name,
-            path: `/event/${bracket}`
-        };
+    const brackets = data.bracketAll.map((bracket) => ({
+        name: bracket.name,
+        path: `/event/${bracket.slug}`
     }));
 
     return {
         props: {
-            ...getSharedPageProps(totalApiRequests),
+            ...getSharedPageProps(apiRequests),
             awards,
             brackets
         }

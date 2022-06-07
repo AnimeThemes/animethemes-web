@@ -27,5 +27,13 @@ export const RevalidationToken = Object.freeze({
 
 export const GlobalVolume = Object.freeze({
     __KEY__: "volume",
-    __INITIAL_VALUE__: 1
+    __INITIAL_VALUE__: 1,
+});
+
+export const ColorTheme = Object.freeze({
+    __KEY__: "theme",
+    __INITIAL_VALUE__: "system",
+    SYSTEM: "system",
+    DARK: "dark",
+    LIGHT: "light",
 });

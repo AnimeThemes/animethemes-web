@@ -3,6 +3,7 @@ const typeDefs = `
     
     type Query {
         bracket(slug: String): Bracket
+        bracketAll: [Bracket]
     }
 
     type Bracket {

@@ -57,7 +57,7 @@ const StyledThemeGroupContainer = styled.div`
     margin-top: 8px;
 `;
 
-export function AnimeSummaryCard({ anime, previewThemes = false, expandable = false, ...props }) {
+export function AnimeSummaryCard({ anime, expandable = false, ...props }) {
     const [isExpanded, toggleExpanded] = useToggle();
     const { smallCover } = useImage(anime);
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);

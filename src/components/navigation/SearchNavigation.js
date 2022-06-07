@@ -43,6 +43,7 @@ const updateSearchQuery = debounce((router, newSearchQuery) => {
 
 export function SearchNavigation() {
     const router = useRouter();
+    const [routerWasReady, setRouterWasReady] = useState(router.isReady);
     const { entity, ...query } = router.query;
     const { q: initialSearchQuery = "" } = query;
 
@@ -52,12 +53,6 @@ export function SearchNavigation() {
         setInputSearchQuery(newInputSearchQuery);
         updateSearchQuery(router, newInputSearchQuery);
     };
-
-    useEffect(() => {
-        if (router.isReady) {
-            setInputSearchQuery(initialSearchQuery);
-        }
-    }, [router.isReady]);
 
     const inputRef = useRef();
 
@@ -74,7 +69,7 @@ export function SearchNavigation() {
 
     useEffect(() => {
         const hotkeyListener = (event) => {
-            if ((event.key === "s" && event.ctrlKey) || (event.key === "/")) {
+            if (inputRef.current !== document.activeElement && ((event.key === "s" && event.ctrlKey) || (event.key === "/"))) {
                 event.preventDefault();
                 inputRef.current?.focus({
                     preventScroll: true
@@ -87,6 +82,12 @@ export function SearchNavigation() {
 
         return () => window.removeEventListener("keydown", hotkeyListener);
     }, []);
+
+    if (router.isReady !== routerWasReady) {
+        setRouterWasReady(router.isReady);
+        setInputSearchQuery(initialSearchQuery);
+        return null;
+    }
 
     return (
         <>

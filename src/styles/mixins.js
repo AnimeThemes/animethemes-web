@@ -1,20 +1,16 @@
 import { css, keyframes } from "styled-components";
 
 const loadingAnimationKeyframes = keyframes`
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 100% 100%;
-  }
+    50% {
+        background-color: rgba(46, 41, 58, 0.5);
+    }
 `;
 
 export const loadingAnimation = css`
-    background: radial-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.25)) no-repeat;
-    background-size: 500% 500%;
+    background-color: rgba(46, 41, 58, 1);
 
     @media (prefers-reduced-motion: no-preference) {
-        animation: ${loadingAnimationKeyframes} 2s infinite alternate linear;
+        animation: ${loadingAnimationKeyframes} 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
 `;
 

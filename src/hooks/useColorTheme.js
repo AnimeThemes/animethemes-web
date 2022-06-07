@@ -1,24 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import useLocalStorageState from "use-local-storage-state";
 
 export default function useColorTheme() {
-    const [ theme, setTheme ] = useState(null);
+    const [ theme, setTheme ] = useLocalStorageState("theme", { ssr: true }, "system");
 
     useEffect(() => {
-        const body = document.body;
+        setTheme(document.body.getAttribute("theme"));
+    }, [setTheme]);
 
-        setTheme(body.getAttribute("theme"));
-    }, []);
+    useEffect(() => {
+        document.body.setAttribute("theme", theme);
+    }, [theme]);
 
-    function toggleTheme() {
-        const newTheme = theme === "dark" ? "light" : "dark";
-
-        setTheme(newTheme);
-
-        const body = document.body;
-        body.setAttribute("theme", newTheme);
-
-        window.localStorage.setItem("theme", newTheme);
-    }
-
-    return [theme, toggleTheme];
+    return [theme, setTheme];
 }

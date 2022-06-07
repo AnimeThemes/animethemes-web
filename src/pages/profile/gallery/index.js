@@ -2,7 +2,7 @@ import { Text } from "components/text";
 import styled from "styled-components";
 import { Button } from "components/button";
 import { useState } from "react";
-import { API_BASE_URL } from "lib/common/animethemes/api";
+import { API_URL } from "lib/common/animethemes/api";
 import { SEO } from "components/seo";
 import getSharedPageProps from "utils/getSharedPageProps";
 
@@ -61,7 +61,7 @@ function Grill({ grill }) {
 }
 
 export async function getStaticProps() {
-    const res = await fetch(`${API_BASE_URL}/image?filter[facet]=Grill&page[size]=100`);
+    const res = await fetch(`${API_URL}/image?filter[facet]=Grill&page[size]=100`);
     const json = await res.json();
 
     return {

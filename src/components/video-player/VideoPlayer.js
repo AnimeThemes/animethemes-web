@@ -19,12 +19,12 @@ import { Column, Row } from "components/box";
 import { Container } from "components/container";
 import useCompatability from "hooks/useCompatability";
 import { useRouter } from "next/router";
-import { videoBaseUrl } from "lib/client/api";
 import useMediaQuery from "hooks/useMediaQuery";
 import styledTheme from "theme";
 import { SongTitle } from "components/utils";
 import useSetting from "hooks/useSetting";
 import { GlobalVolume } from "utils/settings";
+import { VIDEO_URL } from "utils/config";
 
 export function VideoPlayer({ anime, theme, entry, video, background, ...props }) {
     const [isPlaying, setPlaying] = useState(false);
@@ -33,7 +33,7 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
     const progressRef = useRef();
     const { clearCurrentVideo } = useContext(PlayerContext);
     const isMobile = useMediaQuery(`(max-width: ${styledTheme.breakpoints.mobileMax})`);
-    const videoUrl = `${videoBaseUrl}/${video.basename}`;
+    const videoUrl = `${VIDEO_URL}/${video.basename}`;
     const router = useRouter();
     const [globalVolume, setGlobalVolume] = useSetting(GlobalVolume);
 

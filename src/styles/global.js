@@ -8,16 +8,6 @@ export default createGlobalStyle`
         box-sizing: border-box;
     }
 
-    [theme="light"] {
-        ${createCssDefinition(colors)}
-        ${createCssDefinition(shadows)}
-    }
-
-    [theme="dark"] {
-        ${createCssDefinition(darkColors)}
-        ${createCssDefinition(darkShadows)}
-    }
-
     html {
         // Always show a vertical scroll bar, even if the page 
         // is not scrollable to prevent layout shift.
@@ -35,6 +25,26 @@ export default createGlobalStyle`
         -moz-osx-font-smoothing: grayscale;
 
         line-height: 1.5;
+
+        &[theme="system"] {
+            ${createCssDefinition(darkColors)}
+            ${createCssDefinition(darkShadows)}
+            
+            @media (prefers-color-scheme: light) {
+                ${createCssDefinition(colors)}
+                ${createCssDefinition(shadows)}    
+            }
+        }
+        
+        &[theme="light"] {
+            ${createCssDefinition(colors)}
+            ${createCssDefinition(shadows)}
+        }
+
+        &[theme="dark"] {
+            ${createCssDefinition(darkColors)}
+            ${createCssDefinition(darkShadows)}
+        }
     }
 
     html, body, #__next {

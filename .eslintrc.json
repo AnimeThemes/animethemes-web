@@ -31,14 +31,7 @@
       }
     ],
     "no-duplicate-imports": "error",
-    "no-restricted-imports": [
-      "error",
-      {
-        "patterns": [
-          "components/*/*"
-        ]
-      }
-    ],
+    "no-unused-vars": "error",
     "react/react-in-jsx-scope": "off",
     "react/self-closing-comp": "error",
     // For now we don't habe prop-types validation

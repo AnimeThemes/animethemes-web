@@ -1,11 +1,12 @@
 import { fetchData } from "lib/server";
 import gql from "graphql-tag";
 import createVideoSlug from "utils/createVideoSlug";
+import { BASE_PATH, REVALIDATE_TOKEN } from "utils/config";
 
 export default async function handler(req, res) {
     const { secret, id, resource, mode = "page" } = req.query;
 
-    if (secret !== process.env.REVALIDATE_TOKEN) {
+    if (secret !== REVALIDATE_TOKEN) {
         return res.status(401).json({ message: "Invalid token." });
     }
 
@@ -28,7 +29,7 @@ export default async function handler(req, res) {
     }
 
     for (const path of paths) {
-        await res.unstable_revalidate(`${process.env.NEXT_PUBLIC_BASE_PATH || ""}${path}`);
+        await res.unstable_revalidate(`${BASE_PATH}${path}`);
     }
 
     return res.json({ revalidated: true, affectedPaths: paths });

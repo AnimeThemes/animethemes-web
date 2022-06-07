@@ -8,6 +8,7 @@ import { Button } from "components/button";
 import styled from "styled-components";
 import theme from "theme";
 import { forwardRef } from "react";
+import { APP_URL } from "utils/config";
 
 const StyledFooter = styled(Solid)`
     margin-top: auto;
@@ -45,7 +46,7 @@ export function Footer() {
         <StyledFooter>
             <StyledContainer>
                 <StyledLinkList>
-                    <FooterTextLink href="https://staging.animethemes.moe/transparency">
+                    <FooterTextLink href={`${APP_URL}/transparency`}>
                         Transparency
                     </FooterTextLink>
                     <Link href="/wiki/donate" passHref>
@@ -60,10 +61,10 @@ export function Footer() {
                     </Link>
                 </StyledLinkList>
                 <StyledLinkList>
-                    <FooterTextLink href="https://staging.animethemes.moe/terms-of-service">
+                    <FooterTextLink href={`${APP_URL}/terms-of-service`}>
                         Terms of Service
                     </FooterTextLink>
-                    <FooterTextLink href="https://staging.animethemes.moe/privacy-policy">
+                    <FooterTextLink href={`${APP_URL}/privacy-policy`}>
                         Privacy Policy
                     </FooterTextLink>
                     <FooterTextLink href="mailto:admin@animethemes.moe">

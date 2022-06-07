@@ -15,8 +15,6 @@ import Head from "next/head";
 import withBasePath from "utils/withBasePath";
 import { SEO } from "components/seo";
 import { config } from "@fortawesome/fontawesome-svg-core";
-import { WatchHistoryProvider } from "context/watchHistoryContext";
-import { LocalPlaylistProvider } from "context/localPlaylistContext";
 import { ToastProvider } from "context/toastContext";
 import { AnnouncementToast, ToastHub } from "components/toast";
 import { Text } from "components/text";
@@ -24,6 +22,9 @@ import { useRouter } from "next/router";
 import useSetting from "hooks/useSetting";
 import { DeveloperMode, RevalidationToken } from "utils/settings";
 import { ErrorBoundary } from "components/utils";
+import { STAGING } from "utils/config";
+import { Card } from "components/card";
+import { ExternalLink } from "components/external-link";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "styles/prism.scss";
@@ -46,7 +47,7 @@ const StyledContainer = styled(Container)`
 
 export default function MyApp({ Component, pageProps }) {
     const router = useRouter();
-    const [colorTheme, toggleColorTheme] = useColorTheme();
+    const [colorTheme, setColorTheme] = useColorTheme();
     const [developerMode] = useSetting(DeveloperMode);
 
     const { lastBuildAt, apiRequests, isVideoPage = false, ...videoPageProps } = pageProps;
@@ -74,14 +75,12 @@ export default function MyApp({ Component, pageProps }) {
     return (
         <MultiContextProvider providers={[
             [ ThemeProvider, { theme } ],
-            [ ColorThemeContext.Provider, { value: { colorTheme, toggleColorTheme } } ],
+            [ ColorThemeContext.Provider, { value: { colorTheme, setColorTheme } } ],
             [ PlayerContext.Provider, { value: {
                 currentVideo: lastVideoPageProps?.video,
                 clearCurrentVideo: () => setLastVideoPageProps(null)
             } } ],
             [ QueryClientProvider, { client: queryClient } ],
-            [ WatchHistoryProvider ],
-            [ LocalPlaylistProvider ],
             [ ToastProvider, { initialToasts: [ {
                 id: "announcement",
                 content: <AnnouncementToast/>
@@ -113,6 +112,17 @@ export default function MyApp({ Component, pageProps }) {
                     {pageProps.isSearch && (
                         <SearchNavigation/>
                     )}
+                    {STAGING ? (
+                        <Card color="text-warning">
+                            <Text as="p">
+                                <strong>WARNING</strong>: This version of the website is for testing purposes only.
+                                Some pages or functions might not work.
+                            </Text>
+                            <Text as="p">
+                                <ExternalLink href={`https://animethemes.moe${router.asPath}`}>CLICK HERE TO GO BACK TO THE NORMAL SITE</ExternalLink>
+                            </Text>
+                        </Card>
+                    ) : null}
                     <Component {...pageProps}/>
                     {developerMode === DeveloperMode.ENABLED && lastBuildAt && (
                         <PageRevalidation lastBuildAt={lastBuildAt} apiRequests={apiRequests}/>

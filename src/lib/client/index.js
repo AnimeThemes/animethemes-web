@@ -1,14 +1,6 @@
-import { makeExecutableSchema } from "@graphql-tools/schema";
+export async function fetchDataClient(...args) {
+    // Code-split anything GraphQL related to reduce initial bundle size.
+    const { fetchDataClient } = await import("./chunk");
 
-import { buildFetchData } from "lib/common";
-
-import typeDefsAnimeThemes from "lib/common/animethemes/type-defs";
-
-import resolversAnimeThemes from "lib/common/animethemes/resolvers";
-
-const schema = makeExecutableSchema({
-    typeDefs: typeDefsAnimeThemes,
-    resolvers: resolversAnimeThemes
-});
-
-export const fetchDataClient = buildFetchData(schema);
+    return fetchDataClient(...args);
+}

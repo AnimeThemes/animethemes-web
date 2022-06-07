@@ -5,7 +5,7 @@ const ThemeInjection = () => {
     // language=JavaScript
     const injectTheme = `
         (function() {
-            let theme = window.localStorage.getItem("theme");
+            let theme = JSON.parse(window.localStorage.getItem("theme"));
             if (!theme && window.matchMedia("(prefers-color-scheme: light)").matches) {
                 theme = "light";
             }
@@ -34,7 +34,7 @@ export default class MyDocument extends Document {
                         rel="stylesheet"
                     />
                 </Head>
-                <body theme="dark">
+                <body theme="system">
                     <ThemeInjection/>
                     <Main/>
                     <NextScript/>

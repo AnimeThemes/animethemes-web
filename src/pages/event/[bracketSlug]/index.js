@@ -1,36 +1,24 @@
 import styled from "styled-components";
-import Link from "next/link";
 import { SEO } from "components/seo";
 import { Text } from "components/text";
-import { Column } from "components/box";
-import { SummaryCard } from "components/card";
-import { faAward, faSeedling, faStopwatch, faUsers } from "@fortawesome/pro-solid-svg-icons";
-import { Icon } from "components/icon";
+import { Column, Solid } from "components/box";
+import { faStopwatch } from "@fortawesome/pro-solid-svg-icons";
 import theme from "theme";
-import useImage from "hooks/useImage";
-import createVideoSlug from "utils/createVideoSlug";
-import { SongTitleWithArtists } from "components/utils";
 import { useState } from "react";
 import { Switcher } from "components/switcher";
 import { fetchData } from "lib/server";
 import getSharedPageProps from "utils/getSharedPageProps";
+import fetchStaticPaths from "utils/fetchStaticPaths";
+import gql from "graphql-tag";
+import { CornerIcon } from "components/icon/CornerIcon";
+import { BracketThemeSummaryCard } from "components/bracket/BracketThemeSummaryCard";
+import { BracketChart } from "components/bracket/BracketChart";
 
-const CornerIcon = styled(Icon).attrs({
-    size: "2x"
-})`
-    position: absolute;
-    right: 0;
-    top: 0;
-    color: ${theme.colors["text-primary"]};
-    transform: translate(50%, -33%) rotate(10deg);
-`;
-
-const CurrentRound = styled.div`
+const CurrentRound = styled(Solid)`
     position: relative;
     margin: 0 -2rem;
     padding: 2rem;
     border-radius: 0.5rem;
-    background-color: ${theme.colors["solid"]};
 `;
 
 const StyledHeader = styled.div`
@@ -56,6 +44,7 @@ export default function BracketPage({ bracket }) {
         <>
             <SEO title={bracket.name} />
             <Text variant="h1">{bracket.name}</Text>
+            <BracketChart bracket={bracket}/>
             {!!bracket.currentRound && (
                 <BracketRound round={bracket.currentRound} initialGroup={String(bracket.currentGroup)} isCurrent/>
             )}
@@ -147,81 +136,13 @@ function ContestantCard({ contestant, opponent, contestantVotes, opponentVotes }
     const isWinner = isVoted && (contestantVotes !== opponentVotes ? contestantVotes > opponentVotes : contestant.seed < opponent.seed);
 
     return (
-        <ThemeSummaryCard
-            theme={contestant.theme}
+        <BracketThemeSummaryCard
+            contestant={contestant}
             isVoted={isVoted}
             isWinner={isWinner}
             seed={contestant.seed}
             votes={contestantVotes}
         />
-    );
-}
-
-const StyledSummaryCard = styled(SummaryCard)`
-    position: relative;
-    
-    width: 100%;
-    padding-inline-end: 24px;
-    
-    opacity: var(--opacity);
-`;
-
-const StyledRank = styled(Text)`
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 1px;
-`;
-
-function ThemeSummaryCard({ theme, isVoted, isWinner, seed, votes, ...props }) {
-    const { smallCover } = useImage(theme.anime);
-
-    if (!theme.entries.length) {
-        return null;
-    }
-
-    const entry = theme.entries[0];
-
-    if (!entry.videos.length) {
-        return null;
-    }
-
-    const video = entry.videos[0];
-    const videoSlug = createVideoSlug(theme, entry, video);
-    const to = `/anime/${theme.anime.slug}/${videoSlug}`;
-
-    const description = (
-        <SummaryCard.Description>
-            <span>{theme.slug}</span>
-            <Link href={`/anime/${theme.anime.slug}`} passHref prefetch={false}>
-                <Text as="a" link>{theme.anime.name}</Text>
-            </Link>
-        </SummaryCard.Description>
-    );
-
-    return (
-        <StyledSummaryCard
-            title={<SongTitleWithArtists song={theme.song} songTitleLinkTo={to}/>}
-            description={description}
-            image={smallCover}
-            to={to}
-            style={{ "--opacity": !isVoted || isWinner ? 1 : 0.5 }}
-            {...props}
-        >
-            <Column style={{ "--gap": "8px" }}>
-                <Text variant="small" color="text-muted" noWrap title="Seed">
-                    <Icon icon={faSeedling}/>
-                    <StyledRank> {seed}</StyledRank>
-                </Text>
-                {isVoted && (
-                    <Text variant="small" color={isWinner ? "text-primary" : "text-muted"} noWrap title="Votes">
-                        <Icon icon={faUsers}/>
-                        <StyledRank> {votes}</StyledRank>
-                    </Text>
-                )}
-            </Column>
-            {isWinner && (
-                <CornerIcon icon={faAward} title="Winner"/>
-            )}
-        </StyledSummaryCard>
     );
 }
 
@@ -235,6 +156,7 @@ export async function getStaticProps({ params: { bracketSlug } }) {
             name
             source
             theme {
+                id
                 slug
                 anime {
                     slug
@@ -312,14 +234,19 @@ export async function getStaticProps({ params: { bracketSlug } }) {
 }
 
 export async function getStaticPaths() {
-    return {
-        paths: [
-            {
-                params: {
-                    bracketSlug: "best-anime-opening-ix-salty-arrow"
+    return fetchStaticPaths(async () => {
+        const { data } = await fetchData(gql`
+            query {
+                bracketAll {
+                    slug
                 }
             }
-        ],
-        fallback: false
-    };
+        `);
+
+        return data.bracketAll.map((bracket) => ({
+            params: {
+                bracketSlug: bracket.slug
+            }
+        }));
+    }, true);
 }

@@ -18,6 +18,9 @@ const theme = {
         toast: 20,
         menuOverlay: 2,
         menuPopover: 1
+    },
+    scalars: {
+        borderRadiusCard: "8px"
     }
 };
 

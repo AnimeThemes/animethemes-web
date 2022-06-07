@@ -20,7 +20,7 @@ import {
 } from "utils/comparators";
 import { SEO } from "components/seo";
 import { Reorder } from "framer-motion";
-import { useLocalPlaylist } from "context/localPlaylistContext";
+import useLocalPlaylist from "hooks/useLocalPlaylist";
 import theme from "theme";
 import { MultiCoverImage } from "components/image";
 import { faExclamationCircle } from "@fortawesome/pro-solid-svg-icons";
@@ -99,7 +99,7 @@ export default function PlaylistPage() {
             <Text variant="h1">Local Playlist</Text>
             <SidebarContainer>
                 <StyledDesktopOnly>
-                    <MultiCoverImage resourcesWithImages={localPlaylist.map((theme) => theme?.anime)}/>
+                    <MultiCoverImage key={JSON.stringify(localPlaylist)} resourcesWithImages={localPlaylist.map((theme) => theme?.anime)}/>
                 </StyledDesktopOnly>
                 <Column style={{ "--gap": "24px" }}>
                     <StyledHeader>

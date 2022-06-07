@@ -1,15 +1,21 @@
-const { info } = require("next/dist/build/output/log");
+const { info, error } = require("next/dist/build/output/log");
+const { ANALYZE, STAGING, BASE_PATH, validateConfig } = require("./src/utils/config");
 
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
-    enabled: process.env.ANALYZE === "true",
+    enabled: ANALYZE,
 });
 
-if (process.env.NEXT_PUBLIC_STAGING) {
+if (!validateConfig()) {
+    error("Shutting down because of invalid configuration...");
+    return process.exit(1);
+}
+
+if (STAGING) {
     info("Running animethemes-web in staging mode!");
 }
 
 module.exports = withBundleAnalyzer({
-    basePath: process.env.NEXT_PUBLIC_BASE_PATH || "",
+    basePath: BASE_PATH,
     reactStrictMode: true,
     compiler: {
         styledComponents: true

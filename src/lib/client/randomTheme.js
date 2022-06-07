@@ -1,10 +1,10 @@
-import { baseUrl } from "lib/client/api";
+import { CLIENT_API_URL } from "utils/config";
 
 const backLog = [];
 
 export async function fetchRandomTheme() {
     if (!backLog.length) {
-        const res = await fetch(`${baseUrl}/animetheme?sort=random&include=anime,animethemeentries.videos&filter[has]=animethemeentries&filter[spoiler]=false`);
+        const res = await fetch(`${CLIENT_API_URL}/animetheme?sort=random&include=anime,animethemeentries.videos&filter[has]=animethemeentries&filter[spoiler]=false`);
         const json = await res.json();
 
         backLog.push(...json.animethemes.map((theme) => {
