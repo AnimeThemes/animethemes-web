@@ -5,5 +5,4 @@ export { SongTitle } from "./SongTitle";
 export { Performances } from "./Performances";
 export { SongTitleWithArtists } from "./SongTitleWithArtists";
 export { HorizontalScroll } from "./HorizontalScroll";
-export { Highlight } from "./Highlight";
 export { ErrorBoundary } from "./ErrorBoundary";

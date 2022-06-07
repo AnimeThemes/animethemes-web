@@ -224,7 +224,7 @@ export async function getStaticProps({ params: { animeSlug } }) {
 }
 
 export async function getStaticPaths() {
-    return fetchStaticPaths(async (isStaging) => {
+    return fetchStaticPaths(async () => {
         const { data } = await fetchData(gql`
             query {
                 animeAll {
@@ -234,14 +234,7 @@ export async function getStaticPaths() {
             }
         `);
 
-        let anime = data.animeAll;
-
-        if (isStaging) {
-            // In staging, we only want to pre-render the newest 100 anime pages.
-            anime = anime.sort((a, b) => b.id - a.id).slice(0, 100);
-        }
-
-        return anime.map((anime) => ({
+        return data.animeAll.map((anime) => ({
             params: {
                 animeSlug: anime.slug
             }

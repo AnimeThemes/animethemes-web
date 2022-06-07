@@ -8,28 +8,55 @@
 ## Configuration
 
 To get started you need to define some environment variables. This can be done by creating a `.env.local` file in the 
-root directory.
+root directory. A minimal setup only requires one variable to be set:
+
+```ini
+; Set this to the URL on which your local API is served.
+;
+; (If you do not have a local instance of animethemes-server set up
+; you can also use the production or staging URLs of the AnimeThemes API.
+; Keep in mind though that this puts addtional load on our servers.
+; That's why it's recommended to set up your own API instance locally.)
+ANIMETHEMES_API_URL=http://localhost
+```
+
+To get to use all features of the client, you may configure some additional variables.
 
 This is a list of all available options:
 
 ```ini
-; Back-end API configuration
-;   These values are required.
+; ===== Server-side =====
+
+; The URL to the AnimeThemes API which will be used on the server.
 ANIMETHEMES_API_URL=http://localhost
+
+; If specified, this API key will be used to make requests to the AnimeThemes API.
+; This is used to by-pass rate limiting.
 ANIMETHEMES_API_KEY=...
 
-; (Optional) The URL to the AnimeThemes API to use on the front-end.
-;   For development this is "http://localhost" by default.
-;   For production this is "https://staging.animethemes.moe" by default.
-NEXT_PUBLIC_API_URL=http://localhost
+; The token to use for manual revalidation.
+REVALIDATE_TOKEN=secret
 
-; (Optional) The URL from which video files should be served.
-;   By default this is "https://animethemes.moe". 
-NEXT_PUBLIC_VIDEO_URL=https://animethemes.moe
+; Set to any truthy value to activate the bundle analyzer.
+ANALYZE=true
 
-; (Optional) The base path the app should be hosted on.
-;   By default the app is hosted on the root path (/).
+; ===== Server-side + Client-side =====
+
+; The base path the app should be hosted on.
 NEXT_PUBLIC_BASE_PATH=/wiki
+
+; The URL to the AnimeThemes API which will be used on the browser.
+NEXT_PUBLIC_API_URL=https://api.animethemes.moe
+
+; The URL from which video files should be served.
+NEXT_PUBLIC_VIDEO_URL=https://v.animethemes.moe
+
+; The URL to use for app links.
+NEXT_PUBLIC_APP_URL=https://app.animethemes.moe
+
+; Set to any truthy value to activate staging mode.
+; Staging mode only pre-renders a small subset of pages to reduce build time.
+STAGING=true
 ```
 
 For more information on environment variables see the [Next.js documentation](https://nextjs.org/docs/basic-features/environment-variables).
@@ -56,4 +83,4 @@ For more information on environment variables see the [Next.js documentation](ht
 
 ### APIs
 
-- [AnimeThemes API](https://staging.animethemes.moe/api/docs/)
+- [AnimeThemes API](https://api-docs.animethemes.moe/)

@@ -1,10 +1,11 @@
 import pLimit from "p-limit";
 import { parseResolveInfo } from "graphql-parse-resolve-info";
 import devLog from "utils/devLog";
+import { CLIENT_API_URL, SERVER_API_KEY, SERVER_API_URL } from "utils/config";
 
 const limit = pLimit(5);
 
-export const API_BASE_URL = `${process.env.ANIMETHEMES_API_URL || process.env.NEXT_PUBLIC_API_URL}`;
+export const API_URL = `${SERVER_API_URL || CLIENT_API_URL}`;
 
 export const INCLUDES = {
     Anime: {
@@ -131,7 +132,7 @@ export function apiResolver(config) {
             devLog.warn(`Deep fetch at: ${path}`);
         }
 
-        let url = `${API_BASE_URL}${endpoint(parent, args)}`;
+        let url = `${API_URL}${endpoint(parent, args)}`;
 
         const includes = getIncludes(info, baseInclude);
         if (baseInclude) {
@@ -165,8 +166,19 @@ export function apiResolver(config) {
 
         return await limit(() => (async () => {
             if (!pagination) {
-                const json = await fetchJson(url);
-                context.apiRequests++;
+                let json;
+
+                if (context?.cache?.has(url)) {
+                    devLog.info("CACHED: " + url);
+                    json = context.cache.get(url);
+                } else {
+                    json = await fetchJson(url);
+                    context.apiRequests++;
+                    if (!context.cache) {
+                        context.cache = new Map();
+                    }
+                    context.cache.set(url, json);
+                }
 
                 return transformer(extractor(json, parent, args), parent, args);
             } else {
@@ -190,9 +202,9 @@ export function apiResolver(config) {
 async function fetchJson(url) {
     const config = {};
 
-    if (process.env.ANIMETHEMES_API_KEY) {
+    if (SERVER_API_KEY) {
         config.headers = {
-            Authorization: `Bearer ${process.env.ANIMETHEMES_API_KEY}`
+            Authorization: `Bearer ${SERVER_API_KEY}`
         };
     }
 

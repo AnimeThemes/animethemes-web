@@ -8,11 +8,10 @@ import { AnimeSummaryCard, ArtistSummaryCard, SummaryCard, ThemeSummaryCard } fr
 import useImage from "hooks/useImage";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
-import { videoBaseUrl } from "lib/client/api";
 import { faChevronDown, faMinus, faPlus, faShare } from "@fortawesome/pro-solid-svg-icons";
 import { Icon } from "components/icon";
-import { useWatchHistory } from "context/watchHistoryContext";
-import { useLocalPlaylist } from "context/localPlaylistContext";
+import useWatchHistory from "hooks/useWatchHistory";
+import useLocalPlaylist from "hooks/useLocalPlaylist";
 import styled from "styled-components";
 import theme from "theme";
 import createVideoSlug from "utils/createVideoSlug";
@@ -23,6 +22,7 @@ import { Menu } from "components/menu";
 import { useToasts } from "context/toastContext";
 import { Toast } from "components/toast";
 import { ThemeEntryTags, VideoTags } from "components/tag";
+import { VIDEO_URL } from "utils/config";
 
 const StyledVideoInfo = styled.div`
     display: grid;
@@ -166,7 +166,7 @@ export default function VideoPage({ anime, theme, entry, video }) {
             .then(() => dispatchToast("clipboard", <Toast>Copied to clipboard!</Toast>));
     };
 
-    const videoUrl = `${videoBaseUrl}/${video.basename}`;
+    const videoUrl = `${VIDEO_URL}/${video.basename}`;
 
     return (
         <>
@@ -420,7 +420,7 @@ export async function getStaticProps({ params: { animeSlug, videoSlug } }) {
 }
 
 export async function getStaticPaths() {
-    return fetchStaticPaths(async (isStaging) => {
+    return fetchStaticPaths(async () => {
         const { data } = await fetchData(gql`
             query {
                 animeAll {
@@ -441,14 +441,7 @@ export async function getStaticPaths() {
             }
         `);
 
-        let anime = data.animeAll;
-
-        if (isStaging) {
-            // In staging, we only want to pre-render the video pages for the neweset 100 anime.
-            anime = anime.sort((a, b) => b.id - a.id).slice(0, 100);
-        }
-
-        return anime.flatMap(
+        return data.animeAll.flatMap(
             (anime) => anime.themes.flatMap(
                 (theme) => theme.entries.flatMap(
                     (entry) => entry.videos.flatMap(

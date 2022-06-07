@@ -10,8 +10,7 @@ import gql from "graphql-tag";
 import { fetchRandomGrill } from "lib/client/randomGrill";
 import createVideoSlug from "utils/createVideoSlug";
 import Link from "next/link";
-
-const videoBaseUrl = process.env.NEXT_PUBLIC_VIDEO_URL || "https://animethemes.moe";
+import { VIDEO_URL } from "utils/config";
 
 const slowPan = keyframes`
     from {
@@ -75,6 +74,7 @@ const StyledCenter = styled.div`
 const StyledVideo = styled.video`
     width: 100%;
     filter: blur(5px);
+    background-color: ${theme.colors["solid-on-card"]};
 `;
 
 const StyledCover = styled.img`
@@ -152,7 +152,7 @@ export function FeaturedTheme({ theme }) {
 
 function FeaturedThemeBackground({ theme }) {
     const [ featuredThemePreview ] = useSetting(FeaturedThemePreview);
-    const { canPlayVideo } = useCompatability({ canPlayVideo: false });
+    const { canPlayVideo } = useCompatability();
     const [ fallbackToCover, setFallbackToCover ] = useState(false);
     const { smallCover: featuredCover } = useImage(theme.anime);
 
@@ -180,16 +180,20 @@ function FeaturedThemeBackground({ theme }) {
             <Link {...linkProps}>
                 <StyledOverflowHidden>
                     <StyledVideo
-                        src={`${videoBaseUrl}/${video.basename}`}
                         autoPlay
                         muted
                         loop
                         onError={() => setFallbackToCover(true)}
-                    />
+                    >
+                        <source
+                            src={`${VIDEO_URL}/${video.basename}`}
+                            type={`video/webm; codecs="vp8, vp9, opus`}
+                        />
+                    </StyledVideo>
                 </StyledOverflowHidden>
             </Link>
         );
-    } else if (featuredThemePreview === FeaturedThemePreview.COVER || fallbackToCover) {
+    } else if (featuredThemePreview !== FeaturedThemePreview.DISABLED) {
         return (
             <Link {...linkProps}>
                 <StyledOverflowHidden>

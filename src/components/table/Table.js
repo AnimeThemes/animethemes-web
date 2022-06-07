@@ -6,7 +6,7 @@ export const Table = styled.div``;
 
 Table.Body = styled.div`
     border: 2px solid ${theme.colors["solid-on-card"]};
-    border-radius: 8px;
+    border-radius: ${theme.scalars.borderRadiusCard};
     overflow: hidden;
 `;
 

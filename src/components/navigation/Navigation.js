@@ -1,16 +1,6 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import {
-    faBars,
-    faLightbulb,
-    faMoon,
-    faRandom,
-    faSearch,
-    faSpinner,
-    faTimes,
-    faTv,
-    faUser
-} from "@fortawesome/pro-solid-svg-icons";
+import { faBars, faRandom, faSearch, faTimes, faTv, faUser } from "@fortawesome/pro-solid-svg-icons";
 import {
     StyledCollapsibleLink,
     StyledLogo,
@@ -21,7 +11,6 @@ import {
     StyledNavigationLinks
 } from "./Navigation.style";
 import { Button } from "components/button";
-import ColorThemeContext from "context/colorThemeContext";
 import { Icon } from "components/icon";
 import { Text } from "components/text";
 import useCurrentSeason from "hooks/useCurrentSeason";
@@ -30,7 +19,6 @@ import { useRouter } from "next/router";
 
 export function Navigation({ offsetToggleButton = false }) {
     const [ show, setShow ] = useState(false);
-    const { colorTheme, toggleColorTheme } = useContext(ColorThemeContext);
     const { currentYear, currentSeason } = useCurrentSeason();
 
     const router = useRouter();
@@ -76,15 +64,6 @@ export function Navigation({ offsetToggleButton = false }) {
                                 <span>My Profile</span>
                             </StyledCollapsibleLink>
                         </Link>
-                        <Button
-                            variant="silent"
-                            isCircle
-                            onClick={toggleColorTheme}
-                            alignSelf="center"
-                            title="Toggle color theme"
-                        >
-                            <Icon icon={colorTheme === null ? faSpinner : colorTheme === "dark" ? faLightbulb : faMoon} spin={colorTheme === null} />
-                        </Button>
                     </StyledNavigationLinks>
                 </StyledNavigationContainer>
             </StyledNavigation>

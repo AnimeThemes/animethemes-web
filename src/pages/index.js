@@ -17,6 +17,8 @@ import { FeaturedTheme } from "components/featured-theme";
 import gql from "graphql-tag";
 import { fetchDataClient } from "lib/client";
 import getSharedPageProps from "utils/getSharedPageProps";
+import { range } from "lodash-es";
+import { Skeleton } from "components/skeleton";
 
 const BigButton = styled(Button)`
     justify-content: flex-end;
@@ -82,7 +84,7 @@ const About = styled(Column)`
 `;
 
 export default function HomePage({ featuredTheme }) {
-    const [ recentlyAdded, setRecentlyAdded ] = useState([]);
+    const [ recentlyAdded, setRecentlyAdded ] = useState(null);
     const { currentYear, currentSeason } = useCurrentSeason();
 
     useEffect(() => {
@@ -116,8 +118,12 @@ export default function HomePage({ featuredTheme }) {
                 </MainGridArea>
 
                 <RecentlyAdded>
-                    {recentlyAdded.map((theme, index) => (
-                        <ThemeSummaryCard key={index} theme={theme}/>
+                    {range(10).map((index) => (
+                        <Skeleton key={index} variant="summary-card" delay={index * 100}>
+                            {(recentlyAdded !== null && recentlyAdded[index]) ? (
+                                <ThemeSummaryCard theme={recentlyAdded[index]}/>
+                            ) : null}
+                        </Skeleton>
                     ))}
                 </RecentlyAdded>
 

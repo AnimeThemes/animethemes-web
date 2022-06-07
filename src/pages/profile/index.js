@@ -5,17 +5,12 @@ import { Text } from "components/text";
 import { SummaryCard, ThemeSummaryCard } from "components/card";
 import { IconTextButton } from "components/button";
 import { faKey, faTrash } from "@fortawesome/pro-solid-svg-icons";
-import { useWatchHistory } from "context/watchHistoryContext";
-import { useLocalPlaylist } from "context/localPlaylistContext";
+import useWatchHistory from "hooks/useWatchHistory";
+import useLocalPlaylist from "hooks/useLocalPlaylist";
 import theme from "theme";
 import { SearchFilter, SearchFilterGroup } from "components/search-filter";
 import { Listbox } from "components/listbox";
-import {
-    DeveloperMode,
-    FeaturedThemePreview,
-    RevalidationToken,
-    ShowAnnouncements
-} from "utils/settings";
+import { ColorTheme, DeveloperMode, FeaturedThemePreview, RevalidationToken, ShowAnnouncements } from "utils/settings";
 import useSetting from "hooks/useSetting";
 import { Input } from "components/input";
 
@@ -49,6 +44,7 @@ export default function ProfilePage() {
     const [featuredThemePreview, setFeaturedThemePreview] = useSetting(FeaturedThemePreview);
     const [developerMode, setDeveloperMode] = useSetting(DeveloperMode);
     const [revalidationToken, setRevalidationToken] = useSetting(RevalidationToken);
+    const [colorTheme, setColorTheme] = useSetting(ColorTheme);
 
     return (
         <>
@@ -62,6 +58,14 @@ export default function ProfilePage() {
                     <SummaryCard title="Local Playlist" description={`${localPlaylist.length} themes`} to="/profile/playlist"/>
                     <Text variant="h2">Settings</Text>
                     <SearchFilterGroup>
+                        <SearchFilter>
+                            <Text>Color Theme</Text>
+                            <Listbox value={colorTheme} onChange={setColorTheme}>
+                                <Listbox.Option value={ColorTheme.SYSTEM}>System</Listbox.Option>
+                                <Listbox.Option value={ColorTheme.DARK}>Dark</Listbox.Option>
+                                <Listbox.Option value={ColorTheme.LIGHT}>Light</Listbox.Option>
+                            </Listbox>
+                        </SearchFilter>
                         <SearchFilter>
                             <Text>Show Announcements</Text>
                             <Listbox value={showAnnouncements} onChange={setShowAnnouncements}>
@@ -77,6 +81,8 @@ export default function ProfilePage() {
                                 <Listbox.Option value={FeaturedThemePreview.DISABLED}>Disabled</Listbox.Option>
                             </Listbox>
                         </SearchFilter>
+                    </SearchFilterGroup>
+                    <SearchFilterGroup>
                         <SearchFilter>
                             <Text>Developer Mode</Text>
                             <Listbox value={developerMode} onChange={setDeveloperMode}>
@@ -88,7 +94,7 @@ export default function ProfilePage() {
                             <SearchFilter>
                                 <Text>Revalidation Token</Text>
                                 <Input
-                                    value={revalidationToken}
+                                    value={revalidationToken ?? null}
                                     onChange={setRevalidationToken}
                                     icon={faKey}
                                 />

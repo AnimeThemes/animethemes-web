@@ -1,5 +1,5 @@
-import { baseUrl } from "lib/client/api";
 import { uniq } from "lodash-es";
+import { CLIENT_API_URL } from "utils/config";
 
 const entityConfigs = {
     anime: {
@@ -139,7 +139,7 @@ const entityConfigs = {
 export async function fetchGlobalSearchResults(query, limit, entities) {
     const parameters = generateGlobalSearchParameters(entities);
 
-    const res = await fetch(`${baseUrl}/search?${parameters.join("&")}&limit=${limit}&q=${encodeURIComponent(query)}`);
+    const res = await fetch(`${CLIENT_API_URL}/search?${parameters.join("&")}&limit=${limit}&q=${encodeURIComponent(query)}`);
     const json = await res.json();
 
     if (!res.ok) {
@@ -172,7 +172,7 @@ export async function fetchEntitySearchResults({
         ...generateFilterAndSortParameters(filters, sortBy)
     ];
 
-    let url = `${baseUrl}/${entityConfigs[entity].singular || entity}?${parameters.join("&")}&page[size]=${limit}&page[number]=${page}`;
+    let url = `${CLIENT_API_URL}/${entityConfigs[entity].singular || entity}?${parameters.join("&")}&page[size]=${limit}&page[number]=${page}`;
     if (query) {
         url += `&q=${encodeURIComponent(query)}`;
     }

@@ -1,7 +1,7 @@
-import { baseUrl } from "lib/client/api";
+import { CLIENT_API_URL } from "utils/config";
 
 export async function fetchRandomGrill() {
-    const res = await fetch(`${baseUrl}/image?filter[facet]=Grill&sort=random&page[size]=1`);
+    const res = await fetch(`${CLIENT_API_URL}/image?filter[facet]=Grill&sort=random&page[size]=1`);
     const json = await res.json();
 
     return json.images[0].link;

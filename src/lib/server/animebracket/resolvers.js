@@ -1,20 +1,38 @@
+import brackets from "./brackets.json";
 import mappings from "./mappings.json";
 import { apiResolver } from "lib/common/animethemes/api";
+import devLog from "utils/devLog";
 
 const resolvers = {
     Query: {
         bracket: async (_, { slug }) => {
-            const bracket = await fetchJson(`https://animebracket.com/api/bracket/${slug}`);
-            const rounds = await fetchJson(`https://animebracket.com/api/results/${slug}`);
-            const currentRound = await fetchJson(`https://animebracket.com/api/rounds/${slug}`);
+            const config = brackets[slug];
+
+            if (!config) {
+                return null;
+            }
+
+            devLog.info(`Fetching bracket: ${config.slug}`);
+            const bracket = await fetchJson(`https://animebracket.com/api/bracket/${config.slug}`);
+            const rounds = await fetchJson(`https://animebracket.com/api/results/${config.slug}`);
+            // Some brackets are broken and still in a running state. We can check if the bracket has a winner already and
+            // not fetch the current round in that case.
+            const currentRound = bracket.winnerCharacterId ? null : await fetchJson(`https://animebracket.com/api/rounds/${config.slug}`);
+            devLog.info(`Fetched bracket: ${config.slug} (${rounds.length} rounds)`);
 
             return {
                 slug,
-                name: bracket.name,
+                name: config.name,
                 currentRound,
                 currentGroup: currentRound,
                 rounds
             };
+        },
+        bracketAll: async () => {
+            return Object.entries(brackets).map(([slug, bracket]) => ({
+                slug,
+                name: bracket.name,
+            }));
         }
     },
     Bracket: {

@@ -14,23 +14,21 @@ const StyledSummaryCard = styled(Card)`
     gap: 16px;
 
     height: 64px;
-    padding: 0 1rem 0 0;
+    padding: 0 1rem 0 4px;
 `;
 
 const StyledCover = styled.img.attrs({
     loading: "lazy"
 })`
-  width: 48px;
-  height: 64px;
-  object-fit: cover;
-
-  ${loadingAnimation}
-
-  ${(props) => props.isPlaceholder && css`
-    padding: 0.5rem;
-    object-fit: contain;
-    background: white;
-  `}
+    width: 48px;
+    height: 64px;
+    object-fit: cover;
+    
+    ${(props) => props.isPlaceholder ? css`
+        padding: 0.5rem;
+        object-fit: contain;
+        background: white;
+    ` : loadingAnimation}
 `;
 
 const StyledBody = styled(Column)`
@@ -46,7 +44,7 @@ export function SummaryCard({ title, description, image, to, children, ...props 
 
     return (
         <StyledSummaryCard {...props}>
-            <Link href={to} prefetch={false}>
+            <ConditionalWrapper as={Link} condition={to} href={to} prefetch={false}>
                 <a>
                     <StyledCover
                         alt="Cover"
@@ -56,13 +54,13 @@ export function SummaryCard({ title, description, image, to, children, ...props 
                         onError={() => setImageNotFound(true)}
                     />
                 </a>
-            </Link>
+            </ConditionalWrapper>
             <StyledBody>
                 <Text maxLines={1} title={typeof title === "string" ? title : undefined}>
                     {typeof title === "string" ? (
-                        <Link href={to} passHref prefetch={false}>
+                        <ConditionalWrapper as={Link} condition={to} href={to} passHref prefetch={false}>
                             <Text as="a" link>{title}</Text>
-                        </Link>
+                        </ConditionalWrapper>
                     ) : title}
                 </Text>
                 {!!description && (
@@ -78,6 +76,16 @@ export function SummaryCard({ title, description, image, to, children, ...props 
             {children}
         </StyledSummaryCard>
     );
+}
+
+function ConditionalWrapper({ as: Wrapper, condition, ...props }) {
+    if (condition) {
+        return (
+            <Wrapper {...props}/>
+        );
+    }
+
+    return props.children;
 }
 
 SummaryCard.Description = function SummaryCardDescription({ children }) {

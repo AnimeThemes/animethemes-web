@@ -18,7 +18,7 @@ import {
 import { Icon } from "components/icon";
 import styled from "styled-components";
 import theme from "theme";
-import { Collapse, HeightTransition, Highlight } from "components/utils";
+import { Collapse, HeightTransition } from "components/utils";
 import ColorThemeContext from "context/colorThemeContext";
 import { ExternalLink } from "components/external-link";
 import { Switcher } from "components/switcher";
@@ -35,6 +35,7 @@ import { useToasts } from "context/toastContext";
 import { Input } from "components/input";
 import gql from "graphql-tag";
 import getSharedPageProps from "utils/getSharedPageProps";
+import { Highlight } from "components/utils/Highlight";
 
 const ColorGrid = styled.div`
     display: grid;
