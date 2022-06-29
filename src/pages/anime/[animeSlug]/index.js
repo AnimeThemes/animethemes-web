@@ -121,7 +121,7 @@ export default function AnimeDetailPage({ anime }) {
                     {
                         !!anime.themes?.length
                             ? <AnimeThemeFilter themes={anime.themes}/>
-                            : <Text as="p">There are no themes for this anime, yet.</Text>
+                            : <Text as="p">There are no themes for this anime yet.</Text>
                     }
                 </Column>
             </SidebarContainer>
