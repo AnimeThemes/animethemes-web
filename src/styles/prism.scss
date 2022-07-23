@@ -179,7 +179,7 @@ pre[class*="language-"] {
 }
 
 /* Forked from https://github.com/PrismJS/prism-themes/blob/master/themes/prism-material-light.css */
-[theme="light"] {
+[data-theme="light"] {
     .language-css > code,
     .language-sass > code,
     .language-scss > code {

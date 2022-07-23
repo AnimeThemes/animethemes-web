@@ -20,5 +20,8 @@ module.exports = withBundleAnalyzer({
     compiler: {
         styledComponents: true
     },
-    staticPageGenerationTimeout: 3600
+    staticPageGenerationTimeout: 3600,
+    experimental: {
+        newNextLinkBehavior: true
+    }
 });
