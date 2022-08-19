@@ -1,5 +1,8 @@
 import { SyntheticEvent, MouseEvent, useContext, useEffect, useRef, useState } from "react";
 import {
+    StyledAudio,
+    StyledAudioBackground,
+    StyledAudioCover,
     StyledOverlay,
     StyledPlayer,
     StyledPlayerButton,
@@ -23,8 +26,8 @@ import useMediaQuery from "hooks/useMediaQuery";
 import styledTheme from "theme";
 import { SongTitle } from "components/utils";
 import useSetting from "hooks/useSetting";
-import { GlobalVolume } from "utils/settings";
-import { VIDEO_URL } from "utils/config";
+import { AudioMode, GlobalVolume } from "utils/settings";
+import { VIDEO_URL, AUDIO_URL } from "utils/config";
 import gql from "graphql-tag";
 import {
     VideoPlayerAnimeFragment,
@@ -32,6 +35,7 @@ import {
     VideoPlayerThemeFragment,
     VideoPlayerVideoFragment
 } from "generated/graphql";
+import extractImages from "utils/extractImages";
 
 interface VideoPlayerProps {
     anime: VideoPlayerAnimeFragment
@@ -48,9 +52,16 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
     const progressRef = useRef<HTMLDivElement>(null);
     const { clearCurrentVideo } = useContext(PlayerContext);
     const isMobile = useMediaQuery(`(max-width: ${styledTheme.breakpoints.mobileMax})`);
-    const videoUrl = `${VIDEO_URL}/${video.basename}`;
     const router = useRouter();
     const [globalVolume, setGlobalVolume] = useSetting(GlobalVolume);
+    const [canRenderPlayer, setCanRenderPlayer] = useState(false);
+    const { largeCover } = extractImages(anime);
+    const [audioMode] = useSetting(AudioMode);
+
+    const videoUrl = `${VIDEO_URL}/${video.basename}`;
+    const audioUrl = `${AUDIO_URL}/${video.audio.basename}`;
+
+    useEffect(() => setCanRenderPlayer(true), []);
 
     useEffect(() => {
         if (playerRef.current) {
@@ -129,18 +140,38 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
 
             {...props}
         >
-            <StyledVideo
-                ref={playerRef}
-                src={videoUrl}
-                controls={!background}
-                autoPlay
-                onPlay={() => setPlaying(true)}
-                onPause={() => setPlaying(false)}
-                onEnded={() => setPlaying(false)}
-                onClick={background && isMobile ? maximize : undefined}
-                onTimeUpdate={updateProgress}
-                onVolumeChange={(event: SyntheticEvent<HTMLVideoElement>) => setGlobalVolume(event.currentTarget.volume)}
-            />
+            {canRenderPlayer ? (
+                audioMode === AudioMode.ENABLED ? (
+                    <StyledAudioBackground>
+                        <StyledAudioCover src={largeCover}/>
+                        <StyledAudio
+                            ref={playerRef}
+                            src={audioUrl}
+                            controls={!background}
+                            autoPlay
+                            onPlay={() => setPlaying(true)}
+                            onPause={() => setPlaying(false)}
+                            onEnded={() => setPlaying(false)}
+                            onClick={background && isMobile ? maximize : undefined}
+                            onTimeUpdate={updateProgress}
+                            onVolumeChange={(event: SyntheticEvent<HTMLVideoElement>) => setGlobalVolume(event.currentTarget.volume)}
+                        />
+                    </StyledAudioBackground>
+                ) : (
+                    <StyledVideo
+                        ref={playerRef}
+                        src={videoUrl}
+                        controls={!background}
+                        autoPlay
+                        onPlay={() => setPlaying(true)}
+                        onPause={() => setPlaying(false)}
+                        onEnded={() => setPlaying(false)}
+                        onClick={background && isMobile ? maximize : undefined}
+                        onTimeUpdate={updateProgress}
+                        onVolumeChange={(event: SyntheticEvent<HTMLVideoElement>) => setGlobalVolume(event.currentTarget.volume)}
+                    />
+                )
+            ) : null}
             {background && (
                 <>
                     <StyledPlayerProgress>
@@ -181,7 +212,10 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
 
 VideoPlayer.fragments = {
     anime: gql`
+        ${extractImages.fragments.resourceWithImages}
+        
         fragment VideoPlayerAnime on Anime {
+            ...extractImagesResourceWithImages
             slug
             name
         }
@@ -210,6 +244,9 @@ VideoPlayer.fragments = {
         fragment VideoPlayerVideo on Video {
             ...createVideoSlugVideo
             basename
+            audio {
+                basename
+            }
         }
     `,
 };

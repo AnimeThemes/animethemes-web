@@ -15,7 +15,7 @@ export async function fetchRandomTheme() {
                 searchTheme(args: { 
                     sortBy: "random"
                     filters: [
-                        { key: "has" value: "animethemesentries" }
+                        { key: "has" value: "animethemeentries" }
                         { key: "spoiler" value: "false" }
                     ]
                 }) {

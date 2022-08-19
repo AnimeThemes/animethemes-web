@@ -251,5 +251,5 @@ export const getStaticPaths: GetStaticPaths<BracketPageParams> = async () => {
                 bracketSlug: bracket.slug
             }
         }));
-    }, true);
+    });
 };

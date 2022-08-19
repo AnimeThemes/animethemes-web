@@ -2,10 +2,9 @@ import extractImages from "utils/extractImages";
 import { AspectRatio } from "components/utils";
 import { FullWidthImage, MultiCoverImage } from "components/image";
 import gql from "graphql-tag";
-import { ComponentPropsWithoutRef, SyntheticEvent, useState } from "react";
+import { ComponentPropsWithoutRef, useState } from "react";
 import { StudioCoverImageStudioFragment } from "generated/graphql";
 import styled from "styled-components";
-import extractBackgroundColor from "utils/extractBackgroundColor";
 
 const StyledImage = styled(FullWidthImage)`
     object-fit: contain;
@@ -17,18 +16,9 @@ interface StudioCoverImageProps extends ComponentPropsWithoutRef<typeof FullWidt
 }
 
 export function StudioCoverImage({ studio, ...props }: StudioCoverImageProps) {
-    const { smallCover, largeCover } = extractImages(studio);
+    const { largeCover } = extractImages(studio);
 
     const [ imageNotFound, setImageNotFound ] = useState(!largeCover);
-
-    function handleLoad(event: SyntheticEvent<HTMLImageElement>) {
-        const image = event.currentTarget;
-        const color = extractBackgroundColor(image);
-        if (color) {
-            image.style.background = color;
-            image.style.backgroundSize = "10000%";
-        }
-    }
 
     return (
         <AspectRatio ratio={2 / 3}>
@@ -36,8 +26,7 @@ export function StudioCoverImage({ studio, ...props }: StudioCoverImageProps) {
                 <StyledImage
                     key={largeCover}
                     src={largeCover}
-                    style={{ background: `url(${smallCover})` }}
-                    onLoad={handleLoad}
+                    style={{ background: `url(${largeCover})`, backgroundSize: "10000%" }}
                     onError={() => setImageNotFound(true)}
                     {...props}
                 />

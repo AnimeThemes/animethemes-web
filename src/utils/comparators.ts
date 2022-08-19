@@ -1,5 +1,5 @@
 import { Comparator } from "utils/types";
-import { Anime, Resource, Series, Studio, Theme } from "generated/graphql";
+import { Anime, Entry, Resource, Series, Studio, Theme } from "generated/graphql";
 
 const seasonOrder = [
     "winter",
@@ -64,6 +64,8 @@ export const animePremiereComparator: Comparator<Pick<Anime, "year" | "season">>
     either(animeYearComparator).or(animeSeasonComparator).chain();
 export const songTitleComparator: Comparator<Theme> =
     nestedComparator((theme) => theme.song?.title);
+export const entryVersionComparator: Comparator<Pick<Entry, "version">> =
+    nestedComparator((entry) => entry.version);
 export const themeTypeComparator: Comparator<Pick<Theme, "type">> =
     nestedComparator((theme) => theme.type.toLowerCase(), enumComparator(themeTypeOrder));
 export const themeIndexComparator: Comparator<Pick<Theme, "sequence">> =

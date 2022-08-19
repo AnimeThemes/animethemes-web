@@ -26,6 +26,11 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import { fetchData } from "lib/server";
 import gql from "graphql-tag";
 import { RequiredNonNullable } from "utils/types";
+import { Switcher } from "components/switcher";
+import useSetting from "hooks/useSetting";
+import { AudioMode } from "utils/settings";
+import { SwitcherOption } from "components/switcher/Switcher";
+import { VideoPlayer } from "components/video-player";
 
 const StyledVideoInfo = styled.div`
     display: grid;
@@ -121,6 +126,10 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex }:
     const { addToHistory } = useWatchHistory();
     const [ showMoreRelatedThemes, setShowMoreRelatedThemes ] = useState(false);
     const { dispatchToast } = useToasts();
+    const [audioMode, setAudioMode] = useSetting(AudioMode);
+    const [canRenderPlayer, setCanRenderPlayer] = useState(false);
+
+    useEffect(() => setCanRenderPlayer(true), []);
 
     const relatedThemes = anime.themes
         .filter((relatedTheme) => relatedTheme.slug !== theme.slug)
@@ -254,6 +263,12 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex }:
                     <Menu.Option onSelect={() => saveToClipboard(location.href)}>Copy URL to this Page</Menu.Option>
                     <Menu.Option onSelect={() => saveToClipboard(videoUrl)}>Copy URL to Embeddable Video</Menu.Option>
                 </Menu>
+                {canRenderPlayer ? (
+                    <Switcher selectedItem={audioMode} onChange={setAudioMode}>
+                        <SwitcherOption value={AudioMode.DISABLED}>Video</SwitcherOption>
+                        <SwitcherOption value={AudioMode.ENABLED}>Audio</SwitcherOption>
+                    </Switcher>
+                ) : null}
             </Row>
         </HorizontalScroll>
         <StyledRelatedGrid>
@@ -340,14 +355,20 @@ export const getStaticProps: GetStaticProps<VideoPageProps, VideoPageParams> = a
     const { data, apiRequests } = await fetchData<VideoPageQuery, VideoPageQueryVariables>(gql`
         ${ThemeSummaryCard.fragments.theme}
         ${ArtistSummaryCard.fragments.artist}
+        ${VideoPlayer.fragments.anime}
+        ${VideoPlayer.fragments.theme}
+        ${VideoPlayer.fragments.entry}
+        ${VideoPlayer.fragments.video}
         
         query VideoPage($animeSlug: String!) {
             anime(slug: $animeSlug) {
+                ...VideoPlayerAnime
                 name
                 slug
                 year
                 season
                 themes {
+                    ...VideoPlayerTheme
                     ...ThemeSummaryCardTheme
                     id
                     slug
@@ -361,11 +382,13 @@ export const getStaticProps: GetStaticProps<VideoPageProps, VideoPageParams> = a
                         }
                     }
                     entries {
+                        ...VideoPlayerEntry
                         episodes
                         nsfw
                         spoiler
                         version
                         videos {
+                            ...VideoPlayerVideo
                             basename
                             filename
                             lyrics

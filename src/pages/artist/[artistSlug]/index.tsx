@@ -111,7 +111,7 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                     {!!artist.members?.length && (
                         <DescriptionList.Item title="Members">
                             <StyledList>
-                                {artist.members.map(({ member }) =>
+                                {artist.members.map(({ member, as }) =>
                                     <Link
                                         key={member.slug}
                                         href={`/artist/${member.slug}`}
@@ -119,6 +119,7 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                                         legacyBehavior>
                                         <Text as="a" link>
                                             {member.name}
+                                            {as ? ` (as ${as})` : null}
                                         </Text>
                                     </Link>
                                 )}
@@ -128,7 +129,7 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                     {!!artist.groups?.length && (
                         <DescriptionList.Item title="Member of">
                             <StyledList>
-                                {artist.groups.map(({ group }) =>
+                                {artist.groups.map(({ group, as }) =>
                                     <Link
                                         key={group.slug}
                                         href={`/artist/${group.slug}`}
@@ -136,6 +137,7 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                                         legacyBehavior>
                                         <Text as="a" link>
                                             {group.name}
+                                            {as ? ` (as ${as})` : null}
                                         </Text>
                                     </Link>
                                 )}
@@ -258,12 +260,14 @@ export const getStaticProps: GetStaticProps<ArtistDetailPageProps, ArtistDetailP
                         slug
                         name
                     }
+                    as
                 }
                 groups {
                     group {
                         slug
                         name
                     }
+                    as
                 }
                 resources {
                     link

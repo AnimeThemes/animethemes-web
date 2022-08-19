@@ -21,3 +21,33 @@ export const withHover = <T extends ThemedStyledProps<object, any>>(content: Int
         }
     }
 `;
+
+export const withColorTheme = <T extends ThemedStyledProps<object, any>>(
+    colorTheme: "light" | "dark",
+    content: Interpolation<T>
+) => css`
+    [data-theme="system"] & {
+        @media (prefers-color-scheme: ${colorTheme}) {
+            ${content}
+        }
+    }
+
+    [data-theme="${colorTheme}"] & {
+        ${content}
+    }
+`;
+
+export const defineColorTheme = <T extends ThemedStyledProps<object, any>>(
+    colorTheme: "light" | "dark",
+    content: Interpolation<T>
+) => css`
+    &[data-theme="system"] {
+        @media (prefers-color-scheme: ${colorTheme}) {
+            ${content}
+        }
+    }
+
+    &[data-theme="${colorTheme}"] {
+        ${content}
+    }
+`;

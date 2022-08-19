@@ -10,6 +10,7 @@ import styled from "styled-components";
 import { Card } from "components/card/Card";
 import theme from "theme";
 import { Row } from "components/box";
+import { entryVersionComparator } from "utils/comparators";
 
 const StyledThemeCard = styled(Card)`
     display: flex;
@@ -62,7 +63,7 @@ export function ThemeDetailCard({ theme }: ThemeDetailCardProps) {
                 </Text>
                 <ThemeMenu theme={theme}/>
             </StyledRow>
-            {theme.entries.map(entry => (
+            {theme.entries.sort(entryVersionComparator).map(entry => (
                 <StyledRow key={entry.version || 0}>
                     <Text variant="small" color="text-muted">{!!entry.version && `v${entry.version}`}</Text>
                     <Text color="text-muted">
