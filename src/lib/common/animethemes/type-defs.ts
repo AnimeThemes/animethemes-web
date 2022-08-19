@@ -95,6 +95,7 @@ const typeDefs = `
         source: VideoSource
         overlap: VideoOverlap!
         tags: String!
+        audio: Audio!
         entries: [Entry!]!
     }
     
@@ -111,6 +112,17 @@ const typeDefs = `
         NONE
         TRANSITION
         OVER
+    }
+    
+    type Audio {
+        id: Int!
+        filename: String!
+        basename: String!
+        path: String!
+        size: Int!
+        mimetype: String!
+        link: String!
+        videos: [Video!]!
     }
     
     type Song {

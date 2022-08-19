@@ -1,7 +1,8 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle, css } from "styled-components";
 import { colors, shadows } from "theme/colors";
 import { darkColors, darkShadows } from "theme/colors/dark";
 import theme, { createCssDefinition } from "theme";
+import { defineColorTheme } from "styles/mixins";
 
 export default createGlobalStyle`
     * {
@@ -26,25 +27,15 @@ export default createGlobalStyle`
 
         line-height: 1.5;
 
-        &[data-theme="system"] {
-            ${createCssDefinition(darkColors)}
-            ${createCssDefinition(darkShadows)}
-            
-            @media (prefers-color-scheme: light) {
-                ${createCssDefinition(colors)}
-                ${createCssDefinition(shadows)}    
-            }
-        }
-        
-        &[data-theme="light"] {
+        ${defineColorTheme("light", css`
             ${createCssDefinition(colors)}
             ${createCssDefinition(shadows)}
-        }
+        `)}
 
-        &[data-theme="dark"] {
+        ${defineColorTheme("dark", css`
             ${createCssDefinition(darkColors)}
             ${createCssDefinition(darkShadows)}
-        }
+        `)}
     }
 
     html, body, #__next {

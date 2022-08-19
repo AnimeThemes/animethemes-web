@@ -1,10 +1,11 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import theme from "theme";
 import { Icon } from "components/icon";
 import { faTimes } from "@fortawesome/pro-solid-svg-icons";
 import { Button } from "components/button";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { ComponentPropsWithoutRef, FormEvent } from "react";
+import { withColorTheme } from "styles/mixins";
 
 const StyledSearchInput = styled.div`
     display: flex;
@@ -21,9 +22,9 @@ const StyledSearchInput = styled.div`
     &:focus-within {
         box-shadow: ${theme.shadows.low};
 
-        [data-theme="dark"] & {
+        ${withColorTheme("dark", css`
             box-shadow: 0 0 0 2px ${theme.colors["text-primary"]};
-        }
+        `)}
     }
 `;
 const StyledForm = styled.form`

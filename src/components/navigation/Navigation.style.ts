@@ -5,6 +5,7 @@ import theme from "theme";
 import { blurOut, zoomIn } from "styles/animations";
 import { Solid } from "components/box";
 import { Logo } from "components/image";
+import { withColorTheme } from "styles/mixins";
 
 export const StyledNavigation = styled(Solid).attrs({ as: "nav" })<{ show: boolean }>`
     position: sticky;
@@ -56,9 +57,9 @@ export const StyledNavigationContainer = styled(Container)`
         animation: ${zoomIn} 250ms ease;
         will-change: transform;
 
-        [data-theme="dark"] & {
+        ${withColorTheme("dark", css`
             border: 2px solid ${theme.colors["text-disabled"]};
-        }
+        `)}
     }
 `;
 
@@ -71,10 +72,6 @@ export const StyledNavigationLinks = styled.div`
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         flex-direction: column;
         align-items: flex-start;
-
-        & :last-child {
-            align-self: center;
-        }
     }
 `;
 

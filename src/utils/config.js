@@ -17,6 +17,7 @@ const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 const CLIENT_API_URL = process.env.NEXT_PUBLIC_API_URL;
 const VIDEO_URL = process.env.NEXT_PUBLIC_VIDEO_URL;
+const AUDIO_URL = process.env.NEXT_PUBLIC_AUDIO_URL;
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
 
 const STAGING = !!process.env.NEXT_PUBLIC_STAGING;
@@ -33,6 +34,9 @@ function validateConfig() {
     if (!VIDEO_URL) {
         warn(`It is recommended to specify ${chalk.cyan("NEXT_PUBLIC_VIDEO_URL")}. Otherwise videos won't play.`);
     }
+    if (!AUDIO_URL) {
+        warn(`It is recommended to specify ${chalk.cyan("NEXT_PUBLIC_AUDIO_URL")}. Otherwise audios won't play.`);
+    }
     if (!APP_URL) {
         warn(`You haven't specified ${chalk.cyan("NEXT_PUBLIC_APP_URL")}. This is fine for development, but should be fixed in production.`);
     }
@@ -47,6 +51,7 @@ module.exports = {
     BASE_PATH,
     CLIENT_API_URL,
     VIDEO_URL,
+    AUDIO_URL,
     APP_URL,
     STAGING,
     validateConfig,

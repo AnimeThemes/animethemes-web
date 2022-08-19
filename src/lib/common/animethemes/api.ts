@@ -39,7 +39,11 @@ export const INCLUDES = {
         theme: "animetheme"
     },
     Video: {
+        audio: "audio",
         entries: "animethemeentries"
+    },
+    Audio: {
+        videos: "videos"
     },
     Series: {
         anime: "anime"
@@ -82,6 +86,7 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
         "images",
         "resources",
         "studios",
+        "animethemes.animethemeentries.videos.audio",
         "animethemes.animethemeentries.videos.animethemeentries.animetheme.anime",
         "animethemes.animethemeentries.videos.animethemeentries.animetheme.anime.images",
         "animethemes.animethemeentries.videos.animethemeentries.animetheme.animethemeentries.videos",
@@ -124,7 +129,11 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
         "artists"
     ],
     Video: [
-        "animethemeentries.animetheme.anime"
+        "animethemeentries.animetheme.anime",
+        "audio"
+    ],
+    Audio: [
+        "videos"
     ]
 };
 

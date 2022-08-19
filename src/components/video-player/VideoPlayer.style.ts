@@ -1,10 +1,23 @@
-import styled, { css } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import { motion } from "framer-motion";
 import { Button } from "components/button";
 import theme from "theme";
 import { slideIn } from "styles/animations";
 
+const slowPan = keyframes`
+    from, to {
+        object-position: top;
+    }
+    50% {
+        object-position: bottom;
+    }
+`;
+
 export const StyledPlayer = styled(motion.div)<{ $background: boolean }>`
+    width: 100%;
+    max-height: calc(100vh - 96px);
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
     z-index: ${theme.zIndices.videoPlayer};
     
     ${(props) => props.$background ? css`
@@ -13,7 +26,6 @@ export const StyledPlayer = styled(motion.div)<{ $background: boolean }>`
         @media (max-width: 720px) {
             display: flex;
             
-            width: 100%;
             height: 4rem;
             bottom: 0;
             left: 0;
@@ -41,7 +53,6 @@ export const StyledPlayer = styled(motion.div)<{ $background: boolean }>`
         }
         @media (min-width: 721px) {
             margin: 1.5rem auto 0 auto;
-            width: 100%;
             max-width: 1100px;
         }
     `}
@@ -49,10 +60,37 @@ export const StyledPlayer = styled(motion.div)<{ $background: boolean }>`
 
 export const StyledVideo = styled.video`
     width: 100%;
-    max-height: calc(100vh - 96px);
-    aspect-ratio: 16 / 9;
+    height: 100%;
     outline: none;
     background-color: rgb(0, 0, 0);
+`;
+
+export const StyledAudio = styled.audio`
+    position: absolute;
+    outline: none;
+`;
+
+export const StyledAudioBackground = styled.div`
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    width: 100%;
+    height: 100%;
+`;
+
+export const StyledAudioCover = styled.img`
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(5px);
+    transform: scale(1.1);
+    
+    @media (prefers-reduced-motion: no-preference) {
+        animation: ${slowPan} 120s ease-in-out infinite;
+    }
 `;
 
 export const StyledOverlay = styled.div<{ force: boolean }>`        

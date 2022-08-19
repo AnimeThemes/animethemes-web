@@ -1,7 +1,7 @@
 import { fetchData } from "lib/server";
 import gql from "graphql-tag";
 import createVideoSlug from "utils/createVideoSlug";
-import { REVALIDATE_TOKEN } from "utils/config";
+import { BASE_PATH, REVALIDATE_TOKEN } from "utils/config";
 import { NextApiRequest, NextApiResponse } from "next";
 import { RevalidateAnimeQuery } from "generated/graphql";
 
@@ -45,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
 
     for (const path of paths) {
-        await res.revalidate(path);
+        await res.revalidate(`${BASE_PATH}${path}`);
     }
 
     return res.json({ revalidated: true, affectedPaths: paths });

@@ -1,7 +1,7 @@
 import * as log from "next/dist/build/output/log";
 
 function info(...message: string[]) {
-    logIfDevelopment(log.event, ...message);
+    logIfDevelopment(log.info, ...message);
 }
 
 function warn(...message: string[]) {

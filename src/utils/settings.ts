@@ -43,3 +43,10 @@ export const ColorTheme: Setting<string> = Object.freeze({
     DARK: "dark",
     LIGHT: "light",
 });
+
+export const AudioMode: Setting<string> = Object.freeze({
+    __KEY__: "audioMode",
+    __INITIAL_VALUE__: "disabled",
+    DISABLED: "disabled",
+    ENABLED: "enabled",
+});

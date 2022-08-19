@@ -20,6 +20,8 @@ export const Text = styled.span<TextProps>.attrs(getAttributes)`
     // Reset margin for elements like <p>
     margin: 0;
     scroll-margin-top: 4rem;
+
+    overflow-wrap: anywhere;
     
     ${(props) => props.variant === "h1" && css`
         font-size: 2rem;

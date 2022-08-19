@@ -202,7 +202,7 @@ const resolvers: IResolvers = {
             endpoint: (artist) => `/artist/${artist.slug}`,
             field: "groups",
             extractor: (result) => result.artist.groups,
-            transformer: (groups, artist) => groups.map((group: Record<string, unknown>) => ({ group, member: artist })),
+            transformer: (groups, artist) => groups.map(({ as, ...group }: Record<string, unknown>) => ({ group, member: artist, as })),
             type: "Artist",
             baseInclude: INCLUDES.Artist.groups
         }),
@@ -210,7 +210,7 @@ const resolvers: IResolvers = {
             endpoint: (artist) => `/artist/${artist.slug}`,
             field: "members",
             extractor: (result) => result.artist.members,
-            transformer: (members, artist) => members.map((member: Record<string, unknown>) => ({ member, group: artist })),
+            transformer: (members, artist) => members.map(({ as, ...member }: Record<string, unknown>) => ({ member, group: artist, as })),
             type: "Artist",
             baseInclude: INCLUDES.Artist.members
         }),
@@ -250,12 +250,28 @@ const resolvers: IResolvers = {
         }),
     },
     Video: {
+        audio: apiResolver({
+            endpoint: (video) => `/video/${video.basename}`,
+            field: "audio",
+            extractor: (result) => result.video.audio,
+            type: "Video",
+            baseInclude: INCLUDES.Video.audio
+        }),
         entries: apiResolver({
             endpoint: (video) => `/video/${video.basename}`,
             field: "animethemeentries",
             extractor: (result) => result.video.animethemeentries,
             type: "Video",
             baseInclude: INCLUDES.Video.entries
+        }),
+    },
+    Audio: {
+        videos: apiResolver({
+            endpoint: (audio) => `/audio/${audio.basename}`,
+            field: "videos",
+            extractor: (result) => result.audio.videos,
+            type: "Audio",
+            baseInclude: INCLUDES.Audio.videos
         }),
     },
     Series: {
