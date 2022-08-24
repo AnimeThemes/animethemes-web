@@ -29,14 +29,21 @@ export const StyledPlayer = styled(motion.div)<{ $background: boolean }>`
             height: 4rem;
             bottom: 0;
             left: 0;
+            overflow: visible;
             
             background-color: ${theme.colors["solid"]};
 
             animation: ${slideIn()} 500ms ease;
             
-            & ${StyledVideo} {
+            & ${StyledVideo}, & ${StyledAudioBackground} {
                 width: auto;
                 aspect-ratio: auto;
+            }
+            
+            & ${StyledAudioCover} {
+                filter: none;
+                transform: none;
+                animation: none;
             }
         }
         @media (min-width: 721px) {
