@@ -118,7 +118,6 @@ export function AnimeSummaryCard({ anime, expandable = false, ...props }: AnimeS
                         {/* TODO: Context Menu */}
                         {expandable && (
                             <StyledExpandButton
-                                forwardedAs="a"
                                 variant="silent"
                                 isCircle
                                 title={isExpanded ? "Collapse" : "Expand"}

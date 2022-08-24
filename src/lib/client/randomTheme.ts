@@ -23,7 +23,6 @@ export async function fetchRandomTheme() {
                         ...ThemeSummaryCardTheme
                         ...ThemeSummaryCardThemeExpandable
                     }
-                    nextPage
                 }
             }
         `);

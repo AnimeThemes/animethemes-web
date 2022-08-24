@@ -143,7 +143,7 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
             {canRenderPlayer ? (
                 audioMode === AudioMode.ENABLED ? (
                     <StyledAudioBackground>
-                        <StyledAudioCover src={largeCover}/>
+                        <StyledAudioCover src={largeCover} onClick={background && isMobile ? maximize : undefined}/>
                         <StyledAudio
                             ref={playerRef}
                             src={audioUrl}
@@ -152,7 +152,6 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
                             onPlay={() => setPlaying(true)}
                             onPause={() => setPlaying(false)}
                             onEnded={() => setPlaying(false)}
-                            onClick={background && isMobile ? maximize : undefined}
                             onTimeUpdate={updateProgress}
                             onVolumeChange={(event: SyntheticEvent<HTMLVideoElement>) => setGlobalVolume(event.currentTarget.volume)}
                         />

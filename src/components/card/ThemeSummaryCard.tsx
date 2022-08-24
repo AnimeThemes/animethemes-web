@@ -120,7 +120,6 @@ export function ThemeSummaryCard({ theme, artist, children, expandable, ...props
                     <ThemeMenu theme={theme}/>
                     {expandable && (
                         <StyledExpandButton
-                            forwardedAs="a"
                             variant="silent"
                             isCircle
                             title={isExpanded ? "Collapse" : "Expand"}
