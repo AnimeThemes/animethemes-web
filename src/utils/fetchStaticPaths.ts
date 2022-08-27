@@ -1,12 +1,13 @@
-import { STAGING } from "utils/config";
+import { MINIMAL_BUILD } from "utils/config";
 import type { ParsedUrlQuery } from "querystring";
 
 export default async function fetchStaticPaths<T extends ParsedUrlQuery = ParsedUrlQuery>(
     fetchPaths: () => Promise<Array<{ params: T }>>,
-    allPathsInStaging = false
+    forceFullBuild = false
 ): Promise<{ paths: Array<{ params: T }>, fallback: "blocking" }> {
-    // In development and staging all pages should be fetched on-demand. This speeds up page generation a lot.
-    if (process.env.NODE_ENV === "development" || (STAGING && !allPathsInStaging)) {
+    // In development all pages should be fetched on-demand. This speeds up page generation a lot.
+    // This can also be enabled via an enviroment variable.
+    if (process.env.NODE_ENV === "development" || (MINIMAL_BUILD && !forceFullBuild)) {
         return {
             paths: [],
             fallback: "blocking"
