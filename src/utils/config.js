@@ -12,6 +12,7 @@ const SERVER_API_KEY = process.env.ANIMETHEMES_API_KEY;
 
 const REVALIDATE_TOKEN = process.env.REVALIDATE_TOKEN;
 const ANALYZE = !!process.env.ANALYZE;
+const MINIMAL_BUILD = !!process.env.MINIMAL_BUILD;
 
 // Server-side + Client-side
 
@@ -50,6 +51,7 @@ module.exports = {
     SERVER_API_KEY,
     REVALIDATE_TOKEN,
     ANALYZE,
+    MINIMAL_BUILD,
     BASE_PATH,
     CLIENT_API_URL,
     VIDEO_URL,
