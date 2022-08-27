@@ -4,11 +4,12 @@ import styled, { css } from "styled-components";
 import { Card } from "components/card";
 import { Column } from "components/box";
 import withBasePath from "utils/withBasePath";
-import { ComponentPropsWithoutRef, ReactNode, useState } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
+import { useState } from "react";
 import { loadingAnimation } from "styles/mixins";
 import { TextLink } from "components/text/TextLink";
 import { ConditionalWrapper } from "components/utils/ConditionalWrapper";
-import { Property } from "csstype";
+import type { Property } from "csstype";
 
 const StyledSummaryCard = styled(Card)`
     display: flex;

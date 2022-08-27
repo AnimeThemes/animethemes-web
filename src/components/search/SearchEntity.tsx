@@ -6,9 +6,9 @@ import { Icon } from "components/icon";
 import { SearchFilterGroup } from "components/search-filter";
 import { ErrorCard } from "components/card";
 import useEntitySearch from "hooks/useEntitySearch";
-import { ReactNode } from "react";
-import { SearchArgs } from "generated/graphql";
-import { SimpleSearchArgs } from "lib/client/search";
+import type { ReactNode } from "react";
+import type { SearchArgs } from "generated/graphql";
+import type { SimpleSearchArgs } from "lib/client/search";
 
 interface SearchEntityProps<T> {
     entity: string
@@ -81,7 +81,7 @@ export function SearchEntity<T>({ entity, fetchResults, searchArgs, filters, ren
                         {(hasNextPage || isPlaceholderData) && (
                             <Row style={{ "--justify-content": "center" }}>
                                 <Button variant="silent" isCircle onClick={() => !isLoadingMore && fetchNextPage()} title="Load more">
-                                    <Icon icon={isLoadingMore ? faSpinner : faChevronDown} spin={isLoadingMore}/>
+                                    <Icon icon={isLoadingMore ? faSpinner : faChevronDown} className={isLoadingMore ? "fa-spin" : undefined}/>
                                 </Button>
                             </Row>
                         )}

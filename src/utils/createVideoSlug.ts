@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
-import { ASTNode } from "graphql";
-import {
+import type { ASTNode } from "graphql";
+import type {
     CreateVideoSlugEntryFragment,
     CreateVideoSlugThemeFragment,
     CreateVideoSlugVideoFragment

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Text } from "components/text";
 import gql from "graphql-tag";
-import { SongTitleSongFragment } from "generated/graphql";
+import type { SongTitleSongFragment } from "generated/graphql";
 
 export interface SongTitleProps {
     song: SongTitleSongFragment | null

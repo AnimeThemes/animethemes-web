@@ -1,7 +1,8 @@
 import useLocalStorageState from "use-local-storage-state";
 import { PlaylistAddToast } from "components/toast";
 import { useToasts } from "context/toastContext";
-import { FetchThemeSummaryCardData, fetchThemeSummaryCardData } from "components/card/ThemeSummaryCard";
+import type { FetchThemeSummaryCardData } from "components/card/ThemeSummaryCard";
+import { fetchThemeSummaryCardData } from "components/card/ThemeSummaryCard";
 
 interface LocalPlaylistTheme {
     id: number

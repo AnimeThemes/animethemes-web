@@ -3,7 +3,7 @@ import { Toast } from "components/toast";
 import { Text } from "components/text";
 import { Row } from "components/box";
 import { SongTitle } from "components/utils";
-import { FetchThemeSummaryCardData } from "components/card/ThemeSummaryCard";
+import type { FetchThemeSummaryCardData } from "components/card/ThemeSummaryCard";
 
 interface PlaylistAddToastProps {
     theme: Exclude<FetchThemeSummaryCardData, null>

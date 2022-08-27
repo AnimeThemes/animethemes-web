@@ -1,4 +1,5 @@
-import { SyntheticEvent, MouseEvent, useContext, useEffect, useRef, useState } from "react";
+import type { SyntheticEvent, MouseEvent } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
     StyledAudio,
     StyledAudioBackground,
@@ -29,7 +30,7 @@ import useSetting from "hooks/useSetting";
 import { AudioMode, GlobalVolume } from "utils/settings";
 import { VIDEO_URL, AUDIO_URL } from "utils/config";
 import gql from "graphql-tag";
-import {
+import type {
     VideoPlayerAnimeFragment,
     VideoPlayerEntryFragment,
     VideoPlayerThemeFragment,

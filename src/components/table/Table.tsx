@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 import theme from "theme";
 import { withHover } from "styles/mixins";
-import { Property } from "csstype";
+import type { Property } from "csstype";
 
 export const Table = styled.div<{ style: { "--columns": Property.GridTemplateColumns } }>``;
 

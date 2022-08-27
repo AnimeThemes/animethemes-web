@@ -3,7 +3,7 @@ import { Text } from "components/text";
 import styled from "styled-components";
 import { useState } from "react";
 import gql from "graphql-tag";
-import { PerformancesArtistFragment, PerformancesSongFragment } from "generated/graphql";
+import type { PerformancesArtistFragment, PerformancesSongFragment } from "generated/graphql";
 
 const StyledArtist = styled(Text)`
     &:not(:first-of-type)::before {

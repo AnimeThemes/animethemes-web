@@ -9,7 +9,8 @@ import ColorThemeContext from "context/colorThemeContext";
 import useColorTheme from "hooks/useColorTheme";
 import { VideoPlayer } from "components/video-player";
 import PlayerContext from "context/playerContext";
-import { ComponentType, ReactNode, useEffect, useState } from "react";
+import type { ComponentType, ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Head from "next/head";
 import withBasePath from "utils/withBasePath";
@@ -28,7 +29,8 @@ import { ExternalLink } from "components/external-link";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "styles/prism.scss";
-import { AppProps } from "next/app";
+import type { AppProps } from "next/app";
+import { LazyMotion } from "framer-motion";
 
 config.autoAddCss = false;
 
@@ -104,6 +106,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                 id: "announcement",
                 content: <AnnouncementToast/>
             } ] }),
+            stackContext(LazyMotion, { features: () => import("utils/motionFeatures").then(res => res.default) }),
             stackContext(ErrorBoundary, {}),
         ]}>
             <GlobalStyle/>

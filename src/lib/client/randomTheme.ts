@@ -1,5 +1,5 @@
 import { fetchDataClient } from "lib/client/index";
-import { SearchThemeQuery } from "generated/graphql";
+import type { SearchThemeQuery } from "generated/graphql";
 import gql from "graphql-tag";
 import { ThemeSummaryCard } from "components/card";
 

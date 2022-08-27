@@ -10,7 +10,7 @@ import { Icon } from "components/icon";
 import theme from "theme";
 import getSharedPageProps from "utils/getSharedPageProps";
 import gql from "graphql-tag";
-import { EventPageQuery } from "generated/graphql";
+import type { EventPageQuery } from "generated/graphql";
 
 const BigButton = styled(Button)`
     overflow: hidden;

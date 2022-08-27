@@ -9,8 +9,8 @@ import { AnimeSummaryCard, ArtistSummaryCard, ErrorCard, SummaryCard, ThemeSumma
 import { useRouter } from "next/router";
 import { fetchDataClient } from "lib/client";
 import gql from "graphql-tag";
-import { SearchGlobalQuery, SearchGlobalQueryVariables } from "generated/graphql";
-import { ReactNode } from "react";
+import type { SearchGlobalQuery, SearchGlobalQueryVariables } from "generated/graphql";
+import type { ReactNode } from "react";
 
 interface SearchGlobalProps {
     searchQuery?: string

@@ -1,10 +1,11 @@
 import styled from "styled-components";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
-import getSharedPageProps, { SharedPageProps } from "utils/getSharedPageProps";
+import type { SharedPageProps } from "utils/getSharedPageProps";
+import getSharedPageProps from "utils/getSharedPageProps";
 import gql from "graphql-tag";
-import { YearIndexPageQuery } from "generated/graphql";
-import { GetStaticProps } from "next";
+import type { YearIndexPageQuery } from "generated/graphql";
+import type { GetStaticProps } from "next";
 import { TextLink } from "components/text/TextLink";
 import { Text } from "components/text";
 import { Card } from "components/card";

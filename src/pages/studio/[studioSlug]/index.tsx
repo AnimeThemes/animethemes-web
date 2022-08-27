@@ -26,10 +26,10 @@ import theme from "theme";
 import gql from "graphql-tag";
 import fetchStaticPaths from "utils/fetchStaticPaths";
 import getSharedPageProps from "utils/getSharedPageProps";
-import { GetStaticPaths, GetStaticProps } from "next";
-import { RequiredNonNullable } from "utils/types";
-import { StudioDetailPageAllQuery, StudioDetailPageQuery, StudioDetailPageQueryVariables } from "generated/graphql";
-import { ParsedUrlQuery } from "querystring";
+import type { GetStaticPaths, GetStaticProps } from "next";
+import type { RequiredNonNullable } from "utils/types";
+import type { StudioDetailPageAllQuery, StudioDetailPageQuery, StudioDetailPageQueryVariables } from "generated/graphql";
+import type { ParsedUrlQuery } from "querystring";
 import extractImages from "utils/extractImages";
 import { StudioCoverImage } from "components/image/StudioCoverImage";
 

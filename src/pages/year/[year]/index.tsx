@@ -10,11 +10,12 @@ import { SEO } from "components/seo";
 import gql from "graphql-tag";
 import { ANIME_A_Z, getComparator } from "utils/comparators";
 import fetchStaticPaths from "utils/fetchStaticPaths";
-import getSharedPageProps, { SharedPageProps } from "utils/getSharedPageProps";
-import { ParsedUrlQuery } from "querystring";
-import { GetStaticPaths, GetStaticProps } from "next";
-import { YearDetailPageAllQuery, YearDetailPageQuery, YearDetailPageQueryVariables } from "generated/graphql";
-import { RequiredNonNullable } from "utils/types";
+import type { SharedPageProps } from "utils/getSharedPageProps";
+import getSharedPageProps from "utils/getSharedPageProps";
+import type { ParsedUrlQuery } from "querystring";
+import type { GetStaticPaths, GetStaticProps } from "next";
+import type { YearDetailPageAllQuery, YearDetailPageQuery, YearDetailPageQueryVariables } from "generated/graphql";
+import type { RequiredNonNullable } from "utils/types";
 
 const seasonOrder = [ "Winter", "Spring", "Summer", "Fall" ];
 

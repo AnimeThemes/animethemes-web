@@ -3,8 +3,8 @@ import theme from "theme";
 import { Icon } from "components/icon";
 import { faTimes } from "@fortawesome/pro-solid-svg-icons";
 import { Button } from "components/button";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { ComponentPropsWithoutRef, FormEvent } from "react";
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import type { ComponentPropsWithoutRef, FormEvent } from "react";
 import { withColorTheme } from "styles/mixins";
 
 const StyledSearchInput = styled.div`
@@ -47,7 +47,7 @@ interface InputProps extends ComponentPropsWithoutRef<typeof StyledSearchInput> 
     onChange: (value: string) => void
     onSubmit?: (event: FormEvent<HTMLFormElement>) => void
     resettable?: boolean
-    icon?: IconProp
+    icon?: IconDefinition
     inputProps?: ComponentPropsWithoutRef<typeof StyledInput>
 }
 

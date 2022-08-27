@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
-import { ASTNode } from "graphql";
-import { ExtractImagesResourceWithImagesFragment } from "generated/graphql";
+import type { ASTNode } from "graphql";
+import type { ExtractImagesResourceWithImagesFragment } from "generated/graphql";
 
 interface ExtractImages {
     (resourcesWithImages?: ExtractImagesResourceWithImagesFragment | null): ExtractImagesResult

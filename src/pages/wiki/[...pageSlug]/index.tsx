@@ -1,22 +1,25 @@
 import { fetchData } from "lib/server";
-import markdownToHtml, { Heading, Markdown } from "utils/markdownToHtml";
+import type { Heading, Markdown } from "utils/markdownToHtml";
+import markdownToHtml from "utils/markdownToHtml";
 import { unified } from "unified";
 import rehypeReact from "rehype-react";
 import { Text } from "components/text";
-import { ComponentPropsWithoutRef, createElement, Fragment, useEffect, useState } from "react";
+import type { ComponentPropsWithoutRef } from "react";
+import { createElement, Fragment, useEffect, useState } from "react";
 import rehypeParse from "rehype-parse";
 import styled from "styled-components";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import theme from "theme";
 import { SEO } from "components/seo";
 import fetchStaticPaths from "utils/fetchStaticPaths";
 import gql from "graphql-tag";
-import getSharedPageProps, { SharedPageProps } from "utils/getSharedPageProps";
-import { GetStaticPaths, GetStaticProps } from "next";
-import { ParsedUrlQuery } from "querystring";
-import { DocumentPageAllQuery, DocumentPageQuery, DocumentPageQueryVariables } from "generated/graphql";
+import type { SharedPageProps } from "utils/getSharedPageProps";
+import getSharedPageProps from "utils/getSharedPageProps";
+import type { GetStaticPaths, GetStaticProps } from "next";
+import type { ParsedUrlQuery } from "querystring";
+import type { DocumentPageAllQuery, DocumentPageQuery, DocumentPageQueryVariables } from "generated/graphql";
 import { TextLink } from "components/text/TextLink";
-import { RequiredNonNullable } from "utils/types";
+import type { RequiredNonNullable } from "utils/types";
 
 const StyledGrid = styled.div`
     display: flex;
@@ -156,7 +159,7 @@ const StyledTableOfContentsHeading = styled.li<{ $depth: number }>`
     font-size: ${(props) => props.$depth === 3 && "0.9rem"};
 `;
 
-const StyledDot = styled(motion.div)`
+const StyledDot = styled(m.div)`
     position: absolute;
     left: -16px;
     width: 4px;

@@ -1,5 +1,6 @@
 import useLocalStorageState from "use-local-storage-state";
-import { FetchThemeSummaryCardData, fetchThemeSummaryCardData } from "components/card/ThemeSummaryCard";
+import type { FetchThemeSummaryCardData } from "components/card/ThemeSummaryCard";
+import { fetchThemeSummaryCardData } from "components/card/ThemeSummaryCard";
 
 interface WatchHistoryTheme {
     id: number

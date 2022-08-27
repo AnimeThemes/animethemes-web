@@ -1,4 +1,5 @@
-import { ComponentPropsWithoutRef, useContext } from "react";
+import type { ComponentPropsWithoutRef } from "react";
+import { useContext } from "react";
 import Link from "next/link";
 import { faCompactDisc, faPlay } from "@fortawesome/pro-solid-svg-icons";
 import PlayerContext from "context/playerContext";
@@ -7,7 +8,7 @@ import { Icon } from "components/icon";
 import { Button } from "components/button";
 import { VideoTags } from "components/tag";
 import gql from "graphql-tag";
-import {
+import type {
     VideoButtonAnimeFragment,
     VideoButtonEntryFragment,
     VideoButtonThemeFragment,
@@ -33,7 +34,7 @@ export function VideoButton({ anime, theme, entry, video, ...props }: VideoButto
             legacyBehavior>
             <Button as="a" {...props}>
                 <Button as="span" variant="primary" isCircle>
-                    <Icon icon={isPlaying ? faCompactDisc : faPlay} spin={isPlaying}/>
+                    <Icon icon={isPlaying ? faCompactDisc : faPlay} className="fa-spin"/>
                 </Button>
                 <VideoTags video={video} hideTextOnMobile/>
             </Button>

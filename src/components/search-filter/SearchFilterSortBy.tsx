@@ -1,7 +1,7 @@
 import { Text } from "components/text";
 import { Listbox } from "components/listbox";
 import { SearchFilter } from "components/search-filter";
-import { ComponentPropsWithoutRef, ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 
 interface SearchFilterSortByProps<T extends string | null> {
     children: ReactNode

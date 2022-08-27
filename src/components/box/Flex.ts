@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Property } from "csstype";
+import type { Property } from "csstype";
 
 const Flex = styled.div<{
     $wrap?: boolean

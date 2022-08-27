@@ -11,7 +11,7 @@ import createVideoSlug from "utils/createVideoSlug";
 import Link from "next/link";
 import { VIDEO_URL } from "utils/config";
 import gql from "graphql-tag";
-import { FeaturedThemeThemeFragment } from "generated/graphql";
+import type { FeaturedThemeThemeFragment } from "generated/graphql";
 
 const slowPan = keyframes`
     from {

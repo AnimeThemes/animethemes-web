@@ -2,8 +2,8 @@ import { SearchAnime, SearchArtist, SearchSeries, SearchStudio, SearchTheme } fr
 import { useRouter } from "next/router";
 import { SEO } from "components/seo";
 import { capitalize } from "lodash-es";
-import { GetStaticPaths, GetStaticProps } from "next";
-import { ParsedUrlQuery } from "querystring";
+import type { GetStaticPaths, GetStaticProps } from "next";
+import type { ParsedUrlQuery } from "querystring";
 
 const SEARCH_ENTITIES = [ "anime", "theme", "artist", "series", "studio" ] as const;
 

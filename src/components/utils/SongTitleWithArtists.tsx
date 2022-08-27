@@ -1,7 +1,7 @@
 import { Text } from "components/text";
 import { Performances, SongTitle } from "components/utils";
 import gql from "graphql-tag";
-import { SongTitleWithArtistsArtistFragment, SongTitleWithArtistsSongFragment } from "generated/graphql";
+import type { SongTitleWithArtistsArtistFragment, SongTitleWithArtistsSongFragment } from "generated/graphql";
 
 interface SongTitleWithArtistsProps {
     song: SongTitleWithArtistsSongFragment | null

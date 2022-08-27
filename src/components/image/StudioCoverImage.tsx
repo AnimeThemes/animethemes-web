@@ -2,8 +2,9 @@ import extractImages from "utils/extractImages";
 import { AspectRatio } from "components/utils";
 import { FullWidthImage, MultiCoverImage } from "components/image";
 import gql from "graphql-tag";
-import { ComponentPropsWithoutRef, useState } from "react";
-import { StudioCoverImageStudioFragment } from "generated/graphql";
+import type { ComponentPropsWithoutRef } from "react";
+import { useState } from "react";
+import type { StudioCoverImageStudioFragment } from "generated/graphql";
 import styled from "styled-components";
 
 const StyledImage = styled(FullWidthImage)`

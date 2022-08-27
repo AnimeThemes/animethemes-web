@@ -1,6 +1,7 @@
 import { ListboxCustom, ListboxNative } from "components/listbox";
 import theme from "theme";
-import { createContext, ReactNode, useContext } from "react";
+import type { ReactNode } from "react";
+import { createContext, useContext } from "react";
 import useMediaQuery from "hooks/useMediaQuery";
 
 const ListboxContext = createContext({

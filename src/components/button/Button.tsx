@@ -2,7 +2,8 @@ import styled, { css } from "styled-components";
 import theme from "theme";
 import { withHover } from "styles/mixins";
 import { Solid } from "components/box";
-import { ComponentPropsWithoutRef, ForwardedRef, forwardRef, ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ForwardedRef, ReactNode } from "react";
+import { forwardRef } from "react";
 
 export const Button = forwardRef(ButtonWithRef);
 

@@ -2,9 +2,9 @@ import { Row } from "components/box";
 import { Switcher } from "components/switcher";
 import Link from "next/link";
 import { HorizontalScroll } from "components/utils";
-import { YearDetailPageProps } from "pages/year/[year]";
+import type { YearDetailPageProps } from "pages/year/[year]";
 import { SwitcherOption } from "components/switcher/Switcher";
-import { SeasonDetailPageProps } from "pages/year/[year]/[season]";
+import type { SeasonDetailPageProps } from "pages/year/[year]/[season]";
 
 export function SeasonNavigation(props: YearDetailPageProps | SeasonDetailPageProps) {
     const { year } = props;

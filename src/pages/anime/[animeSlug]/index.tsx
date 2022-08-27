@@ -20,13 +20,14 @@ import {
     studioNameComparator
 } from "utils/comparators";
 import fetchStaticPaths from "utils/fetchStaticPaths";
-import getSharedPageProps, { SharedPageProps } from "utils/getSharedPageProps";
-import { GetStaticPaths, GetStaticProps } from "next";
-import { ParsedUrlQuery } from "querystring";
+import type { SharedPageProps } from "utils/getSharedPageProps";
+import getSharedPageProps from "utils/getSharedPageProps";
+import type { GetStaticPaths, GetStaticProps } from "next";
+import type { ParsedUrlQuery } from "querystring";
 import { fetchData } from "lib/server";
 import gql from "graphql-tag";
-import { AnimeDetailPageAllQuery, AnimeDetailPageQuery, AnimeDetailPageQueryVariables } from "generated/graphql";
-import { RequiredNonNullable } from "utils/types";
+import type { AnimeDetailPageAllQuery, AnimeDetailPageQuery, AnimeDetailPageQueryVariables } from "generated/graphql";
+import type { RequiredNonNullable } from "utils/types";
 
 const StyledList = styled.div`
     display: flex;

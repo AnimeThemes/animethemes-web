@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { fadeIn, slideIn } from "styles/animations";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 const StyledWrapper = styled.div`
     animation-name: ${slideIn("-16px")}, ${fadeIn};
