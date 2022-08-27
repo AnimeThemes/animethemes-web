@@ -34,7 +34,7 @@ export function VideoButton({ anime, theme, entry, video, ...props }: VideoButto
             legacyBehavior>
             <Button as="a" {...props}>
                 <Button as="span" variant="primary" isCircle>
-                    <Icon icon={isPlaying ? faCompactDisc : faPlay} className="fa-spin"/>
+                    <Icon icon={isPlaying ? faCompactDisc : faPlay} className={isPlaying ? "fa-spin" : undefined}/>
                 </Button>
                 <VideoTags video={video} hideTextOnMobile/>
             </Button>
