@@ -3,7 +3,7 @@ import { Button } from "components/button";
 import styled from "styled-components";
 import { Row } from "components/box";
 import { Text } from "components/text";
-import { YearDetailPageProps } from "pages/year/[year]";
+import type { YearDetailPageProps } from "pages/year/[year]";
 
 const StyledYear = styled.div`
     flex: 1;

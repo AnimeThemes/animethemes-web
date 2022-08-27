@@ -4,7 +4,7 @@ import { Text } from "components/text";
 import { Menu } from "components/menu";
 import useLocalPlaylist from "hooks/useLocalPlaylist";
 import gql from "graphql-tag";
-import { ThemeMenuThemeFragment } from "generated/graphql";
+import type { ThemeMenuThemeFragment } from "generated/graphql";
 
 interface ThemeMenuProps {
     theme: ThemeMenuThemeFragment

@@ -7,16 +7,17 @@ import theme from "theme";
 import { useState } from "react";
 import { Switcher } from "components/switcher";
 import { fetchData } from "lib/server";
-import getSharedPageProps, { SharedPageProps } from "utils/getSharedPageProps";
+import type { SharedPageProps } from "utils/getSharedPageProps";
+import getSharedPageProps from "utils/getSharedPageProps";
 import fetchStaticPaths from "utils/fetchStaticPaths";
 import gql from "graphql-tag";
 import { CornerIcon } from "components/icon/CornerIcon";
 import { BracketThemeSummaryCard } from "components/bracket/BracketThemeSummaryCard";
 import { BracketChart } from "components/bracket/BracketChart";
-import { RequiredNonNullable } from "utils/types";
-import { BracketPageAllQuery, BracketPageQuery, BracketPageQueryVariables } from "generated/graphql";
-import { ParsedUrlQuery } from "querystring";
-import { GetStaticPaths, GetStaticProps } from "next";
+import type { RequiredNonNullable } from "utils/types";
+import type { BracketPageAllQuery, BracketPageQuery, BracketPageQueryVariables } from "generated/graphql";
+import type { ParsedUrlQuery } from "querystring";
+import type { GetStaticPaths, GetStaticProps } from "next";
 import { SwitcherOption } from "components/switcher/Switcher";
 
 const CurrentRound = styled(Solid)`

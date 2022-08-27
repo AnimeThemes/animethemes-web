@@ -8,7 +8,7 @@ import { ContentWarningTags, EpisodeTag, VideoTags } from "components/tag";
 import { Row } from "components/box";
 import { TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "components/table/Table";
 import gql from "graphql-tag";
-import { ThemeTableThemeFragment } from "generated/graphql";
+import type { ThemeTableThemeFragment } from "generated/graphql";
 
 export interface ThemeTableProps {
     themes: Array<ThemeTableThemeFragment>

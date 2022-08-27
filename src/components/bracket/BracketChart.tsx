@@ -2,13 +2,14 @@ import styled from "styled-components";
 import { Text } from "components/text";
 import { faDiagramProject } from "@fortawesome/pro-solid-svg-icons";
 import { Icon } from "components/icon";
-import { memo, RefObject, useCallback, useRef, useState } from "react";
+import type { RefObject } from "react";
+import { memo, useCallback, useRef, useState } from "react";
 import theme from "theme";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Button } from "components/button";
 import { BracketThemeSummaryCard } from "components/bracket/BracketThemeSummaryCard";
-import { BracketPageQuery } from "generated/graphql";
-import { RequiredNonNullable } from "utils/types";
+import type { BracketPageQuery } from "generated/graphql";
+import type { RequiredNonNullable } from "utils/types";
 
 const StyledBracketContainer = styled.div`
     flex: 1 1 0;
@@ -27,7 +28,7 @@ const StyledBracketContainer = styled.div`
     }
 `;
 
-const StyledBracket = styled(motion.div)`
+const StyledBracket = styled(m.div)`
     display: flex;
     position: relative;
     

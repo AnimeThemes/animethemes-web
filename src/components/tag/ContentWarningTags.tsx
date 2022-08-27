@@ -2,7 +2,7 @@ import { faExclamationCircle } from "@fortawesome/pro-solid-svg-icons";
 import { Tag } from "components/tag";
 import { Icon } from "components/icon";
 import gql from "graphql-tag";
-import { ContentWarningTagsEntryFragment } from "generated/graphql";
+import type { ContentWarningTagsEntryFragment } from "generated/graphql";
 
 interface ContentWarningTagsProps {
     entry: ContentWarningTagsEntryFragment

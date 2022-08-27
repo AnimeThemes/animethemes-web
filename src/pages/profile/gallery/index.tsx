@@ -3,10 +3,11 @@ import styled from "styled-components";
 import { Button } from "components/button";
 import { useState } from "react";
 import { SEO } from "components/seo";
-import getSharedPageProps, { SharedPageProps } from "utils/getSharedPageProps";
-import { GetStaticProps } from "next";
+import type { SharedPageProps } from "utils/getSharedPageProps";
+import getSharedPageProps from "utils/getSharedPageProps";
+import type { GetStaticProps } from "next";
 import { fetchData } from "lib/server";
-import { GalleryPageQuery } from "generated/graphql";
+import type { GalleryPageQuery } from "generated/graphql";
 import gql from "graphql-tag";
 
 const StyledGrid = styled.div`

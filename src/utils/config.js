@@ -1,4 +1,6 @@
 // This file needs to be a .js file, because it's used by next.config.js.
+// We can't use ES imports here to we supress the lint rule.
+/* eslint-disable @typescript-eslint/no-var-requires */
 
 const { error, warn } = require("next/dist/build/output/log");
 const chalk = require("next/dist/lib/chalk").default;

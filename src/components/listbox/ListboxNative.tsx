@@ -3,9 +3,10 @@ import { faSort, faTimes } from "@fortawesome/pro-solid-svg-icons";
 import { Button } from "components/button";
 import { Text } from "components/text";
 import theme from "theme";
-import { createContext, SyntheticEvent, useCallback, useContext, useEffect, useState } from "react";
+import type { SyntheticEvent } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { Icon } from "components/icon";
-import { ListboxOptionProps, ListboxProps } from "components/listbox/Listbox";
+import type { ListboxOptionProps, ListboxProps } from "components/listbox/Listbox";
 
 const NULL_VALUE = "__NULL__";
 

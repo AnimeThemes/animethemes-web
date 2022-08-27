@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faSort, faTimes } from "@fortawesome/pro-solid-svg-icons";
 import { Button } from "components/button";
 import { Text } from "components/text";
@@ -14,8 +13,8 @@ import {
 } from "@reach/listbox";
 import { flipDown } from "styles/animations";
 import { Icon } from "components/icon";
-import { ListboxOptionProps, ListboxProps } from "components/listbox/Listbox";
-import { SyntheticEvent } from "react";
+import type { ListboxOptionProps, ListboxProps } from "components/listbox/Listbox";
+import type { SyntheticEvent } from "react";
 
 // ReachUI's listbox can't handle null values, so we are giving it a fake null value.
 // The caveat is, that we can't use this value normally, thus it's obscure name.
@@ -161,7 +160,7 @@ ListboxCustom.Option = function ListboxCustomOption({ value, children, hidden = 
         <StyledListboxOption value={value ?? NULL_VALUE} hidden={hidden}>
             <Text>{children}</Text>
             {value === context.value && (
-                <FontAwesomeIcon icon={faCheck} fixedWidth/>
+                <Icon icon={faCheck}/>
             )}
         </StyledListboxOption>
     );

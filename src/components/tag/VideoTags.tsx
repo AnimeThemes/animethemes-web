@@ -10,7 +10,7 @@ import { Tag } from "components/tag";
 import { Row } from "components/box";
 import styled from "styled-components";
 import gql from "graphql-tag";
-import { VideoTagsVideoFragment } from "generated/graphql";
+import type { VideoTagsVideoFragment } from "generated/graphql";
 
 const StyledVideoTags = styled(Row)`
     align-items: baseline;

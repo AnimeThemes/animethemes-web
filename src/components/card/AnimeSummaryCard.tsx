@@ -13,7 +13,7 @@ import { Collapse } from "components/utils";
 import { ThemeTable } from "components/table";
 import useMediaQuery from "hooks/useMediaQuery";
 import gql from "graphql-tag";
-import { AnimeSummaryCardAnimeExpandableFragment, AnimeSummaryCardAnimeFragment } from "generated/graphql";
+import type { AnimeSummaryCardAnimeExpandableFragment, AnimeSummaryCardAnimeFragment } from "generated/graphql";
 import { TextLink } from "components/text/TextLink";
 
 const StyledWrapper = styled.div`
@@ -123,7 +123,11 @@ export function AnimeSummaryCard({ anime, expandable = false, ...props }: AnimeS
                                 title={isExpanded ? "Collapse" : "Expand"}
                                 onClick={handleToggleExpand}
                             >
-                                <Icon icon={faChevronDown} rotation={isExpanded ? 180 : undefined} transition="transform 400ms"/>
+                                <Icon
+                                    icon={faChevronDown}
+                                    className={isExpanded ? "fa-rotate-180" : undefined}
+                                    style={{ transition: "transform 400ms" }}
+                                />
                             </StyledExpandButton>
                         )}
                     </StyledThemeContainerInline>

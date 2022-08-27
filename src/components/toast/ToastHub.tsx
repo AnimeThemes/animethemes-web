@@ -2,7 +2,7 @@ import { useToasts } from "context/toastContext";
 import styled from "styled-components";
 import { Container } from "components/container";
 import theme from "theme";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 
 const StyledToastHub = styled(Container)`
     position: fixed;
@@ -18,7 +18,7 @@ const StyledToastHub = styled(Container)`
     pointer-events: none;
 `;
 
-const StyledToastContainer = styled(motion.div)`
+const StyledToastContainer = styled(m.div)`
     pointer-events: initial;
 `;
 

@@ -16,10 +16,10 @@ import { MultiCoverImage } from "components/image";
 import gql from "graphql-tag";
 import fetchStaticPaths from "utils/fetchStaticPaths";
 import getSharedPageProps from "utils/getSharedPageProps";
-import { GetStaticPaths, GetStaticProps } from "next";
-import { RequiredNonNullable } from "utils/types";
-import { SeriesDetailPageAllQuery, SeriesDetailPageQuery, SeriesDetailPageQueryVariables } from "generated/graphql";
-import { ParsedUrlQuery } from "querystring";
+import type { GetStaticPaths, GetStaticProps } from "next";
+import type { RequiredNonNullable } from "utils/types";
+import type { SeriesDetailPageAllQuery, SeriesDetailPageQuery, SeriesDetailPageQueryVariables } from "generated/graphql";
+import type { ParsedUrlQuery } from "querystring";
 
 const StyledDesktopOnly = styled.div`
     gap: 24px;

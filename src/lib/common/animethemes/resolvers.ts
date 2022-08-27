@@ -1,5 +1,5 @@
 import { apiResolver, INCLUDES } from "./api";
-import { IResolvers } from "@graphql-tools/utils";
+import type { IResolvers } from "@graphql-tools/utils";
 
 const resolvers: IResolvers = {
     Query: {

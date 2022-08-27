@@ -7,7 +7,7 @@ import { faDiscord, faGithub, faReddit, faTwitter } from "@fortawesome/free-bran
 import { Button } from "components/button";
 import styled from "styled-components";
 import theme from "theme";
-import { ComponentPropsWithoutRef } from "react";
+import type { ComponentPropsWithoutRef } from "react";
 import { APP_URL } from "utils/config";
 
 const StyledFooter = styled(Solid)`

@@ -1,6 +1,7 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { Property } from "csstype";
+import type { Property } from "csstype";
 
 const StyledShadowFix = styled.div`
     overflow: hidden;

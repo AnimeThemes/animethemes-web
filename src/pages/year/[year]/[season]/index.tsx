@@ -5,11 +5,12 @@ import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import gql from "graphql-tag";
 import fetchStaticPaths from "utils/fetchStaticPaths";
-import getSharedPageProps, { SharedPageProps } from "utils/getSharedPageProps";
-import { GetStaticPaths, GetStaticProps } from "next";
-import { SeasonDetailPageAllQuery, SeasonDetailPageQuery, SeasonDetailPageQueryVariables } from "generated/graphql";
-import { ParsedUrlQuery } from "querystring";
-import { RequiredNonNullable } from "utils/types";
+import type { SharedPageProps } from "utils/getSharedPageProps";
+import getSharedPageProps from "utils/getSharedPageProps";
+import type { GetStaticPaths, GetStaticProps } from "next";
+import type { SeasonDetailPageAllQuery, SeasonDetailPageQuery, SeasonDetailPageQueryVariables } from "generated/graphql";
+import type { ParsedUrlQuery } from "querystring";
+import type { RequiredNonNullable } from "utils/types";
 import { capitalize } from "lodash-es";
 
 const seasonOrder = [ "Winter", "Spring", "Summer", "Fall" ];

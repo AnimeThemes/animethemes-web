@@ -1,5 +1,5 @@
 import { STAGING } from "utils/config";
-import { ParsedUrlQuery } from "querystring";
+import type { ParsedUrlQuery } from "querystring";
 
 export default async function fetchStaticPaths<T extends ParsedUrlQuery = ParsedUrlQuery>(
     fetchPaths: () => Promise<Array<{ params: T }>>,

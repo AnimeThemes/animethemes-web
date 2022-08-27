@@ -1,10 +1,11 @@
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import { Text } from "components/text";
-import getSharedPageProps, { SharedPageProps } from "utils/getSharedPageProps";
-import { GetStaticProps } from "next";
+import type { SharedPageProps } from "utils/getSharedPageProps";
+import getSharedPageProps from "utils/getSharedPageProps";
+import type { GetStaticProps } from "next";
 import gql from "graphql-tag";
-import { DocumentIndexPageQuery } from "generated/graphql";
+import type { DocumentIndexPageQuery } from "generated/graphql";
 import { TextLink } from "components/text/TextLink";
 import { AlphabeticalIndex } from "components/index";
 

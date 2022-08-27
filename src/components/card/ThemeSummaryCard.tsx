@@ -15,13 +15,13 @@ import styled from "styled-components";
 import { Table, ThemeTable } from "components/table";
 import theme from "theme";
 import useMediaQuery from "hooks/useMediaQuery";
-import {
+import type {
     ThemeSummaryCardArtistFragment,
     ThemeSummaryCardQuery,
     ThemeSummaryCardThemeExpandableFragment,
     ThemeSummaryCardThemeFragment
 } from "generated/graphql";
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 import { TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "components/table/Table";
 import { TextLink } from "components/text/TextLink";
 
@@ -125,7 +125,11 @@ export function ThemeSummaryCard({ theme, artist, children, expandable, ...props
                             title={isExpanded ? "Collapse" : "Expand"}
                             onClick={handleToggleExpand}
                         >
-                            <Icon icon={faChevronDown} rotation={isExpanded ? 180 : undefined} transition="transform 400ms"/>
+                            <Icon
+                                icon={faChevronDown}
+                                className={isExpanded ? "fa-rotate-180" : undefined}
+                                style={{ transition: "transform 400ms" }}
+                            />
                         </StyledExpandButton>
                     )}
                 </StyledOverlayButtons>

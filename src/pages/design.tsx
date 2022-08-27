@@ -35,11 +35,11 @@ import { Input } from "components/input";
 import gql from "graphql-tag";
 import getSharedPageProps from "utils/getSharedPageProps";
 import { Highlight } from "components/utils/Highlight";
-import { DesignPageQuery } from "generated/graphql";
-import { GetStaticProps } from "next";
+import type { DesignPageQuery } from "generated/graphql";
+import type { GetStaticProps } from "next";
 import { SwitcherOption, SwitcherReset } from "components/switcher/Switcher";
-import { RequiredNonNullable } from "utils/types";
-import { Colors } from "theme/colors";
+import type { RequiredNonNullable } from "utils/types";
+import type { Colors } from "theme/colors";
 
 const ColorGrid = styled.div`
     display: grid;
@@ -185,8 +185,8 @@ export default function DesignPage({ demoData }: DesignPageProps) {
                 <Highlight>{`<Icon icon={faStar} color="text-primary"/>`}</Highlight>
                 <Icon icon={faStar} color="text-primary"/>
 
-                <Highlight>{`<Icon icon={faSpinner} spin/>`}</Highlight>
-                <Icon icon={faSpinner} spin/>
+                <Highlight>{`<Icon icon={faSpinner} className="fa-spin"/>`}</Highlight>
+                <Icon icon={faSpinner} className="fa-spin"/>
             </ExampleGrid>
 
             <Text variant="h2">Tag</Text>

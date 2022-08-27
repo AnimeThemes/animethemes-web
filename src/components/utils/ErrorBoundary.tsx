@@ -1,4 +1,5 @@
-import { Component, ErrorInfo, ReactNode } from "react";
+import type { ErrorInfo, ReactNode } from "react";
+import { Component } from "react";
 import Link from "next/link";
 import { Text } from "components/text";
 import { Container } from "components/container";

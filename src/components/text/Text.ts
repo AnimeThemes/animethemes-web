@@ -1,8 +1,8 @@
 import styled, { css } from "styled-components";
 import theme from "theme";
-import { Property } from "csstype";
-import { Colors } from "theme/colors";
-import { ReactElement } from "react";
+import type { Property } from "csstype";
+import type { Colors } from "theme/colors";
+import type { ReactElement } from "react";
 
 interface TextProps {
     variant?: "h1" | "h2" | "h3" | "small" | "code";

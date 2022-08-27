@@ -1,14 +1,15 @@
 import { SearchFilterFirstLetter, SearchFilterSortBy } from "components/search-filter";
 import { SearchEntity } from "components/search";
 import { SummaryCard } from "components/card";
-import { SyntheticEvent, useState } from "react";
+import type { SyntheticEvent } from "react";
+import { useState } from "react";
 import { fetchDataClient } from "lib/client";
-import { SearchStudioQuery, SearchStudioQueryVariables } from "generated/graphql";
+import type { SearchStudioQuery, SearchStudioQueryVariables } from "generated/graphql";
 import gql from "graphql-tag";
 import { StudioCoverImage } from "components/image/StudioCoverImage";
 import extractImages from "utils/extractImages";
 import extractBackgroundColor from "utils/extractBackgroundColor";
-import { Property } from "csstype";
+import type { Property } from "csstype";
 import useFilterStorage from "hooks/useFilterStorage";
 
 const initialFilter = {

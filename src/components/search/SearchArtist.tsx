@@ -3,7 +3,7 @@ import { SearchEntity } from "components/search";
 import { ArtistSummaryCard } from "components/card";
 import { useState } from "react";
 import { fetchDataClient } from "lib/client";
-import { SearchArtistQuery, SearchArtistQueryVariables } from "generated/graphql";
+import type { SearchArtistQuery, SearchArtistQueryVariables } from "generated/graphql";
 import gql from "graphql-tag";
 import useFilterStorage from "hooks/useFilterStorage";
 

@@ -1,5 +1,5 @@
-import { Comparator } from "utils/types";
-import { Anime, Entry, Resource, Series, Studio, Theme } from "generated/graphql";
+import type { Comparator } from "utils/types";
+import type { Anime, Entry, Resource, Series, Studio, Theme } from "generated/graphql";
 
 const seasonOrder = [
     "winter",

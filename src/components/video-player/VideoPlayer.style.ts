@@ -1,5 +1,5 @@
 import styled, { css, keyframes } from "styled-components";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Button } from "components/button";
 import theme from "theme";
 import { slideIn } from "styles/animations";
@@ -13,7 +13,7 @@ const slowPan = keyframes`
     }
 `;
 
-export const StyledPlayer = styled(motion.div)<{ $background: boolean }>`
+export const StyledPlayer = styled(m.div)<{ $background: boolean }>`
     width: 100%;
     max-height: calc(100vh - 96px);
     aspect-ratio: 16 / 9;

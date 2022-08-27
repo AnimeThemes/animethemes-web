@@ -8,7 +8,7 @@ import { SearchEntity } from "components/search";
 import { AnimeSummaryCard } from "components/card";
 import { useState } from "react";
 import gql from "graphql-tag";
-import { SearchAnimeQuery, SearchAnimeQueryVariables } from "generated/graphql";
+import type { SearchAnimeQuery, SearchAnimeQueryVariables } from "generated/graphql";
 import { fetchDataClient } from "lib/client";
 import useFilterStorage from "hooks/useFilterStorage";
 

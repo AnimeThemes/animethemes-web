@@ -1,4 +1,4 @@
-import { Property } from "csstype";
+import type { Property } from "csstype";
 
 export default function extractBackgroundColor(image: HTMLImageElement): Property.Background | void {
     try {

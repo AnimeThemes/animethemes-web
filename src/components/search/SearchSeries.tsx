@@ -3,7 +3,7 @@ import { SearchEntity } from "components/search";
 import { SummaryCard } from "components/card";
 import { useState } from "react";
 import { fetchDataClient } from "lib/client";
-import { SearchSeriesQuery, SearchSeriesQueryVariables } from "generated/graphql";
+import type { SearchSeriesQuery, SearchSeriesQueryVariables } from "generated/graphql";
 import gql from "graphql-tag";
 import useFilterStorage from "hooks/useFilterStorage";
 

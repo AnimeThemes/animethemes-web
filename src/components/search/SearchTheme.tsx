@@ -3,7 +3,7 @@ import { SearchEntity } from "components/search";
 import { ThemeSummaryCard } from "components/card";
 import { useState } from "react";
 import { fetchDataClient } from "lib/client";
-import { SearchThemeQuery, SearchThemeQueryVariables } from "generated/graphql";
+import type { SearchThemeQuery, SearchThemeQueryVariables } from "generated/graphql";
 import gql from "graphql-tag";
 import useFilterStorage from "hooks/useFilterStorage";
 

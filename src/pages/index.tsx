@@ -19,12 +19,12 @@ import { fetchDataClient } from "lib/client";
 import getSharedPageProps from "utils/getSharedPageProps";
 import { range } from "lodash-es";
 import { Skeleton } from "components/skeleton";
-import {
+import type {
     HomePageQuery,
     RecentlyAddedQuery,
     ThemeSummaryCardThemeFragment
 } from "generated/graphql";
-import { GetStaticProps } from "next";
+import type { GetStaticProps } from "next";
 
 const BigButton = styled(Button)`
     justify-content: flex-end;
@@ -145,7 +145,7 @@ export default function HomePage({ featuredTheme }: HomePageProps) {
             <MainGridArea area="c">
                 <Link href="/search" passHref legacyBehavior>
                     <BigButton forwardedAs="a">
-                        <BigIcon icon={faSearch} flip="horizontal"/>
+                        <BigIcon icon={faSearch} className="fa-flip-horizontal"/>
                         <Text>Search</Text>
                         <Icon icon={faArrowRight} color="text-primary"/>
                     </BigButton>

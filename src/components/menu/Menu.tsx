@@ -6,7 +6,7 @@ import { withHover } from "styles/mixins";
 import { Icon } from "components/icon";
 import { faEllipsisV } from "@fortawesome/pro-solid-svg-icons";
 import { fadeIn, flipDown, slideIn } from "styles/animations";
-import { ComponentPropsWithoutRef, PropsWithChildren, ReactNode } from "react";
+import type { ComponentPropsWithoutRef, PropsWithChildren, ReactNode } from "react";
 
 const StyledMenuItems = styled(MenuItems)`
     z-index: ${theme.zIndices.menuPopover};

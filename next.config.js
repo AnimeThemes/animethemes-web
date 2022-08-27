@@ -7,7 +7,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 
 if (!validateConfig()) {
     error("Shutting down because of invalid configuration...");
-    return process.exit(1);
+    process.exit(1);
 }
 
 if (STAGING) {

@@ -1,4 +1,5 @@
-import { Colors, colors, Shadows } from "./index";
+import type { Colors, Shadows } from "./index";
+import { colors } from "./index";
 
 export const darkColors: Colors = {
     ...colors,

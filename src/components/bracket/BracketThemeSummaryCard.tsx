@@ -9,8 +9,8 @@ import { Icon } from "components/icon";
 import { faAward, faSeedling, faUsers } from "@fortawesome/pro-solid-svg-icons";
 import { CornerIcon } from "components/icon/CornerIcon";
 import gql from "graphql-tag";
-import { BracketThemeSummaryCardConstestantFragment } from "generated/graphql";
-import { ComponentPropsWithoutRef, ReactNode } from "react";
+import type { BracketThemeSummaryCardConstestantFragment } from "generated/graphql";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { TextLink } from "components/text/TextLink";
 
 const StyledSummaryCardWrapper = styled.div`

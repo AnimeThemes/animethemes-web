@@ -31,10 +31,10 @@ import extractImages from "utils/extractImages";
 import gql from "graphql-tag";
 import fetchStaticPaths from "utils/fetchStaticPaths";
 import getSharedPageProps from "utils/getSharedPageProps";
-import { GetStaticPaths, GetStaticProps } from "next";
-import { ArtistDetailPageAllQuery, ArtistDetailPageQuery, ArtistDetailPageQueryVariables } from "generated/graphql";
-import { ParsedUrlQuery } from "querystring";
-import { RequiredNonNullable } from "utils/types";
+import type { GetStaticPaths, GetStaticProps } from "next";
+import type { ArtistDetailPageAllQuery, ArtistDetailPageQuery, ArtistDetailPageQueryVariables } from "generated/graphql";
+import type { ParsedUrlQuery } from "querystring";
+import type { RequiredNonNullable } from "utils/types";
 
 const StyledList = styled.div`
     display: flex;

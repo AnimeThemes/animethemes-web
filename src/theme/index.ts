@@ -1,4 +1,5 @@
-import { Colors, colors, Shadows, shadows } from "theme/colors";
+import type { Colors, Shadows } from "theme/colors";
+import { colors, shadows } from "theme/colors";
 
 interface Theme {
     breakpoints: {

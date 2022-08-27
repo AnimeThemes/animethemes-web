@@ -2,9 +2,9 @@ import styled, { css } from "styled-components";
 import { Text } from "components/text";
 import { Icon } from "components/icon";
 import theme from "theme";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { HTMLAttributes, ReactComponentElement, ReactElement, ReactNode } from "react";
-import { Colors } from "theme/colors";
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import type { HTMLAttributes, ReactComponentElement, ReactElement, ReactNode } from "react";
+import type { Colors } from "theme/colors";
 
 const StyledTag = styled.span`
     display: flex;
@@ -28,7 +28,7 @@ const StyledText = styled(Text)`
 `;
 
 interface TagProps extends HTMLAttributes<HTMLSpanElement> {
-    icon?: ReactComponentElement<typeof Icon> | IconProp
+    icon?: ReactComponentElement<typeof Icon> | IconDefinition
     children?: ReactNode
     hideTextOnMobile?: boolean
     textColor?: keyof Colors
@@ -47,6 +47,6 @@ export function Tag({ icon, children, hideTextOnMobile = false, textColor, ...pr
     );
 }
 
-function isIcon(value: ReactComponentElement<typeof Icon> | IconProp): value is ReactComponentElement<typeof Icon> {
+function isIcon(value: ReactComponentElement<typeof Icon> | IconDefinition): value is ReactComponentElement<typeof Icon> {
     return typeof value === "object" && "type" in value && (value as ReactElement).type === Icon;
 }

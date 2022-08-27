@@ -2,11 +2,12 @@ import React from "react";
 import Link from "next/link";
 import { Text } from "components/text";
 import { AlphabeticalIndex } from "components/index";
-import getSharedPageProps, { SharedPageProps } from "utils/getSharedPageProps";
-import { GetStaticProps } from "next";
+import type { SharedPageProps } from "utils/getSharedPageProps";
+import getSharedPageProps from "utils/getSharedPageProps";
+import type { GetStaticProps } from "next";
 import { fetchData } from "lib/server";
 import gql from "graphql-tag";
-import { SeriesIndexPageQuery } from "generated/graphql";
+import type { SeriesIndexPageQuery } from "generated/graphql";
 
 interface SeriesIndexPageProps extends SharedPageProps, SeriesIndexPageQuery {}
 

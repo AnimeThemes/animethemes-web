@@ -1,4 +1,5 @@
-import { css, Interpolation, keyframes, ThemedStyledProps } from "styled-components";
+import type { Interpolation, ThemedStyledProps } from "styled-components";
+import { css, keyframes } from "styled-components";
 
 const loadingAnimationKeyframes = keyframes`
     50% {

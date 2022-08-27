@@ -1,8 +1,8 @@
 import extractImages from "utils/extractImages";
 import { AspectRatio } from "components/utils";
 import styled, { css } from "styled-components";
-import { ComponentPropsWithoutRef } from "react";
-import { MultiCoverImageResourceWithImagesFragment } from "generated/graphql";
+import type { ComponentPropsWithoutRef } from "react";
+import type { MultiCoverImageResourceWithImagesFragment } from "generated/graphql";
 import gql from "graphql-tag";
 import { LogoPlaceholder } from "components/image/LogoPlaceholder";
 

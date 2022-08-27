@@ -1,4 +1,5 @@
-import { ComponentPropsWithoutRef, Fragment, useState } from "react";
+import type { ComponentPropsWithoutRef } from "react";
+import { Fragment, useState } from "react";
 import event from "lib/server/animeawards/index.json";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
@@ -13,12 +14,12 @@ import Link from "next/link";
 import { SongTitleWithArtists } from "components/utils";
 import { Icon } from "components/icon";
 import { faAward, faHashtag, faUsers } from "@fortawesome/pro-solid-svg-icons";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import getSharedPageProps from "utils/getSharedPageProps";
-import { GetStaticProps } from "next";
+import type { GetStaticProps } from "next";
 import gql from "graphql-tag";
-import { AwardPageThemeQuery } from "generated/graphql";
-import { Comparator } from "utils/types";
+import type { AwardPageThemeQuery } from "generated/graphql";
+import type { Comparator } from "utils/types";
 import { SwitcherOption, SwitcherReset } from "components/switcher/Switcher";
 import { CornerIcon } from "components/icon/CornerIcon";
 
@@ -109,7 +110,7 @@ export default function AnimeAwardsPage({ awards }: AnimeAwardsPage) {
                     <StyledNomineeGrid style={{ "--columns": typeFilter ? 1 : 2, "--rows": typeFilter ? 10 : 20 }}>
                         {(typeFilter === null || typeFilter === "op") && (
                             [...award.nominees.openings].sort(sortFn).map((nominee, rank) => (
-                                <motion.div
+                                <m.div
                                     layout="position"
                                     layoutId={String(nominee.id)}
                                     layoutDependency={judgeFilter}
@@ -120,12 +121,12 @@ export default function AnimeAwardsPage({ awards }: AnimeAwardsPage) {
                                         rank={judgeFilter === "public" ? rank + 1 : nominee.rankJury}
                                         votes={judgeFilter === "public" ? nominee.votesPublic : null}
                                     />
-                                </motion.div>
+                                </m.div>
                             ))
                         )}
                         {(typeFilter === null || typeFilter === "ed") && (
                             [...award.nominees.endings].sort(sortFn).map((nominee, rank) => (
-                                <motion.div
+                                <m.div
                                     layout="position"
                                     layoutId={String(nominee.id)}
                                     layoutDependency={judgeFilter}
@@ -136,7 +137,7 @@ export default function AnimeAwardsPage({ awards }: AnimeAwardsPage) {
                                         rank={judgeFilter === "public" ? rank + 1 : nominee.rankJury}
                                         votes={judgeFilter === "public" ? nominee.votesPublic : null}
                                     />
-                                </motion.div>
+                                </m.div>
                             ))
                         )}
                     </StyledNomineeGrid>

@@ -2,8 +2,8 @@ import extractImages from "utils/extractImages";
 import { AspectRatio } from "components/utils";
 import { FullWidthImage } from "components/image";
 import gql from "graphql-tag";
-import { CoverImageResourceWithImagesFragment } from "generated/graphql";
-import { ComponentPropsWithoutRef } from "react";
+import type { CoverImageResourceWithImagesFragment } from "generated/graphql";
+import type { ComponentPropsWithoutRef } from "react";
 
 interface CoverImageProps extends ComponentPropsWithoutRef<typeof FullWidthImage> {
     resourceWithImages: CoverImageResourceWithImagesFragment

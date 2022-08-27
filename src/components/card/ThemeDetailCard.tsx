@@ -5,7 +5,7 @@ import { ThemeMenu } from "components/menu";
 import { ThemeEntryTags } from "components/tag";
 import { VideoTags } from "components/tag/VideoTags";
 import gql from "graphql-tag";
-import { ThemeDetailCardThemeFragment } from "generated/graphql";
+import type { ThemeDetailCardThemeFragment } from "generated/graphql";
 import styled from "styled-components";
 import { Card } from "components/card/Card";
 import theme from "theme";

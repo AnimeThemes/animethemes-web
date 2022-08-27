@@ -1,5 +1,5 @@
-import { ASTNode } from "graphql";
-import { ApiExecutionResult } from "lib/common";
+import type { ASTNode } from "graphql";
+import type { ApiExecutionResult } from "lib/common";
 
 export async function fetchDataClient<T>(
     query: string | ASTNode

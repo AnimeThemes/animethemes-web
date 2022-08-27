@@ -5,7 +5,7 @@ import { Listbox } from "components/listbox";
 import { HorizontalScroll } from "components/utils";
 import { either, themeIndexComparator, themeTypeComparator } from "utils/comparators";
 import gql from "graphql-tag";
-import { AnimeThemeFilterThemeFragment } from "generated/graphql";
+import type { AnimeThemeFilterThemeFragment } from "generated/graphql";
 
 interface AnimeThemeFilterProps {
     themes: Array<AnimeThemeFilterThemeFragment>

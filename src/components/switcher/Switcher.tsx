@@ -1,12 +1,13 @@
 import styled, { css } from "styled-components";
-import { LayoutGroup, motion } from "framer-motion";
+import { LayoutGroup, m } from "framer-motion";
 import theme from "theme";
 import { uniqueId as createUniqueId } from "lodash-es";
-import {
+import type {
     ComponentPropsWithoutRef,
     ComponentPropsWithRef,
+    ReactNode } from "react";
+import {
     createContext,
-    ReactNode,
     useContext,
     useMemo
 } from "react";
@@ -66,7 +67,7 @@ const StyledButton = styled.button<StyledButtonProps>`
     `)}
 `;
 
-const StyledButtonBackground = styled(motion.div)`
+const StyledButtonBackground = styled(m.div)`
     position: absolute;
     z-index: ${theme.zIndices.switcherButton};
     top: 0;

@@ -2,8 +2,8 @@ import { fetchData } from "lib/server";
 import gql from "graphql-tag";
 import createVideoSlug from "utils/createVideoSlug";
 import { BASE_PATH, REVALIDATE_TOKEN } from "utils/config";
-import { NextApiRequest, NextApiResponse } from "next";
-import { RevalidateAnimeQuery } from "generated/graphql";
+import type { NextApiRequest, NextApiResponse } from "next";
+import type { RevalidateAnimeQuery } from "generated/graphql";
 
 interface RevalidateQuery {
     secret?: string

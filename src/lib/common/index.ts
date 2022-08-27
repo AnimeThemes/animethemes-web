@@ -1,4 +1,5 @@
-import { ASTNode, graphql, GraphQLSchema, print } from "graphql";
+import type { ASTNode, GraphQLSchema } from "graphql";
+import { graphql, print } from "graphql";
 
 export interface ApiExecutionResult<T> {
     data: T

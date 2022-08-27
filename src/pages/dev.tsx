@@ -1,4 +1,5 @@
-import React, { ReactNode } from "react";
+import type { ReactNode } from "react";
+import React from "react";
 import Link from "next/link";
 import { Text } from "components/text";
 import styled from "styled-components";
