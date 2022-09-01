@@ -14,13 +14,13 @@ export function SongTitle({ song, songTitleLinkTo }: SongTitleProps) {
     if (songTitleLinkTo) {
         return (
             <Link href={songTitleLinkTo} passHref legacyBehavior>
-                <Text as="a" link title={songTitle} italics={!song?.title}>{songTitle}</Text>
+                <Text as="a" link title={songTitle} italics={!song?.title} wrapAnywhere>{songTitle}</Text>
             </Link>
         );
     }
 
     return (
-        <Text color="text-primary" weight="600" italics={!song?.title}>{songTitle}</Text>
+        <Text color="text-primary" weight="600" italics={!song?.title} wrapAnywhere>{songTitle}</Text>
     );
 }
 

@@ -21,7 +21,7 @@ import { Menu } from "components/menu";
 import { useToasts } from "context/toastContext";
 import { Toast } from "components/toast";
 import { ThemeEntryTags, VideoTags } from "components/tag";
-import { VIDEO_URL } from "utils/config";
+import { AUDIO_URL, VIDEO_URL } from "utils/config";
 import type { VideoPageAllQuery, VideoPageQuery, VideoPageQueryVariables } from "generated/graphql";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import { fetchData } from "lib/server";
@@ -127,7 +127,7 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex }:
     const { addToHistory } = useWatchHistory();
     const [ showMoreRelatedThemes, setShowMoreRelatedThemes ] = useState(false);
     const { dispatchToast } = useToasts();
-    const [audioMode, setAudioMode] = useSetting(AudioMode);
+    const [audioMode, setAudioMode] = useSetting(AudioMode, { storageSync: false });
     const [canRenderPlayer, setCanRenderPlayer] = useState(false);
 
     useEffect(() => setCanRenderPlayer(true), []);
@@ -196,6 +196,7 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex }:
     };
 
     const videoUrl = `${VIDEO_URL}/${video.basename}`;
+    const audioUrl = `${AUDIO_URL}/${video.audio.basename}`;
 
     return <>
         <SEO title={pageTitle} description={pageDesc} image={largeCover}>
@@ -262,7 +263,11 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex }:
                     </Button>
                 )}>
                     <Menu.Option onSelect={() => saveToClipboard(location.href)}>Copy URL to this Page</Menu.Option>
-                    <Menu.Option onSelect={() => saveToClipboard(videoUrl)}>Copy URL to Embeddable Video</Menu.Option>
+                    {audioMode ? (
+                        <Menu.Option onSelect={() => saveToClipboard(audioUrl)}>Copy URL to Embeddable Audio</Menu.Option>
+                    ) : (
+                        <Menu.Option onSelect={() => saveToClipboard(videoUrl)}>Copy URL to Embeddable Video</Menu.Option>
+                    )}
                 </Menu>
                 {canRenderPlayer ? (
                     <Switcher selectedItem={audioMode} onChange={setAudioMode}>
