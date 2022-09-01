@@ -1,12 +1,11 @@
 import useLocalStorageState from "use-local-storage-state";
-import type { FetchThemeSummaryCardData } from "components/card/ThemeSummaryCard";
-import { fetchThemeSummaryCardData } from "components/card/ThemeSummaryCard";
+import type { ThemeSummaryCardThemeFragment } from "generated/graphql";
 
-interface WatchHistoryTheme {
+interface WatchHistoryTheme extends ThemeSummaryCardThemeFragment {
     id: number
 }
 
-export type WatchHistory = Array<NonNullable<FetchThemeSummaryCardData> & WatchHistoryTheme>;
+export type WatchHistory = Array<WatchHistoryTheme>;
 
 export default function useWatchHistory() {
     const [ history, setHistory ] = useLocalStorageState<WatchHistory>("history", { ssr: true, defaultValue: [] });
@@ -17,22 +16,18 @@ export default function useWatchHistory() {
             return;
         }
 
-        fetchThemeSummaryCardData(theme.id).then((themeFresh) => {
-            if (themeFresh) {
-                setHistory((history) => {
-                    // Remove all previous occurences of the theme to avoid duplicates
-                    const newHistory = history.filter((t) => t.id !== theme.id);
+        setHistory((history) => {
+            // Remove all previous occurences of the theme to avoid duplicates
+            const newHistory = history.filter((t) => t.id !== theme.id);
 
-                    newHistory.push(themeFresh);
+            newHistory.push(theme);
 
-                    // Keep history below 100 entries
-                    if (newHistory.length > 100) {
-                        newHistory.shift();
-                    }
-
-                    return newHistory;
-                });
+            // Keep history below 100 entries
+            if (newHistory.length > 100) {
+                newHistory.shift();
             }
+
+            return newHistory;
         });
     }
 

@@ -14,6 +14,7 @@ interface TextProps {
     weight?: Property.FontWeight
     color?: keyof Colors
     as?: string | ReactElement
+    wrapAnywhere?: boolean
 }
 
 export const Text = styled.span<TextProps>.attrs(getAttributes)`    
@@ -21,8 +22,6 @@ export const Text = styled.span<TextProps>.attrs(getAttributes)`
     margin: 0;
     scroll-margin-top: 4rem;
 
-    overflow-wrap: anywhere;
-    
     ${(props) => props.variant === "h1" && css`
         font-size: 2rem;
         font-weight: 700;
@@ -92,6 +91,7 @@ export const Text = styled.span<TextProps>.attrs(getAttributes)`
     font-style: ${(props) => props.italics && "italic"};
     font-weight: ${(props) => props.weight};
     color: ${(props) => props.color && theme.colors[props.color]};
+    overflow-wrap: ${(props) => props.wrapAnywhere && "anywhere"};
 `;
 
 function getAttributes(props: TextProps) {

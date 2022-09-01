@@ -49,7 +49,7 @@ interface VideoPlayerProps {
 export function VideoPlayer({ anime, theme, entry, video, background, ...props }: VideoPlayerProps) {
     const [isPlaying, setPlaying] = useState(false);
     const { canPlayVideo } = useCompatability();
-    const playerRef = useRef<HTMLVideoElement>(null);
+    const playerRef = useRef<HTMLVideoElement | HTMLAudioElement | null>(null);
     const progressRef = useRef<HTMLDivElement>(null);
     const { clearCurrentVideo } = useContext(PlayerContext);
     const isMobile = useMediaQuery(`(max-width: ${styledTheme.breakpoints.mobileMax})`);
@@ -57,7 +57,7 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
     const [globalVolume, setGlobalVolume] = useSetting(GlobalVolume);
     const [canRenderPlayer, setCanRenderPlayer] = useState(false);
     const { largeCover } = extractImages(anime);
-    const [audioMode] = useSetting(AudioMode);
+    const [audioMode] = useSetting(AudioMode, { storageSync: false });
 
     const videoUrl = `${VIDEO_URL}/${video.basename}`;
     const audioUrl = `${AUDIO_URL}/${video.audio.basename}`;
@@ -69,6 +69,13 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
             playerRef.current.volume = globalVolume;
         }
     }, [globalVolume]);
+
+    function onPlayerMount(player: HTMLVideoElement) {
+        playerRef.current = player;
+        if (playerRef.current) {
+            playerRef.current.volume = globalVolume;
+        }
+    }
 
     function togglePlay() {
         if (isPlaying) {
@@ -89,7 +96,7 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
         }
     }
 
-    function updateProgress(event: SyntheticEvent<HTMLVideoElement>) {
+    function updateProgress(event: SyntheticEvent<HTMLVideoElement | HTMLAudioElement>) {
         if (background && isMobile && progressRef.current) {
             // Update the progress bar using a ref to prevent re-rendering.
             const progress = event.currentTarget.currentTime / event.currentTarget.duration * 100;
@@ -146,7 +153,7 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
                     <StyledAudioBackground>
                         <StyledAudioCover src={largeCover} onClick={background && isMobile ? maximize : undefined}/>
                         <StyledAudio
-                            ref={playerRef}
+                            ref={onPlayerMount}
                             src={audioUrl}
                             controls={!background}
                             autoPlay
@@ -154,12 +161,12 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
                             onPause={() => setPlaying(false)}
                             onEnded={() => setPlaying(false)}
                             onTimeUpdate={updateProgress}
-                            onVolumeChange={(event: SyntheticEvent<HTMLVideoElement>) => setGlobalVolume(event.currentTarget.volume)}
+                            onVolumeChange={(event: SyntheticEvent<HTMLAudioElement>) => setGlobalVolume(event.currentTarget.volume)}
                         />
                     </StyledAudioBackground>
                 ) : (
                     <StyledVideo
-                        ref={playerRef}
+                        ref={onPlayerMount}
                         src={videoUrl}
                         controls={!background}
                         autoPlay
