@@ -4,7 +4,7 @@ import { Icon } from "components/icon";
 import { faTimes } from "@fortawesome/pro-solid-svg-icons";
 import { Button } from "components/button";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import type { ComponentPropsWithoutRef, FormEvent } from "react";
+import type { ComponentPropsWithoutRef } from "react";
 import { withColorTheme } from "styles/mixins";
 
 const StyledSearchInput = styled.div`
@@ -27,9 +27,6 @@ const StyledSearchInput = styled.div`
         `)}
     }
 `;
-const StyledForm = styled.form`
-    flex: 1;
-`;
 const StyledInput = styled.input`
     width: 100%;
 `;
@@ -45,7 +42,6 @@ const StyledResetButton = styled(Button).attrs({ variant: "silent", isCircle: tr
 interface InputProps extends ComponentPropsWithoutRef<typeof StyledSearchInput> {
     value: string
     onChange: (value: string) => void
-    onSubmit?: (event: FormEvent<HTMLFormElement>) => void
     resettable?: boolean
     icon?: IconDefinition
     inputProps?: ComponentPropsWithoutRef<typeof StyledInput>
@@ -54,7 +50,6 @@ interface InputProps extends ComponentPropsWithoutRef<typeof StyledSearchInput> 
 export function Input({
     value,
     onChange,
-    onSubmit,
     resettable = false,
     icon,
     inputProps = {},
@@ -65,19 +60,12 @@ export function Input({
             {icon && (
                 <Icon icon={icon} color="text-disabled"/>
             )}
-            <StyledForm onSubmit={(event) => {
-                event.preventDefault();
-                if (onSubmit) {
-                    onSubmit(event);
-                }
-            }}>
-                <StyledInput
-                    type="text"
-                    value={value}
-                    onChange={(event) => onChange && onChange(event.target.value)}
-                    {...inputProps}
-                />
-            </StyledForm>
+            <StyledInput
+                type="text"
+                value={value}
+                onChange={(event) => onChange && onChange(event.target.value)}
+                {...inputProps}
+            />
             {resettable && !!value && (
                 <StyledResetButton>
                     <Icon icon={faTimes} onClick={() => onChange && onChange("")}/>

@@ -8,7 +8,6 @@ import { Button } from "components/button";
 import styled from "styled-components";
 import theme from "theme";
 import type { ComponentPropsWithoutRef } from "react";
-import { APP_URL } from "utils/config";
 
 const StyledFooter = styled(Solid)`
     margin-top: auto;
@@ -46,24 +45,24 @@ export function Footer() {
         <StyledFooter>
             <StyledContainer>
                 <StyledLinkList>
-                    <FooterTextLink href={`${APP_URL}/transparency`}>
+                    <FooterTextLink href="/about/transparency">
                         Transparency
                     </FooterTextLink>
-                    <FooterTextLink forwardedAs={Link} href="/wiki/donate" target="_self">
+                    <FooterTextLink href="/wiki/donate">
                         Donate
                     </FooterTextLink>
-                    <FooterTextLink forwardedAs={Link} href="/wiki/faq" target="_self">
+                    <FooterTextLink href="/wiki/faq">
                         FAQ
                     </FooterTextLink>
                 </StyledLinkList>
                 <StyledLinkList>
-                    <FooterTextLink href={`${APP_URL}/terms-of-service`}>
+                    <FooterTextLink href="/about/terms-of-service">
                         Terms of Service
                     </FooterTextLink>
-                    <FooterTextLink href={`${APP_URL}/privacy-policy`}>
+                    <FooterTextLink href="/about/privacy-policy">
                         Privacy Policy
                     </FooterTextLink>
-                    <FooterTextLink href="mailto:admin@animethemes.moe">
+                    <FooterTextLink as="a" href="mailto:admin@animethemes.moe">
                         Contact
                     </FooterTextLink>
                 </StyledLinkList>
@@ -96,7 +95,7 @@ export function Footer() {
 
 function FooterLink(props: ComponentPropsWithoutRef<typeof Text>) {
     return (
-        <Text as="a" target="_blank" rel="noopener" {...props}/>
+        <Text as={Link} {...props}/>
     );
 }
 

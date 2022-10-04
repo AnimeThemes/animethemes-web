@@ -31,7 +31,7 @@ import { fetchData } from "lib/server";
 import { Menu } from "components/menu";
 import { Toast } from "components/toast";
 import { useToasts } from "context/toastContext";
-import { Input } from "components/input";
+import { Input } from "components/form";
 import gql from "graphql-tag";
 import getSharedPageProps from "utils/getSharedPageProps";
 import { Highlight } from "components/utils/Highlight";

@@ -20,6 +20,9 @@ const typeDefs = `
         pageAll: [Page!]!
         imageAll(facet: String): [Image!]! 
         featuredTheme: FeaturedTheme
+        dumpAll: [Dump!]!
+        balanceAll: [Balance!]!
+        transactionAll: [Transaction!]!
     }
 
     interface ResourceWithImages {
@@ -202,6 +205,30 @@ const typeDefs = `
 
     type FeaturedTheme {
         theme: Theme!
+    }
+    
+    type Dump {
+        id: Int!
+        path: String!
+        link: String!
+        created_at: String!
+    }
+
+    type Balance {
+        id: Int!
+        date: String!
+        service: String!
+        frequency: String!
+        usage: Float!
+        month_to_date_balance: Float!
+    }
+
+    type Transaction {
+        id: Int!
+        date: String!
+        service: String!
+        description: String!
+        amount: Float!
     }
     
     schema {
