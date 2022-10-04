@@ -58,8 +58,8 @@ NEXT_PUBLIC_VIDEO_URL=https://v.animethemes.moe
 ; The URL from which audio files should be served.
 NEXT_PUBLIC_AUDIO_URL=https://a.animethemes.moe
 
-; The URL to use for app links.
-NEXT_PUBLIC_APP_URL=https://app.animethemes.moe
+; The URL to use for authentication API requests.
+NEXT_PUBLIC_AUTH_URL=https://app.animethemes.moe
 
 ; Set to any truthy value to activate staging mode.
 ; In staging mode a warning banner is displayed at the top of the page.
