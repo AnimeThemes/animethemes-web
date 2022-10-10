@@ -263,7 +263,7 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex }:
                     </Button>
                 )}>
                     <Menu.Option onSelect={() => saveToClipboard(location.href)}>Copy URL to this Page</Menu.Option>
-                    {audioMode ? (
+                    {audioMode === AudioMode.ENABLED ? (
                         <Menu.Option onSelect={() => saveToClipboard(audioUrl)}>Copy URL to Embeddable Audio</Menu.Option>
                     ) : (
                         <Menu.Option onSelect={() => saveToClipboard(videoUrl)}>Copy URL to Embeddable Video</Menu.Option>
