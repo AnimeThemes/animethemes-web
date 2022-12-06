@@ -29,9 +29,14 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+.npmrc
 
 # vercel
 .vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
 
 # IDE (WebStorm)
 *.iml

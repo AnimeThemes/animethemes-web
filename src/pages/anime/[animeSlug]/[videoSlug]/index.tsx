@@ -357,77 +357,94 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex }:
     </>;
 }
 
-export const getStaticProps: GetStaticProps<VideoPageProps, VideoPageParams> = async ({ params }) => {
-    const { data, apiRequests } = await fetchData<VideoPageQuery, VideoPageQueryVariables>(gql`
+VideoPage.fragments = {
+    anime: gql`
         ${ThemeSummaryCard.fragments.theme}
         ${ArtistSummaryCard.fragments.artist}
         ${VideoPlayer.fragments.anime}
         ${VideoPlayer.fragments.theme}
         ${VideoPlayer.fragments.entry}
         ${VideoPlayer.fragments.video}
-        
-        query VideoPage($animeSlug: String!) {
-            anime(slug: $animeSlug) {
-                ...VideoPlayerAnime
-                name
+
+        fragment VideoPageAnime on Anime {
+            ...VideoPlayerAnime
+            name
+            slug
+            year
+            season
+            themes {
+                ...VideoPlayerTheme
+                ...ThemeSummaryCardTheme
+                id
                 slug
-                year
-                season
-                themes {
-                    ...VideoPlayerTheme
-                    ...ThemeSummaryCardTheme
-                    id
-                    slug
-                    song {
-                        title
-                        performances {
-                            artist {
-                                ...ArtistSummaryCardArtist
-                            }
-                            as
+                song {
+                    title
+                    performances {
+                        artist {
+                            ...ArtistSummaryCardArtist
                         }
+                        as
                     }
-                    entries {
-                        ...VideoPlayerEntry
-                        episodes
-                        nsfw
-                        spoiler
-                        version
-                        videos {
-                            ...VideoPlayerVideo
-                            basename
-                            filename
-                            lyrics
-                            nc
-                            overlap
-                            resolution
-                            source
-                            subbed
-                            uncen
-                            tags
-                            entries {
-                                theme {
-                                    ...ThemeSummaryCardTheme
-                                }
+                }
+                entries {
+                    ...VideoPlayerEntry
+                    episodes
+                    nsfw
+                    spoiler
+                    version
+                    videos {
+                        ...VideoPlayerVideo
+                        basename
+                        filename
+                        lyrics
+                        nc
+                        overlap
+                        resolution
+                        source
+                        subbed
+                        uncen
+                        tags
+                        entries {
+                            theme {
+                                ...ThemeSummaryCardTheme
                             }
                         }
                     }
-                }
-                images {
-                    facet
-                    link
-                }
-                series {
-                    slug
-                    name
-                }
-                studios {
-                    slug
-                    name
                 }
             }
+            images {
+                facet
+                link
+            }
+            series {
+                slug
+                name
+            }
+            studios {
+                slug
+                name
+            }
         }
-    `, params && { animeSlug: params.animeSlug });
+    `,
+};
+
+const buildTimeCache: Map<string, VideoPageQuery> = new Map();
+
+export const getStaticProps: GetStaticProps<VideoPageProps, VideoPageParams> = async ({ params }) => {
+    let data = params ? buildTimeCache.get(params.animeSlug) : null;
+    let apiRequests = 0;
+
+    if (!data) {
+        ({ data, apiRequests } = await fetchData<VideoPageQuery, VideoPageQueryVariables>(gql`
+            ${VideoPage.fragments.anime}
+
+            query VideoPage($animeSlug: String!) {
+                anime(slug: $animeSlug) {
+                    ...VideoPageAnime
+                }
+            }
+        `, params && { animeSlug: params.animeSlug }));
+    }
 
     const anime = data.anime;
 
@@ -462,24 +479,16 @@ export const getStaticProps: GetStaticProps<VideoPageProps, VideoPageParams> = a
 export const getStaticPaths: GetStaticPaths<VideoPageParams> = () => {
     return fetchStaticPaths(async () => {
         const { data } = await fetchData<VideoPageAllQuery>(gql`
+            ${VideoPage.fragments.anime}
+            
             query VideoPageAll {
                 animeAll {
-                    id
-                    slug
-                    themes {
-                        slug
-                        entries {
-                            id
-                            version
-                            videos {
-                                id
-                                tags
-                            }
-                        }
-                    }
+                    ...VideoPageAnime
                 }
             }
         `);
+
+        data.animeAll.forEach((anime) => buildTimeCache.set(anime.slug, { anime }));
 
         return data.animeAll.flatMap(
             (anime) => anime.themes.flatMap(

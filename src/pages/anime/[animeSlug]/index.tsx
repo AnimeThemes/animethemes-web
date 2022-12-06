@@ -149,41 +149,58 @@ export default function AnimeDetailPage({ anime }: AnimeDetailPageProps) {
     </>;
 }
 
-export const getStaticProps: GetStaticProps<AnimeDetailPageProps, AnimeDetailPageParams> = async ({ params }) => {
-    const { data, apiRequests } = await fetchData<AnimeDetailPageQuery, AnimeDetailPageQueryVariables>(gql`
+AnimeDetailPage.fragments = {
+    anime: gql`
         ${extractImages.fragments.resourceWithImages}
         ${ThemeDetailCard.fragments.theme}
 
-        query AnimeDetailPage($animeSlug: String!) {
-            anime(slug: $animeSlug) {
-                ...extractImagesResourceWithImages
+        fragment AnimeDetailPageAnime on Anime {
+            ...extractImagesResourceWithImages
+            slug
+            name
+            season
+            year
+            synopsis
+            synonyms {
+                text
+            }
+            series {
                 slug
                 name
-                season
-                year
-                synopsis
-                synonyms {
-                    text
-                }
-                series {
-                    slug
-                    name
-                }
-                studios {
-                    slug
-                    name
-                }
-                resources {
-                    site
-                    link
-                    as
-                }
-                themes {
-                    ...ThemeDetailCardTheme
-                }
+            }
+            studios {
+                slug
+                name
+            }
+            resources {
+                site
+                link
+                as
+            }
+            themes {
+                ...ThemeDetailCardTheme
             }
         }
-    `, params);
+    `,
+};
+
+const buildTimeCache: Map<string, AnimeDetailPageQuery> = new Map();
+
+export const getStaticProps: GetStaticProps<AnimeDetailPageProps, AnimeDetailPageParams> = async ({ params }) => {
+    let data = params ? buildTimeCache.get(params.animeSlug) : null;
+    let apiRequests = 0;
+
+    if (!data) {
+        ({ data, apiRequests } = await fetchData<AnimeDetailPageQuery, AnimeDetailPageQueryVariables>(gql`
+            ${AnimeDetailPage.fragments.anime}
+
+            query AnimeDetailPage($animeSlug: String!) {
+                anime(slug: $animeSlug) {
+                    ...AnimeDetailPageAnime
+                }
+            }
+        `, params));
+    }
 
     if (!data.anime) {
         return {
@@ -204,13 +221,16 @@ export const getStaticProps: GetStaticProps<AnimeDetailPageProps, AnimeDetailPag
 export const getStaticPaths: GetStaticPaths<AnimeDetailPageParams> = () => {
     return fetchStaticPaths(async () => {
         const { data } = await fetchData<AnimeDetailPageAllQuery>(gql`
+            ${AnimeDetailPage.fragments.anime}
+
             query AnimeDetailPageAll {
                 animeAll {
-                    id
-                    slug
+                    ...AnimeDetailPageAnime
                 }
             }
         `);
+
+        data.animeAll.forEach((anime) => buildTimeCache.set(anime.slug, { anime }));
 
         return data.animeAll.map((anime) => ({
             params: {

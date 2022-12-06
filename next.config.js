@@ -14,7 +14,12 @@ if (STAGING) {
     info("Running animethemes-web in staging mode!");
 }
 
-module.exports = withBundleAnalyzer({
+// @ts-check
+
+/**
+ * @type {import('next').NextConfig}
+ **/
+const nextConfig = {
     basePath: BASE_PATH,
     reactStrictMode: true,
     compiler: {
@@ -22,6 +27,12 @@ module.exports = withBundleAnalyzer({
     },
     staticPageGenerationTimeout: 3600,
     experimental: {
-        newNextLinkBehavior: true
+        newNextLinkBehavior: true,
+        // We don't want to multi-thread page building
+        // to make use of caching between page builds.
+        workerThreads: false,
+        cpus: 1
     }
-});
+};
+
+module.exports = withBundleAnalyzer(nextConfig);
