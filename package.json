@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "graphql-codegen": "graphql-codegen --config codegen.yml"
+    "graphql-codegen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.1",

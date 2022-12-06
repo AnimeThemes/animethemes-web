@@ -17,7 +17,7 @@ interface TextProps {
     wrapAnywhere?: boolean
 }
 
-export const Text = styled.span<TextProps>.attrs(getAttributes)`    
+export const Text = styled.span.attrs(getAttributes)<TextProps>`    
     // Reset margin for elements like <p>
     margin: 0;
     scroll-margin-top: 4rem;

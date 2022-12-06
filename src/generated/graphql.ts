@@ -70,6 +70,15 @@ export type Audio = {
   videos: Array<Video>;
 };
 
+export type Balance = {
+  date: Scalars['String'];
+  frequency: Scalars['String'];
+  id: Scalars['Int'];
+  month_to_date_balance: Scalars['Float'];
+  service: Scalars['String'];
+  usage: Scalars['Float'];
+};
+
 export type Bracket = {
   currentGroup: Maybe<Scalars['Int']>;
   currentRound: Maybe<BracketRound>;
@@ -103,6 +112,13 @@ export type BracketRound = {
   name: Maybe<Scalars['String']>;
   pairings: Array<BracketPairing>;
   tier: Scalars['Int'];
+};
+
+export type Dump = {
+  created_at: Scalars['String'];
+  id: Scalars['Int'];
+  link: Scalars['String'];
+  path: Scalars['String'];
 };
 
 export type EntitySearchResult = {
@@ -163,8 +179,10 @@ export type Query = {
   animeAll: Array<Anime>;
   artist: Maybe<Artist>;
   artistAll: Array<Artist>;
+  balanceAll: Array<Balance>;
   bracket: Maybe<Bracket>;
   bracketAll: Array<Bracket>;
+  dumpAll: Array<Dump>;
   featuredTheme: Maybe<FeaturedTheme>;
   imageAll: Array<Image>;
   page: Maybe<Page>;
@@ -183,6 +201,7 @@ export type Query = {
   studioAll: Array<Studio>;
   theme: Maybe<Theme>;
   themeAll: Array<Theme>;
+  transactionAll: Array<Transaction>;
   year: Maybe<Year>;
   yearAll: Array<Year>;
 };
@@ -388,6 +407,14 @@ export type ThemeSearchResult = EntitySearchResult & {
   nextPage: Maybe<Scalars['Int']>;
 };
 
+export type Transaction = {
+  amount: Scalars['Float'];
+  date: Scalars['String'];
+  description: Scalars['String'];
+  id: Scalars['Int'];
+  service: Scalars['String'];
+};
+
 export type Video = {
   audio: Audio;
   basename: Scalars['String'];
@@ -555,6 +582,16 @@ export type RandomThemeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type RandomThemeQuery = { searchTheme: { data: Array<{ slug: string, type: string, sequence: number | null, group: string | null, id: number, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null, entries: Array<{ version: number | null, episodes: string | null, spoiler: boolean, nsfw: boolean, videos: Array<{ tags: string, resolution: number | null, nc: boolean, subbed: boolean, lyrics: boolean, uncen: boolean, source: VideoSource | null, overlap: VideoOverlap }> }> }> } };
+
+export type DumpIndexPageQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DumpIndexPageQuery = { dumpAll: Array<{ path: string, link: string, created_at: string }> };
+
+export type TransparencyIndexPageQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TransparencyIndexPageQuery = { balanceAll: Array<{ id: number, date: string, service: string, frequency: string, usage: number, month_to_date_balance: number }>, transactionAll: Array<{ id: number, date: string, service: string, description: string, amount: number }> };
 
 export type VideoPageAnimeFragment = { name: string, slug: string, year: number | null, season: string | null, themes: Array<{ id: number, slug: string, type: string, sequence: number | null, group: string | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } }> } | null, entries: Array<{ episodes: string | null, nsfw: boolean, spoiler: boolean, version: number | null, videos: Array<{ basename: string, filename: string, lyrics: boolean, nc: boolean, overlap: VideoOverlap, resolution: number | null, source: VideoSource | null, subbed: boolean, uncen: boolean, tags: string, entries: Array<{ theme: { slug: string, type: string, sequence: number | null, group: string | null, id: number, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null, entries: Array<{ version: number | null, videos: Array<{ tags: string }> }> } | null }>, audio: { basename: string } }> }>, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null }>, images: Array<{ facet: string | null, link: string }>, series: Array<{ slug: string, name: string }>, studios: Array<{ slug: string, name: string }> };
 
