@@ -3,7 +3,9 @@ import theme from "theme";
 import { withHover } from "styles/mixins";
 import type { Property } from "csstype";
 
-export const Table = styled.div<{ style: { "--columns": Property.GridTemplateColumns } }>``;
+export const Table = styled.div<{ style: { "--columns": Property.GridTemplateColumns } }>`
+    width: 100%;
+`;
 
 export const TableBody = styled.div`
     border: 2px solid ${theme.colors["solid-on-card"]};

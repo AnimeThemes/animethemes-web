@@ -90,6 +90,21 @@ const resolvers: IResolvers = {
                 }
             })
         }),
+        dumpAll: apiResolver({
+            endpoint: () => `/dump`,
+            extractor: (result) => result.dumps,
+            pagination: true
+        }),
+        balanceAll: apiResolver({
+            endpoint: () => `/balance`,
+            extractor: (result) => result.balances,
+            pagination: true
+        }),
+        transactionAll: apiResolver({
+            endpoint: () => `/transaction`,
+            extractor: (result) => result.transactions,
+            pagination: true
+        }),
     },
     Year: {
         seasons: apiResolver({

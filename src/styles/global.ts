@@ -69,7 +69,7 @@ export default createGlobalStyle`
         -webkit-appearance: none;
     }
 
-    input[type="text"] {
+    input {
         width: 100%;
         border: none;
         outline: none;
@@ -89,7 +89,7 @@ export default createGlobalStyle`
         max-width: 100%;
     }
 
-    pre {
+    pre, ul {
         margin: 0;
     }
 
@@ -105,7 +105,7 @@ export default createGlobalStyle`
 
     ::-webkit-scrollbar {
         width: 6px;
-        height: 3px;
+        height: 12px;
         background-color: transparent;
     }
 

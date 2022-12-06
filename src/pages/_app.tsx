@@ -48,7 +48,9 @@ const StyledContainer = styled(Container)`
     gap: 24px;
 `;
 
-export default function MyApp({ Component, pageProps }: AppProps) {
+// TODO: Add proper type checking, also extract layout modes out of _app.tsx
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function MyApp({ Component, pageProps }: AppProps<any>) {
     const router = useRouter();
     const [colorTheme, setColorTheme] = useColorTheme();
     const [developerMode] = useSetting(DeveloperMode);

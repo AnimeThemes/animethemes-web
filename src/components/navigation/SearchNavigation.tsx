@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Text } from "components/text";
-import { Input } from "components/input";
+import { Input } from "components/form";
 import { HorizontalScroll } from "components/utils";
 import { Switcher } from "components/switcher";
 import styled from "styled-components";
