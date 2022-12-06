@@ -124,50 +124,67 @@ const StudioAnime = memo(function StudioAnime({ anime }: StudioAnimeProps) {
     return <>{animeCards}</>;
 });
 
-export const getStaticProps: GetStaticProps<StudioDetailPageProps, StudioDetailPageParams> = async ({ params }) => {
-    const { data, apiRequests } = await fetchData<StudioDetailPageQuery, StudioDetailPageQueryVariables>(gql`
+StudioDetailPage.fragments = {
+    studio: gql`
         ${AnimeSummaryCard.fragments.anime}
         ${AnimeSummaryCard.fragments.expandable}
         ${StudioCoverImage.fragments.studio}
         ${extractImages.fragments.resourceWithImages}
-
-        query StudioDetailPage($studioSlug: String!) {
-            studio(slug: $studioSlug) {
-                ...StudioCoverImageStudio
-                ...extractImagesResourceWithImages
-                slug
+        
+        fragment StudioDetailPageStudio on Studio {
+            ...StudioCoverImageStudio
+            ...extractImagesResourceWithImages
+            slug
+            name
+            anime {
+                ...AnimeSummaryCardAnime
+                ...AnimeSummaryCardAnimeExpandable
                 name
-                anime {
-                    ...AnimeSummaryCardAnime
-                    ...AnimeSummaryCardAnimeExpandable
-                    name
+                slug
+                year
+                season
+                themes {
                     slug
-                    year
-                    season
-                    themes {
-                        slug
-                        type
-                        sequence
-                        entries {
-                            version
-                            videos {
-                                tags
-                            }
+                    type
+                    sequence
+                    entries {
+                        version
+                        videos {
+                            tags
                         }
                     }
-                    images {
-                        facet
-                        link
-                    }
                 }
-                resources {
+                images {
+                    facet
                     link
-                    site
-                    as
                 }
             }
+            resources {
+                link
+                site
+                as
+            }
         }
-    `, params);
+    `,
+};
+
+const buildTimeCache: Map<string, StudioDetailPageQuery> = new Map();
+
+export const getStaticProps: GetStaticProps<StudioDetailPageProps, StudioDetailPageParams> = async ({ params }) => {
+    let data = params ? buildTimeCache.get(params.studioSlug) : null;
+    let apiRequests = 0;
+
+    if (!data) {
+        ({ data, apiRequests } = await fetchData<StudioDetailPageQuery, StudioDetailPageQueryVariables>(gql`
+            ${StudioDetailPage.fragments.studio}
+
+            query StudioDetailPage($studioSlug: String!) {
+                studio(slug: $studioSlug) {
+                    ...StudioDetailPageStudio
+                }
+            }
+        `, params));
+    }
 
     if (!data.studio) {
         return {
@@ -188,12 +205,16 @@ export const getStaticProps: GetStaticProps<StudioDetailPageProps, StudioDetailP
 export const getStaticPaths: GetStaticPaths<StudioDetailPageParams> = async () => {
     return fetchStaticPaths(async () => {
         const { data } = await fetchData<StudioDetailPageAllQuery>(gql`
+            ${StudioDetailPage.fragments.studio}
+            
             query StudioDetailPageAll {
                 studioAll {
-                    slug
+                    ...StudioDetailPageStudio
                 }
             }
         `);
+
+        data.studioAll.forEach((studio) => buildTimeCache.set(studio.slug, { studio }));
 
         return data.studioAll.map((studio) => ({
             params: {

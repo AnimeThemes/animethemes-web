@@ -90,41 +90,58 @@ const SeriesAnime = memo(function SeriesAnime({ anime }: SeriesAnimeProps) {
     return <>{animeCards}</>;
 });
 
-export const getStaticProps: GetStaticProps<SeriesDetailPageProps, SeriesDetailPageParams> = async ({ params }) => {
-    const { data, apiRequests } = await fetchData<SeriesDetailPageQuery, SeriesDetailPageQueryVariables>(gql`
+SeriesDetailPage.fragments = {
+    series: gql`
         ${AnimeSummaryCard.fragments.anime}
         ${AnimeSummaryCard.fragments.expandable}
-
-        query SeriesDetailPage($seriesSlug: String!) {
-            series(slug: $seriesSlug) {
-                slug
+        
+        fragment SeriesDetailPageSeries on Series {
+            slug
+            name
+            anime {
+                ...AnimeSummaryCardAnime
+                ...AnimeSummaryCardAnimeExpandable
                 name
-                anime {
-                    ...AnimeSummaryCardAnime
-                    ...AnimeSummaryCardAnimeExpandable
-                    name
+                slug
+                year
+                season
+                themes {
                     slug
-                    year
-                    season
-                    themes {
-                        slug
-                        type
-                        sequence
-                        entries {
-                            version
-                            videos {
-                                tags
-                            }
+                    type
+                    sequence
+                    entries {
+                        version
+                        videos {
+                            tags
                         }
                     }
-                    images {
-                        facet
-                        link
-                    }
+                }
+                images {
+                    facet
+                    link
                 }
             }
         }
-    `, params);
+    `,
+};
+
+const buildTimeCache: Map<string, SeriesDetailPageQuery> = new Map();
+
+export const getStaticProps: GetStaticProps<SeriesDetailPageProps, SeriesDetailPageParams> = async ({ params }) => {
+    let data = params ? buildTimeCache.get(params.seriesSlug) : null;
+    let apiRequests = 0;
+
+    if (!data) {
+        ({ data, apiRequests } = await fetchData<SeriesDetailPageQuery, SeriesDetailPageQueryVariables>(gql`
+            ${SeriesDetailPage.fragments.series}
+
+            query SeriesDetailPage($seriesSlug: String!) {
+                series(slug: $seriesSlug) {
+                    ...SeriesDetailPageSeries
+                }
+            }
+        `, params));
+    }
 
     if (!data.series) {
         return {
@@ -145,12 +162,16 @@ export const getStaticProps: GetStaticProps<SeriesDetailPageProps, SeriesDetailP
 export const getStaticPaths: GetStaticPaths<SeriesDetailPageParams> = async () => {
     return fetchStaticPaths(async () => {
         const { data } = await fetchData<SeriesDetailPageAllQuery>(gql`
+            ${SeriesDetailPage.fragments.series}
+            
             query SeriesDetailPageAll {
                 seriesAll {
-                    slug
+                    ...SeriesDetailPageSeries
                 }
             }
         `);
+
+        data.seriesAll.forEach((series) => buildTimeCache.set(series.slug, { series }));
 
         return data.seriesAll.map((series) => ({
             params: {

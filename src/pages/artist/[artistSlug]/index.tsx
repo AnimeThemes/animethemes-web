@@ -219,68 +219,85 @@ const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemes
     return <>{themeCards}</>;
 });
 
-export const getStaticProps: GetStaticProps<ArtistDetailPageProps, ArtistDetailPageParams> = async ({ params }) => {
-    const { data, apiRequests } = await fetchData<ArtistDetailPageQuery, ArtistDetailPageQueryVariables>(gql`
+ArtistDetailPage.fragements = {
+    artist: gql`
         ${ThemeSummaryCard.fragments.theme}
         ${ThemeSummaryCard.fragments.artist}
         ${ThemeSummaryCard.fragments.expandable}
-
-        query ArtistDetailPage($artistSlug: String!) {
-            artist(slug: $artistSlug) {
-                ...ThemeSummaryCardArtist
-                slug
-                name
-                performances {
-                    as
-                    song {
-                        title
-                        performances {
-                            artist {
-                                slug
-                                name
-                            }
-                            as
-                        }
-                        themes {
-                            ...ThemeSummaryCardTheme
-                            ...ThemeSummaryCardThemeExpandable
-                            id
+        
+        fragment ArtistDetailPageArtist on Artist {
+            ...ThemeSummaryCardArtist
+            slug
+            name
+            performances {
+                as
+                song {
+                    title
+                    performances {
+                        artist {
                             slug
-                            group
-                            anime {
-                                slug
-                                year
-                                season
-                            }
+                            name
+                        }
+                        as
+                    }
+                    themes {
+                        ...ThemeSummaryCardTheme
+                        ...ThemeSummaryCardThemeExpandable
+                        id
+                        slug
+                        group
+                        anime {
+                            slug
+                            year
+                            season
                         }
                     }
-                }
-                members {
-                    member {
-                        slug
-                        name
-                    }
-                    as
-                }
-                groups {
-                    group {
-                        slug
-                        name
-                    }
-                    as
-                }
-                resources {
-                    link
-                    site
-                    as
-                }
-                images {
-                    facet
-                    link
                 }
             }
+            members {
+                member {
+                    slug
+                    name
+                }
+                as
+            }
+            groups {
+                group {
+                    slug
+                    name
+                }
+                as
+            }
+            resources {
+                link
+                site
+                as
+            }
+            images {
+                facet
+                link
+            }
         }
-    `, params);
+    `,
+};
+
+const buildTimeCache: Map<string, ArtistDetailPageQuery> = new Map();
+
+export const getStaticProps: GetStaticProps<ArtistDetailPageProps, ArtistDetailPageParams> = async ({ params }) => {
+    let data = params ? buildTimeCache.get(params.artistSlug) : null;
+    let apiRequests = 0;
+
+    if (!data) {
+        ({ data, apiRequests } = await fetchData<ArtistDetailPageQuery, ArtistDetailPageQueryVariables>(gql`
+            ${ArtistDetailPage.fragements.artist}
+
+            query ArtistDetailPage($artistSlug: String!) {
+                artist(slug: $artistSlug) {
+                    ...ArtistDetailPageArtist
+                }
+            }
+        `, params));
+    }
 
     if (!data.artist) {
         return {
@@ -301,12 +318,16 @@ export const getStaticProps: GetStaticProps<ArtistDetailPageProps, ArtistDetailP
 export const getStaticPaths: GetStaticPaths<ArtistDetailPageParams> = async () => {
     return fetchStaticPaths(async () => {
         const { data } = await fetchData<ArtistDetailPageAllQuery>(gql`
+            ${ArtistDetailPage.fragements.artist}
+            
             query ArtistDetailPageAll {
                 artistAll {
-                    slug
+                    ...ArtistDetailPageArtist
                 }
             }
         `);
+
+        data.artistAll.forEach((artist) => buildTimeCache.set(artist.slug, { artist }));
 
         return data.artistAll.map((artist) => ({
             params: {
