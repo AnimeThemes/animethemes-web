@@ -168,7 +168,7 @@ const StyledDot = styled(m.div)`
     background-color: ${theme.colors["text-primary"]};
 `;
 
-interface DocumentPageProps extends SharedPageProps {
+export interface DocumentPageProps extends SharedPageProps {
     page: Omit<RequiredNonNullable<DocumentPageQuery>["page"], "body"> & {
         body: Markdown
     }

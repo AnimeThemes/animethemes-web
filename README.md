@@ -14,7 +14,7 @@ root directory. A minimal setup only requires one variable to be set:
 ; Set this to the URL on which your local API is served.
 ;
 ; (If you do not have a local instance of animethemes-server set up
-; you can also use the production or staging URLs of the AnimeThemes API.
+; you can also use the production or beta URLs of the AnimeThemes API.
 ; Keep in mind though that this puts addtional load on our servers.
 ; That's why it's recommended to set up your own API instance locally.)
 ANIMETHEMES_API_URL=http://localhost
@@ -37,6 +37,10 @@ ANIMETHEMES_API_KEY=...
 ; The token to use for manual revalidation.
 REVALIDATE_TOKEN=secret
 
+; Set to any truthy value to activate minimal build mode.
+; In minimal build mode, only a small subset of pages get prerendered at build time.
+MINIMAL_BUILD=true
+
 ; Set to any truthy value to activate the bundle analyzer.
 ANALYZE=true
 
@@ -55,8 +59,8 @@ NEXT_PUBLIC_VIDEO_URL=https://v.animethemes.moe
 NEXT_PUBLIC_APP_URL=https://app.animethemes.moe
 
 ; Set to any truthy value to activate staging mode.
-; Staging mode only pre-renders a small subset of pages to reduce build time.
-STAGING=true
+; In staging mode a warning banner is displayed at the top of the page.
+NEXT_PUBLIC_STAGING=true
 ```
 
 For more information on environment variables see the [Next.js documentation](https://nextjs.org/docs/basic-features/environment-variables).

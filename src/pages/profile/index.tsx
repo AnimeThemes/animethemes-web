@@ -13,7 +13,7 @@ import { SearchFilter, SearchFilterGroup } from "components/search-filter";
 import { Listbox } from "components/listbox";
 import { ColorTheme, DeveloperMode, FeaturedThemePreview, RevalidationToken, ShowAnnouncements } from "utils/settings";
 import useSetting from "hooks/useSetting";
-import { Input } from "components/input";
+import { Input } from "components/form";
 import { memo } from "react";
 
 const StyledProfileGrid = styled.div`

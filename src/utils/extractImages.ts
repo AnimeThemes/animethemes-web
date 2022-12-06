@@ -21,10 +21,10 @@ const extractImages: ExtractImages = (resourceWithImages) => {
         for (const image of resourceWithImages.images) {
             switch (image.facet) {
                 case "Small Cover":
-                    images.smallCover = image.link.replace("localhost", "staging.animethemes.moe");
+                    images.smallCover = image.link;
                     break;
                 case "Large Cover":
-                    images.largeCover = image.link.replace("localhost", "staging.animethemes.moe");
+                    images.largeCover = image.link;
                     break;
                 default:
                 // Ignore
