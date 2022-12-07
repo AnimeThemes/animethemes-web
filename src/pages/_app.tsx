@@ -26,15 +26,39 @@ import { ErrorBoundary } from "components/utils";
 import { STAGING } from "utils/config";
 import { Card } from "components/card";
 import { ExternalLink } from "components/external-link";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import type { AppProps } from "next/app";
+import { LazyMotion } from "framer-motion";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "styles/prism.scss";
-import type { AppProps } from "next/app";
-import { LazyMotion } from "framer-motion";
 
 config.autoAddCss = false;
 
 const queryClient = new QueryClient();
+
+const apolloClient = new ApolloClient({
+    uri: "/api/graphql",
+    cache: new InMemoryCache({
+        // All interfaces and their implementing types need to be specified here.
+        // This is required for fragments that use interfaces:
+        // https://www.apollographql.com/docs/react/data/fragments#using-fragments-with-unions-and-interfaces
+        possibleTypes: {
+            ResourceWithImages: [
+                "Anime",
+                "Artist",
+                "Studio",
+            ],
+            EntitySearchResult: [
+                "AnimeSearchResult",
+                "ThemeSearchResult",
+                "ArtistSearchResult",
+                "SeriesSearchResult",
+                "StudioSearchResult",
+            ],
+        }
+    })
+});
 
 const StyledWrapper = styled(Column)`
     min-height: 100%;
@@ -104,6 +128,7 @@ export default function MyApp({ Component, pageProps }: AppProps<any>) {
                 clearCurrentVideo: () => setLastVideoPageProps(null)
             } }),
             stackContext(QueryClientProvider, { client: queryClient }),
+            stackContext(ApolloProvider, { client: apolloClient, children: null }),
             stackContext(ToastProvider, { initialToasts: [ {
                 id: "announcement",
                 content: <AnnouncementToast/>

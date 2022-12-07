@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ThemeSummaryCard } from "components/card";
 import { Column } from "components/box";
@@ -14,17 +13,12 @@ import navigateToRandomTheme from "utils/navigateToRandomTheme";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import { FeaturedTheme } from "components/featured-theme";
-import gql from "graphql-tag";
-import { fetchDataClient } from "lib/client";
 import getSharedPageProps from "utils/getSharedPageProps";
 import { range } from "lodash-es";
 import { Skeleton } from "components/skeleton";
-import type {
-    HomePageQuery,
-    RecentlyAddedQuery,
-    ThemeSummaryCardThemeFragment
-} from "generated/graphql";
+import type { HomePageQuery, RecentlyAddedQuery } from "generated/graphql";
 import type { GetStaticProps } from "next";
+import { gql, useQuery } from "@apollo/client";
 
 const BigButton = styled(Button)`
     justify-content: flex-end;
@@ -94,24 +88,18 @@ interface HomePageProps {
 }
 
 export default function HomePage({ featuredTheme }: HomePageProps) {
-    const [ recentlyAdded, setRecentlyAdded ] = useState<Array<ThemeSummaryCardThemeFragment | null>>(() => range(10).map(() => null));
     const { currentYear, currentSeason } = useCurrentSeason();
 
-    useEffect(() => {
-        fetchDataClient<RecentlyAddedQuery>(gql`
-            ${ThemeSummaryCard.fragments.theme}
+    const { data, loading } = useQuery<RecentlyAddedQuery>(gql`
+        ${ThemeSummaryCard.fragments.theme}
 
-            query RecentlyAdded {
-                recentlyAdded: themeAll(orderBy: "id", orderDesc: true, limit: 10, has: "animethemeentries.videos,song") {
-                    ...ThemeSummaryCardTheme
-                }
+        query RecentlyAdded {
+            recentlyAdded: themeAll(orderBy: "id", orderDesc: true, limit: 10, has: "animethemeentries.videos,song") {
+                ...ThemeSummaryCardTheme
             }
-        `).then(({ data }) => {
-            if (data) {
-                setRecentlyAdded(data.recentlyAdded);
-            }
-        });
-    }, []);
+        }
+    `, { ssr: false });
+    const recentlyAdded = loading ? range(10).map(() => null) : data?.recentlyAdded;
 
     return <>
         <SEO/>
@@ -133,7 +121,7 @@ export default function HomePage({ featuredTheme }: HomePageProps) {
             </MainGridArea>
 
             <RecentlyAdded>
-                {recentlyAdded.map((theme, index) => (
+                {recentlyAdded?.map((theme, index) => (
                     <Skeleton key={index} variant="summary-card" delay={index * 100}>
                         {theme ? (
                             <ThemeSummaryCard theme={theme}/>

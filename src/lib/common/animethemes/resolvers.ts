@@ -272,6 +272,13 @@ const resolvers: IResolvers = {
             type: "Video",
             baseInclude: INCLUDES.Video.audio
         }),
+        script: apiResolver({
+            endpoint: (video) => `/video/${video.basename}`,
+            field: "videoscript",
+            extractor: (result) => result.video.videoscript,
+            type: "Video",
+            baseInclude: INCLUDES.Video.script
+        }),
         entries: apiResolver({
             endpoint: (video) => `/video/${video.basename}`,
             field: "animethemeentries",

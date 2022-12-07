@@ -20,7 +20,8 @@ import getSharedPageProps from "utils/getSharedPageProps";
 import { Menu } from "components/menu";
 import { useToasts } from "context/toastContext";
 import { Toast } from "components/toast";
-import { ThemeEntryTags, VideoTags } from "components/tag";
+import { ThemeEntryTags } from "components/tag/ThemeEntryTags";
+import { VideoTags } from "components/tag/VideoTags";
 import { AUDIO_URL, VIDEO_URL } from "utils/config";
 import type { VideoPageAllQuery, VideoPageQuery, VideoPageQueryVariables } from "generated/graphql";
 import type { GetStaticPaths, GetStaticProps } from "next";
@@ -29,7 +30,7 @@ import gql from "graphql-tag";
 import type { RequiredNonNullable } from "utils/types";
 import { Switcher } from "components/switcher";
 import useSetting from "hooks/useSetting";
-import { AudioMode } from "utils/settings";
+import { AudioMode, DeveloperMode } from "utils/settings";
 import { SwitcherOption } from "components/switcher/Switcher";
 import { VideoPlayer } from "components/video-player";
 
@@ -128,6 +129,7 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex }:
     const [ showMoreRelatedThemes, setShowMoreRelatedThemes ] = useState(false);
     const { dispatchToast } = useToasts();
     const [audioMode, setAudioMode] = useSetting(AudioMode, { storageSync: false });
+    const [developerMode] = useSetting(DeveloperMode);
     const [canRenderPlayer, setCanRenderPlayer] = useState(false);
 
     useEffect(() => setCanRenderPlayer(true), []);
@@ -140,7 +142,10 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex }:
         .map((entry) => entry.theme)
         .filter((otherTheme) => otherTheme?.anime && otherTheme.anime.slug !== anime.slug);
 
-    useEffect(() => addToHistory(theme), [ addToHistory, theme ]);
+    // We don't want to re-add the theme when the history changes, because it can cause
+    // various issues when multiple tabs are open.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => addToHistory(theme), [ theme ]);
 
     useEffect(() => {
         if (theme && smallCover && navigator.mediaSession) {
@@ -354,6 +359,25 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex }:
                 </StyledRelatedEntries>
             )}
         </StyledRelatedGrid>
+        {developerMode === DeveloperMode.ENABLED ? (
+            <div>
+                {video.script ? (
+                    <Text
+                        as="a"
+                        href={video.script?.link}
+                        download
+                        variant="small"
+                        link
+                        color="text-disabled"
+                    >Click to download encoding script.</Text>
+                ) : (
+                    <Text
+                        variant="small"
+                        color="text-disabled"
+                    >No encoding script available.</Text>
+                )}
+            </div>
+        ) : null}
     </>;
 }
 
@@ -408,6 +432,9 @@ VideoPage.fragments = {
                             theme {
                                 ...ThemeSummaryCardTheme
                             }
+                        }
+                        script {
+                            link
                         }
                     }
                 }

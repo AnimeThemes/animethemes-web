@@ -19,7 +19,7 @@ const StyledErrorMessage = styled(Text).attrs({ variant: "code" })`
 `;
 
 interface ErrorCardProps {
-    error: any
+    error: unknown
 }
 
 export function ErrorCard({ error }: ErrorCardProps) {

@@ -1,5 +1,5 @@
 import { faFilm } from "@fortawesome/pro-solid-svg-icons";
-import { Tag } from "components/tag";
+import { Tag } from "components/tag/Tag";
 import gql from "graphql-tag";
 import type { EpisodeTagEntryFragment } from "generated/graphql";
 

@@ -22,7 +22,7 @@ import ColorThemeContext from "context/colorThemeContext";
 import { ExternalLink } from "components/external-link";
 import { Switcher } from "components/switcher";
 import useToggle from "hooks/useToggle";
-import { Tag } from "components/tag";
+import { Tag } from "components/tag/Tag";
 import { CoverImage } from "components/image";
 import { DescriptionList } from "components/description-list";
 import { codeBlock } from "common-tags";

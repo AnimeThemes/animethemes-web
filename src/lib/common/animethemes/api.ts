@@ -41,6 +41,7 @@ export const INCLUDES = {
     },
     Video: {
         audio: "audio",
+        script: "videoscript",
         entries: "animethemeentries"
     },
     Audio: {
@@ -131,6 +132,7 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
     ],
     Video: [
         "animethemeentries.animetheme.anime",
+        "videoscript",
         "audio"
     ],
     Audio: [
@@ -148,7 +150,7 @@ interface ApiResolverConfig {
     baseInclude?: string
 }
 
-interface ApiResolverContext {
+export interface ApiResolverContext {
     cache?: Map<string, Record<string, unknown> | null>
     apiRequests: number
 }
@@ -248,7 +250,7 @@ export function apiResolver(config: ApiResolverConfig): GraphQLFieldResolver<Rec
     };
 }
 
-export async function fetchJson(path: string): Promise<Record<string, unknown> | null> {
+export async function fetchJson<T = Record<string, unknown>>(path: string): Promise<T | null> {
     const url = path.startsWith(API_URL) ? path : `${API_URL}${path}`;
     const config: RequestInit = {};
 

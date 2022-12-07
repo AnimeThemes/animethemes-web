@@ -99,7 +99,14 @@ const typeDefs = `
         overlap: VideoOverlap!
         tags: String!
         audio: Audio!
+        script: VideoScript
         entries: [Entry!]!
+    }
+    
+    type VideoScript {
+        id: Int!
+        path: String!
+        link: String!
     }
     
     enum VideoSource {
