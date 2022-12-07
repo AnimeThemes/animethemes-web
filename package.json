@@ -10,6 +10,7 @@
     "graphql-codegen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.0",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-brands-svg-icons": "^6.1.1",
     "@fortawesome/pro-solid-svg-icons": "^6.1.1",
@@ -19,6 +20,7 @@
     "@next/bundle-analyzer": "^12.0.3",
     "@reach/listbox": "^0.17.0",
     "@reach/menu-button": "^0.17.0",
+    "apollo-server-micro": "^3.10.3",
     "common-tags": "^1.8.0",
     "framer-motion": "^6.5.1",
     "graphql": "^15.8.0",

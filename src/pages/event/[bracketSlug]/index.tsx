@@ -182,6 +182,8 @@ function ContestantCard({ contestant, opponent, contestantVotes, opponentVotes }
     );
 }
 
+const themeCache = new Map();
+
 export const getStaticProps: GetStaticProps<BracketPageProps, BracketPageParams> = async ({ params }) => {
     const { data, apiRequests } = await fetchData<BracketPageQuery, BracketPageQueryVariables>(gql`
         ${BracketThemeSummaryCard.fragments.contestant}
@@ -221,7 +223,7 @@ export const getStaticProps: GetStaticProps<BracketPageProps, BracketPageParams>
                 }
             }
         }
-    `, params);
+    `, params, { cache: themeCache });
 
     if (!data.bracket) {
         return {

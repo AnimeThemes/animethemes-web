@@ -6,7 +6,7 @@ import PlayerContext from "context/playerContext";
 import createVideoSlug from "utils/createVideoSlug";
 import { Icon } from "components/icon";
 import { Button } from "components/button";
-import { VideoTags } from "components/tag";
+import { VideoTags } from "components/tag/VideoTags";
 import gql from "graphql-tag";
 import type {
     VideoButtonAnimeFragment,

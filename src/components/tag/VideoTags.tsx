@@ -6,7 +6,7 @@ import {
     faCompactDisc,
     faEyes
 } from "@fortawesome/pro-solid-svg-icons";
-import { Tag } from "components/tag";
+import { Tag } from "components/tag/Tag";
 import { Row } from "components/box";
 import styled from "styled-components";
 import gql from "graphql-tag";

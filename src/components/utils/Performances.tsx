@@ -39,7 +39,7 @@ export function Performances({ song, artist, maxPerformances = 3, expandable = f
         maxPerformances = song.performances.length;
     }
 
-    const performances = song.performances.sort((a, b) => a.artist.name.localeCompare(b.artist.name));
+    const performances = [...song.performances].sort((a, b) => a.artist.name.localeCompare(b.artist.name));
     const performancesShown = performances.slice(0, maxPerformances);
     const performancesHidden = performances.slice(maxPerformances);
 

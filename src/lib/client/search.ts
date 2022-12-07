@@ -73,6 +73,16 @@ interface Args {
     args: SearchArgs
 }
 
+interface GlobalSearchResult {
+    search: {
+        anime: unknown
+        animethemes: unknown
+        artists: unknown
+        series: unknown
+        studios: unknown
+    }
+}
+
 export const searchResolvers = {
     Query: {
         // TODO: This resolver has to be custom, because the search endpoint uses scoped includes
@@ -94,14 +104,14 @@ export const searchResolvers = {
             searchParams.append("fields[series]", "name,slug");
             searchParams.append("fields[studio]", "name,slug");
 
-            const result = await fetchJson(`/search?${searchParams}`) as any;
+            const result = await fetchJson<GlobalSearchResult>(`/search?${searchParams}`);
 
             return {
-                anime: result.search.anime,
-                themes: result.search.animethemes,
-                artists: result.search.artists,
-                series: result.search.series,
-                studios: result.search.studios,
+                anime: result?.search.anime,
+                themes: result?.search.animethemes,
+                artists: result?.search.artists,
+                series: result?.search.series,
+                studios: result?.search.studios,
             };
         },
         searchAnime: apiResolver({

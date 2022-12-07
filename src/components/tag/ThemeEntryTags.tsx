@@ -1,4 +1,5 @@
-import { ContentWarningTags, EpisodeTag } from "components/tag";
+import { ContentWarningTags } from "components/tag/ContentWarningTags";
+import { EpisodeTag } from "components/tag/EpisodeTag";
 import { Row } from "components/box";
 import gql from "graphql-tag";
 import type { ThemeEntryTagsEntryFragment } from "generated/graphql";
