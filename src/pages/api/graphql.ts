@@ -17,7 +17,7 @@ const schema = makeExecutableSchema({
     ])
 });
 
-const apolloServer = new ApolloServer({ schema });
+const apolloServer = new ApolloServer({ schema, introspection: true });
 
 const startServer = apolloServer.start();
 

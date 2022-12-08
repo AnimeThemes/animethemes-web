@@ -23,7 +23,7 @@ import { useRouter } from "next/router";
 import useSetting from "hooks/useSetting";
 import { DeveloperMode, RevalidationToken } from "utils/settings";
 import { ErrorBoundary } from "components/utils";
-import { STAGING } from "utils/config";
+import { BASE_PATH, STAGING } from "utils/config";
 import { Card } from "components/card";
 import { ExternalLink } from "components/external-link";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
@@ -38,7 +38,7 @@ config.autoAddCss = false;
 const queryClient = new QueryClient();
 
 const apolloClient = new ApolloClient({
-    uri: "/api/graphql",
+    uri: `${BASE_PATH}/api/graphql`,
     cache: new InMemoryCache({
         // All interfaces and their implementing types need to be specified here.
         // This is required for fragments that use interfaces:
