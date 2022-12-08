@@ -1,4 +1,5 @@
 import * as log from "next/dist/build/output/log";
+import { STAGING } from "./config";
 
 function info(...message: string[]) {
     logIfDevelopment(log.info, ...message);
@@ -13,7 +14,7 @@ function error(...message: string[]) {
 }
 
 function logIfDevelopment(fn: (...message: string[]) => void, ...message: string[]) {
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === "development" || STAGING) {
         fn(...message);
     }
 }

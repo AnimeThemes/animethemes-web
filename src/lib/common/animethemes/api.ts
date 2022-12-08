@@ -1,12 +1,9 @@
-import pLimit from "p-limit";
 import type { ResolveTree } from "graphql-parse-resolve-info";
 import { parseResolveInfo } from "graphql-parse-resolve-info";
 import devLog from "utils/devLog";
 import { CLIENT_API_URL, SERVER_API_KEY, SERVER_API_URL } from "utils/config";
 import type { GraphQLFieldResolver, GraphQLOutputType, GraphQLResolveInfo } from "graphql";
 import type { Path } from "graphql/jsutils/Path";
-
-const limit = pLimit(5);
 
 export const API_URL = `${SERVER_API_URL || CLIENT_API_URL}`;
 
@@ -210,43 +207,41 @@ export function apiResolver(config: ApiResolverConfig): GraphQLFieldResolver<Rec
 
         devLog.info(path + ": " + url);
 
-        return await limit(() => (async () => {
-            if (!pagination) {
-                let json: Record<string, unknown> | null;
+        if (!pagination) {
+            let json: Record<string, unknown> | null;
 
-                const jsonCached = context?.cache?.get(url);
-                if (jsonCached) {
-                    devLog.info("CACHED: " + url);
-                    json = jsonCached;
-                } else {
-                    json = await fetchJson(url);
-                    context.apiRequests++;
-                    if (!context.cache) {
-                        context.cache = new Map();
-                    }
-                    context.cache.set(url, json);
-                }
-
-                if (!json) {
-                    return null;
-                }
-
-                return transformer(extractor(json, parent, args), parent, args);
+            const jsonCached = context?.cache?.get(url);
+            if (jsonCached) {
+                devLog.info("CACHED: " + url);
+                json = jsonCached;
             } else {
-                devLog.info(`Collecting: ${url}`);
-                const results = [];
-                let nextUrl = `${url}${url.includes("?") ? "&" : "?"}page[size]=100`;
-                while (nextUrl) {
-                    const json = await fetchJson(nextUrl) as Record<string, unknown> & { links: { next: string } };
-                    context.apiRequests++;
-                    results.push(...transformer(extractor(json, parent, args), parent, args) as Array<unknown>);
-                    devLog.info(`Collecting: ${url}, Got ${results.length}`);
-                    nextUrl = json.links.next;
+                json = await fetchJson(url);
+                context.apiRequests++;
+                if (!context.cache) {
+                    context.cache = new Map();
                 }
-
-                return results;
+                context.cache.set(url, json);
             }
-        })());
+
+            if (!json) {
+                return null;
+            }
+
+            return transformer(extractor(json, parent, args), parent, args);
+        } else {
+            devLog.info(`Collecting: ${url}`);
+            const results = [];
+            let nextUrl = `${url}${url.includes("?") ? "&" : "?"}page[size]=25`;
+            while (nextUrl) {
+                const json = await fetchJson(nextUrl) as Record<string, unknown> & { links: { next: string } };
+                context.apiRequests++;
+                results.push(...transformer(extractor(json, parent, args), parent, args) as Array<unknown>);
+                devLog.info(`Collecting: ${url}, Got ${results.length}`);
+                nextUrl = json.links.next;
+            }
+
+            return results;
+        }
     };
 }
 
