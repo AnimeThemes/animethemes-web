@@ -89,6 +89,7 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
         "resources",
         "studios",
         "animethemes.animethemeentries.videos.audio",
+        "animethemes.animethemeentries.videos.videoscript",
         "animethemes.animethemeentries.videos.animethemeentries.animetheme.anime",
         "animethemes.animethemeentries.videos.animethemeentries.animetheme.anime.images",
         "animethemes.animethemeentries.videos.animethemeentries.animetheme.animethemeentries.videos",
