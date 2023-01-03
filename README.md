@@ -7,7 +7,7 @@
 
 ## Configuration
 
-To get started you need to define some environment variables. This can be done by creating a `.env.local` file in the 
+To get started you need to define some environment variables. This can be done by creating a `.env.local` file in the
 root directory. A minimal setup only requires one variable to be set:
 
 ```ini
@@ -54,6 +54,9 @@ NEXT_PUBLIC_API_URL=https://api.animethemes.moe
 
 ; The URL from which video files should be served.
 NEXT_PUBLIC_VIDEO_URL=https://v.animethemes.moe
+
+; The URL from which audio files should be served.
+NEXT_PUBLIC_AUDIO_URL=https://a.animethemes.moe
 
 ; The URL to use for app links.
 NEXT_PUBLIC_APP_URL=https://app.animethemes.moe
