@@ -1,4 +1,4 @@
-import { createGlobalStyle, css } from "styled-components";
+import { createGlobalStyle } from "styled-components";
 import { colors, shadows } from "theme/colors";
 import { darkColors, darkShadows } from "theme/colors/dark";
 import theme, { createCssDefinition } from "theme";
@@ -27,15 +27,15 @@ export default createGlobalStyle`
 
         line-height: 1.5;
 
-        ${defineColorTheme("light", css`
+        ${defineColorTheme("light")`
             ${createCssDefinition(colors)}
             ${createCssDefinition(shadows)}
-        `)}
+        `}
 
-        ${defineColorTheme("dark", css`
+        ${defineColorTheme("dark")`
             ${createCssDefinition(darkColors)}
             ${createCssDefinition(darkShadows)}
-        `)}
+        `}
     }
 
     html, body, #__next {

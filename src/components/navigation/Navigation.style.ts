@@ -57,9 +57,9 @@ export const StyledNavigationContainer = styled(Container)`
         animation: ${zoomIn} 250ms ease;
         will-change: transform;
 
-        ${withColorTheme("dark", css`
+        ${withColorTheme("dark")`
             border: 2px solid ${theme.colors["text-disabled"]};
-        `)}
+        `}
     }
 `;
 
@@ -100,7 +100,7 @@ export const StyledLogo = styled(Logo)`
     color: ${theme.colors["text"]};
 `;
 
-export const StyledMobileToggle = styled(Button)`
+export const StyledMobileToggle = styled(Button)<{ offsetToggleButton: boolean }>`
     position: fixed;
     bottom: ${(props) => props.offsetToggleButton ? "5rem" : "1rem"};
     right: 1rem;

@@ -56,11 +56,11 @@ const StyledMarkdown = styled.div`
         margin-bottom: 16px;
     }
     
-    & p + h2 {
+    & p + h2, & ul + h2, & ol + h2 {
         margin-top: 48px;
     }
 
-    & p + h3 {
+    & p + h3, & ul + h3, & ol + h3 {
         margin-top: 32px;
     }
 

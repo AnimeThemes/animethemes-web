@@ -33,6 +33,7 @@ import useSetting from "hooks/useSetting";
 import { AudioMode, DeveloperMode } from "utils/settings";
 import { SwitcherOption } from "components/switcher/Switcher";
 import { VideoPlayer } from "components/video-player";
+import VideoScript from "components/video-script/VideoScript";
 
 const StyledVideoInfo = styled.div`
     display: grid;
@@ -360,23 +361,7 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex }:
             )}
         </StyledRelatedGrid>
         {developerMode === DeveloperMode.ENABLED ? (
-            <div>
-                {video.script ? (
-                    <Text
-                        as="a"
-                        href={video.script?.link}
-                        download
-                        variant="small"
-                        link
-                        color="text-disabled"
-                    >Click to download encoding script.</Text>
-                ) : (
-                    <Text
-                        variant="small"
-                        color="text-disabled"
-                    >No encoding script available.</Text>
-                )}
-            </div>
+            <VideoScript video={video} />
         ) : null}
     </>;
 }
@@ -389,6 +374,7 @@ VideoPage.fragments = {
         ${VideoPlayer.fragments.theme}
         ${VideoPlayer.fragments.entry}
         ${VideoPlayer.fragments.video}
+        ${VideoScript.fragments.video}
 
         fragment VideoPageAnime on Anime {
             ...VideoPlayerAnime
@@ -418,6 +404,7 @@ VideoPage.fragments = {
                     version
                     videos {
                         ...VideoPlayerVideo
+                        ...VideoScriptVideo
                         basename
                         filename
                         lyrics
@@ -432,9 +419,6 @@ VideoPage.fragments = {
                             theme {
                                 ...ThemeSummaryCardTheme
                             }
-                        }
-                        script {
-                            link
                         }
                     }
                 }

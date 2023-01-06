@@ -42,10 +42,11 @@ export default function DumpIndexPage({ dumpAll }: DumpIndexPageProps) {
                 >
                     <IconTextButton
                         variant="solid"
-                        forwardedAs="a"
+                        as="a"
                         href={dump.link}
                         download
                         icon={faDownload}
+                        collapsible
                     >Download</IconTextButton>
                 </SummaryCard>
             ))}
