@@ -22,8 +22,9 @@ const CLIENT_API_URL = process.env.NEXT_PUBLIC_API_URL;
 const VIDEO_URL = process.env.NEXT_PUBLIC_VIDEO_URL;
 const AUDIO_URL = process.env.NEXT_PUBLIC_AUDIO_URL;
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
-
 const STAGING = !!process.env.NEXT_PUBLIC_STAGING;
+const VERBOSE_LOGS = !!process.env.NEXT_PUBLIC_VERBOSE_LOGS;
+
 
 function validateConfig() {
     let isValid = true;
@@ -58,5 +59,6 @@ module.exports = {
     AUDIO_URL,
     APP_URL,
     STAGING,
+    VERBOSE_LOGS,
     validateConfig,
 };
