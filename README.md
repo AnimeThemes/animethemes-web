@@ -64,6 +64,9 @@ NEXT_PUBLIC_APP_URL=https://app.animethemes.moe
 ; Set to any truthy value to activate staging mode.
 ; In staging mode a warning banner is displayed at the top of the page.
 NEXT_PUBLIC_STAGING=true
+
+; To enable verbose logging.
+NEXT_PUBLIC_VERBOSE_LOGS=true
 ```
 
 For more information on environment variables see the [Next.js documentation](https://nextjs.org/docs/basic-features/environment-variables).
