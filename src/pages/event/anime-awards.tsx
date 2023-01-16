@@ -1,5 +1,5 @@
 import type { ComponentPropsWithoutRef } from "react";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import event from "lib/server/animeawards/index.json";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
@@ -28,7 +28,7 @@ const StyledHeader = styled.div`
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    
+
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         flex-direction: column;
         align-items: stretch;
@@ -55,95 +55,165 @@ const StyledNomineeGrid = styled.div<{ style: { "--columns": number, "--rows": n
 `;
 
 interface AnimeAwardsPage {
-    awards: Array<AwardWithThemes>
+    awards: Array<Award>
 }
 
-interface Award {
+type Award = AwardUnvoted | AwardVoted;
+
+interface AwardBase {
     year: number
+}
+
+interface AwardUnvoted extends AwardBase {
+    isFinished: false
     nominees: {
         openings: Array<Nominee>
         endings: Array<Nominee>
     }
 }
 
-interface AwardWithThemes extends Award {
+interface AwardVoted extends AwardBase {
+    isFinished: true
     nominees: {
-        openings: Array<Nominee & AwardPageThemeQuery>
-        endings: Array<Nominee & AwardPageThemeQuery>
+        openings: Array<NomineeVoted>
+        endings: Array<NomineeVoted>
     }
 }
 
-interface Nominee {
+interface Nominee extends AwardPageThemeQuery {
     id: number
+    version?: number
+}
+
+interface NomineeVoted extends Nominee {
     votesPublic: number
     rankJury: number
 }
 
 export default function AnimeAwardsPage({ awards }: AnimeAwardsPage) {
-    const [ judgeFilter, setJudgeFilter ] = useState("public");
-    const [ typeFilter, setTypeFilter ] = useState<string | null>(null);
-
-    const sortFn: Comparator<Nominee> = judgeFilter === "public"
-        ? (a, b) => b.votesPublic - a.votesPublic
-        : (a, b) => a.rankJury - b.rankJury;
-
     return (
         <>
             <SEO title="/r/anime Awards" description="Listen to all themes nominated for the /r/anime Awards."/>
             <Text variant="h1">/r/anime Awards</Text>
-            {awards.map((award) => (
-                <Fragment key={award.year}>
-                    <StyledHeader>
-                        <Text variant="h2">{award.year} Results</Text>
-                        <StyledSwitchers>
-                            <Switcher selectedItem={judgeFilter} onChange={setJudgeFilter}>
-                                <SwitcherOption value="public">Public</SwitcherOption>
-                                <SwitcherOption value="jury">Jury</SwitcherOption>
-                            </Switcher>
-                            <Switcher selectedItem={typeFilter} onChange={setTypeFilter}>
-                                <SwitcherReset/>
-                                <SwitcherOption value="op">OP</SwitcherOption>
-                                <SwitcherOption value="ed">ED</SwitcherOption>
-                            </Switcher>
-                        </StyledSwitchers>
-                    </StyledHeader>
-                    <StyledNomineeGrid style={{ "--columns": typeFilter ? 1 : 2, "--rows": typeFilter ? 10 : 20 }}>
-                        {(typeFilter === null || typeFilter === "op") && (
-                            [...award.nominees.openings].sort(sortFn).map((nominee, rank) => (
-                                <m.div
-                                    layout="position"
-                                    layoutId={String(nominee.id)}
-                                    layoutDependency={judgeFilter}
-                                    key={nominee.id}
-                                >
-                                    <AwardThemeSummaryCard
-                                        theme={nominee.theme}
-                                        rank={judgeFilter === "public" ? rank + 1 : nominee.rankJury}
-                                        votes={judgeFilter === "public" ? nominee.votesPublic : null}
-                                    />
-                                </m.div>
-                            ))
-                        )}
-                        {(typeFilter === null || typeFilter === "ed") && (
-                            [...award.nominees.endings].sort(sortFn).map((nominee, rank) => (
-                                <m.div
-                                    layout="position"
-                                    layoutId={String(nominee.id)}
-                                    layoutDependency={judgeFilter}
-                                    key={nominee.id}
-                                >
-                                    <AwardThemeSummaryCard
-                                        theme={nominee.theme}
-                                        rank={judgeFilter === "public" ? rank + 1 : nominee.rankJury}
-                                        votes={judgeFilter === "public" ? nominee.votesPublic : null}
-                                    />
-                                </m.div>
-                            ))
-                        )}
-                    </StyledNomineeGrid>
-                </Fragment>
+            {awards.map((award) => award.isFinished ? (
+                <AwardSectionVoted key={award.year} award={award} />
+            ) : (
+                <AwardSectionUnvoted key={award.year} award={award} />
             ))}
+        </>
+    );
+}
 
+interface AwardSectionUnvotedProps {
+    award: AwardUnvoted
+}
+
+function AwardSectionUnvoted({ award }: AwardSectionUnvotedProps) {
+    const [ typeFilter, setTypeFilter ] = useState<string | null>(null);
+
+    const sortFn: Comparator<Nominee> =  (a, b) => {
+        const nameA = a.theme?.anime?.name;
+        const nameB = b.theme?.anime?.name;
+
+        return (nameA && nameB && nameA.localeCompare(nameB)) || 0;
+    };
+
+    return (
+        <>
+            <StyledHeader>
+                <Text variant="h2">{award.year} Nominees</Text>
+                <StyledSwitchers>
+                    <Switcher selectedItem={typeFilter} onChange={setTypeFilter}>
+                        <SwitcherReset/>
+                        <SwitcherOption value="op">OP</SwitcherOption>
+                        <SwitcherOption value="ed">ED</SwitcherOption>
+                    </Switcher>
+                </StyledSwitchers>
+            </StyledHeader>
+            <StyledNomineeGrid style={{ "--columns": typeFilter ? 1 : 2, "--rows": typeFilter ? 10 : 20 }}>
+                {(typeFilter === null || typeFilter === "op") && (
+                    [...award.nominees.openings].sort(sortFn).map((nominee) => (
+                        <AwardThemeSummaryCard
+                            key={nominee.id}
+                            theme={nominee.theme}
+                        />
+                    ))
+                )}
+                {(typeFilter === null || typeFilter === "ed") && (
+                    [...award.nominees.endings].sort(sortFn).map((nominee) => (
+                        <AwardThemeSummaryCard
+                            key={nominee.id}
+                            theme={nominee.theme}
+                        />
+                    ))
+                )}
+            </StyledNomineeGrid>
+        </>
+    );
+}
+
+interface AwardSectionVotedProps {
+    award: AwardVoted
+}
+
+function AwardSectionVoted({ award }: AwardSectionVotedProps) {
+    const [ judgeFilter, setJudgeFilter ] = useState("public");
+    const [ typeFilter, setTypeFilter ] = useState<string | null>(null);
+
+    const sortFn = judgeFilter === "public"
+        ? (a: NomineeVoted, b: NomineeVoted) => b.votesPublic - a.votesPublic
+        : (a: NomineeVoted, b: NomineeVoted) => a.rankJury - b.rankJury;
+
+    return (
+        <>
+            <StyledHeader>
+                <Text variant="h2">{award.year} Results</Text>
+                <StyledSwitchers>
+                    <Switcher selectedItem={judgeFilter} onChange={setJudgeFilter}>
+                        <SwitcherOption value="public">Public</SwitcherOption>
+                        <SwitcherOption value="jury">Jury</SwitcherOption>
+                    </Switcher>
+                    <Switcher selectedItem={typeFilter} onChange={setTypeFilter}>
+                        <SwitcherReset/>
+                        <SwitcherOption value="op">OP</SwitcherOption>
+                        <SwitcherOption value="ed">ED</SwitcherOption>
+                    </Switcher>
+                </StyledSwitchers>
+            </StyledHeader>
+            <StyledNomineeGrid style={{ "--columns": typeFilter ? 1 : 2, "--rows": typeFilter ? 10 : 20 }}>
+                {(typeFilter === null || typeFilter === "op") && (
+                    [...award.nominees.openings].sort(sortFn).map((nominee, rank) => (
+                        <m.div
+                            layout="position"
+                            layoutId={String(nominee.id)}
+                            layoutDependency={judgeFilter}
+                            key={nominee.id}
+                        >
+                            <AwardThemeSummaryCard
+                                theme={nominee.theme}
+                                rank={judgeFilter === "public" ? rank + 1 : nominee.rankJury}
+                                votes={judgeFilter === "public" ? nominee.votesPublic : null}
+                            />
+                        </m.div>
+                    ))
+                )}
+                {(typeFilter === null || typeFilter === "ed") && (
+                    [...award.nominees.endings].sort(sortFn).map((nominee, rank) => (
+                        <m.div
+                            layout="position"
+                            layoutId={String(nominee.id)}
+                            layoutDependency={judgeFilter}
+                            key={nominee.id}
+                        >
+                            <AwardThemeSummaryCard
+                                theme={nominee.theme}
+                                rank={judgeFilter === "public" ? rank + 1 : nominee.rankJury}
+                                votes={judgeFilter === "public" ? nominee.votesPublic : null}
+                            />
+                        </m.div>
+                    ))
+                )}
+            </StyledNomineeGrid>
         </>
     );
 }
@@ -169,8 +239,8 @@ const StyledRank = styled(Text)`
 `;
 
 interface AwardThemeSummaryCardProps extends AwardPageThemeQuery, ComponentPropsWithoutRef<typeof StyledSummaryCardWrapper> {
-    rank: number
-    votes: number | null
+    rank?: number
+    votes?: number | null
 }
 
 function AwardThemeSummaryCard({ theme, rank, votes, ...props }: AwardThemeSummaryCardProps) {
@@ -196,7 +266,7 @@ function AwardThemeSummaryCard({ theme, rank, votes, ...props }: AwardThemeSumma
 
     const description = (
         <SummaryCard.Description>
-            <span>{theme.slug}</span>
+            <span>{theme.slug}{(entry.version && entry.version > 1) ? `v${entry.version}` : null}</span>
             <Link
                 href={`/anime/${theme.anime.slug}`}
                 passHref
@@ -214,18 +284,22 @@ function AwardThemeSummaryCard({ theme, rank, votes, ...props }: AwardThemeSumma
                 image={smallCover}
                 to={to}
             >
-                <StyledRankInfo>
-                    <Text variant="small" color="text-muted" noWrap title="Jury Rank">
-                        <Icon icon={faHashtag}/>
-                        <StyledRank> {rank}</StyledRank>
-                    </Text>
-                    {!!votes && (
-                        <Text variant="small" color="text-muted" noWrap title="Public Votes">
-                            <Icon icon={faUsers}/>
-                            <StyledRank> {votes}</StyledRank>
-                        </Text>
-                    )}
-                </StyledRankInfo>
+                {(rank || votes) ? (
+                    <StyledRankInfo>
+                        {rank ? (
+                            <Text variant="small" color="text-muted" noWrap title="Jury Rank">
+                                <Icon icon={faHashtag}/>
+                                <StyledRank> {rank}</StyledRank>
+                            </Text>
+                        ) : null}
+                        {votes ? (
+                            <Text variant="small" color="text-muted" noWrap title="Public Votes">
+                                <Icon icon={faUsers}/>
+                                <StyledRank> {votes}</StyledRank>
+                            </Text>
+                        ) : null}
+                    </StyledRankInfo>
+                ) : null}
             </StyledSummaryCard>
             {rank === 1 && (
                 <CornerIcon icon={faAward} title="Winner"/>
@@ -237,12 +311,10 @@ function AwardThemeSummaryCard({ theme, rank, votes, ...props }: AwardThemeSumma
 export const getStaticProps: GetStaticProps<AnimeAwardsPage> = async () => {
     let totalApiRequests = 0;
 
-    const awards = await Promise.all((event as Array<Award>).map(async (award) => {
-        const { openings, endings } = award.nominees;
-
-        async function populateNominees(nominees: Array<Nominee>) {
+    const awards = await Promise.all((event as Array<Award>).map<Promise<Award>>(async (award) => {
+        async function populateNominees<T extends Nominee>(nominees: Array<T>): Promise<Array<T>> {
             return Promise.all(nominees.map(async (nominee) => {
-                const { theme, apiRequests } = await fetchTheme(nominee.id);
+                const { theme, apiRequests } = await fetchTheme(nominee.id, nominee.version);
 
                 totalApiRequests += apiRequests;
 
@@ -250,12 +322,24 @@ export const getStaticProps: GetStaticProps<AnimeAwardsPage> = async () => {
             }));
         }
 
+        if (award.isFinished) {
+            return {
+                ...award,
+                isFinished: true,
+                nominees: {
+                    openings: await populateNominees(award.nominees.openings),
+                    endings: await populateNominees(award.nominees.endings),
+                },
+            };
+        }
+
         return {
-            year: award.year,
+            ...award,
+            isFinished: false,
             nominees: {
-                openings: await populateNominees(openings),
-                endings: await populateNominees(endings)
-            }
+                openings: await populateNominees(award.nominees.openings),
+                endings: await populateNominees(award.nominees.endings),
+            },
         };
     }));
 
@@ -267,7 +351,7 @@ export const getStaticProps: GetStaticProps<AnimeAwardsPage> = async () => {
     };
 };
 
-async function fetchTheme(themeId: number) {
+async function fetchTheme(themeId: number, version?: number) {
     const { data, apiRequests } = await fetchData<AwardPageThemeQuery>(gql`
         query AwardPageTheme($themeId: Int) {
             theme(id: $themeId) {
@@ -302,5 +386,8 @@ async function fetchTheme(themeId: number) {
         }
     `, { themeId });
 
-    return { theme: data.theme, apiRequests };
+    return { theme: {
+        ...data.theme,
+        entries: version ? data.theme?.entries.filter((e) => e.version === version) : data.theme?.entries.slice(0, 1)
+    }, apiRequests };
 }
