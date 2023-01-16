@@ -1,4 +1,3 @@
-import type { Interpolation, ThemedStyledProps } from "styled-components";
 import { css, keyframes } from "styled-components";
 
 const loadingAnimationKeyframes = keyframes`
@@ -15,40 +14,42 @@ export const loadingAnimation = css`
     }
 `;
 
-export const withHover = <T extends ThemedStyledProps<object, any>>(content: Interpolation<T>) => css`
+export const withHover = (...args: Parameters<typeof css>) => css`
     @media (hover: hover) and (pointer: fine) {
         &:hover {
-            ${content}
+            ${css(...args)}
         }
     }
 `;
 
-export const withColorTheme = <T extends ThemedStyledProps<object, any>>(
+export const withColorTheme = (
     colorTheme: "light" | "dark",
-    content: Interpolation<T>
+) => (
+    ...args: Parameters<typeof css>
 ) => css`
     [data-theme="system"] & {
         @media (prefers-color-scheme: ${colorTheme}) {
-            ${content}
+            ${css(...args)}
         }
     }
 
     [data-theme="${colorTheme}"] & {
-        ${content}
+        ${css(...args)}
     }
 `;
 
-export const defineColorTheme = <T extends ThemedStyledProps<object, any>>(
+export const defineColorTheme = (
     colorTheme: "light" | "dark",
-    content: Interpolation<T>
+) => (
+    ...args: Parameters<typeof css>
 ) => css`
     &[data-theme="system"] {
         @media (prefers-color-scheme: ${colorTheme}) {
-            ${content}
+            ${css(...args)}
         }
     }
 
     &[data-theme="${colorTheme}"] {
-        ${content}
+        ${css(...args)}
     }
 `;

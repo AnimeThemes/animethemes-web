@@ -585,6 +585,8 @@ export type VideoPlayerEntryFragment = { version: number | null };
 
 export type VideoPlayerVideoFragment = { basename: string, tags: string, audio: { basename: string } };
 
+export type VideoScriptVideoFragment = { script: { link: string } | null };
+
 export type RandomThemeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
