@@ -212,6 +212,17 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex }:
             <meta name="og:video:type" content="video/webm"/>
             <meta name="og:video:width" content="1280"/>
             <meta name="og:video:height" content="720"/>
+
+            {/* Twitter card support */}
+            {/* See: https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/player-card */}
+            <meta name="twitter:card" content="player" />
+            <meta name="twitter:site" content="@AnimeThemesMoe" />
+            <meta name="twitter:title" content={pageTitle} />
+            <meta name="twitter:description" content={pageDesc} />
+            <meta name="twitter:image" content={largeCover} />
+            <meta name="twitter:player" content={videoUrl} />
+            <meta name="twitter:player:width" content="1920" />
+            <meta name="twitter:player:height" content="1080" />
         </SEO>
         <StyledVideoInfo>
             <Column style={{ "--gap": "8px" }}>
