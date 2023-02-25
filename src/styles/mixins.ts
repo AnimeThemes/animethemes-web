@@ -14,7 +14,7 @@ export const loadingAnimation = css`
     }
 `;
 
-export const withHover = (...args: Parameters<typeof css>) => css`
+export const withHover = <T extends object>(...args: Parameters<typeof css<T>>) => css`
     @media (hover: hover) and (pointer: fine) {
         &:hover {
             ${css(...args)}
@@ -24,8 +24,8 @@ export const withHover = (...args: Parameters<typeof css>) => css`
 
 export const withColorTheme = (
     colorTheme: "light" | "dark",
-) => (
-    ...args: Parameters<typeof css>
+) => <T extends object>(
+    ...args: Parameters<typeof css<T>>
 ) => css`
     [data-theme="system"] & {
         @media (prefers-color-scheme: ${colorTheme}) {
@@ -40,8 +40,8 @@ export const withColorTheme = (
 
 export const defineColorTheme = (
     colorTheme: "light" | "dark",
-) => (
-    ...args: Parameters<typeof css>
+) => <T extends object>(
+    ...args: Parameters<typeof css<T>>
 ) => css`
     &[data-theme="system"] {
         @media (prefers-color-scheme: ${colorTheme}) {

@@ -23,6 +23,7 @@ const typeDefs = `
         dumpAll: [Dump!]!
         balanceAll: [Balance!]!
         transactionAll: [Transaction!]!
+        announcementAll: [Announcement!]!
     }
 
     interface ResourceWithImages {

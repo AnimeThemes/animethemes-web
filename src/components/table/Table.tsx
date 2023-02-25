@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import theme from "theme";
 import { withHover } from "styles/mixins";
 import type { Property } from "csstype";
@@ -24,9 +24,9 @@ export const TableRow = styled.div`
         border-bottom: 2px solid ${theme.colors["solid-on-card"]};
     }
     
-    ${withHover(css`
+    ${withHover`
         background-color: ${theme.colors["solid"]};
-    `)}
+    `}
 `;
 
 export const TableCell = styled.div<{ style?: { "--span"?: number } }>`

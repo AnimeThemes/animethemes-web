@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import theme from "theme";
 import { withHover } from "styles/mixins";
 import { Solid } from "components/box";
@@ -82,9 +82,9 @@ const SolidButton = styled(BaseButton)`
     background-color: ${theme.colors["solid"]};
     color: ${theme.colors["text-muted"]};
 
-    ${withHover(css`
+    ${withHover`
         color: ${theme.colors["text"]};
-    `)}
+    `}
     
     ${Solid} & {
         background-color: ${theme.colors["solid-on-card"]};
@@ -95,19 +95,19 @@ const SilentButton = styled(BaseButton)`
     background-color: transparent;
     color: ${theme.colors["text-muted"]};
 
-    ${withHover(css`
+    ${withHover`
         background-color: ${theme.colors["solid"]};
         color: ${theme.colors["text"]};
-    `)}
+    `}
 
     &:not(:hover) {
         box-shadow: none;
     }
 
     ${Solid} & {
-        ${withHover(css`
+        ${withHover`
             background-color: ${theme.colors["solid-on-card"]};
-        `)}
+        `}
     }
 `;
 

@@ -19,6 +19,9 @@ import { Skeleton } from "components/skeleton";
 import type { HomePageQuery, RecentlyAddedQuery } from "generated/graphql";
 import type { GetStaticProps } from "next";
 import { gql, useQuery } from "@apollo/client";
+import { AnnouncementCard } from "components/card/AnnouncementCard";
+import type { MDXRemoteSerializeResult } from "next-mdx-remote";
+import serializeMarkdown from "utils/serializeMarkdown";
 
 const BigButton = styled(Button)`
     justify-content: flex-end;
@@ -84,10 +87,11 @@ const About = styled(Column)`
 `;
 
 interface HomePageProps {
-    featuredTheme: NonNullable<HomePageQuery["featuredTheme"]>["theme"] | null
+    featuredTheme: NonNullable<HomePageQuery["featuredTheme"]>["theme"] | null;
+    announcementSources: MDXRemoteSerializeResult[]
 }
 
-export default function HomePage({ featuredTheme }: HomePageProps) {
+export default function HomePage({ featuredTheme, announcementSources }: HomePageProps) {
     const { currentYear, currentSeason } = useCurrentSeason();
 
     const { data, loading } = useQuery<RecentlyAddedQuery>(gql`
@@ -104,6 +108,10 @@ export default function HomePage({ featuredTheme }: HomePageProps) {
     return <>
         <SEO/>
         <Text variant="h1">Welcome, to AnimeThemes.moe!</Text>
+
+        {announcementSources.length > 0 ? (
+            <AnnouncementCard announcementSource={announcementSources[0]} />
+        ) : null}
 
         {featuredTheme ? (
             <>
@@ -249,13 +257,19 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
                     ...FeaturedThemeTheme
                 }
             }
+            announcementAll {
+                content
+            }
         }
     `);
 
     return {
         props: {
             ...getSharedPageProps(apiRequests),
-            featuredTheme: data?.featuredTheme?.theme ?? null
+            featuredTheme: data?.featuredTheme?.theme ?? null,
+            announcementSources: await Promise.all(
+                data?.announcementAll.map(async (announcement) => (await serializeMarkdown(announcement.content)).source)
+            ),
         }
     };
 };
