@@ -24,9 +24,9 @@ export const Card = styled(Solid)<{
     ${(props) => props.hoverable && css`
         cursor: pointer;
 
-        ${withHover(css`
+        ${withHover`
             background-color: ${theme.colors["solid-on-card"]};
-        `)}
+        `}
     `}
     
     &:before {

@@ -105,6 +105,11 @@ const resolvers: IResolvers = {
             extractor: (result) => result.transactions,
             pagination: true
         }),
+        announcementAll: apiResolver({
+            endpoint: () => `/announcement`,
+            extractor: (result) => result.announcements,
+            pagination: true
+        }),
     },
     Year: {
         seasons: apiResolver({

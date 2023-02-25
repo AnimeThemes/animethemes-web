@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { Menu as ReachMenu, MenuButton, MenuItem, MenuItems, MenuPopover, } from "@reach/menu-button";
 import { Button } from "components/button";
 import theme from "theme";
@@ -46,10 +46,10 @@ const StyledMenuItem = styled(MenuItem)`
     cursor: pointer;
     color: ${theme.colors["text-muted"]};
     
-    ${withHover(css`
+    ${withHover`
         background-color: ${theme.colors["solid-on-card"]};
         color: ${theme.colors["text"]};
-    `)}
+    `}
 `;
 const StyledMenuOverlay = styled(MenuPopover)`
     @media (max-width: 720px) {

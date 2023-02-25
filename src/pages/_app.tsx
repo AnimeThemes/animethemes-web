@@ -17,7 +17,7 @@ import withBasePath from "utils/withBasePath";
 import { SEO } from "components/seo";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import { ToastProvider } from "context/toastContext";
-import { AnnouncementToast, ToastHub } from "components/toast";
+import { ToastHub } from "components/toast";
 import { Text } from "components/text";
 import { useRouter } from "next/router";
 import useSetting from "hooks/useSetting";
@@ -129,10 +129,7 @@ export default function MyApp({ Component, pageProps }: AppProps<any>) {
             } }),
             stackContext(QueryClientProvider, { client: queryClient }),
             stackContext(ApolloProvider, { client: apolloClient, children: null }),
-            stackContext(ToastProvider, { initialToasts: [ {
-                id: "announcement",
-                content: <AnnouncementToast/>
-            } ] }),
+            stackContext(ToastProvider, {}),
             stackContext(LazyMotion, { features: () => import("utils/motionFeatures").then(res => res.default) }),
             stackContext(ErrorBoundary, {}),
         ]}>

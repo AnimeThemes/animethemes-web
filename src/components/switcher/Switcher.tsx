@@ -1,16 +1,9 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { LayoutGroup, m } from "framer-motion";
 import theme from "theme";
 import { uniqueId as createUniqueId } from "lodash-es";
-import type {
-    ComponentPropsWithoutRef,
-    ComponentPropsWithRef,
-    ReactNode } from "react";
-import {
-    createContext,
-    useContext,
-    useMemo
-} from "react";
+import type { ComponentPropsWithoutRef, ComponentPropsWithRef, ReactNode } from "react";
+import { createContext, useContext, useMemo } from "react";
 import { faTimes } from "@fortawesome/pro-solid-svg-icons";
 import { Icon } from "components/icon";
 import { withHover } from "styles/mixins";
@@ -61,10 +54,10 @@ const StyledButton = styled.button<StyledButtonProps>`
     
     transition: color 500ms;
 
-    ${withHover(css<StyledButtonProps>`
-        color: ${(props: StyledButtonProps) => props.$isSelected ? theme.colors["text-on-primary"] : theme.colors["text"]};;
+    ${withHover`
+        color: ${(props) => props.$isSelected ? theme.colors["text-on-primary"] : theme.colors["text"]};;
         transition-duration: 250ms;
-    `)}
+    `}
 `;
 
 const StyledButtonBackground = styled(m.div)`
