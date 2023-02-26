@@ -1,71 +1,111 @@
 [
     {
         "year": 2022,
-        "isFinished": false,
+        "isFinished": true,
         "nominees": {
             "openings": [
                 {
-                    "id": 11810
+                    "id": 11810,
+                    "votesPublic": 118,
+                    "rankJury": 5
                 },
                 {
-                    "id": 11045
+                    "id": 11045,
+                    "votesPublic": 974,
+                    "rankJury": 1
                 },
                 {
-                    "id": 11450
+                    "id": 11450,
+                    "votesPublic": 349,
+                    "rankJury": 6
                 },
                 {
-                    "id": 11856
+                    "id": 11856,
+                    "votesPublic": 293,
+                    "rankJury": 3
                 },
                 {
-                    "id": 11803
+                    "id": 11803,
+                    "votesPublic": 51,
+                    "rankJury": 4
                 },
                 {
-                    "id": 11849
+                    "id": 11849,
+                    "votesPublic": 1875,
+                    "rankJury": 2
                 },
                 {
-                    "id": 11829
+                    "id": 11829,
+                    "votesPublic": 739,
+                    "rankJury": 7
                 },
                 {
-                    "id": 11388
+                    "id": 11388,
+                    "votesPublic": 1571,
+                    "rankJury": 9
                 },
                 {
-                    "id": 11077
+                    "id": 11077,
+                    "votesPublic": 905,
+                    "rankJury": 10
                 },
                 {
-                    "id": 11631
+                    "id": 11631,
+                    "votesPublic": 577,
+                    "rankJury": 8
                 }
             ],
             "endings": [
                 {
-                    "id": 11885
+                    "id": 11885,
+                    "votesPublic": 1016,
+                    "rankJury": 1
                 },
                 {
-                    "id": 11908
+                    "id": 11908,
+                    "votesPublic": 586,
+                    "rankJury": 6
                 },
                 {
-                    "id": 11632
+                    "id": 11632,
+                    "votesPublic": 1306,
+                    "rankJury": 10
                 },
                 {
-                    "id": 11458
+                    "id": 11458,
+                    "votesPublic": 1007,
+                    "rankJury": 7
                 },
                 {
-                    "id": 11933
+                    "id": 11933,
+                    "votesPublic": 648,
+                    "rankJury": 9
                 },
                 {
-                    "id": 11495
+                    "id": 11495,
+                    "votesPublic": 909,
+                    "rankJury": 3
                 },
                 {
-                    "id": 11755
+                    "id": 11755,
+                    "votesPublic": 858,
+                    "rankJury": 5
                 },
                 {
-                    "id": 11377
+                    "id": 11377,
+                    "votesPublic": 412,
+                    "rankJury": 8
                 },
                 {
-                    "id": 11855
+                    "id": 11855,
+                    "votesPublic": 359,
+                    "rankJury": 4
                 },
                 {
                     "id": 11804,
-                    "version": 2
+                    "version": 2,
+                    "votesPublic": 83,
+                    "rankJury": 2
                 }
             ]
         }
