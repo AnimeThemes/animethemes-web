@@ -15,7 +15,7 @@ interface ThemeMenuProps {
 
 export function ThemeMenu({ theme }: ThemeMenuProps) {
     const entry = theme.entries[0];
-    const video = entry.videos[0];
+    const video = entry?.videos[0];
 
     if (!entry || !video) {
         return null;
