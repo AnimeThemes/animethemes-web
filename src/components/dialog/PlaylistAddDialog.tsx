@@ -5,7 +5,7 @@ import { Column, Row } from "components/box";
 import { Text } from "components/text";
 import { SearchFilter } from "components/search-filter";
 import { Input } from "components/form";
-import type { FormEvent } from "react";
+import type { FormEvent, ReactNode } from "react";
 import { useState } from "react";
 import { Listbox2, Listbox2Option } from "components/listbox/Listbox2";
 import axios from "lib/client/axios";
@@ -13,14 +13,21 @@ import styled from "styled-components";
 import { LoginGate } from "components/auth/LoginGate";
 import { mutate } from "swr";
 import { Busy } from "components/utils/Busy";
+import { isAxiosError } from "axios";
 
-export function PlaylistAddDialog() {
+interface PlaylistAddDialogProps {
+    trigger?: ReactNode;
+}
+
+export function PlaylistAddDialog({ trigger }: PlaylistAddDialogProps) {
     const [open, setOpen] = useState(false);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <IconTextButton icon={faPlus} collapsible>New</IconTextButton>
+                {trigger ?? (
+                    <IconTextButton icon={faPlus} collapsible>New</IconTextButton>
+                )}
             </DialogTrigger>
             <DialogContent title="Create a new playlist">
                 {/* Only render the form when dialog is open, so it will reset after closing. */}
@@ -53,11 +60,13 @@ function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
     const isValid = title !== "";
 
     const [isBusy, setBusy] = useState(false);
+    const [error, setError] = useState("");
 
     async function submit(event: FormEvent) {
         event.preventDefault();
 
         setBusy(true);
+        setError("");
 
         try {
             await axios.post("/api/playlist", {
@@ -65,6 +74,12 @@ function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
                 visibility,
             });
             await mutate((key) => [key].flat().includes("/api/me/playlist"));
+        } catch (error: unknown) {
+            if (isAxiosError(error) && error.response) {
+                setError(error.response.data.message ?? "An unknown error occured!");
+            }
+
+            return;
         } finally {
             setBusy(false);
         }
@@ -96,6 +111,9 @@ function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
                         <Busy isBusy={isBusy}>Create Playlist</Busy>
                     </Button>
                 </Row>
+                {error ? (
+                    <Text color="text-warning"><strong>The playlist could not be created: </strong>{error}</Text>
+                ) : null}
             </Column>
         </StyledForm>
     );

@@ -548,6 +548,8 @@ export type ThemeSummaryCardQuery = { theme: { slug: string, type: string, seque
 
 export type VideoSummaryCardVideoFragment = { tags: string, entries: Array<{ version: number | null, theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } | null }> };
 
+export type PlaylistRemoveDialogPlaylistFragment = { id: number, name: string, visibility: PlaylistVisibility };
+
 export type PlaylistTrackAddDialogVideoFragment = { id: number, tags: string, entries: Array<{ version: number | null, theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } | null }> };
 
 export type PlaylistTrackAddFormPlaylistQueryVariables = Exact<{
@@ -636,6 +638,8 @@ export type EpisodeTagEntryFragment = { episodes: string | null };
 export type ThemeEntryTagsEntryFragment = { episodes: string | null, spoiler: boolean, nsfw: boolean };
 
 export type VideoTagsVideoFragment = { resolution: number | null, nc: boolean, subbed: boolean, lyrics: boolean, uncen: boolean, source: VideoSource | null, overlap: VideoOverlap };
+
+export type PlaylistRemoveToastPlaylistFragment = { id: number, name: string };
 
 export type PlaylistTrackAddToastPlaylistFragment = { id: number, name: string };
 
