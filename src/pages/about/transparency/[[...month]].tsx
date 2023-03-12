@@ -261,8 +261,8 @@ export const getStaticPaths: GetStaticPaths<TransparencyPageParams> = () => {
         const transactionsByMonth = groupBy(data.transactionAll, (transaction) => transaction.date.substring(0, 7));
 
         months.forEach((month) => buildTimeCache.pageQueries.set(month, {
-            balanceAll: balancesByMonth[month],
-            transactionAll: transactionsByMonth[month]
+            balanceAll: balancesByMonth[month] ?? [],
+            transactionAll: transactionsByMonth[month] ?? [],
         }));
         buildTimeCache.months = months;
 
