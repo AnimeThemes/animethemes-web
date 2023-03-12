@@ -30,13 +30,16 @@ import useSWR from "swr";
 import { fetchDataClient } from "lib/client";
 import type { RequiredNonNullable } from "utils/types";
 import { Busy } from "components/utils/Busy";
+import { Menu } from "components/menu";
+import { PlaylistRemoveDialog } from "components/dialog/PlaylistRemoveDialog";
+import { Icon } from "components/icon";
 
 const StyledProfileGrid = styled.div`
     --columns: 2;
     
     display: grid;
     grid-template-columns: repeat(var(--columns), 1fr);
-    grid-gap: 24px 32px;
+    grid-gap: 24px 64px;
     
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         --columns: 1;
@@ -114,7 +117,23 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                             </StyledHeader>
                             <Column style={{ "--gap": "16px" }}>
                                 {me.playlistAll.map((playlist) => (
-                                    <PlaylistSummaryCard key={playlist.id} playlist={playlist} />
+                                    <PlaylistSummaryCard
+                                        key={playlist.id}
+                                        playlist={playlist}
+                                        menu={
+                                            <Menu>
+                                                <PlaylistRemoveDialog
+                                                    playlist={playlist}
+                                                    trigger={
+                                                        <Menu.Option>
+                                                            <Icon icon={faTrash} />
+                                                            <Text>Delete Playlist</Text>
+                                                        </Menu.Option>
+                                                    }
+                                                />
+                                            </Menu>
+                                        }
+                                    />
                                 ))}
                             </Column>
                         </>

@@ -25,7 +25,7 @@ const StyledOverlay = styled(RadixDialog.Overlay)`
 
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     padding: 32px 16px;
     overflow: auto;
 
@@ -38,7 +38,7 @@ const StyledDialogCard = styled(Card)`
     max-width: 450px;
     animation: ${contentAnimation} 250ms;
     
-    margin: 0 auto;
+    margin: auto;
     padding: 24px;
     box-shadow: 0 0 0 2px ${theme.colors["text-disabled"]};
     

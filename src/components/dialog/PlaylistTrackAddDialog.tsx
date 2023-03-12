@@ -22,6 +22,7 @@ import gql from "graphql-tag";
 import { Skeleton } from "components/skeleton/Skeleton";
 import { Busy } from "components/utils/Busy";
 import { fetchDataClient } from "lib/client";
+import { PlaylistAddDialog } from "components/dialog/PlaylistAddDialog";
 
 interface PlaylistTrackAddDialogProps {
     video: PlaylistTrackAddDialogVideoFragment;
@@ -112,15 +113,21 @@ function PlaylistTrackAddForm({ video, onCancel }: PlaylistTrackAddFormProps) {
                 <Icon icon={faArrowDown} color="text-disabled" />
             </Row>
             <Column style={{ "--gap": "16px" }}>
-                {playlists?.map((playlist) => (
+                {playlists?.length ? playlists.map((playlist) => (
                     <PlaylistTrackAddCard
                         key={playlist.id}
                         playlist={playlist}
                         video={video}
                     />
-                )) ?? (
-                    <Text color="text-disabled">You have not created a playlist, yet.</Text>
+                )) : (
+                    <Text>You have not created a playlist, yet.</Text>
                 )}
+                <PlaylistAddDialog trigger={
+                    <Button style={{ "--gap": "8px" }}>
+                        <Icon icon={faPlus} />
+                        <Text>Create new Playlist</Text>
+                    </Button>
+                } />
             </Column>
             <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
                 <Button variant="silent" onClick={onCancel}>Close</Button>
