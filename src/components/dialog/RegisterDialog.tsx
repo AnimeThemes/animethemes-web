@@ -9,6 +9,7 @@ import styled from "styled-components";
 import Switch from "components/form/Switch";
 import { Column, Row } from "components/box";
 import { Dialog, DialogContent, DialogTrigger } from "components/dialog/Dialog";
+import { Busy } from "components/utils/Busy";
 
 export function RegisterDialog() {
     const [open, setOpen] = useState(false);
@@ -49,6 +50,7 @@ function RegisterForm({ onCancel }: RegisterFormProps) {
 
     const isValid = username && email && password && passwordConfirmation && isTermsAccepted;
 
+    const [isBusy, setBusy] = useState(false);
     const [errors, setErrors] = useState<{
         name?: string[];
         email?: string[];
@@ -58,14 +60,17 @@ function RegisterForm({ onCancel }: RegisterFormProps) {
     function performRegister(event: SyntheticEvent) {
         event.preventDefault();
 
-        void register({
+        setBusy(true);
+
+        register({
             setErrors,
             name: username,
             email,
             password,
             password_confirmation: passwordConfirmation,
             terms: isTermsAccepted,
-        });
+        })
+            .finally(() => setBusy(false));
     }
 
     return (
@@ -134,7 +139,9 @@ function RegisterForm({ onCancel }: RegisterFormProps) {
                     </Row>
                     <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
                         <Button type="button" variant="silent" onClick={onCancel}>Cancel</Button>
-                        <Button type="submit" variant="primary" disabled={!isValid}>Create Account</Button>
+                        <Button type="submit" variant="primary" disabled={!isValid || isBusy}>
+                            <Busy isBusy={isBusy}>Create Account</Busy>
+                        </Button>
                     </Row>
                 </Column>
             </StyledForm>
