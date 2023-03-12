@@ -60,7 +60,7 @@ const resolvers: IResolvers = {
             transformer: (seasons, _, { year }) => seasons.map((season: string) => ({ value: season, year: { value: year } }))
         }),
         page: apiResolver({
-            endpoint: (_, { slug }) => `/page/${slug}`,
+            endpoint: (_, { slug }) => `/page/${slug}?fields[page]=id,slug,name,body`,
             extractor: (result) => result.page
         }),
         pageAll: apiResolver({
@@ -96,12 +96,12 @@ const resolvers: IResolvers = {
             pagination: true
         }),
         balanceAll: apiResolver({
-            endpoint: () => `/balance`,
+            endpoint: (_, { month }) => `/balance?${month ? `filter[date]=${month}` : ``}`,
             extractor: (result) => result.balances,
             pagination: true
         }),
         transactionAll: apiResolver({
-            endpoint: () => `/transaction`,
+            endpoint: (_, { month }) => `/transaction?${month ? `filter[date]=${month}` : ``}`,
             extractor: (result) => result.transactions,
             pagination: true
         }),
@@ -109,6 +109,25 @@ const resolvers: IResolvers = {
             endpoint: () => `/announcement`,
             extractor: (result) => result.announcements,
             pagination: true
+        }),
+        billingMonthAll: apiResolver({
+            endpoint: () => `/transparency`,
+            extractor: (result) => Object.values(result.transparency.filterOptions),
+        }),
+        playlist: apiResolver({
+            endpoint: (_, { id }) => `/playlist/${id}`,
+            extractor: (result) => result.playlist,
+        }),
+        me: () => ({}),
+    },
+    UserScopedQuery: {
+        user: apiResolver({
+            endpoint: () => `/me`,
+            extractor: (result) => result.user,
+        }),
+        playlistAll: apiResolver({
+            endpoint: (_, { filterVideoId }) => `/me/playlist?${filterVideoId ? `filter[track][video_id]=${filterVideoId}` : ``}`,
+            extractor: (result) => result.playlists,
         }),
     },
     Year: {
@@ -352,7 +371,37 @@ const resolvers: IResolvers = {
         NONE: "None",
         TRANSITION: "Transition",
         OVER: "Over",
-    }
+    },
+    Playlist: {
+        tracks: apiResolver({
+            endpoint: (playlist) => `/playlist/${playlist.id}/track`,
+            field: "tracks",
+            extractor: (result) => result.tracks,
+            transformer: (tracks, playlist) => tracks.map((track: Record<string, unknown>) => ({ ...track, playlist }))
+        }),
+        forward: apiResolver({
+            endpoint: (playlist) => `/playlist/${playlist.id}/forward`,
+            field: "tracks",
+            extractor: (result) => result.tracks,
+            transformer: (tracks, playlist) => tracks.map((track: Record<string, unknown>) => ({ ...track, playlist }))
+        }),
+        user: apiResolver({
+            endpoint: (playlist) => `/playlist/${playlist.id}`,
+            field: "user",
+            extractor: (result) => result.playlist.user,
+            type: "Playlist",
+            baseInclude: INCLUDES.Playlist.user,
+        }),
+    },
+    PlaylistTrack: {
+        video: apiResolver({
+            endpoint: (track) => `/playlist/${track.playlist.id}/track/${track.id}`,
+            field: "video",
+            extractor: (result) => result.video,
+            type: "PlaylistTrack",
+            baseInclude: INCLUDES.PlaylistTrack.video,
+        }),
+    },
 };
 
 export default resolvers;

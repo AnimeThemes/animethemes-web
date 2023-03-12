@@ -19,7 +19,7 @@ const StyledContent = styled.div<{ style: { "--delay": Property.AnimationDelay }
 `;
 
 interface SkeletonProps {
-    children: ReactNode
+    children?: ReactNode
     variant?: "summary-card"
     delay?: number
 }

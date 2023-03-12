@@ -13,6 +13,7 @@ const SERVER_API_KEY = process.env.ANIMETHEMES_API_KEY;
 const REVALIDATE_TOKEN = process.env.REVALIDATE_TOKEN;
 const ANALYZE = !!process.env.ANALYZE;
 const MINIMAL_BUILD = !!process.env.MINIMAL_BUILD;
+const AUTH_REFERER = String(process.env.AUTH_REFERER);
 
 // Server-side + Client-side
 
@@ -61,5 +62,6 @@ module.exports = {
     AUTH_URL,
     STAGING,
     VERBOSE_LOGS,
+    AUTH_REFERER,
     validateConfig,
 };
