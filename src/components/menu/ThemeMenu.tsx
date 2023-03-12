@@ -1,51 +1,78 @@
 import { Icon } from "components/icon";
-import { faMinus, faPlus } from "@fortawesome/pro-solid-svg-icons";
+import { faListMusic } from "@fortawesome/pro-solid-svg-icons";
 import { Text } from "components/text";
 import { Menu } from "components/menu";
-import useLocalPlaylist from "hooks/useLocalPlaylist";
-import gql from "graphql-tag";
 import type { ThemeMenuThemeFragment } from "generated/graphql";
+import { PlaylistTrackAddDialog } from "components/dialog/PlaylistTrackAddDialog";
+import gql from "graphql-tag";
+import { SongTitleWithArtists } from "components/utils";
+import extractImages from "utils/extractImages";
+import createVideoSlug from "utils/createVideoSlug";
 
 interface ThemeMenuProps {
-    theme: ThemeMenuThemeFragment
+    theme: ThemeMenuThemeFragment;
 }
 
 export function ThemeMenu({ theme }: ThemeMenuProps) {
-    const { addToPlaylist, removeFromPlaylist, isInPlaylist } = useLocalPlaylist();
+    const entry = theme.entries[0];
+    const video = entry.videos[0];
 
-    const options = [
-        !!theme.id && (isInPlaylist(theme) ? (
-            <Menu.Option key="add" onSelect={() => removeFromPlaylist(theme)}>
-                <Icon icon={faMinus}/>
-                <Text>Remove from Playlist</Text>
-            </Menu.Option>
-        ) : (
-            <Menu.Option key="remove" onSelect={() => addToPlaylist(theme)}>
-                <Icon icon={faPlus}/>
-                <Text>Add to Playlist</Text>
-            </Menu.Option>
-        ))
-    ].filter((option) => option);
-
-    if (!options.length) {
+    if (!entry || !video) {
         return null;
     }
 
     return (
         <Menu>
-            {options}
+            <PlaylistTrackAddDialog
+                video={{
+                    // Flip the structure on it's head,
+                    // because we need video as the root object here.
+                    ...video,
+                    entries: [{
+                        ...entry,
+                        theme,
+                    }],
+                }}
+                trigger={
+                    <Menu.Option>
+                        <Icon icon={faListMusic}/>
+                        <Text>Add to Playlist</Text>
+                    </Menu.Option>
+                }
+            />
         </Menu>
     );
 }
 
 ThemeMenu.fragments = {
     theme: gql`
+        ${SongTitleWithArtists.fragments.song}
+        ${extractImages.fragments.resourceWithImages}
+        ${createVideoSlug.fragments.theme}
+        ${createVideoSlug.fragments.entry}
+        ${createVideoSlug.fragments.video}
+        
         fragment ThemeMenuTheme on Theme {
-            id
-            # Hidden inside local playlist context
+            ...createVideoSlugTheme
+            slug
+            type
+            sequence
+            group
+            anime {
+                ...extractImagesResourceWithImages
+                slug
+                name
+            }
             song {
-                title
+                ...SongTitleWithArtistsSong
+            }
+            entries {
+                ...createVideoSlugEntry
+                videos {
+                    ...createVideoSlugVideo
+                    id
+                }
             }
         }
-    `
+    `,
 };

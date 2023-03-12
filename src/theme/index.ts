@@ -40,9 +40,11 @@ const theme: Theme = {
         switcherText: 2,
         videoPlayer: 5,
         videoPlayerOverlay: 6,
-        toast: 20,
-        menuOverlay: 2,
-        menuPopover: 1
+        toast: 35,
+        menuOverlay: 41,
+        menuPopover: 40,
+        dialog: 30,
+        dialogBackdrop: 29,
     },
     scalars: {
         borderRadiusCard: "4px"

@@ -9,7 +9,7 @@ export const Button = forwardRef(ButtonWithRef);
 
 interface ButtonProps extends ComponentPropsWithoutRef<typeof BaseButton> {
     children?: ReactNode
-    variant?: "solid" | "primary" | "silent"
+    variant?: "solid" | "primary" | "warning" | "silent"
     isCircle?: boolean
     disabled?: boolean
 }
@@ -26,6 +26,8 @@ function ButtonWithRef({
         Component = SolidButton;
     } else if (variant === "primary") {
         Component = PrimaryButton;
+    } else if (variant === "warning") {
+        Component = WarningButton;
     } else if (variant === "silent") {
         Component = SilentButton;
     } else {
@@ -46,11 +48,13 @@ function ButtonWithRef({
 
 const BaseButton = styled.button<{ $isCircle: boolean }>`
     --gap: 0;
+    --focus-ring-color: ${theme.colors["text-primary"]};
     
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: ${(props) => props.disabled ? "not-allowed" : "pointer"};
+    pointer-events: ${(props) => props.disabled && "none"};
 
     font-size: 0.9rem;
     font-weight: 700;
@@ -71,11 +75,42 @@ const BaseButton = styled.button<{ $isCircle: boolean }>`
         box-shadow: none;
         margin: -8px 8px -8px -16px;
     }
+    
+    &:focus {
+        box-shadow: 0 0 0 2px var(--focus-ring-color);
+    }
 `;
 
 const PrimaryButton = styled(BaseButton)`
     background-color: ${theme.colors["solid-primary"]};
     color: ${theme.colors["text-on-primary"]};
+
+    ${withHover`
+        background-color: ${theme.colors["text-on-primary"]};
+        color: ${theme.colors["text-primary"]};
+    `}
+    
+    &:focus {
+        background-color: ${theme.colors["text-on-primary"]};
+        color: ${theme.colors["text-primary"]};
+    }
+`;
+
+const WarningButton = styled(BaseButton)`
+    --focus-ring-color: ${theme.colors["text-warning"]};
+    
+    background-color: ${theme.colors["solid-warning"]};
+    color: ${theme.colors["text-on-warning"]};
+
+    ${withHover`
+        background-color: ${theme.colors["text-on-warning"]};
+        color: ${theme.colors["text-warning"]};
+    `}
+    
+    &:focus {
+        background-color: ${theme.colors["text-on-warning"]};
+        color: ${theme.colors["text-warning"]};
+    }
 `;
 
 const SolidButton = styled(BaseButton)`
@@ -100,13 +135,20 @@ const SilentButton = styled(BaseButton)`
         color: ${theme.colors["text"]};
     `}
 
-    &:not(:hover) {
+    &:not(:hover)&:not(:focus) {
         box-shadow: none;
     }
 
     ${Solid} & {
         ${withHover`
             background-color: ${theme.colors["solid-on-card"]};
+        `}
+    }
+
+    ${Solid} ${Solid} & {
+        ${withHover`
+            background-color: transparent;
+            box-shadow: none;
         `}
     }
 `;

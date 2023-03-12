@@ -1,11 +1,11 @@
 import { memo, useMemo, useState } from "react";
 import { Column, Row } from "components/box";
 import { ThemeDetailCard } from "components/card";
-import { Listbox } from "components/listbox";
 import { HorizontalScroll } from "components/utils";
 import { either, themeIndexComparator, themeTypeComparator } from "utils/comparators";
 import gql from "graphql-tag";
 import type { AnimeThemeFilterThemeFragment } from "generated/graphql";
+import { Listbox2, Listbox2Option } from "components/listbox/Listbox2";
 
 interface AnimeThemeFilterProps {
     themes: Array<AnimeThemeFilterThemeFragment>
@@ -39,7 +39,7 @@ function AnimeThemeFilterInternal({ themes }: AnimeThemeFilterProps) {
     const activeThemes = groups.find((group) => group.name === activeGroup)?.themes ?? [];
 
     const hasMultipleTypes = activeThemes.find((theme) => theme.type === "OP") && activeThemes.find((theme) => theme.type === "ED");
-    const [ filterType, setFilterType ] = useState(null);
+    const [ filterType, setFilterType ] = useState<string | null>(null);
 
     const filteredThemes = activeThemes
         .filter((theme) => !filterType || theme.type === filterType)
@@ -51,18 +51,18 @@ function AnimeThemeFilterInternal({ themes }: AnimeThemeFilterProps) {
                 <HorizontalScroll fixShadows>
                     <Row style={{ "--gap": "16px" }}>
                         {groups.length > 1 && (
-                            <Listbox value={activeGroup} onChange={setActiveGroup}>
+                            <Listbox2 value={activeGroup} onValueChange={setActiveGroup}>
                                 {groups.map((group) => (
-                                    <Listbox.Option key={group.name} value={group.name}>{group.name}</Listbox.Option>
+                                    <Listbox2Option key={group.name} value={group.name}>{group.name}</Listbox2Option>
                                 ))}
-                            </Listbox>
+                            </Listbox2>
                         )}
                         {hasMultipleTypes && (
-                            <Listbox value={filterType} onChange={setFilterType} resettable highlightNonDefault>
-                                <Listbox.Option value={null} hidden>OP & ED</Listbox.Option>
-                                <Listbox.Option value="OP">OP</Listbox.Option>
-                                <Listbox.Option value="ED">ED</Listbox.Option>
-                            </Listbox>
+                            <Listbox2 value={filterType} onValueChange={setFilterType} defaultValue={null} resettable nullable highlightNonDefault>
+                                <Listbox2Option value={null} hidden>OP & ED</Listbox2Option>
+                                <Listbox2Option value="OP">OP</Listbox2Option>
+                                <Listbox2Option value="ED">ED</Listbox2Option>
+                            </Listbox2>
                         )}
                     </Row>
                 </HorizontalScroll>

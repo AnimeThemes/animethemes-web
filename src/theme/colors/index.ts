@@ -33,12 +33,14 @@ export interface Colors extends BaseColors {
     "background": string
     "solid": string
     "solid-primary": string
+    "solid-warning": string
     "solid-on-card": string
     "text": string
     "text-muted": string
     "text-disabled": string
     "text-warning": string
     "text-warning-muted": string
+    "text-on-warning": string
     "text-primary": string
     "text-on-primary": string
 }
@@ -85,12 +87,14 @@ export const colors: Colors = {
     "background":           baseColors["gray-100"],
     "solid":                baseColors["white"],
     "solid-primary":        baseColors["primary-700"],
+    "solid-warning":        baseColors["warning-700"],
     "solid-on-card":        baseColors["gray-200"],
     "text":                 baseColors["gray-900"],
     "text-muted":           baseColors["gray-500"],
     "text-disabled":        baseColors["gray-400"],
     "text-warning":         baseColors["warning-600"],
     "text-warning-muted":   baseColors["warning-900"],
+    "text-on-warning":      baseColors["warning-100"],
     "text-primary":         baseColors["primary-600"],
     "text-on-primary":      baseColors["primary-100"]
 };

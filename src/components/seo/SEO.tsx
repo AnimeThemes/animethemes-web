@@ -20,7 +20,7 @@ export function SEO({
         <Head>
             <title key="title">{titleWithSuffix}</title>
             <meta key="description" name="description" content={description}/>
-            <meta key="og:title" name="og:title" content={titleWithSuffix}/>
+            <meta key="og:title" name="og:title" content={title}/>
             <meta key="og:description" name="og:description" content={description}/>
             <meta key="og:image" name="og:image" content={image}/>
             <meta key="og:site_name" name="og:site_name" content="AnimeThemes"/>

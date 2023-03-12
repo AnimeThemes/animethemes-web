@@ -1,7 +1,7 @@
 import { Text } from "components/text";
-import { Listbox } from "components/listbox";
 import useYearList from "hooks/useYearList";
 import { SearchFilter } from "components/search-filter";
+import { Listbox2, Listbox2Option } from "components/listbox/Listbox2";
 
 interface SearchFilterYearProps {
     value: string | null
@@ -14,12 +14,12 @@ export function SearchFilterYear({ value, setValue }: SearchFilterYearProps) {
     return (
         <SearchFilter>
             <Text variant="h2">Year</Text>
-            <Listbox value={value ? String(value) : null} onChange={setValue} resettable highlightNonDefault>
-                <Listbox.Option value={null}>Any</Listbox.Option>
+            <Listbox2 value={value ? String(value) : null} onValueChange={setValue} defaultValue={null} resettable nullable highlightNonDefault>
+                <Listbox2Option value={null} hidden>Any</Listbox2Option>
                 {yearList.map((year) => (
-                    <Listbox.Option key={year} value={year ? String(year) : null}>{String(year)}</Listbox.Option>
+                    <Listbox2Option key={year} value={year ? String(year) : null}>{String(year)}</Listbox2Option>
                 ))}
-            </Listbox>
+            </Listbox2>
         </SearchFilter>
     );
 }
