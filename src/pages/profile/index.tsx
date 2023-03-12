@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import { SEO } from "components/seo";
-import { Column } from "components/box";
+import { Column, Row } from "components/box";
 import { Text } from "components/text";
-import { SummaryCard, ThemeSummaryCard } from "components/card";
+import { Card, SummaryCard, ThemeSummaryCard } from "components/card";
 import { IconTextButton } from "components/button";
-import { faKey, faTrash } from "@fortawesome/pro-solid-svg-icons";
+import { faKey, faPersonToDoor, faTrash } from "@fortawesome/pro-solid-svg-icons";
 import type { WatchHistory } from "hooks/useWatchHistory";
 import useWatchHistory from "hooks/useWatchHistory";
 import useLocalPlaylist from "hooks/useLocalPlaylist";
@@ -14,21 +14,32 @@ import { Listbox } from "components/listbox";
 import { ColorTheme, DeveloperMode, FeaturedThemePreview, RevalidationToken, ShowAnnouncements } from "utils/settings";
 import useSetting from "hooks/useSetting";
 import { Input } from "components/form";
-import { memo } from "react";
+import { memo, useState } from "react";
+import { PlaylistAddDialog } from "components/dialog/PlaylistAddDialog";
+import PlaylistSummaryCard from "components/card/PlaylistSummaryCard";
+import type { GetServerSideProps } from "next";
+import { fetchData } from "lib/server";
+import type { ProfilePageMeQuery, ProfilePageQuery } from "generated/graphql";
+import gql from "graphql-tag";
+import type { SharedPageProps } from "utils/getSharedPageProps";
+import getSharedPageProps from "utils/getSharedPageProps";
+import useAuth from "hooks/useAuth";
+import { LoginDialog } from "components/dialog/LoginDialog";
+import { RegisterDialog } from "components/dialog/RegisterDialog";
+import useSWR from "swr";
+import { fetchDataClient } from "lib/client";
+import type { RequiredNonNullable } from "utils/types";
+import { Busy } from "components/utils/Busy";
 
 const StyledProfileGrid = styled.div`
     --columns: 2;
-    --rows: 2;
     
     display: grid;
     grid-template-columns: repeat(var(--columns), 1fr);
-    grid-template-rows: repeat(var(--rows), auto);
-    grid-auto-flow: column;
-    grid-gap: 16px 32px;
+    grid-gap: 24px 32px;
     
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         --columns: 1;
-        --rows: 4;
     }
 `;
 
@@ -38,7 +49,32 @@ const StyledHeader = styled.div`
     align-items: center;
 `;
 
-export default function ProfilePage() {
+type ProfilePageProps = SharedPageProps & RequiredNonNullable<ProfilePageQuery>;
+
+export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
+    const { data: me } = useSWR(
+        ["ProfilePageMe", "/api/me", "/api/me/playlist"],
+        async () => {
+            const { data } = await fetchDataClient<ProfilePageMeQuery>(gql`
+                query ProfilePageMe {
+                    me {
+                        user {
+                            name
+                        }
+                        playlistAll {
+                            id
+                            name
+                            visibility
+                        }
+                    }
+                }
+            `);
+
+            return data.me;
+        },
+        { fallbackData: initialMe }
+    );
+
     const { localPlaylist } = useLocalPlaylist();
     const { history, clearHistory } = useWatchHistory();
 
@@ -51,13 +87,38 @@ export default function ProfilePage() {
     return (
         <>
             <SEO title="My Profile"/>
-            <Text variant="h1">My Profile</Text>
+            <StyledHeader>
+                <Text variant="h1">{me.user ? `Welcome back, ${me.user.name}!` : "My Profile"}</Text>
+                {me.user ? (
+                    <LogoutButton />
+                ) : null}
+            </StyledHeader>
+            {!me.user ? (
+                <Card>
+                    <Column style={{ "--gap": "16px" }}>
+                        <Text>Share your favorite anime themes with others and more. Create your AnimeThemes account today!</Text>
+                        <Row $wrap style={{ "--gap": "16px" }}>
+                            <LoginDialog />
+                            <RegisterDialog />
+                        </Row>
+                    </Column>
+                </Card>
+            ) : null}
             <StyledProfileGrid>
-                <StyledHeader>
-                    <Text variant="h2">Playlists</Text>
-                </StyledHeader>
                 <Column style={{ "--gap": "24px" }}>
-                    <SummaryCard title="Local Playlist" description={`${localPlaylist.length} themes`} to="/profile/playlist"/>
+                    {me.playlistAll ? (
+                        <>
+                            <StyledHeader>
+                                <Text variant="h2">Playlists</Text>
+                                <PlaylistAddDialog />
+                            </StyledHeader>
+                            <Column style={{ "--gap": "16px" }}>
+                                {me.playlistAll.map((playlist) => (
+                                    <PlaylistSummaryCard key={playlist.id} playlist={playlist} />
+                                ))}
+                            </Column>
+                        </>
+                    ) : null}
                     <Text variant="h2">Settings</Text>
                     <SearchFilterGroup>
                         <SearchFilter>
@@ -103,17 +164,21 @@ export default function ProfilePage() {
                             </SearchFilter>
                         )}
                     </SearchFilterGroup>
+                    <Text variant="h2">Legacy</Text>
+                    <SummaryCard title="Local Playlist" description={`${localPlaylist.length} themes`} to="/profile/playlist"/>
                 </Column>
-                <StyledHeader>
-                    <Text variant="h2">Recently Watched</Text>
-                    <IconTextButton
-                        icon={faTrash}
-                        collapsible
-                        onClick={clearHistory}
-                    >Clear</IconTextButton>
-                </StyledHeader>
-                <Column style={{ "--gap": "16px" }}>
-                    <WatchHistoryThemes themes={history}/>
+                <Column style={{ "--gap": "24px" }}>
+                    <StyledHeader>
+                        <Text variant="h2">Recently Watched</Text>
+                        <IconTextButton
+                            icon={faTrash}
+                            collapsible
+                            onClick={clearHistory}
+                        >Clear</IconTextButton>
+                    </StyledHeader>
+                    <Column style={{ "--gap": "16px" }}>
+                        <WatchHistoryThemes themes={history}/>
+                    </Column>
                 </Column>
             </StyledProfileGrid>
         </>
@@ -133,3 +198,46 @@ const WatchHistoryThemes = memo(function WatchHistoryThemes({ themes }: WatchHis
         </>
     );
 });
+
+function LogoutButton() {
+    const { logout } = useAuth();
+
+    const [isBusy, setBusy] = useState(false);
+
+    function performLogout() {
+        setBusy(true);
+
+        logout()
+            .finally(() => setBusy(false));
+    }
+
+    return (
+        <IconTextButton icon={faPersonToDoor} collapsible onClick={performLogout}>
+            <Busy isBusy={isBusy}>Logout</Busy>
+        </IconTextButton>
+    );
+}
+
+export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async ({ req }) => {
+    const { data, apiRequests } = await fetchData<ProfilePageQuery>(gql`
+        query ProfilePage {
+            me {
+                user {
+                    name
+                }
+                playlistAll {
+                    id
+                    name
+                    visibility
+                }
+            }
+        }
+    `, undefined, { req });
+
+    return {
+        props: {
+            ...getSharedPageProps(apiRequests),
+            me: data.me,
+        },
+    };
+};

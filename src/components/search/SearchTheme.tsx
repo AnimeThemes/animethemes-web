@@ -78,7 +78,7 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
                     <SearchFilterThemeType value={filter.type} setValue={bindUpdateFilter("type")}/>
                     <SearchFilterSortBy value={filter.sortBy} setValue={bindUpdateFilter("sortBy")}>
                         {searchQuery ? (
-                            <SearchFilterSortBy.Option>Relevance</SearchFilterSortBy.Option>
+                            <SearchFilterSortBy.Option value={null}>Relevance</SearchFilterSortBy.Option>
                         ) : null}
                         <SearchFilterSortBy.Option value="song.title">A ➜ Z</SearchFilterSortBy.Option>
                         <SearchFilterSortBy.Option value="-song.title">Z ➜ A</SearchFilterSortBy.Option>

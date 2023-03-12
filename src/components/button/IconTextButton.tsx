@@ -20,7 +20,7 @@ const StyledText = styled.span<{ collapsible: boolean }>`
 
 interface IconTextButtonProps extends ComponentPropsWithoutRef<typeof StyledButton> {
     icon: IconDefinition
-    children: ReactNode
+    children?: ReactNode
     collapsible?: boolean
 }
 
@@ -31,7 +31,9 @@ export function IconTextButton({ icon, children, collapsible = false, ...props }
     return (
         <StyledButton variant="silent" isCircle={isCollapsed} {...props}>
             <Icon icon={icon} color="text-disabled"/>
-            <StyledText collapsible={collapsible}>{children}</StyledText>
+            {children ? (
+                <StyledText collapsible={collapsible}>{children}</StyledText>
+            ) : null}
         </StyledButton>
     );
 }

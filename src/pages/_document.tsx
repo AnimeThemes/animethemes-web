@@ -1,6 +1,7 @@
 import type { DocumentContext } from "next/document";
 import Document, { Head, Html, Main, NextScript } from "next/document";
 import { ServerStyleSheet } from "styled-components";
+import { AUTH_URL } from "utils/config";
 
 const ThemeInjection = () => {
     // language=JavaScript
@@ -34,6 +35,7 @@ export default class MyDocument extends Document {
                         href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=fallback"
                         rel="stylesheet"
                     />
+                    <link rel="preload" href={`${AUTH_URL}/api/me`} as="fetch" crossOrigin="use-credentials" />
                 </Head>
                 <body data-theme="system">
                     <ThemeInjection/>

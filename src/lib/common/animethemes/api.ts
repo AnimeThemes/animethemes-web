@@ -2,9 +2,10 @@ import pLimit from "p-limit";
 import type { ResolveTree } from "graphql-parse-resolve-info";
 import { parseResolveInfo } from "graphql-parse-resolve-info";
 import devLog from "utils/devLog";
-import { CLIENT_API_URL, SERVER_API_KEY, SERVER_API_URL } from "utils/config";
+import { CLIENT_API_URL, SERVER_API_KEY, SERVER_API_URL, AUTH_REFERER } from "utils/config";
 import type { GraphQLFieldResolver, GraphQLOutputType, GraphQLResolveInfo } from "graphql";
 import type { Path } from "graphql/jsutils/Path";
+import type { NextIncomingMessage } from "next/dist/server/request-meta";
 
 const limit = pLimit(5);
 
@@ -77,6 +78,13 @@ export const INCLUDES = {
     StudioSearchResult: {
         data: "_",
     },
+    Playlist: {
+        tracks: "tracks",
+        user: "user",
+    },
+    PlaylistTrack: {
+        video: "video",
+    },
 } as const;
 
 const ALLOWED_INCLUDES: Record<string, Array<string>> = {
@@ -138,7 +146,15 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
     ],
     Audio: [
         "videos"
-    ]
+    ],
+    Playlist: [
+        "user",
+        "tracks",
+    ],
+    PlaylistTrack: [
+        "video.animethemeentries.animetheme.anime.images",
+        "video.animethemeentries.animetheme.song.artists",
+    ],
 };
 
 interface ApiResolverConfig {
@@ -154,6 +170,7 @@ interface ApiResolverConfig {
 export interface ApiResolverContext {
     cache?: Map<string, Record<string, unknown> | null>
     apiRequests: number
+    req?: NextIncomingMessage
 }
 
 export function apiResolver(config: ApiResolverConfig): GraphQLFieldResolver<Record<string, unknown>, ApiResolverContext> {
@@ -209,6 +226,12 @@ export function apiResolver(config: ApiResolverConfig): GraphQLFieldResolver<Rec
             url += `${url.includes("?") ? "&" : "?"}include=${allowedIncludes.join()}`;
         }
 
+        const headers = context.req ? {
+            // Send auth headers from client forward, if provided.
+            referer: context.req.headers.referer ?? AUTH_REFERER,
+            cookie: context.req.headers.cookie ?? "",
+        } : undefined;
+
         devLog.info(path + ": " + url);
 
         // Limiting the concurrect requests is necessary to prevent timeouts.
@@ -222,7 +245,7 @@ export function apiResolver(config: ApiResolverConfig): GraphQLFieldResolver<Rec
                     devLog.info("CACHED: " + url);
                     json = jsonCached;
                 } else {
-                    json = await fetchJson(url);
+                    json = await fetchJson(url, { headers });
                     context.apiRequests++;
                     if (!context.cache) {
                         context.cache = new Map();
@@ -240,7 +263,7 @@ export function apiResolver(config: ApiResolverConfig): GraphQLFieldResolver<Rec
                 const results = [];
                 let nextUrl = `${url}${url.includes("?") ? "&" : "?"}page[size]=25`;
                 while (nextUrl) {
-                    const json = await fetchJson(nextUrl) as Record<string, unknown> & { links: { next: string } };
+                    const json = await fetchJson(nextUrl, { headers }) as Record<string, unknown> & { links: { next: string } };
                     context.apiRequests++;
                     results.push(...transformer(extractor(json, parent, args), parent, args) as Array<unknown>);
                     devLog.info(`Collecting: ${url}, Got ${results.length}`);
@@ -253,20 +276,22 @@ export function apiResolver(config: ApiResolverConfig): GraphQLFieldResolver<Rec
     };
 }
 
-export async function fetchJson<T = Record<string, unknown>>(path: string): Promise<T | null> {
+export async function fetchJson<T = Record<string, unknown>>(path: string, config: RequestInit = {}): Promise<T | null> {
     const url = path.startsWith(API_URL) ? path : `${API_URL}${path}`;
-    const config: RequestInit = {};
+
+    config.credentials = "include";
 
     if (SERVER_API_KEY) {
         config.headers = {
-            Authorization: `Bearer ${SERVER_API_KEY}`
+            Authorization: `Bearer ${SERVER_API_KEY}`,
+            ...config.headers,
         };
     }
 
     const response = await fetch(url, config);
 
     if (!response.ok) {
-        if (response.status === 404) {
+        if (response.status === 404 || response.status === 401 || response.status === 403) {
             return null;
         }
 

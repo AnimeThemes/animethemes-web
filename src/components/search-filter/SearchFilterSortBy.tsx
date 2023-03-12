@@ -1,7 +1,8 @@
 import { Text } from "components/text";
-import { Listbox } from "components/listbox";
 import { SearchFilter } from "components/search-filter";
-import type { ComponentPropsWithoutRef, ReactNode } from "react";
+import type { ReactNode } from "react";
+import type { ListboxOptionProps } from "components/listbox/Listbox2";
+import { Listbox2, Listbox2Option } from "components/listbox/Listbox2";
 
 interface SearchFilterSortByProps<T extends string | null> {
     children: ReactNode
@@ -13,13 +14,13 @@ export function SearchFilterSortBy<T extends string | null>({ children, value, s
     return (
         <SearchFilter>
             <Text variant="h2">Sort by</Text>
-            <Listbox value={value} onChange={setValue}>
+            <Listbox2 value={value} onValueChange={setValue} defaultValue={null} nullable>
                 {children}
-            </Listbox>
+            </Listbox2>
         </SearchFilter>
     );
 }
 
-SearchFilterSortBy.Option = function SearchFilterSortByOption(props: ComponentPropsWithoutRef<typeof Listbox.Option>) {
-    return <Listbox.Option {...props}/>;
+SearchFilterSortBy.Option = function SearchFilterSortByOption(props: ListboxOptionProps) {
+    return <Listbox2Option {...props}/>;
 };

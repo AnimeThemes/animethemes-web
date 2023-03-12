@@ -79,7 +79,7 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
                     <SearchFilterFirstLetter value={filter.firstLetter} setValue={bindUpdateFilter("firstLetter")}/>
                     <SearchFilterSortBy value={filter.sortBy} setValue={bindUpdateFilter("sortBy")}>
                         {searchQuery ? (
-                            <SearchFilterSortBy.Option>Relevance</SearchFilterSortBy.Option>
+                            <SearchFilterSortBy.Option value={null}>Relevance</SearchFilterSortBy.Option>
                         ) : null}
                         <SearchFilterSortBy.Option value="name">A ➜ Z</SearchFilterSortBy.Option>
                         <SearchFilterSortBy.Option value="-name">Z ➜ A</SearchFilterSortBy.Option>

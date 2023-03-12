@@ -1,7 +1,7 @@
 import { VideoButton } from "components/button";
 import { Performances, SongTitle } from "components/utils";
 import { Text } from "components/text";
-import { ThemeMenu } from "components/menu";
+import { ThemeMenu } from "components/menu/ThemeMenu";
 import { ThemeEntryTags } from "components/tag/ThemeEntryTags";
 import { VideoTags } from "components/tag/VideoTags";
 import gql from "graphql-tag";

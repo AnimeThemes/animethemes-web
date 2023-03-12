@@ -4,7 +4,7 @@ import { Text } from "components/text";
 import extractImages from "utils/extractImages";
 import createVideoSlug from "utils/createVideoSlug";
 import { SummaryCard } from "components/card";
-import { ThemeMenu } from "components/menu";
+import { ThemeMenu } from "components/menu/ThemeMenu";
 import gql from "graphql-tag";
 import { fetchDataClient } from "lib/client";
 import { Icon } from "components/icon";

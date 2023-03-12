@@ -7,10 +7,9 @@ import { Button, VideoButton } from "components/button";
 import { AnimeSummaryCard, ArtistSummaryCard, SummaryCard, ThemeSummaryCard } from "components/card";
 import extractImages from "utils/extractImages";
 import { SEO } from "components/seo";
-import { faChevronDown, faMinus, faPlus, faShare } from "@fortawesome/pro-solid-svg-icons";
+import { faChevronDown, faShare } from "@fortawesome/pro-solid-svg-icons";
 import { Icon } from "components/icon";
 import useWatchHistory from "hooks/useWatchHistory";
-import useLocalPlaylist from "hooks/useLocalPlaylist";
 import styled from "styled-components";
 import theme from "theme";
 import createVideoSlug from "utils/createVideoSlug";
@@ -34,6 +33,7 @@ import { AudioMode, DeveloperMode } from "utils/settings";
 import { SwitcherOption } from "components/switcher/Switcher";
 import { VideoPlayer } from "components/video-player";
 import VideoScript from "components/video-script/VideoScript";
+import { PlaylistTrackAddDialog } from "components/dialog/PlaylistTrackAddDialog";
 
 const StyledVideoInfo = styled.div`
     display: grid;
@@ -94,18 +94,6 @@ const StyledVideoList = styled(Row)`
     }
 `;
 
-const StyledTabletOnly = styled.span`
-    @media (max-width: ${theme.breakpoints.mobileMax}) {
-        display: none;
-    }
-`;
-
-const StyledMobileOnly = styled.span`
-    @media (min-width: ${theme.breakpoints.tabletMin}) {
-        display: none;
-    }
-`;
-
 interface VideoPageProps extends SharedPageProps, RequiredNonNullable<VideoPageQuery> {
     themeIndex: number
     entryIndex: number
@@ -125,7 +113,6 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex }:
 
     const songTitle = theme.song?.title || "T.B.A.";
     const { smallCover, largeCover } = extractImages(anime);
-    const { addToPlaylist, removeFromPlaylist, isInPlaylist } = useLocalPlaylist();
     const { addToHistory } = useWatchHistory();
     const [ showMoreRelatedThemes, setShowMoreRelatedThemes ] = useState(false);
     const { dispatchToast } = useToasts();
@@ -204,14 +191,17 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex }:
     const videoUrl = `${VIDEO_URL}/${video.basename}`;
     const audioUrl = `${AUDIO_URL}/${video.audio.basename}`;
 
+    const videoHeight = video.resolution ?? 720;
+    const videoWidth = Math.floor(videoHeight / 9 * 16);
+
     return <>
         <SEO title={pageTitle} description={pageDesc} image={largeCover}>
             <meta name="og:video" content={videoUrl}/>
             <meta name="og:video:url" content={videoUrl}/>
             <meta name="og:video:secure_url" content={videoUrl}/>
             <meta name="og:video:type" content="video/webm"/>
-            <meta name="og:video:width" content="1280"/>
-            <meta name="og:video:height" content="720"/>
+            <meta name="og:video:width" content={String(videoWidth)}/>
+            <meta name="og:video:height" content={String(videoHeight)}/>
 
             {/* Twitter card support */}
             {/* See: https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/player-card */}
@@ -221,8 +211,8 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex }:
             <meta name="twitter:description" content={pageDesc} />
             <meta name="twitter:image" content={largeCover} />
             <meta name="twitter:player" content={videoUrl} />
-            <meta name="twitter:player:width" content="1920" />
-            <meta name="twitter:player:height" content="1080" />
+            <meta name="twitter:player:width" content={String(videoWidth)} />
+            <meta name="twitter:player:height" content={String(videoHeight)} />
         </SEO>
         <StyledVideoInfo>
             <Column style={{ "--gap": "8px" }}>
@@ -256,23 +246,17 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex }:
         </StyledVideoInfo>
         <HorizontalScroll fixShadows>
             <Row style={{ "--gap": "16px" }}>
-                {isInPlaylist(theme) ? (
-                    <Button variant="primary" style={{ "--gap": "8px" }} onClick={() => removeFromPlaylist(theme)}>
-                        <Icon icon={faMinus}/>
-                        <Text>
-                            <StyledTabletOnly>Remove from Playlist</StyledTabletOnly>
-                            <StyledMobileOnly>Unsave</StyledMobileOnly>
-                        </Text>
-                    </Button>
-                ) : (
-                    <Button style={{ "--gap": "8px" }} onClick={() => addToPlaylist(theme)}>
-                        <Icon icon={faPlus}/>
-                        <Text>
-                            <StyledTabletOnly>Add to Playlist</StyledTabletOnly>
-                            <StyledMobileOnly>Save</StyledMobileOnly>
-                        </Text>
-                    </Button>
-                )}
+                <PlaylistTrackAddDialog
+                    video={{
+                        // Flip the structure on it's head,
+                        // because we need video as the root object here.
+                        ...video,
+                        entries: [{
+                            ...entry,
+                            theme,
+                        }],
+                    }}
+                />
                 <Menu button={(MenuButton) => (
                     <Button as={MenuButton} style={{ "--gap": "8px" }}>
                         <Icon icon={faShare}/>
@@ -416,6 +400,7 @@ VideoPage.fragments = {
                     videos {
                         ...VideoPlayerVideo
                         ...VideoScriptVideo
+                        id
                         basename
                         filename
                         lyrics

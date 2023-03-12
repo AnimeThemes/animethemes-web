@@ -6,12 +6,14 @@ export const darkColors: Colors = {
     "background":           colors["gray-900"],
     "solid":                colors["gray-800"],
     "solid-primary":        colors["primary-300"],
+    "solid-warning":        colors["warning-300"],
     "solid-on-card":        colors["gray-700"],
     "text":                 colors["gray-100"],
     "text-muted":           colors["gray-300"],
     "text-disabled":        colors["gray-400"],
     "text-warning":         colors["warning-400"],
     "text-warning-muted":   colors["warning-200"],
+    "text-on-warning":      colors["warning-900"],
     "text-primary":         colors["primary-300"],
     "text-on-primary":      colors["primary-900"]
 };
