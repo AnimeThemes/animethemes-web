@@ -91,7 +91,7 @@ const resolvers: IResolvers = {
             })
         }),
         dumpAll: apiResolver({
-            endpoint: () => `/dump`,
+            endpoint: () => `/dump?fields[dump]=id,path,link,created_at`,
             extractor: (result) => result.dumps,
             pagination: true
         }),

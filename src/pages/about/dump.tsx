@@ -42,7 +42,7 @@ export default function DumpIndexPage({ dumpAll }: DumpIndexPageProps) {
                 >
                     <IconTextButton
                         variant="solid"
-                        as="a"
+                        forwardedAs="a"
                         href={dump.link}
                         download
                         icon={faDownload}
