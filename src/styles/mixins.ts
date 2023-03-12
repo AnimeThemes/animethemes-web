@@ -1,16 +1,23 @@
 import { css, keyframes } from "styled-components";
+import { Solid } from "components/box";
 
 const loadingAnimationKeyframes = keyframes`
     50% {
-        background-color: rgba(46, 41, 58, 0.5);
+        background-color: rgba(var(--rgb), 0.5);
     }
 `;
 
 export const loadingAnimation = css`
-    background-color: rgba(46, 41, 58, 1);
+    --rgb: 46, 41, 58;
+    
+    background-color: rgba(var(--rgb), 1);
 
     @media (prefers-reduced-motion: no-preference) {
         animation: ${loadingAnimationKeyframes} 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    ${Solid} & {
+        --rgb: 69, 61, 83;
     }
 `;
 

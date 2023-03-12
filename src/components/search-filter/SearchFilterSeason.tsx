@@ -1,6 +1,6 @@
 import { Text } from "components/text";
-import { Listbox } from "components/listbox";
 import { SearchFilter } from "components/search-filter";
+import { Listbox2, Listbox2Option } from "components/listbox/Listbox2";
 
 interface SearchFilterSeasonProps {
     value: string | null
@@ -11,13 +11,13 @@ export function SearchFilterSeason({ value, setValue }: SearchFilterSeasonProps)
     return (
         <SearchFilter>
             <Text variant="h2">Season</Text>
-            <Listbox value={value} onChange={setValue} resettable highlightNonDefault>
-                <Listbox.Option value={null} hidden>Any</Listbox.Option>
-                <Listbox.Option value="Winter">Winter</Listbox.Option>
-                <Listbox.Option value="Spring">Spring</Listbox.Option>
-                <Listbox.Option value="Summer">Summer</Listbox.Option>
-                <Listbox.Option value="Fall">Fall</Listbox.Option>
-            </Listbox>
+            <Listbox2 value={value} onValueChange={setValue} defaultValue={null} resettable nullable highlightNonDefault>
+                <Listbox2Option value={null} hidden>Any</Listbox2Option>
+                <Listbox2Option value="Winter">Winter</Listbox2Option>
+                <Listbox2Option value="Spring">Spring</Listbox2Option>
+                <Listbox2Option value="Summer">Summer</Listbox2Option>
+                <Listbox2Option value="Fall">Fall</Listbox2Option>
+            </Listbox2>
         </SearchFilter>
     );
 }

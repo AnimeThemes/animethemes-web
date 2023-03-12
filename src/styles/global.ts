@@ -9,12 +9,6 @@ export default createGlobalStyle`
         box-sizing: border-box;
     }
 
-    html {
-        // Always show a vertical scroll bar, even if the page 
-        // is not scrollable to prevent layout shift.
-        overflow-y: scroll;
-    }
-
     body {
         margin: 0;
 
@@ -26,6 +20,10 @@ export default createGlobalStyle`
         -moz-osx-font-smoothing: grayscale;
 
         line-height: 1.5;
+
+        // Always show a vertical scroll bar, even if the page 
+        // is not scrollable to prevent layout shift.
+        overflow-y: scroll;
 
         ${defineColorTheme("light")`
             ${createCssDefinition(colors)}

@@ -22,7 +22,8 @@ export const StyledNavigation = styled(Solid).attrs({ as: "nav" })<{ show: boole
         left: 0;
         width: 100%;
         height: 100vh;
-            
+        z-index: ${theme.zIndices.navigation};
+
         background-color: transparent;
 
         ${(props) => props.show && css`

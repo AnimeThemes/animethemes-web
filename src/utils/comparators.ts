@@ -112,3 +112,7 @@ const comparators: Record<string, Comparator<any>> = {
 export function getComparator(name: keyof typeof comparators) {
     return comparators[name];
 }
+
+export function sortTransformed<T, K>(comparator: Comparator<T>, tranformator: (from: K) => T): Comparator<K> {
+    return (a, b) => comparator(tranformator(a), tranformator(b));
+}

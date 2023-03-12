@@ -21,9 +21,17 @@ const typeDefs = `
         imageAll(facet: String): [Image!]! 
         featuredTheme: FeaturedTheme
         dumpAll: [Dump!]!
-        balanceAll: [Balance!]!
-        transactionAll: [Transaction!]!
+        balanceAll(month: String): [Balance!]!
+        transactionAll(month: String): [Transaction!]!
+        billingMonthAll: [String!]!
+        playlist(id: Int!): Playlist
         announcementAll: [Announcement!]!
+        me: UserScopedQuery!
+    }
+    
+    type UserScopedQuery {
+        user: User
+        playlistAll(filterVideoId: Int): [Playlist!]
     }
 
     interface ResourceWithImages {
@@ -237,6 +245,31 @@ const typeDefs = `
         service: String!
         description: String!
         amount: Float!
+    }
+    
+    type Playlist {
+        id: Int!
+        name: String!
+        visibility: PlaylistVisibility!
+        tracks: [PlaylistTrack!]!
+        forward: [PlaylistTrack!]!
+        user: User!
+    }
+    
+    enum PlaylistVisibility {
+        Public
+        Unlisted
+        Private
+    }
+    
+    type PlaylistTrack {
+        id: Int!
+        video: Video!
+    }
+    
+    type User {
+        id: Int!
+        name: String!
     }
     
     schema {
