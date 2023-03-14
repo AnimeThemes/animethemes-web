@@ -17,6 +17,7 @@ export default function useAuth() {
                         user {
                             id
                             name
+                            email
                         }
                     }
                 }
