@@ -30,7 +30,7 @@ const typeDefs = `
     }
     
     type UserScopedQuery {
-        user: User
+        user: UserAuth
         playlistAll(filterVideoId: Int): [Playlist!]
     }
 
@@ -253,7 +253,7 @@ const typeDefs = `
         visibility: PlaylistVisibility!
         tracks: [PlaylistTrack!]!
         forward: [PlaylistTrack!]!
-        user: User!
+        user: UserPublic!
     }
     
     enum PlaylistVisibility {
@@ -267,8 +267,24 @@ const typeDefs = `
         video: Video!
     }
     
-    type User {
+    interface User {
         id: Int!
+        name: String!
+    }
+
+    type UserPublic implements User {
+        id: Int!
+        name: String!
+    }
+    
+    type UserAuth implements User {
+        id: Int!
+        name: String!
+        email: String!
+        roles: [UserRole!]!
+    }
+    
+    type UserRole {
         name: String!
     }
     

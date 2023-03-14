@@ -8,7 +8,7 @@ import {
     StyledMobileToggle,
     StyledNavigation,
     StyledNavigationContainer,
-    StyledNavigationLinks
+    StyledNavigationLinks, StyledProfileImage
 } from "./Navigation.style";
 import { Button } from "components/button";
 import { Icon } from "components/icon";
@@ -16,12 +16,15 @@ import { Text } from "components/text";
 import useCurrentSeason from "hooks/useCurrentSeason";
 import navigateToRandomTheme from "utils/navigateToRandomTheme";
 import { useRouter } from "next/router";
+import useAuth from "hooks/useAuth";
 
 interface NavigationProps {
     offsetToggleButton?: boolean
 }
 
 export function Navigation({ offsetToggleButton = false }: NavigationProps) {
+    const { me } = useAuth();
+
     const [ show, setShow ] = useState(false);
     const { currentYear, currentSeason } = useCurrentSeason();
 
@@ -66,7 +69,11 @@ export function Navigation({ offsetToggleButton = false }: NavigationProps) {
                     </Link>
                     <Link href="/profile" passHref legacyBehavior>
                         <StyledCollapsibleLink forwardedAs="a" title="My Profile">
-                            <Icon icon={faUser}/>
+                            {me.user ? (
+                                <StyledProfileImage user={me.user} />
+                            ) : (
+                                <Icon icon={faUser}/>
+                            )}
                             <span>My Profile</span>
                         </StyledCollapsibleLink>
                     </Link>

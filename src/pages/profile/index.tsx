@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { SEO } from "components/seo";
 import { Column, Row } from "components/box";
 import { Text } from "components/text";
@@ -33,13 +33,14 @@ import { Busy } from "components/utils/Busy";
 import { Menu } from "components/menu";
 import { PlaylistRemoveDialog } from "components/dialog/PlaylistRemoveDialog";
 import { Icon } from "components/icon";
+import { ProfileImage } from "components/image/ProfileImage";
 
 const StyledProfileGrid = styled.div`
     --columns: 2;
     
     display: grid;
     grid-template-columns: repeat(var(--columns), 1fr);
-    grid-gap: 24px 64px;
+    grid-gap: 24px 128px;
     
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         --columns: 1;
@@ -52,6 +53,51 @@ const StyledHeader = styled.div`
     align-items: center;
 `;
 
+const StyledHeaderTop = styled(StyledHeader)`
+    isolation: isolate;
+    padding: 32px 0;
+    gap: 32px;
+    text-align: center;
+
+    @media (min-width: ${theme.breakpoints.tabletMin}) {
+        & :last-child {
+            margin-left: auto;
+        }
+    }
+    
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        flex-direction: column;
+        gap: 16px;
+    }
+`;
+
+const StyledProfileImage = styled(ProfileImage)<{ $borderColor?: string }>`
+    width: 128px;
+    height: 128px;
+    border-radius: 9999px;
+    
+    ${(props) => props.$borderColor && css`
+        box-shadow: 0 0 0 4px rgb(${props.$borderColor}), 0 0 10px 6px rgba(${props.$borderColor}, 0.5);
+    `}
+`;
+
+const StyledUsername = styled.span<{ $color: string }>`
+    color: rgb(${(props) => props.$color});
+    text-shadow: 0 0 4px rgba(${(props) => props.$color}, 0.5);
+`;
+
+const StyledProfileImageBackground = styled(ProfileImage)`
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 128px;
+    object-fit: cover;
+    opacity: 0.15;
+    filter: blur(32px);
+    transform: translateY(-64px);
+`;
+
 type ProfilePageProps = SharedPageProps & RequiredNonNullable<ProfilePageQuery>;
 
 export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
@@ -59,15 +105,16 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
         ["ProfilePageMe", "/api/me", "/api/me/playlist"],
         async () => {
             const { data } = await fetchDataClient<ProfilePageMeQuery>(gql`
+                ${ProfilePage.fragments.playlist}
+                ${ProfilePage.fragments.user}
+
                 query ProfilePageMe {
                     me {
                         user {
-                            name
+                            ...ProfilePageUser
                         }
                         playlistAll {
-                            id
-                            name
-                            visibility
+                            ...ProfilePagePlaylist
                         }
                     }
                 }
@@ -87,15 +134,29 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
     const [revalidationToken, setRevalidationToken] = useSetting(RevalidationToken);
     const [colorTheme, setColorTheme] = useSetting(ColorTheme);
 
+    const roles = me.user?.roles.map((role) => role.name) ?? [];
+    let roleColor = "";
+    if (roles.includes("Admin")) {
+        roleColor = "31, 139, 76";
+    } else if (roles.includes("Patron")) {
+        roleColor = "231, 76, 60";
+    }
+
     return (
         <>
             <SEO title="My Profile"/>
-            <StyledHeader>
-                <Text variant="h1">{me.user ? `Welcome back, ${me.user.name}!` : "My Profile"}</Text>
-                {me.user ? (
-                    <LogoutButton />
-                ) : null}
-            </StyledHeader>
+            {me.user ? (
+                <>
+                    <StyledProfileImageBackground user={me.user} />
+                    <StyledHeaderTop>
+                        <StyledProfileImage user={me.user} size={128} $borderColor={roleColor} />
+                        <Text variant="h1">Welcome back, <StyledUsername $color={roleColor}>{me.user.name}</StyledUsername>!</Text>
+                        <LogoutButton />
+                    </StyledHeaderTop>
+                </>
+            ) : (
+                <Text variant="h1">My Profile</Text>
+            )}
             {!me.user ? (
                 <Card>
                     <Column style={{ "--gap": "16px" }}>
@@ -231,23 +292,43 @@ function LogoutButton() {
     }
 
     return (
-        <IconTextButton icon={faPersonToDoor} collapsible onClick={performLogout}>
+        <IconTextButton icon={faPersonToDoor} onClick={performLogout}>
             <Busy isBusy={isBusy}>Logout</Busy>
         </IconTextButton>
     );
 }
 
+ProfilePage.fragments = {
+    playlist: gql`
+        fragment ProfilePagePlaylist on Playlist {
+            id
+            name
+            visibility
+        }
+    `,
+    user: gql`
+        fragment ProfilePageUser on UserAuth {
+            name
+            email
+            roles {
+                name
+            }
+        }
+    `,
+};
+
 export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async ({ req }) => {
     const { data, apiRequests } = await fetchData<ProfilePageQuery>(gql`
+        ${ProfilePage.fragments.playlist}
+        ${ProfilePage.fragments.user}
+        
         query ProfilePage {
             me {
                 user {
-                    name
+                    ...ProfilePageUser
                 }
                 playlistAll {
-                    id
-                    name
-                    visibility
+                    ...ProfilePagePlaylist
                 }
             }
         }

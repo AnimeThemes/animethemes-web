@@ -6,6 +6,7 @@ import { blurOut, zoomIn } from "styles/animations";
 import { Solid } from "components/box";
 import { Logo } from "components/image";
 import { withColorTheme } from "styles/mixins";
+import { ProfileImage } from "components/image/ProfileImage";
 
 export const StyledNavigation = styled(Solid).attrs({ as: "nav" })<{ show: boolean }>`
     position: sticky;
@@ -112,4 +113,11 @@ export const StyledMobileToggle = styled(Button)<{ offsetToggleButton: boolean }
     @media (min-width: 721px) {
         display: none;
     }
+`;
+
+export const StyledProfileImage = styled(ProfileImage)`
+    width: 2em;
+    height: 2em;
+    margin: -1em 0 -1em -0.75em;
+    border-radius: 9999px;
 `;
