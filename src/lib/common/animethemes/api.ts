@@ -281,7 +281,7 @@ export async function fetchJson<T = Record<string, unknown>>(path: string, confi
 
     config.credentials = "include";
 
-    if (SERVER_API_KEY) {
+    if (SERVER_API_KEY && !("cookie" in (config.headers ?? {}))) {
         config.headers = {
             Authorization: `Bearer ${SERVER_API_KEY}`,
             ...config.headers,
