@@ -4,7 +4,7 @@ import { Column, Row } from "components/box";
 import { Text } from "components/text";
 import { Card, SummaryCard, ThemeSummaryCard } from "components/card";
 import { IconTextButton } from "components/button";
-import { faKey, faPersonToDoor, faTrash } from "@fortawesome/pro-solid-svg-icons";
+import { faExclamationCircle, faKey, faPersonToDoor, faTrash } from "@fortawesome/pro-solid-svg-icons";
 import type { WatchHistory } from "hooks/useWatchHistory";
 import useWatchHistory from "hooks/useWatchHistory";
 import useLocalPlaylist from "hooks/useLocalPlaylist";
@@ -34,6 +34,9 @@ import { Menu } from "components/menu";
 import { PlaylistRemoveDialog } from "components/dialog/PlaylistRemoveDialog";
 import { Icon } from "components/icon";
 import { ProfileImage } from "components/image/ProfileImage";
+import { isAxiosError } from "axios";
+import { handleAxiosError } from "lib/client/axios";
+import { PasswordChangeDialog } from "components/dialog/PasswordChangeDialog";
 
 const StyledProfileGrid = styled.div`
     --columns: 2;
@@ -153,6 +156,15 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                         <Text variant="h1">Welcome back, <StyledUsername $color={roleColor}>{me.user.name}</StyledUsername>!</Text>
                         <LogoutButton />
                     </StyledHeaderTop>
+                    {!me.user.email_verified_at ? (
+                        <Card color="text-warning">
+                            <Column style={{ "--gap": "8px" }}>
+                                <Text color="text-warning" weight="bold"><Icon icon={faExclamationCircle} /> Your email address is not verified!</Text>
+                                <Text>You haven&apos;t verified your email address, yet. Please do so to unlock all features.</Text>
+                                <Text>No email received? <ResendVerificationEmailLink /></Text>
+                            </Column>
+                        </Card>
+                    ) : null}
                 </>
             ) : (
                 <Text variant="h1">My Profile</Text>
@@ -169,15 +181,15 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                 </Card>
             ) : null}
             <StyledProfileGrid>
-                <Column style={{ "--gap": "24px" }}>
+                <Column style={{ "--gap": "48px" }}>
                     {me.playlistAll ? (
-                        <>
+                        <Column style={{ "--gap": "24px" }}>
                             <StyledHeader>
                                 <Text variant="h2">Playlists</Text>
                                 <PlaylistAddDialog />
                             </StyledHeader>
                             <Column style={{ "--gap": "16px" }}>
-                                {me.playlistAll.map((playlist) => (
+                                {me.playlistAll.length ? me.playlistAll.map((playlist) => (
                                     <PlaylistSummaryCard
                                         key={playlist.id}
                                         playlist={playlist}
@@ -195,57 +207,69 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                                             </Menu>
                                         }
                                     />
-                                ))}
+                                )) : (
+                                    <Text>You have not created a playlist, yet.</Text>
+                                )}
                             </Column>
-                        </>
+                        </Column>
                     ) : null}
-                    <Text variant="h2">Settings</Text>
-                    <SearchFilterGroup>
-                        <SearchFilter>
-                            <Text>Color Theme</Text>
-                            <Listbox value={colorTheme} onChange={setColorTheme}>
-                                <Listbox.Option value={ColorTheme.SYSTEM}>System</Listbox.Option>
-                                <Listbox.Option value={ColorTheme.DARK}>Dark</Listbox.Option>
-                                <Listbox.Option value={ColorTheme.LIGHT}>Light</Listbox.Option>
-                            </Listbox>
-                        </SearchFilter>
-                        <SearchFilter>
-                            <Text>Show Announcements</Text>
-                            <Listbox value={showAnnouncements} onChange={setShowAnnouncements}>
-                                <Listbox.Option value={ShowAnnouncements.ENABLED}>Enabled</Listbox.Option>
-                                <Listbox.Option value={ShowAnnouncements.DISABLED}>Disabled</Listbox.Option>
-                            </Listbox>
-                        </SearchFilter>
-                        <SearchFilter>
-                            <Text>Featured Theme Preview</Text>
-                            <Listbox value={featuredThemePreview} onChange={setFeaturedThemePreview}>
-                                <Listbox.Option value={FeaturedThemePreview.VIDEO}>Video</Listbox.Option>
-                                <Listbox.Option value={FeaturedThemePreview.COVER}>Cover</Listbox.Option>
-                                <Listbox.Option value={FeaturedThemePreview.DISABLED}>Disabled</Listbox.Option>
-                            </Listbox>
-                        </SearchFilter>
-                    </SearchFilterGroup>
-                    <SearchFilterGroup>
-                        <SearchFilter>
-                            <Text>Developer Mode</Text>
-                            <Listbox value={developerMode} onChange={setDeveloperMode}>
-                                <Listbox.Option value={DeveloperMode.DISABLED}>Disabled</Listbox.Option>
-                                <Listbox.Option value={DeveloperMode.ENABLED}>Enabled</Listbox.Option>
-                            </Listbox>
-                        </SearchFilter>
-                        {developerMode === DeveloperMode.ENABLED && (
+                    {me.user ? (
+                        <Column style={{ "--gap": "24px" }}>
+                            <Text variant="h2">Account Settings</Text>
+                            <PasswordChangeDialog />
+                        </Column>
+                    ) : null}
+                    <Column style={{ "--gap": "24px" }}>
+                        <Text variant="h2">Page Settings</Text>
+                        <SearchFilterGroup>
                             <SearchFilter>
-                                <Text>Revalidation Token</Text>
-                                <Input
-                                    value={revalidationToken ?? ""}
-                                    onChange={setRevalidationToken}
-                                    icon={faKey}
-                                />
+                                <Text>Color Theme</Text>
+                                <Listbox value={colorTheme} onChange={setColorTheme}>
+                                    <Listbox.Option value={ColorTheme.SYSTEM}>System</Listbox.Option>
+                                    <Listbox.Option value={ColorTheme.DARK}>Dark</Listbox.Option>
+                                    <Listbox.Option value={ColorTheme.LIGHT}>Light</Listbox.Option>
+                                </Listbox>
                             </SearchFilter>
-                        )}
-                    </SearchFilterGroup>
-                    <Text variant="h2">Legacy</Text>
-                    <SummaryCard title="Local Playlist" description={`${localPlaylist.length} themes`} to="/profile/playlist"/>
+                            <SearchFilter>
+                                <Text>Show Announcements</Text>
+                                <Listbox value={showAnnouncements} onChange={setShowAnnouncements}>
+                                    <Listbox.Option value={ShowAnnouncements.ENABLED}>Enabled</Listbox.Option>
+                                    <Listbox.Option value={ShowAnnouncements.DISABLED}>Disabled</Listbox.Option>
+                                </Listbox>
+                            </SearchFilter>
+                            <SearchFilter>
+                                <Text>Featured Theme Preview</Text>
+                                <Listbox value={featuredThemePreview} onChange={setFeaturedThemePreview}>
+                                    <Listbox.Option value={FeaturedThemePreview.VIDEO}>Video</Listbox.Option>
+                                    <Listbox.Option value={FeaturedThemePreview.COVER}>Cover</Listbox.Option>
+                                    <Listbox.Option value={FeaturedThemePreview.DISABLED}>Disabled</Listbox.Option>
+                                </Listbox>
+                            </SearchFilter>
+                        </SearchFilterGroup>
+                        <SearchFilterGroup>
+                            <SearchFilter>
+                                <Text>Developer Mode</Text>
+                                <Listbox value={developerMode} onChange={setDeveloperMode}>
+                                    <Listbox.Option value={DeveloperMode.DISABLED}>Disabled</Listbox.Option>
+                                    <Listbox.Option value={DeveloperMode.ENABLED}>Enabled</Listbox.Option>
+                                </Listbox>
+                            </SearchFilter>
+                            {developerMode === DeveloperMode.ENABLED && (
+                                <SearchFilter>
+                                    <Text>Revalidation Token</Text>
+                                    <Input
+                                        value={revalidationToken ?? ""}
+                                        onChange={setRevalidationToken}
+                                        icon={faKey}
+                                    />
+                                </SearchFilter>
+                            )}
+                        </SearchFilterGroup>
+                    </Column>
+                    <Column style={{ "--gap": "24px" }}>
+                        <Text variant="h2">Legacy</Text>
+                        <SummaryCard title="Local Playlist" description={`${localPlaylist.length} themes`} to="/profile/playlist"/>
+                    </Column>
                 </Column>
                 <Column style={{ "--gap": "24px" }}>
                     <StyledHeader>
@@ -298,6 +322,47 @@ function LogoutButton() {
     );
 }
 
+function ResendVerificationEmailLink() {
+    const { resendEmailVerification } = useAuth();
+
+    const [isBusy, setBusy] = useState(false);
+    const [isSuccess, setSuccess] = useState(false);
+    const [error, setError] = useState("");
+
+    async function submit() {
+        setBusy(true);
+        setError("");
+
+        try {
+            await resendEmailVerification();
+        } catch (error) {
+            if (isAxiosError(error)) {
+                setError(handleAxiosError(error));
+            }
+
+            return;
+        } finally {
+            setBusy(false);
+        }
+
+        setSuccess(true);
+    }
+
+    if (error) {
+        return <Text color="text-warning">{error}</Text>;
+    }
+
+    if (isSuccess) {
+        return <Text>Verification email was sent.</Text>;
+    }
+
+    return (
+        <Text link onClick={submit}>
+            <Busy isBusy={isBusy}>Click here to send a new verification email.</Busy>
+        </Text>
+    );
+}
+
 ProfilePage.fragments = {
     playlist: gql`
         fragment ProfilePagePlaylist on Playlist {
@@ -310,6 +375,7 @@ ProfilePage.fragments = {
         fragment ProfilePageUser on UserAuth {
             name
             email
+            email_verified_at
             roles {
                 name
             }

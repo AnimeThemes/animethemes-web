@@ -4,8 +4,9 @@ import { SEO } from "components/seo";
 import { capitalize } from "lodash-es";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import type { ParsedUrlQuery } from "querystring";
+import { SearchPlaylist } from "components/search/SearchPlaylist";
 
-const SEARCH_ENTITIES = [ "anime", "theme", "artist", "series", "studio" ] as const;
+const SEARCH_ENTITIES = [ "anime", "theme", "artist", "series", "studio", "playlist" ] as const;
 
 interface SearchEntityPageProps {
     entity: typeof SEARCH_ENTITIES[number]
@@ -47,6 +48,8 @@ function Index({ searchQuery, searchEntity }: IndexProps) {
             return <SearchSeries searchQuery={searchQuery}/>;
         case "studio":
             return <SearchStudio searchQuery={searchQuery}/>;
+        case "playlist":
+            return <SearchPlaylist searchQuery={searchQuery}/>;
         default:
             // Should never happen
             return null;

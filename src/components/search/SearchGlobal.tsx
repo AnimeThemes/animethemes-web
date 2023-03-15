@@ -11,6 +11,7 @@ import { fetchDataClient } from "lib/client";
 import gql from "graphql-tag";
 import type { SearchGlobalQuery, SearchGlobalQueryVariables } from "generated/graphql";
 import type { ReactNode } from "react";
+import PlaylistSummaryCard from "components/card/PlaylistSummaryCard";
 
 interface SearchGlobalProps {
     searchQuery?: string
@@ -23,6 +24,8 @@ export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
         ${ThemeSummaryCard.fragments.theme}
         ${ThemeSummaryCard.fragments.expandable}
         ${ArtistSummaryCard.fragments.artist}
+        ${PlaylistSummaryCard.fragments.playlist}
+        ${PlaylistSummaryCard.fragments.showOwner}
         
         query SearchGlobal($args: SearchArgs!) {
             search(args: $args) {
@@ -44,6 +47,10 @@ export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
                 studios {
                     slug
                     name
+                }
+                playlists {
+                    ...PlaylistSummaryCardPlaylist
+                    ...PlaylistSummaryCardShowOwner
                 }
             }
         }
@@ -79,7 +86,8 @@ export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
         themes: themeResults = [],
         artists: artistResults = [],
         series: seriesResults = [],
-        studios: studioResults = []
+        studios: studioResults = [],
+        playlists: playlistResults = [],
     } = data.data.search;
 
     const totalResults =
@@ -87,7 +95,8 @@ export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
         themeResults.length +
         artistResults.length +
         seriesResults.length +
-        studioResults.length;
+        studioResults.length +
+        playlistResults.length;
 
     if (!totalResults) {
         return (
@@ -132,6 +141,12 @@ export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
                     <SummaryCard key={studio.slug} title={studio.name} description="Studio"
                         to={`/studio/${studio.slug}`}/>
                 )}
+            />
+            <GlobalSearchSection
+                entity="playlist"
+                title="Playlists"
+                results={playlistResults}
+                renderSummaryCard={(playlist) => <PlaylistSummaryCard key={playlist.id} playlist={playlist} showOwner />}
             />
         </>
     );

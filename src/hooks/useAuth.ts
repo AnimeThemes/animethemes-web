@@ -96,10 +96,8 @@ export default function useAuth() {
             });
     };
 
-    const resendEmailVerification = ({ setStatus }: any) => {
-        axios
-            .post("/email/verification-notification")
-            .then(response => setStatus(response.data.status));
+    const resendEmailVerification = async () => {
+        await axios.post("/email/verification-notification");
     };
 
     const logout = async () => {

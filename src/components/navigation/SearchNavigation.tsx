@@ -112,6 +112,7 @@ export function SearchNavigation() {
                     <SwitcherOption as={Link} href={{ pathname: "/search/artist", query }} value="artist">Artist</SwitcherOption>
                     <SwitcherOption as={Link} href={{ pathname: "/search/series", query }} value="series">Series</SwitcherOption>
                     <SwitcherOption as={Link} href={{ pathname: "/search/studio", query }} value="studio">Studio</SwitcherOption>
+                    <SwitcherOption as={Link} href={{ pathname: "/search/playlist", query }} value="playlist">Playlist</SwitcherOption>
                 </Switcher>
             </HorizontalScroll>
         </StyledSearchOptions>
