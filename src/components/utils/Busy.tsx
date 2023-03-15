@@ -6,7 +6,7 @@ import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
 const StyledWrapper = styled.div`
     position: relative;
     
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
 `;

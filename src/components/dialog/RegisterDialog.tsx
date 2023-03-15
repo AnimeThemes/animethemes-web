@@ -10,6 +10,7 @@ import Switch from "components/form/Switch";
 import { Column, Row } from "components/box";
 import { Dialog, DialogContent, DialogTrigger } from "components/dialog/Dialog";
 import { Busy } from "components/utils/Busy";
+import Link from "next/link";
 
 export function RegisterDialog() {
     const [open, setOpen] = useState(false);
@@ -135,7 +136,10 @@ function RegisterForm({ onCancel }: RegisterFormProps) {
                             isChecked={isTermsAccepted}
                             onCheckedChange={setTermsAccepted}
                         />
-                        <Text as="label" htmlFor="input-terms">I accept the terms and conditions.</Text>
+                        <Text as="label" htmlFor="input-terms">I accept the{" "}
+                            <Text as={Link} href="/about/terms-of-service" link>Terms of Service</Text> and{" "}
+                            <Text as={Link} href="/about/privacy-policy" link>Privacy Policy</Text>.
+                        </Text>
                     </Row>
                     <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
                         <Button type="button" variant="silent" onClick={onCancel}>Cancel</Button>

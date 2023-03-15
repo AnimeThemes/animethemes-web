@@ -17,6 +17,7 @@ export const searchTypeDefs = gql`
         searchArtist(args: SearchArgs!): ArtistSearchResult!
         searchSeries(args: SearchArgs!): SeriesSearchResult!
         searchStudio(args: SearchArgs!): StudioSearchResult!
+        searchPlaylist(args: SearchArgs!): PlaylistSearchResult!
     }
 
     type GlobalSearchResult {
@@ -25,6 +26,7 @@ export const searchTypeDefs = gql`
         artists: [Artist!]!
         series: [Series!]!
         studios: [Studio!]!
+        playlists: [Playlist!]!
     }
     
     interface EntitySearchResult {
@@ -56,6 +58,11 @@ export const searchTypeDefs = gql`
         nextPage: Int
     }
     
+    type PlaylistSearchResult implements EntitySearchResult {
+        data: [Playlist!]!
+        nextPage: Int
+    }
+    
     input SearchArgs {
         query: String
         filters: [Filter!]
@@ -80,6 +87,7 @@ interface GlobalSearchResult {
         artists: unknown
         series: unknown
         studios: unknown
+        playlists: unknown
     }
 }
 
@@ -94,6 +102,7 @@ export const searchResolvers = {
             searchParams.append("include[anime]", "animethemes.animethemeentries.videos,animethemes.song,images");
             searchParams.append("include[animetheme]", "animethemeentries.videos,anime.images,song.artists");
             searchParams.append("include[artist]", "images,songs");
+            searchParams.append("include[playlist]", "user");
             searchParams.append("fields[anime]", "name,slug,year,season");
             searchParams.append("fields[animetheme]", "type,sequence,slug,group,id");
             searchParams.append("fields[animethemeentry]", "version,episodes,spoiler,nsfw");
@@ -103,6 +112,8 @@ export const searchResolvers = {
             searchParams.append("fields[artist]", "name,slug,as");
             searchParams.append("fields[series]", "name,slug");
             searchParams.append("fields[studio]", "name,slug");
+            searchParams.append("fields[playlist]", "id,name,visibility");
+            searchParams.append("fields[user]", "name");
 
             const result = await fetchJson<GlobalSearchResult>(`/search?${searchParams}`);
 
@@ -112,6 +123,7 @@ export const searchResolvers = {
                 artists: result?.search.artists,
                 series: result?.search.series,
                 studios: result?.search.studios,
+                playlists: result?.search.playlists,
             };
         },
         searchAnime: apiResolver({
@@ -154,6 +166,14 @@ export const searchResolvers = {
             }),
             type: "Studio"
         }),
+        searchPlaylist: apiResolver({
+            endpoint: (_, { args }) => `/playlist?${getSearchParams(args as SearchArgs)}`,
+            extractor: (result, _, args) => ({
+                data: result.playlists,
+                nextPage: getNextPage(result, args)
+            }),
+            type: "Playlist"
+        }),
     }
 };
 
@@ -165,7 +185,7 @@ function getSearchParams({ query, filters, sortBy, page = 1 }: SearchArgs, isGlo
         searchParams.append("page[number]", String(page));
     } else {
         searchParams.append("page[limit]", "4");
-        searchParams.append("fields[search]", "anime,animethemes,artists,series,studios");
+        searchParams.append("fields[search]", "anime,animethemes,artists,series,studios,playlists");
     }
 
     if (query) {
