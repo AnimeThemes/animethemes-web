@@ -63,6 +63,13 @@ export const INCLUDES = {
         song: "_",
         artist: "_"
     },
+    Playlist: {
+        tracks: "tracks",
+        user: "user",
+    },
+    PlaylistTrack: {
+        video: "video",
+    },
     AnimeSearchResult: {
         data: "_",
     },
@@ -78,12 +85,8 @@ export const INCLUDES = {
     StudioSearchResult: {
         data: "_",
     },
-    Playlist: {
-        tracks: "tracks",
-        user: "user",
-    },
-    PlaylistTrack: {
-        video: "video",
+    PlaylistSearchResult: {
+        data: "_",
     },
 } as const;
 
