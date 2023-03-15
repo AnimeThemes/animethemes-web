@@ -281,6 +281,7 @@ const typeDefs = `
         id: Int!
         name: String!
         email: String!
+        email_verified_at: String
         roles: [UserRole!]!
     }
     
