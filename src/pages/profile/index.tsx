@@ -63,7 +63,7 @@ const StyledHeaderTop = styled(StyledHeader)`
     text-align: center;
 
     @media (min-width: ${theme.breakpoints.tabletMin}) {
-        & :last-child {
+        & > :last-child {
             margin-left: auto;
         }
     }
@@ -80,13 +80,13 @@ const StyledProfileImage = styled(ProfileImage)<{ $borderColor?: string }>`
     border-radius: 9999px;
     
     ${(props) => props.$borderColor && css`
-        box-shadow: 0 0 0 4px rgb(${props.$borderColor}), 0 0 10px 6px rgba(${props.$borderColor}, 0.5);
+        box-shadow: 0 0 0 4px ${props.$borderColor}, 0 0 10px 6px ${props.$borderColor}7F;
     `}
 `;
 
 const StyledUsername = styled.span<{ $color: string }>`
-    color: rgb(${(props) => props.$color});
-    text-shadow: 0 0 4px rgba(${(props) => props.$color}, 0.5);
+    color: ${(props) => props.$color};
+    text-shadow: 0 0 4px ${(props) => props.$color}7F;
 `;
 
 const StyledProfileImageBackground = styled(ProfileImage)`
@@ -99,6 +99,30 @@ const StyledProfileImageBackground = styled(ProfileImage)`
     opacity: 0.15;
     filter: blur(32px);
     transform: translateY(-64px);
+`;
+
+const StyledRoles = styled.div`
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+
+    @media (max-width: ${theme.breakpoints.mobileMax}) {
+        justify-content: center;
+    }
+`;
+
+const StyledRoleBadge = styled.span<{ $color: string }>`
+    display: inline-block;
+    padding: 2px 4px;
+    border-radius: 4px;
+    
+    background-color: ${(props) => props.$color || "#FFFFFF"}3F;
+    color: ${(props) => props.$color};
+    
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 `;
 
 type ProfilePageProps = SharedPageProps & RequiredNonNullable<ProfilePageQuery>;
@@ -137,13 +161,12 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
     const [revalidationToken, setRevalidationToken] = useSetting(RevalidationToken);
     const [colorTheme, setColorTheme] = useSetting(ColorTheme);
 
-    const roles = me.user?.roles.map((role) => role.name) ?? [];
-    let roleColor = "";
-    if (roles.includes("Admin")) {
-        roleColor = "31, 139, 76";
-    } else if (roles.includes("Patron")) {
-        roleColor = "231, 76, 60";
-    }
+    const roles = (me.user?.roles ?? [])
+        .filter((role) => !role.default)
+        .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+    const highlightColor = roles[0]?.color ?? "";
+
+    const isNewUser = !!me.user && (Date.now() - Date.parse(me.user.created_at)) / (1000 * 60 * 60 * 24) < 1;
 
     return (
         <>
@@ -152,8 +175,15 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                 <>
                     <StyledProfileImageBackground user={me.user} />
                     <StyledHeaderTop>
-                        <StyledProfileImage user={me.user} size={128} $borderColor={roleColor} />
-                        <Text variant="h1">Welcome back, <StyledUsername $color={roleColor}>{me.user.name}</StyledUsername>!</Text>
+                        <StyledProfileImage user={me.user} size={128} $borderColor={highlightColor} />
+                        <Column>
+                            <Text variant="h1">Welcome {isNewUser ? "on AnimeThemes" : "back"}, <StyledUsername $color={highlightColor}>{me.user.name}</StyledUsername>!</Text>
+                            <StyledRoles>
+                                {roles.map((role) => (
+                                    <StyledRoleBadge key={role.name} $color={role.color ?? ""}>{role.name}</StyledRoleBadge>
+                                ))}
+                            </StyledRoles>
+                        </Column>
                         <LogoutButton />
                     </StyledHeaderTop>
                     {!me.user.email_verified_at ? (
@@ -376,8 +406,12 @@ ProfilePage.fragments = {
             name
             email
             email_verified_at
+            created_at
             roles {
                 name
+                color
+                priority
+                default
             }
         }
     `,
