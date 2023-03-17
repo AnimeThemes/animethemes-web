@@ -122,7 +122,7 @@ const resolvers: IResolvers = {
     },
     UserScopedQuery: {
         user: apiResolver({
-            endpoint: () => `/me`,
+            endpoint: () => `/me?fields[user]=id,name,email,email_verified_at,created_at`,
             extractor: (result) => result.user,
         }),
         playlistAll: apiResolver({
