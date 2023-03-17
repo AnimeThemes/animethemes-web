@@ -471,6 +471,7 @@ export type User = {
 };
 
 export type UserAuth = User & {
+  created_at: Scalars['String'];
   email: Scalars['String'];
   email_verified_at: Maybe<Scalars['String']>;
   id: Scalars['Int'];
@@ -484,7 +485,10 @@ export type UserPublic = User & {
 };
 
 export type UserRole = {
+  color: Maybe<Scalars['String']>;
+  default: Scalars['Boolean'];
   name: Scalars['String'];
+  priority: Maybe<Scalars['Int']>;
 };
 
 export type UserScopedQuery = {
@@ -877,16 +881,16 @@ export type GalleryPageQuery = { grills: Array<{ id: number, link: string }> };
 export type ProfilePageMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ProfilePageMeQuery = { me: { user: { name: string, email: string, email_verified_at: string | null, roles: Array<{ name: string }> } | null, playlistAll: Array<{ id: number, name: string, visibility: PlaylistVisibility }> | null } };
+export type ProfilePageMeQuery = { me: { user: { name: string, email: string, email_verified_at: string | null, created_at: string, roles: Array<{ name: string, color: string | null, priority: number | null, default: boolean }> } | null, playlistAll: Array<{ id: number, name: string, visibility: PlaylistVisibility }> | null } };
 
 export type ProfilePagePlaylistFragment = { id: number, name: string, visibility: PlaylistVisibility };
 
-export type ProfilePageUserFragment = { name: string, email: string, email_verified_at: string | null, roles: Array<{ name: string }> };
+export type ProfilePageUserFragment = { name: string, email: string, email_verified_at: string | null, created_at: string, roles: Array<{ name: string, color: string | null, priority: number | null, default: boolean }> };
 
 export type ProfilePageQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ProfilePageQuery = { me: { user: { name: string, email: string, email_verified_at: string | null, roles: Array<{ name: string }> } | null, playlistAll: Array<{ id: number, name: string, visibility: PlaylistVisibility }> | null } };
+export type ProfilePageQuery = { me: { user: { name: string, email: string, email_verified_at: string | null, created_at: string, roles: Array<{ name: string, color: string | null, priority: number | null, default: boolean }> } | null, playlistAll: Array<{ id: number, name: string, visibility: PlaylistVisibility }> | null } };
 
 export type SeriesDetailPageSeriesFragment = { slug: string, name: string, anime: Array<{ name: string, slug: string, year: number | null, season: string | null, themes: Array<{ slug: string, type: string, sequence: number | null, group: string | null, entries: Array<{ version: number | null, episodes: string | null, spoiler: boolean, nsfw: boolean, videos: Array<{ tags: string, resolution: number | null, nc: boolean, subbed: boolean, lyrics: boolean, uncen: boolean, source: VideoSource | null, overlap: VideoOverlap }> }>, anime: { slug: string } | null, song: { title: string | null } | null }>, images: Array<{ facet: string | null, link: string }> }> };
 

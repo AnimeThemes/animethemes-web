@@ -282,11 +282,15 @@ const typeDefs = `
         name: String!
         email: String!
         email_verified_at: String
+        created_at: String!
         roles: [UserRole!]!
     }
     
     type UserRole {
         name: String!
+        color: String
+        priority: Int
+        default: Boolean!
     }
     
     schema {
