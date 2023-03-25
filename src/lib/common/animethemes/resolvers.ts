@@ -408,6 +408,13 @@ const resolvers: IResolvers = {
             baseInclude: INCLUDES.PlaylistTrack.video,
         }),
     },
+    UserAuth: {
+        roles: apiResolver({
+            endpoint: () => `/me`,
+            field: "roles",
+            extractor: (result) => result.roles,
+        }),
+    },
 };
 
 export default resolvers;
