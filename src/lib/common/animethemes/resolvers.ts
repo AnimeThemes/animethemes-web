@@ -48,6 +48,11 @@ const resolvers: IResolvers = {
             extractor: (result) => result.studios,
             pagination: true
         }),
+        videoAll: apiResolver({
+            endpoint: (_, { limit, orderBy, orderDesc }) =>
+                `/video?sort=${orderDesc ? "-" : ""}${orderBy}&page[size]=${limit}`,
+            extractor: (result) => result.videos
+        }),
         year: (_, { value }) => ({ value }),
         yearAll: apiResolver({
             endpoint: () => `/animeyear`,
@@ -115,7 +120,7 @@ const resolvers: IResolvers = {
             extractor: (result) => Object.values(result.transparency.filterOptions),
         }),
         playlist: apiResolver({
-            endpoint: (_, { id }) => `/playlist/${id}`,
+            endpoint: (_, { id }) => `/playlist/${id}?fields[playlist]=id,name,visibility,tracks_count`,
             extractor: (result) => result.playlist,
         }),
         me: () => ({}),
@@ -126,7 +131,7 @@ const resolvers: IResolvers = {
             extractor: (result) => result.user,
         }),
         playlistAll: apiResolver({
-            endpoint: (_, { filterVideoId }) => `/me/playlist?${filterVideoId ? `filter[track][video_id]=${filterVideoId}` : ``}`,
+            endpoint: (_, { filterVideoId }) => `/me/playlist?fields[playlist]=id,name,visibility,tracks_count${filterVideoId ? `&filter[track][video_id]=${filterVideoId}` : ``}`,
             extractor: (result) => result.playlists,
         }),
     },
@@ -383,7 +388,8 @@ const resolvers: IResolvers = {
             endpoint: (playlist) => `/playlist/${playlist.id}/forward`,
             field: "tracks",
             extractor: (result) => result.tracks,
-            transformer: (tracks, playlist) => tracks.map((track: Record<string, unknown>) => ({ ...track, playlist }))
+            transformer: (tracks, playlist) => tracks.map((track: Record<string, unknown>) => ({ ...track, playlist })),
+            pagination: true,
         }),
         user: apiResolver({
             endpoint: (playlist) => `/playlist/${playlist.id}`,

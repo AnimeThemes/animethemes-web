@@ -112,7 +112,7 @@ export const searchResolvers = {
             searchParams.append("fields[artist]", "name,slug,as");
             searchParams.append("fields[series]", "name,slug");
             searchParams.append("fields[studio]", "name,slug");
-            searchParams.append("fields[playlist]", "id,name,visibility");
+            searchParams.append("fields[playlist]", "id,name,visibility,tracks_count");
             searchParams.append("fields[user]", "name");
 
             const result = await fetchJson<GlobalSearchResult>(`/search?${searchParams}`);
@@ -167,7 +167,7 @@ export const searchResolvers = {
             type: "Studio"
         }),
         searchPlaylist: apiResolver({
-            endpoint: (_, { args }) => `/playlist?${getSearchParams(args as SearchArgs)}`,
+            endpoint: (_, { args }) => `/playlist?fields[playlist]=id,name,visibility,tracks_count&${getSearchParams(args as SearchArgs)}`,
             extractor: (result, _, args) => ({
                 data: result.playlists,
                 nextPage: getNextPage(result, args)

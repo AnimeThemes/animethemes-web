@@ -9,6 +9,7 @@ import useAuth from "hooks/useAuth";
 import { Dialog, DialogContent, DialogTrigger } from "components/dialog/Dialog";
 import { Column, Row } from "components/box";
 import { Busy } from "components/utils/Busy";
+import Switch from "components/form/Switch";
 
 const StyledForm = styled.form`
     display: flex;
@@ -43,6 +44,7 @@ function LoginForm({ onCancel }: LoginFormProps) {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isRemember, setRemember] = useState(false);
 
     const isValid = email && password;
 
@@ -59,7 +61,8 @@ function LoginForm({ onCancel }: LoginFormProps) {
         login({
             setErrors,
             email,
-            password
+            password,
+            remember: isRemember,
         })
             .finally(() => setBusy(false));
     }
@@ -93,6 +96,14 @@ function LoginForm({ onCancel }: LoginFormProps) {
                             }}
                         />
                     </SearchFilter>
+                    <Row style={{ "--gap": "12px", "--align-items": "center" }}>
+                        <Switch
+                            id="input-remember"
+                            isChecked={isRemember}
+                            onCheckedChange={setRemember}
+                        />
+                        <Text as="label" htmlFor="input-remember">Remember my login on this device.</Text>
+                    </Row>
                     <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
                         <Button type="button" variant="silent" onClick={onCancel}>Cancel</Button>
                         <Button type="submit" variant="primary" disabled={!isValid || isBusy}>

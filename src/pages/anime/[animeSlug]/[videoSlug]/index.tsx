@@ -94,7 +94,7 @@ const StyledVideoList = styled(Row)`
     }
 `;
 
-interface VideoPageProps extends SharedPageProps, RequiredNonNullable<VideoPageQuery> {
+export interface VideoPageProps extends SharedPageProps, RequiredNonNullable<VideoPageQuery> {
     themeIndex: number
     entryIndex: number
     videoIndex: number

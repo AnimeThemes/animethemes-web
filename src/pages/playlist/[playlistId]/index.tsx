@@ -15,7 +15,7 @@ import getSharedPageProps from "utils/getSharedPageProps";
 import type { RequiredNonNullable } from "utils/types";
 import type { ParsedUrlQuery } from "querystring";
 import useToggle from "hooks/useToggle";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
     ANIME_A_Z,
     ANIME_NEW_OLD,
@@ -31,7 +31,7 @@ import { SEO } from "components/seo";
 import { SidebarContainer } from "components/container";
 import { MultiCoverImage } from "components/image";
 import { Column } from "components/box";
-import { FilterToggleButton } from "components/button";
+import { Button, FilterToggleButton } from "components/button";
 import { Collapse } from "components/utils";
 import { SearchFilterGroup, SearchFilterSortBy } from "components/search-filter";
 import styled from "styled-components";
@@ -44,6 +44,7 @@ import { PlaylistTrackAddDialog } from "components/dialog/PlaylistTrackAddDialog
 import { PlaylistTrackRemoveDialog } from "components/dialog/PlaylistTrackRemoveDialog";
 import useSWR from "swr";
 import { fetchDataClient } from "lib/client";
+import PlayerContext from "context/playerContext";
 
 const StyledDesktopOnly = styled.div`
     gap: 24px;
@@ -65,6 +66,8 @@ interface PlaylistDetailPageParams extends ParsedUrlQuery {
 }
 
 export default function PlaylistDetailPage({ playlist: initialPlaylist, me: initialMe }: PlaylistDetailPageProps) {
+    const { setWatchList } = useContext(PlayerContext);
+
     const { data: playlist } = useSWR(
         ["PlaylistDetailPagePlaylist", `/api/playlist/${initialPlaylist.id}`],
         async () => {
@@ -130,6 +133,10 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
         )
     );
 
+    function playAll() {
+        setWatchList(tracks.map((track) => track.video));
+    }
+
     return (
         <>
             <SEO title={playlist.name} />
@@ -156,7 +163,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                     <StyledHeader>
                         <Text variant="h2">
                             Themes
-                            <Text color="text-disabled"> ({tracks.length})</Text>
+                            <Text color="text-disabled"> ({playlist.tracks_count})</Text>
                         </Text>
                         <FilterToggleButton onClick={toggleShowFilter}/>
                     </StyledHeader>
@@ -173,6 +180,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                             </SearchFilterSortBy>
                         </SearchFilterGroup>
                     </Collapse>
+                    <Button onClick={playAll}>Play All</Button>
                     <Column style={{ "--gap": "16px" }}>
                         {tracks.map((track) => (
                             <VideoSummaryCard
@@ -221,6 +229,7 @@ PlaylistDetailPage.fragments = {
             id
             name
             visibility
+            tracks_count
             forward {
                 id
                 video {
