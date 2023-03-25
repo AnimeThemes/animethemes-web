@@ -29,11 +29,17 @@ const StyledSocialList = styled(Row)`
     justify-content: flex-end;
     align-items: flex-end;
     gap: 4px;
-
+    
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         flex-basis: 100%;
         justify-content: flex-start;
     }
+
+    // To avoid overlap with scroll back to top button as window width gets smaller
+    @media (max-width: 1225px) and (min-width:${theme.breakpoints.mobileMax}) {
+        margin-right: 4rem;
+    }
+    
 `;
 
 const StyledSocialButton = styled(Button).attrs({ variant: "silent", isCircle: true })`

@@ -8,12 +8,14 @@ import gql from "graphql-tag";
 import type { DocumentIndexPageQuery } from "generated/graphql";
 import { TextLink } from "components/text/TextLink";
 import { AlphabeticalIndex } from "components/index";
+import { BackToTopButton } from "components/button";
 
 interface DocumentIndexPageProps extends SharedPageProps, DocumentIndexPageQuery {}
 
 export default function DocumentIndexPage({ pageAll }: DocumentIndexPageProps) {
     return <>
         <SEO title="Wiki"/>
+        <BackToTopButton/>
         <Text variant="h1">Wiki</Text>
         <AlphabeticalIndex items={pageAll}>
             {(page) => (

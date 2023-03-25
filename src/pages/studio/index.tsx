@@ -8,11 +8,13 @@ import type { GetStaticProps } from "next";
 import { fetchData } from "lib/server";
 import gql from "graphql-tag";
 import type { StudioIndexPageQuery } from "generated/graphql";
+import { BackToTopButton } from "components/button";
 
 interface StudioIndexPageProps extends SharedPageProps, StudioIndexPageQuery {}
 
 export default function StudioIndexPage({ studioAll }: StudioIndexPageProps) {
     return <>
+        <BackToTopButton/>
         <Text variant="h1">Studio Index</Text>
         <AlphabeticalIndex items={studioAll}>
             {(studio) => (
