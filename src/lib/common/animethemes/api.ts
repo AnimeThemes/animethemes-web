@@ -70,6 +70,9 @@ export const INCLUDES = {
     PlaylistTrack: {
         video: "video",
     },
+    UserAuth: {
+        roles: "roles",
+    },
     AnimeSearchResult: {
         data: "_",
     },
@@ -157,6 +160,9 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
     PlaylistTrack: [
         "video.animethemeentries.animetheme.anime.images",
         "video.animethemeentries.animetheme.song.artists",
+    ],
+    UserAuth: [
+        "roles",
     ],
 };
 
