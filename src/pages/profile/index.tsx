@@ -395,10 +395,11 @@ function ResendVerificationEmailLink() {
 
 ProfilePage.fragments = {
     playlist: gql`
+        ${PlaylistSummaryCard.fragments.playlist}
+        
         fragment ProfilePagePlaylist on Playlist {
+            ...PlaylistSummaryCardPlaylist
             id
-            name
-            visibility
         }
     `,
     user: gql`

@@ -7,7 +7,6 @@ import { Footer } from "components/footer";
 import { Navigation, SearchNavigation, SeasonNavigation, YearNavigation } from "components/navigation";
 import ColorThemeContext from "context/colorThemeContext";
 import useColorTheme from "hooks/useColorTheme";
-import { VideoPlayer } from "components/video-player";
 import PlayerContext from "context/playerContext";
 import type { ComponentType, ReactNode } from "react";
 import { useEffect, useState } from "react";
@@ -23,12 +22,12 @@ import { useRouter } from "next/router";
 import useSetting from "hooks/useSetting";
 import { DeveloperMode, RevalidationToken } from "utils/settings";
 import { ErrorBoundary } from "components/utils";
-import { BASE_PATH, STAGING } from "utils/config";
+import { STAGING } from "utils/config";
 import { Card } from "components/card";
 import { ExternalLink } from "components/external-link";
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import type { AppProps } from "next/app";
 import { LazyMotion } from "framer-motion";
+import { VideoPlayer2 } from "components/video-player-2/VideoPlayer2";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "styles/prism.scss";
@@ -36,29 +35,6 @@ import "styles/prism.scss";
 config.autoAddCss = false;
 
 const queryClient = new QueryClient();
-
-const apolloClient = new ApolloClient({
-    uri: `${BASE_PATH}/api/graphql`,
-    cache: new InMemoryCache({
-        // All interfaces and their implementing types need to be specified here.
-        // This is required for fragments that use interfaces:
-        // https://www.apollographql.com/docs/react/data/fragments#using-fragments-with-unions-and-interfaces
-        possibleTypes: {
-            ResourceWithImages: [
-                "Anime",
-                "Artist",
-                "Studio",
-            ],
-            EntitySearchResult: [
-                "AnimeSearchResult",
-                "ThemeSearchResult",
-                "ArtistSearchResult",
-                "SeriesSearchResult",
-                "StudioSearchResult",
-            ],
-        }
-    })
-});
 
 const StyledWrapper = styled(Column)`
     min-height: 100%;
@@ -79,32 +55,12 @@ export default function MyApp({ Component, pageProps }: AppProps<any>) {
     const [colorTheme, setColorTheme] = useColorTheme();
     const [developerMode] = useSetting(DeveloperMode);
 
-    const { lastBuildAt, apiRequests, isVideoPage = false, ...videoPagePropsRaw } = pageProps;
+    const { lastBuildAt, apiRequests, isVideoPage = false } = pageProps;
 
-    const videoPageProps = (() => {
-        if (!isVideoPage) {
-            return null;
-        }
-
-        // TODO: This will later be replaced by the new client-side player
-        const theme = videoPagePropsRaw.anime.themes[videoPagePropsRaw.themeIndex];
-        const entry = theme.entries[videoPagePropsRaw.entryIndex];
-        const video = entry.videos[videoPagePropsRaw.videoIndex];
-
-        return {
-            anime: videoPagePropsRaw.anime,
-            theme,
-            entry,
-            video,
-        };
-    })();
     const [ lastVideoPageProps, setLastVideoPageProps ] = useState(() => {
-        return isVideoPage ? videoPageProps : null;
+        return isVideoPage ? pageProps : null;
     });
-
-    if (isVideoPage && lastVideoPageProps?.video?.basename !== videoPageProps?.video?.basename) {
-        setLastVideoPageProps(videoPageProps);
-    }
+    const [watchList, setWatchList] = useState<any[]>([]);
 
     useEffect(() => {
         const hotkeyListener = (event: KeyboardEvent) => {
@@ -119,16 +75,35 @@ export default function MyApp({ Component, pageProps }: AppProps<any>) {
         return () => window.removeEventListener("keydown", hotkeyListener);
     }, [pageProps.isSearch, router]);
 
+    if (isVideoPage) {
+        const lastBaseName = lastVideoPageProps?.anime
+            .themes[lastVideoPageProps.themeIndex]
+            .entries[lastVideoPageProps.entryIndex]
+            .videos[lastVideoPageProps.videoIndex]
+            .basename;
+        const baseName = pageProps.anime
+            .themes[pageProps.themeIndex]
+            .entries[pageProps.entryIndex]
+            .videos[pageProps.videoIndex]
+            .basename;
+
+        if (lastBaseName !== baseName) {
+            setLastVideoPageProps(pageProps);
+            return null;
+        }
+    }
+
     return (
         <MultiContextProvider providers={[
             stackContext(ThemeProvider, { theme }),
             stackContext(ColorThemeContext.Provider, { value: { colorTheme, setColorTheme } }),
             stackContext(PlayerContext.Provider, { value: {
                 currentVideo: lastVideoPageProps?.video,
-                clearCurrentVideo: () => setLastVideoPageProps(null)
+                clearCurrentVideo: () => setLastVideoPageProps(null),
+                watchList,
+                setWatchList,
             } }),
             stackContext(QueryClientProvider, { client: queryClient }),
-            stackContext(ApolloProvider, { client: apolloClient, children: null }),
             stackContext(ToastProvider, {}),
             stackContext(LazyMotion, { features: () => import("utils/motionFeatures").then(res => res.default) }),
             stackContext(ErrorBoundary, {}),
@@ -144,37 +119,41 @@ export default function MyApp({ Component, pageProps }: AppProps<any>) {
                 <meta name="theme-color" content="#1c1823"/>
             </Head>
             <StyledWrapper>
-                <Navigation offsetToggleButton={lastVideoPageProps ? !isVideoPage : false}/>
+                <Navigation />
+                {!isVideoPage ? (
+                    <>
+                        <StyledContainer>
+                            {!!pageProps.year && (
+                                <Column style={{ "--gap": "16px" }}>
+                                    <YearNavigation {...pageProps}/>
+                                    <SeasonNavigation {...pageProps}/>
+                                </Column>
+                            )}
+                            {pageProps.isSearch && (
+                                <SearchNavigation/>
+                            )}
+                            {STAGING ? (
+                                <Card color="text-warning">
+                                    <Text as="p">
+                                        <strong>WARNING</strong>: This version of the website is for testing purposes only.
+                                        Some pages or functions might not work.
+                                    </Text>
+                                    <Text as="p">
+                                        <ExternalLink href={`https://animethemes.moe${router.asPath}`}>CLICK HERE TO GO BACK TO THE NORMAL SITE</ExternalLink>
+                                    </Text>
+                                </Card>
+                            ) : null}
+                            <Component {...pageProps}/>
+                            {developerMode === DeveloperMode.ENABLED && lastBuildAt && (
+                                <PageRevalidation lastBuildAt={lastBuildAt} apiRequests={apiRequests}/>
+                            )}
+                        </StyledContainer>
+                        <Footer />
+                    </>
+                ) : null}
                 {lastVideoPageProps && (
-                    <VideoPlayer {...lastVideoPageProps} background={!isVideoPage}/>
+                    <VideoPlayer2 {...lastVideoPageProps} background={!isVideoPage} />
                 )}
-                <StyledContainer>
-                    {!!pageProps.year && (
-                        <Column style={{ "--gap": "16px" }}>
-                            <YearNavigation {...pageProps}/>
-                            <SeasonNavigation {...pageProps}/>
-                        </Column>
-                    )}
-                    {pageProps.isSearch && (
-                        <SearchNavigation/>
-                    )}
-                    {STAGING ? (
-                        <Card color="text-warning">
-                            <Text as="p">
-                                <strong>WARNING</strong>: This version of the website is for testing purposes only.
-                                Some pages or functions might not work.
-                            </Text>
-                            <Text as="p">
-                                <ExternalLink href={`https://animethemes.moe${router.asPath}`}>CLICK HERE TO GO BACK TO THE NORMAL SITE</ExternalLink>
-                            </Text>
-                        </Card>
-                    ) : null}
-                    <Component {...pageProps}/>
-                    {developerMode === DeveloperMode.ENABLED && lastBuildAt && (
-                        <PageRevalidation lastBuildAt={lastBuildAt} apiRequests={apiRequests}/>
-                    )}
-                </StyledContainer>
-                <Footer/>
             </StyledWrapper>
             <ToastHub/>
         </MultiContextProvider>

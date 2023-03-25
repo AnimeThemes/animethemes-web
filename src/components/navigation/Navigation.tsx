@@ -1,46 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { faBars, faRandom, faSearch, faTimes, faTv, faUser } from "@fortawesome/pro-solid-svg-icons";
+import { faRandom, faSearch, faTv, faUser } from "@fortawesome/pro-solid-svg-icons";
 import {
-    StyledCollapsibleLink,
     StyledLogo,
     StyledLogoContainer,
-    StyledMobileToggle,
     StyledNavigation,
     StyledNavigationContainer,
-    StyledNavigationLinks, StyledProfileImage
+    StyledNavigationLinks,
+    StyledProfileImage,
+    StyledProfileImageIcon
 } from "./Navigation.style";
-import { Button } from "components/button";
-import { Icon } from "components/icon";
-import { Text } from "components/text";
+import { IconTextButton } from "components/button";
 import useCurrentSeason from "hooks/useCurrentSeason";
 import navigateToRandomTheme from "utils/navigateToRandomTheme";
 import { useRouter } from "next/router";
 import useAuth from "hooks/useAuth";
 
-interface NavigationProps {
-    offsetToggleButton?: boolean
-}
-
-export function Navigation({ offsetToggleButton = false }: NavigationProps) {
+export function Navigation() {
     const { me } = useAuth();
 
-    const [ show, setShow ] = useState(false);
     const { currentYear, currentSeason } = useCurrentSeason();
 
     const router = useRouter();
     const [ prevPathname, setPrevPathname ] = useState(router.pathname);
 
+    const [ isFloating, setFloating ] = useState(true);
+
+    useEffect(() => {
+        function onScroll() {
+            setFloating(window.scrollY === 0);
+        }
+
+        window.addEventListener("scroll", onScroll);
+
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
+
     // If the user clicks on a link which sends them to another page,
     // we want to close the modal navigation.
     if (router.pathname !== prevPathname) {
-        setShow(false);
         setPrevPathname(router.pathname);
         return null;
     }
 
     return <>
-        <StyledNavigation show={show} onClick={() => setShow(false)}>
+        <StyledNavigation $floating={isFloating}>
             <StyledNavigationContainer onClick={(event) => event.stopPropagation()}>
                 <Link href="/" passHref legacyBehavior>
                     <StyledLogoContainer>
@@ -49,45 +53,38 @@ export function Navigation({ offsetToggleButton = false }: NavigationProps) {
                 </Link>
                 <StyledNavigationLinks>
                     <Link href="/search" passHref legacyBehavior>
-                        <Button as="a" variant="silent" style={{ "--gap": "8px" }}>
-                            <Icon icon={faSearch}/>
-                            <Text>Search</Text>
-                        </Button>
+                        <IconTextButton forwardedAs="a" icon={faSearch} variant="silent" collapsible style={{ "--gap": "8px" }}>
+                            Search
+                        </IconTextButton>
                     </Link>
-                    <Button variant="silent" style={{ "--gap": "8px" }} onClick={navigateToRandomTheme}>
-                        <Icon icon={faRandom}/>
-                        <Text>Play Random</Text>
-                    </Button>
+                    <IconTextButton variant="silent" icon={faRandom} collapsible style={{ "--gap": "8px" }} onClick={navigateToRandomTheme}>
+                        Play Random
+                    </IconTextButton>
                     <Link
                         href={(currentYear && currentSeason) ? `/year/${currentYear}/${currentSeason}` : "/"}
                         passHref
                         legacyBehavior>
-                        <Button as="a" variant="silent" style={{ "--gap": "8px" }}>
-                            <Icon icon={faTv}/>
-                            <Text>Current Season</Text>
-                        </Button>
+                        <IconTextButton forwardedAs="a" variant="silent" icon={faTv} collapsible style={{ "--gap": "8px" }}>
+                            Current Season
+                        </IconTextButton>
                     </Link>
                     <Link href="/profile" passHref legacyBehavior>
-                        <StyledCollapsibleLink forwardedAs="a" title="My Profile">
-                            {me.user ? (
-                                <StyledProfileImage user={me.user} />
-                            ) : (
-                                <Icon icon={faUser}/>
-                            )}
-                            <span>My Profile</span>
-                        </StyledCollapsibleLink>
+                        <IconTextButton
+                            forwardedAs="a"
+                            variant="silent"
+                            icon={me.user ? (
+                                <StyledProfileImageIcon>
+                                    <StyledProfileImage user={me.user} />
+                                </StyledProfileImageIcon>
+                            ) : faUser}
+                            title="My Profile"
+                            collapsible
+                        >
+                            My Profile
+                        </IconTextButton>
                     </Link>
                 </StyledNavigationLinks>
             </StyledNavigationContainer>
         </StyledNavigation>
-
-        <StyledMobileToggle
-            variant={show ? "solid" : "primary"}
-            isCircle
-            offsetToggleButton={offsetToggleButton}
-            onClick={() => setShow(!show)}
-        >
-            <Icon icon={show ? faTimes : faBars}/>
-        </StyledMobileToggle>
     </>;
 }

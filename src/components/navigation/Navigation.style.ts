@@ -2,89 +2,42 @@ import styled, { css } from "styled-components";
 import { Container } from "components/container";
 import { Button } from "components/button";
 import theme from "theme";
-import { blurOut, zoomIn } from "styles/animations";
 import { Solid } from "components/box";
 import { Logo } from "components/image";
-import { withColorTheme } from "styles/mixins";
 import { ProfileImage } from "components/image/ProfileImage";
 
-export const StyledNavigation = styled(Solid).attrs({ as: "nav" })<{ show: boolean }>`
+export const StyledNavigation = styled(Solid).attrs({ as: "nav" })<{ $floating: boolean }>`
     position: sticky;
     top: 0;
     z-index: ${theme.zIndices.navigation};
+    background-color: ${theme.colors["background"]};
     box-shadow: ${theme.shadows.medium};
 
-    @media (max-width: 720px) {
-        display: none;
-        align-items: center;
-
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        z-index: ${theme.zIndices.navigation};
-
+    transition: 100ms ease;
+    transition-property: background-color, box-shadow;
+    
+    ${(props) => props.$floating && css`
+        transition: 500ms ease;
         background-color: transparent;
-
-        ${(props) => props.show && css`
-            display: flex;
-
-            animation: ${blurOut} 250ms ease forwards;
-        `}
-    }
+        box-shadow: none;
+    `}
 `;
 
 export const StyledNavigationContainer = styled(Container)`
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
+    align-items: stretch;
     gap: 16px;
-
-    @media (min-width: 721px) {
-        flex-direction: row;
-        align-items: stretch;
-
-        padding: 0.5rem 1rem;
-    }
-
-    @media (max-width: 720px) {
-        flex-direction: column;
-        align-items: center;
-
-        padding: 1rem;
-        border-radius: 1rem;
-        width: auto;
-
-        background-color: ${theme.colors["solid"]};
-        animation: ${zoomIn} 250ms ease;
-        will-change: transform;
-
-        ${withColorTheme("dark")`
-            border: 2px solid ${theme.colors["text-disabled"]};
-        `}
-    }
+    
+    padding: 8px 16px;
 `;
 
 export const StyledNavigationLinks = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 8px;
-
-    @media (max-width: ${theme.breakpoints.mobileMax}) {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-`;
-
-export const StyledCollapsibleLink = styled(Button).attrs({ variant: "silent" })`
-    gap: 8px;
-
-    @media (min-width: ${theme.breakpoints.tabletMin}) and (max-width: ${theme.breakpoints.tabletMax}) {
-        & > :last-child {
-            display: none;
-        }
-    }
+    gap: 16px;
 `;
 
 export const StyledLogoContainer = styled.a`
@@ -98,7 +51,7 @@ export const StyledLogoContainer = styled.a`
 
 export const StyledLogo = styled(Logo)`
     width: auto;
-    height: 2rem;
+    height: 1.5rem;
     color: ${theme.colors["text"]};
 `;
 
@@ -115,9 +68,23 @@ export const StyledMobileToggle = styled(Button)<{ offsetToggleButton: boolean }
     }
 `;
 
+export const StyledProfileImageIcon = styled.div`
+    position: relative;
+    width: 1.25em;
+    height: 1em;
+`;
+
 export const StyledProfileImage = styled(ProfileImage)`
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 2em;
     height: 2em;
-    margin: -1em 0 -1em -0.75em;
+    max-width: none;
     border-radius: 9999px;
+
+    @media (min-width: 721px) {
+        transform: translate(calc(-50% - 4px), -50%);
+    }
 `;
