@@ -12,6 +12,7 @@ const typeDefs = `
         seriesAll(limit: Int): [Series!]!
         studio(id: Int, slug: String): Studio
         studioAll(limit: Int): [Studio!]!
+        videoAll(limit: Int, orderBy: String, orderDesc: Boolean): [Video!]!
         year(value: Int!): Year
         yearAll: [Year!]!
         season(year: Int!, value: String!): Season
@@ -251,6 +252,7 @@ const typeDefs = `
         id: Int!
         name: String!
         visibility: PlaylistVisibility!
+        tracks_count: Int!
         tracks: [PlaylistTrack!]!
         forward: [PlaylistTrack!]!
         user: UserPublic!

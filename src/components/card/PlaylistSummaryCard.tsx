@@ -47,6 +47,7 @@ export default function PlaylistSummaryCard({ playlist, children, menu, showOwne
             {showOwner ? (
                 <Text link>{playlist.user.name}</Text>
             ) : null}
+            <span>{playlist.tracks_count} theme{playlist.tracks_count !== 1 ? "s" : null}</span>
         </SummaryCard.Description>
     );
 
@@ -70,6 +71,7 @@ PlaylistSummaryCard.fragments = {
             id
             name
             visibility
+            tracks_count
         } 
     `,
     showOwner: gql`

@@ -7,6 +7,7 @@ import { createContext, useContext, useMemo } from "react";
 import { faTimes } from "@fortawesome/pro-solid-svg-icons";
 import { Icon } from "components/icon";
 import { withHover } from "styles/mixins";
+import { Solid } from "components/box";
 
 interface SwitcherContextValue {
     selectedItem: string | null
@@ -28,6 +29,10 @@ const StyledSwitcher = styled.div`
     
     background-color: ${theme.colors["solid"]};
     box-shadow: ${theme.shadows.low};
+
+    ${Solid} & {
+        background-color: ${theme.colors["solid-on-card"]};
+    }
 `;
 
 interface StyledButtonProps {
