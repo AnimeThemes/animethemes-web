@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ThemeSummaryCard } from "components/card";
 import { Column } from "components/box";
 import { Text } from "components/text";
 import styled from "styled-components";
@@ -16,12 +15,15 @@ import { FeaturedTheme } from "components/featured-theme";
 import getSharedPageProps from "utils/getSharedPageProps";
 import { range } from "lodash-es";
 import { Skeleton } from "components/skeleton";
-import type { HomePageQuery, RecentlyAddedQuery } from "generated/graphql";
+import type { HomePageMostViewedQuery, HomePageQuery, HomePageRecentlyAddedQuery } from "generated/graphql";
 import type { GetStaticProps } from "next";
-import { gql, useQuery } from "@apollo/client";
 import { AnnouncementCard } from "components/card/AnnouncementCard";
 import type { MDXRemoteSerializeResult } from "next-mdx-remote";
 import serializeMarkdown from "utils/serializeMarkdown";
+import { VideoSummaryCard } from "components/card/VideoSummaryCard";
+import useSWR from "swr";
+import { fetchDataClient } from "lib/client";
+import gql from "graphql-tag";
 
 const BigButton = styled(Button)`
     justify-content: flex-end;
@@ -94,16 +96,41 @@ interface HomePageProps {
 export default function HomePage({ featuredTheme, announcementSources }: HomePageProps) {
     const { currentYear, currentSeason } = useCurrentSeason();
 
-    const { data, loading } = useQuery<RecentlyAddedQuery>(gql`
-        ${ThemeSummaryCard.fragments.theme}
+    const { data: recentlyAdded } = useSWR<HomePageRecentlyAddedQuery["videoAll"] | null[]>(
+        ["HomePageRecentlyAdded"],
+        async () => {
+            const { data } = await fetchDataClient<HomePageRecentlyAddedQuery>(gql`
+                ${VideoSummaryCard.fragments.video}
 
-        query RecentlyAdded {
-            recentlyAdded: themeAll(orderBy: "id", orderDesc: true, limit: 10, has: "animethemeentries.videos,song") {
-                ...ThemeSummaryCardTheme
-            }
-        }
-    `, { ssr: false });
-    const recentlyAdded = loading ? range(10).map(() => null) : data?.recentlyAdded;
+                query HomePageRecentlyAdded {
+                    videoAll(orderBy: "id", orderDesc: true, limit: 10) {
+                        ...VideoSummaryCardVideo
+                    }
+                }
+            `);
+
+            return data.videoAll;
+        },
+        { fallbackData: range(10).map(() => null) }
+    );
+
+    const { data: mostViewed } = useSWR<HomePageMostViewedQuery["videoAll"] | null[]>(
+        ["HomePageTrending"],
+        async () => {
+            const { data } = await fetchDataClient<HomePageMostViewedQuery>(gql`
+                ${VideoSummaryCard.fragments.video}
+
+                query HomePageMostViewed {
+                    videoAll(orderBy: "views_count", orderDesc: true, limit: 10) {
+                        ...VideoSummaryCardVideo
+                    }
+                }
+            `);
+
+            return data.videoAll;
+        },
+        { fallbackData: range(10).map(() => null) }
+    );
 
     return <>
         <SEO/>
@@ -129,10 +156,18 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
             </MainGridArea>
 
             <RecentlyAdded>
-                {recentlyAdded?.map((theme, index) => (
+                {recentlyAdded?.map((video, index) => (
                     <Skeleton key={index} variant="summary-card" delay={index * 100}>
-                        {theme ? (
-                            <ThemeSummaryCard theme={theme}/>
+                        {video ? (
+                            <VideoSummaryCard video={video}/>
+                        ) : null}
+                    </Skeleton>
+                ))}
+                <Text variant="h2">Most Viewed</Text>
+                {mostViewed?.map((video, index) => (
+                    <Skeleton key={index} variant="summary-card" delay={index * 100}>
+                        {video ? (
+                            <VideoSummaryCard video={video}/>
                         ) : null}
                     </Skeleton>
                 ))}

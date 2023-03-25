@@ -5,11 +5,17 @@ interface PlayerContextInterface {
         filename: string
     } | null
     clearCurrentVideo: () => void
+    watchList: any[];
+    setWatchList: (watchList: any[]) => void;
 }
 
 const PlayerContext = createContext<PlayerContextInterface>({
     currentVideo: null,
     clearCurrentVideo: () => {
+        // Do nothing
+    },
+    watchList: [],
+    setWatchList: () => {
         // Do nothing
     }
 });

@@ -77,12 +77,13 @@ function PlaylistTrackAddForm({ video, onCancel }: PlaylistTrackAddFormProps) {
         ["PlaylistTrackAddFormPlaylist", "/api/me/playlist", video.id],
         async () => {
             const { data } = await fetchDataClient<PlaylistTrackAddFormPlaylistQuery, PlaylistTrackAddFormPlaylistQueryVariables>(gql`
+                ${PlaylistSummaryCard.fragments.playlist}
+                
                 query PlaylistTrackAddFormPlaylist($filterVideoId: Int!) {
                     me {
                         playlistAll(filterVideoId: $filterVideoId) {
+                            ...PlaylistSummaryCardPlaylist
                             id
-                            name
-                            visibility
                             tracks {
                                 id
                             }
