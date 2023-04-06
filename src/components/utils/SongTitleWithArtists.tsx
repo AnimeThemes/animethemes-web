@@ -13,7 +13,7 @@ interface SongTitleWithArtistsProps {
 export function SongTitleWithArtists({ song, songTitleLinkTo, artist }: SongTitleWithArtistsProps) {
     return (
         <Text>
-            <SongTitle song={song} songTitleLinkTo={songTitleLinkTo}/>
+            <SongTitle song={song} href={songTitleLinkTo}/>
             <Performances song={song} artist={artist}/>
         </Text>
     );

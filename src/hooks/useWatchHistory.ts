@@ -9,7 +9,7 @@ interface WatchHistoryTheme extends ThemeSummaryCardThemeFragment {
 export type WatchHistory = Array<WatchHistoryTheme>;
 
 export default function useWatchHistory() {
-    const [ history, setHistory ] = useLocalStorageState<WatchHistory>("history", { ssr: true, defaultValue: [] });
+    const [ history, setHistory ] = useLocalStorageState<WatchHistory>("history", { defaultValue: [] });
 
     const addToHistory = useCallback((theme: WatchHistoryTheme) => {
 

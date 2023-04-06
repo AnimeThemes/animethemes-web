@@ -11,7 +11,7 @@ interface LocalPlaylistTheme {
 type LocalPlaylist = Array<NonNullable<FetchThemeSummaryCardData> & LocalPlaylistTheme>;
 
 export default function useLocalPlaylist() {
-    const [ localPlaylist, setLocalPlaylist ] = useLocalStorageState<LocalPlaylist>("local-playlist", { ssr: true, defaultValue: [] });
+    const [ localPlaylist, setLocalPlaylist ] = useLocalStorageState<LocalPlaylist>("local-playlist", { defaultValue: [] });
     const { dispatchToast } = useToasts();
 
     function addToPlaylist(theme: LocalPlaylistTheme) {

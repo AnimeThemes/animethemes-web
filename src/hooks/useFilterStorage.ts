@@ -5,10 +5,7 @@ export default function useFilterStorage<T>(key: string, defaultValue: T): {
     updateFilter(key: keyof T, value: T[typeof key]): void
     bindUpdateFilter(key: keyof T): (value: T[typeof key]) => void
 } {
-    const [filter, setFilter] = useSessionStorageState(key, {
-        ssr: true,
-        defaultValue,
-    });
+    const [filter, setFilter] = useSessionStorageState(key, { defaultValue });
 
     return {
         filter,
