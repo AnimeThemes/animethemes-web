@@ -7,7 +7,7 @@ import { SearchFilter } from "components/search-filter";
 import { Input } from "components/form";
 import type { FormEvent, ReactNode } from "react";
 import { useState } from "react";
-import { Listbox2, Listbox2Option } from "components/listbox/Listbox2";
+import { Listbox, ListboxOption } from "components/listbox/Listbox";
 import axios from "lib/client/axios";
 import styled from "styled-components";
 import { LoginGate } from "components/auth/LoginGate";
@@ -99,11 +99,11 @@ function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
                 </SearchFilter>
                 <SearchFilter>
                     <Text>Visibility</Text>
-                    <Listbox2 value={visibility} onValueChange={setVisibility}>
-                        <Listbox2Option value="PUBLIC">Public</Listbox2Option>
-                        <Listbox2Option value="UNLISTED">Unlisted</Listbox2Option>
-                        <Listbox2Option value="PRIVATE">Private</Listbox2Option>
-                    </Listbox2>
+                    <Listbox value={visibility} onValueChange={setVisibility}>
+                        <ListboxOption value="PUBLIC">Public</ListboxOption>
+                        <ListboxOption value="UNLISTED">Unlisted</ListboxOption>
+                        <ListboxOption value="PRIVATE">Private</ListboxOption>
+                    </Listbox>
                 </SearchFilter>
                 <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
                     <Button type="button" variant="silent" onClick={onCancel}>Cancel</Button>

@@ -1,84 +1,170 @@
-import { ListboxCustom, ListboxNative } from "components/listbox";
+import styled from "styled-components";
+import { faCheck, faSort, faTimes } from "@fortawesome/pro-solid-svg-icons";
+import { Button } from "components/button";
 import theme from "theme";
-import type { ReactNode } from "react";
-import { createContext, useContext } from "react";
-import useMediaQuery from "hooks/useMediaQuery";
+import * as RadixSelect from "@radix-ui/react-select";
+import { flipDown } from "styles/animations";
+import { Icon } from "components/icon";
+import { forwardRef } from "react";
 
-const ListboxContext = createContext({
-    isMobile: false
-});
+// Radix' listbox can't handle null values, so we are giving it a fake null value.
+const NULL_VALUE = "__NULL__";
 
-export interface ListboxProps<T extends string | null> {
-    children: ReactNode
-    value: T
-    onChange: (newValue: T) => void
-    resettable?: boolean
-    defaultValue?: T | null
-    highlightNonDefault?: boolean
-    disabled?: boolean
+const StyledListboxButton = styled(Button)`
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+
+    white-space: nowrap;
+    gap: 8px;
+
+    &:focus {
+        box-shadow: 0 0 0 2px ${theme.colors["text-primary"]};
+    }
+`;
+const StyledListboxReset = styled.span`
+    display: inline-block;
+    isolation: isolate;
+    margin: -8px;
+    padding: 8px;
+`;
+const StyledListboxPopover = styled(RadixSelect.Portal)`
+    z-index: ${theme.zIndices.menuPopover};
+
+    min-width: max-content;
+    padding: 0;
+    border-radius: 8px;
+    overflow: auto;
+
+    background-color: ${theme.colors["solid"]};
+    box-shadow: 0 0 0 2px ${theme.colors["text-primary"]}, ${theme.shadows.high};
+
+    transform-origin: top;
+    animation: ${flipDown} 200ms ease-out;
+
+    // Revert CSS rules set by Radix UI which hide the native scrollbar.
+    [data-radix-select-viewport] {
+        scrollbar-width: revert;
+        -ms-overflow-style: revert;
+    }
+    [data-radix-select-viewport]::-webkit-scrollbar {
+        display: revert;
+    }
+`;
+const StyledListboxList = styled(RadixSelect.Content)`
+    width: var(--radix-select-trigger-width);
+    max-height: calc(var(--radix-select-content-available-height) - 32px);
+    padding: 8px 0;
+`;
+const StyledListboxOption = styled(RadixSelect.Item)`
+    display: ${(props) => props.hidden ? "none" : "flex"};
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 8px 16px;
+    gap: 8px;
+
+    color: ${theme.colors["text-muted"]};
+    cursor: pointer;
+
+    &[data-highlighted] {
+        background-color: ${theme.colors["solid-on-card"]};
+        color: ${theme.colors["text"]};
+        outline: none;
+    }
+    
+    &[data-state="checked"] {
+        color: ${theme.colors["text-primary"]};
+    }
+`;
+
+type ListboxProps =
+    Omit<RadixSelect.SelectProps, "value" | "defaultValue" | "onValueChange">
+    & (PropsNullable | PropsNotNullable)
+    & {
+        resettable?: boolean;
+        highlightNonDefault?: boolean;
+    };
+
+interface PropsNullable {
+    nullable: true;
+    value: string | null;
+    onValueChange(newValue: string | null): void;
+    defaultValue?: string | null;
 }
 
-export function Listbox<T extends string | null>({
-    value,
-    onChange,
+interface PropsNotNullable {
+    nullable?: false;
+    value: string;
+    onValueChange(newValue: string): void;
+    defaultValue?: string;
+}
 
-    // Adds a reset button to the list box once a non-default value has been selected.
-    resettable = false,
+export const Listbox = forwardRef<HTMLButtonElement, ListboxProps>(
+    function Listbox({
+        value,
+        onValueChange,
+        defaultValue,
+        nullable,
+        resettable,
+        highlightNonDefault,
+        children,
+        ...props
+    }, ref) {
+        const radixValue = value === null ? NULL_VALUE : value;
+        const radixOnValueChange = (newValue: string) => {
+            if (nullable) {
+                onValueChange(newValue === NULL_VALUE ? null : newValue);
+            } else {
+                onValueChange(newValue);
+            }
+        };
+        const radixDefaultValue = defaultValue === null ? NULL_VALUE : defaultValue;
 
-    // The value to return to after a reset.
-    defaultValue = null,
-
-    // Highlights the listbox if an option other than defaultValue is selected.
-    highlightNonDefault = false,
-
-    disabled = false,
-    ...props
-}: ListboxProps<T>) {
-    const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
-
-    if (isMobile) {
         return (
-            <ListboxContext.Provider value={{ isMobile }}>
-                <ListboxNative
-                    value={value}
-                    onChange={onChange}
-                    resettable={resettable}
-                    defaultValue={defaultValue}
-                    highlightNonDefault={highlightNonDefault}
-                    disabled={disabled}
-                    {...props}
-                />
-            </ListboxContext.Provider>
+            <RadixSelect.Root value={radixValue} onValueChange={radixOnValueChange} defaultValue={radixDefaultValue} {...props}>
+                <RadixSelect.Trigger asChild ref={ref}>
+                    <StyledListboxButton variant={highlightNonDefault && value !== defaultValue ? "primary" : undefined}>
+                        <RadixSelect.Value />
+                        <RadixSelect.Icon>
+                            {(resettable && radixDefaultValue && value !== defaultValue) ? (
+                                <StyledListboxReset
+                                    onClick={() => radixOnValueChange(radixDefaultValue)}
+                                    onPointerDown={(event) => event.stopPropagation()}
+                                >
+                                    <Icon icon={faTimes}/>
+                                </StyledListboxReset>
+                            ) : (
+                                <Icon icon={faSort} />
+                            )}
+                        </RadixSelect.Icon>
+                    </StyledListboxButton>
+                </RadixSelect.Trigger>
+                <StyledListboxPopover>
+                    <StyledListboxList position="popper" sideOffset={8}>
+                        <RadixSelect.Viewport>{children}</RadixSelect.Viewport>
+                    </StyledListboxList>
+                </StyledListboxPopover>
+            </RadixSelect.Root>
         );
     }
+);
 
-    return (
-        <ListboxContext.Provider value={{ isMobile }}>
-            <ListboxCustom
-                value={value}
-                onChange={onChange}
-                resettable={resettable}
-                defaultValue={defaultValue}
-                highlightNonDefault={highlightNonDefault}
-                disabled={disabled}
-                {...props}
-            />
-        </ListboxContext.Provider>
-    );
+export interface ListboxOptionProps extends Omit<RadixSelect.SelectItemProps, "value"> {
+    value: string | null;
 }
 
-export interface ListboxOptionProps {
-    value?: string | null
-    children: string
-    hidden?: boolean
-}
+export const ListboxOption = forwardRef<HTMLDivElement, ListboxOptionProps>(
+    function ListboxOption({ value, children, ...props }, ref) {
+        const radixValue = value === null ? NULL_VALUE : value;
 
-Listbox.Option = function ListboxOption(props: ListboxOptionProps) {
-    const { isMobile } = useContext(ListboxContext);
-
-    if (isMobile) {
-        return <ListboxNative.Option {...props}/>;
+        return (
+            <StyledListboxOption value={radixValue} {...props} ref={ref}>
+                <RadixSelect.ItemText>{children}</RadixSelect.ItemText>
+                <RadixSelect.ItemIndicator>
+                    <Icon icon={faCheck} />
+                </RadixSelect.ItemIndicator>
+            </StyledListboxOption>
+        );
     }
-
-    return <ListboxCustom.Option {...props}/>;
-};
+);

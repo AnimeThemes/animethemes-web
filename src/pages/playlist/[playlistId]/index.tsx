@@ -6,7 +6,7 @@ import type {
     PlaylistDetailPagePlaylistQuery,
     PlaylistDetailPagePlaylistQueryVariables,
     PlaylistDetailPageQuery,
-    PlaylistDetailPageQueryVariables
+    PlaylistDetailPageQueryVariables, VideoSummaryCardVideoFragment
 } from "generated/graphql";
 import gql from "graphql-tag";
 import { VideoSummaryCard } from "components/card/VideoSummaryCard";
@@ -37,14 +37,14 @@ import { SearchFilterGroup, SearchFilterSortBy } from "components/search-filter"
 import styled from "styled-components";
 import theme from "theme";
 import { DescriptionList } from "components/description-list";
-import { Menu } from "components/menu";
 import { Icon } from "components/icon";
-import { faListMusic, faMinus } from "@fortawesome/pro-solid-svg-icons";
+import { faEllipsisV, faListMusic, faMinus, faPlus } from "@fortawesome/pro-solid-svg-icons";
 import { PlaylistTrackAddDialog } from "components/dialog/PlaylistTrackAddDialog";
 import { PlaylistTrackRemoveDialog } from "components/dialog/PlaylistTrackRemoveDialog";
 import useSWR from "swr";
 import { fetchDataClient } from "lib/client";
 import PlayerContext from "context/playerContext";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "components/menu/Menu";
 
 const StyledDesktopOnly = styled.div`
     gap: 24px;
@@ -66,7 +66,7 @@ interface PlaylistDetailPageParams extends ParsedUrlQuery {
 }
 
 export default function PlaylistDetailPage({ playlist: initialPlaylist, me: initialMe }: PlaylistDetailPageProps) {
-    const { setWatchList } = useContext(PlayerContext);
+    const { setWatchList, setCurrentWatchListItem, addWatchListItem, addWatchListItemNext } = useContext(PlayerContext);
 
     const { data: playlist } = useSWR(
         ["PlaylistDetailPagePlaylist", `/api/playlist/${initialPlaylist.id}`],
@@ -74,7 +74,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
             const { data } = await fetchDataClient<PlaylistDetailPagePlaylistQuery, PlaylistDetailPagePlaylistQueryVariables>(gql`
                 ${PlaylistDetailPage.fragments.playlist}
                 
-                query PlaylistDetailPagePlaylist($playlistId: Int!) {
+                query PlaylistDetailPagePlaylist($playlistId: String!) {
                     playlist(id: $playlistId) {
                         ...PlaylistDetailPagePlaylist
                     }
@@ -133,8 +133,9 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
         )
     );
 
-    function playAll() {
+    function playAll(initiatingVideo: VideoSummaryCardVideoFragment) {
         setWatchList(tracks.map((track) => track.video));
+        setCurrentWatchListItem(initiatingVideo);
     }
 
     return (
@@ -180,36 +181,51 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                             </SearchFilterSortBy>
                         </SearchFilterGroup>
                     </Collapse>
-                    <Button onClick={playAll}>Play All</Button>
                     <Column style={{ "--gap": "16px" }}>
                         {tracks.map((track) => (
                             <VideoSummaryCard
                                 key={track.id}
                                 video={track.video}
+                                onPlay={() => playAll(track.video)}
                                 menu={
-                                    <Menu>
-                                        <PlaylistTrackAddDialog
-                                            video={track.video}
-                                            trigger={
-                                                <Menu.Option>
-                                                    <Icon icon={faListMusic}/>
-                                                    <Text>Add to Playlist</Text>
-                                                </Menu.Option>
-                                            }
-                                        />
-                                        {me.user?.name === playlist.user.name ? (
-                                            <PlaylistTrackRemoveDialog
-                                                playlist={playlist}
-                                                trackId={track.id}
+                                    <Menu modal={false}>
+                                        <MenuTrigger asChild>
+                                            <Button variant="silent" isCircle>
+                                                <Icon icon={faEllipsisV} />
+                                            </Button>
+                                        </MenuTrigger>
+                                        <MenuContent>
+                                            <PlaylistTrackAddDialog
                                                 video={track.video}
                                                 trigger={
-                                                    <Menu.Option>
-                                                        <Icon icon={faMinus}/>
-                                                        <Text>Remove from Playlist</Text>
-                                                    </Menu.Option>
+                                                    <MenuItem onSelect={(event) => event.preventDefault()}>
+                                                        <Icon icon={faListMusic}/>
+                                                        <Text>Add to Playlist</Text>
+                                                    </MenuItem>
                                                 }
                                             />
-                                        ) : null}
+                                            {me.user?.name === playlist.user.name ? (
+                                                <PlaylistTrackRemoveDialog
+                                                    playlist={playlist}
+                                                    trackId={track.id}
+                                                    video={track.video}
+                                                    trigger={
+                                                        <MenuItem onSelect={(event) => event.preventDefault()}>
+                                                            <Icon icon={faMinus}/>
+                                                            <Text>Remove from Playlist</Text>
+                                                        </MenuItem>
+                                                    }
+                                                />
+                                            ) : null}
+                                            <MenuItem onSelect={() => addWatchListItem(track.video)}>
+                                                <Icon icon={faPlus}/>
+                                                <Text>Add to Watch List</Text>
+                                            </MenuItem>
+                                            <MenuItem onSelect={() => addWatchListItemNext(track.video)}>
+                                                <Icon icon={faPlus}/>
+                                                <Text>Play Next</Text>
+                                            </MenuItem>
+                                        </MenuContent>
                                     </Menu>
                                 }
                             />
@@ -266,7 +282,7 @@ export const getServerSideProps: GetServerSideProps<PlaylistDetailPageProps, Pla
         ${PlaylistDetailPage.fragments.playlist}
         ${PlaylistDetailPage.fragments.user}
         
-        query PlaylistDetailPage($playlistId: Int!) {
+        query PlaylistDetailPage($playlistId: String!) {
             playlist(id: $playlistId) {
                 ...PlaylistDetailPagePlaylist
             }
@@ -276,7 +292,7 @@ export const getServerSideProps: GetServerSideProps<PlaylistDetailPageProps, Pla
                 }
             }
         }
-    `, { playlistId: +params.playlistId }, { req });
+    `, { playlistId: params.playlistId }, { req });
 
     if (!data.playlist) {
         return {

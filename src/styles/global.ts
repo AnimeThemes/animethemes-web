@@ -101,17 +101,19 @@ export default createGlobalStyle`
         scrollbar-width: thin;
     }
 
-    ::-webkit-scrollbar {
-        width: 6px;
-        height: 12px;
-        background-color: transparent;
-    }
+    @media (pointer: fine) {
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 12px;
+            background-color: transparent;
+        }
 
-    ::-webkit-scrollbar-thumb {
-        background-color: ${theme.colors["gray-700"]};
+        ::-webkit-scrollbar-thumb {
+            background-color: ${theme.colors["gray-700"]};
 
-        &:hover {
-            background-color: ${theme.colors["gray-500"]};
+            &:hover {
+                background-color: ${theme.colors["gray-500"]};
+            }
         }
     }
 `;

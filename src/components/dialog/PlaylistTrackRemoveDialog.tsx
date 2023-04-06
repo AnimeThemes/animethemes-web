@@ -20,7 +20,7 @@ import { Busy } from "components/utils/Busy";
 
 interface PlaylistTrackRemoveDialogProps {
     playlist: PlaylistTrackRemoveDialogPlaylistFragment;
-    trackId: number;
+    trackId: string;
     video: PlaylistTrackRemoveDialogVideoFragment;
     trigger?: ReactNode;
 }
@@ -76,7 +76,7 @@ PlaylistTrackRemoveDialog.fragments = {
 
 interface PlaylistTrackRemoveFormProps {
     playlist: PlaylistTrackRemoveDialogPlaylistFragment;
-    trackId: number;
+    trackId: string;
     video: PlaylistTrackRemoveDialogVideoFragment;
     onSuccess(): void;
     onCancel(): void;

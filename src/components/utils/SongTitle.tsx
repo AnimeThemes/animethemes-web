@@ -2,25 +2,26 @@ import Link from "next/link";
 import { Text } from "components/text";
 import gql from "graphql-tag";
 import type { SongTitleSongFragment } from "generated/graphql";
+import type { ComponentPropsWithoutRef } from "react";
 
-export interface SongTitleProps {
+export interface SongTitleProps extends ComponentPropsWithoutRef<typeof Text> {
     song: SongTitleSongFragment | null
-    songTitleLinkTo?: string
+    href?: string
 }
 
-export function SongTitle({ song, songTitleLinkTo }: SongTitleProps) {
+export function SongTitle({ song, href, ...props }: SongTitleProps) {
     const songTitle = song?.title || "T.B.A.";
 
-    if (songTitleLinkTo) {
+    if (href) {
         return (
-            <Link href={songTitleLinkTo} passHref legacyBehavior>
-                <Text as="a" link title={songTitle} italics={!song?.title} wrapAnywhere>{songTitle}</Text>
+            <Link href={href} passHref legacyBehavior>
+                <Text as="a" link title={songTitle} italics={!song?.title} wrapAnywhere {...props}>{songTitle}</Text>
             </Link>
         );
     }
 
     return (
-        <Text color="text-primary" weight="600" italics={!song?.title} wrapAnywhere>{songTitle}</Text>
+        <Text color="text-primary" weight="600" italics={!song?.title} wrapAnywhere {...props}>{songTitle}</Text>
     );
 }
 

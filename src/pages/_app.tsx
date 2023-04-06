@@ -28,6 +28,7 @@ import { ExternalLink } from "components/external-link";
 import type { AppProps } from "next/app";
 import { LazyMotion } from "framer-motion";
 import { VideoPlayer2 } from "components/video-player-2/VideoPlayer2";
+import type { VideoSummaryCardVideoFragment } from "generated/graphql";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "styles/prism.scss";
@@ -60,7 +61,8 @@ export default function MyApp({ Component, pageProps }: AppProps<any>) {
     const [ lastVideoPageProps, setLastVideoPageProps ] = useState(() => {
         return isVideoPage ? pageProps : null;
     });
-    const [watchList, setWatchList] = useState<any[]>([]);
+    const [watchList, setWatchList] = useState<VideoSummaryCardVideoFragment[]>([]);
+    const [currentWatchListItem, setCurrentWatchListItem] = useState<VideoSummaryCardVideoFragment | null>(null);
 
     useEffect(() => {
         const hotkeyListener = (event: KeyboardEvent) => {
@@ -102,6 +104,18 @@ export default function MyApp({ Component, pageProps }: AppProps<any>) {
                 clearCurrentVideo: () => setLastVideoPageProps(null),
                 watchList,
                 setWatchList,
+                currentWatchListItem,
+                setCurrentWatchListItem,
+                addWatchListItem: (watchListItem) => setWatchList((watchList) => [...watchList, watchListItem]),
+                addWatchListItemNext: (watchListItem) => {
+                    const currentIndex = currentWatchListItem ? watchList.indexOf(currentWatchListItem) : 0;
+
+                    setWatchList((watchList) => [
+                        ...watchList.slice(0, currentIndex + 1),
+                        watchListItem,
+                        ...watchList.slice(currentIndex + 1)
+                    ]);
+                },
             } }),
             stackContext(QueryClientProvider, { client: queryClient }),
             stackContext(ToastProvider, {}),
