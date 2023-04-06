@@ -1,16 +1,8 @@
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import theme from "theme";
 import { Switcher } from "components/switcher";
 import { Solid } from "components/box";
-
-const slowPan = keyframes`
-    from, to {
-        object-position: top;
-    }
-    50% {
-        object-position: bottom;
-    }
-`;
+import { IconTextButton } from "components/button";
 
 export const StyledPlayer = styled.div`    
     position: sticky;
@@ -25,10 +17,10 @@ export const StyledPlayerContent = styled.div`
     flex: 1;
     
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    grid-gap: 128px;
+    grid-template-columns: 3fr 1fr;
+    grid-gap: 5%;
     
-    padding: 0 128px;
+    padding: 0 5%;
     
     @media (max-width: ${theme.breakpoints.tabletMax}) {
         grid-template-columns: 1fr;
@@ -40,13 +32,58 @@ export const StyledPlayerContent = styled.div`
 `;
 
 export const StyledPlaybackArea = styled.div`
-    align-self: center;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-
+    align-self: stretch;
+    justify-self: stretch;
+    
+    padding: 16px 0;
+    
     @media (max-width: ${theme.breakpoints.tabletMax}) {
         margin: 0 -16px;
     }
+`;
+
+export const StyledVideoBackground = styled.div`
+    position: relative;
+
+    display: flex;
+
+    width: 100%;
+    height: 100%;
+`;
+
+export const StyledVideo = styled.video`
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    
+    max-height: 100%;
+    
+    outline: none;
+
+    @media (max-width: ${theme.breakpoints.tabletMax}) {
+        position: static;
+    }
+`;
+
+export const StyledAudioBackground = styled.div`
+    position: relative;
+    
+    display: flex;
+    
+    width: 100%;
+    height: 100%;
+`;
+
+export const StyledAudio = styled.audio`
+    display: none;
+`;
+
+export const StyledAudioCover = styled.img`
+    position: absolute;
+    inset: 0;
+    margin: auto;
+
+    max-height: 100%;
 `;
 
 export const StyledAside = styled.aside`
@@ -58,41 +95,6 @@ export const StyledAside = styled.aside`
 
     @media (max-width: ${theme.breakpoints.tabletMax}) {
         padding-top: 0;
-    }
-`;
-
-export const StyledVideo = styled.video`
-    width: 100%;
-    height: 100%;
-    outline: none;
-    background-color: rgb(0, 0, 0);
-`;
-
-export const StyledAudio = styled.audio`
-    position: absolute;
-    outline: none;
-`;
-
-export const StyledAudioBackground = styled.div`
-    position: relative;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    width: 100%;
-    height: 100%;
-`;
-
-export const StyledAudioCover = styled.img`
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: blur(5px);
-    transform: scale(1.1);
-    
-    @media (prefers-reduced-motion: no-preference) {
-        animation: ${slowPan} 120s ease-in-out infinite;
     }
 `;
 
@@ -131,14 +133,15 @@ export const StyledPlayerBarControls = styled.div`
     display: flex;
     gap: 16px;
     
-    font-size: 2.5rem;
-    color: ${theme.colors["text-disabled"]};
-
     @media (max-width: ${theme.breakpoints.tabletMax}) {
         & > :first-child, & > :last-child {
             display: none;
         }
     }
+`;
+
+export const StyledPlayerBarControl = styled(IconTextButton)`
+    font-size: 2rem;
 `;
 
 export const StyledPlayerBarActions = styled.div`

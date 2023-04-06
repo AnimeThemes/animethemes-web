@@ -12,7 +12,6 @@ import { memo, useMemo, useState } from "react";
 import { FilterToggleButton } from "components/button";
 import { SearchFilter, SearchFilterGroup, SearchFilterSortBy } from "components/search-filter";
 import { Collapse } from "components/utils";
-import { Listbox } from "components/listbox";
 import {
     either,
     getComparator,
@@ -32,9 +31,14 @@ import gql from "graphql-tag";
 import fetchStaticPaths from "utils/fetchStaticPaths";
 import getSharedPageProps from "utils/getSharedPageProps";
 import type { GetStaticPaths, GetStaticProps } from "next";
-import type { ArtistDetailPageAllQuery, ArtistDetailPageQuery, ArtistDetailPageQueryVariables } from "generated/graphql";
+import type {
+    ArtistDetailPageAllQuery,
+    ArtistDetailPageQuery,
+    ArtistDetailPageQueryVariables
+} from "generated/graphql";
 import type { ParsedUrlQuery } from "querystring";
 import type { RequiredNonNullable } from "utils/types";
+import { Listbox, ListboxOption } from "components/listbox/Listbox";
 
 const StyledList = styled.div`
     display: flex;
@@ -51,9 +55,8 @@ const StyledHeader = styled.div`
 `;
 
 type Performance = ArtistDetailPageProps["artist"]["performances"][number];
-type PerformanceFilterKey = "SOLO" | "GROUP" | null;
 
-function getPerformanceFilter(key: PerformanceFilterKey): (performance: Performance) => boolean {
+function getPerformanceFilter(key: string | null): (performance: Performance) => boolean {
     switch (key) {
         case "SOLO":
             return (performance) => performance.song.performances.length === 1;
@@ -84,7 +87,7 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
     }, [ artist ]);
 
     const [ showFilter, toggleShowFilter ] = useToggle();
-    const [ filterPerformance, setFilterPerformance ] = useState<PerformanceFilterKey>(null);
+    const [ filterPerformance, setFilterPerformance ] = useState<string | null>(null);
     const [ filterAlias, setFilterAlias ] = useState(aliasFilterOptions[0]);
     const [ sortBy, setSortBy ] = useState(SONG_A_Z_ANIME);
 
@@ -169,17 +172,17 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                     <SearchFilterGroup>
                         <SearchFilter>
                             <Text variant="h2">Performed with</Text>
-                            <Listbox value={filterPerformance} onChange={setFilterPerformance} resettable highlightNonDefault>
-                                <Listbox.Option value={null} hidden>Any</Listbox.Option>
-                                <Listbox.Option value="SOLO">Solo</Listbox.Option>
-                                <Listbox.Option value="GROUP">Group</Listbox.Option>
+                            <Listbox value={filterPerformance} onValueChange={setFilterPerformance} defaultValue={null} nullable resettable highlightNonDefault>
+                                <ListboxOption value={null} hidden>Any</ListboxOption>
+                                <ListboxOption value="SOLO">Solo</ListboxOption>
+                                <ListboxOption value="GROUP">Group</ListboxOption>
                             </Listbox>
                         </SearchFilter>
                         <SearchFilter>
                             <Text variant="h2">Performed as</Text>
-                            <Listbox value={filterAlias} onChange={setFilterAlias} resettable highlightNonDefault>
+                            <Listbox value={filterAlias} onValueChange={setFilterAlias} defaultValue={null} nullable resettable highlightNonDefault>
                                 {aliasFilterOptions.map((option) => (
-                                    <Listbox.Option key={option} value={option} hidden={!option}>{option ?? "Any"}</Listbox.Option>
+                                    <ListboxOption key={option} value={option} hidden={!option}>{option ?? "Any"}</ListboxOption>
                                 ))}
                             </Listbox>
                         </SearchFilter>

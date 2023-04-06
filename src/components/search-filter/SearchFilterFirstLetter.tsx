@@ -1,6 +1,6 @@
 import { Text } from "components/text";
 import { SearchFilter } from "components/search-filter";
-import { Listbox2, Listbox2Option } from "components/listbox/Listbox2";
+import { Listbox, ListboxOption } from "components/listbox/Listbox";
 
 const letters = createLetters();
 
@@ -13,12 +13,12 @@ export function SearchFilterFirstLetter({ value, setValue }: SearchFilterFirstLe
     return (
         <SearchFilter>
             <Text variant="h2">First Letter</Text>
-            <Listbox2 value={value} onValueChange={setValue} defaultValue={null} resettable nullable highlightNonDefault>
-                <Listbox2Option value={null} hidden>Any</Listbox2Option>
+            <Listbox value={value} onValueChange={setValue} defaultValue={null} resettable nullable highlightNonDefault>
+                <ListboxOption value={null} hidden>Any</ListboxOption>
                 {letters.map((letter) => (
-                    <Listbox2Option key={letter} value={letter}>{letter}</Listbox2Option>
+                    <ListboxOption key={letter} value={letter}>{letter}</ListboxOption>
                 ))}
-            </Listbox2>
+            </Listbox>
         </SearchFilter>
     );
 }

@@ -1,12 +1,15 @@
 import { createContext } from "react";
+import type { VideoSummaryCardVideoFragment } from "generated/graphql";
 
 interface PlayerContextInterface {
-    currentVideo: {
-        filename: string
-    } | null
-    clearCurrentVideo: () => void
-    watchList: any[];
-    setWatchList: (watchList: any[]) => void;
+    currentVideo: VideoSummaryCardVideoFragment | null;
+    clearCurrentVideo: () => void;
+    watchList: VideoSummaryCardVideoFragment[];
+    setWatchList: (watchList: VideoSummaryCardVideoFragment[]) => void;
+    currentWatchListItem: VideoSummaryCardVideoFragment | null;
+    setCurrentWatchListItem: (currentWatchListItem: VideoSummaryCardVideoFragment | null) => void;
+    addWatchListItem: (watchListItem: VideoSummaryCardVideoFragment) => void;
+    addWatchListItemNext: (watchListItem: VideoSummaryCardVideoFragment) => void;
 }
 
 const PlayerContext = createContext<PlayerContextInterface>({
@@ -17,7 +20,17 @@ const PlayerContext = createContext<PlayerContextInterface>({
     watchList: [],
     setWatchList: () => {
         // Do nothing
-    }
+    },
+    currentWatchListItem: null,
+    setCurrentWatchListItem: () => {
+        // Do nothing
+    },
+    addWatchListItem: () => {
+        // Do nothing
+    },
+    addWatchListItemNext: () => {
+        // Do nothing
+    },
 });
 
 export default PlayerContext;

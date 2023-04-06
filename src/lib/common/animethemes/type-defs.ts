@@ -25,7 +25,7 @@ const typeDefs = `
         balanceAll(month: String): [Balance!]!
         transactionAll(month: String): [Transaction!]!
         billingMonthAll: [String!]!
-        playlist(id: Int!): Playlist
+        playlist(id: String!): Playlist
         announcementAll: [Announcement!]!
         me: UserScopedQuery!
     }
@@ -249,7 +249,7 @@ const typeDefs = `
     }
     
     type Playlist {
-        id: Int!
+        id: String!
         name: String!
         visibility: PlaylistVisibility!
         tracks_count: Int!
@@ -265,7 +265,7 @@ const typeDefs = `
     }
     
     type PlaylistTrack {
-        id: Int!
+        id: String!
         video: Video!
     }
     
