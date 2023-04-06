@@ -5,7 +5,7 @@ import { HorizontalScroll } from "components/utils";
 import { either, themeIndexComparator, themeTypeComparator } from "utils/comparators";
 import gql from "graphql-tag";
 import type { AnimeThemeFilterThemeFragment } from "generated/graphql";
-import { Listbox2, Listbox2Option } from "components/listbox/Listbox2";
+import { Listbox, ListboxOption } from "components/listbox/Listbox";
 
 interface AnimeThemeFilterProps {
     themes: Array<AnimeThemeFilterThemeFragment>
@@ -51,18 +51,18 @@ function AnimeThemeFilterInternal({ themes }: AnimeThemeFilterProps) {
                 <HorizontalScroll fixShadows>
                     <Row style={{ "--gap": "16px" }}>
                         {groups.length > 1 && (
-                            <Listbox2 value={activeGroup} onValueChange={setActiveGroup}>
+                            <Listbox value={activeGroup} onValueChange={setActiveGroup}>
                                 {groups.map((group) => (
-                                    <Listbox2Option key={group.name} value={group.name}>{group.name}</Listbox2Option>
+                                    <ListboxOption key={group.name} value={group.name}>{group.name}</ListboxOption>
                                 ))}
-                            </Listbox2>
+                            </Listbox>
                         )}
                         {hasMultipleTypes && (
-                            <Listbox2 value={filterType} onValueChange={setFilterType} defaultValue={null} resettable nullable highlightNonDefault>
-                                <Listbox2Option value={null} hidden>OP & ED</Listbox2Option>
-                                <Listbox2Option value="OP">OP</Listbox2Option>
-                                <Listbox2Option value="ED">ED</Listbox2Option>
-                            </Listbox2>
+                            <Listbox value={filterType} onValueChange={setFilterType} defaultValue={null} resettable nullable highlightNonDefault>
+                                <ListboxOption value={null} hidden>OP & ED</ListboxOption>
+                                <ListboxOption value="OP">OP</ListboxOption>
+                                <ListboxOption value="ED">ED</ListboxOption>
+                            </Listbox>
                         )}
                     </Row>
                 </HorizontalScroll>

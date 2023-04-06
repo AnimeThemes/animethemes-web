@@ -3,14 +3,13 @@ import { SEO } from "components/seo";
 import { Column, Row } from "components/box";
 import { Text } from "components/text";
 import { Card, SummaryCard, ThemeSummaryCard } from "components/card";
-import { IconTextButton } from "components/button";
-import { faExclamationCircle, faKey, faPersonToDoor, faTrash } from "@fortawesome/pro-solid-svg-icons";
+import { Button, IconTextButton } from "components/button";
+import { faEllipsisV, faExclamationCircle, faKey, faPersonToDoor, faTrash } from "@fortawesome/pro-solid-svg-icons";
 import type { WatchHistory } from "hooks/useWatchHistory";
 import useWatchHistory from "hooks/useWatchHistory";
 import useLocalPlaylist from "hooks/useLocalPlaylist";
 import theme from "theme";
 import { SearchFilter, SearchFilterGroup } from "components/search-filter";
-import { Listbox } from "components/listbox";
 import { ColorTheme, DeveloperMode, FeaturedThemePreview, RevalidationToken, ShowAnnouncements } from "utils/settings";
 import useSetting from "hooks/useSetting";
 import { Input } from "components/form";
@@ -30,13 +29,14 @@ import useSWR from "swr";
 import { fetchDataClient } from "lib/client";
 import type { RequiredNonNullable } from "utils/types";
 import { Busy } from "components/utils/Busy";
-import { Menu } from "components/menu";
 import { PlaylistRemoveDialog } from "components/dialog/PlaylistRemoveDialog";
 import { Icon } from "components/icon";
 import { ProfileImage } from "components/image/ProfileImage";
 import { isAxiosError } from "axios";
 import { handleAxiosError } from "lib/client/axios";
 import { PasswordChangeDialog } from "components/dialog/PasswordChangeDialog";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "components/menu/Menu";
+import { Listbox, ListboxOption } from "components/listbox/Listbox";
 
 const StyledProfileGrid = styled.div`
     --columns: 2;
@@ -224,16 +224,23 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                                         key={playlist.id}
                                         playlist={playlist}
                                         menu={
-                                            <Menu>
-                                                <PlaylistRemoveDialog
-                                                    playlist={playlist}
-                                                    trigger={
-                                                        <Menu.Option>
-                                                            <Icon icon={faTrash} />
-                                                            <Text>Delete Playlist</Text>
-                                                        </Menu.Option>
-                                                    }
-                                                />
+                                            <Menu modal={false}>
+                                                <MenuTrigger asChild>
+                                                    <Button variant="silent" isCircle>
+                                                        <Icon icon={faEllipsisV} />
+                                                    </Button>
+                                                </MenuTrigger>
+                                                <MenuContent>
+                                                    <PlaylistRemoveDialog
+                                                        playlist={playlist}
+                                                        trigger={
+                                                            <MenuItem onSelect={(event) => event.preventDefault()}>
+                                                                <Icon icon={faTrash} />
+                                                                <Text>Delete Playlist</Text>
+                                                            </MenuItem>
+                                                        }
+                                                    />
+                                                </MenuContent>
                                             </Menu>
                                         }
                                     />
@@ -254,34 +261,34 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                         <SearchFilterGroup>
                             <SearchFilter>
                                 <Text>Color Theme</Text>
-                                <Listbox value={colorTheme} onChange={setColorTheme}>
-                                    <Listbox.Option value={ColorTheme.SYSTEM}>System</Listbox.Option>
-                                    <Listbox.Option value={ColorTheme.DARK}>Dark</Listbox.Option>
-                                    <Listbox.Option value={ColorTheme.LIGHT}>Light</Listbox.Option>
+                                <Listbox value={colorTheme} onValueChange={setColorTheme}>
+                                    <ListboxOption value={ColorTheme.SYSTEM}>System</ListboxOption>
+                                    <ListboxOption value={ColorTheme.DARK}>Dark</ListboxOption>
+                                    <ListboxOption value={ColorTheme.LIGHT}>Light</ListboxOption>
                                 </Listbox>
                             </SearchFilter>
                             <SearchFilter>
                                 <Text>Show Announcements</Text>
-                                <Listbox value={showAnnouncements} onChange={setShowAnnouncements}>
-                                    <Listbox.Option value={ShowAnnouncements.ENABLED}>Enabled</Listbox.Option>
-                                    <Listbox.Option value={ShowAnnouncements.DISABLED}>Disabled</Listbox.Option>
+                                <Listbox value={showAnnouncements} onValueChange={setShowAnnouncements}>
+                                    <ListboxOption value={ShowAnnouncements.ENABLED}>Enabled</ListboxOption>
+                                    <ListboxOption value={ShowAnnouncements.DISABLED}>Disabled</ListboxOption>
                                 </Listbox>
                             </SearchFilter>
                             <SearchFilter>
                                 <Text>Featured Theme Preview</Text>
-                                <Listbox value={featuredThemePreview} onChange={setFeaturedThemePreview}>
-                                    <Listbox.Option value={FeaturedThemePreview.VIDEO}>Video</Listbox.Option>
-                                    <Listbox.Option value={FeaturedThemePreview.COVER}>Cover</Listbox.Option>
-                                    <Listbox.Option value={FeaturedThemePreview.DISABLED}>Disabled</Listbox.Option>
+                                <Listbox value={featuredThemePreview} onValueChange={setFeaturedThemePreview}>
+                                    <ListboxOption value={FeaturedThemePreview.VIDEO}>Video</ListboxOption>
+                                    <ListboxOption value={FeaturedThemePreview.COVER}>Cover</ListboxOption>
+                                    <ListboxOption value={FeaturedThemePreview.DISABLED}>Disabled</ListboxOption>
                                 </Listbox>
                             </SearchFilter>
                         </SearchFilterGroup>
                         <SearchFilterGroup>
                             <SearchFilter>
                                 <Text>Developer Mode</Text>
-                                <Listbox value={developerMode} onChange={setDeveloperMode}>
-                                    <Listbox.Option value={DeveloperMode.DISABLED}>Disabled</Listbox.Option>
-                                    <Listbox.Option value={DeveloperMode.ENABLED}>Enabled</Listbox.Option>
+                                <Listbox value={developerMode} onValueChange={setDeveloperMode}>
+                                    <ListboxOption value={DeveloperMode.DISABLED}>Disabled</ListboxOption>
+                                    <ListboxOption value={DeveloperMode.ENABLED}>Enabled</ListboxOption>
                                 </Listbox>
                             </SearchFilter>
                             {developerMode === DeveloperMode.ENABLED && (

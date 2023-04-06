@@ -15,7 +15,7 @@ import { HorizontalScroll } from "components/utils/HorizontalScroll";
 import fetchStaticPaths from "utils/fetchStaticPaths";
 import type { ParsedUrlQuery } from "querystring";
 import { useRouter } from "next/router";
-import { Listbox2, Listbox2Option } from "components/listbox/Listbox2";
+import { Listbox, ListboxOption } from "components/listbox/Listbox";
 
 interface TransparencyPageProps extends SharedPageProps, TransparencyPageQuery {
     month: string;
@@ -58,11 +58,11 @@ export default function TransparencyPage({ month, months, balanceAll, transactio
             <SEO title="Transparency"/>
             <Row $wrap style={{ "--gap": "16px", "--justify-content": "space-between", "--align-items": "center" }}>
                 <Text variant="h1">Transparency</Text>
-                <Listbox2 value={month} onValueChange={(newMonth) => router.push(`/about/transparency/${newMonth}`)}>
+                <Listbox value={month} onValueChange={(newMonth) => router.push(`/about/transparency/${newMonth}`)}>
                     {months.map((month) => (
-                        <Listbox2Option key={month} value={month}>{toFormattedString(new Date(month))}</Listbox2Option>
+                        <ListboxOption key={month} value={month}>{toFormattedString(new Date(month))}</ListboxOption>
                     ))}
-                </Listbox2>
+                </Listbox>
             </Row>
             <Text variant="h2">Balances</Text>
             {balanceAll.length ? (

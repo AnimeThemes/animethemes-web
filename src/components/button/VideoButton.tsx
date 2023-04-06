@@ -25,7 +25,7 @@ interface VideoButtonProps extends ComponentPropsWithoutRef<typeof Button> {
 export function VideoButton({ anime, theme, entry, video, ...props }: VideoButtonProps) {
     const { currentVideo } = useContext(PlayerContext);
     const videoSlug = createVideoSlug(theme, entry, video);
-    const isPlaying = currentVideo ? currentVideo.filename === video.filename : false;
+    const isPlaying = currentVideo ? currentVideo.id === video.id : false;
 
     return (
         <Link
@@ -63,7 +63,7 @@ VideoButton.fragments = {
         
         fragment VideoButtonVideo on Video {
             ...VideoTagsVideo
-            filename
+            id
             tags
         }
     `,

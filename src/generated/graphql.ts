@@ -177,7 +177,7 @@ export type Performance = {
 
 export type Playlist = {
   forward: Array<PlaylistTrack>;
-  id: Scalars['Int'];
+  id: Scalars['String'];
   name: Scalars['String'];
   tracks: Array<PlaylistTrack>;
   tracks_count: Scalars['Int'];
@@ -191,7 +191,7 @@ export type PlaylistSearchResult = EntitySearchResult & {
 };
 
 export type PlaylistTrack = {
-  id: Scalars['Int'];
+  id: Scalars['String'];
   video: Video;
 };
 
@@ -285,7 +285,7 @@ export type QueryPageArgs = {
 
 
 export type QueryPlaylistArgs = {
-  id: Scalars['Int'];
+  id: Scalars['String'];
 };
 
 
@@ -563,7 +563,7 @@ export type VideoButtonThemeFragment = { slug: string };
 
 export type VideoButtonEntryFragment = { version: number | null };
 
-export type VideoButtonVideoFragment = { filename: string, tags: string, resolution: number | null, nc: boolean, subbed: boolean, lyrics: boolean, uncen: boolean, source: VideoSource | null, overlap: VideoOverlap };
+export type VideoButtonVideoFragment = { id: number, tags: string, resolution: number | null, nc: boolean, subbed: boolean, lyrics: boolean, uncen: boolean, source: VideoSource | null, overlap: VideoOverlap };
 
 export type AnimeSummaryCardAnimeFragment = { slug: string, name: string, year: number | null, season: string | null, themes: Array<{ group: string | null }>, images: Array<{ link: string, facet: string | null }> };
 
@@ -571,7 +571,7 @@ export type AnimeSummaryCardAnimeExpandableFragment = { themes: Array<{ group: s
 
 export type ArtistSummaryCardArtistFragment = { slug: string, name: string, images: Array<{ link: string, facet: string | null }> };
 
-export type PlaylistSummaryCardPlaylistFragment = { id: number, name: string, visibility: PlaylistVisibility, tracks_count: number };
+export type PlaylistSummaryCardPlaylistFragment = { id: string, name: string, visibility: PlaylistVisibility, tracks_count: number };
 
 export type PlaylistSummaryCardShowOwnerFragment = { user: { name: string } };
 
@@ -590,9 +590,9 @@ export type ThemeSummaryCardQueryVariables = Exact<{
 
 export type ThemeSummaryCardQuery = { theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { year: number | null, season: string | null, slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null, entries: Array<{ version: number | null, videos: Array<{ id: number, tags: string }> }> } | null };
 
-export type VideoSummaryCardVideoFragment = { tags: string, entries: Array<{ version: number | null, theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } | null }> };
+export type VideoSummaryCardVideoFragment = { id: number, tags: string, entries: Array<{ version: number | null, theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } | null }> };
 
-export type PlaylistRemoveDialogPlaylistFragment = { id: number, name: string, visibility: PlaylistVisibility, tracks_count: number };
+export type PlaylistRemoveDialogPlaylistFragment = { id: string, name: string, visibility: PlaylistVisibility, tracks_count: number };
 
 export type PlaylistTrackAddDialogVideoFragment = { id: number, tags: string, entries: Array<{ version: number | null, theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } | null }> };
 
@@ -601,11 +601,11 @@ export type PlaylistTrackAddFormPlaylistQueryVariables = Exact<{
 }>;
 
 
-export type PlaylistTrackAddFormPlaylistQuery = { me: { playlistAll: Array<{ id: number, name: string, visibility: PlaylistVisibility, tracks_count: number, tracks: Array<{ id: number }> }> | null } };
+export type PlaylistTrackAddFormPlaylistQuery = { me: { playlistAll: Array<{ id: string, name: string, visibility: PlaylistVisibility, tracks_count: number, tracks: Array<{ id: string }> }> | null } };
 
-export type PlaylistTrackRemoveDialogPlaylistFragment = { id: number, name: string };
+export type PlaylistTrackRemoveDialogPlaylistFragment = { id: string, name: string };
 
-export type PlaylistTrackRemoveDialogVideoFragment = { tags: string, entries: Array<{ version: number | null, theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } | null }> };
+export type PlaylistTrackRemoveDialogVideoFragment = { id: number, tags: string, entries: Array<{ version: number | null, theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } | null }> };
 
 export type FeaturedThemeThemeFragment = { slug: string, type: string, sequence: number | null, group: string | null, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, entries: Array<{ version: number | null, videos: Array<{ basename: string, id: number, tags: string }> }>, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null };
 
@@ -652,14 +652,14 @@ export type SearchGlobalQueryVariables = Exact<{
 }>;
 
 
-export type SearchGlobalQuery = { search: { anime: Array<{ slug: string, name: string, year: number | null, season: string | null, themes: Array<{ group: string | null, type: string, sequence: number | null, slug: string, anime: { slug: string } | null, entries: Array<{ version: number | null, episodes: string | null, spoiler: boolean, nsfw: boolean, videos: Array<{ tags: string, resolution: number | null, nc: boolean, subbed: boolean, lyrics: boolean, uncen: boolean, source: VideoSource | null, overlap: VideoOverlap }> }>, song: { title: string | null } | null }>, images: Array<{ link: string, facet: string | null }> }>, themes: Array<{ slug: string, type: string, sequence: number | null, group: string | null, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null, entries: Array<{ version: number | null, episodes: string | null, spoiler: boolean, nsfw: boolean, videos: Array<{ id: number, tags: string, resolution: number | null, nc: boolean, subbed: boolean, lyrics: boolean, uncen: boolean, source: VideoSource | null, overlap: VideoOverlap }> }> }>, artists: Array<{ slug: string, name: string, images: Array<{ link: string, facet: string | null }> }>, series: Array<{ slug: string, name: string }>, studios: Array<{ slug: string, name: string }>, playlists: Array<{ id: number, name: string, visibility: PlaylistVisibility, tracks_count: number, user: { name: string } }> } };
+export type SearchGlobalQuery = { search: { anime: Array<{ slug: string, name: string, year: number | null, season: string | null, themes: Array<{ group: string | null, type: string, sequence: number | null, slug: string, anime: { slug: string } | null, entries: Array<{ version: number | null, episodes: string | null, spoiler: boolean, nsfw: boolean, videos: Array<{ tags: string, resolution: number | null, nc: boolean, subbed: boolean, lyrics: boolean, uncen: boolean, source: VideoSource | null, overlap: VideoOverlap }> }>, song: { title: string | null } | null }>, images: Array<{ link: string, facet: string | null }> }>, themes: Array<{ slug: string, type: string, sequence: number | null, group: string | null, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null, entries: Array<{ version: number | null, episodes: string | null, spoiler: boolean, nsfw: boolean, videos: Array<{ id: number, tags: string, resolution: number | null, nc: boolean, subbed: boolean, lyrics: boolean, uncen: boolean, source: VideoSource | null, overlap: VideoOverlap }> }> }>, artists: Array<{ slug: string, name: string, images: Array<{ link: string, facet: string | null }> }>, series: Array<{ slug: string, name: string }>, studios: Array<{ slug: string, name: string }>, playlists: Array<{ id: string, name: string, visibility: PlaylistVisibility, tracks_count: number, user: { name: string } }> } };
 
 export type SearchPlaylistQueryVariables = Exact<{
   args: SearchArgs;
 }>;
 
 
-export type SearchPlaylistQuery = { searchPlaylist: { nextPage: number | null, data: Array<{ id: number, name: string, visibility: PlaylistVisibility, tracks_count: number, user: { name: string } }> } };
+export type SearchPlaylistQuery = { searchPlaylist: { nextPage: number | null, data: Array<{ id: string, name: string, visibility: PlaylistVisibility, tracks_count: number, user: { name: string } }> } };
 
 export type SearchSeriesQueryVariables = Exact<{
   args: SearchArgs;
@@ -692,13 +692,13 @@ export type ThemeEntryTagsEntryFragment = { episodes: string | null, spoiler: bo
 
 export type VideoTagsVideoFragment = { resolution: number | null, nc: boolean, subbed: boolean, lyrics: boolean, uncen: boolean, source: VideoSource | null, overlap: VideoOverlap };
 
-export type PlaylistRemoveToastPlaylistFragment = { id: number, name: string };
+export type PlaylistRemoveToastPlaylistFragment = { id: string, name: string };
 
-export type PlaylistTrackAddToastPlaylistFragment = { id: number, name: string };
+export type PlaylistTrackAddToastPlaylistFragment = { id: string, name: string };
 
 export type PlaylistTrackAddToastVideoFragment = { entries: Array<{ theme: { song: { title: string | null } | null } | null }> };
 
-export type PlaylistTrackRemoveToastPlaylistFragment = { id: number, name: string };
+export type PlaylistTrackRemoveToastPlaylistFragment = { id: string, name: string };
 
 export type PlaylistTrackRemoveToastVideoFragment = { entries: Array<{ theme: { song: { title: string | null } | null } | null }> };
 
@@ -848,12 +848,12 @@ export type EventPageQuery = { bracketAll: Array<{ slug: string, name: string }>
 export type HomePageRecentlyAddedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type HomePageRecentlyAddedQuery = { videoAll: Array<{ tags: string, entries: Array<{ version: number | null, theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } | null }> }> };
+export type HomePageRecentlyAddedQuery = { videoAll: Array<{ id: number, tags: string, entries: Array<{ version: number | null, theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } | null }> }> };
 
 export type HomePageMostViewedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type HomePageMostViewedQuery = { videoAll: Array<{ tags: string, entries: Array<{ version: number | null, theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } | null }> }> };
+export type HomePageMostViewedQuery = { videoAll: Array<{ id: number, tags: string, entries: Array<{ version: number | null, theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } | null }> }> };
 
 export type HomePageQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -861,18 +861,18 @@ export type HomePageQueryVariables = Exact<{ [key: string]: never; }>;
 export type HomePageQuery = { featuredTheme: { theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, entries: Array<{ version: number | null, videos: Array<{ basename: string, id: number, tags: string }> }>, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } } | null, announcementAll: Array<{ content: string }> };
 
 export type PlaylistDetailPagePlaylistQueryVariables = Exact<{
-  playlistId: Scalars['Int'];
+  playlistId: Scalars['String'];
 }>;
 
 
-export type PlaylistDetailPagePlaylistQuery = { playlist: { id: number, name: string, visibility: PlaylistVisibility, tracks_count: number, forward: Array<{ id: number, video: { id: number, tags: string, entries: Array<{ version: number | null, theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { year: number | null, season: string | null, slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } | null }> } }>, user: { name: string } } | null };
+export type PlaylistDetailPagePlaylistQuery = { playlist: { id: string, name: string, visibility: PlaylistVisibility, tracks_count: number, forward: Array<{ id: string, video: { id: number, tags: string, entries: Array<{ version: number | null, theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { year: number | null, season: string | null, slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } | null }> } }>, user: { name: string } } | null };
 
 export type PlaylistDetailPageMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type PlaylistDetailPageMeQuery = { me: { user: { name: string } | null } };
 
-export type PlaylistDetailPagePlaylistFragment = { id: number, name: string, visibility: PlaylistVisibility, tracks_count: number, forward: Array<{ id: number, video: { id: number, tags: string, entries: Array<{ version: number | null, theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { year: number | null, season: string | null, slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } | null }> } }>, user: { name: string } };
+export type PlaylistDetailPagePlaylistFragment = { id: string, name: string, visibility: PlaylistVisibility, tracks_count: number, forward: Array<{ id: string, video: { id: number, tags: string, entries: Array<{ version: number | null, theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { year: number | null, season: string | null, slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } | null }> } }>, user: { name: string } };
 
 type PlaylistDetailPageUser_UserAuth_Fragment = { name: string };
 
@@ -881,11 +881,11 @@ type PlaylistDetailPageUser_UserPublic_Fragment = { name: string };
 export type PlaylistDetailPageUserFragment = PlaylistDetailPageUser_UserAuth_Fragment | PlaylistDetailPageUser_UserPublic_Fragment;
 
 export type PlaylistDetailPageQueryVariables = Exact<{
-  playlistId: Scalars['Int'];
+  playlistId: Scalars['String'];
 }>;
 
 
-export type PlaylistDetailPageQuery = { playlist: { id: number, name: string, visibility: PlaylistVisibility, tracks_count: number, forward: Array<{ id: number, video: { id: number, tags: string, entries: Array<{ version: number | null, theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { year: number | null, season: string | null, slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } | null }> } }>, user: { name: string } } | null, me: { user: { name: string } | null } };
+export type PlaylistDetailPageQuery = { playlist: { id: string, name: string, visibility: PlaylistVisibility, tracks_count: number, forward: Array<{ id: string, video: { id: number, tags: string, entries: Array<{ version: number | null, theme: { slug: string, type: string, sequence: number | null, group: string | null, anime: { year: number | null, season: string | null, slug: string, name: string, images: Array<{ link: string, facet: string | null }> } | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } | null }> } }>, user: { name: string } } | null, me: { user: { name: string } | null } };
 
 export type GalleryPageQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -895,16 +895,16 @@ export type GalleryPageQuery = { grills: Array<{ id: number, link: string }> };
 export type ProfilePageMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ProfilePageMeQuery = { me: { user: { name: string, email: string, email_verified_at: string | null, created_at: string, roles: Array<{ name: string, color: string | null, priority: number | null, default: boolean }> } | null, playlistAll: Array<{ id: number, name: string, visibility: PlaylistVisibility, tracks_count: number }> | null } };
+export type ProfilePageMeQuery = { me: { user: { name: string, email: string, email_verified_at: string | null, created_at: string, roles: Array<{ name: string, color: string | null, priority: number | null, default: boolean }> } | null, playlistAll: Array<{ id: string, name: string, visibility: PlaylistVisibility, tracks_count: number }> | null } };
 
-export type ProfilePagePlaylistFragment = { id: number, name: string, visibility: PlaylistVisibility, tracks_count: number };
+export type ProfilePagePlaylistFragment = { id: string, name: string, visibility: PlaylistVisibility, tracks_count: number };
 
 export type ProfilePageUserFragment = { name: string, email: string, email_verified_at: string | null, created_at: string, roles: Array<{ name: string, color: string | null, priority: number | null, default: boolean }> };
 
 export type ProfilePageQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ProfilePageQuery = { me: { user: { name: string, email: string, email_verified_at: string | null, created_at: string, roles: Array<{ name: string, color: string | null, priority: number | null, default: boolean }> } | null, playlistAll: Array<{ id: number, name: string, visibility: PlaylistVisibility, tracks_count: number }> | null } };
+export type ProfilePageQuery = { me: { user: { name: string, email: string, email_verified_at: string | null, created_at: string, roles: Array<{ name: string, color: string | null, priority: number | null, default: boolean }> } | null, playlistAll: Array<{ id: string, name: string, visibility: PlaylistVisibility, tracks_count: number }> | null } };
 
 export type SeriesDetailPageSeriesFragment = { slug: string, name: string, anime: Array<{ name: string, slug: string, year: number | null, season: string | null, themes: Array<{ slug: string, type: string, sequence: number | null, group: string | null, entries: Array<{ version: number | null, episodes: string | null, spoiler: boolean, nsfw: boolean, videos: Array<{ tags: string, resolution: number | null, nc: boolean, subbed: boolean, lyrics: boolean, uncen: boolean, source: VideoSource | null, overlap: VideoOverlap }> }>, anime: { slug: string } | null, song: { title: string | null } | null }>, images: Array<{ facet: string | null, link: string }> }> };
 
