@@ -184,6 +184,9 @@ const resolvers: IResolvers = {
             endpoint: (anime) => `/anime/${anime.slug}`,
             field: "resources",
             extractor: (result) => result.anime.resources,
+            transformer: (resources) => resources.map(({ animeresource, ...resource }: any) => (
+                { ...animeresource, ...resource }
+            )),
             type: "Anime",
             baseInclude: INCLUDES.Anime.resources
         }),
@@ -224,7 +227,9 @@ const resolvers: IResolvers = {
             endpoint: (artist) => `/artist/${artist.slug}`,
             field: "songs",
             extractor: (result) => result.artist.songs,
-            transformer: (songs, artist) => songs.map(({ as, ...song }: Record<string, unknown>) => ({ as, song, artist })),
+            transformer: (songs, artist) => songs.map((song: any) => (
+                { ...song.artistsong, song, artist }
+            )),
             type: "Artist",
             baseInclude: INCLUDES.Artist.performances
         }),
@@ -232,6 +237,9 @@ const resolvers: IResolvers = {
             endpoint: (artist) => `/artist/${artist.slug}`,
             field: "resources",
             extractor: (result) => result.artist.resources,
+            transformer: (resources) => resources.map(({ artistresource, ...resource }: any) => (
+                { ...artistresource, ...resource }
+            )),
             type: "Artist",
             baseInclude: INCLUDES.Artist.resources
         }),
@@ -246,7 +254,9 @@ const resolvers: IResolvers = {
             endpoint: (artist) => `/artist/${artist.slug}`,
             field: "groups",
             extractor: (result) => result.artist.groups,
-            transformer: (groups, artist) => groups.map(({ as, ...group }: Record<string, unknown>) => ({ group, member: artist, as })),
+            transformer: (groups, artist) => groups.map((group: any) => (
+                { ...group.artistmember, group, member: artist }
+            )),
             type: "Artist",
             baseInclude: INCLUDES.Artist.groups
         }),
@@ -254,7 +264,9 @@ const resolvers: IResolvers = {
             endpoint: (artist) => `/artist/${artist.slug}`,
             field: "members",
             extractor: (result) => result.artist.members,
-            transformer: (members, artist) => members.map(({ as, ...member }: Record<string, unknown>) => ({ member, group: artist, as })),
+            transformer: (members, artist) => members.map((member: any) => (
+                { ...member.artistmember, member, group: artist }
+            )),
             type: "Artist",
             baseInclude: INCLUDES.Artist.members
         }),
@@ -271,7 +283,9 @@ const resolvers: IResolvers = {
             endpoint: (song) => `/song/${song.id}`,
             field: "artists",
             extractor: (result) => result.song.artists,
-            transformer: (artists, song) => artists.map(({ as, ...artist }: Record<string, unknown>) => ({ as, artist, song })),
+            transformer: (artists, song) => artists.map((artist: any) => (
+                { ...artist.artistsong, artist, song }
+            )),
             type: "Song",
             baseInclude: INCLUDES.Song.performances
         }),
@@ -346,6 +360,9 @@ const resolvers: IResolvers = {
             endpoint: (studio) => `/studio/${studio.slug}`,
             field: "resources",
             extractor: (result) => result.studio.resources,
+            transformer: (resources) => resources.map(({ studioresource, ...resource }: any) => (
+                { ...studioresource, ...resource }
+            )),
             type: "Studio",
             baseInclude: INCLUDES.Studio.resources
         }),

@@ -3,6 +3,9 @@ import { colors, shadows } from "theme/colors";
 import { darkColors, darkShadows } from "theme/colors/dark";
 import theme, { createCssDefinition } from "theme";
 import { defineColorTheme } from "styles/mixins";
+import { Nunito } from "next/font/google";
+
+const nunito = Nunito({ subsets: ["latin"] });
 
 export default createGlobalStyle`
     * {
@@ -15,7 +18,7 @@ export default createGlobalStyle`
         background-color: ${theme.colors["background"]};
         color: ${theme.colors["text"]};
 
-        font-family: "Nunito", sans-serif;
+        font-family: ${nunito.style.fontFamily}, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
 

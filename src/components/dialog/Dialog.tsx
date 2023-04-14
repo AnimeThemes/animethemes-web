@@ -21,7 +21,6 @@ const contentAnimation = keyframes`
 const StyledOverlay = styled(RadixDialog.Overlay)`
     position: fixed;
     inset: 0;
-    z-index: ${theme.zIndices.dialogBackdrop};
 
     display: flex;
     justify-content: center;

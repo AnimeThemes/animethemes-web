@@ -6,7 +6,7 @@ import type {
     PlaylistDetailPagePlaylistQuery,
     PlaylistDetailPagePlaylistQueryVariables,
     PlaylistDetailPageQuery,
-    PlaylistDetailPageQueryVariables, VideoSummaryCardVideoFragment
+    PlaylistDetailPageQueryVariables
 } from "generated/graphql";
 import gql from "graphql-tag";
 import { VideoSummaryCard } from "components/card/VideoSummaryCard";
@@ -43,7 +43,7 @@ import { PlaylistTrackAddDialog } from "components/dialog/PlaylistTrackAddDialog
 import { PlaylistTrackRemoveDialog } from "components/dialog/PlaylistTrackRemoveDialog";
 import useSWR from "swr";
 import { fetchDataClient } from "lib/client";
-import PlayerContext from "context/playerContext";
+import PlayerContext, { createWatchListItem } from "context/playerContext";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "components/menu/Menu";
 
 const StyledDesktopOnly = styled.div`
@@ -66,7 +66,7 @@ interface PlaylistDetailPageParams extends ParsedUrlQuery {
 }
 
 export default function PlaylistDetailPage({ playlist: initialPlaylist, me: initialMe }: PlaylistDetailPageProps) {
-    const { setWatchList, setCurrentWatchListItem, addWatchListItem, addWatchListItemNext } = useContext(PlayerContext);
+    const { setWatchList, setWatchListFactory, setCurrentWatchListItem, addWatchListItem, addWatchListItemNext } = useContext(PlayerContext);
 
     const { data: playlist } = useSWR(
         ["PlaylistDetailPagePlaylist", `/api/playlist/${initialPlaylist.id}`],
@@ -133,9 +133,11 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
         )
     );
 
-    function playAll(initiatingVideo: VideoSummaryCardVideoFragment) {
-        setWatchList(tracks.map((track) => track.video));
-        setCurrentWatchListItem(initiatingVideo);
+    function playAll(initiatingVideoIndex: number) {
+        const watchList = tracks.map((track) => createWatchListItem(track.video));
+        setWatchList(watchList);
+        setWatchListFactory(null);
+        setCurrentWatchListItem(watchList[initiatingVideoIndex]);
     }
 
     return (
@@ -182,11 +184,11 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                         </SearchFilterGroup>
                     </Collapse>
                     <Column style={{ "--gap": "16px" }}>
-                        {tracks.map((track) => (
+                        {tracks.map((track, index) => (
                             <VideoSummaryCard
                                 key={track.id}
                                 video={track.video}
-                                onPlay={() => playAll(track.video)}
+                                onPlay={() => playAll(index)}
                                 menu={
                                     <Menu modal={false}>
                                         <MenuTrigger asChild>

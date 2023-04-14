@@ -29,8 +29,6 @@ const StyledListboxReset = styled.span`
     padding: 8px;
 `;
 const StyledListboxPopover = styled(RadixSelect.Portal)`
-    z-index: ${theme.zIndices.menuPopover};
-
     min-width: max-content;
     padding: 0;
     border-radius: 8px;

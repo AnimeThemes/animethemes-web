@@ -30,11 +30,6 @@ export default class MyDocument extends Document {
         return (
             <Html lang="en">
                 <Head>
-                    {/* eslint-disable-next-line @next/next/google-font-display */}
-                    <link
-                        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=fallback"
-                        rel="stylesheet"
-                    />
                     <link rel="preload" href={`${AUTH_URL}/api/me`} as="fetch" crossOrigin="use-credentials" />
                 </Head>
                 <body data-theme="system">
