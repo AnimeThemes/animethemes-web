@@ -10,6 +10,7 @@ import { TextLink } from "components/text/TextLink";
 import { Text } from "components/text";
 import { Card } from "components/card";
 import theme from "theme";
+import { BackToTopButton } from "components/button";
 
 const StyledYearGrid = styled.div`
     display: grid;
@@ -39,6 +40,7 @@ export default function YearIndexPage({ yearAll }: YearIndexPageProps) {
     return (
         <>
             <SEO title="Browse by Year"/>
+            <BackToTopButton/>
             <Text variant="h1">Year Index</Text>
             <StyledYearGrid>
                 {yearAll.map((year) => (

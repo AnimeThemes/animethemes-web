@@ -8,11 +8,13 @@ import type { GetStaticProps } from "next";
 import { fetchData } from "lib/server";
 import gql from "graphql-tag";
 import type { ArtistIndexPageQuery } from "generated/graphql";
+import { BackToTopButton } from "components/button";
 
 interface ArtistIndexPageProps extends SharedPageProps, ArtistIndexPageQuery {}
 
 export default function ArtistIndexPage({ artistAll }: ArtistIndexPageProps) {
     return <>
+        <BackToTopButton/>
         <Text variant="h1">Artist Index</Text>
         <AlphabeticalIndex items={artistAll}>
             {(artist) => (

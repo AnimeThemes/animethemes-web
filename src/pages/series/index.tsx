@@ -8,11 +8,13 @@ import type { GetStaticProps } from "next";
 import { fetchData } from "lib/server";
 import gql from "graphql-tag";
 import type { SeriesIndexPageQuery } from "generated/graphql";
+import { BackToTopButton } from "components/button";
 
 interface SeriesIndexPageProps extends SharedPageProps, SeriesIndexPageQuery {}
 
 export default function SeriesIndexPage({ seriesAll }: SeriesIndexPageProps) {
     return <>
+        <BackToTopButton/>
         <Text variant="h1">Series Index</Text>
         <AlphabeticalIndex items={seriesAll}>
             {(series) => (

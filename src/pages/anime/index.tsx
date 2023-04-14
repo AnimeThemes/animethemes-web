@@ -8,11 +8,13 @@ import type { GetStaticProps } from "next";
 import { fetchData } from "lib/server";
 import gql from "graphql-tag";
 import type { AnimeIndexPageQuery } from "generated/graphql";
+import { BackToTopButton } from "components/button";
 
 interface AnimeIndexPageProps extends SharedPageProps, AnimeIndexPageQuery {}
 
 export default function AnimeIndexPage({ animeAll }: AnimeIndexPageProps) {
     return <>
+        <BackToTopButton/>
         <Text variant="h1">Anime Index</Text>
         <AlphabeticalIndex items={animeAll}>
             {(anime) => (
