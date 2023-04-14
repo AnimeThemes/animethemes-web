@@ -36,8 +36,8 @@ const StyledSocialList = styled(Row)`
     }
 
     // To avoid overlap with scroll back to top button as window width gets smaller
-    @media (max-width: 1225px) and (min-width:${theme.breakpoints.mobileMax}) {
-        margin-right: 4rem;
+    @media (max-width: ${theme.breakpoints.socialListMax}) and (min-width:${theme.breakpoints.mobileMax}) {
+        margin-right: 64px;
     }
     
 `;
