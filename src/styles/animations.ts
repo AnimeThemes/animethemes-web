@@ -17,8 +17,20 @@ export const fadeIn = keyframes`
     }
 `;
 
+export const fadeOut = keyframes`
+    to {
+        opacity: 0;
+    }
+`;
+
 export const slideIn = (y = "100%", x = "0") => keyframes`
     from {
+        transform: translate(${x}, ${y});
+    }
+`;
+
+export const slideOut = (y = "100%", x = "0") => keyframes`
+    to {
         transform: translate(${x}, ${y});
     }
 `;
