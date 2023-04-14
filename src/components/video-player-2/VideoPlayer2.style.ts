@@ -3,14 +3,18 @@ import theme from "theme";
 import { Switcher } from "components/switcher";
 import { Solid } from "components/box";
 import { IconTextButton } from "components/button";
+import { m } from "framer-motion";
 
 export const StyledPlayer = styled.div`    
     position: sticky;
     bottom: 0;
-    z-index: ${theme.zIndices.videoPlayer};
     
     display: flex;
     flex-direction: column;
+    
+    &:not([data-background]) {
+        flex: 1;
+    }
 `;
 
 export const StyledPlayerContent = styled.div`
@@ -29,9 +33,15 @@ export const StyledPlayerContent = styled.div`
         
         padding: 0 16px;
     }
+    
+    [data-background] & {
+        position: fixed;
+        inset: 70px 16px 104px 16px;
+        pointer-events: none;
+    }
 `;
 
-export const StyledPlaybackArea = styled.div`
+export const StyledPlaybackArea = styled(m.div)`
     align-self: stretch;
     justify-self: stretch;
     
@@ -39,6 +49,19 @@ export const StyledPlaybackArea = styled.div`
     
     @media (max-width: ${theme.breakpoints.tabletMax}) {
         margin: 0 -16px;
+    }
+
+    [data-background] & {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 300px;
+        aspect-ratio: 16 / 9;
+        padding: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        pointer-events: all;
     }
 `;
 
@@ -84,6 +107,7 @@ export const StyledAudioCover = styled.img`
     margin: auto;
 
     max-height: 100%;
+    pointer-events: none;
 `;
 
 export const StyledAside = styled.aside`
@@ -95,6 +119,10 @@ export const StyledAside = styled.aside`
 
     @media (max-width: ${theme.breakpoints.tabletMax}) {
         padding-top: 0;
+    }
+    
+    [data-background] & {
+        display: none;
     }
 `;
 
