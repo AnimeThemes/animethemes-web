@@ -11,11 +11,9 @@ import { TextLink } from "components/text/TextLink";
 import Link from "next/link";
 import { Icon } from "components/icon";
 import { faPlay } from "@fortawesome/pro-solid-svg-icons";
-import { useContext } from "react";
-import PlayerContext from "context/playerContext";
 
 const StyledWrapper = styled.div`
-    position: relative
+    position: relative;
 `;
 
 const StyledOverlayButtons = styled.div`
@@ -55,11 +53,10 @@ interface VideoSummaryCardProps {
     video: VideoSummaryCardVideoFragment;
     menu?: ReactNode;
     onPlay?(): void;
+    isPlaying?: boolean;
 }
 
-export function VideoSummaryCard({ video, menu, onPlay, ...props }: VideoSummaryCardProps) {
-    const { currentWatchListItem } = useContext(PlayerContext);
-
+export function VideoSummaryCard({ video, menu, onPlay, isPlaying, ...props }: VideoSummaryCardProps) {
     const entry = video.entries[0];
     const theme = entry.theme;
     const anime = theme?.anime;
@@ -77,7 +74,7 @@ export function VideoSummaryCard({ video, menu, onPlay, ...props }: VideoSummary
             <SummaryCard {...props}>
                 <StyledCoverLink href={href} onClick={onPlay}>
                     <SummaryCard.Cover src={smallCover} />
-                    {currentWatchListItem === video ? (
+                    {isPlaying ? (
                         <StyledCoverOverlay>
                             <Icon icon={faPlay} />
                         </StyledCoverOverlay>
@@ -114,11 +111,13 @@ VideoSummaryCard.fragments = {
 
         fragment VideoSummaryCardVideo on Video {
             id
+            basename
             ...createVideoSlugVideo
             entries {
                 ...createVideoSlugEntry
                 theme {
                     ...createVideoSlugTheme
+                    id
                     slug
                     type
                     sequence
@@ -132,6 +131,9 @@ VideoSummaryCard.fragments = {
                         ...SongTitleWithArtistsSong
                     }
                 }
+            }
+            audio {
+                basename
             }
         }
     `,

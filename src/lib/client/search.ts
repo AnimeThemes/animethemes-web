@@ -109,7 +109,7 @@ export const searchResolvers = {
             searchParams.append("fields[video]", "id,tags,resolution,nc,subbed,lyrics,uncen,source,overlap");
             searchParams.append("fields[image]", "facet,link");
             searchParams.append("fields[song]", "title");
-            searchParams.append("fields[artist]", "name,slug,as");
+            searchParams.append("fields[artist]", "name,slug");
             searchParams.append("fields[series]", "name,slug");
             searchParams.append("fields[studio]", "name,slug");
             searchParams.append("fields[playlist]", "id,name,visibility,tracks_count");

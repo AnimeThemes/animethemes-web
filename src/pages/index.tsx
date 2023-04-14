@@ -8,7 +8,7 @@ import { faArrowRight, faAward, faRandom, faSearch, faTv, faUser } from "@fortaw
 import theme from "theme";
 import { ExternalLink } from "components/external-link";
 import useCurrentSeason from "hooks/useCurrentSeason";
-import navigateToRandomTheme from "utils/navigateToRandomTheme";
+import useRandomThemes from "hooks/useRandomThemes";
 import { fetchData } from "lib/server";
 import { SEO } from "components/seo";
 import { FeaturedTheme } from "components/featured-theme";
@@ -95,6 +95,7 @@ interface HomePageProps {
 
 export default function HomePage({ featuredTheme, announcementSources }: HomePageProps) {
     const { currentYear, currentSeason } = useCurrentSeason();
+    const { playRandomThemes } = useRandomThemes();
 
     const { data: recentlyAdded } = useSWR<HomePageRecentlyAddedQuery["videoAll"] | null[]>(
         ["HomePageRecentlyAdded"],
@@ -183,9 +184,9 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
                 </Link>
             </MainGridArea>
             <MainGridArea area="d">
-                <BigButton onClick={navigateToRandomTheme}>
+                <BigButton onClick={playRandomThemes}>
                     <BigIcon icon={faRandom}/>
-                    <Text>Play Random</Text>
+                    <Text>Shuffle</Text>
                     <Icon icon={faArrowRight} color="text-primary"/>
                 </BigButton>
             </MainGridArea>

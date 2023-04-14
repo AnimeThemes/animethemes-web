@@ -47,7 +47,7 @@ const StyledWrapper = styled.div`
     }
 `;
 
-const StyledOverflowHidden = styled.a`
+const StyledOverflowHidden = styled(Link)`
     width: 100%;
     height: 100%;
     border-radius: 0.5rem;
@@ -174,36 +174,29 @@ function FeaturedThemeBackground({ theme }: FeaturedThemeProps) {
     const video = entry.videos[0];
     const videoSlug = createVideoSlug(theme, entry, video);
 
-    const linkProps = {
-        href: `/anime/${theme.anime.slug}/${videoSlug}`,
-        passHref: true,
-    };
+    const href = `/anime/${theme.anime.slug}/${videoSlug}`;
 
     if (featuredThemePreview === FeaturedThemePreview.VIDEO && canPlayVideo && !fallbackToCover) {
         return (
-            <Link {...linkProps} legacyBehavior>
-                <StyledOverflowHidden>
-                    <StyledVideo
-                        autoPlay
-                        muted
-                        loop
-                        onError={() => setFallbackToCover(true)}
-                    >
-                        <source
-                            src={`${VIDEO_URL}/${video.basename}`}
-                            type={`video/webm; codecs="vp8, vp9, opus`}
-                        />
-                    </StyledVideo>
-                </StyledOverflowHidden>
-            </Link>
+            <StyledOverflowHidden href={href}>
+                <StyledVideo
+                    autoPlay
+                    muted
+                    loop
+                    onError={() => setFallbackToCover(true)}
+                >
+                    <source
+                        src={`${VIDEO_URL}/${video.basename}`}
+                        type={`video/webm; codecs="vp8, vp9, opus`}
+                    />
+                </StyledVideo>
+            </StyledOverflowHidden>
         );
     } else if (featuredThemePreview !== FeaturedThemePreview.DISABLED) {
         return (
-            <Link {...linkProps} legacyBehavior>
-                <StyledOverflowHidden>
-                    <StyledCover src={featuredCover}/>
-                </StyledOverflowHidden>
-            </Link>
+            <StyledOverflowHidden href={href}>
+                <StyledCover src={featuredCover}/>
+            </StyledOverflowHidden>
         );
     }
 

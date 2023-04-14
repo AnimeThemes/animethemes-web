@@ -6,8 +6,6 @@ import type { DropdownMenuContentProps } from "@radix-ui/react-dropdown-menu";
 import * as RadixMenu from "@radix-ui/react-dropdown-menu";
 
 const StyledMenuContent = styled(RadixMenu.Content)`
-    z-index: ${theme.zIndices.menuPopover};
-
     width: max-content;
     padding: 8px 0;
     border-radius: 8px;

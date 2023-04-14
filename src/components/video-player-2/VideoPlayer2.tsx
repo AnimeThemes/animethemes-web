@@ -1,5 +1,5 @@
-import type { SyntheticEvent } from "react";
-import { useContext, useEffect, useRef, useState } from "react";
+import type { ReactNode, SyntheticEvent } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import {
     StyledAside,
     StyledAudio,
@@ -12,8 +12,6 @@ import {
     StyledPlayerBarControl,
     StyledPlayerBarControls,
     StyledPlayerContent,
-    StyledScrollArea,
-    StyledSwitcher,
     StyledVideo,
     StyledVideoBackground
 } from "./VideoPlayer2.style";
@@ -25,33 +23,33 @@ import { AudioMode, GlobalVolume } from "utils/settings";
 import { AUDIO_URL, VIDEO_URL } from "utils/config";
 import extractImages from "utils/extractImages";
 import { Text } from "components/text";
-import { AnimeSummaryCard, ArtistSummaryCard, SummaryCard, ThemeSummaryCard } from "components/card";
-import { Column, Row } from "components/box";
-import type { VideoPageProps } from "pages/anime/[animeSlug]/[videoSlug]";
+import { Column } from "components/box";
 import { Switcher } from "components/switcher";
 import { SwitcherOption } from "components/switcher/Switcher";
-import { Button, VideoButton } from "components/button";
+import { Button, IconTextButton } from "components/button";
 import { Icon } from "components/icon";
-import { faBackwardStep, faForwardStep, faPause, faPlay, faShare } from "@fortawesome/pro-solid-svg-icons";
-import { HorizontalScroll, Performances, SongTitle } from "components/utils";
+import { faBackwardStep, faForwardStep, faPause, faPlay, faShare, faXmark } from "@fortawesome/pro-solid-svg-icons";
+import { Performances, SongTitle } from "components/utils";
 import Link from "next/link";
 import { PlaylistTrackAddDialog } from "components/dialog/PlaylistTrackAddDialog";
-import { Menu, MenuItem, MenuTrigger, MenuContent } from "components/menu/Menu";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "components/menu/Menu";
 import { Toast } from "components/toast";
 import { useToasts } from "context/toastContext";
-import { VideoSummaryCard } from "components/card/VideoSummaryCard";
 import useWatchHistory from "hooks/useWatchHistory";
 import { ProgressBar } from "components/video-player-2/ProgressBar";
-import { ThemeEntryTags } from "components/tag/ThemeEntryTags";
+import type { VideoSummaryCardVideoFragment } from "generated/graphql";
+import { ConditionalWrapper } from "components/utils/ConditionalWrapper";
 
-interface VideoPlayerProps extends VideoPageProps {
+interface VideoPlayerProps {
+    video: VideoSummaryCardVideoFragment;
     background: boolean;
+    children?: ReactNode;
 }
 
-export function VideoPlayer2({ anime, themeIndex, entryIndex, videoIndex, background, ...props }: VideoPlayerProps) {
-    const theme = anime.themes[themeIndex];
-    const entry = theme.entries[entryIndex];
-    const video = entry.videos[videoIndex];
+export function VideoPlayer2({ video, background, children, ...props }: VideoPlayerProps) {
+    const entry = video.entries[0];
+    const theme = entry.theme!;
+    const anime = theme.anime!;
 
     const videoPath = `/anime/${anime.slug}/${createVideoSlug(theme, entry, video)}`;
 
@@ -68,16 +66,8 @@ export function VideoPlayer2({ anime, themeIndex, entryIndex, videoIndex, backgr
     const [canRenderPlayer, setCanRenderPlayer] = useState(false);
     const { smallCover, largeCover } = extractImages(anime);
     const [audioMode, setAudioMode] = useSetting(AudioMode, { storageSync: false });
-    const [selectedTab, setSelectedTab] = useState<"watch-list" | "info" | "related">("info");
     const { dispatchToast } = useToasts();
     const { addToHistory } = useWatchHistory();
-
-    const relatedThemes = anime.themes
-        .filter((relatedTheme) => relatedTheme.slug !== theme.slug);
-
-    const usedAlsoAs = video.entries
-        .map((entry) => entry.theme)
-        .filter((otherTheme) => otherTheme?.anime && otherTheme.anime.slug !== anime.slug);
 
     const previousVideo = getWatchListVideo(-1);
     const previousEntry = previousVideo?.entries[0];
@@ -88,6 +78,15 @@ export function VideoPlayer2({ anime, themeIndex, entryIndex, videoIndex, backgr
         ? `/anime/${previousAnime.slug}/${createVideoSlug(previousTheme, previousEntry, previousVideo)}`
         : null;
 
+    const playPreviousTrack = useCallback((navigate = false) => {
+        if (previousVideoPath) {
+            setCurrentWatchListItem(previousVideo);
+            if (navigate) {
+                router.push(previousVideoPath);
+            }
+        }
+    }, [previousVideo, previousVideoPath, router, setCurrentWatchListItem]);
+    
     const nextVideo = getWatchListVideo(1);
     const nextEntry = nextVideo?.entries[0];
     const nextTheme = nextEntry?.theme;
@@ -96,6 +95,15 @@ export function VideoPlayer2({ anime, themeIndex, entryIndex, videoIndex, backgr
     const nextVideoPath = (nextAnime && nextTheme && nextVideo)
         ? `/anime/${nextAnime.slug}/${createVideoSlug(nextTheme, nextEntry, nextVideo)}`
         : null;
+
+    const playNextTrack = useCallback((navigate = false) => {
+        if (nextVideoPath) {
+            setCurrentWatchListItem(nextVideo);
+            if (navigate) {
+                router.push(nextVideoPath);
+            }
+        }
+    }, [nextVideo, nextVideoPath, router, setCurrentWatchListItem]);
 
     useEffect(() => setCanRenderPlayer(true), []);
 
@@ -106,7 +114,17 @@ export function VideoPlayer2({ anime, themeIndex, entryIndex, videoIndex, backgr
     }, [globalVolume]);
 
     useEffect(() => {
-        addToHistory(theme);
+        addToHistory({
+            ...theme,
+            entries: [
+                {
+                    ...entry,
+                    videos: [
+                        video,
+                    ],
+                },
+            ],
+        });
 
         // Reset the progress bar (otherwise we'd have to wait for the player to load).
         if (progressRef.current) {
@@ -130,21 +148,11 @@ export function VideoPlayer2({ anime, themeIndex, entryIndex, videoIndex, backgr
                     { src: smallCover, sizes: "512x512", type: "image/jpeg" }
                 ]
             });
+            
+            navigator.mediaSession.setActionHandler("previoustrack", () => { playPreviousTrack(true); });
+            navigator.mediaSession.setActionHandler("nexttrack", () => { playNextTrack(true); });
         }
-    }, [ anime, theme, smallCover ]);
-
-    const otherEntries = theme.entries.map(otherEntry => {
-        const videos = otherEntry.videos.filter((otherVideo) => otherVideo.filename !== video.filename);
-
-        if (!videos.length) {
-            return null;
-        }
-
-        return {
-            ...otherEntry,
-            videos
-        };
-    }).filter((otherEntry) => !!otherEntry);
+    }, [anime, theme, smallCover, playNextTrack, playPreviousTrack]);
 
     function onPlayerMount(player: HTMLVideoElement) {
         playerRef.current = player;
@@ -184,19 +192,17 @@ export function VideoPlayer2({ anime, themeIndex, entryIndex, videoIndex, backgr
         setAudioMode(audioMode);
     }
 
-    function playNextTrack() {
-        if (nextVideoPath) {
-            router.push(nextVideoPath);
-            setCurrentWatchListItem(nextVideo);
-        }
-    }
-
     function getWatchListVideo(offset: 1 | -1) {
         if (!currentWatchListItem) {
             return null;
         }
 
-        const currentTrackIndex = watchList.indexOf(currentWatchListItem);
+        const currentTrackIndex = watchList.findIndex((item) => item.watchListId === currentWatchListItem.watchListId);
+
+        if (currentTrackIndex < 0) {
+            return null;
+        }
+
         const nextTrackIndex = currentTrackIndex + offset;
 
         if (!watchList[nextTrackIndex]) {
@@ -206,24 +212,33 @@ export function VideoPlayer2({ anime, themeIndex, entryIndex, videoIndex, backgr
         return watchList[nextTrackIndex];
     }
 
+    const constraintRef = useRef<HTMLDivElement>(null);
+
     return (
         <>
-            <StyledPlayer style={{ flex: background ? undefined : "1" }} {...props}>
-                <StyledPlayerContent style={{ display: background ? "none" : undefined }}>
-                    <StyledPlaybackArea>
+            <StyledPlayer data-background={background || undefined} {...props}>
+                <StyledPlayerContent ref={constraintRef}>
+                    <StyledPlaybackArea
+                        layout
+                        drag={background}
+                        dragConstraints={constraintRef}
+                        animate={background ? undefined : {
+                            x: 0,
+                            y: 0,
+                        }}
+                    >
                         {audioMode === AudioMode.ENABLED ? (
                             <StyledAudioBackground>
-                                <StyledAudioCover src={largeCover} onClick={togglePlay}/>
+                                <StyledAudioCover src={largeCover} onClick={background ? undefined : togglePlay}/>
                                 <StyledAudio
                                     ref={onPlayerMount}
                                     src={audioUrl}
-                                    controls={!background}
                                     autoPlay
                                     onPlay={() => setPlaying(true)}
                                     onPause={() => setPlaying(false)}
                                     onEnded={() => {
                                         setPlaying(false);
-                                        playNextTrack();
+                                        playNextTrack(true);
                                     }}
                                     onTimeUpdate={updateProgress}
                                     onVolumeChange={(event: SyntheticEvent<HTMLAudioElement>) => setGlobalVolume(event.currentTarget.volume)}
@@ -239,9 +254,9 @@ export function VideoPlayer2({ anime, themeIndex, entryIndex, videoIndex, backgr
                                     onPause={() => setPlaying(false)}
                                     onEnded={() => {
                                         setPlaying(false);
-                                        playNextTrack();
+                                        playNextTrack(true);
                                     }}
-                                    onClick={togglePlay}
+                                    onClick={background ? undefined : togglePlay}
                                     onTimeUpdate={updateProgress}
                                     onVolumeChange={(event: SyntheticEvent<HTMLVideoElement>) => setGlobalVolume(event.currentTarget.volume)}
                                 />
@@ -249,98 +264,7 @@ export function VideoPlayer2({ anime, themeIndex, entryIndex, videoIndex, backgr
                         )}
                     </StyledPlaybackArea>
                     <StyledAside>
-                        <HorizontalScroll fixShadows>
-                            <StyledSwitcher selectedItem={selectedTab} onChange={setSelectedTab}>
-                                <SwitcherOption value="watch-list">Next Up</SwitcherOption>
-                                <SwitcherOption value="info">Info</SwitcherOption>
-                                <SwitcherOption value="related">Related</SwitcherOption>
-                            </StyledSwitcher>
-                        </HorizontalScroll>
-                        {selectedTab === "watch-list" ? (
-                            <StyledScrollArea>
-                                <Column style={{ "--gap": "16px" }}>
-                                    {watchList.map((video) => (
-                                        <VideoSummaryCard key={video.id} video={video} onPlay={() => setCurrentWatchListItem(video)} />
-                                    ))}
-                                </Column>
-                            </StyledScrollArea>
-                        ) : null}
-                        {selectedTab === "info" ? (
-                            <StyledScrollArea>
-                                <Column style={{ "--gap": "16px" }}>
-                                    <Text variant="h2">Origin</Text>
-                                    <AnimeSummaryCard anime={anime}/>
-                                    {anime.series.map((series) => (
-                                        <SummaryCard key={series.slug} title={series.name} description="Series" to={`/series/${series.slug}`} />
-                                    ))}
-                                    {anime.studios.map((studio) => (
-                                        <SummaryCard key={studio.slug} title={studio.name} description="Studio" to={`/studio/${studio.slug}`} />
-                                    ))}
-                                    {!!theme.song?.performances?.length && (
-                                        <>
-                                            <Text variant="h2">Artists</Text>
-                                            {theme.song.performances.sort((a, b) => a.artist.name.localeCompare(b.artist.name)).map((performance) => (
-                                                <ArtistSummaryCard
-                                                    key={performance.artist.name}
-                                                    artist={performance.artist}
-                                                    as={performance.as}
-                                                />
-                                            ))}
-                                        </>
-                                    )}
-                                    {!!usedAlsoAs.length && (
-                                        <>
-                                            <Text variant="h2">Also Used As</Text>
-                                            {usedAlsoAs.map((theme) => theme?.anime ? (
-                                                <ThemeSummaryCard key={theme.anime.slug} theme={theme}/>
-                                            ) : null)}
-                                        </>
-                                    )}
-                                </Column>
-                            </StyledScrollArea>
-                        ) : null}
-                        {selectedTab === "related" ? (
-                            <StyledScrollArea>
-                                <Column style={{ "--gap": "16px" }}>
-                                    {!!relatedThemes.length && (
-                                        <>
-                                            <Text variant="h2">Related themes</Text>
-                                            {relatedThemes.map((theme) => (
-                                                <ThemeSummaryCard key={theme.slug} theme={{ ...theme, anime }}/>
-                                            ))}
-                                        </>
-                                    )}
-                                    {!!otherEntries.length && (
-                                        <>
-                                            <Text variant="h2">Other versions</Text>
-                                            <Column style={{ "--gap": "32px" }}>
-                                                {otherEntries.map((otherEntry) => otherEntry ? (
-                                                    <Column style={{ "--gap": "16px" }} key={otherEntry.version ?? 1}>
-                                                        <Text color="text-muted">
-                                                            <Row style={{ "--gap": "8px", "--align-items": "baseline" }}>
-                                                                <Text variant="small">Version {otherEntry.version || 1}</Text>
-                                                                <ThemeEntryTags entry={otherEntry}/>
-                                                            </Row>
-                                                        </Text>
-                                                        <Row $wrap style={{ "--gap": "16px" }}>
-                                                            {otherEntry.videos.map((video, index) => (
-                                                                <VideoButton
-                                                                    key={index}
-                                                                    anime={anime}
-                                                                    theme={theme}
-                                                                    entry={otherEntry}
-                                                                    video={video}
-                                                                />
-                                                            ))}
-                                                        </Row>
-                                                    </Column>
-                                                ) : null)}
-                                            </Column>
-                                        </>
-                                    )}
-                                </Column>
-                            </StyledScrollArea>
-                        ) : null}
+                        {children}
                     </StyledAside>
                 </StyledPlayerContent>
                 <StyledPlayerBar>
@@ -363,13 +287,16 @@ export function VideoPlayer2({ anime, themeIndex, entryIndex, videoIndex, backgr
                     </Column>
                     <StyledPlayerBarControls>
                         {previousVideoPath ? (
-                            <Link href={previousVideoPath}>
+                            <ConditionalWrapper
+                                condition={!background}
+                                wrap={(children) => <Link href={previousVideoPath}>{children}</Link>}
+                            >
                                 <StyledPlayerBarControl
                                     icon={faBackwardStep}
                                     isCircle
-                                    onClick={() => setCurrentWatchListItem(previousVideo)}
+                                    onClick={() => playPreviousTrack(!background)}
                                 />
-                            </Link>
+                            </ConditionalWrapper>
                         ) : (
                             <StyledPlayerBarControl
                                 icon={faBackwardStep}
@@ -383,13 +310,16 @@ export function VideoPlayer2({ anime, themeIndex, entryIndex, videoIndex, backgr
                             onClick={togglePlay}
                         />
                         {nextVideoPath ? (
-                            <Link href={nextVideoPath}>
+                            <ConditionalWrapper
+                                condition={!background}
+                                wrap={(children) => <Link href={nextVideoPath}>{children}</Link>}
+                            >
                                 <StyledPlayerBarControl
                                     icon={faForwardStep}
                                     isCircle
-                                    onClick={() => setCurrentWatchListItem(nextVideo)}
+                                    onClick={() => playNextTrack(!background)}
                                 />
-                            </Link>
+                            </ConditionalWrapper>
                         ) : (
                             <StyledPlayerBarControl
                                 icon={faForwardStep}
@@ -432,6 +362,12 @@ export function VideoPlayer2({ anime, themeIndex, entryIndex, videoIndex, backgr
                                 <SwitcherOption value={AudioMode.ENABLED}>Audio</SwitcherOption>
                             </Switcher>
                         ) : null}
+                        <IconTextButton
+                            icon={faXmark}
+                            isCircle
+                            disabled={!background}
+                            onClick={() => setCurrentWatchListItem(null)}
+                        />
                     </StyledPlayerBarActions>
                     <ProgressBar
                         playerRef={playerRef}
