@@ -7,7 +7,8 @@ import { Footer } from "components/footer";
 import { Navigation, SearchNavigation, SeasonNavigation, YearNavigation } from "components/navigation";
 import ColorThemeContext from "context/colorThemeContext";
 import useColorTheme from "hooks/useColorTheme";
-import PlayerContext from "context/playerContext";
+import type { WatchListItem } from "context/playerContext";
+import PlayerContext, { createWatchListItem } from "context/playerContext";
 import type { ComponentType, ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -20,7 +21,7 @@ import { ToastHub } from "components/toast";
 import { Text } from "components/text";
 import { useRouter } from "next/router";
 import useSetting from "hooks/useSetting";
-import { DeveloperMode, RevalidationToken } from "utils/settings";
+import { DeveloperMode } from "utils/settings";
 import { ErrorBoundary } from "components/utils";
 import { STAGING } from "utils/config";
 import { Card } from "components/card";
@@ -28,7 +29,8 @@ import { ExternalLink } from "components/external-link";
 import type { AppProps } from "next/app";
 import { LazyMotion } from "framer-motion";
 import { VideoPlayer2 } from "components/video-player-2/VideoPlayer2";
-import type { VideoSummaryCardVideoFragment } from "generated/graphql";
+import { PageRevalidation } from "components/utils/PageRevalidation";
+import type { VideoPageProps } from "pages/anime/[animeSlug]/[videoSlug]";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "styles/prism.scss";
@@ -51,18 +53,48 @@ const StyledContainer = styled(Container)`
 
 // TODO: Add proper type checking, also extract layout modes out of _app.tsx
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function MyApp({ Component, pageProps }: AppProps<any>) {
+export default function MyApp({ Component, pageProps }: AppProps) {
     const router = useRouter();
     const [colorTheme, setColorTheme] = useColorTheme();
     const [developerMode] = useSetting(DeveloperMode);
 
     const { lastBuildAt, apiRequests, isVideoPage = false } = pageProps;
 
-    const [ lastVideoPageProps, setLastVideoPageProps ] = useState(() => {
-        return isVideoPage ? pageProps : null;
+    const [watchList, setWatchList] = useState<WatchListItem[]>(() => {
+        if (isVideoPage) {
+            const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
+
+            const theme = anime.themes[themeIndex];
+            const entry = theme.entries[entryIndex];
+            const video = entry.videos[videoIndex];
+
+            return [
+                createWatchListItem({
+                    ...video,
+                    entries: [
+                        {
+                            ...entry,
+                            theme: {
+                                ...theme,
+                                anime,
+                            },
+                        },
+                    ],
+                }),
+            ];
+        }
+        return [];
     });
-    const [watchList, setWatchList] = useState<VideoSummaryCardVideoFragment[]>([]);
-    const [currentWatchListItem, setCurrentWatchListItem] = useState<VideoSummaryCardVideoFragment | null>(null);
+    const [watchListFactory, setWatchListFactory] = useState<(() => Promise<WatchListItem[]>) | null>(null);
+    const [currentWatchListItem, setCurrentWatchListItem] = useState<WatchListItem | null>(() => {
+        if (watchList.length) {
+            return watchList[0];
+        }
+        return null;
+    });
+
+    const currentBasename = getBasename(pageProps);
+    const [previousBasename, setPreviousBasename] = useState<string | null>(() => getBasename(pageProps));
 
     useEffect(() => {
         const hotkeyListener = (event: KeyboardEvent) => {
@@ -77,22 +109,37 @@ export default function MyApp({ Component, pageProps }: AppProps<any>) {
         return () => window.removeEventListener("keydown", hotkeyListener);
     }, [pageProps.isSearch, router]);
 
-    if (isVideoPage) {
-        const lastBaseName = lastVideoPageProps?.anime
-            .themes[lastVideoPageProps.themeIndex]
-            .entries[lastVideoPageProps.entryIndex]
-            .videos[lastVideoPageProps.videoIndex]
-            .basename;
-        const baseName = pageProps.anime
-            .themes[pageProps.themeIndex]
-            .entries[pageProps.entryIndex]
-            .videos[pageProps.videoIndex]
-            .basename;
+    if (isVideoPage && currentBasename !== previousBasename) {
+        setPreviousBasename(currentBasename);
 
-        if (lastBaseName !== baseName) {
-            setLastVideoPageProps(pageProps);
-            return null;
+        if (currentBasename !== currentWatchListItem?.basename) {
+            const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
+
+            const theme = anime.themes[themeIndex];
+            const entry = theme.entries[entryIndex];
+            const video = entry.videos[videoIndex];
+
+            const watchList: WatchListItem[] = [
+                createWatchListItem({
+                    ...video,
+                    entries: [
+                        {
+                            ...entry,
+                            theme: {
+                                ...theme,
+                                anime,
+                            },
+                        },
+                    ],
+                }),
+            ];
+
+            setWatchList(watchList);
+            setWatchListFactory(null);
+            setCurrentWatchListItem(watchList[0]);
         }
+
+        return null;
     }
 
     return (
@@ -100,19 +147,36 @@ export default function MyApp({ Component, pageProps }: AppProps<any>) {
             stackContext(ThemeProvider, { theme }),
             stackContext(ColorThemeContext.Provider, { value: { colorTheme, setColorTheme } }),
             stackContext(PlayerContext.Provider, { value: {
-                currentVideo: lastVideoPageProps?.video,
-                clearCurrentVideo: () => setLastVideoPageProps(null),
+                currentVideo: null,
+                clearCurrentVideo: () => {
+                    // Do nothing
+                },
                 watchList,
                 setWatchList,
+                setWatchListFactory: (factory) => setWatchListFactory(() => factory),
                 currentWatchListItem,
-                setCurrentWatchListItem,
-                addWatchListItem: (watchListItem) => setWatchList((watchList) => [...watchList, watchListItem]),
-                addWatchListItemNext: (watchListItem) => {
-                    const currentIndex = currentWatchListItem ? watchList.indexOf(currentWatchListItem) : 0;
+                setCurrentWatchListItem: (watchListItem) => {
+                    setCurrentWatchListItem(watchListItem);
+                    if (watchListFactory && watchList.findIndex((item) => item.watchListId === watchListItem?.watchListId) === watchList.length - 1) {
+                        watchListFactory().then((nextWatchList) => {
+                            setWatchList([
+                                ...watchList,
+                                ...nextWatchList,
+                            ]);
+                        });
+                    }
+                },
+                addWatchListItem: (video) => {
+                    setWatchList((watchList) => [...watchList, createWatchListItem(video)]);
+                },
+                addWatchListItemNext: (video) => {
+                    const currentIndex = currentWatchListItem
+                        ? watchList.findIndex((item) => item.watchListId === currentWatchListItem.watchListId)
+                        : 0;
 
                     setWatchList((watchList) => [
                         ...watchList.slice(0, currentIndex + 1),
-                        watchListItem,
+                        createWatchListItem(video),
                         ...watchList.slice(currentIndex + 1)
                     ]);
                 },
@@ -165,8 +229,12 @@ export default function MyApp({ Component, pageProps }: AppProps<any>) {
                         <Footer />
                     </>
                 ) : null}
-                {lastVideoPageProps && (
-                    <VideoPlayer2 {...lastVideoPageProps} background={!isVideoPage} />
+                {currentWatchListItem && (
+                    <VideoPlayer2 video={currentWatchListItem} background={!isVideoPage}>
+                        {isVideoPage ? (
+                            <Component {...pageProps}/>
+                        ) : null}
+                    </VideoPlayer2>
                 )}
             </StyledWrapper>
             <ToastHub/>
@@ -193,64 +261,15 @@ function MultiContextProvider({ providers = [], children }: MultiContextProvider
     return <>{stack}</>;
 }
 
-interface PageRevalidationProps {
-    lastBuildAt: number
-    apiRequests: number
-}
+function getBasename(pageProps: any): string | null {
+    if (pageProps.isVideoPage) {
+        const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
 
-function PageRevalidation({ lastBuildAt, apiRequests }: PageRevalidationProps) {
-    const router = useRouter();
-    const [secret] = useSetting(RevalidationToken);
+        const theme = anime.themes[themeIndex];
+        const entry = theme.entries[entryIndex];
+        const video = entry.videos[videoIndex];
 
-    const [isRevalidating, setRevalidating] = useState(false);
-
-    function revalidate() {
-        if (isRevalidating || !secret) {
-            return;
-        }
-
-        setRevalidating(true);
-
-        revalidateAsync()
-            .then(() => location.reload())
-            .catch((err) => alert(`Error while revalidating: ${err.message}`))
-            .finally(() => setRevalidating(false));
+        return video.basename;
     }
-
-    async function revalidateAsync() {
-        const res = await fetch(`${router.basePath}/api/revalidate?secret=${secret}&id=${router.asPath}`);
-        if (!res.ok) {
-            throw new Error((await res.json()).message);
-        }
-
-        const json = await res.json();
-        if (!json.revalidated) {
-            throw new Error();
-        }
-
-        return json;
-    }
-
-    const minutesSinceLastBuild = Math.round((Date.now() - lastBuildAt) / 60000);
-    const lastBuildDescription = minutesSinceLastBuild
-        ? `${minutesSinceLastBuild} minute${minutesSinceLastBuild === 1 ? "" : "s"}`
-        : "a few seconds";
-
-    const apiRequestsDescription = apiRequests
-        ? ` using ${apiRequests} API request${apiRequests === 1 ? "" : "s"}`
-        : "";
-
-    const canRebuild = !isRevalidating && !!secret;
-    const rebuildDescription = isRevalidating
-        ? "Rebuild in progress... The page will automatically reload after it's finished."
-        : (secret
-            ? "Click to start a rebuild."
-            : "Setup the revalidation token on your profile to manually start a rebuild."
-        );
-
-    return (
-        <Text variant="small" color="text-disabled" link={canRebuild} onClick={revalidate}>
-            Page was last built {lastBuildDescription} ago{apiRequestsDescription}. {rebuildDescription}
-        </Text>
-    );
+    return null;
 }

@@ -112,6 +112,7 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
     Theme: [
         "anime.images",
         "animethemeentries.videos",
+        "animethemeentries.videos.audio",
         "song.artists"
     ],
     Artist: [
@@ -125,7 +126,8 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
         "songs.animethemes.song.artists",
         "songs.animethemes.anime.images",
         "songs.animethemes.animethemeentries",
-        "songs.animethemes.animethemeentries.videos"
+        "songs.animethemes.animethemeentries.videos",
+        "songs.animethemes.animethemeentries.videos.audio",
     ],
     Series: [
         "anime",
@@ -146,7 +148,8 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
         "artists"
     ],
     Video: [
-        "animethemeentries.animetheme.anime",
+        "animethemeentries.animetheme.anime.images",
+        "animethemeentries.animetheme.song.artists",
         "videoscript",
         "audio"
     ],
@@ -160,6 +163,7 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
     PlaylistTrack: [
         "video.animethemeentries.animetheme.anime.images",
         "video.animethemeentries.animetheme.song.artists",
+        "video.audio",
     ],
     UserAuth: [
         "roles",

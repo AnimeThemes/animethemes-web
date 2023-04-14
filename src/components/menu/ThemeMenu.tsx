@@ -62,6 +62,7 @@ ThemeMenu.fragments = {
         
         fragment ThemeMenuTheme on Theme {
             ...createVideoSlugTheme
+            id
             slug
             type
             sequence
@@ -79,6 +80,10 @@ ThemeMenu.fragments = {
                 videos {
                     ...createVideoSlugVideo
                     id
+                    basename
+                    audio {
+                        basename
+                    }
                 }
             }
         }

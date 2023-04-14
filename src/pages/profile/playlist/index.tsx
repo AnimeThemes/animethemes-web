@@ -84,7 +84,7 @@ export default function PlaylistPage() {
                 throw new Error(`Theme could not be refreshed: ${theme.id}`);
             }
 
-            localPlaylistRefreshed.push({ id: theme.id, ...themeRefreshed });
+            localPlaylistRefreshed.push(themeRefreshed);
 
             setRefreshProgess((refreshProgress) => refreshProgress ? refreshProgress + 1 : 1);
 

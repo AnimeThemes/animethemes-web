@@ -12,7 +12,7 @@ export function ProfileImage({ user, size = 80, ...props }: ProfileImageProps) {
 
     return (
         <img
-            src={`https://www.gravatar.com/avatar/${hash}?s=${size}`}
+            src={`https://www.gravatar.com/avatar/${hash}?s=${size}&d=identicon`}
             alt={user.name}
             width={size}
             height={size}
