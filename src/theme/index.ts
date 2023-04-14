@@ -31,6 +31,7 @@ const theme: Theme = {
         tabletMin: "721px",
         tabletMax: "870px",
         desktopMin: "871px",
+        socialListMax: "1225px",
     },
     shadows: createThemeDefinition(shadows),
     colors: createThemeDefinition(colors),
