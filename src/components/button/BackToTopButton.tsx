@@ -24,39 +24,39 @@ const ScrollButton = styled(Button)`
 `;
 
 export function BackToTopButton() {
-  const [isButtonVisible, setIsButtonVisible] = useState(false);
-  const [animation, setAnimation] = useState(slideIn());
+    const [isButtonVisible, setIsButtonVisible] = useState(false);
+    const [animation, setAnimation] = useState(slideIn());
 
-  useEffect(() => {
-    function handleScroll() {
-      if (window.scrollY > 2000) {
-        setIsButtonVisible(true);
-        setAnimation(slideIn());
-      } else {
-        setIsButtonVisible(false);
-        setAnimation(slideOut("150%", "0"));
-      }
+    useEffect(() => {
+        function handleScroll() {
+            if (window.scrollY > 2000) {
+                setIsButtonVisible(true);
+                setAnimation(slideIn());
+            } else {
+                setIsButtonVisible(false);
+                setAnimation(slideOut("150%", "0"));
+            }
+        }
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    function scrollUp() {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
     }
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  function scrollUp() {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  }
-  return (
-    <ScrollButton
-      variant="primary"
-      isCircle={true}
-      onClick={scrollUp}
-      isVisible={isButtonVisible}
-      animation={animation}
-      onMouseDown={(event:React.PointerEvent) => event.preventDefault()}
-    >
-      <Icon icon={faChevronUp} />
-    </ScrollButton>
-  );
+    return (
+        <ScrollButton
+            variant="primary"
+            isCircle={true}
+            onClick={scrollUp}
+            isVisible={isButtonVisible}
+            animation={animation}
+            onMouseDown={(event:React.PointerEvent) => event.preventDefault()}
+        >
+            <Icon icon={faChevronUp} />
+        </ScrollButton>
+    );
 }
