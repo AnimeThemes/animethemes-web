@@ -107,6 +107,7 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
         "animethemes.animethemeentries.videos.animethemeentries.animetheme.anime",
         "animethemes.animethemeentries.videos.animethemeentries.animetheme.anime.images",
         "animethemes.animethemeentries.videos.animethemeentries.animetheme.animethemeentries.videos",
+        "animethemes.animethemeentries.videos.animethemeentries.animetheme.animethemeentries.videos.audio",
         "animethemes.animethemeentries.videos.animethemeentries.animetheme.song.artists"
     ],
     Theme: [
