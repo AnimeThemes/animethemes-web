@@ -13,7 +13,7 @@ const StyledTag = styled.span`
     gap: 4px;
     
     & ${Icon} {
-        transform: translateY(0.2rem);
+        transform: translateY(0.2em);
     }
 `;
 

@@ -16,8 +16,7 @@ import { SwitcherOption } from "components/switcher/Switcher";
 import { Column, Row } from "components/box";
 import { VideoSummaryCard } from "components/card/VideoSummaryCard";
 import { Text } from "components/text";
-import { ThemeEntryTags } from "components/tag/ThemeEntryTags";
-import { VideoButton } from "components/button";
+import { IconTextButton } from "components/button";
 import { useContext, useState } from "react";
 import PlayerContext from "context/playerContext";
 import { DeveloperMode } from "utils/settings";
@@ -26,6 +25,7 @@ import useSetting from "hooks/useSetting";
 import { SEO } from "components/seo";
 import extractImages from "utils/extractImages";
 import { VIDEO_URL } from "utils/config";
+import { faChevronDown, faChevronUp } from "@fortawesome/pro-solid-svg-icons";
 
 export interface VideoPageProps extends SharedPageProps, RequiredNonNullable<VideoPageQuery> {
     themeIndex: number
@@ -52,26 +52,15 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
     const [selectedTab, setSelectedTab] = useState<"watch-list" | "info" | "related">(() => {
         return watchList.length > 1 ? "watch-list" : "info";
     });
+    const [showMoreRelatedThemes, setShowMoreRelatedThemes] = useState(false);
 
     const relatedThemes = anime.themes
-        .filter((relatedTheme) => relatedTheme.slug !== theme.slug);
+        .filter((relatedTheme) => relatedTheme.slug !== theme.slug)
+        .slice(0, showMoreRelatedThemes ? undefined : 4);
 
     const usedAlsoAs = video.entries
         .map((entry) => entry.theme)
         .filter((otherTheme) => otherTheme?.anime && otherTheme.anime.slug !== anime.slug);
-
-    const otherEntries = theme.entries.map(otherEntry => {
-        const videos = otherEntry.videos.filter((otherVideo) => otherVideo.filename !== video.filename);
-
-        if (!videos.length) {
-            return null;
-        }
-
-        return {
-            ...otherEntry,
-            videos
-        };
-    }).filter((otherEntry) => !!otherEntry);
 
     const pageTitle = entry.version
         ? `${songTitle} (${anime.name} ${theme.slug} v${entry.version})`
@@ -190,34 +179,16 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
                                 {relatedThemes.map((theme) => (
                                     <ThemeSummaryCard key={theme.slug} theme={{ ...theme, anime }}/>
                                 ))}
-                            </>
-                        )}
-                        {!!otherEntries.length && (
-                            <>
-                                <Text variant="h2">Other versions</Text>
-                                <Column style={{ "--gap": "32px" }}>
-                                    {otherEntries.map((otherEntry) => otherEntry ? (
-                                        <Column style={{ "--gap": "16px" }} key={otherEntry.version ?? 1}>
-                                            <Text color="text-muted">
-                                                <Row style={{ "--gap": "8px", "--align-items": "baseline" }}>
-                                                    <Text variant="small">Version {otherEntry.version || 1}</Text>
-                                                    <ThemeEntryTags entry={otherEntry}/>
-                                                </Row>
-                                            </Text>
-                                            <Row $wrap style={{ "--gap": "16px" }}>
-                                                {otherEntry.videos.map((video, index) => (
-                                                    <VideoButton
-                                                        key={index}
-                                                        anime={anime}
-                                                        theme={theme}
-                                                        entry={otherEntry}
-                                                        video={video}
-                                                    />
-                                                ))}
-                                            </Row>
-                                        </Column>
-                                    ) : null)}
-                                </Column>
+                                {anime.themes.length > 4 ? (
+                                    <Row style={{ "--justify-content": "center" }}>
+                                        <IconTextButton
+                                            icon={showMoreRelatedThemes ? faChevronUp : faChevronDown}
+                                            variant="silent"
+                                            isCircle
+                                            onClick={() => setShowMoreRelatedThemes(!showMoreRelatedThemes)}
+                                        />
+                                    </Row>
+                                ) : null}
                             </>
                         )}
                     </Column>

@@ -1,8 +1,6 @@
 import styled from "styled-components";
 import theme from "theme";
 import { Switcher } from "components/switcher";
-import { Solid } from "components/box";
-import { IconTextButton } from "components/button";
 import { m } from "framer-motion";
 
 export const StyledPlayer = styled.div`    
@@ -14,6 +12,10 @@ export const StyledPlayer = styled.div`
     
     &:not([data-background]) {
         flex: 1;
+    }
+
+    &[data-relaxed] {
+        cursor: none;
     }
 `;
 
@@ -39,16 +41,29 @@ export const StyledPlayerContent = styled.div`
         inset: 70px 16px 104px 16px;
         pointer-events: none;
     }
+    
+    [data-fullscreen] & {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        padding: 0;
+    }
 `;
 
 export const StyledPlaybackArea = styled(m.div)`
     align-self: stretch;
     justify-self: stretch;
     
-    padding: 16px 0;
+    position: relative;
+    
+    margin: 32px 0;
     
     @media (max-width: ${theme.breakpoints.tabletMax}) {
+        aspect-ratio: 16 / 9;
         margin: 0 -16px;
+
+        [data-background] & {
+            display: none;
+        }
     }
 
     [data-background] & {
@@ -57,44 +72,44 @@ export const StyledPlaybackArea = styled(m.div)`
         left: 0;
         width: 300px;
         aspect-ratio: 16 / 9;
+        margin: 0;
         padding: 0;
         background-color: rgba(0, 0, 0, 0.5);
         border-radius: 8px;
         overflow: hidden;
         pointer-events: all;
     }
+    
+    [data-fullscreen] & {
+        height: 100%;
+        margin: 0;
+    }
 `;
 
 export const StyledVideoBackground = styled.div`
-    position: relative;
-
-    display: flex;
-
-    width: 100%;
-    height: 100%;
-`;
-
-export const StyledVideo = styled.video`
     position: absolute;
     inset: 0;
     margin: auto;
     
+    max-width: 100%;
     max-height: 100%;
+    aspect-ratio: 16 / 9;
+`;
+
+export const StyledVideo = styled.video`
+    width: 100%;
+    height: 100%;
     
     outline: none;
-
-    @media (max-width: ${theme.breakpoints.tabletMax}) {
-        position: static;
-    }
 `;
 
 export const StyledAudioBackground = styled.div`
-    position: relative;
-    
-    display: flex;
-    
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    inset: 0;
+    margin: auto;
+
+    max-width: 100%;
+    max-height: 100%;
 `;
 
 export const StyledAudio = styled.audio`
@@ -102,12 +117,15 @@ export const StyledAudio = styled.audio`
 `;
 
 export const StyledAudioCover = styled.img`
-    position: absolute;
-    inset: 0;
-    margin: auto;
+    width: 100%;
+    height: 100%;
 
-    max-height: 100%;
-    pointer-events: none;
+    outline: none;
+    object-fit: contain;
+
+    [data-background] & {
+        pointer-events: none;
+    }
 `;
 
 export const StyledAside = styled.aside`
@@ -119,9 +137,10 @@ export const StyledAside = styled.aside`
 
     @media (max-width: ${theme.breakpoints.tabletMax}) {
         padding-top: 0;
+        gap: 16px;
     }
     
-    [data-background] & {
+    [data-background] &, [data-fullscreen] & {
         display: none;
     }
 `;
@@ -137,48 +156,4 @@ export const StyledScrollArea = styled.div`
     
     padding-bottom: 16px;
     overflow: auto;
-`;
-
-export const StyledPlayerBar = styled(Solid)`
-    position: relative;
-    
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    grid-gap: 32px;
-    align-items: center;
-    
-    padding: 16px 32px;
-
-    @media (max-width: ${theme.breakpoints.tabletMax}) {
-        grid-template-columns: 1fr auto;
-        grid-gap: 16px;
-        
-        padding: 16px;
-    }
-`;
-
-export const StyledPlayerBarControls = styled.div`
-    display: flex;
-    gap: 16px;
-    
-    @media (max-width: ${theme.breakpoints.tabletMax}) {
-        & > :first-child, & > :last-child {
-            display: none;
-        }
-    }
-`;
-
-export const StyledPlayerBarControl = styled(IconTextButton)`
-    font-size: 2rem;
-`;
-
-export const StyledPlayerBarActions = styled.div`
-    display: flex;
-    gap: 16px;
-    
-    margin-left: auto;
-
-    @media (max-width: ${theme.breakpoints.tabletMax}) {
-        display: none;
-    }
 `;

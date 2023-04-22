@@ -78,7 +78,7 @@ const typeDefs = `
         sequence: Int
         group: String
         song: Song
-        anime: Anime
+        anime: Anime!
         entries: [Entry!]!
     }
 
@@ -88,7 +88,7 @@ const typeDefs = `
         episodes: String
         nsfw: Boolean!
         spoiler: Boolean!
-        theme: Theme        
+        theme: Theme!
         videos: [Video!]!
     }
     
