@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import theme from "theme";
-import type { RefObject } from "react";
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
+import { VideoPlayerContext } from "components/video-player-2/VideoPlayer2";
 
 const StyledPlayerProgress = styled.div`
     position: absolute;
@@ -11,6 +11,7 @@ const StyledPlayerProgress = styled.div`
     padding: 16px 0;
     
     cursor: pointer;
+    touch-action: none;
     transform: translateY(-50%);
 `;
 
@@ -69,12 +70,18 @@ const StyledPlayerProgressBarHover = styled.div`
     }
 `;
 
-interface ProgressBarProps {
-    playerRef: RefObject<HTMLVideoElement | HTMLAudioElement>;
-    progressRef: RefObject<HTMLDivElement>;
-}
+export function ProgressBar() {
+    const context = useContext(VideoPlayerContext);
 
-export function ProgressBar({ playerRef, progressRef }: ProgressBarProps) {
+    if (!context) {
+        throw new Error("ProgressBar needs to be inside VideoPlayer!");
+    }
+
+    const {
+        playerRef,
+        progressRef,
+    } = context;
+
     const progressHoverRef = useRef<HTMLDivElement>(null);
     
     const nextProgressRef = useRef(0);
@@ -101,18 +108,18 @@ export function ProgressBar({ playerRef, progressRef }: ProgressBarProps) {
             }
         }
         
-        window.addEventListener("mouseup", onMouseUp);
-        window.addEventListener("mousemove", onMouseMove);
+        window.addEventListener("pointerup", onMouseUp);
+        window.addEventListener("pointermove", onMouseMove);
         
         return () => {
-            window.removeEventListener("mouseup", onMouseUp);
-            window.removeEventListener("mousemove", onMouseMove);
+            window.removeEventListener("pointerup", onMouseUp);
+            window.removeEventListener("pointermove", onMouseMove);
         };
     }, [playerRef, progressRef]);
     
     return (
         <StyledPlayerProgress
-            onMouseDown={(event) => {
+            onPointerDown={(event) => {
                 const nextProgress = event.clientX / event.currentTarget.getBoundingClientRect().width;
                 isDraggingRef.current = true;
                 nextProgressRef.current = nextProgress;
@@ -121,7 +128,7 @@ export function ProgressBar({ playerRef, progressRef }: ProgressBarProps) {
                     progressRef.current.style.width = `${nextProgress * 100}%`;
                 }
             }}
-            onMouseMove={(event) => {
+            onPointerMove={(event) => {
                 const nextProgress = event.clientX / event.currentTarget.getBoundingClientRect().width;
                 if (progressHoverRef.current) {
                     progressHoverRef.current.innerText = playerRef.current ? formatTime(nextProgress * playerRef.current.duration) : "";

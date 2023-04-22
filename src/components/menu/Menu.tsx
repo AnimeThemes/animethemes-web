@@ -7,9 +7,10 @@ import * as RadixMenu from "@radix-ui/react-dropdown-menu";
 
 const StyledMenuContent = styled(RadixMenu.Content)`
     width: max-content;
+    max-height: var(--radix-dropdown-menu-content-available-height);
     padding: 8px 0;
     border-radius: 8px;
-    overflow: hidden;
+    overflow: auto;
 
     background-color: ${theme.colors["solid"]};
     box-shadow: 0 0 0 2px ${theme.colors["text-primary"]}, ${theme.shadows.high};
@@ -48,4 +49,26 @@ export const MenuItem = styled(RadixMenu.Item)`
         color: ${theme.colors["text"]};
         outline: none;
     }
+    
+    &[data-disabled] {
+        opacity: 0.5;
+        cursor: revert;
+    }
+`;
+
+export const MenuLabel = styled(RadixMenu.Label)`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    width: 100%;
+    padding: 8px 16px;
+    color: ${theme.colors["text-muted"]};
+    font-size: 0.8rem;
+`;
+
+export const MenuSeparator = styled(RadixMenu.Separator)`
+    height: 2px;
+    background-color: ${theme.colors["text-primary"]};
+    margin: 8px 0;
 `;

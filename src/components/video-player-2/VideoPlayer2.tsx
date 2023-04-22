@@ -1,5 +1,5 @@
-import type { ReactNode, SyntheticEvent } from "react";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import type { MouseEvent, PointerEvent, ReactNode, RefObject, SyntheticEvent } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import {
     StyledAside,
     StyledAudio,
@@ -7,10 +7,6 @@ import {
     StyledAudioCover,
     StyledPlaybackArea,
     StyledPlayer,
-    StyledPlayerBar,
-    StyledPlayerBarActions,
-    StyledPlayerBarControl,
-    StyledPlayerBarControls,
     StyledPlayerContent,
     StyledVideo,
     StyledVideoBackground
@@ -22,52 +18,59 @@ import useSetting from "hooks/useSetting";
 import { AudioMode, GlobalVolume } from "utils/settings";
 import { AUDIO_URL, VIDEO_URL } from "utils/config";
 import extractImages from "utils/extractImages";
-import { Text } from "components/text";
-import { Column } from "components/box";
-import { Switcher } from "components/switcher";
-import { SwitcherOption } from "components/switcher/Switcher";
-import { Button, IconTextButton } from "components/button";
-import { Icon } from "components/icon";
-import { faBackwardStep, faForwardStep, faPause, faPlay, faShare, faXmark } from "@fortawesome/pro-solid-svg-icons";
-import { Performances, SongTitle } from "components/utils";
-import Link from "next/link";
-import { PlaylistTrackAddDialog } from "components/dialog/PlaylistTrackAddDialog";
-import { Menu, MenuContent, MenuItem, MenuTrigger } from "components/menu/Menu";
-import { Toast } from "components/toast";
-import { useToasts } from "context/toastContext";
 import useWatchHistory from "hooks/useWatchHistory";
-import { ProgressBar } from "components/video-player-2/ProgressBar";
 import type { VideoSummaryCardVideoFragment } from "generated/graphql";
-import { ConditionalWrapper } from "components/utils/ConditionalWrapper";
+import { VideoPlayerBar } from "components/video-player-2/VideoPlayerBar";
+import useMouseRelax from "hooks/useMouseRelax";
 
-interface VideoPlayerProps {
+interface VideoPlayerContextValue {
+    video: VideoSummaryCardVideoFragment;
+    background: boolean;
+    playerRef: RefObject<HTMLVideoElement | HTMLAudioElement | null>;
+    progressRef: RefObject<HTMLDivElement>;
+    previousVideoPath: string | null;
+    playPreviousTrack(navigate: boolean): void;
+    nextVideoPath: string | null;
+    playNextTrack(navigate: boolean): void;
+    isPlaying: boolean;
+    togglePlay(): void;
+    videoUrl: string;
+    audioUrl: string;
+    updateAudioMode(audioMode: string): void;
+}
+
+export const VideoPlayerContext = createContext<VideoPlayerContextValue | null>(null);
+
+type VideoPlayerProps = {
     video: VideoSummaryCardVideoFragment;
     background: boolean;
     children?: ReactNode;
+    overlay?: ReactNode;
 }
 
-export function VideoPlayer2({ video, background, children, ...props }: VideoPlayerProps) {
+export function VideoPlayer2({ video, background, children, overlay, ...props }: VideoPlayerProps) {
     const entry = video.entries[0];
-    const theme = entry.theme!;
-    const anime = theme.anime!;
-
-    const videoPath = `/anime/${anime.slug}/${createVideoSlug(theme, entry, video)}`;
+    const theme = entry.theme;
+    const anime = theme.anime;
 
     const videoUrl = `${VIDEO_URL}/${video.basename}`;
     const audioUrl = `${AUDIO_URL}/${video.audio.basename}`;
 
     const [isPlaying, setPlaying] = useState(false);
+    const [aspectRatio, setAspectRatio] = useState(16 / 9);
+
+    const containerRef = useRef<HTMLDivElement>(null);
     const playerRef = useRef<HTMLVideoElement | HTMLAudioElement | null>(null);
     const progressRef = useRef<HTMLDivElement>(null);
     const currentTimeBeforeModeSwitch = useRef<number | null>(null);
+
     const { watchList, currentWatchListItem, setCurrentWatchListItem } = useContext(PlayerContext);
     const router = useRouter();
     const [globalVolume, setGlobalVolume] = useSetting(GlobalVolume);
-    const [canRenderPlayer, setCanRenderPlayer] = useState(false);
     const { smallCover, largeCover } = extractImages(anime);
     const [audioMode, setAudioMode] = useSetting(AudioMode, { storageSync: false });
-    const { dispatchToast } = useToasts();
     const { addToHistory } = useWatchHistory();
+    const isRelaxed = useMouseRelax();
 
     const previousVideo = getWatchListVideo(-1);
     const previousEntry = previousVideo?.entries[0];
@@ -104,8 +107,6 @@ export function VideoPlayer2({ video, background, children, ...props }: VideoPla
             }
         }
     }, [nextVideo, nextVideoPath, router, setCurrentWatchListItem]);
-
-    useEffect(() => setCanRenderPlayer(true), []);
 
     useEffect(() => {
         if (playerRef.current) {
@@ -158,11 +159,20 @@ export function VideoPlayer2({ video, background, children, ...props }: VideoPla
         playerRef.current = player;
         if (playerRef.current) {
             setPlaying(!playerRef.current.paused);
+            if ("videoWidth" in playerRef.current) {
+                setAspectRatio(playerRef.current.videoWidth / playerRef.current.videoHeight);
+            }
             playerRef.current.volume = globalVolume;
             if (currentTimeBeforeModeSwitch.current) {
                 playerRef.current.currentTime = currentTimeBeforeModeSwitch.current;
                 currentTimeBeforeModeSwitch.current = null;
             }
+        }
+    }
+
+    function onPlayerClick(event: PointerEvent) {
+        if (!background && event.nativeEvent.pointerType === "mouse") {
+            togglePlay();
         }
     }
 
@@ -180,11 +190,6 @@ export function VideoPlayer2({ video, background, children, ...props }: VideoPla
             const progress = event.currentTarget.currentTime / event.currentTarget.duration * 100;
             progressRef.current.style.width = `${progress}%`;
         }
-    }
-
-    function saveToClipboard(url: string) {
-        navigator.clipboard.writeText(url)
-            .then(() => dispatchToast("clipboard", <Toast>Copied to clipboard!</Toast>));
     }
 
     function updateAudioMode(audioMode: string) {
@@ -215,8 +220,27 @@ export function VideoPlayer2({ video, background, children, ...props }: VideoPla
     const constraintRef = useRef<HTMLDivElement>(null);
 
     return (
-        <>
-            <StyledPlayer data-background={background || undefined} {...props}>
+        <VideoPlayerContext.Provider value={{
+            video,
+            background,
+            playerRef,
+            progressRef,
+            previousVideoPath,
+            playPreviousTrack,
+            nextVideoPath,
+            playNextTrack,
+            isPlaying,
+            togglePlay,
+            videoUrl,
+            audioUrl,
+            updateAudioMode,
+        }}>
+            <StyledPlayer
+                ref={containerRef}
+                data-background={background || undefined}
+                data-relaxed={isRelaxed || undefined}
+                {...props}
+            >
                 <StyledPlayerContent ref={constraintRef}>
                     <StyledPlaybackArea
                         layout
@@ -229,7 +253,7 @@ export function VideoPlayer2({ video, background, children, ...props }: VideoPla
                     >
                         {audioMode === AudioMode.ENABLED ? (
                             <StyledAudioBackground>
-                                <StyledAudioCover src={largeCover} onClick={background ? undefined : togglePlay}/>
+                                <StyledAudioCover src={largeCover} onPointerDown={onPlayerClick}/>
                                 <StyledAudio
                                     ref={onPlayerMount}
                                     src={audioUrl}
@@ -243,9 +267,10 @@ export function VideoPlayer2({ video, background, children, ...props }: VideoPla
                                     onTimeUpdate={updateProgress}
                                     onVolumeChange={(event: SyntheticEvent<HTMLAudioElement>) => setGlobalVolume(event.currentTarget.volume)}
                                 />
+                                {overlay}
                             </StyledAudioBackground>
                         ) : (
-                            <StyledVideoBackground>
+                            <StyledVideoBackground style={{ aspectRatio }}>
                                 <StyledVideo
                                     ref={onPlayerMount}
                                     src={videoUrl}
@@ -256,10 +281,16 @@ export function VideoPlayer2({ video, background, children, ...props }: VideoPla
                                         setPlaying(false);
                                         playNextTrack(true);
                                     }}
-                                    onClick={background ? undefined : togglePlay}
+                                    onPointerDown={onPlayerClick}
                                     onTimeUpdate={updateProgress}
                                     onVolumeChange={(event: SyntheticEvent<HTMLVideoElement>) => setGlobalVolume(event.currentTarget.volume)}
+                                    onLoadedMetadata={(event) => {
+                                        console.log(event.currentTarget.videoWidth);
+                                        console.log(event.currentTarget.videoHeight);
+                                        setAspectRatio(event.currentTarget.videoWidth / event.currentTarget.videoHeight);
+                                    }}
                                 />
+                                {overlay}
                             </StyledVideoBackground>
                         )}
                     </StyledPlaybackArea>
@@ -267,114 +298,8 @@ export function VideoPlayer2({ video, background, children, ...props }: VideoPla
                         {children}
                     </StyledAside>
                 </StyledPlayerContent>
-                <StyledPlayerBar>
-                    <Column style={{ "--gap": "8px" }}>
-                        <Text color="text-muted" maxLines={1}>
-                            <SongTitle song={theme.song} href={videoPath} />
-                            <Text variant="small"> - </Text>
-                            <Text weight={600}>{theme.type}{theme.sequence || null}{theme.group && ` (${theme.group})`}</Text>
-                            <Text variant="small"> from </Text>
-                            <Link href={`/anime/${anime.slug}`} passHref legacyBehavior>
-                                <Text as="a" link>{anime.name}</Text>
-                            </Link>
-                        </Text>
-                        {!!theme.song?.performances?.length && (
-                            <Text variant="small" color="text-muted">
-                                <Text>Performed</Text>
-                                <Performances song={theme.song} maxPerformances={3} />
-                            </Text>
-                        )}
-                    </Column>
-                    <StyledPlayerBarControls>
-                        {previousVideoPath ? (
-                            <ConditionalWrapper
-                                condition={!background}
-                                wrap={(children) => <Link href={previousVideoPath}>{children}</Link>}
-                            >
-                                <StyledPlayerBarControl
-                                    icon={faBackwardStep}
-                                    isCircle
-                                    onClick={() => playPreviousTrack(!background)}
-                                />
-                            </ConditionalWrapper>
-                        ) : (
-                            <StyledPlayerBarControl
-                                icon={faBackwardStep}
-                                isCircle
-                                disabled
-                            />
-                        )}
-                        <StyledPlayerBarControl
-                            icon={isPlaying ? faPause :  <Icon icon={faPlay} color="text-disabled" style={{ transform: "translateX(2px)" }} />}
-                            isCircle
-                            onClick={togglePlay}
-                        />
-                        {nextVideoPath ? (
-                            <ConditionalWrapper
-                                condition={!background}
-                                wrap={(children) => <Link href={nextVideoPath}>{children}</Link>}
-                            >
-                                <StyledPlayerBarControl
-                                    icon={faForwardStep}
-                                    isCircle
-                                    onClick={() => playNextTrack(!background)}
-                                />
-                            </ConditionalWrapper>
-                        ) : (
-                            <StyledPlayerBarControl
-                                icon={faForwardStep}
-                                isCircle
-                                disabled
-                            />
-                        )}
-                    </StyledPlayerBarControls>
-                    <StyledPlayerBarActions>
-                        <PlaylistTrackAddDialog
-                            video={{
-                                // Flip the structure on it's head,
-                                // because we need video as the root object here.
-                                ...video,
-                                entries: [{
-                                    ...entry,
-                                    theme,
-                                }],
-                            }}
-                        />
-                        <Menu modal={false}>
-                            <MenuTrigger asChild>
-                                <Button style={{ "--gap": "8px" }}>
-                                    <Icon icon={faShare}/>
-                                    <Text>Share</Text>
-                                </Button>
-                            </MenuTrigger>
-                            <MenuContent>
-                                <MenuItem onSelect={() => saveToClipboard(location.href)}>Copy URL to this Page</MenuItem>
-                                {audioMode === AudioMode.ENABLED ? (
-                                    <MenuItem onSelect={() => saveToClipboard(audioUrl)}>Copy URL to Embeddable Audio</MenuItem>
-                                ) : (
-                                    <MenuItem onSelect={() => saveToClipboard(videoUrl)}>Copy URL to Embeddable Video</MenuItem>
-                                )}
-                            </MenuContent>
-                        </Menu>
-                        {canRenderPlayer ? (
-                            <Switcher selectedItem={audioMode} onChange={updateAudioMode}>
-                                <SwitcherOption value={AudioMode.DISABLED}>Video</SwitcherOption>
-                                <SwitcherOption value={AudioMode.ENABLED}>Audio</SwitcherOption>
-                            </Switcher>
-                        ) : null}
-                        <IconTextButton
-                            icon={faXmark}
-                            isCircle
-                            disabled={!background}
-                            onClick={() => setCurrentWatchListItem(null)}
-                        />
-                    </StyledPlayerBarActions>
-                    <ProgressBar
-                        playerRef={playerRef}
-                        progressRef={progressRef}
-                    />
-                </StyledPlayerBar>
+                <VideoPlayerBar />
             </StyledPlayer>
-        </>
+        </VideoPlayerContext.Provider>
     );
 }

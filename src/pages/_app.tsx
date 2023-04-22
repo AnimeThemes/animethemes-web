@@ -31,6 +31,9 @@ import { LazyMotion } from "framer-motion";
 import { VideoPlayer2 } from "components/video-player-2/VideoPlayer2";
 import { PageRevalidation } from "components/utils/PageRevalidation";
 import type { VideoPageProps } from "pages/anime/[animeSlug]/[videoSlug]";
+import FullscreenContext from "context/fullscreenContext";
+import { VideoPlayerOverlay } from "components/video-player-2/VideoPlayerOverlay";
+import { useFullscreen } from "ahooks";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "styles/prism.scss";
@@ -86,15 +89,34 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         return [];
     });
     const [watchListFactory, setWatchListFactory] = useState<(() => Promise<WatchListItem[]>) | null>(null);
-    const [currentWatchListItem, setCurrentWatchListItem] = useState<WatchListItem | null>(() => {
+    const [currentWatchListItemId, setCurrentWatchListItemId] = useState<number | null>(() => {
         if (watchList.length) {
-            return watchList[0];
+            return watchList[0].watchListId;
         }
         return null;
     });
+    const currentWatchListItem = watchList.find((item) => item.watchListId === currentWatchListItemId) ?? null;
 
     const currentBasename = getBasename(pageProps);
     const [previousBasename, setPreviousBasename] = useState<string | null>(() => getBasename(pageProps));
+
+    const [isFullscreen, { toggleFullscreen }] = useFullscreen(
+        document.documentElement,
+        {
+            onEnter() {
+                document.documentElement.dataset.fullscreen = "true";
+            },
+            onExit() {
+                delete document.documentElement.dataset.fullscreen;
+            },
+        }
+    );
+
+    useEffect(() => {
+        if (!isVideoPage && isFullscreen) {
+            toggleFullscreen();
+        }
+    }, [isFullscreen, isVideoPage, toggleFullscreen]);
 
     useEffect(() => {
         const hotkeyListener = (event: KeyboardEvent) => {
@@ -136,7 +158,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
             setWatchList(watchList);
             setWatchListFactory(null);
-            setCurrentWatchListItem(watchList[0]);
+            setCurrentWatchListItemId(watchList[0].watchListId);
         }
 
         return null;
@@ -145,6 +167,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     return (
         <MultiContextProvider providers={[
             stackContext(ThemeProvider, { theme }),
+            stackContext(FullscreenContext.Provider, { value: { isFullscreen, toggleFullscreen } }),
             stackContext(ColorThemeContext.Provider, { value: { colorTheme, setColorTheme } }),
             stackContext(PlayerContext.Provider, { value: {
                 currentVideo: null,
@@ -156,7 +179,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                 setWatchListFactory: (factory) => setWatchListFactory(() => factory),
                 currentWatchListItem,
                 setCurrentWatchListItem: (watchListItem) => {
-                    setCurrentWatchListItem(watchListItem);
+                    setCurrentWatchListItemId(watchListItem?.watchListId ?? null);
                     if (watchListFactory && watchList.findIndex((item) => item.watchListId === watchListItem?.watchListId) === watchList.length - 1) {
                         watchListFactory().then((nextWatchList) => {
                             setWatchList([
@@ -230,7 +253,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                     </>
                 ) : null}
                 {currentWatchListItem && (
-                    <VideoPlayer2 video={currentWatchListItem} background={!isVideoPage}>
+                    <VideoPlayer2
+                        video={currentWatchListItem}
+                        background={!isVideoPage}
+                        overlay={isVideoPage ? <VideoPlayerOverlay {...pageProps} /> : null}
+                    >
                         {isVideoPage ? (
                             <Component {...pageProps}/>
                         ) : null}
