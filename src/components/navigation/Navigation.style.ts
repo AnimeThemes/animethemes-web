@@ -21,6 +21,10 @@ export const StyledNavigation = styled(Solid).attrs({ as: "nav" })<{ $floating: 
         background-color: transparent;
         box-shadow: none;
     `}
+    
+    [data-fullscreen] & {
+        display: none;
+    }
 `;
 
 export const StyledNavigationContainer = styled(Container)`

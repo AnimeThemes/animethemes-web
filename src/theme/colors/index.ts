@@ -1,4 +1,5 @@
 interface BaseColors {
+    "transparent": string
     "white": string
     "gray-100": string
     "gray-200": string
@@ -52,6 +53,7 @@ export interface Shadows {
 }
 
 const baseColors: BaseColors = {
+    "transparent": "#00000000",
     "white": "#ffffff",
     "gray-100": "#f5f2fa",
     "gray-200": "#e6e1f0",

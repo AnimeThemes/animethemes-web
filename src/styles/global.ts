@@ -39,7 +39,11 @@ export default createGlobalStyle`
         `}
     }
 
-    html, body, #__next {
+    html {
+        height: 100dvh;
+    }
+    
+    body, #__next {
         // Every container in the page hierarchy needs to have the 
         // maximum height of the viewport. Using 100vh on innermost container 
         // would break certain layouts on mobile devices.

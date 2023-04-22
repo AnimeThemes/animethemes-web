@@ -32,6 +32,7 @@ const StyledCoverContainer = styled.div`
     height: 100%;
     border-radius: 0.5rem;
     overflow: hidden;
+    isolation: isolate;
 `;
 const StyledCoverItemContainer = styled.div<{ $itemCount: number }>`
     position: absolute;
