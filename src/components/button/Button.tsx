@@ -76,7 +76,7 @@ const BaseButton = styled.button<{ $isCircle: boolean }>`
         margin: -8px 8px -8px -16px;
     }
     
-    &:focus {
+    &:focus:focus-visible {
         box-shadow: 0 0 0 2px var(--focus-ring-color);
     }
 `;

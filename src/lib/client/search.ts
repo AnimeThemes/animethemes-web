@@ -106,7 +106,7 @@ export const searchResolvers = {
             searchParams.append("fields[anime]", "name,slug,year,season");
             searchParams.append("fields[animetheme]", "type,sequence,slug,group,id");
             searchParams.append("fields[animethemeentry]", "version,episodes,spoiler,nsfw");
-            searchParams.append("fields[video]", "id,tags,resolution,nc,subbed,lyrics,uncen,source,overlap");
+            searchParams.append("fields[video]", "id,tags,resolution,nc,subbed,lyrics,uncen,source,overlap,basename");
             searchParams.append("fields[image]", "facet,link");
             searchParams.append("fields[song]", "title");
             searchParams.append("fields[artist]", "name,slug");

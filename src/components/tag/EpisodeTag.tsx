@@ -9,7 +9,7 @@ interface EpisodeTagProps {
 
 export function EpisodeTag({ entry }: EpisodeTagProps) {
     return (
-        <Tag icon={faFilm}>
+        <Tag icon={faFilm} title={entry.episodes ? `Used in episode ${entry.episodes}` : "Used in all episodes"}>
             {entry.episodes || "—"}
         </Tag>
     );
