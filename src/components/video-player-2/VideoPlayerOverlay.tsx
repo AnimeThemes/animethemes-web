@@ -27,7 +27,9 @@ const StyledOverlay = styled.div`
     opacity: 0;
     transition: opacity 500ms;
 
-    ${StyledPlayer}:not([data-relaxed]) ${StyledPlaybackArea}:hover &, &:hover {
+    &:hover,
+    html:not([data-fullscreen]) ${StyledPlaybackArea}:hover &,
+    ${StyledPlayer}:not([data-relaxed]) ${StyledPlaybackArea}:hover & {
         opacity: 1;
         transition: opacity 100ms;
     }

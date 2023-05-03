@@ -45,6 +45,9 @@ import useSWR from "swr";
 import { fetchDataClient } from "lib/client";
 import PlayerContext, { createWatchListItem } from "context/playerContext";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "components/menu/Menu";
+import { PlaylistEditDialog } from "components/dialog/PlaylistEditDialog";
+import { Reorder } from "framer-motion";
+import axios from "lib/client/axios";
 
 const StyledDesktopOnly = styled.div`
     gap: 24px;
@@ -58,6 +61,14 @@ const StyledHeader = styled.div`
     justify-content: space-between;
     align-items: center;
 `;
+const StyledReorderContainer = styled.div`
+    // Hack to style the framer motion reorder component
+    & > div {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+`;
 
 interface PlaylistDetailPageProps extends SharedPageProps, RequiredNonNullable<PlaylistDetailPageQuery> {}
 
@@ -68,7 +79,7 @@ interface PlaylistDetailPageParams extends ParsedUrlQuery {
 export default function PlaylistDetailPage({ playlist: initialPlaylist, me: initialMe }: PlaylistDetailPageProps) {
     const { setWatchList, setWatchListFactory, setCurrentWatchListItem, addWatchListItem, addWatchListItemNext } = useContext(PlayerContext);
 
-    const { data: playlist } = useSWR(
+    const { data: playlist, mutate } = useSWR(
         ["PlaylistDetailPagePlaylist", `/api/playlist/${initialPlaylist.id}`],
         async () => {
             const { data } = await fetchDataClient<PlaylistDetailPagePlaylistQuery, PlaylistDetailPagePlaylistQueryVariables>(gql`
@@ -113,7 +124,10 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
     const [ showFilter, toggleShowFilter ] = useToggle();
     const [ sortBy, setSortBy ] = useState(UNSORTED);
 
-    const tracks = [...playlist.forward].sort(
+    const isOwner = me.user?.name === playlist.user.name;
+
+    const tracks = [...playlist.forward];
+    const tracksSorted = [...tracks].sort(
         sortTransformed(
             getComparator(sortBy),
             (track) => {
@@ -134,11 +148,83 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
     );
 
     function playAll(initiatingVideoIndex: number) {
-        const watchList = tracks.map((track) => createWatchListItem(track.video));
+        const watchList = tracksSorted.map((track) => createWatchListItem(track.video));
         setWatchList(watchList);
         setWatchListFactory(null);
         setCurrentWatchListItem(watchList[initiatingVideoIndex]);
     }
+
+    async function updateTrackOrder(newTracks: typeof tracks) {
+        await mutate({
+            ...playlist,
+            forward: newTracks,
+        }, { revalidate: false });
+    }
+
+    async function updateTrackOrderRemote(trackId: string) {
+        const trackIndex = tracks.findIndex((track) => track.id === trackId);
+
+        const nextId = tracks[trackIndex + 1]?.id;
+        const previousId = tracks[trackIndex - 1]?.id;
+
+        if (nextId || previousId) {
+            await axios.put(`/api/playlist/${playlist.id}/track/${trackId}`, {
+                next: nextId,
+                previous: nextId ? undefined : previousId,
+            });
+
+            await mutate();
+        }
+    }
+
+    const trackElements = tracksSorted.map((track, index) => [track, (
+        <VideoSummaryCard
+            key={track.id}
+            video={track.video}
+            onPlay={() => playAll(index)}
+            menu={
+                <Menu modal={false}>
+                    <MenuTrigger asChild>
+                        <Button variant="silent" isCircle>
+                            <Icon icon={faEllipsisV} />
+                        </Button>
+                    </MenuTrigger>
+                    <MenuContent>
+                        <PlaylistTrackAddDialog
+                            video={track.video}
+                            trigger={
+                                <MenuItem onSelect={(event) => event.preventDefault()}>
+                                    <Icon icon={faListMusic}/>
+                                    <Text>Add to Playlist</Text>
+                                </MenuItem>
+                            }
+                        />
+                        {isOwner ? (
+                            <PlaylistTrackRemoveDialog
+                                playlist={playlist}
+                                trackId={track.id}
+                                video={track.video}
+                                trigger={
+                                    <MenuItem onSelect={(event) => event.preventDefault()}>
+                                        <Icon icon={faMinus}/>
+                                        <Text>Remove from Playlist</Text>
+                                    </MenuItem>
+                                }
+                            />
+                        ) : null}
+                        <MenuItem onSelect={() => addWatchListItem(track.video)}>
+                            <Icon icon={faPlus}/>
+                            <Text>Add to Watch List</Text>
+                        </MenuItem>
+                        <MenuItem onSelect={() => addWatchListItemNext(track.video)}>
+                            <Icon icon={faPlus}/>
+                            <Text>Play Next</Text>
+                        </MenuItem>
+                    </MenuContent>
+                </Menu>
+            }
+        />
+    )] as const);
 
     return (
         <>
@@ -156,6 +242,9 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                             })}
                         />
                     </StyledDesktopOnly>
+                    {isOwner ? (
+                        <PlaylistEditDialog playlist={playlist} />
+                    ) : null}
                     <DescriptionList>
                         <DescriptionList.Item title="Playlist by">
                             <Text link>{playlist.user.name}</Text>
@@ -173,7 +262,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                     <Collapse collapse={!showFilter}>
                         <SearchFilterGroup>
                             <SearchFilterSortBy value={sortBy} setValue={setSortBy}>
-                                <SearchFilterSortBy.Option value={UNSORTED}>Recently Added</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={UNSORTED}>Custom</SearchFilterSortBy.Option>
                                 <SearchFilterSortBy.Option value={SONG_A_Z}>A ➜ Z (Song)</SearchFilterSortBy.Option>
                                 <SearchFilterSortBy.Option value={SONG_Z_A}>Z ➜ A (Song)</SearchFilterSortBy.Option>
                                 <SearchFilterSortBy.Option value={ANIME_A_Z}>A ➜ Z (Anime)</SearchFilterSortBy.Option>
@@ -183,56 +272,21 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                             </SearchFilterSortBy>
                         </SearchFilterGroup>
                     </Collapse>
-                    <Column style={{ "--gap": "16px" }}>
-                        {tracks.map((track, index) => (
-                            <VideoSummaryCard
-                                key={track.id}
-                                video={track.video}
-                                onPlay={() => playAll(index)}
-                                menu={
-                                    <Menu modal={false}>
-                                        <MenuTrigger asChild>
-                                            <Button variant="silent" isCircle>
-                                                <Icon icon={faEllipsisV} />
-                                            </Button>
-                                        </MenuTrigger>
-                                        <MenuContent>
-                                            <PlaylistTrackAddDialog
-                                                video={track.video}
-                                                trigger={
-                                                    <MenuItem onSelect={(event) => event.preventDefault()}>
-                                                        <Icon icon={faListMusic}/>
-                                                        <Text>Add to Playlist</Text>
-                                                    </MenuItem>
-                                                }
-                                            />
-                                            {me.user?.name === playlist.user.name ? (
-                                                <PlaylistTrackRemoveDialog
-                                                    playlist={playlist}
-                                                    trackId={track.id}
-                                                    video={track.video}
-                                                    trigger={
-                                                        <MenuItem onSelect={(event) => event.preventDefault()}>
-                                                            <Icon icon={faMinus}/>
-                                                            <Text>Remove from Playlist</Text>
-                                                        </MenuItem>
-                                                    }
-                                                />
-                                            ) : null}
-                                            <MenuItem onSelect={() => addWatchListItem(track.video)}>
-                                                <Icon icon={faPlus}/>
-                                                <Text>Add to Watch List</Text>
-                                            </MenuItem>
-                                            <MenuItem onSelect={() => addWatchListItemNext(track.video)}>
-                                                <Icon icon={faPlus}/>
-                                                <Text>Play Next</Text>
-                                            </MenuItem>
-                                        </MenuContent>
-                                    </Menu>
-                                }
-                            />
-                        ))}
-                    </Column>
+                    <StyledReorderContainer>
+                        {(sortBy === UNSORTED && isOwner) ? (
+                            <Reorder.Group as="div" axis="y" values={tracksSorted} onReorder={updateTrackOrder}>
+                                {trackElements.map(([track, node]) => (
+                                    <Reorder.Item key={track.id} as="div" value={track} onDragEnd={() => updateTrackOrderRemote(track.id)}>
+                                        {node}
+                                    </Reorder.Item>
+                                ))}
+                            </Reorder.Group>
+                        ) : (
+                            <div>
+                                {trackElements.map(([, node]) => node)}
+                            </div>
+                        )}
+                    </StyledReorderContainer>
                 </Column>
             </SidebarContainer>
         </>
@@ -242,8 +296,12 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
 PlaylistDetailPage.fragments = {
     playlist: gql`
         ${VideoSummaryCard.fragments.video}
+        ${PlaylistEditDialog.fragments.playlist}
+        ${PlaylistTrackRemoveDialog.fragments.playlist}
         
         fragment PlaylistDetailPagePlaylist on Playlist {
+            ...PlaylistEditDialogPlaylist
+            ...PlaylistTrackRemoveDialogPlaylist
             id
             name
             visibility

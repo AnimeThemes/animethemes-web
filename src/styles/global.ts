@@ -5,7 +5,7 @@ import theme, { createCssDefinition } from "theme";
 import { defineColorTheme } from "styles/mixins";
 import { Nunito } from "next/font/google";
 
-const nunito = Nunito({ subsets: ["latin"] });
+const nunito = Nunito({ subsets: ["latin"], weight: "variable" });
 
 export default createGlobalStyle`
     * {
@@ -28,6 +28,11 @@ export default createGlobalStyle`
         // is not scrollable to prevent layout shift.
         overflow-y: scroll;
 
+        [data-fullscreen] & {
+            // Except in fullscreen mode.
+            overflow-y: hidden;
+        }
+        
         ${defineColorTheme("light")`
             ${createCssDefinition(colors)}
             ${createCssDefinition(shadows)}
