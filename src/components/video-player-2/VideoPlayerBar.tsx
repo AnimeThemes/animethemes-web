@@ -3,47 +3,53 @@ import { Text } from "components/text";
 import { Performances, SongTitle } from "components/utils";
 import Link from "next/link";
 import { ConditionalWrapper } from "components/utils/ConditionalWrapper";
-import { faBackwardStep, faForwardStep, faPause, faPlay, faShare, faXmark } from "@fortawesome/pro-solid-svg-icons";
+import {
+    faBackwardStep,
+    faForwardStep,
+    faListMusic,
+    faPause,
+    faPlay,
+    faShare,
+    faXmark
+} from "@fortawesome/pro-solid-svg-icons";
 import { Icon } from "components/icon";
 import { PlaylistTrackAddDialog } from "components/dialog/PlaylistTrackAddDialog";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "components/menu/Menu";
-import { Button, IconTextButton } from "components/button";
+import { IconTextButton } from "components/button";
 import { AudioMode } from "utils/settings";
 import { ProgressBar } from "components/video-player-2/ProgressBar";
 import styled from "styled-components";
 import theme from "theme";
 import { Toast } from "components/toast";
 import { useToasts } from "context/toastContext";
-import createVideoSlug from "utils/createVideoSlug";
 import { useContext } from "react";
 import { VideoPlayerContext } from "components/video-player-2/VideoPlayer2";
 import useSetting from "hooks/useSetting";
 import PlayerContext from "context/playerContext";
+import { VolumeControl } from "components/video-player-2/VolumeControl";
 
 const StyledPlayerBar = styled(Solid)`
     position: relative;
-    
+
     display: grid;
     grid-template-columns: 1fr auto 1fr;
-    grid-gap: 32px;
+    grid-gap: 16px;
     align-items: center;
-    
-    padding: 16px 32px;
+
+    padding: 10px 32px;
 
     transition: opacity 100ms;
-    
+
     @media (max-width: ${theme.breakpoints.tabletMax}) {
         grid-template-columns: 1fr auto;
-        grid-gap: 16px;
-        
+
         padding: 8px 16px;
     }
-    
+
     [data-fullscreen] & {
         position: fixed;
         inset: auto 0 0 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        backdrop-filter: brightness(0.25);
+        background-color: rgba(46, 41, 58, 0.8);
     }
 
     [data-fullscreen] [data-relaxed] & {
@@ -68,14 +74,19 @@ const StyledPlayerBarControl = styled(IconTextButton)`
 `;
 
 const StyledPlayerBarActions = styled.div`
+    align-self: stretch;
+    
     display: flex;
     gap: 16px;
-    
-    margin-left: auto;
+    align-items: center;
 
     @media (max-width: ${theme.breakpoints.tabletMax}) {
         display: none;
     }
+`;
+
+const StyledVolumeControl = styled(VolumeControl)`
+    margin-right: auto;
 `;
 
 export function VideoPlayerBar() {
@@ -88,6 +99,7 @@ export function VideoPlayerBar() {
     const {
         video,
         background,
+        videoPagePath,
         previousVideoPath,
         playPreviousTrack,
         nextVideoPath,
@@ -102,8 +114,6 @@ export function VideoPlayerBar() {
     const theme = entry.theme;
     const anime = theme.anime;
 
-    const videoPath = `/anime/${anime.slug}/${createVideoSlug(theme, entry, video)}`;
-
     const { dispatchToast } = useToasts();
     const [audioMode] = useSetting(AudioMode, { storageSync: false });
     const { setCurrentWatchListItem } = useContext(PlayerContext);
@@ -117,7 +127,7 @@ export function VideoPlayerBar() {
         <StyledPlayerBar>
             <Column style={{ "--gap": "8px" }}>
                 <Text color="text-muted" maxLines={1}>
-                    <SongTitle song={theme.song} href={videoPath} />
+                    <SongTitle song={theme.song} href={videoPagePath} />
                     <Text variant="small"> - </Text>
                     <Text weight={600}>{theme.type}{theme.sequence || null}{theme.group && ` (${theme.group})`}</Text>
                     <Text variant="small"> from </Text>
@@ -126,7 +136,7 @@ export function VideoPlayerBar() {
                     </Link>
                 </Text>
                 {!!theme.song?.performances?.length && (
-                    <Text variant="small" color="text-muted">
+                    <Text variant="small" color="text-muted" maxLines={1}>
                         <Text>Performed</Text>
                         <Performances song={theme.song} maxPerformances={3} />
                     </Text>
@@ -176,6 +186,7 @@ export function VideoPlayerBar() {
                 )}
             </StyledPlayerBarControls>
             <StyledPlayerBarActions>
+                <StyledVolumeControl />
                 <PlaylistTrackAddDialog
                     video={{
                         // Flip the structure on it's head,
@@ -186,13 +197,13 @@ export function VideoPlayerBar() {
                             theme,
                         }],
                     }}
+                    trigger={
+                        <IconTextButton icon={faListMusic} variant="solid" collapsible="socialListMax">Add to Playlist</IconTextButton>
+                    }
                 />
                 <Menu modal={false}>
                     <MenuTrigger asChild>
-                        <Button style={{ "--gap": "8px" }}>
-                            <Icon icon={faShare}/>
-                            <Text>Share</Text>
-                        </Button>
+                        <IconTextButton icon={faShare} variant="solid" collapsible="socialListMax">Share</IconTextButton>
                     </MenuTrigger>
                     <MenuContent>
                         <MenuItem onSelect={() => saveToClipboard(location.href)}>Copy URL to this Page</MenuItem>

@@ -159,7 +159,7 @@ function formatTime(time: number) {
     }
 
     const minutes = Math.floor(time / 60);
-    const seconds = (time % 60).toLocaleString(undefined, { minimumIntegerDigits: 2, maximumFractionDigits: 0 });
+    const seconds = Math.floor(time % 60).toLocaleString(undefined, { minimumIntegerDigits: 2 });
 
     return `${minutes}:${seconds}`;
 }
