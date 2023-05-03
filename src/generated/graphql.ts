@@ -592,6 +592,8 @@ export type ThemeSummaryCardQuery = { theme: { slug: string, type: string, seque
 
 export type VideoSummaryCardVideoFragment = { id: number, basename: string, tags: string, entries: Array<{ version: number | null, theme: { id: number, slug: string, type: string, sequence: number | null, group: string | null, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } }>, audio: { basename: string } };
 
+export type PlaylistEditDialogPlaylistFragment = { id: string, name: string, visibility: PlaylistVisibility };
+
 export type PlaylistRemoveDialogPlaylistFragment = { id: string, name: string, visibility: PlaylistVisibility, tracks_count: number };
 
 export type PlaylistTrackAddDialogVideoFragment = { id: number, basename: string, tags: string, entries: Array<{ version: number | null, theme: { id: number, slug: string, type: string, sequence: number | null, group: string | null, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } }>, audio: { basename: string } };
@@ -859,6 +861,11 @@ export type HomePageQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type HomePageQuery = { featuredTheme: { theme: { slug: string, type: string, sequence: number | null, group: string | null, id: number, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, entries: Array<{ version: number | null, videos: Array<{ basename: string, id: number, tags: string, audio: { basename: string } }> }>, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } } | null, announcementAll: Array<{ content: string }> };
+
+export type LandingPageQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LandingPageQuery = { featuredTheme: { theme: { slug: string, type: string, sequence: number | null, group: string | null, id: number, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, entries: Array<{ version: number | null, videos: Array<{ basename: string, id: number, tags: string, audio: { basename: string } }> }>, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } } | null, announcementAll: Array<{ content: string }> };
 
 export type PlaylistDetailPagePlaylistQueryVariables = Exact<{
   playlistId: Scalars['String'];

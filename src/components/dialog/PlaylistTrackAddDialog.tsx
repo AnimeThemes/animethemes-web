@@ -36,7 +36,7 @@ export function PlaylistTrackAddDialog({ video, trigger }: PlaylistTrackAddDialo
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 {trigger ?? (
-                    <IconTextButton icon={faListMusic} variant="solid" collapsible>Add to Playlist</IconTextButton>    
+                    <IconTextButton icon={faListMusic} variant="solid" collapsible>Add to Playlist</IconTextButton>
                 )}
             </DialogTrigger>
             <DialogContent title="Add to playlist">

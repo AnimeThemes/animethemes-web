@@ -14,7 +14,7 @@ export const StyledPlayer = styled.div`
         flex: 1;
     }
 
-    &[data-relaxed] {
+    [data-fullscreen] &[data-relaxed] {
         cursor: none;
     }
 `;
@@ -38,7 +38,7 @@ export const StyledPlayerContent = styled.div`
     
     [data-background] & {
         position: fixed;
-        inset: 70px 16px 104px 16px;
+        inset: 70px 16px 92px 16px;
         pointer-events: none;
     }
     
@@ -64,6 +64,10 @@ export const StyledPlaybackArea = styled(m.div)`
         [data-background] & {
             display: none;
         }
+
+        [data-fullscreen] & {
+            aspect-ratio: auto;
+        }
     }
 
     [data-background] & {
@@ -83,6 +87,7 @@ export const StyledPlaybackArea = styled(m.div)`
     [data-fullscreen] & {
         height: 100%;
         margin: 0;
+        background: rgba(0, 0, 0);
     }
 `;
 

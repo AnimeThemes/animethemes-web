@@ -2,15 +2,16 @@ import styled from "styled-components";
 import { Button } from "./Button";
 import { Icon } from "components/icon";
 import { faChevronUp } from "@fortawesome/pro-solid-svg-icons";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import theme from "theme";
 import { withHover } from "styles/mixins";
 import { slideIn, slideOut } from "styles/animations";
+import PlayerContext from "context/playerContext";
 
-const ScrollButton = styled(Button)`
+const ScrollButton = styled(Button)<{ $bottomOffset: number }>`
   position: fixed;
   right: 16px;
-  bottom: 16px;
+  bottom: ${(props) => 16 + props.$bottomOffset}px;
   padding: 16px;
 
   visibility: ${(props) => (props.isVisible ? "visible" : "hidden")};
@@ -26,6 +27,8 @@ const ScrollButton = styled(Button)`
 export function BackToTopButton() {
     const [isButtonVisible, setIsButtonVisible] = useState(false);
     const [animation, setAnimation] = useState(slideIn());
+
+    const { currentWatchListItem } = useContext(PlayerContext);
 
     useEffect(() => {
         function handleScroll() {
@@ -55,6 +58,7 @@ export function BackToTopButton() {
             isVisible={isButtonVisible}
             animation={animation}
             onMouseDown={(event:React.PointerEvent) => event.preventDefault()}
+            $bottomOffset={currentWatchListItem ? 76 : 0}
         >
             <Icon icon={faChevronUp} />
         </ScrollButton>
