@@ -26,6 +26,7 @@ import useMouseRelax from "hooks/useMouseRelax";
 interface VideoPlayerContextValue {
     video: VideoSummaryCardVideoFragment;
     background: boolean;
+    videoPagePath: string;
     playerRef: RefObject<HTMLVideoElement | HTMLAudioElement | null>;
     progressRef: RefObject<HTMLDivElement>;
     previousVideoPath: string | null;
@@ -52,6 +53,8 @@ export function VideoPlayer2({ video, background, children, overlay, ...props }:
     const entry = video.entries[0];
     const theme = entry.theme;
     const anime = theme.anime;
+
+    const videoPagePath = `/anime/${anime.slug}/${createVideoSlug(theme, entry, video)}`;
 
     const videoUrl = `${VIDEO_URL}/${video.basename}`;
     const audioUrl = `${AUDIO_URL}/${video.audio.basename}`;
@@ -171,7 +174,7 @@ export function VideoPlayer2({ video, background, children, overlay, ...props }:
     }
 
     function onPlayerClick(event: PointerEvent) {
-        if (!background && event.nativeEvent.pointerType === "mouse") {
+        if (!background && event.nativeEvent.pointerType === "mouse" && event.nativeEvent.button === 0) {
             togglePlay();
         }
     }
@@ -223,6 +226,7 @@ export function VideoPlayer2({ video, background, children, overlay, ...props }:
         <VideoPlayerContext.Provider value={{
             video,
             background,
+            videoPagePath,
             playerRef,
             progressRef,
             previousVideoPath,
@@ -250,10 +254,17 @@ export function VideoPlayer2({ video, background, children, overlay, ...props }:
                             x: 0,
                             y: 0,
                         }}
+                        onDoubleClick={() => router.push(videoPagePath)}
                     >
                         {audioMode === AudioMode.ENABLED ? (
-                            <StyledAudioBackground>
-                                <StyledAudioCover src={largeCover} onPointerDown={onPlayerClick}/>
+                            <StyledAudioBackground style={{ aspectRatio }}>
+                                <StyledAudioCover
+                                    src={largeCover}
+                                    onPointerDown={onPlayerClick}
+                                    onLoad={(event) => {
+                                        setAspectRatio(event.currentTarget.naturalWidth / event.currentTarget.naturalHeight);
+                                    }}
+                                />
                                 <StyledAudio
                                     ref={onPlayerMount}
                                     src={audioUrl}
@@ -262,7 +273,7 @@ export function VideoPlayer2({ video, background, children, overlay, ...props }:
                                     onPause={() => setPlaying(false)}
                                     onEnded={() => {
                                         setPlaying(false);
-                                        playNextTrack(true);
+                                        playNextTrack(!background);
                                     }}
                                     onTimeUpdate={updateProgress}
                                     onVolumeChange={(event: SyntheticEvent<HTMLAudioElement>) => setGlobalVolume(event.currentTarget.volume)}
@@ -279,14 +290,12 @@ export function VideoPlayer2({ video, background, children, overlay, ...props }:
                                     onPause={() => setPlaying(false)}
                                     onEnded={() => {
                                         setPlaying(false);
-                                        playNextTrack(true);
+                                        playNextTrack(!background);
                                     }}
                                     onPointerDown={onPlayerClick}
                                     onTimeUpdate={updateProgress}
                                     onVolumeChange={(event: SyntheticEvent<HTMLVideoElement>) => setGlobalVolume(event.currentTarget.volume)}
                                     onLoadedMetadata={(event) => {
-                                        console.log(event.currentTarget.videoWidth);
-                                        console.log(event.currentTarget.videoHeight);
                                         setAspectRatio(event.currentTarget.videoWidth / event.currentTarget.videoHeight);
                                     }}
                                 />

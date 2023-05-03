@@ -1,42 +1,53 @@
 import { Icon } from "components/icon";
 import { Button } from "components/button";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import theme from "theme";
-import useMediaQuery from "hooks/useMediaQuery";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { forwardRef } from "react";
 
-const StyledButton = styled(Button)`
+const StyledButton = styled(Button)<{ $collapseBreakpoint: string }>`
     gap: 8px;
+    
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    
+    @media (max-width: ${(props) => props.$collapseBreakpoint}) {
+        aspect-ratio: 1 / 1;
+        padding: 8px;
+    }
 `;
 
-const StyledText = styled.span<{ collapsible: boolean }>`
-    ${(props) => props.collapsible && css`
-        @media (max-width: ${theme.breakpoints.mobileMax}) {
-            display: none;
-        }
-    `}
+const StyledText = styled.span<{ $collapseBreakpoint: string }>`
+    @media (max-width: ${(props) => props.$collapseBreakpoint}) {
+        display: none;
+    }
 `;
 
 interface IconTextButtonProps extends ComponentPropsWithoutRef<typeof StyledButton> {
     icon: IconDefinition | ReactNode
     children?: ReactNode
-    collapsible?: boolean
+    collapsible?: true | keyof typeof theme.breakpoints
 }
 
 export const IconTextButton = forwardRef(
-    function IconTextButton({ icon, children, collapsible = false, ...props }: IconTextButtonProps, ref) {
-        const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
-        const isCollapsed = collapsible && isMobile;
+    function IconTextButton({ icon, children, collapsible, ...props }: IconTextButtonProps, ref) {
+        let collapseBreakpoint = "0px";
+
+        if (collapsible === true) {
+            collapseBreakpoint = theme.breakpoints.mobileMax;
+        } else if (collapsible) {
+            collapseBreakpoint = theme.breakpoints[collapsible];
+        }
 
         return (
-            <StyledButton ref={ref} variant="silent" isCircle={isCollapsed} {...props}>
+            <StyledButton ref={ref} variant="silent" $collapseBreakpoint={collapseBreakpoint} {...props}>
                 {isIconDefinition(icon) ? (
                     <Icon icon={icon} color="text-disabled"/>
                 ) : icon}
-                {children ? (
-                    <StyledText collapsible={collapsible}>{children}</StyledText>
+                {(children !== null && children !== undefined) ? (
+                    <StyledText $collapseBreakpoint={collapseBreakpoint}>{children}</StyledText>
                 ) : null}
             </StyledButton>
         );

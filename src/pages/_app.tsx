@@ -54,6 +54,12 @@ const StyledContainer = styled(Container)`
     gap: 24px;
 `;
 
+const StyledFullWidthContainer = styled(Container)`
+    margin: 0;
+    padding: 0;
+    max-width: none;
+`;
+
 // TODO: Add proper type checking, also extract layout modes out of _app.tsx
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function MyApp({ Component, pageProps }: AppProps) {
@@ -61,7 +67,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     const [colorTheme, setColorTheme] = useColorTheme();
     const [developerMode] = useSetting(DeveloperMode);
 
-    const { lastBuildAt, apiRequests, isVideoPage = false } = pageProps;
+    const { lastBuildAt, apiRequests, isVideoPage = false, isFullWidthPage = false } = pageProps;
 
     const [watchList, setWatchList] = useState<WatchListItem[]>(() => {
         if (isVideoPage) {
@@ -164,6 +170,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         return null;
     }
 
+    const Container = isFullWidthPage ? StyledFullWidthContainer : StyledContainer;
+
     return (
         <MultiContextProvider providers={[
             stackContext(ThemeProvider, { theme }),
@@ -220,10 +228,12 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                 <meta name="theme-color" content="#1c1823"/>
             </Head>
             <StyledWrapper>
-                <Navigation />
+                {!isFullWidthPage ? (
+                    <Navigation />
+                ) : null}
                 {!isVideoPage ? (
                     <>
-                        <StyledContainer>
+                        <Container>
                             {!!pageProps.year && (
                                 <Column style={{ "--gap": "16px" }}>
                                     <YearNavigation {...pageProps}/>
@@ -248,7 +258,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                             {developerMode === DeveloperMode.ENABLED && lastBuildAt && (
                                 <PageRevalidation lastBuildAt={lastBuildAt} apiRequests={apiRequests}/>
                             )}
-                        </StyledContainer>
+                        </Container>
                         <Footer />
                     </>
                 ) : null}

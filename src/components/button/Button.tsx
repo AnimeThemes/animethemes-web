@@ -90,7 +90,7 @@ const PrimaryButton = styled(BaseButton)`
         color: ${theme.colors["text-primary"]};
     `}
     
-    &:focus {
+    &:focus:focus-visible {
         background-color: ${theme.colors["text-on-primary"]};
         color: ${theme.colors["text-primary"]};
     }
@@ -107,7 +107,7 @@ const WarningButton = styled(BaseButton)`
         color: ${theme.colors["text-warning"]};
     `}
     
-    &:focus {
+    &:focus:focus-visible {
         background-color: ${theme.colors["text-on-warning"]};
         color: ${theme.colors["text-warning"]};
     }
@@ -135,7 +135,7 @@ const SilentButton = styled(BaseButton)`
         color: ${theme.colors["text"]};
     `}
 
-    &:not(:hover)&:not(:focus) {
+    &:not(:hover)&:not(:focus:focus-visible) {
         box-shadow: none;
     }
 

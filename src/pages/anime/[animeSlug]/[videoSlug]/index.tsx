@@ -56,7 +56,7 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
 
     const relatedThemes = anime.themes
         .filter((relatedTheme) => relatedTheme.slug !== theme.slug)
-        .slice(0, showMoreRelatedThemes ? undefined : 4);
+        .slice(0, showMoreRelatedThemes ? undefined : 3);
 
     const usedAlsoAs = video.entries
         .map((entry) => entry.theme)

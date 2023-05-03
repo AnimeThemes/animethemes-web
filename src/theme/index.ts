@@ -25,7 +25,7 @@ type CssDefinition<T extends VariableDefinition> = {
     [Key in `--${keyof T & string}`]?: T[keyof T];
 };
 
-const theme: Theme = {
+const theme = {
     breakpoints: {
         mobileMax: "720px",
         tabletMin: "721px",
@@ -50,7 +50,7 @@ const theme: Theme = {
     scalars: {
         borderRadiusCard: "4px"
     }
-};
+} satisfies Theme;
 
 export default theme;
 

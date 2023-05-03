@@ -115,18 +115,21 @@ interface MultiCoverImageProps extends ComponentPropsWithoutRef<typeof StyledCov
 }
 
 export function MultiCoverImage({ resourcesWithImages, ...props }: MultiCoverImageProps) {
-    const images = [
-        [ extractImages(resourcesWithImages[0]), resourcesWithImages[0] ] as const,
-        [ extractImages(resourcesWithImages[1]), resourcesWithImages[1] ] as const,
-        [ extractImages(resourcesWithImages[2]), resourcesWithImages[2] ] as const,
-        [ extractImages(resourcesWithImages[3]), resourcesWithImages[3] ] as const
-    ]
-        .map(([ images, resource ]) => ({
-            largeCover: images.largeCover,
-            smallCover: images.smallCover,
-            resource
-        }))
-        .filter(({ largeCover }) => !!largeCover);
+    const images = resourcesWithImages
+        .filter((resource, index, list) =>
+            list.findIndex((r) => r.name === resource.name) === index
+        )
+        .map((resource) => {
+            const { largeCover, smallCover } = extractImages(resource);
+
+            return {
+                largeCover,
+                smallCover,
+                resource,
+            };
+        })
+        .filter(({ largeCover }) => !!largeCover)
+        .slice(0, 4);
 
     return (
         <AspectRatio ratio={2 / 3}>
