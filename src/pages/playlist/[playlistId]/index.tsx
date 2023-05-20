@@ -12,7 +12,7 @@ import gql from "graphql-tag";
 import { VideoSummaryCard } from "components/card/VideoSummaryCard";
 import type { SharedPageProps } from "utils/getSharedPageProps";
 import getSharedPageProps from "utils/getSharedPageProps";
-import type { RequiredNonNullable } from "utils/types";
+import type { Comparator, RequiredNonNullable } from "utils/types";
 import type { ParsedUrlQuery } from "querystring";
 import useToggle from "hooks/useToggle";
 import { useContext, useState } from "react";
@@ -38,7 +38,7 @@ import styled from "styled-components";
 import theme from "theme";
 import { DescriptionList } from "components/description-list";
 import { Icon } from "components/icon";
-import { faEllipsisV, faListMusic, faMinus, faPlus } from "@fortawesome/pro-solid-svg-icons";
+import { faEllipsisV, faListMusic, faMinus, faPlus, faTrophy } from "@fortawesome/pro-solid-svg-icons";
 import { PlaylistTrackAddDialog } from "components/dialog/PlaylistTrackAddDialog";
 import { PlaylistTrackRemoveDialog } from "components/dialog/PlaylistTrackRemoveDialog";
 import useSWR from "swr";
@@ -48,6 +48,7 @@ import { Menu, MenuContent, MenuItem, MenuTrigger } from "components/menu/Menu";
 import { PlaylistEditDialog } from "components/dialog/PlaylistEditDialog";
 import { Reorder } from "framer-motion";
 import axios from "lib/client/axios";
+import { FeaturedTheme } from "components/featured-theme";
 
 const StyledDesktopOnly = styled.div`
     gap: 24px;
@@ -69,6 +70,40 @@ const StyledReorderContainer = styled.div`
         gap: 16px;
     }
 `;
+const StyledSummaryCardWrapper = styled.div`
+    position: relative;
+`;
+const StyledRank = styled.span`
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    font-size: 16px;
+    color: ${theme.colors["text-primary"]};
+    background-color: ${theme.colors["solid-on-card"]};
+    transform: translate(-50%, -33%) rotate(-10deg);
+`;
+
+const RANK_ASC = "rank-asc";
+const RANK_DESC = "rank-desc";
+
+function getRankComparator(name: string): Comparator<number> {
+    switch (name) {
+        case RANK_ASC:
+            return (a, b) => a - b;
+        case RANK_DESC:
+            return (a, b) => b - a;
+        default:
+            return () => 0;
+    }
+}
 
 interface PlaylistDetailPageProps extends SharedPageProps, RequiredNonNullable<PlaylistDetailPageQuery> {}
 
@@ -125,11 +160,12 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
     const [ sortBy, setSortBy ] = useState(UNSORTED);
 
     const isOwner = me.user?.name === playlist.user.name;
+    const isRanking = playlist.name.startsWith("[#] ");
 
-    const tracks = [...playlist.forward];
+    const tracks = [...playlist.forward].map((track, index) => ({ ...track, rank: index + 1 }));
     const tracksSorted = [...tracks].sort(
         sortTransformed(
-            getComparator(sortBy),
+            getComparator(sortBy) ?? getRankComparator(sortBy),
             (track) => {
                 switch (sortBy) {
                     case UNSORTED:
@@ -142,6 +178,9 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                     case ANIME_OLD_NEW:
                     case ANIME_NEW_OLD:
                         return track.video.entries[0].theme?.anime;
+                    case RANK_ASC:
+                    case RANK_DESC:
+                        return track.rank;
                 }
             }
         )
@@ -178,52 +217,58 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
     }
 
     const trackElements = tracksSorted.map((track, index) => [track, (
-        <VideoSummaryCard
-            key={track.id}
-            video={track.video}
-            onPlay={() => playAll(index)}
-            menu={
-                <Menu modal={false}>
-                    <MenuTrigger asChild>
-                        <Button variant="silent" isCircle>
-                            <Icon icon={faEllipsisV} />
-                        </Button>
-                    </MenuTrigger>
-                    <MenuContent>
-                        <PlaylistTrackAddDialog
-                            video={track.video}
-                            trigger={
-                                <MenuItem onSelect={(event) => event.preventDefault()}>
-                                    <Icon icon={faListMusic}/>
-                                    <Text>Add to Playlist</Text>
-                                </MenuItem>
-                            }
-                        />
-                        {isOwner ? (
-                            <PlaylistTrackRemoveDialog
-                                playlist={playlist}
-                                trackId={track.id}
+        <StyledSummaryCardWrapper key={track.id}>
+            <VideoSummaryCard
+                video={track.video}
+                onPlay={() => playAll(index)}
+                menu={
+                    <Menu modal={false}>
+                        <MenuTrigger asChild>
+                            <Button variant="silent" isCircle>
+                                <Icon icon={faEllipsisV} />
+                            </Button>
+                        </MenuTrigger>
+                        <MenuContent>
+                            <PlaylistTrackAddDialog
                                 video={track.video}
                                 trigger={
                                     <MenuItem onSelect={(event) => event.preventDefault()}>
-                                        <Icon icon={faMinus}/>
-                                        <Text>Remove from Playlist</Text>
+                                        <Icon icon={faListMusic}/>
+                                        <Text>Add to Playlist</Text>
                                     </MenuItem>
                                 }
                             />
-                        ) : null}
-                        <MenuItem onSelect={() => addWatchListItem(track.video)}>
-                            <Icon icon={faPlus}/>
-                            <Text>Add to Watch List</Text>
-                        </MenuItem>
-                        <MenuItem onSelect={() => addWatchListItemNext(track.video)}>
-                            <Icon icon={faPlus}/>
-                            <Text>Play Next</Text>
-                        </MenuItem>
-                    </MenuContent>
-                </Menu>
-            }
-        />
+                            {isOwner ? (
+                                <PlaylistTrackRemoveDialog
+                                    playlist={playlist}
+                                    trackId={track.id}
+                                    video={track.video}
+                                    trigger={
+                                        <MenuItem onSelect={(event) => event.preventDefault()}>
+                                            <Icon icon={faMinus}/>
+                                            <Text>Remove from Playlist</Text>
+                                        </MenuItem>
+                                    }
+                                />
+                            ) : null}
+                            <MenuItem onSelect={() => addWatchListItem(track.video)}>
+                                <Icon icon={faPlus}/>
+                                <Text>Add to Watch List</Text>
+                            </MenuItem>
+                            <MenuItem onSelect={() => addWatchListItemNext(track.video)}>
+                                <Icon icon={faPlus}/>
+                                <Text>Play Next</Text>
+                            </MenuItem>
+                        </MenuContent>
+                    </Menu>
+                }
+            />
+            {isRanking ? (
+                <StyledRank>{track.rank === 1 ? (
+                    <Icon icon={faTrophy} color="gold" />
+                ) : `#${track.rank}`}</StyledRank>
+            ) : null}
+        </StyledSummaryCardWrapper>
     )] as const);
 
     return (
@@ -252,6 +297,19 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                     </DescriptionList>
                 </Column>
                 <Column style={{ "--gap": "24px" }}>
+                    {isRanking ? (
+                        <FeaturedTheme
+                            theme={{
+                                ...tracks[0].video.entries[0].theme,
+                                entries: [{
+                                    ...tracks[0].video.entries[0],
+                                    videos: [tracks[0].video],
+                                }],
+                            }}
+                            hasGrill={false}
+                            card={trackElements.find(([track]) => track.rank === 1)?.[1]}
+                        />
+                    ) : null}
                     <StyledHeader>
                         <Text variant="h2">
                             Themes
@@ -263,6 +321,9 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                         <SearchFilterGroup>
                             <SearchFilterSortBy value={sortBy} setValue={setSortBy}>
                                 <SearchFilterSortBy.Option value={UNSORTED}>Custom</SearchFilterSortBy.Option>
+                                {isRanking ? (
+                                    <SearchFilterSortBy.Option value={RANK_DESC}>Reversed</SearchFilterSortBy.Option>
+                                ) : null}
                                 <SearchFilterSortBy.Option value={SONG_A_Z}>A ➜ Z (Song)</SearchFilterSortBy.Option>
                                 <SearchFilterSortBy.Option value={SONG_Z_A}>Z ➜ A (Song)</SearchFilterSortBy.Option>
                                 <SearchFilterSortBy.Option value={ANIME_A_Z}>A ➜ Z (Anime)</SearchFilterSortBy.Option>
