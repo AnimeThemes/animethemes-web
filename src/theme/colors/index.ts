@@ -1,58 +1,4 @@
-interface BaseColors {
-    "transparent": string
-    "white": string
-    "gray-100": string
-    "gray-200": string
-    "gray-300": string
-    "gray-400": string
-    "gray-500": string
-    "gray-600": string
-    "gray-700": string
-    "gray-800": string
-    "gray-900": string
-    "primary-100": string
-    "primary-200": string
-    "primary-300": string
-    "primary-400": string
-    "primary-500": string
-    "primary-600": string
-    "primary-700": string
-    "primary-800": string
-    "primary-900": string
-    "warning-100": string
-    "warning-200": string
-    "warning-300": string
-    "warning-400": string
-    "warning-500": string
-    "warning-600": string
-    "warning-700": string
-    "warning-800": string
-    "warning-900": string
-}
-
-export interface Colors extends BaseColors {
-    "background": string
-    "solid": string
-    "solid-primary": string
-    "solid-warning": string
-    "solid-on-card": string
-    "text": string
-    "text-muted": string
-    "text-disabled": string
-    "text-warning": string
-    "text-warning-muted": string
-    "text-on-warning": string
-    "text-primary": string
-    "text-on-primary": string
-}
-
-export interface Shadows {
-    low: string
-    medium: string
-    high: string
-}
-
-const baseColors: BaseColors = {
+const baseColors = {
     "transparent": "#00000000",
     "white": "#ffffff",
     "gray-100": "#f5f2fa",
@@ -81,10 +27,11 @@ const baseColors: BaseColors = {
     "warning-600": "#dc2626",
     "warning-700": "#b91c1c",
     "warning-800": "#991b1b",
-    "warning-900": "#7f1d1d"
+    "warning-900": "#7f1d1d",
+    "gold": "gold",
 };
 
-export const colors: Colors = {
+export const colors = {
     ...baseColors,
     "background":           baseColors["gray-100"],
     "solid":                baseColors["white"],
@@ -101,7 +48,9 @@ export const colors: Colors = {
     "text-on-primary":      baseColors["primary-100"]
 };
 
-export const shadows: Shadows = {
+export type Colors = typeof colors;
+
+export const shadows = {
     low: `
         1px 2px 2px hsl(262deg 20% 50% / 0.4)
     `,
@@ -118,3 +67,5 @@ export const shadows: Shadows = {
         16px 32px 32px hsl(262deg 20% 50% / 0.1)
     `
 };
+
+export type Shadows = typeof shadows;

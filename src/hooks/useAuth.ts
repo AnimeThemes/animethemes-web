@@ -62,38 +62,16 @@ export default function useAuth() {
             });
     };
 
-    const forgotPassword = async ({ setErrors, setStatus, email }: any) => {
+    const forgotPassword = async (props: any) => {
         await csrf();
 
-        setErrors([]);
-        setStatus(null);
-
-        axios
-            .post("/forgot-password", { email })
-            .then(response => setStatus(response.data.status))
-            .catch(error => {
-                if (error.response.status !== 422) {throw error;}
-
-                setErrors(error.response.data.errors);
-            });
+        return await axios.post("/forgot-password", props);
     };
 
-    const resetPassword = async ({ setErrors, setStatus, ...props }: any) => {
+    const resetPassword = async (props: any) => {
         await csrf();
 
-        setErrors([]);
-        setStatus(null);
-
-        axios
-            .post("/reset-password", { token: router.query.token, ...props })
-            .then(response =>
-                router.push("/login?reset=" + btoa(response.data.status)),
-            )
-            .catch(error => {
-                if (error.response.status !== 422) {throw error;}
-
-                setErrors(error.response.data.errors);
-            });
+        await axios.post("/reset-password", props);
     };
 
     const resendEmailVerification = async () => {
