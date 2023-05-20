@@ -1,34 +1,33 @@
 import type { SyntheticEvent } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Text } from "components/text";
 import { SearchFilter } from "components/search-filter";
 import { Input } from "components/form";
 import { Button } from "components/button";
 import styled from "styled-components";
 import { Column, Row } from "components/box";
-import { Dialog, DialogContent, DialogTrigger } from "components/dialog/Dialog";
+import { Dialog, DialogContent } from "components/dialog/Dialog";
 import { Busy } from "components/utils/Busy";
-import axios from "lib/client/axios";
 import { isAxiosError } from "axios";
 import { useToasts } from "context/toastContext";
 import { Toast } from "components/toast";
+import { useRouter } from "next/router";
+import useAuth from "hooks/useAuth";
 
-export function PasswordChangeDialog() {
+export function PasswordResetDialog() {
+    const router = useRouter();
+
     const [open, setOpen] = useState(false);
 
+    useEffect(() => setOpen(true), []);
+
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button>Change Password</Button>
-            </DialogTrigger>
-            <DialogContent title="Change Password">
-                {/* Only render the form when dialog is open, so it will reset after closing. */}
-                {open ? (
-                    <PasswordChangeForm
-                        onSuccess={() => setOpen(false)}
-                        onCancel={() => setOpen(false)}
-                    />
-                ) : null}
+        <Dialog open={open}>
+            <DialogContent title="Reset Password">
+                <PasswordResetForm
+                    onSuccess={() => router.push("/profile")}
+                    onCancel={() => router.push("/")}
+                />
             </DialogContent>
         </Dialog>
     );
@@ -40,45 +39,46 @@ const StyledForm = styled.form`
     gap: 16px;
 `;
 
-interface PasswordChangeFormProps {
+interface PasswordResetFormProps {
     onSuccess(): void;
     onCancel(): void;
 }
 
-function PasswordChangeForm({ onSuccess, onCancel }: PasswordChangeFormProps) {
+function PasswordResetForm({ onSuccess, onCancel }: PasswordResetFormProps) {
+    const { resetPassword } = useAuth();
     const { dispatchToast } = useToasts();
+    const router = useRouter();
 
-    const [currentPassword, setCurrentPassword] = useState("");
+    const [email, setEmail] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [newPasswordConfirmation, setNewPasswordConfirmation] = useState("");
+    const token = router.query.token;
 
-    const isValid = currentPassword && newPassword && newPasswordConfirmation;
+    const isValid = email && newPassword && newPasswordConfirmation;
 
     const [isBusy, setBusy] = useState(false);
     const [errors, setErrors] = useState<{
-        current_password?: string[];
+        email?: string[];
         password?: string[];
     }>({});
 
-    async function performChangePassword(event: SyntheticEvent) {
+    async function performResetPassword(event: SyntheticEvent) {
         event.preventDefault();
 
         setBusy(true);
         setErrors({});
 
         try {
-            await axios.put(
-                "/user/password",
-                {
-                    current_password: currentPassword,
-                    password: newPassword,
-                    password_confirmation: newPasswordConfirmation,
-                }
-            );
+            await resetPassword({
+                email,
+                password: newPassword,
+                password_confirmation: newPasswordConfirmation,
+                token,
+            });
 
             dispatchToast(
-                "password-change",
-                <Toast>Password changed successfully.</Toast>
+                "password-reset",
+                <Toast>Password reset successfully.</Toast>
             );
 
             onSuccess();
@@ -95,19 +95,19 @@ function PasswordChangeForm({ onSuccess, onCancel }: PasswordChangeFormProps) {
 
     return (
         <>
-            <StyledForm onSubmit={performChangePassword}>
+            <StyledForm onSubmit={performResetPassword}>
                 <Column style={{ "--gap": "24px" }}>
                     <SearchFilter>
-                        <Text>Current Password</Text>
+                        <Text>E-Mail</Text>
                         <Input
-                            value={currentPassword}
-                            onChange={setCurrentPassword}
+                            value={email}
+                            onChange={setEmail}
                             inputProps={{
-                                type: "password",
+                                type: "email",
                                 required: true,
                             }}
                         />
-                        {errors.current_password ? errors.current_password.map((error) => (
+                        {errors.email ? errors.email.map((error) => (
                             <Text key={error} color="text-warning">{error}</Text>
                         )) : null}
                     </SearchFilter>
@@ -139,7 +139,7 @@ function PasswordChangeForm({ onSuccess, onCancel }: PasswordChangeFormProps) {
                     <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
                         <Button type="button" variant="silent" onClick={onCancel}>Cancel</Button>
                         <Button type="submit" variant="primary" disabled={!isValid || isBusy}>
-                            <Busy isBusy={isBusy}>Change Password</Busy>
+                            <Busy isBusy={isBusy}>Reset Password</Busy>
                         </Button>
                     </Row>
                 </Column>

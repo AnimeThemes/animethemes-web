@@ -3,6 +3,7 @@ import styled, { keyframes } from "styled-components";
 import theme from "theme";
 import { ThemeSummaryCard } from "components/card";
 import extractImages from "utils/extractImages";
+import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import useSetting from "hooks/useSetting";
 import useCompatability from "hooks/useCompatability";
@@ -117,16 +118,20 @@ const StyledGrill = styled.img`
 const Box = styled.div``;
 
 interface FeaturedThemeProps {
-    theme: FeaturedThemeThemeFragment
+    theme: FeaturedThemeThemeFragment;
+    hasGrill?: boolean;
+    card?: ReactNode;
 }
 
-export function FeaturedTheme({ theme }: FeaturedThemeProps) {
+export function FeaturedTheme({ theme, hasGrill = true, card }: FeaturedThemeProps) {
     const [ grill, setGrill ] = useState<string | null>(null);
     const [ featuredThemePreview ] = useSetting(FeaturedThemePreview);
 
     useEffect(() => {
-        fetchRandomGrill().then(setGrill);
-    }, []);
+        if (hasGrill) {
+            fetchRandomGrill().then(setGrill);
+        }
+    }, [hasGrill]);
 
     const FeaturedThemeWrapper = featuredThemePreview !== FeaturedThemePreview.DISABLED
         ? StyledWrapper
@@ -135,11 +140,11 @@ export function FeaturedTheme({ theme }: FeaturedThemeProps) {
     const featuredThemeSummaryCard = featuredThemePreview !== FeaturedThemePreview.DISABLED
         ? (
             <StyledCenter>
-                <ThemeSummaryCard theme={theme}/>
+                {card ?? <ThemeSummaryCard theme={theme}/>}
             </StyledCenter>
         )
         : (
-            <ThemeSummaryCard theme={theme}/>
+            card ?? <ThemeSummaryCard theme={theme}/>
         );
 
     return (
@@ -180,6 +185,7 @@ function FeaturedThemeBackground({ theme }: FeaturedThemeProps) {
         return (
             <StyledOverflowHidden href={href}>
                 <StyledVideo
+                    key={video.basename}
                     autoPlay
                     muted
                     loop
