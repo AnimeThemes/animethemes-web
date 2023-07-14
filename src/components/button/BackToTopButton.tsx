@@ -13,54 +13,60 @@ const ScrollButton = styled(Button)<{ $bottomOffset: number }>`
   right: 16px;
   bottom: ${(props) => 16 + props.$bottomOffset}px;
   padding: 16px;
-
-  visibility: ${(props) => (props.isVisible ? "visible" : "hidden")};
-  animation: ${(props) => props.animation} 200ms both;
-  transition: all 200ms;
+  display: ${(props) => (props.isVisible ? "default" : "none")};
+  animation: ${(props) => props.animation} 250ms;
 
   ${withHover`
-    background-color: ${theme.colors["solid-on-card"]}; 
-    color: ${theme.colors["text-primary"]}; 
-  `}
+      background-color: ${theme.colors["solid-on-card"]}; 
+      color: ${theme.colors["text-primary"]}; 
+    `}
 `;
 
 export function BackToTopButton() {
-    const [isButtonVisible, setIsButtonVisible] = useState(false);
-    const [animation, setAnimation] = useState(slideIn());
+  const [isButtonVisible, setIsButtonVisible] = useState(false);
+  const [animation, setAnimation] = useState("slideOut");
 
-    const { currentWatchListItem } = useContext(PlayerContext);
+  const { currentWatchListItem } = useContext(PlayerContext);
 
-    useEffect(() => {
-        function handleScroll() {
-            if (window.scrollY > 2000) {
-                setIsButtonVisible(true);
-                setAnimation(slideIn());
-            } else {
-                setIsButtonVisible(false);
-                setAnimation(slideOut("150%", "0"));
-            }
-        }
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+  function scrollUp() {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
 
-    function scrollUp() {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-        });
+  useEffect(() => {
+    function handleScroll() {
+      if (window.scrollY > 2000) {
+        setIsButtonVisible(true);
+        setAnimation("slideIn");
+      } else {
+        setAnimation("slideOut");
+      }
     }
-    return (
-        <ScrollButton
-            variant="primary"
-            isCircle={true}
-            onClick={scrollUp}
-            isVisible={isButtonVisible}
-            animation={animation}
-            onMouseDown={(event:React.PointerEvent) => event.preventDefault()}
-            $bottomOffset={currentWatchListItem ? 76 : 0}
-        >
-            <Icon icon={faChevronUp} />
-        </ScrollButton>
-    );
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    // Allow the button to slide out before setting display:none using 'isButtonVisible'
+    if (animation === "slideOut") {
+      setTimeout(() => {
+        setIsButtonVisible(false);
+      }, 200);
+    }
+  }, [animation]);
+  return (
+    <ScrollButton
+      variant="primary"
+      isCircle={true}
+      onClick={scrollUp}
+      isVisible={isButtonVisible}
+      animation={animation === "slideIn" ? slideIn() : slideOut("450%", "0%")}
+      onMouseDown={(event: React.PointerEvent) => event.preventDefault()}
+      $bottomOffset={currentWatchListItem ? 76 : 0}
+    >
+      <Icon icon={faChevronUp} />
+    </ScrollButton>
+  );
 }
