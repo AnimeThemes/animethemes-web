@@ -72,32 +72,31 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     const [watchList, setWatchList] = useState<WatchListItem[]>(() => {
         if (isVideoPage) {
             const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
-
-            const theme = anime.themes[themeIndex];
-            const entry = theme.entries[entryIndex];
-            const video = entry.videos[videoIndex];
-
-            return [
-                createWatchListItem({
+            
+            return anime.themes.map((theme, index) => {
+                const entry = themeIndex == index ? theme.entries[entryIndex] : theme.entries[0];
+                const video = themeIndex == index ? entry.videos[videoIndex] : entry.videos[0];
+                    return createWatchListItem({
                     ...video,
                     entries: [
                         {
-                            ...entry,
-                            theme: {
-                                ...theme,
-                                anime,
-                            },
+                        ...entry,
+                        theme: {
+                            ...theme,
+                            anime,
+                        },
                         },
                     ],
-                }),
-            ];
+                    });
+                });
         }
         return [];
     });
     const [watchListFactory, setWatchListFactory] = useState<(() => Promise<WatchListItem[]>) | null>(null);
     const [currentWatchListItemId, setCurrentWatchListItemId] = useState<number | null>(() => {
         if (watchList.length) {
-            return watchList[0].watchListId;
+            const { themeIndex }: VideoPageProps = pageProps;
+            return watchList[themeIndex].watchListId;
         }
         return null;
     });
@@ -143,28 +142,26 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         if (currentBasename !== currentWatchListItem?.basename) {
             const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
 
-            const theme = anime.themes[themeIndex];
-            const entry = theme.entries[entryIndex];
-            const video = entry.videos[videoIndex];
-
-            const watchList: WatchListItem[] = [
-                createWatchListItem({
+            const watchList : WatchListItem[] = anime.themes.map((theme, index) => {
+                const entry = themeIndex == index ? theme.entries[entryIndex] : theme.entries[0];
+                const video = themeIndex == index ? entry.videos[videoIndex] : entry.videos[0];
+                    return createWatchListItem({
                     ...video,
                     entries: [
                         {
-                            ...entry,
-                            theme: {
-                                ...theme,
-                                anime,
-                            },
+                        ...entry,
+                        theme: {
+                            ...theme,
+                            anime,
+                        },
                         },
                     ],
-                }),
-            ];
+                    });
+                });
 
             setWatchList(watchList);
             setWatchListFactory(null);
-            setCurrentWatchListItemId(watchList[0].watchListId);
+            setCurrentWatchListItemId(watchList[themeIndex].watchListId);
         }
 
         return null;
