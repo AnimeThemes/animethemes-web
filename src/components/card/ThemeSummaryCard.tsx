@@ -24,6 +24,9 @@ import type {
 import type { PropsWithChildren } from "react";
 import { TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "components/table/Table";
 import { TextLink } from "components/text/TextLink";
+import PlayerContext from "context/playerContext";
+import { WatchListItem } from "context/playerContext";
+import { useContext } from "react";
 
 const StyledWrapper = styled.div`
     position: relative
@@ -104,14 +107,37 @@ export function ThemeSummaryCard({ theme, artist, children, expandable, ...props
             toggleExpanded();
         }
     }
+    const {
+        setWatchList,
+        setWatchListFactory,
+        watchListFactory,
+        setCurrentWatchListItem,
+      } = useContext(PlayerContext);
 
+    async function playFactoryThemes(initiatingTheme:ThemeSummaryCardThemeFragment, entryIndex:number, videoIndex:number){
+        if (watchListFactory !== null) {
+            const watchList : WatchListItem[] = await watchListFactory()
+            const initiatingThemeIndex = watchList.findIndex((watchlistTheme:WatchListItem) => watchlistTheme.entries[0].theme.id == initiatingTheme.id)
+
+            const entry = initiatingTheme.entries[entryIndex]
+            const video = entry.videos[videoIndex]
+            watchList[initiatingThemeIndex] = {
+                ...watchList[initiatingThemeIndex],
+                ...video,
+            }
+            setWatchList(watchList)
+            setCurrentWatchListItem(watchList[initiatingThemeIndex])
+            setWatchListFactory(null)
+        }
+    }
     return (
         <StyledWrapper>
             <SummaryCard
-                title={<SongTitleWithArtists song={theme.song} songTitleLinkTo={to} artist={artist}/>}
+                title={<SongTitleWithArtists song={theme.song} songTitleLinkTo={to} onPlay={()=>playFactoryThemes(theme, 0, 0)} artist={artist}/>}
                 description={description}
                 image={smallCover}
                 to={to}
+                theme={theme}
                 onClick={handleToggleExpand}
                 {...props}
             >
