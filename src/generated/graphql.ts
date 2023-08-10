@@ -684,7 +684,7 @@ export type SearchThemeQueryVariables = Exact<{
 
 export type SearchThemeQuery = { searchTheme: { nextPage: number | null, data: Array<{ slug: string, type: string, sequence: number | null, group: string | null, id: number, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null, entries: Array<{ version: number | null, episodes: string | null, spoiler: boolean, nsfw: boolean, videos: Array<{ id: number, basename: string, tags: string, resolution: number | null, nc: boolean, subbed: boolean, lyrics: boolean, uncen: boolean, source: VideoSource | null, overlap: VideoOverlap, audio: { basename: string } }> }> }> } };
 
-export type ThemeTableThemeFragment = { type: string, sequence: number | null, slug: string, anime: { slug: string }, entries: Array<{ version: number | null, episodes: string | null, spoiler: boolean, nsfw: boolean, videos: Array<{ tags: string, resolution: number | null, nc: boolean, subbed: boolean, lyrics: boolean, uncen: boolean, source: VideoSource | null, overlap: VideoOverlap }> }>, song: { title: string | null } | null };
+export type ThemeTableThemeFragment = { id:number, type: string, sequence: number | null, slug: string, anime: { slug: string }, entries: Array<{ version: number | null, episodes: string | null, spoiler: boolean, nsfw: boolean, videos: Array<{ tags: string, resolution: number | null, nc: boolean, subbed: boolean, lyrics: boolean, uncen: boolean, source: VideoSource | null, overlap: VideoOverlap }> }>, song: { title: string | null } | null };
 
 export type ContentWarningTagsEntryFragment = { spoiler: boolean, nsfw: boolean };
 
