@@ -138,7 +138,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
     if (isVideoPage && currentBasename !== previousBasename) {
         setPreviousBasename(currentBasename);
-
         if (currentBasename !== currentWatchListItem?.basename) {
             const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
 
@@ -158,7 +157,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                     ],
                     });
                 });
-
             setWatchList(watchList);
             setWatchListFactory(null);
             setCurrentWatchListItemId(watchList[themeIndex].watchListId);
@@ -181,6 +179,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                 },
                 watchList,
                 setWatchList,
+                watchListFactory,
                 setWatchListFactory: (factory) => setWatchListFactory(() => factory),
                 currentWatchListItem,
                 setCurrentWatchListItem: (watchListItem) => {
