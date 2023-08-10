@@ -11,25 +11,50 @@ import { Row } from "components/box";
 import { TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "components/table/Table";
 import gql from "graphql-tag";
 import type { ThemeTableThemeFragment } from "generated/graphql";
-
+import { useContext } from "react";
+import PlayerContext from "context/playerContext";
+import { WatchListItem } from "context/playerContext";
 export interface ThemeTableProps {
     themes: Array<ThemeTableThemeFragment>
 }
-
 export function ThemeTable({ themes }: ThemeTableProps) {
+    const {
+        setWatchList,
+        setWatchListFactory,
+        watchListFactory,
+        setCurrentWatchListItem,
+      } = useContext(PlayerContext);
+
+    async function playFactoryThemes(initiatingTheme:ThemeTableThemeFragment, entryIndex:number, videoIndex:number){
+        if (watchListFactory !== null) {
+            const watchList : WatchListItem[] = await watchListFactory()
+            const initiatingThemeIndex = watchList.findIndex((watchlistTheme:WatchListItem) => watchlistTheme.entries[0].theme.id == initiatingTheme.id)
+
+            const entry = initiatingTheme.entries[entryIndex]
+            const video = entry.videos[videoIndex]
+            watchList[initiatingThemeIndex] = {
+                ...watchList[initiatingThemeIndex],
+                ...video,
+            }
+            setWatchList(watchList)
+            setCurrentWatchListItem(watchList[initiatingThemeIndex])
+            setWatchListFactory(null)
+        }
+    }
     const rows = themes
         .filter((theme) => theme.anime && theme.entries.length && theme.entries[0]?.videos.length)
         .sort(either(themeTypeComparator).or(themeIndexComparator).chain())
         .map((theme) => theme.entries.map((entry, entryIndex) => entry.videos.map((video, videoIndex) => {
             const anime = theme.anime as NonNullable<typeof theme["anime"]>;
             const videoSlug = createVideoSlug(theme, entry, video);
-
             return (
                 <Link
                     key={anime.slug + videoSlug}
                     href={`/anime/${anime.slug}/${videoSlug}`}
                     passHref
-                    legacyBehavior>
+                    onClick={()=>{playFactoryThemes(theme, entryIndex, videoIndex)}}
+                    // legacyBehavior
+                    >
                     <TableRow as="a">
                         <TableCell style={{ "--span": (entryIndex || videoIndex) ? 2 : undefined }}>
                             {!videoIndex && (
