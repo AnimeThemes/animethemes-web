@@ -135,12 +135,36 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
         return () => window.removeEventListener("keydown", hotkeyListener);
     }, [pageProps.isSearch, router]);
+    // ALTERNATIVE METHOD (as comments):
+    // async function playFactoryThemes(initiatingThemeId:number, entryIndex:number, videoIndex:number){
+    //     if (watchListFactory !== null) {
+    //         const watchList : WatchListItem[] = await watchListFactory()
+    //         const initiatingThemeIndex = watchList.findIndex((theme) => theme.entries[0].theme.id == initiatingThemeId)
+            
+    //         const theme = watchList[initiatingThemeIndex]
+    //         const entry = theme.entries[entryIndex]
+    //         const video = entry.videos[videoIndex]
+    //         watchList[initiatingThemeIndex] = {
+    //             ...theme,
+    //             ...video,
+    //             watchListId:theme.watchListId,
+    //         }
+    //         setWatchList(watchList)
+    //         setCurrentWatchListItemId(watchList[initiatingThemeIndex].watchListId)
+    //         setWatchListFactory(null)
+    //     }
+    // }
 
     if (isVideoPage && currentBasename !== previousBasename) {
         setPreviousBasename(currentBasename);
+        // const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
+        // If there exists a watchListFactory then use it to fetch themes and initiate a watchList
+        // if (watchListFactory !== null && currentBasename !== currentWatchListItem?.basename){
+        //         playFactoryThemes(anime.themes[themeIndex].id, entryIndex, videoIndex)
+        //     } 
+        // else if (currentBasename !== currentWatchListItem?.basename) {
         if (currentBasename !== currentWatchListItem?.basename) {
             const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
-
             const watchList : WatchListItem[] = anime.themes.map((theme, index) => {
                 const entry = themeIndex == index ? theme.entries[entryIndex] : theme.entries[0];
                 const video = themeIndex == index ? entry.videos[videoIndex] : entry.videos[0];
