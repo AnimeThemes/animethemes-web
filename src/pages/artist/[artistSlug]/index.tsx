@@ -39,6 +39,8 @@ import type {
 import type { ParsedUrlQuery } from "querystring";
 import type { RequiredNonNullable } from "utils/types";
 import { Listbox, ListboxOption } from "components/listbox/Listbox";
+import { useContext, useEffect } from "react";
+import PlayerContext, { createWatchListItem } from "context/playerContext";
 
 const StyledList = styled.div`
     display: flex;
@@ -104,6 +106,27 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
     [artist.name, artist.performances, filterAlias, filterPerformance, sortBy]
     );
 
+    const {
+        setWatchListFactory,
+      } = useContext(PlayerContext);
+    
+      useEffect(() => {
+        setWatchListFactory(async () => {
+            return themes.map((theme) => {
+                const entry = theme.entries[0];
+                const video = entry.videos[0];
+                return createWatchListItem({
+                ...video,
+                entries: [
+                    {
+                    ...entry,
+                    theme,
+                    },
+                ],
+                });
+            });
+        });
+      }, [themes]);
     return <>
         <SEO title={artist.name} image={largeCover}/>
         <Text variant="h1">{artist.name}</Text>
