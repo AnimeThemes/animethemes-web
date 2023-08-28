@@ -16,31 +16,9 @@ import PlayerContext from "context/playerContext";
 import { WatchListItem } from "context/playerContext";
 export interface ThemeTableProps {
     themes: Array<ThemeTableThemeFragment>
+    onPlay: (initiatingThemeId:number, entryIndex?:number, videoIndex?:number) => void,
 }
-export function ThemeTable({ themes }: ThemeTableProps) {
-    const {
-        setWatchList,
-        setWatchListFactory,
-        watchListFactory,
-        setCurrentWatchListItem,
-      } = useContext(PlayerContext);
-
-    async function playFactoryThemes(initiatingTheme:ThemeTableThemeFragment, entryIndex:number, videoIndex:number){
-        if (watchListFactory !== null) {
-            const watchList : WatchListItem[] = await watchListFactory()
-            const initiatingThemeIndex = watchList.findIndex((watchlistTheme:WatchListItem) => watchlistTheme.entries[0].theme.id == initiatingTheme.id)
-
-            const entry = initiatingTheme.entries[entryIndex]
-            const video = entry.videos[videoIndex]
-            watchList[initiatingThemeIndex] = {
-                ...watchList[initiatingThemeIndex],
-                ...video,
-            }
-            setWatchList(watchList)
-            setCurrentWatchListItem(watchList[initiatingThemeIndex])
-            setWatchListFactory(null)
-        }
-    }
+export function ThemeTable({ themes, onPlay }: ThemeTableProps) {
     const rows = themes
         .filter((theme) => theme.anime && theme.entries.length && theme.entries[0]?.videos.length)
         .sort(either(themeTypeComparator).or(themeIndexComparator).chain())
@@ -52,7 +30,7 @@ export function ThemeTable({ themes }: ThemeTableProps) {
                     key={anime.slug + videoSlug}
                     href={`/anime/${anime.slug}/${videoSlug}`}
                     passHref
-                    onClick={()=>{playFactoryThemes(theme, entryIndex, videoIndex)}}
+                    onClick={()=>{onPlay(theme.id, entryIndex, videoIndex)}}
                     // legacyBehavior
                     >
                     <TableRow as="a">

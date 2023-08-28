@@ -108,14 +108,16 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
 
     const {
         setWatchListFactory,
+        setWatchList,
+        setCurrentWatchListItem,
       } = useContext(PlayerContext);
-    
-      useEffect(() => {
-        setWatchListFactory(async () => {
-            return themes.map((theme) => {
-                const entry = theme.entries[0];
-                const video = entry.videos[0];
-                return createWatchListItem({
+
+    function playArtistThemes(initiatingThemeId:number, entryIndex:number = 0, videoIndex:number = 0){
+        const themeIndex = themes.findIndex((artistTheme) => artistTheme.id == initiatingThemeId)
+        const watchList = themes.map((theme, index) => {
+            const entry = themeIndex == index ? theme.entries[entryIndex] : theme.entries[0];
+            const video = themeIndex == index ? entry.videos[videoIndex] : entry.videos[0];
+            return createWatchListItem({
                 ...video,
                 entries: [
                     {
@@ -123,10 +125,12 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                     theme,
                     },
                 ],
-                });
             });
         });
-      }, [themes]);
+        setWatchList(watchList);
+        setWatchListFactory(null);
+        setCurrentWatchListItem(watchList[themeIndex]);
+    }
     return <>
         <SEO title={artist.name} image={largeCover}/>
         <Text variant="h1">{artist.name}</Text>
@@ -220,7 +224,7 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                     </SearchFilterGroup>
                 </Collapse>
                 <Column style={{ "--gap": "16px" }}>
-                    <ArtistThemes themes={themes} artist={artist}/>
+                    <ArtistThemes themes={themes} artist={artist} playArtistThemes={playArtistThemes}/>
                 </Column>
             </Column>
         </SidebarContainer>
@@ -230,14 +234,17 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
 interface ArtistThemesProps {
     themes: Performance["song"]["themes"]
     artist: ArtistDetailPageProps["artist"]
+    // playArtistThemes: (themeIndex:number, entryIndex?:number, videoIndex?:number) => void
+    playArtistThemes: (initiatingThemeId:number, entryIndex?:number, videoIndex?:number) => void
 }
 
-const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemesProps) {
+const ArtistThemes = memo(function ArtistThemes({ themes, artist, playArtistThemes }: ArtistThemesProps) {
     const themeCards = themes.map((theme) => (
         <ThemeSummaryCard
             key={theme.anime?.slug + theme.slug + theme.group}
             theme={theme}
             artist={artist}
+            playArtistThemes = {playArtistThemes}
             expandable
         />
     ));

@@ -10,10 +10,6 @@ import { loadingAnimation } from "styles/mixins";
 import { TextLink } from "components/text/TextLink";
 import { ConditionalWrapper } from "components/utils/ConditionalWrapper";
 import type { Property } from "csstype";
-import { useContext } from "react";
-import PlayerContext from "context/playerContext";
-import { WatchListItem } from "context/playerContext";
-import { ThemeSummaryCardThemeFragment } from "generated/graphql";
 
 const StyledSummaryCard = styled(Card)`
     display: flex;
@@ -60,6 +56,7 @@ type SummaryCardProps = ComponentPropsWithoutRef<typeof StyledSummaryCard> & {
     imageProps?: ComponentPropsWithoutRef<typeof StyledCover>
     to?: string
     children?: ReactNode
+    onPlay: (initiatingThemeId:number, entryIndex?:number, videoIndex?:number) => void
 };
 
 export function SummaryCard({
@@ -70,33 +67,12 @@ export function SummaryCard({
     to,
     children,
     theme,
+    onPlay,
     ...props
 }: SummaryCardProps) {
     const [ imageNotFound, setImageNotFound ] = useState(false);
     const [ imageLoading, setImageLoading ] = useState(true);
-    const {
-        setWatchList,
-        setWatchListFactory,
-        watchListFactory,
-        setCurrentWatchListItem,
-      } = useContext(PlayerContext);
 
-      async function playFactoryThemes(initiatingTheme:ThemeSummaryCardThemeFragment, entryIndex:number, videoIndex:number){
-        if (watchListFactory !== null) {
-            const watchList : WatchListItem[] = await watchListFactory()
-            const initiatingThemeIndex = watchList.findIndex((watchlistTheme:WatchListItem) => watchlistTheme.entries[0].theme.id == initiatingTheme.id)
-
-            const entry = initiatingTheme.entries[entryIndex]
-            const video = entry.videos[videoIndex]
-            watchList[initiatingThemeIndex] = {
-                ...watchList[initiatingThemeIndex],
-                ...video,
-            }
-            setWatchList(watchList)
-            setCurrentWatchListItem(watchList[initiatingThemeIndex])
-            setWatchListFactory(null)
-        }
-    }
     return (
         <StyledSummaryCard {...props}>
             <ConditionalWrapper
@@ -107,7 +83,7 @@ export function SummaryCard({
                     alt="Cover"
                     src={(!imageNotFound && image) || withBasePath("/img/logo.svg")}
                     isLoading={imageLoading}
-                    onClick={()=>{playFactoryThemes(theme, 0, 0)}}
+                    onClick={()=>{onPlay(theme.id, 0, 0)}}
                     isPlaceholder={!image || imageNotFound}
                     loading="lazy"
                     {...imageProps}
