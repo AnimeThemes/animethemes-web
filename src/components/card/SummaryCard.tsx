@@ -100,9 +100,8 @@ export function SummaryCard({
             </ConditionalWrapper>
             <StyledBody>
                 <Text maxLines={1} title={typeof title === "string" ? title : undefined}>
-                    {typeof title === "string" ? (
-                        to ? <TextLink href={to}>{title}</TextLink> : title
-                    ) : title}
+                    {typeof title === "string" && to ? 
+                        <TextLink href={to}>{title}</TextLink> : title}
                 </Text>
                 {!!description && (
                     <Text variant="small" maxLines={1}>

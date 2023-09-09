@@ -10,6 +10,7 @@ interface PlayerContextInterface {
     clearCurrentVideo: () => void;
     watchList: WatchListItem[];
     setWatchList: (watchList: WatchListItem[]) => void;
+    watchListFactory: (() => Promise<WatchListItem[]>) | null;
     setWatchListFactory: (factory: (() => Promise<WatchListItem[]>) | null) => void;
     currentWatchListItem: WatchListItem | null;
     setCurrentWatchListItem: (watchListItem: WatchListItem | null) => void;
@@ -26,6 +27,7 @@ const PlayerContext = createContext<PlayerContextInterface>({
     setWatchList: () => {
         // Do nothing
     },
+    watchListFactory: null,
     setWatchListFactory: () => {
         // Do nothing
     },

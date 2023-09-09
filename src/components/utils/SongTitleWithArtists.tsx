@@ -7,12 +7,13 @@ interface SongTitleWithArtistsProps {
     song: SongTitleWithArtistsSongFragment | null
     songTitleLinkTo?: string
     artist?: SongTitleWithArtistsArtistFragment
+    onPlay?: ()=> void
 }
 
 // Specify an artist if you want to display this in an artist context (e.g. artist page)
-export function SongTitleWithArtists({ song, songTitleLinkTo, artist }: SongTitleWithArtistsProps) {
+export function SongTitleWithArtists({ song, songTitleLinkTo, artist, onPlay }: SongTitleWithArtistsProps) {
     return (
-        <Text>
+        <Text onClick={onPlay}>
             <SongTitle song={song} href={songTitleLinkTo}/>
             <Performances song={song} artist={artist}/>
         </Text>

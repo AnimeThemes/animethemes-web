@@ -39,6 +39,8 @@ import type {
 import type { ParsedUrlQuery } from "querystring";
 import type { RequiredNonNullable } from "utils/types";
 import { Listbox, ListboxOption } from "components/listbox/Listbox";
+import { useContext } from "react";
+import PlayerContext, { createWatchListItem } from "context/playerContext";
 
 const StyledList = styled.div`
     display: flex;
@@ -197,7 +199,7 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                     </SearchFilterGroup>
                 </Collapse>
                 <Column style={{ "--gap": "16px" }}>
-                    <ArtistThemes themes={themes} artist={artist}/>
+                    <ArtistThemes themes={themes} artist={artist} />
                 </Column>
             </Column>
         </SidebarContainer>
@@ -210,12 +212,38 @@ interface ArtistThemesProps {
 }
 
 const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemesProps) {
-    const themeCards = themes.map((theme) => (
+    const {
+        setWatchListFactory,
+        setWatchList,
+        setCurrentWatchListItem,
+    } = useContext(PlayerContext);
+
+    function playArtistThemes(initiatingThemeIndex: number, entryIndex = 0, videoIndex = 0){
+        const watchList = themes.map((theme, index) => {
+            const entry = initiatingThemeIndex === index ? theme.entries[entryIndex] : theme.entries[0];
+            const video = initiatingThemeIndex === index ? entry.videos[videoIndex] : entry.videos[0];
+            return createWatchListItem({
+                ...video,
+                entries: [
+                    {
+                        ...entry,
+                        theme,
+                    },
+                ],
+            });
+        });
+        setWatchList(watchList);
+        setWatchListFactory(null);
+        setCurrentWatchListItem(watchList[initiatingThemeIndex]);
+    }
+
+    const themeCards = themes.map((theme, index) => (
         <ThemeSummaryCard
             key={theme.anime?.slug + theme.slug + theme.group}
             theme={theme}
             artist={artist}
             expandable
+            onPlay={(entryIndex, videoIndex) => playArtistThemes(index, entryIndex, videoIndex)}
         />
     ));
 
