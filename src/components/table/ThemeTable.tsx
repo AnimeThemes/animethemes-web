@@ -14,23 +14,24 @@ import type { ThemeTableThemeFragment } from "generated/graphql";
 
 export interface ThemeTableProps {
     themes: Array<ThemeTableThemeFragment>
+    onPlay?(initiatingThemeId: number, entryIndex?: number, videoIndex?: number): void
 }
 
-export function ThemeTable({ themes }: ThemeTableProps) {
+export function ThemeTable({ themes, onPlay }: ThemeTableProps) {
     const rows = themes
         .filter((theme) => theme.anime && theme.entries.length && theme.entries[0]?.videos.length)
         .sort(either(themeTypeComparator).or(themeIndexComparator).chain())
         .map((theme) => theme.entries.map((entry, entryIndex) => entry.videos.map((video, videoIndex) => {
             const anime = theme.anime as NonNullable<typeof theme["anime"]>;
             const videoSlug = createVideoSlug(theme, entry, video);
-
             return (
                 <Link
                     key={anime.slug + videoSlug}
                     href={`/anime/${anime.slug}/${videoSlug}`}
                     passHref
-                    legacyBehavior>
-                    <TableRow as="a">
+                    legacyBehavior
+                >
+                    <TableRow as="a" onClick={()=> onPlay?.(theme.id, entryIndex, videoIndex)}>
                         <TableCell style={{ "--span": (entryIndex || videoIndex) ? 2 : undefined }}>
                             {!videoIndex && (
                                 (entry.version ?? 1) > 1 ? (
@@ -92,6 +93,7 @@ ThemeTable.fragments = {
         
         fragment ThemeTableTheme on Theme {
             ...createVideoSlugTheme
+            id
             type
             sequence
             anime {
