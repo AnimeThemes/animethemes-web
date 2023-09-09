@@ -76,19 +76,19 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             return anime.themes.map((theme, index) => {
                 const entry = themeIndex == index ? theme.entries[entryIndex] : theme.entries[0];
                 const video = themeIndex == index ? entry.videos[videoIndex] : entry.videos[0];
-                    return createWatchListItem({
+                return createWatchListItem({
                     ...video,
                     entries: [
                         {
-                        ...entry,
-                        theme: {
-                            ...theme,
-                            anime,
-                        },
+                            ...entry,
+                            theme: {
+                                ...theme,
+                                anime,
+                            },
                         },
                     ],
-                    });
                 });
+            });
         }
         return [];
     });
@@ -143,19 +143,19 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             const watchList : WatchListItem[] = anime.themes.map((theme, index) => {
                 const entry = themeIndex == index ? theme.entries[entryIndex] : theme.entries[0];
                 const video = themeIndex == index ? entry.videos[videoIndex] : entry.videos[0];
-                    return createWatchListItem({
+                return createWatchListItem({
                     ...video,
                     entries: [
                         {
-                        ...entry,
-                        theme: {
-                            ...theme,
-                            anime,
-                        },
+                            ...entry,
+                            theme: {
+                                ...theme,
+                                anime,
+                            },
                         },
                     ],
-                    });
                 });
+            });
             setWatchList(watchList);
             setWatchListFactory(null);
             setCurrentWatchListItemId(watchList[themeIndex].watchListId);

@@ -11,13 +11,12 @@ import { Row } from "components/box";
 import { TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "components/table/Table";
 import gql from "graphql-tag";
 import type { ThemeTableThemeFragment } from "generated/graphql";
-import { useContext } from "react";
-import PlayerContext from "context/playerContext";
-import { WatchListItem } from "context/playerContext";
+
 export interface ThemeTableProps {
     themes: Array<ThemeTableThemeFragment>
-    onPlay: (initiatingThemeId:number, entryIndex?:number, videoIndex?:number) => void,
+    onPlay?(initiatingThemeId: number, entryIndex?: number, videoIndex?: number): void
 }
+
 export function ThemeTable({ themes, onPlay }: ThemeTableProps) {
     const rows = themes
         .filter((theme) => theme.anime && theme.entries.length && theme.entries[0]?.videos.length)
@@ -30,10 +29,9 @@ export function ThemeTable({ themes, onPlay }: ThemeTableProps) {
                     key={anime.slug + videoSlug}
                     href={`/anime/${anime.slug}/${videoSlug}`}
                     passHref
-                    onClick={()=>{onPlay(theme.id, entryIndex, videoIndex)}}
-                    // legacyBehavior
-                    >
-                    <TableRow as="a">
+                    legacyBehavior
+                >
+                    <TableRow as="a" onClick={()=> onPlay?.(theme.id, entryIndex, videoIndex)}>
                         <TableCell style={{ "--span": (entryIndex || videoIndex) ? 2 : undefined }}>
                             {!videoIndex && (
                                 (entry.version ?? 1) > 1 ? (
@@ -95,6 +93,7 @@ ThemeTable.fragments = {
         
         fragment ThemeTableTheme on Theme {
             ...createVideoSlugTheme
+            id
             type
             sequence
             anime {

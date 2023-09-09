@@ -56,7 +56,6 @@ type SummaryCardProps = ComponentPropsWithoutRef<typeof StyledSummaryCard> & {
     imageProps?: ComponentPropsWithoutRef<typeof StyledCover>
     to?: string
     children?: ReactNode
-    onPlay: (initiatingThemeId:number, entryIndex?:number, videoIndex?:number) => void
 };
 
 export function SummaryCard({
@@ -66,8 +65,6 @@ export function SummaryCard({
     imageProps,
     to,
     children,
-    theme,
-    onPlay,
     ...props
 }: SummaryCardProps) {
     const [ imageNotFound, setImageNotFound ] = useState(false);
@@ -78,12 +75,11 @@ export function SummaryCard({
             <ConditionalWrapper
                 condition={!!to}
                 wrap={(children) => <Link href={to as string}>{children}</Link>}
-                >
+            >
                 <StyledCover
                     alt="Cover"
                     src={(!imageNotFound && image) || withBasePath("/img/logo.svg")}
                     isLoading={imageLoading}
-                    onClick={()=>{onPlay(theme.id, 0, 0)}}
                     isPlaceholder={!image || imageNotFound}
                     loading="lazy"
                     {...imageProps}

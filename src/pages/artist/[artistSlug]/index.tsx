@@ -39,7 +39,7 @@ import type {
 import type { ParsedUrlQuery } from "querystring";
 import type { RequiredNonNullable } from "utils/types";
 import { Listbox, ListboxOption } from "components/listbox/Listbox";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import PlayerContext, { createWatchListItem } from "context/playerContext";
 
 const StyledList = styled.div`
@@ -106,31 +106,6 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
     [artist.name, artist.performances, filterAlias, filterPerformance, sortBy]
     );
 
-    const {
-        setWatchListFactory,
-        setWatchList,
-        setCurrentWatchListItem,
-      } = useContext(PlayerContext);
-
-    function playArtistThemes(initiatingThemeId:number, entryIndex:number = 0, videoIndex:number = 0){
-        const themeIndex = themes.findIndex((artistTheme) => artistTheme.id == initiatingThemeId)
-        const watchList = themes.map((theme, index) => {
-            const entry = themeIndex == index ? theme.entries[entryIndex] : theme.entries[0];
-            const video = themeIndex == index ? entry.videos[videoIndex] : entry.videos[0];
-            return createWatchListItem({
-                ...video,
-                entries: [
-                    {
-                    ...entry,
-                    theme,
-                    },
-                ],
-            });
-        });
-        setWatchList(watchList);
-        setWatchListFactory(null);
-        setCurrentWatchListItem(watchList[themeIndex]);
-    }
     return <>
         <SEO title={artist.name} image={largeCover}/>
         <Text variant="h1">{artist.name}</Text>
@@ -224,7 +199,7 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                     </SearchFilterGroup>
                 </Collapse>
                 <Column style={{ "--gap": "16px" }}>
-                    <ArtistThemes themes={themes} artist={artist} playArtistThemes={playArtistThemes}/>
+                    <ArtistThemes themes={themes} artist={artist} />
                 </Column>
             </Column>
         </SidebarContainer>
@@ -234,18 +209,41 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
 interface ArtistThemesProps {
     themes: Performance["song"]["themes"]
     artist: ArtistDetailPageProps["artist"]
-    // playArtistThemes: (themeIndex:number, entryIndex?:number, videoIndex?:number) => void
-    playArtistThemes: (initiatingThemeId:number, entryIndex?:number, videoIndex?:number) => void
 }
 
-const ArtistThemes = memo(function ArtistThemes({ themes, artist, playArtistThemes }: ArtistThemesProps) {
-    const themeCards = themes.map((theme) => (
+const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemesProps) {
+    const {
+        setWatchListFactory,
+        setWatchList,
+        setCurrentWatchListItem,
+    } = useContext(PlayerContext);
+
+    function playArtistThemes(initiatingThemeIndex: number, entryIndex = 0, videoIndex = 0){
+        const watchList = themes.map((theme, index) => {
+            const entry = initiatingThemeIndex === index ? theme.entries[entryIndex] : theme.entries[0];
+            const video = initiatingThemeIndex === index ? entry.videos[videoIndex] : entry.videos[0];
+            return createWatchListItem({
+                ...video,
+                entries: [
+                    {
+                        ...entry,
+                        theme,
+                    },
+                ],
+            });
+        });
+        setWatchList(watchList);
+        setWatchListFactory(null);
+        setCurrentWatchListItem(watchList[initiatingThemeIndex]);
+    }
+
+    const themeCards = themes.map((theme, index) => (
         <ThemeSummaryCard
             key={theme.anime?.slug + theme.slug + theme.group}
             theme={theme}
             artist={artist}
-            playArtistThemes = {playArtistThemes}
             expandable
+            onPlay={(entryIndex, videoIndex) => playArtistThemes(index, entryIndex, videoIndex)}
         />
     ));
 
