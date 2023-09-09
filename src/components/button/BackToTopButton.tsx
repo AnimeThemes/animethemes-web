@@ -21,44 +21,44 @@ const ScrollButton = styled(m(Button))<{ $bottomOffset: number }>`
 `;
 
 export function BackToTopButton() {
-  const [isButtonVisible, setIsButtonVisible] = useState(false);
-  const { currentWatchListItem } = useContext(PlayerContext);
+    const [isButtonVisible, setIsButtonVisible] = useState(false);
+    const { currentWatchListItem } = useContext(PlayerContext);
 
-  function scrollUp() {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  }
-
-  useEffect(() => {
-    function handleScroll() {
-      if (window.scrollY > 2000) {
-        setIsButtonVisible(true);
-      } else {
-        setIsButtonVisible(false);
-      }
+    function scrollUp() {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
     }
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-  return (
-    <AnimatePresence>
-      {isButtonVisible ? (
-        <ScrollButton
-          key={"scrollButton"}
-          initial={{ y: "150%" }}
-          animate={{ y: "0" }}
-          exit={{ y: "450%" }}
-          variant="primary"
-          isCircle={true}
-          onClick={scrollUp}
-          onMouseDown={(event: React.PointerEvent) => event.preventDefault()}
-          $bottomOffset={currentWatchListItem ? 76 : 0}
-        >
-          <Icon icon={faChevronUp} />
-        </ScrollButton>
-      ) : null}
-    </AnimatePresence>
-  );
+
+    useEffect(() => {
+        function handleScroll() {
+            if (window.scrollY > 2000) {
+                setIsButtonVisible(true);
+            } else {
+                setIsButtonVisible(false);
+            }
+        }
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+    return (
+        <AnimatePresence>
+            {isButtonVisible ? (
+                <ScrollButton
+                    key={"scrollButton"}
+                    initial={{ y: "150%" }}
+                    animate={{ y: "0" }}
+                    exit={{ y: "450%" }}
+                    variant="primary"
+                    isCircle={true}
+                    onClick={scrollUp}
+                    onMouseDown={(event: React.PointerEvent) => event.preventDefault()}
+                    $bottomOffset={currentWatchListItem ? 76 : 0}
+                >
+                    <Icon icon={faChevronUp} />
+                </ScrollButton>
+            ) : null}
+        </AnimatePresence>
+    );
 }

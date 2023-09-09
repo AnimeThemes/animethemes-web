@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { Collapse, SongTitleWithArtists } from "components/utils";
+import { Collapse, Performances, SongTitle, SongTitleWithArtists } from "components/utils";
 import { Text } from "components/text";
 import extractImages from "utils/extractImages";
 import createVideoSlug from "utils/createVideoSlug";
-import { SummaryCard } from "components/card";
+import { SummaryCard } from "components/card/SummaryCard2";
 import { ThemeMenu } from "components/menu/ThemeMenu";
 import gql from "graphql-tag";
 import { fetchDataClient } from "lib/client";
@@ -66,14 +66,16 @@ type ThemeSummaryCardProps = {
     theme: ThemeSummaryCardThemeFragment
     artist?: ThemeSummaryCardArtistFragment
     expandable?: false
+    onPlay?(entryIndex?: number, videoIndex?: number): void
 } | {
     theme: ThemeSummaryCardThemeFragment & ThemeSummaryCardThemeExpandableFragment
     artist?: ThemeSummaryCardArtistFragment
     expandable: true
+    onPlay?(entryIndex?: number, videoIndex?: number): void
 };
 
 // Specify an artist if you want to display this in an artist context (e.g. artist page)
-export function ThemeSummaryCard({ theme, artist, children, expandable, ...props }: PropsWithChildren<ThemeSummaryCardProps>) {
+export function ThemeSummaryCard({ theme, artist, children, expandable, onPlay, ...props }: PropsWithChildren<ThemeSummaryCardProps>) {
     const [isExpanded, toggleExpanded] = useToggle();
     const isMobile = useIsMobile();
 
@@ -87,34 +89,42 @@ export function ThemeSummaryCard({ theme, artist, children, expandable, ...props
 
     const { smallCover } = extractImages(anime);
     const videoSlug = createVideoSlug(theme, entry, video);
-    const to = `/anime/${anime.slug}/${videoSlug}`;
-
-    const description = (
-        <SummaryCard.Description>
-            <span>Theme</span>
-            <span>{theme.type}{theme.sequence || null}{theme.group && ` (${theme.group})`}</span>
-            <TextLink href={`/anime/${anime.slug}`}>{anime.name}</TextLink>
-        </SummaryCard.Description>
-    );
+    const href = `/anime/${anime.slug}/${videoSlug}`;
 
     function handleToggleExpand(event: MouseEvent) {
-        if (event.target instanceof HTMLAnchorElement && event.target.href) {
+        if (isLink(event.target)) {
             event.stopPropagation();
         } else if (expandable && !isMobile) {
             toggleExpanded();
         }
     }
 
+    function isLink(element: EventTarget | null): boolean {
+        if (!element || !(element instanceof HTMLElement)) {
+            return false;
+        } else if (element instanceof HTMLAnchorElement && element.href) {
+            return true;
+        }
+        return isLink(element.parentElement);
+    }
+
     return (
         <StyledWrapper>
-            <SummaryCard
-                title={<SongTitleWithArtists song={theme.song} songTitleLinkTo={to} artist={artist}/>}
-                description={description}
-                image={smallCover}
-                to={to}
-                onClick={handleToggleExpand}
-                {...props}
-            >
+            <SummaryCard onClick={handleToggleExpand} {...props}>
+                <Link href={href} onClick={() => onPlay?.()}>
+                    <SummaryCard.Cover src={smallCover} />
+                </Link>
+                <SummaryCard.Body>
+                    <SummaryCard.Title>
+                        <SongTitle song={theme.song} as={Link} href={href} onClick={() => onPlay?.()} />
+                        <Performances song={theme.song} artist={artist} />
+                    </SummaryCard.Title>
+                    <SummaryCard.Description>
+                        <span>Theme</span>
+                        <span>{theme.type}{theme.sequence || null}{theme.group && ` (${theme.group})`}</span>
+                        <TextLink href={`/anime/${anime.slug}`}>{anime.name}</TextLink>
+                    </SummaryCard.Description>
+                </SummaryCard.Body>
                 {children}
                 <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>
                     <ThemeMenu theme={theme}/>
@@ -137,7 +147,7 @@ export function ThemeSummaryCard({ theme, artist, children, expandable, ...props
             {expandable && (
                 <Collapse collapse={!isExpanded}>
                     <StyledPerformedWith>
-                        <ThemeTable themes={[theme]}/>
+                        <ThemeTable themes={[theme]} onPlay={(_, entryIndex, videoIndex) => onPlay?.(entryIndex, videoIndex)}/>
                         {(theme.song?.performances.length ?? 0) > (artist ? 1 : 0) && (
                             <Table style={{ "--columns": "1fr" }}>
                                 <TableHead>
