@@ -98,7 +98,8 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
             .filter((performance) =>
                 filterAlias === null ||
                 filterAlias === artist.name && !performance.as ||
-                filterAlias === performance.as
+                filterAlias === performance.as &&
+                performance.song?.themes[0]?.entries[0]?.videos[0]
             )
             .filter(getPerformanceFilter(filterPerformance))
             .flatMap((performance) => performance.song.themes)
@@ -219,19 +220,27 @@ const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemes
     } = useContext(PlayerContext);
 
     function playArtistThemes(initiatingThemeIndex: number, entryIndex = 0, videoIndex = 0){
-        const watchList = themes.map((theme, index) => {
-            const entry = initiatingThemeIndex === index ? theme.entries[entryIndex] : theme.entries[0];
-            const video = initiatingThemeIndex === index ? entry.videos[videoIndex] : entry.videos[0];
-            return createWatchListItem({
-                ...video,
-                entries: [
-                    {
-                        ...entry,
-                        theme,
-                    },
-                ],
-            });
+        const watchList = themes.flatMap((theme, index) => {
+            const entry = initiatingThemeIndex == index ? theme.entries[entryIndex] : theme.entries[0];
+            const video = initiatingThemeIndex == index ? entry?.videos[videoIndex] : entry?.videos[0];
+
+            if (!entry || !video) {
+                return [];
+            }
+
+            return [
+                createWatchListItem({
+                    ...video,
+                    entries: [
+                        {
+                            ...entry,
+                            theme,
+                        },
+                    ],
+                })
+            ];
         });
+
         setWatchList(watchList);
         setWatchListFactory(null);
         setCurrentWatchListItem(watchList[initiatingThemeIndex]);
