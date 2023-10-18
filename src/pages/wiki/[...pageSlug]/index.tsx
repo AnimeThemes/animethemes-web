@@ -42,8 +42,8 @@ const ArrowLink = styled(Link)`
     align-self: flex-start;
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-top: 8px;`;
+    gap: 8px;
+    `;
 
 export interface DocumentPageProps extends SharedPageProps {
     page: Omit<RequiredNonNullable<DocumentPageQuery>["page"], "body"> & {
