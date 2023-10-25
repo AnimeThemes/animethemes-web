@@ -1,5 +1,9 @@
+import Link from "next/link";
 import { fetchData } from "lib/server";
 import styled from "styled-components";
+import { Icon } from "components/icon";
+import { faArrowLeft } from "@fortawesome/pro-solid-svg-icons";
+import { Text } from "components/text";
 import theme from "theme";
 import { SEO } from "components/seo";
 import fetchStaticPaths from "utils/fetchStaticPaths";
@@ -34,6 +38,13 @@ const StyledGrid = styled.div`
     }
 `;
 
+const ArrowLink = styled(Link)`
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    `;
+
 export interface DocumentPageProps extends SharedPageProps {
     page: Omit<RequiredNonNullable<DocumentPageQuery>["page"], "body"> & {
         source: MDXRemoteSerializeResult;
@@ -47,11 +58,17 @@ interface DocumentPageParams extends ParsedUrlQuery {
 
 export default function DocumentPage({ page }: DocumentPageProps) {
     return (
-        <StyledGrid>
-            <SEO title={page.name}/>
-            <Markdown source={page.source} />
-            <TableOfContents headings={page.headings} />
-        </StyledGrid>
+        <>
+            <StyledGrid>
+                <SEO title={page.name}/>
+                <Markdown source={page.source} />
+                <TableOfContents headings={page.headings} />
+            </StyledGrid>
+            <ArrowLink href="/wiki">
+                <Icon icon={faArrowLeft} color="text-disabled"/>
+                <Text link color="text-disabled">Back to overview</Text>
+            </ArrowLink>
+        </>
     );
 }
 
