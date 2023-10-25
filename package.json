@@ -46,7 +46,7 @@
     "sass": "^1.43.4",
     "shiki": "^0.14.1",
     "styled-components": "^5.3.3",
-    "swr": "^2.0.0",
+    "swr": "^2.2.4",
     "unist-util-visit": "^4.1.2",
     "use-local-storage-state": "^18.3.0",
     "use-session-storage-state": "^18.1.1"
