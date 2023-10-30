@@ -84,7 +84,7 @@ export function AnimeSummaryCard({ anime, expandable = false, ...props }: AnimeS
 
     const description = (
         <SummaryCard.Description>
-            <span>Anime</span>
+            <span>{anime.media_format ?? "Anime"}</span>
             {!!anime.year && (
                 <TextLink href={premiereLink}>
                     {premiere}
@@ -161,6 +161,7 @@ AnimeSummaryCard.fragments = {
             name
             year
             season
+            media_format
             themes {
                 group
             }
