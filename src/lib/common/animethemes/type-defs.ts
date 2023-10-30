@@ -57,6 +57,7 @@ const typeDefs = `
         year: Int
         season: String
         synopsis: String
+        media_format: String
         synonyms: [Synonym!]!
         themes: [Theme!]!           
         series: [Series!]!
