@@ -120,7 +120,6 @@ export function ThemeSummaryCard({ theme, artist, children, expandable, onPlay, 
                         <Performances song={theme.song} artist={artist} />
                     </SummaryCard.Title>
                     <SummaryCard.Description>
-                        <span>Theme</span>
                         <span>{theme.type}{theme.sequence || null}{theme.group && ` (${theme.group})`}</span>
                         <TextLink href={`/anime/${anime.slug}`}>{anime.name}</TextLink>
                     </SummaryCard.Description>

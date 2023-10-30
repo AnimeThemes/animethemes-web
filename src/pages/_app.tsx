@@ -34,7 +34,12 @@ import type { VideoPageProps } from "pages/anime/[animeSlug]/[videoSlug]";
 import FullscreenContext from "context/fullscreenContext";
 import { VideoPlayerOverlay } from "components/video-player-2/VideoPlayerOverlay";
 import { useFullscreen } from "ahooks";
-import { either, themeIndexComparator, themeTypeComparator } from "utils/comparators";
+import {
+    either,
+    sortTransformed,
+    themeIndexComparator,
+    themeTypeComparator
+} from "utils/comparators";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "styles/prism.scss";
@@ -282,30 +287,35 @@ function createDefaultWatchList(pageProps: VideoPageProps): WatchListItem[] {
     const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
 
     return anime.themes
-        .filter((theme, index) => {
-            const entry = themeIndex == index ? theme.entries[entryIndex] : theme.entries[0];
-            const video = themeIndex == index ? entry?.videos[videoIndex] : entry?.videos[0];
-
-            return entry && video;
-        })
-        .sort(either(themeTypeComparator).or(themeIndexComparator).chain())
         .flatMap((theme, index) => {
             const entry = themeIndex == index ? theme.entries[entryIndex] : theme.entries[0];
             const video = themeIndex == index ? entry?.videos[videoIndex] : entry?.videos[0];
 
-            return [
-                createWatchListItem({
-                    ...video,
-                    entries: [
-                        {
-                            ...entry,
-                            theme: {
-                                ...theme,
-                                anime,
-                            },
+            if (!entry || !video || theme.group !== anime.themes[themeIndex].group) {
+                return [];
+            }
+
+            return [{ theme, entry, video }];
+        })
+        .sort(
+            sortTransformed(
+                either(themeTypeComparator)
+                    .or(themeIndexComparator)
+                    .chain(),
+                (value) => value.theme)
+        )
+        .map(({ theme, entry, video }) =>
+            createWatchListItem({
+                ...video,
+                entries: [
+                    {
+                        ...entry,
+                        theme: {
+                            ...theme,
+                            anime,
                         },
-                    ],
-                })
-            ];
-        });
+                    },
+                ],
+            })
+        );
 }

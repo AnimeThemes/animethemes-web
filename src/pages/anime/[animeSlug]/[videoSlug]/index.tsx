@@ -200,6 +200,7 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
 
 VideoPage.fragments = {
     anime: gql`
+        ${AnimeSummaryCard.fragments.anime}
         ${ThemeSummaryCard.fragments.theme}
         ${ArtistSummaryCard.fragments.artist}
         ${VideoPlayer.fragments.anime}
@@ -209,6 +210,7 @@ VideoPage.fragments = {
         ${VideoScript.fragments.video}
 
         fragment VideoPageAnime on Anime {
+            ...AnimeSummaryCardAnime
             ...VideoPlayerAnime
             name
             slug

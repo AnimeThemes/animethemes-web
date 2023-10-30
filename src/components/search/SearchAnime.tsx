@@ -11,11 +11,13 @@ import gql from "graphql-tag";
 import type { SearchAnimeQuery, SearchAnimeQueryVariables } from "generated/graphql";
 import { fetchDataClient } from "lib/client";
 import useFilterStorage from "hooks/useFilterStorage";
+import { SearchFilterMediaFormat } from "components/search-filter/SearchFilterMediaFormat";
 
 const initialFilter = {
     firstLetter: null,
     season: null,
     year: null,
+    mediaFormat: null,
     sortBy: "name",
 };
 
@@ -53,7 +55,8 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
                 filters: {
                     "name-like": filter.firstLetter ? `${filter.firstLetter}%` : null,
                     season: filter.season,
-                    year: filter.year
+                    year: filter.year,
+                    media_format: filter.mediaFormat,
                 },
                 sortBy: filter.sortBy,
             }}
@@ -83,6 +86,7 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
                     <SearchFilterFirstLetter value={filter.firstLetter} setValue={bindUpdateFilter("firstLetter")}/>
                     <SearchFilterSeason value={filter.season} setValue={bindUpdateFilter("season")}/>
                     <SearchFilterYear value={filter.year} setValue={bindUpdateFilter("year")}/>
+                    <SearchFilterMediaFormat value={filter.mediaFormat} setValue={bindUpdateFilter("mediaFormat")}/>
                     <SearchFilterSortBy value={filter.sortBy} setValue={bindUpdateFilter("sortBy")}>
                         {searchQuery ? (
                             <SearchFilterSortBy.Option value={null}>Relevance</SearchFilterSortBy.Option>
