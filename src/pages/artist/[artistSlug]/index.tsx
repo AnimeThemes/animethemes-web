@@ -96,25 +96,11 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
     const [ filterAlias, setFilterAlias ] = useState(aliasFilterOptions[0]);
     const [ sortBy, setSortBy ] = useState(SONG_A_Z_ANIME);
 
-    /*const themes = useMemo(() =>
-        artist.performances
-            .filter((performance) =>
-                filterAlias === null ||
-                filterAlias === artist.name && !performance.as ||
-                filterAlias === performance.as &&
-                performance.song?.themes[0]?.entries[0]?.videos[0]
-            )
-            .filter(getPerformanceFilter(filterPerformance))
-            .flatMap((performance) => performance.song.themes)
-            .sort(getComparator(sortBy)),
-    [artist.name, artist.performances, filterAlias, filterPerformance, sortBy]
-    );*/
-
-    const filterPerformances = useCallback((Performances: ArtistDetailPageProps["artist"]["performances"]) => Performances
+    const filterPerformances = useCallback((performances: ArtistDetailPageProps["artist"]["performances"], groupAs: string | null) => performances
         .filter((performance) =>
             filterAlias === null ||
-            filterAlias === artist.name && !performance.as ||
-            filterAlias === performance.as &&
+            filterAlias === artist.name && (!performance.as && !groupAs) ||
+            (filterAlias === groupAs || filterAlias === performance.as) &&
             performance.song?.themes[0]?.entries[0]?.videos[0]
         )
         .filter(getPerformanceFilter(filterPerformance))
@@ -122,33 +108,17 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
         .sort(getComparator(sortBy)), 
     [artist.name, filterAlias, filterPerformance, sortBy]);
 
-    /*function filterPerformances(Performances: ArtistDetailPageProps["artist"]["performances"]) {
-        return Performances
-            .filter((performance) =>
-                filterAlias === null ||
-                filterAlias === artist.name && !performance.as ||
-                filterAlias === performance.as &&
-                performance.song?.themes[0]?.entries[0]?.videos[0]
-            )
-            .filter(getPerformanceFilter(filterPerformance))
-            .flatMap((performance) => performance.song.themes)
-            .sort(getComparator(sortBy));
-    }*/
+    const themes = useMemo(() => filterPerformances(artist.performances, null), 
+        [artist.performances, filterPerformances]);
 
-    const themes = useMemo(() => {
-        return filterPerformances(artist.performances);
-    
-    }, [artist.performances, filterPerformances]);
-
-    const groups = useMemo(() => {
-        return artist.groups.map((group) => ({
-            ...group,
-            group: {
-                ...group.group,
-                performances: filterPerformances(group.group.performances),
-            }
-        }));
-    }, [artist.groups, filterPerformances]);
+    const groups = useMemo(() => artist.groups.map((group) => ({
+        ...group,
+        group: {
+            ...group.group,
+            performances: filterPerformances(group.group.performances, group.as),
+        }
+    })), 
+    [artist.groups, filterPerformances]);
 
     return <>
         <SEO title={artist.name} image={largeCover}/>
@@ -244,16 +214,14 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                 </Collapse>
                 <Column style={{ "--gap": "16px" }}>
                     <ArtistThemes themes={themes} artist={artist}/>
-                    {
-                        groups.map((group) => (
-                            <>
-                                <Link href={`/artist/${group.group.slug}`}>
-                                    <Text variant="h2">{group.group.name} ({group.group.performances.length})</Text>
-                                </Link>
-                                <ArtistThemes themes={group.group.performances} artist={artist}/>
-                            </>
-                        ))
-                    }
+                    {groups.map((group) => (
+                        <React.Fragment key={group.group.slug}>
+                            <Link href={`/artist/${group.group.slug}`}>
+                                <Text variant="h2">{group.group.name} ({group.group.performances.length})</Text>
+                            </Link>
+                            <ArtistThemes themes={group.group.performances} artist={artist}/>
+                        </React.Fragment>
+                    ))}
                 </Column>
             </Column>
         </SidebarContainer>
