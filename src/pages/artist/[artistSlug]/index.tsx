@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import { ExternalLink } from "components/external-link";
@@ -110,7 +110,19 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
     [artist.name, artist.performances, filterAlias, filterPerformance, sortBy]
     );*/
 
-    function filterPerformances(Performances: ArtistDetailPageProps["artist"]["performances"]) {
+    const filterPerformances = useCallback((Performances: ArtistDetailPageProps["artist"]["performances"]) => Performances
+        .filter((performance) =>
+            filterAlias === null ||
+            filterAlias === artist.name && !performance.as ||
+            filterAlias === performance.as &&
+            performance.song?.themes[0]?.entries[0]?.videos[0]
+        )
+        .filter(getPerformanceFilter(filterPerformance))
+        .flatMap((performance) => performance.song.themes)
+        .sort(getComparator(sortBy)), 
+    [artist.name, filterAlias, filterPerformance, sortBy]);
+
+    /*function filterPerformances(Performances: ArtistDetailPageProps["artist"]["performances"]) {
         return Performances
             .filter((performance) =>
                 filterAlias === null ||
@@ -121,12 +133,12 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
             .filter(getPerformanceFilter(filterPerformance))
             .flatMap((performance) => performance.song.themes)
             .sort(getComparator(sortBy));
-    }
+    }*/
 
     const themes = useMemo(() => {
         return filterPerformances(artist.performances);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [artist.name, artist.performances, filterAlias, filterPerformance, sortBy]);
+    
+    }, [artist.performances, filterPerformances]);
 
     const groups = useMemo(() => {
         return artist.groups.map((group) => ({
@@ -136,8 +148,7 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                 performances: filterPerformances(group.group.performances),
             }
         }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [artist.name, artist.groups, artist.performances, filterAlias, filterPerformance, sortBy]);
+    }, [artist.groups, filterPerformances]);
 
     return <>
         <SEO title={artist.name} image={largeCover}/>
