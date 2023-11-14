@@ -82,7 +82,7 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
     const { largeCover } = extractImages(artist);
 
     const aliasFilterOptions = useMemo(() => {
-        const aliases = [ ...new Set(artist.performances.map((performance) => performance.as)) ].filter((alias) => alias);
+        const aliases = [ ...new Set([ ...artist.performances.map((performance) => performance.as), ...artist.groups.map((group) => group.as) ]) ].filter((alias) => alias);
 
         return [
             null,
@@ -103,22 +103,21 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
             (filterAlias === groupAs || filterAlias === performance.as) &&
             performance.song?.themes[0]?.entries[0]?.videos[0]
         )
-        .filter(getPerformanceFilter(filterPerformance))
         .flatMap((performance) => performance.song.themes)
         .sort(getComparator(sortBy)), 
-    [artist.name, filterAlias, filterPerformance, sortBy]);
+    [artist.name, filterAlias, sortBy]);
 
-    const themes = useMemo(() => filterPerformances(artist.performances, null), 
-        [artist.performances, filterPerformances]);
+    const themes = useMemo(() => filterPerformances(artist.performances.filter(getPerformanceFilter(filterPerformance)), null), 
+        [artist.performances, filterPerformance, filterPerformances]);
 
     const groups = useMemo(() => artist.groups.map((group) => ({
         ...group,
         group: {
             ...group.group,
-            performances: filterPerformances(group.group.performances, group.as),
+            performances: filterPerformance === "SOLO" ? [] : filterPerformances(group.group.performances, group.as),
         }
     })), 
-    [artist.groups, filterPerformances]);
+    [artist.groups, filterPerformance, filterPerformances]);
 
     return <>
         <SEO title={artist.name} image={largeCover}/>
@@ -213,11 +212,11 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                     </SearchFilterGroup>
                 </Collapse>
                 <Column style={{ "--gap": "48px" }}>
-                    <Column style={{ "--gap": "16px" }}>
+                    {themes.length ? <Column style={{ "--gap": "16px" }}>
                         <ArtistThemes themes={themes} artist={artist}/>
-                    </Column>
+                    </Column> : null}
                     {groups.map((group) => (
-                        <Column key={group.group.slug} style={{ "--gap": "16px" }}>
+                        group.group.performances.length ? <Column key={group.group.slug} style={{ "--gap": "16px" }}>
                             <Text variant="h2">
                                 {group.as ? `As ${group.as} ` : null}
                                 In{" "}
@@ -227,7 +226,7 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                                 <Text color="text-disabled"> ({group.group.performances.length})</Text>
                             </Text>
                             <ArtistThemes themes={group.group.performances} artist={group.group}/>
-                        </Column>
+                        </Column> : null
                     ))}
                 </Column>
             </Column>
