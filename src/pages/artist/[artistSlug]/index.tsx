@@ -35,7 +35,7 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import type {
     ArtistDetailPageAllQuery,
     ArtistDetailPageQuery,
-    ArtistDetailPageQueryVariables
+    ArtistDetailPageQueryVariables, ThemeSummaryCardArtistFragment
 } from "generated/graphql";
 import type { ParsedUrlQuery } from "querystring";
 import type { RequiredNonNullable } from "utils/types";
@@ -212,15 +212,22 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                         </SearchFilterSortBy>
                     </SearchFilterGroup>
                 </Collapse>
-                <Column style={{ "--gap": "16px" }}>
-                    <ArtistThemes themes={themes} artist={artist}/>
+                <Column style={{ "--gap": "48px" }}>
+                    <Column style={{ "--gap": "16px" }}>
+                        <ArtistThemes themes={themes} artist={artist}/>
+                    </Column>
                     {groups.map((group) => (
-                        <React.Fragment key={group.group.slug}>
-                            <Link href={`/artist/${group.group.slug}`}>
-                                <Text variant="h2">{group.group.name} ({group.group.performances.length})</Text>
-                            </Link>
-                            <ArtistThemes themes={group.group.performances} artist={artist}/>
-                        </React.Fragment>
+                        <Column key={group.group.slug} style={{ "--gap": "16px" }}>
+                            <Text variant="h2">
+                                {group.as ? `As ${group.as} ` : null}
+                                In{" "}
+                                <Link href={`/artist/${group.group.slug}`}>
+                                    <Text link>{group.group.name}</Text>
+                                </Link>
+                                <Text color="text-disabled"> ({group.group.performances.length})</Text>
+                            </Text>
+                            <ArtistThemes themes={group.group.performances} artist={group.group}/>
+                        </Column>
                     ))}
                 </Column>
             </Column>
@@ -230,7 +237,7 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
 
 interface ArtistThemesProps {
     themes: Performance["song"]["themes"]
-    artist: ArtistDetailPageProps["artist"]
+    artist: ThemeSummaryCardArtistFragment
 }
 
 const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemesProps) {
