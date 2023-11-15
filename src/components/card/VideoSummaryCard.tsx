@@ -86,7 +86,6 @@ export function VideoSummaryCard({ video, menu, onPlay, isPlaying, ...props }: V
                         <Performances song={theme.song} />
                     </SummaryCard.Title>
                     <SummaryCard.Description>
-                        <span>Video</span>
                         <span>{videoSlug}{theme.group && ` (${theme.group})`}</span>
                         <TextLink href={`/anime/${anime.slug}`}>{anime.name}</TextLink>
                     </SummaryCard.Description>

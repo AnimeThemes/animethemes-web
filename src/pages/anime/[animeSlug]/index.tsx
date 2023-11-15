@@ -90,6 +90,11 @@ export default function AnimeDetailPage({ anime }: AnimeDetailPageProps) {
                             </StyledList>
                         </DescriptionList.Item>
                     ) : null}
+                    {anime.media_format ? (
+                        <DescriptionList.Item title="Format">
+                            {anime.media_format}
+                        </DescriptionList.Item>
+                    ) : null}
                     {anime.studios?.length ? (
                         <DescriptionList.Item title="Studios">
                             <StyledList>
@@ -161,6 +166,7 @@ AnimeDetailPage.fragments = {
             season
             year
             synopsis
+            media_format
             synonyms {
                 text
             }

@@ -81,8 +81,12 @@ function PlaylistTrackAddForm({ video, onCancel }: PlaylistTrackAddFormProps) {
                 
                 query PlaylistTrackAddFormPlaylist($filterVideoId: Int!) {
                     me {
-                        playlistAll(filterVideoId: $filterVideoId) {
+                        playlistAll {
                             ...PlaylistSummaryCardPlaylist
+                            id
+                            tracks_count
+                        }
+                        playlistAllFiltered: playlistAll(filterVideoId: $filterVideoId) {
                             id
                             tracks {
                                 id
@@ -92,7 +96,14 @@ function PlaylistTrackAddForm({ video, onCancel }: PlaylistTrackAddFormProps) {
                 }
             `, { filterVideoId: video.id });
 
-            return data.me.playlistAll ?? [];
+            const { playlistAll, playlistAllFiltered } = data.me;
+
+            return playlistAll?.map((playlist) => {
+                return {
+                    ...playlist,
+                    ...playlistAllFiltered?.find((p) => p.id === playlist.id)
+                };
+            }) ?? [];
         },
     );
 
@@ -138,7 +149,9 @@ function PlaylistTrackAddForm({ video, onCancel }: PlaylistTrackAddFormProps) {
 }
 
 interface PlaylistTrackAddCardProps {
-    playlist: NonNullable<PlaylistTrackAddFormPlaylistQuery["me"]["playlistAll"]>[number];
+    playlist:
+        NonNullable<PlaylistTrackAddFormPlaylistQuery["me"]["playlistAll"]>[number] &
+        Partial<NonNullable<PlaylistTrackAddFormPlaylistQuery["me"]["playlistAllFiltered"]>[number]>;
     video: PlaylistTrackAddDialogVideoFragment;
 }
 
@@ -169,7 +182,7 @@ function PlaylistTrackAddCard({ playlist, video }: PlaylistTrackAddCardProps) {
     }
 
     async function removeTrackFromPlaylist() {
-        const track = playlist.tracks[0];
+        const track = playlist.tracks?.[0];
 
         if (!track) {
             return;
@@ -197,7 +210,7 @@ function PlaylistTrackAddCard({ playlist, video }: PlaylistTrackAddCardProps) {
 
     return (
         <PlaylistSummaryCard key={playlist.id} playlist={playlist}>
-            {playlist.tracks.length === 0 ? (
+            {!playlist.tracks?.length ? (
                 <IconTextButton
                     icon={faPlus}
                     disabled={isBusy}
