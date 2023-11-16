@@ -27,8 +27,8 @@ const StyledRange = styled(RadixSlider.Range)`
 `;
 const StyledThumb = styled(RadixSlider.Thumb)`
     display: block;
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     background-color: ${theme.colors["text-disabled"]};
     box-shadow: ${theme.shadows.low};
     border-radius: 10px;
@@ -44,6 +44,26 @@ const StyledThumb = styled(RadixSlider.Thumb)`
     }
 `;
 
+const StyledThumbHover = styled.div`
+    position: absolute;
+    top: -26px;
+    left: 50%;
+    padding: 2px 4px;
+    border: 1px solid ${theme.colors["text-disabled"]};
+    border-radius: 4px;
+    font-size: 0.7rem;
+    color: ${theme.colors["text-disabled"]};
+
+    background-color: ${theme.colors["solid"]};
+    transform: translateX(-50%);
+    
+    display: none;
+    
+    ${StyledThumb}:hover & {
+        display: block;
+    }
+`;
+
 export const Slider = forwardRef<HTMLSpanElement, RadixSlider.SliderProps>(
     function Slider(props, ref) {
         const value = (props.value || props.defaultValue) ?? [];
@@ -53,8 +73,11 @@ export const Slider = forwardRef<HTMLSpanElement, RadixSlider.SliderProps>(
                 <StyledTrack>
                     <StyledRange />
                 </StyledTrack>
+                
                 {value.map((_, i) => (
-                    <StyledThumb key={i} />
+                    <StyledThumb key={i} >
+                        <StyledThumbHover>{Math.round(_*100)}%</StyledThumbHover>
+                    </StyledThumb>
                 ))}
             </StyledSlider>
         );
