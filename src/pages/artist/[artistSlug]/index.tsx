@@ -1,3 +1,4 @@
+import React, { useCallback } from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import { ExternalLink } from "components/external-link";
@@ -34,13 +35,14 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import type {
     ArtistDetailPageAllQuery,
     ArtistDetailPageQuery,
-    ArtistDetailPageQueryVariables
+    ArtistDetailPageQueryVariables, ThemeSummaryCardArtistFragment
 } from "generated/graphql";
 import type { ParsedUrlQuery } from "querystring";
 import type { RequiredNonNullable } from "utils/types";
 import { Listbox, ListboxOption } from "components/listbox/Listbox";
 import { useContext } from "react";
 import PlayerContext, { createWatchListItem } from "context/playerContext";
+
 
 const StyledList = styled.div`
     display: flex;
@@ -75,11 +77,12 @@ interface ArtistDetailPageParams extends ParsedUrlQuery {
     artistSlug: string
 }
 
+
 export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
     const { largeCover } = extractImages(artist);
 
     const aliasFilterOptions = useMemo(() => {
-        const aliases = [ ...new Set(artist.performances.map((performance) => performance.as)) ].filter((alias) => alias);
+        const aliases = [ ...new Set([ ...artist.performances.map((performance) => performance.as), ...artist.groups.map((group) => group.as) ]) ].filter((alias) => alias);
 
         return [
             null,
@@ -93,19 +96,28 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
     const [ filterAlias, setFilterAlias ] = useState(aliasFilterOptions[0]);
     const [ sortBy, setSortBy ] = useState(SONG_A_Z_ANIME);
 
-    const themes = useMemo(() =>
-        artist.performances
-            .filter((performance) =>
-                filterAlias === null ||
-                filterAlias === artist.name && !performance.as ||
-                filterAlias === performance.as &&
-                performance.song?.themes[0]?.entries[0]?.videos[0]
-            )
-            .filter(getPerformanceFilter(filterPerformance))
-            .flatMap((performance) => performance.song.themes)
-            .sort(getComparator(sortBy)),
-    [artist.name, artist.performances, filterAlias, filterPerformance, sortBy]
-    );
+    const filterPerformances = useCallback((performances: ArtistDetailPageProps["artist"]["performances"], groupAs: string | null) => performances
+        .filter((performance) =>
+            filterAlias === null ||
+            filterAlias === artist.name && (!performance.as && !groupAs) ||
+            (filterAlias === groupAs || filterAlias === performance.as) &&
+            performance.song?.themes[0]?.entries[0]?.videos[0]
+        )
+        .flatMap((performance) => performance.song.themes)
+        .sort(getComparator(sortBy)), 
+    [artist.name, filterAlias, sortBy]);
+
+    const themes = useMemo(() => filterPerformances(artist.performances.filter(getPerformanceFilter(filterPerformance)), null), 
+        [artist.performances, filterPerformance, filterPerformances]);
+
+    const groups = useMemo(() => artist.groups.map((group) => ({
+        ...group,
+        group: {
+            ...group.group,
+            performances: filterPerformance === "SOLO" ? [] : filterPerformances(group.group.performances, group.as),
+        }
+    })), 
+    [artist.groups, filterPerformance, filterPerformances]);
 
     return <>
         <SEO title={artist.name} image={largeCover}/>
@@ -199,8 +211,23 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                         </SearchFilterSortBy>
                     </SearchFilterGroup>
                 </Collapse>
-                <Column style={{ "--gap": "16px" }}>
-                    <ArtistThemes themes={themes} artist={artist} />
+                <Column style={{ "--gap": "48px" }}>
+                    {themes.length ? <Column style={{ "--gap": "16px" }}>
+                        <ArtistThemes themes={themes} artist={artist}/>
+                    </Column> : null}
+                    {groups.map((group) => (
+                        group.group.performances.length ? <Column key={group.group.slug} style={{ "--gap": "16px" }}>
+                            <Text variant="h2">
+                                {group.as ? `As ${group.as} ` : null}
+                                In{" "}
+                                <Link href={`/artist/${group.group.slug}`}>
+                                    <Text link>{group.group.name}</Text>
+                                </Link>
+                                <Text color="text-disabled"> ({group.group.performances.length})</Text>
+                            </Text>
+                            <ArtistThemes themes={group.group.performances} artist={group.group}/>
+                        </Column> : null
+                    ))}
                 </Column>
             </Column>
         </SidebarContainer>
@@ -209,7 +236,7 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
 
 interface ArtistThemesProps {
     themes: Performance["song"]["themes"]
-    artist: ArtistDetailPageProps["artist"]
+    artist: ThemeSummaryCardArtistFragment
 }
 
 const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemesProps) {
@@ -259,6 +286,7 @@ const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemes
     return <>{themeCards}</>;
 });
 
+
 ArtistDetailPage.fragements = {
     artist: gql`
         ${ThemeSummaryCard.fragments.theme}
@@ -272,6 +300,7 @@ ArtistDetailPage.fragements = {
             performances {
                 as
                 song {
+                    id
                     title
                     performances {
                         artist {
@@ -305,6 +334,32 @@ ArtistDetailPage.fragements = {
                 group {
                     slug
                     name
+                    performances {
+                        as
+                        song {
+                            id
+                            title
+                            performances {
+                                artist {
+                                    slug
+                                    name
+                                }
+                                as
+                            }
+                            themes {
+                                ...ThemeSummaryCardTheme
+                                ...ThemeSummaryCardThemeExpandable
+                                id
+                                slug
+                                group
+                                anime {
+                                    slug
+                                    year
+                                    season
+                                }
+                            }
+                        }
+                    }
                 }
                 as
             }
@@ -376,3 +431,5 @@ export const getStaticPaths: GetStaticPaths<ArtistDetailPageParams> = async () =
         }));
     });
 };
+
+
