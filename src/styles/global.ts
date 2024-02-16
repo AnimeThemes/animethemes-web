@@ -12,6 +12,37 @@ export default createGlobalStyle`
         box-sizing: border-box;
     }
 
+    html, body, #__next {
+        // Every container in the page hierarchy needs to have the 
+        // maximum height of the viewport. Using 100vh on innermost container 
+        // would break certain layouts on mobile devices.
+        height: 100%;
+    }
+    
+    :root {
+        ${defineColorTheme("light")`
+            ${createCssDefinition(colors)}
+            ${createCssDefinition(shadows)}
+        `}
+
+        ${defineColorTheme("dark")`
+            ${createCssDefinition(darkColors)}
+            ${createCssDefinition(darkShadows)}
+        `}
+        
+        scrollbar-color: ${theme.colors["gray-700"]} transparent;
+        scrollbar-width: thin;
+
+        // To prevent layout shift, we want to keep the spacing
+        // of the scrollbar even if the page isn't scrollable.
+        scrollbar-gutter: stable;
+
+        &[data-fullscreen] {
+            // Except in fullscreen mode.
+            scrollbar-gutter: revert;
+        }
+    }
+    
     body {
         margin: 0;
 
@@ -23,36 +54,17 @@ export default createGlobalStyle`
         -moz-osx-font-smoothing: grayscale;
 
         line-height: 1.5;
-
-        // Always show a vertical scroll bar, even if the page 
-        // is not scrollable to prevent layout shift.
-        overflow-y: scroll;
+        
+        // If scrollbar-gutter isn't supported we achieve 
+        // the same effect, by forcing a scrollbar.
+        @supports not (scrollbar-gutter: stable) {
+            overflow-y: scroll;
+        }
 
         [data-fullscreen] & {
             // Except in fullscreen mode.
             overflow-y: hidden;
         }
-        
-        ${defineColorTheme("light")`
-            ${createCssDefinition(colors)}
-            ${createCssDefinition(shadows)}
-        `}
-
-        ${defineColorTheme("dark")`
-            ${createCssDefinition(darkColors)}
-            ${createCssDefinition(darkShadows)}
-        `}
-    }
-
-    html {
-        height: 100dvh;
-    }
-    
-    body, #__next {
-        // Every container in the page hierarchy needs to have the 
-        // maximum height of the viewport. Using 100vh on innermost container 
-        // would break certain layouts on mobile devices.
-        height: 100%;
     }
 
     a {
@@ -106,11 +118,6 @@ export default createGlobalStyle`
     hr {
         margin: 16px 0;
         border-color: ${theme.colors["text-disabled"]};
-    }
-
-    html {
-        scrollbar-color: ${theme.colors["gray-700"]} transparent;
-        scrollbar-width: thin;
     }
 
     @media (pointer: fine) {
