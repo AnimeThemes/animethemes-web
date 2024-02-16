@@ -1,12 +1,10 @@
 import styled, { css } from "styled-components";
 import { Container } from "components/container";
-import { Button } from "components/button";
 import theme from "theme";
-import { Solid } from "components/box";
 import { Logo } from "components/image";
 import { ProfileImage } from "components/image/ProfileImage";
 
-export const StyledNavigation = styled(Solid).attrs({ as: "nav" })<{ $floating: boolean }>`
+export const StyledNavigation = styled.nav<{ $floating: boolean }>`
     position: sticky;
     top: 0;
     z-index: ${theme.zIndices.navigation};
@@ -57,19 +55,6 @@ export const StyledLogo = styled(Logo)`
     width: auto;
     height: 1.5rem;
     color: ${theme.colors["text"]};
-`;
-
-export const StyledMobileToggle = styled(Button)<{ offsetToggleButton: boolean }>`
-    position: fixed;
-    bottom: ${(props) => props.offsetToggleButton ? "5rem" : "1rem"};
-    right: 1rem;
-
-    padding: 1rem;
-    z-index: ${theme.zIndices.navigation};
-
-    @media (min-width: 721px) {
-        display: none;
-    }
 `;
 
 export const StyledProfileImageIcon = styled.div`
