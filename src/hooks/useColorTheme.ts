@@ -7,14 +7,14 @@ export default function useColorTheme(): [ColorTheme, (colorTheme: ColorTheme) =
     const [ theme, setTheme ] = useLocalStorageState<ColorTheme>("theme", { defaultValue: "system" });
 
     useEffect(() => {
-        const injectedColorTheme = document.body.dataset.theme;
+        const injectedColorTheme = document.documentElement.dataset.theme;
         if (isColorTheme(injectedColorTheme)) {
             setTheme(injectedColorTheme);
         }
     }, [setTheme]);
 
     useEffect(() => {
-        document.body.dataset.theme = theme;
+        document.documentElement.dataset.theme = theme;
     }, [theme]);
 
     return [theme, setTheme];
