@@ -12,7 +12,7 @@ const ThemeInjection = () => {
                 theme = "light";
             }
             if (theme) {
-                document.body.dataset.theme = theme;
+                document.documentElement.dataset.theme = theme;
             }
         })();
     `;
@@ -28,11 +28,11 @@ export default class MyDocument extends Document {
 
     render() {
         return (
-            <Html lang="en">
+            <Html lang="en" data-theme="system">
                 <Head>
                     <link rel="preload" href={`${AUTH_URL}/api/me`} as="fetch" crossOrigin="use-credentials" />
                 </Head>
-                <body data-theme="system">
+                <body>
                     <ThemeInjection/>
                     <Main/>
                     <NextScript/>
