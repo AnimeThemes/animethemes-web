@@ -22,9 +22,6 @@ const typeDefs = `
         imageAll(facet: String): [Image!]! 
         featuredTheme: FeaturedTheme
         dumpAll: [Dump!]!
-        balanceAll(month: String): [Balance!]!
-        transactionAll(month: String): [Transaction!]!
-        billingMonthAll: [String!]!
         playlist(id: String!): Playlist
         announcementAll: [Announcement!]!
         me: UserScopedQuery!
@@ -230,23 +227,6 @@ const typeDefs = `
         path: String!
         link: String!
         created_at: String!
-    }
-
-    type Balance {
-        id: Int!
-        date: String!
-        service: String!
-        frequency: String!
-        usage: Float!
-        month_to_date_balance: Float!
-    }
-
-    type Transaction {
-        id: Int!
-        date: String!
-        service: String!
-        description: String!
-        amount: Float!
     }
     
     type Playlist {
