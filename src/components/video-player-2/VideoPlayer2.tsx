@@ -16,7 +16,7 @@ import createVideoSlug from "utils/createVideoSlug";
 import { useRouter } from "next/router";
 import useSetting from "hooks/useSetting";
 import { AudioMode, GlobalVolume } from "utils/settings";
-import { AUDIO_URL, VIDEO_URL } from "utils/config";
+import { AUDIO_URL, VIDEO_URL } from "utils/config.mjs";
 import extractImages from "utils/extractImages";
 import useWatchHistory from "hooks/useWatchHistory";
 import type { VideoSummaryCardVideoFragment } from "generated/graphql";

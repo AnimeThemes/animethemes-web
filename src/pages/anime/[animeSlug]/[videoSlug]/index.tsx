@@ -24,7 +24,7 @@ import { PageRevalidation } from "components/utils/PageRevalidation";
 import useSetting from "hooks/useSetting";
 import { SEO } from "components/seo";
 import extractImages from "utils/extractImages";
-import { VIDEO_URL } from "utils/config";
+import { VIDEO_URL } from "utils/config.mjs";
 import { faChevronDown, faChevronUp } from "@fortawesome/pro-solid-svg-icons";
 
 export interface VideoPageProps extends SharedPageProps, RequiredNonNullable<VideoPageQuery> {

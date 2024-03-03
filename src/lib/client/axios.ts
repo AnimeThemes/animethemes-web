@@ -1,6 +1,6 @@
 import type { AxiosError } from "axios";
 import Axios from "axios";
-import { AUTH_URL } from "utils/config";
+import { AUTH_URL } from "utils/config.mjs";
 
 const axios = Axios.create({
     baseURL: AUTH_URL,

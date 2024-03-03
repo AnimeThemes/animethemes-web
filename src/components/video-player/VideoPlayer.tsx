@@ -28,7 +28,7 @@ import styledTheme from "theme";
 import { SongTitle } from "components/utils";
 import useSetting from "hooks/useSetting";
 import { AudioMode, GlobalVolume } from "utils/settings";
-import { VIDEO_URL, AUDIO_URL } from "utils/config";
+import { VIDEO_URL, AUDIO_URL } from "utils/config.mjs";
 import gql from "graphql-tag";
 import type {
     VideoPlayerAnimeFragment,

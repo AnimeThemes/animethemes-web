@@ -1,5 +1,5 @@
 import * as log from "next/dist/build/output/log";
-import { VERBOSE_LOGS } from "./config";
+import { VERBOSE_LOGS } from "./config.mjs";
 
 function info(...message: string[]) {
     logIfDevelopment(log.info, ...message);

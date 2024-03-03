@@ -2,7 +2,7 @@ import pLimit from "p-limit";
 import type { ResolveTree } from "graphql-parse-resolve-info";
 import { parseResolveInfo } from "graphql-parse-resolve-info";
 import devLog from "utils/devLog";
-import { CLIENT_API_URL, SERVER_API_KEY, SERVER_API_URL, AUTH_REFERER } from "utils/config";
+import { CLIENT_API_URL, SERVER_API_KEY, SERVER_API_URL, AUTH_REFERER } from "utils/config.mjs";
 import type { GraphQLFieldResolver, GraphQLOutputType, GraphQLResolveInfo } from "graphql";
 import type { Path } from "graphql/jsutils/Path";
 import type { NextIncomingMessage } from "next/dist/server/request-meta";
