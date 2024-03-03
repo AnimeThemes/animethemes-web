@@ -1,7 +1,7 @@
 import type { DocumentContext } from "next/document";
 import Document, { Head, Html, Main, NextScript } from "next/document";
 import { ServerStyleSheet } from "styled-components";
-import { AUTH_URL } from "utils/config";
+import { AUTH_URL } from "utils/config.mjs";
 
 const ThemeInjection = () => {
     // language=JavaScript

@@ -54,10 +54,10 @@ export function Footer() {
                     <FooterTextLink href="/about/transparency">
                         Transparency
                     </FooterTextLink>
-                    <FooterTextLink href="/wiki/donate">
+                    <FooterTextLink href="/about/donate">
                         Donate
                     </FooterTextLink>
-                    <FooterTextLink href="/wiki/faq">
+                    <FooterTextLink href="/about/faq">
                         FAQ
                     </FooterTextLink>
                 </StyledLinkList>

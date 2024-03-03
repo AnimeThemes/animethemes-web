@@ -1,9 +1,7 @@
-// This file needs to be a .js file, because it's used by next.config.js.
-// We can't use ES imports here to we supress the lint rule.
-/* eslint-disable @typescript-eslint/no-var-requires */
+// This file needs to be a .mjs file, because it's used by next.config.mjs.
 
-const { error, warn } = require("next/dist/build/output/log");
-const chalk = require("next/dist/lib/chalk").default;
+import { error, warn } from "next/dist/build/output/log.js";
+import chalk from "chalk";
 
 // Server-side
 
@@ -49,7 +47,7 @@ function validateConfig() {
     return isValid;
 }
 
-module.exports = {
+export {
     SERVER_API_URL,
     SERVER_API_KEY,
     REVALIDATE_TOKEN,

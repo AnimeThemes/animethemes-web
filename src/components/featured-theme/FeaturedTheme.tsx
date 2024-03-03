@@ -10,7 +10,7 @@ import useCompatability from "hooks/useCompatability";
 import { fetchRandomGrill } from "lib/client/randomGrill";
 import createVideoSlug from "utils/createVideoSlug";
 import Link from "next/link";
-import { VIDEO_URL } from "utils/config";
+import { VIDEO_URL } from "utils/config.mjs";
 import gql from "graphql-tag";
 import type { FeaturedThemeThemeFragment } from "generated/graphql";
 
