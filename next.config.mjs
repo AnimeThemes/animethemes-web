@@ -1,7 +1,11 @@
-const { info, error } = require("next/dist/build/output/log");
-const { ANALYZE, STAGING, BASE_PATH, validateConfig } = require("./src/utils/config");
+// @ts-check
 
-const withBundleAnalyzer = require("@next/bundle-analyzer")({
+import { error, info } from "next/dist/build/output/log.js";
+import { ANALYZE, BASE_PATH, STAGING, validateConfig } from "./src/utils/config.mjs";
+
+import NextBundleAnalyzer from "@next/bundle-analyzer";
+
+const withBundleAnalyzer = NextBundleAnalyzer({
     enabled: ANALYZE,
 });
 
@@ -14,8 +18,6 @@ if (STAGING) {
     info("Running animethemes-web in staging mode!");
 }
 
-// @ts-check
-
 /**
  * @type {import('next').NextConfig}
  **/
@@ -27,12 +29,14 @@ const nextConfig = {
     },
     staticPageGenerationTimeout: 3600,
     experimental: {
-        newNextLinkBehavior: true,
         // We don't want to multi-thread page building
         // to make use of caching between page builds.
         workerThreads: false,
         cpus: 1,
     },
+    transpilePackages: [
+        "ahooks"
+    ],
     async headers() {
         return [
             {
@@ -82,4 +86,4 @@ const nextConfig = {
     }
 };
 
-module.exports = withBundleAnalyzer(nextConfig);
+export default withBundleAnalyzer(nextConfig);
