@@ -20,6 +20,7 @@ export default async function serializeMarkdown(markdown: Compatible) {
                 [rehypePrettyCode, { theme: "github-dark-dimmed" }],
             ],
         },
+        parseFrontmatter: true,
     });
 
     return {

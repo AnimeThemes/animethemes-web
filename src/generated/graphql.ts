@@ -156,6 +156,7 @@ export type Image = {
 
 export type Page = {
   body: Scalars['String'];
+  created_at: Scalars['String'];
   id: Maybe<Scalars['Int']>;
   name: Scalars['String'];
   slug: Scalars['String'];
@@ -705,6 +706,18 @@ export type RandomThemeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type RandomThemeQuery = { searchTheme: { data: Array<{ slug: string, type: string, sequence: number | null, group: string | null, id: number, entries: Array<{ version: number | null, episodes: string | null, spoiler: boolean, nsfw: boolean, videos: Array<{ basename: string, id: number, tags: string, resolution: number | null, nc: boolean, subbed: boolean, lyrics: boolean, uncen: boolean, source: VideoSource | null, overlap: VideoOverlap, audio: { basename: string } }> }>, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null }> } };
 
+export type DocumentPageQueryVariables = Exact<{
+  pageSlug: Scalars['String'];
+}>;
+
+
+export type DocumentPageQuery = { page: { name: string, body: string, created_at: string } | null };
+
+export type DocumentPageAllQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DocumentPageAllQuery = { pageAll: Array<{ slug: string }> };
+
 export type DumpIndexPageQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -768,6 +781,11 @@ export type ArtistIndexPageQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ArtistIndexPageQuery = { artistAll: Array<{ slug: string, name: string }> };
+
+export type DocumentIndexPageQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DocumentIndexPageQuery = { pageAll: Array<{ slug: string, name: string, created_at: string }> };
 
 export type CharacterFragmentFragment = { id: number, seed: number, name: string, source: string, image: string, theme: { slug: string, type: string, sequence: number | null, group: string | null, id: number, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null, entries: Array<{ version: number | null, videos: Array<{ id: number, basename: string, tags: string, audio: { basename: string } }> }> } | null };
 
@@ -900,23 +918,6 @@ export type StudioIndexPageQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type StudioIndexPageQuery = { studioAll: Array<{ slug: string, name: string }> };
-
-export type DocumentPageQueryVariables = Exact<{
-  pageSlug: Scalars['String'];
-}>;
-
-
-export type DocumentPageQuery = { page: { name: string, body: string } | null };
-
-export type DocumentPageAllQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type DocumentPageAllQuery = { pageAll: Array<{ slug: string }> };
-
-export type DocumentIndexPageQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type DocumentIndexPageQuery = { pageAll: Array<{ slug: string, name: string }> };
 
 export type SeasonDetailPageQueryVariables = Exact<{
   year?: InputMaybe<Scalars['Int']>;
