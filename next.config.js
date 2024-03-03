@@ -65,6 +65,20 @@ const nextConfig = {
                 ]
             }
         ];
+    },
+    async redirects() {
+        return [
+            {
+                source: "/wiki/blog/:slug*",
+                destination: "/blog/:slug*",
+                permanent: true,
+            },
+            {
+                source: "/wiki/status/:slug*",
+                destination: "/blog/status_:slug*",
+                permanent: true,
+            },
+        ];
     }
 };
 
