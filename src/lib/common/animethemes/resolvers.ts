@@ -81,7 +81,7 @@ const resolvers: IResolvers = {
         featuredTheme: apiResolver({
             endpoint: () => `/config/wiki`,
             extractor: (result) => result.wiki.featured_theme,
-            transformer: (featuredTheme) => ({
+            transformer: (featuredTheme) => featuredTheme ? ({
                 animetheme: {
                     ...featuredTheme.animethemeentry.animetheme,
                     animethemeentries: [
@@ -93,31 +93,17 @@ const resolvers: IResolvers = {
                         }
                     ]
                 }
-            })
+            }) : null
         }),
         dumpAll: apiResolver({
             endpoint: () => `/dump?fields[dump]=id,path,link,created_at`,
             extractor: (result) => result.dumps,
             pagination: true
         }),
-        balanceAll: apiResolver({
-            endpoint: (_, { month }) => `/balance?${month ? `filter[date]=${month}` : ``}`,
-            extractor: (result) => result.balances,
-            pagination: true
-        }),
-        transactionAll: apiResolver({
-            endpoint: (_, { month }) => `/transaction?${month ? `filter[date]=${month}` : ``}`,
-            extractor: (result) => result.transactions,
-            pagination: true
-        }),
         announcementAll: apiResolver({
             endpoint: () => `/announcement`,
             extractor: (result) => result.announcements,
             pagination: true
-        }),
-        billingMonthAll: apiResolver({
-            endpoint: () => `/transparency`,
-            extractor: (result) => Object.values(result.transparency.filterOptions),
         }),
         playlist: apiResolver({
             endpoint: (_, { id }) => `/playlist/${id}?fields[playlist]=id,name,visibility,tracks_count`,
