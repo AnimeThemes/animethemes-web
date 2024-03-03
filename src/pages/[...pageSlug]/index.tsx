@@ -59,6 +59,7 @@ interface DocumentPageParams extends ParsedUrlQuery {
 export default function DocumentPage({ page }: DocumentPageProps) {
     return (
         <>
+            <PageHeader title={page.name} author={page.source.frontmatter?.author} createdAt={page.created_at} />
             <StyledGrid>
                 <SEO title={page.name}/>
                 <Markdown source={page.source} />
@@ -72,12 +73,29 @@ export default function DocumentPage({ page }: DocumentPageProps) {
     );
 }
 
+interface PageHeaderProps {
+    title: string;
+    author?: string;
+    createdAt: string;
+}
+
+function PageHeader({ title, author, createdAt }: PageHeaderProps) {
+    return (
+        <div>
+            <Text variant="h1">{title}</Text>
+            { !!author && <Text variant="small" color="text-muted">By: {author} &bull; </Text> }
+            <Text variant="small" color="text-muted">{new Date(createdAt).toLocaleDateString("en", { dateStyle: "long" })}</Text>
+        </div>
+    );
+}
+
 export const getStaticProps: GetStaticProps<DocumentPageProps, DocumentPageParams> = async ({ params }) => {
     const { data, apiRequests } = await fetchData<DocumentPageQuery, DocumentPageQueryVariables>(gql`
         query DocumentPage($pageSlug: String!) {
             page(slug: $pageSlug) {
                 name
                 body
+                created_at
             }
         }
     `, params && {
