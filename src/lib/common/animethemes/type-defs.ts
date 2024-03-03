@@ -216,6 +216,7 @@ const typeDefs = `
         slug: String!
         name: String!
         body: String!
+        created_at: String!
     }
 
     type FeaturedTheme {

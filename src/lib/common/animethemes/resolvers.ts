@@ -65,11 +65,11 @@ const resolvers: IResolvers = {
             transformer: (seasons, _, { year }) => seasons.map((season: string) => ({ value: season, year: { value: year } }))
         }),
         page: apiResolver({
-            endpoint: (_, { slug }) => `/page/${slug}?fields[page]=id,slug,name,body`,
+            endpoint: (_, { slug }) => `/page/${slug}?fields[page]=id,slug,name,body,created_at`,
             extractor: (result) => result.page
         }),
         pageAll: apiResolver({
-            endpoint: () => `/page`,
+            endpoint: () => `/page?fields[page]=id,slug,name,body,created_at`,
             extractor: (result) => result.pages,
             pagination: true
         }),

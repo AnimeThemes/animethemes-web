@@ -34,6 +34,7 @@ const StyledMarkdown = styled.div`
     }
 
     & p {
+        margin-top: 0;
         margin-bottom: 16px;
     }
 
@@ -99,6 +100,10 @@ const StyledMarkdown = styled.div`
     
     & ${Card} {
         margin-bottom: 16px;
+    }
+    
+    & img {
+        border-radius: ${theme.scalars.borderRadiusCard};
     }
 `;
 
