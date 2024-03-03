@@ -23,7 +23,7 @@ import { useRouter } from "next/router";
 import useSetting from "hooks/useSetting";
 import { DeveloperMode } from "utils/settings";
 import { ErrorBoundary } from "components/utils";
-import { STAGING } from "utils/config";
+import { STAGING } from "utils/config.mjs";
 import { Card } from "components/card";
 import { ExternalLink } from "components/external-link";
 import type { AppProps } from "next/app";
