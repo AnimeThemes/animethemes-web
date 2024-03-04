@@ -5,7 +5,7 @@ import devLog from "utils/devLog";
 import { CLIENT_API_URL, SERVER_API_KEY, SERVER_API_URL, AUTH_REFERER } from "utils/config.mjs";
 import type { GraphQLFieldResolver, GraphQLOutputType, GraphQLResolveInfo } from "graphql";
 import type { Path } from "graphql/jsutils/Path";
-import type { NextIncomingMessage } from "next/dist/server/request-meta";
+import type { IncomingMessage } from "node:http";
 
 const limit = pLimit(5);
 
@@ -184,7 +184,7 @@ interface ApiResolverConfig {
 export interface ApiResolverContext {
     cache?: Map<string, Record<string, unknown> | null>
     apiRequests: number
-    req?: NextIncomingMessage
+    req?: IncomingMessage
 }
 
 export function apiResolver(config: ApiResolverConfig): GraphQLFieldResolver<Record<string, unknown>, ApiResolverContext> {

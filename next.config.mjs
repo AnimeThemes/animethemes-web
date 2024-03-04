@@ -1,7 +1,7 @@
 // @ts-check
 
-import { error, info } from "next/dist/build/output/log.js";
 import { ANALYZE, BASE_PATH, STAGING, validateConfig } from "./src/utils/config.mjs";
+import { error, info } from "./src/utils/log.mjs";
 
 import NextBundleAnalyzer from "@next/bundle-analyzer";
 
