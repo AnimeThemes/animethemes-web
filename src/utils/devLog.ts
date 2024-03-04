@@ -1,4 +1,4 @@
-import * as log from "next/dist/build/output/log";
+import * as log from "utils/log.mjs";
 import { VERBOSE_LOGS } from "./config.mjs";
 
 function info(...message: string[]) {

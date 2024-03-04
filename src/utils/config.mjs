@@ -1,7 +1,7 @@
-// This file needs to be a .mjs file, because it's used by next.config.mjs.
+// @ts-check
 
-import { error, warn } from "next/dist/build/output/log.js";
-import chalk from "chalk";
+import pico from "picocolors";
+import { error, warn } from "./log.mjs";
 
 // Server-side
 
@@ -29,20 +29,20 @@ const VERBOSE_LOGS = !!process.env.NEXT_PUBLIC_VERBOSE_LOGS;
 function validateConfig() {
     let isValid = true;
     if (!SERVER_API_URL && !CLIENT_API_URL) {
-        error(`You need to either specify ${chalk.cyan("ANIMETHEMES_API_URL")} or ${chalk.cyan("NEXT_PUBLIC_API_URL")} for API requests to work.`);
+        error(`You need to either specify ${pico.cyan("ANIMETHEMES_API_URL")} or ${pico.cyan("NEXT_PUBLIC_API_URL")} for API requests to work.`);
         isValid = false;
     }
     if (SERVER_API_URL && !CLIENT_API_URL) {
-        warn(`It is highly recommended to specify ${chalk.cyan("NEXT_PUBLIC_API_URL")}. Otherwise API on the client-side won't work.`);
+        warn(`It is highly recommended to specify ${pico.cyan("NEXT_PUBLIC_API_URL")}. Otherwise API on the client-side won't work.`);
     }
     if (!VIDEO_URL) {
-        warn(`It is recommended to specify ${chalk.cyan("NEXT_PUBLIC_VIDEO_URL")}. Otherwise videos won't play.`);
+        warn(`It is recommended to specify ${pico.cyan("NEXT_PUBLIC_VIDEO_URL")}. Otherwise videos won't play.`);
     }
     if (!AUDIO_URL) {
-        warn(`It is recommended to specify ${chalk.cyan("NEXT_PUBLIC_AUDIO_URL")}. Otherwise audios won't play.`);
+        warn(`It is recommended to specify ${pico.cyan("NEXT_PUBLIC_AUDIO_URL")}. Otherwise audios won't play.`);
     }
     if (!AUTH_URL) {
-        warn(`You haven't specified ${chalk.cyan("NEXT_PUBLIC_AUTH_URL")}. This is fine for development, but should be fixed in production.`);
+        warn(`You haven't specified ${pico.cyan("NEXT_PUBLIC_AUTH_URL")}. This is fine for development, but should be fixed in production.`);
     }
     return isValid;
 }
