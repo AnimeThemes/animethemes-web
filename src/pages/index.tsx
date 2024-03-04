@@ -89,7 +89,7 @@ const About = styled(Column)`
 `;
 
 interface HomePageProps {
-    featuredTheme: NonNullable<HomePageQuery["featuredTheme"]>["theme"] | null;
+    featuredTheme: NonNullable<NonNullable<HomePageQuery["featuredTheme"]>["entry"]>["theme"] | null;
     announcementSources: MDXRemoteSerializeResult[]
 }
 
@@ -289,8 +289,10 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
         
         query HomePage {
             featuredTheme {
-                theme {
-                    ...FeaturedThemeTheme
+                entry {
+                    theme {
+                        ...FeaturedThemeTheme    
+                    }
                 }
             }
             announcementAll {
@@ -302,7 +304,7 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
     return {
         props: {
             ...getSharedPageProps(apiRequests),
-            featuredTheme: data?.featuredTheme?.theme ?? null,
+            featuredTheme: data?.featuredTheme?.entry?.theme ?? null,
             announcementSources: await Promise.all(
                 data?.announcementAll.map(async (announcement) => (await serializeMarkdown(announcement.content)).source)
             ),

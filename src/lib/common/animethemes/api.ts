@@ -63,6 +63,10 @@ export const INCLUDES = {
         song: "_",
         artist: "_"
     },
+    FeaturedTheme: {
+        entry: "animethemeentry",
+        video: "video",
+    },
     Playlist: {
         tracks: "tracks",
         user: "user",
@@ -169,6 +173,12 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
     UserAuth: [
         "roles",
     ],
+    FeaturedTheme: [
+        "animethemeentry.animetheme.anime.images",
+        "animethemeentry.animetheme.song.artists",
+        "user",
+        "video",
+    ]
 };
 
 interface ApiResolverConfig {
