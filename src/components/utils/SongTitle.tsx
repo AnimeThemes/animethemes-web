@@ -3,11 +3,10 @@ import { Text } from "components/text";
 import gql from "graphql-tag";
 import type { SongTitleSongFragment } from "generated/graphql";
 import type { ComponentPropsWithoutRef } from "react";
-import type { Url } from "next/dist/shared/lib/router/router";
 
 export interface SongTitleProps extends ComponentPropsWithoutRef<typeof Text> {
     song: SongTitleSongFragment | null
-    href?: Url
+    href?: ComponentPropsWithoutRef<typeof Link>["href"]
 }
 
 export function SongTitle({ song, href, ...props }: SongTitleProps) {
