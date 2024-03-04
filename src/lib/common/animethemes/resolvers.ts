@@ -79,21 +79,8 @@ const resolvers: IResolvers = {
             pagination: true
         }),
         featuredTheme: apiResolver({
-            endpoint: () => `/config/wiki`,
-            extractor: (result) => result.wiki.featured_theme,
-            transformer: (featuredTheme) => featuredTheme ? ({
-                animetheme: {
-                    ...featuredTheme.animethemeentry.animetheme,
-                    animethemeentries: [
-                        {
-                            ...featuredTheme.animethemeentry,
-                            videos: [
-                                featuredTheme.video
-                            ]
-                        }
-                    ]
-                }
-            }) : null
+            endpoint: () => `/current/featuredtheme`,
+            extractor: (result) => result.featuredtheme,
         }),
         dumpAll: apiResolver({
             endpoint: () => `/dump?fields[dump]=id,path,link,created_at`,
@@ -369,10 +356,19 @@ const resolvers: IResolvers = {
         }),
     },
     FeaturedTheme: {
-        theme: apiResolver({
-            endpoint: (featuredTheme) => `/animetheme/${featuredTheme.animetheme.id}`,
-            field: "animetheme",
-            extractor: (result) => result.animetheme
+        entry: apiResolver({
+            endpoint: (featuredTheme) => `/featuredtheme/${featuredTheme.id}`,
+            field: "animethemeentry",
+            extractor: (result) => result.animethemeentry,
+            type: "FeaturedTheme",
+            baseInclude: INCLUDES.FeaturedTheme.entry
+        }),
+        video: apiResolver({
+            endpoint: (featuredTheme) => `/featuredtheme/${featuredTheme.id}`,
+            field: "video",
+            extractor: (result) => result.video,
+            type: "FeaturedTheme",
+            baseInclude: INCLUDES.FeaturedTheme.video
         }),
     },
     VideoOverlap: {
