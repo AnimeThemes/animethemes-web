@@ -220,7 +220,11 @@ const typeDefs = `
     }
 
     type FeaturedTheme {
-        theme: Theme!
+        id: Int!
+        start_at: String!
+        end_at: String!
+        video: Video
+        entry: Entry
     }
     
     type Dump {

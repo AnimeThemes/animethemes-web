@@ -128,7 +128,11 @@ export type Entry = {
 };
 
 export type FeaturedTheme = {
-  theme: Theme;
+  end_at: Scalars['String'];
+  entry: Maybe<Entry>;
+  id: Scalars['Int'];
+  start_at: Scalars['String'];
+  video: Maybe<Video>;
 };
 
 export type Filter = {
@@ -828,12 +832,7 @@ export type HomePageMostViewedQuery = { videoAll: Array<{ id: number, basename: 
 export type HomePageQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type HomePageQuery = { featuredTheme: { theme: { slug: string, type: string, sequence: number | null, group: string | null, id: number, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, entries: Array<{ version: number | null, videos: Array<{ basename: string, id: number, tags: string, audio: { basename: string } }> }>, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } } | null, announcementAll: Array<{ content: string }> };
-
-export type LandingPageQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type LandingPageQuery = { featuredTheme: { theme: { slug: string, type: string, sequence: number | null, group: string | null, id: number, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, entries: Array<{ version: number | null, videos: Array<{ basename: string, id: number, tags: string, audio: { basename: string } }> }>, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } } | null, announcementAll: Array<{ content: string }> };
+export type HomePageQuery = { featuredTheme: { entry: { theme: { slug: string, type: string, sequence: number | null, group: string | null, id: number, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, entries: Array<{ version: number | null, videos: Array<{ basename: string, id: number, tags: string, audio: { basename: string } }> }>, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null } } | null } | null, announcementAll: Array<{ content: string }> };
 
 export type PlaylistDetailPagePlaylistQueryVariables = Exact<{
   playlistId: Scalars['String'];
