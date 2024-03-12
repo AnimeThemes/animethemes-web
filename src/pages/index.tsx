@@ -20,7 +20,7 @@ import type { GetStaticProps } from "next";
 import { AnnouncementCard } from "components/card/AnnouncementCard";
 import type { MDXRemoteSerializeResult } from "next-mdx-remote";
 import serializeMarkdown from "utils/serializeMarkdown";
-import { VideoSummaryCard } from "components/card/VideoSummaryCard";
+import { VideoSummaryCard, VideoSummaryCardFragmentVideo } from "components/card/VideoSummaryCard";
 import useSWR from "swr";
 import { fetchDataClient } from "lib/client";
 import gql from "graphql-tag";
@@ -101,7 +101,7 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
         ["HomePageRecentlyAdded"],
         async () => {
             const { data } = await fetchDataClient<HomePageRecentlyAddedQuery>(gql`
-                ${VideoSummaryCard.fragments.video}
+                ${VideoSummaryCardFragmentVideo}
 
                 query HomePageRecentlyAdded {
                     videoAll(orderBy: "id", orderDesc: true, limit: 10) {
@@ -119,7 +119,7 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
         ["HomePageTrending"],
         async () => {
             const { data } = await fetchDataClient<HomePageMostViewedQuery>(gql`
-                ${VideoSummaryCard.fragments.video}
+                ${VideoSummaryCardFragmentVideo}
 
                 query HomePageMostViewed {
                     videoAll(orderBy: "views_count", orderDesc: true, limit: 10) {
