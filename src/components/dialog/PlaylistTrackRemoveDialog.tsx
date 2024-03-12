@@ -10,7 +10,7 @@ import { faMinus } from "@fortawesome/pro-solid-svg-icons";
 import { LoginGate } from "components/auth/LoginGate";
 import axios from "lib/client/axios";
 import { Column, Row } from "components/box";
-import { VideoSummaryCard } from "components/card/VideoSummaryCard";
+import { VideoSummaryCard, VideoSummaryCardFragmentVideo } from "components/card/VideoSummaryCard";
 import { Text } from "components/text";
 import { PlaylistTrackRemoveToast } from "components/toast/PlaylistTrackRemoveToast";
 import { useToasts } from "context/toastContext";
@@ -64,7 +64,7 @@ PlaylistTrackRemoveDialog.fragments = {
         }
     `,
     video: gql`
-        ${VideoSummaryCard.fragments.video}
+        ${VideoSummaryCardFragmentVideo}
         ${PlaylistTrackRemoveToast.fragments.video}
         
         fragment PlaylistTrackRemoveDialogVideo on Video {

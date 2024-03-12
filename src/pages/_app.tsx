@@ -34,15 +34,11 @@ import type { VideoPageProps } from "pages/anime/[animeSlug]/[videoSlug]";
 import FullscreenContext from "context/fullscreenContext";
 import { VideoPlayerOverlay } from "components/video-player-2/VideoPlayerOverlay";
 import { useFullscreen } from "ahooks";
-import {
-    either,
-    sortTransformed,
-    themeIndexComparator,
-    themeTypeComparator
-} from "utils/comparators";
+import { either, sortTransformed, themeIndexComparator, themeTypeComparator } from "utils/comparators";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "styles/prism.scss";
+import useLocalStorageState from "use-local-storage-state";
 
 config.autoAddCss = false;
 
@@ -92,6 +88,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     });
     const currentWatchListItem = watchList.find((item) => item.watchListId === currentWatchListItemId) ?? null;
 
+    const [isAutoPlay, setAutoPlay] = useLocalStorageState("auto-play", { defaultValue: false });
+    const [isForceAutoPlay, setForceAutoPlay] = useState(false);
+
     const currentBasename = getBasename(pageProps);
     const [previousBasename, setPreviousBasename] = useState<string | null>(() => getBasename(pageProps));
 
@@ -136,6 +135,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             setWatchList(watchList);
             setWatchListFactory(null);
             setCurrentWatchListItemId(watchList.find((item) => item.id === video.id)?.watchListId ?? null);
+            setForceAutoPlay(false);
         }
 
         return null;
@@ -154,7 +154,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                     // Do nothing
                 },
                 watchList,
-                setWatchList,
+                setWatchList: (watchList, forceAutoPlay = false) => {
+                    setWatchList(watchList);
+                    setForceAutoPlay(forceAutoPlay);
+                },
                 watchListFactory,
                 setWatchListFactory: (factory) => setWatchListFactory(() => factory),
                 currentWatchListItem,
@@ -183,6 +186,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                         ...watchList.slice(currentIndex + 1)
                     ]);
                 },
+                isAutoPlay,
+                setAutoPlay,
+                isForceAutoPlay,
             } }),
             stackContext(QueryClientProvider, { client: queryClient }),
             stackContext(ToastProvider, {}),

@@ -17,7 +17,7 @@ import { Column, Row } from "components/box";
 import { VideoSummaryCard } from "components/card/VideoSummaryCard";
 import { Text } from "components/text";
 import { IconTextButton } from "components/button";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import PlayerContext from "context/playerContext";
 import { DeveloperMode } from "utils/settings";
 import { PageRevalidation } from "components/utils/PageRevalidation";
@@ -26,6 +26,7 @@ import { SEO } from "components/seo";
 import extractImages from "utils/extractImages";
 import { VIDEO_URL } from "utils/config.mjs";
 import { faChevronDown, faChevronUp } from "@fortawesome/pro-solid-svg-icons";
+import Switch from "components/form/Switch";
 
 export interface VideoPageProps extends SharedPageProps, RequiredNonNullable<VideoPageQuery> {
     themeIndex: number
@@ -47,7 +48,14 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
     const songTitle = theme.song?.title || "T.B.A.";
 
     const { largeCover } = extractImages(anime);
-    const { watchList, currentWatchListItem, setCurrentWatchListItem } = useContext(PlayerContext);
+    const {
+        watchList,
+        currentWatchListItem,
+        setCurrentWatchListItem,
+        isAutoPlay,
+        setAutoPlay,
+        isForceAutoPlay,
+    } = useContext(PlayerContext);
     const [developerMode] = useSetting(DeveloperMode);
     const [selectedTab, setSelectedTab] = useState<"watch-list" | "info" | "related">(() => {
         return watchList.length > 1 ? "watch-list" : "info";
@@ -88,6 +96,19 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
     const videoHeight = video.resolution ?? 720;
     const videoWidth = Math.floor(videoHeight / 9 * 16);
 
+    const currentVideoCard = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        let isCancelled = false;
+        
+        setTimeout(() => {
+            if (!isCancelled) {
+                currentVideoCard.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+            }
+        }, 200);
+        
+        return () => { isCancelled = true; };
+    }, [currentWatchListItem]);
+    
     return (
         <>
             <SEO title={pageTitle} description={pageDesc} image={largeCover}>
@@ -117,18 +138,27 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
                 </StyledSwitcher>
             </HorizontalScroll>
             {selectedTab === "watch-list" ? (
-                <StyledScrollArea>
-                    <Column style={{ "--gap": "16px" }}>
-                        {watchList.map((watchListItem) => (
-                            <VideoSummaryCard
-                                key={watchListItem.id}
-                                video={watchListItem}
-                                onPlay={() => setCurrentWatchListItem(watchListItem)}
-                                isPlaying={watchListItem.watchListId === currentWatchListItem?.watchListId}
-                            />
-                        ))}
-                    </Column>
-                </StyledScrollArea>
+                <>
+                    {!isForceAutoPlay && (
+                        <Row style={{ "--justify-content": "space-between" }}>
+                            <Text color="text-muted">Auto-play related themes:</Text>
+                            <Switch isChecked={isAutoPlay} onCheckedChange={setAutoPlay} />
+                        </Row>
+                    )}
+                    <StyledScrollArea>
+                        <Column style={{ "--gap": "16px" }}>
+                            {watchList.map((watchListItem) => (
+                                <VideoSummaryCard
+                                    key={watchListItem.id}
+                                    ref={watchListItem.watchListId === currentWatchListItem?.watchListId ? currentVideoCard : undefined}
+                                    video={watchListItem}
+                                    onPlay={() => setCurrentWatchListItem(watchListItem)}
+                                    isPlaying={watchListItem.watchListId === currentWatchListItem?.watchListId}
+                                />
+                            ))}
+                        </Column>
+                    </StyledScrollArea>
+                </>
             ) : null}
             {selectedTab === "info" ? (
                 <StyledScrollArea>
