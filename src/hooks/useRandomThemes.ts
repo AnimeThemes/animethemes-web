@@ -30,7 +30,7 @@ export default function useRandomThemes() {
 
         const watchList = await factory();
 
-        setWatchList(watchList);
+        setWatchList(watchList, true);
         setCurrentWatchListItem(watchList[0]);
 
         const video = watchList[0];

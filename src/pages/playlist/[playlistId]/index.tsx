@@ -9,7 +9,7 @@ import type {
     PlaylistDetailPageQueryVariables
 } from "generated/graphql";
 import gql from "graphql-tag";
-import { VideoSummaryCard } from "components/card/VideoSummaryCard";
+import { VideoSummaryCard, VideoSummaryCardFragmentVideo } from "components/card/VideoSummaryCard";
 import type { SharedPageProps } from "utils/getSharedPageProps";
 import getSharedPageProps from "utils/getSharedPageProps";
 import type { Comparator, RequiredNonNullable } from "utils/types";
@@ -188,7 +188,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
 
     function playAll(initiatingVideoIndex: number) {
         const watchList = tracksSorted.map((track) => createWatchListItem(track.video));
-        setWatchList(watchList);
+        setWatchList(watchList, true);
         setWatchListFactory(null);
         setCurrentWatchListItem(watchList[initiatingVideoIndex]);
     }
@@ -356,7 +356,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
 
 PlaylistDetailPage.fragments = {
     playlist: gql`
-        ${VideoSummaryCard.fragments.video}
+        ${VideoSummaryCardFragmentVideo}
         ${PlaylistEditDialog.fragments.playlist}
         ${PlaylistTrackRemoveDialog.fragments.playlist}
         
