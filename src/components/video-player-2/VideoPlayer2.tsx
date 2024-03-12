@@ -67,7 +67,13 @@ export function VideoPlayer2({ video, background, children, overlay, ...props }:
     const progressRef = useRef<HTMLDivElement>(null);
     const currentTimeBeforeModeSwitch = useRef<number | null>(null);
 
-    const { watchList, currentWatchListItem, setCurrentWatchListItem } = useContext(PlayerContext);
+    const {
+        watchList,
+        currentWatchListItem,
+        setCurrentWatchListItem,
+        isAutoPlay,
+        isForceAutoPlay,
+    } = useContext(PlayerContext);
     const router = useRouter();
     const [globalVolume, setGlobalVolume] = useSetting(GlobalVolume);
     const { smallCover, largeCover } = extractImages(anime);
@@ -103,13 +109,13 @@ export function VideoPlayer2({ video, background, children, overlay, ...props }:
         : null;
 
     const playNextTrack = useCallback((navigate = false) => {
-        if (nextVideoPath) {
+        if ((isAutoPlay || isForceAutoPlay) && nextVideoPath) {
             setCurrentWatchListItem(nextVideo);
             if (navigate) {
                 router.push(nextVideoPath);
             }
         }
-    }, [nextVideo, nextVideoPath, router, setCurrentWatchListItem]);
+    }, [isAutoPlay, isForceAutoPlay, nextVideo, nextVideoPath, router, setCurrentWatchListItem]);
 
     useEffect(() => {
         if (playerRef.current) {

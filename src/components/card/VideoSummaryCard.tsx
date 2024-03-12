@@ -6,7 +6,7 @@ import gql from "graphql-tag";
 import styled from "styled-components";
 import theme from "theme";
 import type { VideoSummaryCardVideoFragment } from "generated/graphql";
-import type { ReactNode } from "react";
+import { type ForwardedRef, forwardRef, type ReactNode } from "react";
 import { TextLink } from "components/text/TextLink";
 import Link from "next/link";
 import { Icon } from "components/icon";
@@ -56,84 +56,84 @@ interface VideoSummaryCardProps {
     isPlaying?: boolean;
 }
 
-export function VideoSummaryCard({ video, menu, onPlay, isPlaying, ...props }: VideoSummaryCardProps) {
-    const entry = video.entries[0];
-    const theme = entry.theme;
-    const anime = theme?.anime;
+export const VideoSummaryCard = forwardRef(
+    function VideoSummaryCard({ video, menu, onPlay, isPlaying, ...props }: VideoSummaryCardProps, ref: ForwardedRef<HTMLDivElement>) {
+        const entry = video.entries[0];
+        const theme = entry.theme;
+        const anime = theme?.anime;
 
-    if (!entry || !theme || !anime) {
-        return null;
-    }
+        if (!entry || !theme || !anime) {
+            return null;
+        }
 
-    const { smallCover } = extractImages(anime);
-    const videoSlug = createVideoSlug(theme, entry, video);
-    const href = `/anime/${anime.slug}/${videoSlug}`;
+        const { smallCover } = extractImages(anime);
+        const videoSlug = createVideoSlug(theme, entry, video);
+        const href = `/anime/${anime.slug}/${videoSlug}`;
 
-    return (
-        <StyledWrapper>
-            <SummaryCard {...props}>
-                <StyledCoverLink href={href} onClick={onPlay}>
-                    <SummaryCard.Cover src={smallCover} />
-                    {isPlaying ? (
-                        <StyledCoverOverlay>
-                            <Icon icon={faPlay} />
-                        </StyledCoverOverlay>
+        return (
+            <StyledWrapper ref={ref}>
+                <SummaryCard {...props}>
+                    <StyledCoverLink href={href} onClick={onPlay}>
+                        <SummaryCard.Cover src={smallCover} />
+                        {isPlaying ? (
+                            <StyledCoverOverlay>
+                                <Icon icon={faPlay} />
+                            </StyledCoverOverlay>
+                        ) : null}
+                    </StyledCoverLink>
+                    <SummaryCard.Body>
+                        <SummaryCard.Title>
+                            <SongTitle song={theme.song} as={Link} href={href} onClick={onPlay} />
+                            <Performances song={theme.song} />
+                        </SummaryCard.Title>
+                        <SummaryCard.Description>
+                            <span>{videoSlug}{theme.group && ` (${theme.group})`}</span>
+                            <TextLink href={`/anime/${anime.slug}`}>{anime.name}</TextLink>
+                        </SummaryCard.Description>
+                    </SummaryCard.Body>
+                    {menu ? (
+                        <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>
+                            {menu}
+                        </StyledOverlayButtons>
                     ) : null}
-                </StyledCoverLink>
-                <SummaryCard.Body>
-                    <SummaryCard.Title>
-                        <SongTitle song={theme.song} as={Link} href={href} onClick={onPlay} />
-                        <Performances song={theme.song} />
-                    </SummaryCard.Title>
-                    <SummaryCard.Description>
-                        <span>{videoSlug}{theme.group && ` (${theme.group})`}</span>
-                        <TextLink href={`/anime/${anime.slug}`}>{anime.name}</TextLink>
-                    </SummaryCard.Description>
-                </SummaryCard.Body>
-                {menu ? (
-                    <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>
-                        {menu}
-                    </StyledOverlayButtons>
-                ) : null}
-            </SummaryCard>
-        </StyledWrapper>
-    );
-}
+                </SummaryCard>
+            </StyledWrapper>
+        );
+    }
+);
 
-VideoSummaryCard.fragments = {
-    video: gql`
-        ${SongTitleWithArtists.fragments.song}
-        ${extractImages.fragments.resourceWithImages}
-        ${createVideoSlug.fragments.theme}
-        ${createVideoSlug.fragments.entry}
-        ${createVideoSlug.fragments.video}
+export const VideoSummaryCardFragmentVideo = gql`
+    ${SongTitleWithArtists.fragments.song}
+    ${extractImages.fragments.resourceWithImages}
+    ${createVideoSlug.fragments.theme}
+    ${createVideoSlug.fragments.entry}
+    ${createVideoSlug.fragments.video}
 
-        fragment VideoSummaryCardVideo on Video {
-            id
-            basename
-            ...createVideoSlugVideo
-            entries {
-                ...createVideoSlugEntry
-                theme {
-                    ...createVideoSlugTheme
-                    id
+    fragment VideoSummaryCardVideo on Video {
+        id
+        basename
+        ...createVideoSlugVideo
+        entries {
+            ...createVideoSlugEntry
+            theme {
+                ...createVideoSlugTheme
+                id
+                slug
+                type
+                sequence
+                group
+                anime {
+                    ...extractImagesResourceWithImages
                     slug
-                    type
-                    sequence
-                    group
-                    anime {
-                        ...extractImagesResourceWithImages
-                        slug
-                        name
-                    }
-                    song {
-                        ...SongTitleWithArtistsSong
-                    }
+                    name
+                }
+                song {
+                    ...SongTitleWithArtistsSong
                 }
             }
-            audio {
-                basename
-            }
         }
-    `,
-};
+        audio {
+            basename
+        }
+    }
+`;

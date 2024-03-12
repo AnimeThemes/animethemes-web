@@ -17,7 +17,7 @@ import { Text } from "components/text";
 import { PlaylistTrackAddToast } from "components/toast/PlaylistTrackAddToast";
 import { PlaylistTrackRemoveToast } from "components/toast/PlaylistTrackRemoveToast";
 import { LoginGate } from "components/auth/LoginGate";
-import { VideoSummaryCard } from "components/card/VideoSummaryCard";
+import { VideoSummaryCard, VideoSummaryCardFragmentVideo } from "components/card/VideoSummaryCard";
 import gql from "graphql-tag";
 import { Skeleton } from "components/skeleton/Skeleton";
 import { Busy } from "components/utils/Busy";
@@ -56,7 +56,7 @@ export function PlaylistTrackAddDialog({ video, trigger }: PlaylistTrackAddDialo
 
 PlaylistTrackAddDialog.fragments = {
     video: gql`
-        ${VideoSummaryCard.fragments.video}
+        ${VideoSummaryCardFragmentVideo}
         ${PlaylistTrackRemoveToast.fragments.video}
         
         fragment PlaylistTrackAddDialogVideo on Video {
