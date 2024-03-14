@@ -22,7 +22,9 @@ export default function AnimeIndexPage({ animeAll }: AnimeIndexPageProps) {
                     key={anime.slug}
                     href={`/anime/${anime.slug}`}
                     passHref
-                    legacyBehavior>
+                    legacyBehavior
+                    prefetch={false}
+                >
                     <Text as="a" block link>{anime.name}</Text>
                 </Link>
             )}

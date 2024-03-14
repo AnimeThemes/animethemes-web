@@ -88,6 +88,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     });
     const currentWatchListItem = watchList.find((item) => item.watchListId === currentWatchListItemId) ?? null;
 
+    const [isWaitingForVideoPage, setWaitingForVideoPage] = useState(!isVideoPage);
+
     const [isAutoPlay, setAutoPlay] = useLocalStorageState("auto-play", { defaultValue: false });
     const [isForceAutoPlay, setForceAutoPlay] = useState(false);
 
@@ -124,6 +126,19 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
         return () => window.removeEventListener("keydown", hotkeyListener);
     }, [pageProps.isSearch, router]);
+
+    // Prevent the video player from opening in the background while the video page is still loading.
+    // This should only happen if the video player is opening for the first time and not on
+    // subsequent page transitions.
+    if (isVideoPage && currentWatchListItem && isWaitingForVideoPage) {
+        setWaitingForVideoPage(false);
+
+        return null;
+    } else if (currentWatchListItem === null && !isWaitingForVideoPage) {
+        setWaitingForVideoPage(true);
+
+        return null;
+    }
 
     if (isVideoPage && currentBasename !== previousBasename) {
         setPreviousBasename(currentBasename);
@@ -240,7 +255,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                         <Footer />
                     </>
                 ) : null}
-                {currentWatchListItem && (
+                {currentWatchListItem && !isWaitingForVideoPage && (
                     <VideoPlayer2
                         video={currentWatchListItem}
                         background={!isVideoPage}

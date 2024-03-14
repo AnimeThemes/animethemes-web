@@ -31,14 +31,14 @@ import { SEO } from "components/seo";
 import { SidebarContainer } from "components/container";
 import { MultiCoverImage } from "components/image";
 import { Column } from "components/box";
-import { Button, FilterToggleButton } from "components/button";
+import { Button, FilterToggleButton, IconTextButton } from "components/button";
 import { Collapse } from "components/utils";
 import { SearchFilterGroup, SearchFilterSortBy } from "components/search-filter";
 import styled from "styled-components";
 import theme from "theme";
 import { DescriptionList } from "components/description-list";
 import { Icon } from "components/icon";
-import { faEllipsisV, faListMusic, faMinus, faPlus, faTrophy } from "@fortawesome/pro-solid-svg-icons";
+import { faEllipsisV, faListMusic, faMinus, faPlus, faShuffle, faTrophy } from "@fortawesome/pro-solid-svg-icons";
 import { PlaylistTrackAddDialog } from "components/dialog/PlaylistTrackAddDialog";
 import { PlaylistTrackRemoveDialog } from "components/dialog/PlaylistTrackRemoveDialog";
 import useSWR from "swr";
@@ -49,6 +49,9 @@ import { PlaylistEditDialog } from "components/dialog/PlaylistEditDialog";
 import { Reorder } from "framer-motion";
 import axios from "lib/client/axios";
 import { FeaturedTheme } from "components/featured-theme";
+import { shuffle } from "lodash-es";
+import createVideoSlug from "../../../utils/createVideoSlug";
+import { useRouter } from "next/router";
 
 const StyledDesktopOnly = styled.div`
     gap: 24px;
@@ -59,8 +62,12 @@ const StyledDesktopOnly = styled.div`
 `;
 const StyledHeader = styled.div`
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 16px;
+    
+    & > :last-child {
+        margin-inline-start: auto;
+    }
 `;
 const StyledReorderContainer = styled.div`
     // Hack to style the framer motion reorder component
@@ -113,6 +120,7 @@ interface PlaylistDetailPageParams extends ParsedUrlQuery {
 
 export default function PlaylistDetailPage({ playlist: initialPlaylist, me: initialMe }: PlaylistDetailPageProps) {
     const { setWatchList, setWatchListFactory, setCurrentWatchListItem, addWatchListItem, addWatchListItemNext } = useContext(PlayerContext);
+    const router = useRouter();
 
     const { data: playlist, mutate } = useSWR(
         ["PlaylistDetailPagePlaylist", `/api/playlist/${initialPlaylist.id}`],
@@ -191,6 +199,26 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
         setWatchList(watchList, true);
         setWatchListFactory(null);
         setCurrentWatchListItem(watchList[initiatingVideoIndex]);
+    }
+
+    function shuffleAll() {
+        if (tracksSorted.length === 0) {
+            return;
+        }
+        const watchList = shuffle(tracksSorted.map((track) => createWatchListItem(track.video)));
+        setWatchList(watchList, true);
+        setWatchListFactory(null);
+        setCurrentWatchListItem(watchList[0]);
+
+        const video = watchList[0];
+        const entry = video.entries[0];
+        const theme = entry.theme;
+        const anime = theme?.anime;
+
+        if (anime && entry && video) {
+            const videoSlug = createVideoSlug(theme, entry, video);
+            void router.push(`/anime/${anime.slug}/${videoSlug}`);
+        }
     }
 
     async function updateTrackOrder(newTracks: typeof tracks) {
@@ -315,6 +343,9 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                             Themes
                             <Text color="text-disabled"> ({playlist.tracks_count})</Text>
                         </Text>
+                        {tracksSorted.length > 0 && (
+                            <IconTextButton icon={faShuffle} collapsible onClick={shuffleAll}>Shuffle All</IconTextButton>
+                        )}
                         <FilterToggleButton onClick={toggleShowFilter}/>
                     </StyledHeader>
                     <Collapse collapse={!showFilter}>
