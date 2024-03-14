@@ -49,7 +49,6 @@ export function AlphabeticalIndex<T extends AlphabeticalIndexItem>({ items, chil
                     key={firstLetter}
                     href={`#${firstLetter}`}
                     passHref
-                    prefetch={false}
                     legacyBehavior>
                     <Text as="a" link>{firstLetter.toUpperCase()} </Text>
                 </Link>
