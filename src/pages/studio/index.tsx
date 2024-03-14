@@ -22,7 +22,9 @@ export default function StudioIndexPage({ studioAll }: StudioIndexPageProps) {
                     key={studio.slug}
                     href={`/studio/${studio.slug}`}
                     passHref
-                    legacyBehavior>
+                    legacyBehavior
+                    prefetch={false}
+                >
                     <Text as="a" block link>{studio.name}</Text>
                 </Link>
             )}

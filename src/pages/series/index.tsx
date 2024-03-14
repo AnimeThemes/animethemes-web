@@ -22,7 +22,9 @@ export default function SeriesIndexPage({ seriesAll }: SeriesIndexPageProps) {
                     key={series.slug}
                     href={`/series/${series.slug}`}
                     passHref
-                    legacyBehavior>
+                    legacyBehavior
+                    prefetch={false}
+                >
                     <Text as="a" block link>{series.name}</Text>
                 </Link>
             )}

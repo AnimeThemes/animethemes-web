@@ -22,7 +22,9 @@ export default function ArtistIndexPage({ artistAll }: ArtistIndexPageProps) {
                     key={artist.slug}
                     href={`/artist/${artist.slug}`}
                     passHref
-                    legacyBehavior>
+                    legacyBehavior
+                    prefetch={false}
+                >
                     <Text as="a" block link>{artist.name}</Text>
                 </Link>
             )}
