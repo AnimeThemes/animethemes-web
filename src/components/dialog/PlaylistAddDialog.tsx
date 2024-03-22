@@ -69,7 +69,7 @@ function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
         setError("");
 
         try {
-            await axios.post("/api/playlist", {
+            await axios.post("/playlist", {
                 name: title,
                 visibility,
             });

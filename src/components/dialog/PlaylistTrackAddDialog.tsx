@@ -164,7 +164,7 @@ function PlaylistTrackAddCard({ playlist, video }: PlaylistTrackAddCardProps) {
         setBusy(true);
 
         try {
-            await axios.post(`/api/playlist/${playlist.id}/track`, { video_id: video.id, });
+            await axios.post(`/playlist/${playlist.id}/track`, { video_id: video.id, });
             await mutate((key) => (
                 [key].flat().some((key) =>
                     key === `/api/playlist/${playlist.id}` ||
@@ -191,7 +191,7 @@ function PlaylistTrackAddCard({ playlist, video }: PlaylistTrackAddCardProps) {
         setBusy(true);
 
         try {
-            await axios.delete(`/api/playlist/${playlist.id}/track/${track.id}`);
+            await axios.delete(`/playlist/${playlist.id}/track/${track.id}`);
             await mutate((key) => (
                 [key].flat().some((key) =>
                     key === `/api/playlist/${playlist.id}` ||

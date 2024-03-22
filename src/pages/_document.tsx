@@ -1,7 +1,7 @@
 import type { DocumentContext } from "next/document";
 import Document, { Head, Html, Main, NextScript } from "next/document";
 import { ServerStyleSheet } from "styled-components";
-import { AUTH_URL } from "utils/config.mjs";
+import { API_URL } from "lib/common/animethemes/api";
 
 const ThemeInjection = () => {
     // language=JavaScript
@@ -30,7 +30,7 @@ export default class MyDocument extends Document {
         return (
             <Html lang="en" data-theme="system">
                 <Head>
-                    <link rel="preload" href={`${AUTH_URL}/api/me`} as="fetch" crossOrigin="use-credentials" />
+                    <link rel="preload" href={`${API_URL}/me`} as="fetch" crossOrigin="use-credentials" />
                 </Head>
                 <body>
                     <ThemeInjection/>

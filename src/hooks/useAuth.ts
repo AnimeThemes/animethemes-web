@@ -3,6 +3,7 @@ import axios from "lib/client/axios";
 import { fetchDataClient } from "lib/client";
 import gql from "graphql-tag";
 import type { CheckAuthQuery } from "generated/graphql";
+import { AUTH_PATH } from "utils/config.mjs";
 
 export default function useAuth() {
     const { data: me } = useSWR(
@@ -25,7 +26,7 @@ export default function useAuth() {
         { fallbackData: { user: null }, dedupingInterval: 2000 }
     );
 
-    const csrf = () => axios.get("/sanctum/csrf-cookie");
+    const csrf = () => axios.get(`/sanctum/csrf-cookie`);
 
     const register = async ({ setErrors, ...props }: any) => {
         await csrf();
@@ -33,7 +34,7 @@ export default function useAuth() {
         setErrors([]);
 
         axios
-            .post("/register", props)
+            .post(`${AUTH_PATH}/register`, props)
             .then(() => mutateGlobal(() => true))
             .catch(error => {
                 if (error.response.status !== 422) {throw error;}
@@ -48,7 +49,7 @@ export default function useAuth() {
         setErrors([]);
 
         await axios
-            .post("/login", props)
+            .post(`${AUTH_PATH}/login`, props)
             .then(() => mutateGlobal(() => true))
             .catch(error => {
                 if (error.response.status !== 422) {
@@ -62,21 +63,21 @@ export default function useAuth() {
     const forgotPassword = async (props: any) => {
         await csrf();
 
-        return await axios.post("/forgot-password", props);
+        return await axios.post(`${AUTH_PATH}/forgot-password`, props);
     };
 
     const resetPassword = async (props: any) => {
         await csrf();
 
-        await axios.post("/reset-password", props);
+        await axios.post(`${AUTH_PATH}/reset-password`, props);
     };
 
     const resendEmailVerification = async () => {
-        await axios.post("/email/verification-notification");
+        await axios.post(`${AUTH_PATH}/email/verification-notification`);
     };
 
     const logout = async () => {
-        await axios.post("/logout").then(() => mutateGlobal(() => true));
+        await axios.post(`${AUTH_PATH}/logout`).then(() => mutateGlobal(() => true));
     };
 
     return {

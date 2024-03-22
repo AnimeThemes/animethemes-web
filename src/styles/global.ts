@@ -65,6 +65,12 @@ export default createGlobalStyle`
             // Except in fullscreen mode.
             overflow-y: hidden;
         }
+        
+        // Workaround for invalid margin added by Radix UI
+        // https://github.com/radix-ui/primitives/issues/1925#issuecomment-1741936046
+        &[style] {
+            margin-right: 0 !important;
+        }
     }
 
     a {

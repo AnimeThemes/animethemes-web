@@ -75,7 +75,7 @@ function PlaylistRemoveForm({ playlist, onSuccess, onCancel }: PlaylistRemoveFor
         setBusy(true);
 
         try {
-            await axios.delete(`/api/playlist/${playlist.id}`);
+            await axios.delete(`/playlist/${playlist.id}`);
             await mutate((key) => [key].flat().includes("/api/me/playlist"));
         } finally {
             setBusy(false);

@@ -20,7 +20,7 @@ const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const CLIENT_API_URL = process.env.NEXT_PUBLIC_API_URL;
 const VIDEO_URL = process.env.NEXT_PUBLIC_VIDEO_URL;
 const AUDIO_URL = process.env.NEXT_PUBLIC_AUDIO_URL;
-const AUTH_URL = process.env.NEXT_PUBLIC_AUTH_URL;
+const AUTH_PATH = process.env.NEXT_PUBLIC_AUTH_PATH;
 
 const STAGING = !!process.env.NEXT_PUBLIC_STAGING;
 const VERBOSE_LOGS = !!process.env.NEXT_PUBLIC_VERBOSE_LOGS;
@@ -41,8 +41,8 @@ function validateConfig() {
     if (!AUDIO_URL) {
         warn(`It is recommended to specify ${pico.cyan("NEXT_PUBLIC_AUDIO_URL")}. Otherwise audios won't play.`);
     }
-    if (!AUTH_URL) {
-        warn(`You haven't specified ${pico.cyan("NEXT_PUBLIC_AUTH_URL")}. This is fine for development, but should be fixed in production.`);
+    if (!AUTH_PATH) {
+        warn(`You haven't specified ${pico.cyan("NEXT_PUBLIC_AUTH_PATH")}. This is fine for development, but should be fixed in production.`);
     }
     return isValid;
 }
@@ -57,7 +57,7 @@ export {
     CLIENT_API_URL,
     VIDEO_URL,
     AUDIO_URL,
-    AUTH_URL,
+    AUTH_PATH,
     STAGING,
     VERBOSE_LOGS,
     AUTH_REFERER,
