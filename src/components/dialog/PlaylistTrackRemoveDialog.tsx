@@ -91,7 +91,7 @@ function PlaylistTrackRemoveForm({ playlist, trackId, video, onSuccess, onCancel
         setBusy(true);
 
         try {
-            await axios.delete(`/api/playlist/${playlist.id}/track/${trackId}`);
+            await axios.delete(`/playlist/${playlist.id}/track/${trackId}`);
             await mutate((key) => (
                 [key].flat().some((key) =>
                     key === `/api/playlist/${playlist.id}` ||

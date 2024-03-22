@@ -84,7 +84,7 @@ function PlaylistEditForm({ playlist, onSuccess, onCancel }: PlaylistEditFormPro
         setError("");
 
         try {
-            await axios.put(`/api/playlist/${playlist.id}`, {
+            await axios.put(`/playlist/${playlist.id}`, {
                 name: title,
                 visibility,
             });

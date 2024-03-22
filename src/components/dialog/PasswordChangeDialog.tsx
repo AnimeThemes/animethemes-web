@@ -12,6 +12,7 @@ import axios from "lib/client/axios";
 import { isAxiosError } from "axios";
 import { useToasts } from "context/toastContext";
 import { Toast } from "components/toast";
+import { AUTH_PATH } from "utils/config.mjs";
 
 export function PasswordChangeDialog() {
     const [open, setOpen] = useState(false);
@@ -68,7 +69,7 @@ function PasswordChangeForm({ onSuccess, onCancel }: PasswordChangeFormProps) {
 
         try {
             await axios.put(
-                "/user/password",
+                `${AUTH_PATH}/user/password`,
                 {
                     current_password: currentPassword,
                     password: newPassword,

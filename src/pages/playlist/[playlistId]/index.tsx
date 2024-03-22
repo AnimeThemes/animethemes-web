@@ -235,7 +235,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
         const previousId = tracks[trackIndex - 1]?.id;
 
         if (nextId || previousId) {
-            await axios.put(`/api/playlist/${playlist.id}/track/${trackId}`, {
+            await axios.put(`/playlist/${playlist.id}/track/${trackId}`, {
                 next: nextId,
                 previous: nextId ? undefined : previousId,
             });
