@@ -195,7 +195,7 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
                             <PageRevalidation lastBuildAt={lastBuildAt} apiRequests={apiRequests} />
                         )}
                         {developerMode === DeveloperMode.ENABLED ? (
-                            <VideoScript video={video} />
+                            <VideoScript key={video.id} video={video} />
                         ) : null}
                     </Column>
                 </StyledScrollArea>

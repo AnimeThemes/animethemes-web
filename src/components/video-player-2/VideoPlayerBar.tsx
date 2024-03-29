@@ -208,9 +208,19 @@ export function VideoPlayerBar() {
                     <MenuContent>
                         <MenuItem onSelect={() => saveToClipboard(location.href)}>Copy URL to this Page</MenuItem>
                         {audioMode === AudioMode.ENABLED ? (
-                            <MenuItem onSelect={() => saveToClipboard(audioUrl)}>Copy URL to Embeddable Audio</MenuItem>
+                            <>
+                                <MenuItem onSelect={() => saveToClipboard(audioUrl)}>Copy URL to Embeddable Audio</MenuItem>
+                                <a href={`${audioUrl}?download`}>
+                                    <MenuItem>Download Audio</MenuItem>
+                                </a>
+                            </>
                         ) : (
-                            <MenuItem onSelect={() => saveToClipboard(videoUrl)}>Copy URL to Embeddable Video</MenuItem>
+                            <>
+                                <MenuItem onSelect={() => saveToClipboard(videoUrl)}>Copy URL to Embeddable Video</MenuItem>
+                                <a href={`${videoUrl}?download`}>
+                                    <MenuItem>Download Video</MenuItem>
+                                </a>
+                            </>
                         )}
                     </MenuContent>
                 </Menu>

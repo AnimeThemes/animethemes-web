@@ -17,7 +17,7 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import type { YearDetailPageAllQuery, YearDetailPageQuery, YearDetailPageQueryVariables } from "generated/graphql";
 import type { RequiredNonNullable } from "utils/types";
 
-const seasonOrder = [ "Winter", "Spring", "Summer", "Fall" ];
+const seasonOrder = [ "winter", "spring", "summer", "fall" ];
 
 export interface YearDetailPageProps extends SharedPageProps, RequiredNonNullable<YearDetailPageQuery> {}
 
@@ -89,7 +89,9 @@ export const getStaticProps: GetStaticProps<YearDetailPageProps, YearDetailPageP
         };
     }
 
-    data.year.seasons.sort((a, b) => seasonOrder.indexOf(a.value) - seasonOrder.indexOf(b.value));
+    data.year.seasons.sort((a, b) =>
+        seasonOrder.indexOf(a.value.toLowerCase()) - seasonOrder.indexOf(b.value.toLowerCase())
+    );
     data.yearAll.sort((a, b) => a.value- b.value);
 
     for (const season of data.year.seasons) {
