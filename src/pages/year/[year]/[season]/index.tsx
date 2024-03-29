@@ -13,7 +13,7 @@ import type { ParsedUrlQuery } from "querystring";
 import type { RequiredNonNullable } from "utils/types";
 import { capitalize } from "lodash-es";
 
-const seasonOrder = [ "Winter", "Spring", "Summer", "Fall" ];
+const seasonOrder = [ "winter", "spring", "summer", "fall" ];
 
 export interface SeasonDetailPageProps extends SharedPageProps, RequiredNonNullable<SeasonDetailPageQuery> {}
 
@@ -79,7 +79,9 @@ export const getStaticProps: GetStaticProps<SeasonDetailPageProps, SeasonDetailP
         };
     }
 
-    data.year.seasons.sort((a, b) => seasonOrder.indexOf(a.value) - seasonOrder.indexOf(b.value));
+    data.year.seasons.sort((a, b) =>
+        seasonOrder.indexOf(a.value.toLowerCase()) - seasonOrder.indexOf(b.value.toLowerCase())
+    );
     data.yearAll.sort((a, b) => a.value - b.value);
 
     return {

@@ -138,6 +138,7 @@ export const StyledAside = styled.aside`
     flex-direction: column;
     gap: 32px;
     
+    min-width: 0;
     padding-top: 64px;
 
     @media (max-width: ${theme.breakpoints.tabletMax}) {
