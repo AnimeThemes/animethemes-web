@@ -109,6 +109,7 @@ const typeDefs = `
         audio: Audio!
         script: VideoScript
         entries: [Entry!]!
+        tracks: [PlaylistTrack!]!
     }
     
     type VideoScript {
@@ -253,6 +254,7 @@ const typeDefs = `
     type PlaylistTrack {
         id: String!
         video: Video!
+        playlist: Playlist!
     }
     
     interface User {
@@ -271,6 +273,7 @@ const typeDefs = `
         email: String!
         email_verified_at: String
         created_at: String!
+        permissions: [Permission!]!
         roles: [UserRole!]!
     }
     
@@ -279,6 +282,12 @@ const typeDefs = `
         color: String
         priority: Int
         default: Boolean!
+        permissions: [Permission!]!
+    }
+    
+    type Permission {
+        id: Int!
+        name: String!
     }
     
     schema {

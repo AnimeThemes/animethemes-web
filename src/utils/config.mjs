@@ -8,7 +8,6 @@ import { error, warn } from "./log.mjs";
 const SERVER_API_URL = process.env.ANIMETHEMES_API_URL;
 const SERVER_API_KEY = process.env.ANIMETHEMES_API_KEY;
 
-const REVALIDATE_TOKEN = process.env.REVALIDATE_TOKEN;
 const ANALYZE = !!process.env.ANALYZE;
 const MINIMAL_BUILD = !!process.env.MINIMAL_BUILD;
 const AUTH_REFERER = String(process.env.AUTH_REFERER);
@@ -50,7 +49,6 @@ function validateConfig() {
 export {
     SERVER_API_URL,
     SERVER_API_KEY,
-    REVALIDATE_TOKEN,
     ANALYZE,
     MINIMAL_BUILD,
     BASE_PATH,

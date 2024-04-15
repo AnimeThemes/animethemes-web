@@ -1,9 +1,9 @@
 import { fetchData } from "lib/server";
 import gql from "graphql-tag";
 import createVideoSlug from "utils/createVideoSlug";
-import { BASE_PATH, REVALIDATE_TOKEN } from "utils/config.mjs";
+import { BASE_PATH } from "utils/config.mjs";
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { RevalidateAnimeQuery } from "generated/graphql";
+import type { RevalidateAnimeQuery, RevalidateApiQuery } from "generated/graphql";
 
 interface RevalidateQuery {
     secret?: string
@@ -20,10 +20,36 @@ type RevalidateResult = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<RevalidateResult>) {
-    const { secret, id, resource, mode = "page" } = req.query as RevalidateQuery;
+    const { id, resource, mode = "page" } = req.query as RevalidateQuery;
+    const { data: { me } } = await fetchData<RevalidateApiQuery>(gql`
+        query RevalidateApi {
+            me {
+                user {
+                    permissions {
+                        name
+                    }
+                    roles {
+                        permissions {
+                            name
+                        }
+                    }
+                }
+            }
+        }
+    `, undefined, { req });
+    const canRevalidate = (() => {
+        const userPermissions = me.user?.permissions ?? [];
+        const rolePermissions = me.user?.roles.flatMap((role) => role.permissions) ?? [];
+        for (const permission of [...userPermissions, ...rolePermissions]) {
+            if (permission.name === "revalidate pages") {
+                return true;
+            }
+        }
+        return false;
+    })();
 
-    if (secret !== REVALIDATE_TOKEN) {
-        return res.status(401).json({ message: "Invalid token." });
+    if (!canRevalidate) {
+        return res.status(403).json({ message: "Forbidden." });
     }
 
     if (!id) {

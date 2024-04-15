@@ -1,4 +1,4 @@
-import { fetchRandomThemes } from "lib/client/randomTheme";
+import { fetchRandomThemes, type RandomThemesOptions } from "lib/client/randomTheme";
 import PlayerContext, { createWatchListItem } from "context/playerContext";
 import { useContext } from "react";
 import { useRouter } from "next/router";
@@ -8,9 +8,9 @@ export default function useRandomThemes() {
     const router = useRouter();
     const { setWatchList, setWatchListFactory, setCurrentWatchListItem } = useContext(PlayerContext);
 
-    async function playRandomThemes() {
+    async function playRandomThemes(options: RandomThemesOptions) {
         const factory = async () => {
-            const themes = await fetchRandomThemes();
+            const themes = await fetchRandomThemes(options);
 
             return themes.map((theme) => {
                 const entry = theme.entries[0];

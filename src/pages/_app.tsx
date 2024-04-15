@@ -20,25 +20,23 @@ import { ToastProvider } from "context/toastContext";
 import { ToastHub } from "components/toast";
 import { Text } from "components/text";
 import { useRouter } from "next/router";
-import useSetting from "hooks/useSetting";
-import { DeveloperMode } from "utils/settings";
 import { ErrorBoundary } from "components/utils";
 import { STAGING } from "utils/config.mjs";
 import { Card } from "components/card";
 import { ExternalLink } from "components/external-link";
 import type { AppProps } from "next/app";
 import { LazyMotion } from "framer-motion";
-import { VideoPlayer2 } from "components/video-player-2/VideoPlayer2";
+import { VideoPlayer } from "components/video-player/VideoPlayer";
 import { PageRevalidation } from "components/utils/PageRevalidation";
 import type { VideoPageProps } from "pages/anime/[animeSlug]/[videoSlug]";
 import FullscreenContext from "context/fullscreenContext";
-import { VideoPlayerOverlay } from "components/video-player-2/VideoPlayerOverlay";
+import { VideoPlayerOverlay } from "components/video-player/VideoPlayerOverlay";
 import { useFullscreen } from "ahooks";
 import { either, sortTransformed, themeIndexComparator, themeTypeComparator } from "utils/comparators";
+import useLocalStorageState from "use-local-storage-state";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "styles/prism.scss";
-import useLocalStorageState from "use-local-storage-state";
 
 config.autoAddCss = false;
 
@@ -67,7 +65,6 @@ const StyledFullWidthContainer = styled(Container)`
 export default function MyApp({ Component, pageProps }: AppProps) {
     const router = useRouter();
     const [colorTheme, setColorTheme] = useColorTheme();
-    const [developerMode] = useSetting(DeveloperMode);
 
     const { lastBuildAt, apiRequests, isVideoPage = false, isFullWidthPage = false } = pageProps;
 
@@ -90,8 +87,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
     const [isWaitingForVideoPage, setWaitingForVideoPage] = useState(!isVideoPage);
 
-    const [isAutoPlay, setAutoPlay] = useLocalStorageState("auto-play", { defaultValue: false });
-    const [isForceAutoPlay, setForceAutoPlay] = useState(false);
+    const [isGlobalAutoPlay, setGlobalAutoPlay] = useLocalStorageState("auto-play", { defaultValue: false });
+    const [isLocalAutoPlay, setLocalAutoPlay] = useState(true);
+    const [isWatchListUsingLocalAutoPlay, setIsWatchListUsingLocalAutoPlay] = useState(false);
 
     const currentBasename = getBasename(pageProps);
     const [previousBasename, setPreviousBasename] = useState<string | null>(() => getBasename(pageProps));
@@ -150,7 +148,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             setWatchList(watchList);
             setWatchListFactory(null);
             setCurrentWatchListItemId(watchList.find((item) => item.id === video.id)?.watchListId ?? null);
-            setForceAutoPlay(false);
+            setIsWatchListUsingLocalAutoPlay(false);
         }
 
         return null;
@@ -169,9 +167,12 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                     // Do nothing
                 },
                 watchList,
-                setWatchList: (watchList, forceAutoPlay = false) => {
+                setWatchList: (watchList, useLocalAutoPlay = false) => {
                     setWatchList(watchList);
-                    setForceAutoPlay(forceAutoPlay);
+                    setIsWatchListUsingLocalAutoPlay(useLocalAutoPlay);
+                    if (useLocalAutoPlay) {
+                        setLocalAutoPlay(true);
+                    }
                 },
                 watchListFactory,
                 setWatchListFactory: (factory) => setWatchListFactory(() => factory),
@@ -201,9 +202,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                         ...watchList.slice(currentIndex + 1)
                     ]);
                 },
-                isAutoPlay,
-                setAutoPlay,
-                isForceAutoPlay,
+                isGlobalAutoPlay,
+                setGlobalAutoPlay,
+                isLocalAutoPlay,
+                setLocalAutoPlay,
+                isWatchListUsingLocalAutoPlay,
             } }),
             stackContext(QueryClientProvider, { client: queryClient }),
             stackContext(ToastProvider, {}),
@@ -248,7 +251,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                                 </Card>
                             ) : null}
                             <Component {...pageProps}/>
-                            {developerMode === DeveloperMode.ENABLED && lastBuildAt && (
+                            {lastBuildAt && (
                                 <PageRevalidation lastBuildAt={lastBuildAt} apiRequests={apiRequests}/>
                             )}
                         </Container>
@@ -256,7 +259,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                     </>
                 ) : null}
                 {currentWatchListItem && !isWaitingForVideoPage && (
-                    <VideoPlayer2
+                    <VideoPlayer
                         video={currentWatchListItem}
                         background={!isVideoPage}
                         overlay={isVideoPage ? <VideoPlayerOverlay {...pageProps} /> : null}
@@ -264,7 +267,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                         {isVideoPage ? (
                             <Component {...pageProps}/>
                         ) : null}
-                    </VideoPlayer2>
+                    </VideoPlayer>
                 )}
             </StyledWrapper>
             <ToastHub/>

@@ -108,7 +108,7 @@ export default createGlobalStyle`
         font-weight: inherit;
 
         ::placeholder {
-            color: ${theme.colors["text-muted"]};
+            color: ${theme.colors["text-disabled"]};
         }
     }
 

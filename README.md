@@ -34,9 +34,6 @@ ANIMETHEMES_API_URL=http://localhost
 ; This is used to by-pass rate limiting.
 ANIMETHEMES_API_KEY=...
 
-; The token to use for manual revalidation.
-REVALIDATE_TOKEN=secret
-
 ; Set to any truthy value to activate minimal build mode.
 ; In minimal build mode, only a small subset of pages get prerendered at build time.
 MINIMAL_BUILD=true

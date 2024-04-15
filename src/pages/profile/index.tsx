@@ -4,15 +4,14 @@ import { Column, Row } from "components/box";
 import { Text } from "components/text";
 import { Card, SummaryCard, ThemeSummaryCard } from "components/card";
 import { Button, IconTextButton } from "components/button";
-import { faEllipsisV, faExclamationCircle, faKey, faPersonToDoor, faTrash } from "@fortawesome/pro-solid-svg-icons";
+import { faEllipsisV, faExclamationCircle, faPersonToDoor, faTrash } from "@fortawesome/pro-solid-svg-icons";
 import type { WatchHistory } from "hooks/useWatchHistory";
 import useWatchHistory from "hooks/useWatchHistory";
 import useLocalPlaylist from "hooks/useLocalPlaylist";
 import theme from "theme";
 import { SearchFilter, SearchFilterGroup } from "components/search-filter";
-import { ColorTheme, DeveloperMode, FeaturedThemePreview, RevalidationToken, ShowAnnouncements } from "utils/settings";
+import { ColorTheme, FeaturedThemePreview, ShowAnnouncements } from "utils/settings";
 import useSetting from "hooks/useSetting";
-import { Input } from "components/form";
 import { memo, useState } from "react";
 import { PlaylistAddDialog } from "components/dialog/PlaylistAddDialog";
 import PlaylistSummaryCard from "components/card/PlaylistSummaryCard";
@@ -37,6 +36,7 @@ import { handleAxiosError } from "lib/client/axios";
 import { PasswordChangeDialog } from "components/dialog/PasswordChangeDialog";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "components/menu/Menu";
 import { Listbox, ListboxOption } from "components/listbox/Listbox";
+import { UserInformationDialog } from "../../components/dialog/UserInformationDialog";
 
 const StyledProfileGrid = styled.div`
     --columns: 2;
@@ -157,8 +157,6 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
 
     const [showAnnouncements, setShowAnnouncements] = useSetting(ShowAnnouncements);
     const [featuredThemePreview, setFeaturedThemePreview] = useSetting(FeaturedThemePreview);
-    const [developerMode, setDeveloperMode] = useSetting(DeveloperMode);
-    const [revalidationToken, setRevalidationToken] = useSetting(RevalidationToken);
     const [colorTheme, setColorTheme] = useSetting(ColorTheme);
 
     const roles = (me.user?.roles ?? [])
@@ -253,7 +251,10 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                     {me.user ? (
                         <Column style={{ "--gap": "24px" }}>
                             <Text variant="h2">Account Settings</Text>
-                            <PasswordChangeDialog />
+                            <Column style={{ "--gap": "16px" }}>
+                                <UserInformationDialog />
+                                <PasswordChangeDialog />
+                            </Column>
                         </Column>
                     ) : null}
                     <Column style={{ "--gap": "24px" }}>
@@ -282,25 +283,6 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                                     <ListboxOption value={FeaturedThemePreview.DISABLED}>Disabled</ListboxOption>
                                 </Listbox>
                             </SearchFilter>
-                        </SearchFilterGroup>
-                        <SearchFilterGroup>
-                            <SearchFilter>
-                                <Text>Developer Mode</Text>
-                                <Listbox value={developerMode} onValueChange={setDeveloperMode}>
-                                    <ListboxOption value={DeveloperMode.DISABLED}>Disabled</ListboxOption>
-                                    <ListboxOption value={DeveloperMode.ENABLED}>Enabled</ListboxOption>
-                                </Listbox>
-                            </SearchFilter>
-                            {developerMode === DeveloperMode.ENABLED && (
-                                <SearchFilter>
-                                    <Text>Revalidation Token</Text>
-                                    <Input
-                                        value={revalidationToken ?? ""}
-                                        onChange={setRevalidationToken}
-                                        icon={faKey}
-                                    />
-                                </SearchFilter>
-                            )}
                         </SearchFilterGroup>
                     </Column>
                     <Column style={{ "--gap": "24px" }}>

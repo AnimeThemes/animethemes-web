@@ -1,186 +1,165 @@
-import styled, { css, keyframes } from "styled-components";
-import { m } from "framer-motion";
-import { Button } from "components/button";
+import styled from "styled-components";
 import theme from "theme";
-import { slideIn } from "styles/animations";
+import { Switcher } from "components/switcher";
+import { m } from "framer-motion";
 
-const slowPan = keyframes`
-    from, to {
-        object-position: top;
+export const StyledPlayer = styled.div`    
+    position: sticky;
+    bottom: 0;
+    
+    display: flex;
+    flex-direction: column;
+    
+    &:not([data-background]) {
+        flex: 1;
     }
-    50% {
-        object-position: bottom;
+
+    [data-fullscreen] &[data-relaxed] {
+        cursor: none;
     }
 `;
 
-export const StyledPlayer = styled(m.div)<{ $background: boolean }>`
-    width: 100%;
-    max-height: calc(100vh - 96px);
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-    z-index: ${theme.zIndices.videoPlayer};
+export const StyledPlayerContent = styled.div`
+    flex: 1;
     
-    ${(props) => props.$background ? css`
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-gap: 5%;
+    
+    padding: 0 5%;
+    
+    @media (max-width: ${theme.breakpoints.tabletMax}) {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+        grid-gap: 16px;
+        
+        padding: 0 16px;
+    }
+    
+    [data-background] & {
         position: fixed;
+        inset: 70px 16px 92px 16px;
+        pointer-events: none;
+    }
+    
+    [data-fullscreen] & {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        padding: 0;
+    }
+`;
 
-        @media (max-width: 720px) {
-            display: flex;
-            
-            height: 4rem;
-            bottom: 0;
-            left: 0;
-            overflow: visible;
-            
-            background-color: ${theme.colors["solid"]};
+export const StyledPlaybackArea = styled(m.div)`
+    align-self: stretch;
+    justify-self: stretch;
+    
+    position: relative;
+    
+    margin: 32px 0;
+    
+    @media (max-width: ${theme.breakpoints.tabletMax}) {
+        aspect-ratio: 16 / 9;
+        margin: 0 -16px;
 
-            animation: ${slideIn()} 500ms ease;
-            
-            & ${StyledVideo}, & ${StyledAudioBackground} {
-                width: auto;
-                aspect-ratio: auto;
-            }
-            
-            & ${StyledAudioCover} {
-                filter: none;
-                transform: none;
-                animation: none;
-            }
+        [data-background] & {
+            display: none;
         }
-        @media (min-width: 721px) {
-            width: 352px;
-            bottom: 1rem;
-            left: 1rem;
-            
-            box-shadow: ${theme.shadows.high};
+
+        [data-fullscreen] & {
+            aspect-ratio: auto;
         }
-    ` : css`
-        @media (max-width: 720px) and (orientation: portrait) {
-            position: sticky;
-            top: 0;
-        }
-        @media (min-width: 721px) {
-            margin: 1.5rem auto 0 auto;
-            max-width: 1100px;
-        }
-    `}
+    }
+
+    [data-background] & {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 300px;
+        aspect-ratio: 16 / 9;
+        margin: 0;
+        padding: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        pointer-events: all;
+    }
+    
+    [data-fullscreen] & {
+        height: 100%;
+        margin: 0;
+        background: rgba(0, 0, 0);
+    }
+`;
+
+export const StyledVideoBackground = styled.div`
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    
+    max-width: 100%;
+    max-height: 100%;
+    aspect-ratio: 16 / 9;
 `;
 
 export const StyledVideo = styled.video`
     width: 100%;
     height: 100%;
-    outline: none;
-    background-color: rgb(0, 0, 0);
-`;
-
-export const StyledAudio = styled.audio`
-    position: absolute;
+    
     outline: none;
 `;
 
 export const StyledAudioBackground = styled.div`
-    position: relative;
+    position: absolute;
+    inset: 0;
+    margin: auto;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    width: 100%;
-    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+`;
+
+export const StyledAudio = styled.audio`
+    display: none;
 `;
 
 export const StyledAudioCover = styled.img`
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    filter: blur(5px);
-    transform: scale(1.1);
-    
-    @media (prefers-reduced-motion: no-preference) {
-        animation: ${slowPan} 120s ease-in-out infinite;
+
+    outline: none;
+    object-fit: contain;
+
+    [data-background] & {
+        pointer-events: none;
     }
 `;
 
-export const StyledOverlay = styled.div<{ force: boolean }>`        
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    
-    @media (max-width: 720px) {
-        flex-direction: row-reverse;
-    }
-    @media (min-width: 721px) {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        z-index: ${theme.zIndices.videoPlayerOverlay};
-
-        gap: 8px;
-        
-        opacity: ${(props) => props.force ? 1 : 0};
-        background-color: hsla(0 0% 0% / 0.5);
-
-        transition: opacity 500ms 1000ms;
-        
-        &:hover {
-            opacity: 1;
-
-            transition: opacity 250ms;
-        }
-    }
-`;
-
-export const StyledPlayerButton = styled(Button).attrs({ variant: "silent", isCircle: true })`
-    padding: 1rem;
-    
-    @media (max-width: 720px) {
-        font-size: 1rem;
-        
-        ${(props) => props.hideOnMobile && css`
-            display: none;
-        `}
-    }
-    @media (min-width: 721px) {
-        font-size: ${(props) => props.size || "1rem"};
-    }
-`;
-
-export const StyledPlayerInfo = styled.div`
-    flex: 1;
-    
+export const StyledAside = styled.aside`
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    gap: 32px;
     
     min-width: 0;
-    padding: 0.5rem 1rem;
-    gap: 4px;
+    padding-top: 64px;
+
+    @media (max-width: ${theme.breakpoints.tabletMax}) {
+        padding-top: 0;
+        gap: 16px;
+    }
     
-    @media (min-width: 721px) {
+    [data-background] &, [data-fullscreen] & {
         display: none;
     }
 `;
 
-export const StyledPlayerProgress = styled.div`
-    position: absolute;
-    top: -4px;
-    left: 0;
-    
+export const StyledSwitcher = styled(Switcher)`
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
     width: 100%;
-    height: 4px;
-    
-    background-color: ${theme.colors["background"]};
-
-    @media (min-width: 721px) {
-        display: none;
-    }
 `;
 
-export const StyledPlayerProgressBar = styled.div`
-    width: 0;
-    height: 100%;
+export const StyledScrollArea = styled.div`
+    flex: 1 0 0;
     
-    background-color: ${theme.colors["text-primary"]};
+    padding-bottom: 16px;
+    overflow: auto;
 `;

@@ -172,6 +172,11 @@ export type Performance = {
   song: Song;
 };
 
+export type Permission = {
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
 export type Playlist = {
   forward: Array<PlaylistTrack>;
   id: Scalars['String'];
@@ -189,6 +194,7 @@ export type PlaylistSearchResult = EntitySearchResult & {
 
 export type PlaylistTrack = {
   id: Scalars['String'];
+  playlist: Playlist;
   video: Video;
 };
 
@@ -461,6 +467,7 @@ export type UserAuth = User & {
   email_verified_at: Maybe<Scalars['String']>;
   id: Scalars['Int'];
   name: Scalars['String'];
+  permissions: Array<Permission>;
   roles: Array<UserRole>;
 };
 
@@ -473,6 +480,7 @@ export type UserRole = {
   color: Maybe<Scalars['String']>;
   default: Scalars['Boolean'];
   name: Scalars['String'];
+  permissions: Array<Permission>;
   priority: Maybe<Scalars['Int']>;
 };
 
@@ -504,6 +512,7 @@ export type Video = {
   source: Maybe<VideoSource>;
   subbed: Scalars['Boolean'];
   tags: Scalars['String'];
+  tracks: Array<PlaylistTrack>;
   uncen: Scalars['Boolean'];
 };
 
@@ -690,22 +699,16 @@ export type SongTitleWithArtistsSongFragment = { title: string | null, performan
 
 export type SongTitleWithArtistsArtistFragment = { slug: string };
 
-export type VideoPlayerAnimeFragment = { slug: string, name: string, images: Array<{ link: string, facet: string | null }> };
-
-export type VideoPlayerThemeFragment = { slug: string, song: { title: string | null } | null };
-
-export type VideoPlayerEntryFragment = { version: number | null };
-
-export type VideoPlayerVideoFragment = { basename: string, tags: string, audio: { basename: string } };
-
 export type VideoScriptVideoFragment = { script: { link: string } | null };
 
 export type CheckAuthQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CheckAuthQuery = { me: { user: { id: number, name: string, email: string } | null } };
+export type CheckAuthQuery = { me: { user: { id: number, name: string, email: string, permissions: Array<{ name: string }>, roles: Array<{ permissions: Array<{ name: string }> }> } | null } };
 
-export type RandomThemeQueryVariables = Exact<{ [key: string]: never; }>;
+export type RandomThemeQueryVariables = Exact<{
+  args: SearchArgs;
+}>;
 
 
 export type RandomThemeQuery = { searchTheme: { data: Array<{ slug: string, type: string, sequence: number | null, group: string | null, id: number, entries: Array<{ version: number | null, episodes: string | null, spoiler: boolean, nsfw: boolean, videos: Array<{ basename: string, id: number, tags: string, resolution: number | null, nc: boolean, subbed: boolean, lyrics: boolean, uncen: boolean, source: VideoSource | null, overlap: VideoOverlap, audio: { basename: string } }> }>, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null }> } };
@@ -727,19 +730,19 @@ export type DumpIndexPageQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type DumpIndexPageQuery = { dumpAll: Array<{ path: string, link: string, created_at: string }> };
 
-export type VideoPageAnimeFragment = { name: string, slug: string, year: number | null, season: string | null, media_format: string | null, themes: Array<{ id: number, slug: string, group: string | null, type: string, sequence: number | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } }> } | null, entries: Array<{ episodes: string | null, nsfw: boolean, spoiler: boolean, version: number | null, videos: Array<{ id: number, basename: string, filename: string, lyrics: boolean, nc: boolean, overlap: VideoOverlap, resolution: number | null, source: VideoSource | null, subbed: boolean, uncen: boolean, tags: string, entries: Array<{ theme: { slug: string, type: string, sequence: number | null, group: string | null, id: number, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null, entries: Array<{ version: number | null, videos: Array<{ id: number, basename: string, tags: string, audio: { basename: string } }> }> } }>, audio: { basename: string }, script: { link: string } | null }> }>, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } }>, images: Array<{ facet: string | null, link: string }>, series: Array<{ slug: string, name: string }>, studios: Array<{ slug: string, name: string }> };
+export type VideoPageAnimeFragment = { name: string, slug: string, year: number | null, season: string | null, media_format: string | null, themes: Array<{ id: number, slug: string, group: string | null, type: string, sequence: number | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } }> } | null, entries: Array<{ episodes: string | null, nsfw: boolean, spoiler: boolean, version: number | null, videos: Array<{ id: number, basename: string, filename: string, lyrics: boolean, nc: boolean, overlap: VideoOverlap, resolution: number | null, source: VideoSource | null, subbed: boolean, uncen: boolean, tags: string, entries: Array<{ theme: { slug: string, type: string, sequence: number | null, group: string | null, id: number, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null, entries: Array<{ version: number | null, videos: Array<{ id: number, basename: string, tags: string, audio: { basename: string } }> }> } }>, tracks: Array<{ playlist: { id: string, name: string, visibility: PlaylistVisibility, tracks_count: number } }>, audio: { basename: string }, script: { link: string } | null }> }>, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } }>, images: Array<{ facet: string | null, link: string }>, series: Array<{ slug: string, name: string }>, studios: Array<{ slug: string, name: string }> };
 
 export type VideoPageQueryVariables = Exact<{
   animeSlug: Scalars['String'];
 }>;
 
 
-export type VideoPageQuery = { anime: { name: string, slug: string, year: number | null, season: string | null, media_format: string | null, themes: Array<{ id: number, slug: string, group: string | null, type: string, sequence: number | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } }> } | null, entries: Array<{ episodes: string | null, nsfw: boolean, spoiler: boolean, version: number | null, videos: Array<{ id: number, basename: string, filename: string, lyrics: boolean, nc: boolean, overlap: VideoOverlap, resolution: number | null, source: VideoSource | null, subbed: boolean, uncen: boolean, tags: string, entries: Array<{ theme: { slug: string, type: string, sequence: number | null, group: string | null, id: number, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null, entries: Array<{ version: number | null, videos: Array<{ id: number, basename: string, tags: string, audio: { basename: string } }> }> } }>, audio: { basename: string }, script: { link: string } | null }> }>, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } }>, images: Array<{ facet: string | null, link: string }>, series: Array<{ slug: string, name: string }>, studios: Array<{ slug: string, name: string }> } | null };
+export type VideoPageQuery = { anime: { name: string, slug: string, year: number | null, season: string | null, media_format: string | null, themes: Array<{ id: number, slug: string, group: string | null, type: string, sequence: number | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } }> } | null, entries: Array<{ episodes: string | null, nsfw: boolean, spoiler: boolean, version: number | null, videos: Array<{ id: number, basename: string, filename: string, lyrics: boolean, nc: boolean, overlap: VideoOverlap, resolution: number | null, source: VideoSource | null, subbed: boolean, uncen: boolean, tags: string, entries: Array<{ theme: { slug: string, type: string, sequence: number | null, group: string | null, id: number, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null, entries: Array<{ version: number | null, videos: Array<{ id: number, basename: string, tags: string, audio: { basename: string } }> }> } }>, tracks: Array<{ playlist: { id: string, name: string, visibility: PlaylistVisibility, tracks_count: number } }>, audio: { basename: string }, script: { link: string } | null }> }>, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } }>, images: Array<{ facet: string | null, link: string }>, series: Array<{ slug: string, name: string }>, studios: Array<{ slug: string, name: string }> } | null };
 
 export type VideoPageAllQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type VideoPageAllQuery = { animeAll: Array<{ name: string, slug: string, year: number | null, season: string | null, media_format: string | null, themes: Array<{ id: number, slug: string, group: string | null, type: string, sequence: number | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } }> } | null, entries: Array<{ episodes: string | null, nsfw: boolean, spoiler: boolean, version: number | null, videos: Array<{ id: number, basename: string, filename: string, lyrics: boolean, nc: boolean, overlap: VideoOverlap, resolution: number | null, source: VideoSource | null, subbed: boolean, uncen: boolean, tags: string, entries: Array<{ theme: { slug: string, type: string, sequence: number | null, group: string | null, id: number, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null, entries: Array<{ version: number | null, videos: Array<{ id: number, basename: string, tags: string, audio: { basename: string } }> }> } }>, audio: { basename: string }, script: { link: string } | null }> }>, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } }>, images: Array<{ facet: string | null, link: string }>, series: Array<{ slug: string, name: string }>, studios: Array<{ slug: string, name: string }> }> };
+export type VideoPageAllQuery = { animeAll: Array<{ name: string, slug: string, year: number | null, season: string | null, media_format: string | null, themes: Array<{ id: number, slug: string, group: string | null, type: string, sequence: number | null, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } }> } | null, entries: Array<{ episodes: string | null, nsfw: boolean, spoiler: boolean, version: number | null, videos: Array<{ id: number, basename: string, filename: string, lyrics: boolean, nc: boolean, overlap: VideoOverlap, resolution: number | null, source: VideoSource | null, subbed: boolean, uncen: boolean, tags: string, entries: Array<{ theme: { slug: string, type: string, sequence: number | null, group: string | null, id: number, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null, entries: Array<{ version: number | null, videos: Array<{ id: number, basename: string, tags: string, audio: { basename: string } }> }> } }>, tracks: Array<{ playlist: { id: string, name: string, visibility: PlaylistVisibility, tracks_count: number } }>, audio: { basename: string }, script: { link: string } | null }> }>, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> } }>, images: Array<{ facet: string | null, link: string }>, series: Array<{ slug: string, name: string }>, studios: Array<{ slug: string, name: string }> }> };
 
 export type AnimeDetailPageAnimeFragment = { slug: string, name: string, season: string | null, year: number | null, synopsis: string | null, media_format: string | null, synonyms: Array<{ text: string | null }>, series: Array<{ slug: string, name: string }>, studios: Array<{ slug: string, name: string }>, resources: Array<{ site: string | null, link: string | null, as: string | null }>, themes: Array<{ slug: string, type: string, sequence: number | null, group: string | null, id: number, anime: { slug: string, name: string, images: Array<{ link: string, facet: string | null }> }, song: { title: string | null, performances: Array<{ as: string | null, artist: { slug: string, name: string } }> } | null, entries: Array<{ version: number | null, episodes: string | null, spoiler: boolean, nsfw: boolean, videos: Array<{ filename: string, tags: string, id: number, basename: string, resolution: number | null, nc: boolean, subbed: boolean, lyrics: boolean, uncen: boolean, source: VideoSource | null, overlap: VideoOverlap, audio: { basename: string } }> }> }>, images: Array<{ link: string, facet: string | null }> };
 
@@ -759,6 +762,11 @@ export type AnimeIndexPageQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type AnimeIndexPageQuery = { animeAll: Array<{ slug: string, name: string }> };
+
+export type RevalidateApiQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RevalidateApiQuery = { me: { user: { permissions: Array<{ name: string }>, roles: Array<{ permissions: Array<{ name: string }> }> } | null } };
 
 export type RevalidateAnimeQueryVariables = Exact<{
   animeSlug: Scalars['String'];

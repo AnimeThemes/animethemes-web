@@ -19,18 +19,6 @@ export const FeaturedThemePreview: Setting<string> = Object.freeze({
     DISABLED: "disabled",
 });
 
-export const DeveloperMode: Setting<string> = Object.freeze({
-    __KEY__: "devMode",
-    __INITIAL_VALUE__: "disabled",
-    DISABLED: "disabled",
-    ENABLED: "enabled",
-});
-
-export const RevalidationToken: Setting<string | undefined> = Object.freeze({
-    __KEY__: "revalidationToken",
-    __INITIAL_VALUE__: undefined,
-});
-
 export const GlobalVolume: Setting<number> = Object.freeze({
     __KEY__: "volume",
     __INITIAL_VALUE__: 1,
