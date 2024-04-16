@@ -8,10 +8,9 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import { fetchData } from "lib/server";
 import gql from "graphql-tag";
 import type { RequiredNonNullable } from "utils/types";
-import { VideoPlayer } from "components/video-player";
 import VideoScript from "components/video-script/VideoScript";
 import { HorizontalScroll } from "components/utils";
-import { StyledScrollArea, StyledSwitcher } from "components/video-player-2/VideoPlayer2.style";
+import { StyledScrollArea, StyledSwitcher } from "components/video-player/VideoPlayer.style";
 import { SwitcherOption } from "components/switcher/Switcher";
 import { Column, Row } from "components/box";
 import { VideoSummaryCard } from "components/card/VideoSummaryCard";
@@ -19,14 +18,13 @@ import { Text } from "components/text";
 import { IconTextButton } from "components/button";
 import { useContext, useEffect, useRef, useState } from "react";
 import PlayerContext from "context/playerContext";
-import { DeveloperMode } from "utils/settings";
 import { PageRevalidation } from "components/utils/PageRevalidation";
-import useSetting from "hooks/useSetting";
 import { SEO } from "components/seo";
 import extractImages from "utils/extractImages";
 import { VIDEO_URL } from "utils/config.mjs";
 import { faChevronDown, faChevronUp } from "@fortawesome/pro-solid-svg-icons";
 import Switch from "components/form/Switch";
+import PlaylistSummaryCard from "../../../../components/card/PlaylistSummaryCard";
 
 export interface VideoPageProps extends SharedPageProps, RequiredNonNullable<VideoPageQuery> {
     themeIndex: number
@@ -52,19 +50,22 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
         watchList,
         currentWatchListItem,
         setCurrentWatchListItem,
-        isAutoPlay,
-        setAutoPlay,
-        isForceAutoPlay,
+        isGlobalAutoPlay,
+        setGlobalAutoPlay,
+        isLocalAutoPlay,
+        setLocalAutoPlay,
+        isWatchListUsingLocalAutoPlay,
     } = useContext(PlayerContext);
-    const [developerMode] = useSetting(DeveloperMode);
     const [selectedTab, setSelectedTab] = useState<"watch-list" | "info" | "related">(() => {
         return watchList.length > 1 ? "watch-list" : "info";
     });
     const [showMoreRelatedThemes, setShowMoreRelatedThemes] = useState(false);
+    const [showMoreRelatedPlaylists, setShowMoreRelatedPlaylists] = useState(false);
 
     const relatedThemes = anime.themes
         .filter((relatedTheme) => relatedTheme.slug !== theme.slug)
         .slice(0, showMoreRelatedThemes ? undefined : 3);
+    const relatedPlaylists = video.tracks.map((track) => track.playlist);
 
     const usedAlsoAs = video.entries
         .map((entry) => entry.theme)
@@ -139,12 +140,19 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
             </HorizontalScroll>
             {selectedTab === "watch-list" ? (
                 <>
-                    {!isForceAutoPlay && (
-                        <Row style={{ "--justify-content": "space-between" }}>
-                            <Text color="text-muted">Auto-play related themes:</Text>
-                            <Switch isChecked={isAutoPlay} onCheckedChange={setAutoPlay} />
-                        </Row>
-                    )}
+                    <Row style={{ "--justify-content": "space-between" }}>
+                        {isWatchListUsingLocalAutoPlay ? (
+                            <>
+                                <Text color="text-muted">Auto-play:</Text>
+                                <Switch isChecked={isLocalAutoPlay} onCheckedChange={setLocalAutoPlay} />
+                            </>
+                        ) : (
+                            <>
+                                <Text color="text-muted">Auto-play related themes:</Text>
+                                <Switch isChecked={isGlobalAutoPlay} onCheckedChange={setGlobalAutoPlay} />
+                            </>
+                        )}
+                    </Row>
                     <StyledScrollArea>
                         <Column style={{ "--gap": "16px" }}>
                             {watchList.map((watchListItem) => (
@@ -183,6 +191,34 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
                                 ))}
                             </>
                         )}
+                        {lastBuildAt && (
+                            <PageRevalidation lastBuildAt={lastBuildAt} apiRequests={apiRequests} />
+                        )}
+                        <VideoScript key={video.id} video={video} />
+                    </Column>
+                </StyledScrollArea>
+            ) : null}
+            {selectedTab === "related" ? (
+                <StyledScrollArea>
+                    <Column style={{ "--gap": "16px" }}>
+                        {!!relatedPlaylists.length && (
+                            <>
+                                <Text variant="h2">Part of these Playlists</Text>
+                                {relatedPlaylists.slice(0, showMoreRelatedThemes ? undefined : 3).map((playlist) => (
+                                    <PlaylistSummaryCard key={playlist.id} playlist={playlist} />
+                                ))}
+                                {relatedPlaylists.length > 3 ? (
+                                    <Row style={{ "--justify-content": "center" }}>
+                                        <IconTextButton
+                                            icon={showMoreRelatedPlaylists ? faChevronUp : faChevronDown}
+                                            variant="silent"
+                                            isCircle
+                                            onClick={() => setShowMoreRelatedPlaylists(!showMoreRelatedPlaylists)}
+                                        />
+                                    </Row>
+                                ) : null}
+                            </>
+                        )}
                         {!!usedAlsoAs.length && (
                             <>
                                 <Text variant="h2">Also Used As</Text>
@@ -191,18 +227,6 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
                                 ) : null)}
                             </>
                         )}
-                        {developerMode === DeveloperMode.ENABLED && lastBuildAt && (
-                            <PageRevalidation lastBuildAt={lastBuildAt} apiRequests={apiRequests} />
-                        )}
-                        {developerMode === DeveloperMode.ENABLED ? (
-                            <VideoScript key={video.id} video={video} />
-                        ) : null}
-                    </Column>
-                </StyledScrollArea>
-            ) : null}
-            {selectedTab === "related" ? (
-                <StyledScrollArea>
-                    <Column style={{ "--gap": "16px" }}>
                         {!!relatedThemes.length && (
                             <>
                                 <Text variant="h2">Related themes</Text>
@@ -233,21 +257,15 @@ VideoPage.fragments = {
         ${AnimeSummaryCard.fragments.anime}
         ${ThemeSummaryCard.fragments.theme}
         ${ArtistSummaryCard.fragments.artist}
-        ${VideoPlayer.fragments.anime}
-        ${VideoPlayer.fragments.theme}
-        ${VideoPlayer.fragments.entry}
-        ${VideoPlayer.fragments.video}
         ${VideoScript.fragments.video}
 
         fragment VideoPageAnime on Anime {
             ...AnimeSummaryCardAnime
-            ...VideoPlayerAnime
             name
             slug
             year
             season
             themes {
-                ...VideoPlayerTheme
                 ...ThemeSummaryCardTheme
                 id
                 slug
@@ -261,13 +279,11 @@ VideoPage.fragments = {
                     }
                 }
                 entries {
-                    ...VideoPlayerEntry
                     episodes
                     nsfw
                     spoiler
                     version
                     videos {
-                        ...VideoPlayerVideo
                         ...VideoScriptVideo
                         id
                         basename
@@ -283,6 +299,14 @@ VideoPage.fragments = {
                         entries {
                             theme {
                                 ...ThemeSummaryCardTheme
+                            }
+                        }
+                        tracks {
+                            playlist {
+                                id
+                                name
+                                visibility
+                                tracks_count
                             }
                         }
                     }

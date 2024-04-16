@@ -115,6 +115,7 @@ export function SwitcherOption({ children, value, ...props }: SwitcherOptionProp
 
     return (
         <StyledButton
+            type="button"
             $isSelected={isSelected}
             onClick={() => context.select?.(value)}
             {...props}

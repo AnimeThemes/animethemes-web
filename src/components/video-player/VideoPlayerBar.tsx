@@ -17,16 +17,16 @@ import { PlaylistTrackAddDialog } from "components/dialog/PlaylistTrackAddDialog
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "components/menu/Menu";
 import { IconTextButton } from "components/button";
 import { AudioMode } from "utils/settings";
-import { ProgressBar } from "components/video-player-2/ProgressBar";
+import { ProgressBar } from "components/video-player/ProgressBar";
 import styled from "styled-components";
 import theme from "theme";
 import { Toast } from "components/toast";
 import { useToasts } from "context/toastContext";
 import { useContext } from "react";
-import { VideoPlayerContext } from "components/video-player-2/VideoPlayer2";
+import { VideoPlayerContext } from "components/video-player/VideoPlayer";
 import useSetting from "hooks/useSetting";
 import PlayerContext from "context/playerContext";
-import { VolumeControl } from "components/video-player-2/VolumeControl";
+import { VolumeControl } from "components/video-player/VolumeControl";
 
 const StyledPlayerBar = styled(Solid)`
     position: relative;

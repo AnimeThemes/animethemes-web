@@ -16,6 +16,14 @@ export default function useAuth() {
                             id
                             name
                             email
+                            permissions {
+                                name
+                            }
+                            roles {
+                                permissions {
+                                    name
+                                }
+                            }
                         }
                     }
                 }

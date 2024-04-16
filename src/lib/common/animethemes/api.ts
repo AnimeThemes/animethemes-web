@@ -43,7 +43,8 @@ export const INCLUDES = {
     Video: {
         audio: "audio",
         script: "videoscript",
-        entries: "animethemeentries"
+        entries: "animethemeentries",
+        tracks: "tracks",
     },
     Audio: {
         videos: "videos"
@@ -73,9 +74,14 @@ export const INCLUDES = {
     },
     PlaylistTrack: {
         video: "video",
+        playlist: "playlist",
     },
     UserAuth: {
+        permissions: "permissions",
         roles: "roles",
+    },
+    UserRole: {
+        permissions: "permissions",
     },
     AnimeSearchResult: {
         data: "_",
@@ -108,6 +114,7 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
         "studios",
         "animethemes.animethemeentries.videos.audio",
         "animethemes.animethemeentries.videos.videoscript",
+        "animethemes.animethemeentries.videos.tracks.playlist",
         "animethemes.animethemeentries.videos.animethemeentries.animetheme.anime",
         "animethemes.animethemeentries.videos.animethemeentries.animetheme.anime.images",
         "animethemes.animethemeentries.videos.animethemeentries.animetheme.animethemeentries.videos",
@@ -171,7 +178,8 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
         "video.audio",
     ],
     UserAuth: [
-        "roles",
+        "permissions",
+        "roles.permissions",
     ],
     FeaturedTheme: [
         "animethemeentry.animetheme.anime.images",

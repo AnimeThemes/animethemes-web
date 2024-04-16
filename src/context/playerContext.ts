@@ -16,9 +16,11 @@ interface PlayerContextInterface {
     setCurrentWatchListItem: (watchListItem: WatchListItem | null) => void;
     addWatchListItem: (video: VideoSummaryCardVideoFragment) => void;
     addWatchListItemNext: (video: VideoSummaryCardVideoFragment) => void;
-    isAutoPlay: boolean;
-    setAutoPlay: (autoPlay: boolean) => void;
-    isForceAutoPlay: boolean;
+    isGlobalAutoPlay: boolean;
+    setGlobalAutoPlay: (autoPlay: boolean) => void;
+    isLocalAutoPlay: boolean;
+    setLocalAutoPlay: (autoPlay: boolean) => void;
+    isWatchListUsingLocalAutoPlay: boolean;
 }
 
 const PlayerContext = createContext<PlayerContextInterface>({
@@ -44,11 +46,15 @@ const PlayerContext = createContext<PlayerContextInterface>({
     addWatchListItemNext: () => {
         // Do nothing
     },
-    isAutoPlay: false,
-    setAutoPlay: () => {
+    isGlobalAutoPlay: false,
+    setGlobalAutoPlay: () => {
         // Do nothing
     },
-    isForceAutoPlay: false,
+    isLocalAutoPlay: false,
+    setLocalAutoPlay: () => {
+        // Do nothing
+    },
+    isWatchListUsingLocalAutoPlay: false,
 });
 
 export default PlayerContext;

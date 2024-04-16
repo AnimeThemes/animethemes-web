@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import theme from "theme";
 import { useContext, useEffect, useRef } from "react";
-import { VideoPlayerContext } from "components/video-player-2/VideoPlayer2";
+import { VideoPlayerContext } from "components/video-player/VideoPlayer";
 
 const StyledPlayerProgress = styled.div`
     position: absolute;

@@ -4,7 +4,7 @@ import type { IResolvers } from "@graphql-tools/utils";
 const resolvers: IResolvers = {
     Query: {
         anime: apiResolver({
-            endpoint: (_, { slug }) => `/anime/${slug}`,
+            endpoint: (_, { slug }) => `/anime/${slug}?fields[playlist]=id,name,visibility,tracks_count`,
             extractor: (result) => result.anime
         }),
         animeAll: apiResolver({

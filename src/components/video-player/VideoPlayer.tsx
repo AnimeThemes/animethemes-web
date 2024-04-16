@@ -1,68 +1,128 @@
-import type { SyntheticEvent, MouseEvent } from "react";
-import { useContext, useEffect, useRef, useState } from "react";
+import type { PointerEvent, ReactNode, RefObject, SyntheticEvent } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import {
+    StyledAside,
     StyledAudio,
     StyledAudioBackground,
     StyledAudioCover,
-    StyledOverlay,
+    StyledPlaybackArea,
     StyledPlayer,
-    StyledPlayerButton,
-    StyledPlayerInfo,
-    StyledPlayerProgress,
-    StyledPlayerProgressBar,
-    StyledVideo
+    StyledPlayerContent,
+    StyledVideo,
+    StyledVideoBackground
 } from "./VideoPlayer.style";
-import { faDownload, faExpandAlt, faPause, faPlay, faTimes } from "@fortawesome/pro-solid-svg-icons";
 import PlayerContext from "context/playerContext";
 import createVideoSlug from "utils/createVideoSlug";
-import { Icon } from "components/icon";
-import { IconTextButton } from "components/button";
-import { Card } from "components/card";
-import { Text } from "components/text";
-import { Column, Row } from "components/box";
-import { Container } from "components/container";
-import useCompatability from "hooks/useCompatability";
 import { useRouter } from "next/router";
-import useMediaQuery from "hooks/useMediaQuery";
-import styledTheme from "theme";
-import { SongTitle } from "components/utils";
 import useSetting from "hooks/useSetting";
 import { AudioMode, GlobalVolume } from "utils/settings";
-import { VIDEO_URL, AUDIO_URL } from "utils/config.mjs";
-import gql from "graphql-tag";
-import type {
-    VideoPlayerAnimeFragment,
-    VideoPlayerEntryFragment,
-    VideoPlayerThemeFragment,
-    VideoPlayerVideoFragment
-} from "generated/graphql";
+import { AUDIO_URL, VIDEO_URL } from "utils/config.mjs";
 import extractImages from "utils/extractImages";
+import useWatchHistory from "hooks/useWatchHistory";
+import type { VideoSummaryCardVideoFragment } from "generated/graphql";
+import { VideoPlayerBar } from "components/video-player/VideoPlayerBar";
+import useMouseRelax from "hooks/useMouseRelax";
 
-interface VideoPlayerProps {
-    anime: VideoPlayerAnimeFragment
-    theme: VideoPlayerThemeFragment
-    entry: VideoPlayerEntryFragment
-    video: VideoPlayerVideoFragment
-    background: boolean
+interface VideoPlayerContextValue {
+    video: VideoSummaryCardVideoFragment;
+    background: boolean;
+    videoPagePath: string;
+    playerRef: RefObject<HTMLVideoElement | HTMLAudioElement | null>;
+    progressRef: RefObject<HTMLDivElement>;
+    previousVideoPath: string | null;
+    playPreviousTrack(navigate: boolean): void;
+    nextVideoPath: string | null;
+    playNextTrack(navigate: boolean): void;
+    isPlaying: boolean;
+    togglePlay(): void;
+    videoUrl: string;
+    audioUrl: string;
+    updateAudioMode(audioMode: string): void;
 }
 
-export function VideoPlayer({ anime, theme, entry, video, background, ...props }: VideoPlayerProps) {
-    const [isPlaying, setPlaying] = useState(false);
-    const { canPlayVideo } = useCompatability();
-    const playerRef = useRef<HTMLVideoElement | HTMLAudioElement | null>(null);
-    const progressRef = useRef<HTMLDivElement>(null);
-    const { clearCurrentVideo } = useContext(PlayerContext);
-    const isMobile = useMediaQuery(`(max-width: ${styledTheme.breakpoints.mobileMax})`);
-    const router = useRouter();
-    const [globalVolume, setGlobalVolume] = useSetting(GlobalVolume);
-    const [canRenderPlayer, setCanRenderPlayer] = useState(false);
-    const { largeCover } = extractImages(anime);
-    const [audioMode] = useSetting(AudioMode, { storageSync: false });
+export const VideoPlayerContext = createContext<VideoPlayerContextValue | null>(null);
+
+type VideoPlayerProps = {
+    video: VideoSummaryCardVideoFragment;
+    background: boolean;
+    children?: ReactNode;
+    overlay?: ReactNode;
+}
+
+export function VideoPlayer({ video, background, children, overlay, ...props }: VideoPlayerProps) {
+    const entry = video.entries[0];
+    const theme = entry.theme;
+    const anime = theme.anime;
+
+    const videoPagePath = `/anime/${anime.slug}/${createVideoSlug(theme, entry, video)}`;
 
     const videoUrl = `${VIDEO_URL}/${video.basename}`;
     const audioUrl = `${AUDIO_URL}/${video.audio.basename}`;
 
-    useEffect(() => setCanRenderPlayer(true), []);
+    const [isPlaying, setPlaying] = useState(false);
+    const [aspectRatio, setAspectRatio] = useState(16 / 9);
+
+    const containerRef = useRef<HTMLDivElement>(null);
+    const playerRef = useRef<HTMLVideoElement | HTMLAudioElement | null>(null);
+    const progressRef = useRef<HTMLDivElement>(null);
+    const currentTimeBeforeModeSwitch = useRef<number | null>(null);
+
+    const {
+        watchList,
+        currentWatchListItem,
+        setCurrentWatchListItem,
+        isGlobalAutoPlay,
+        isLocalAutoPlay,
+        isWatchListUsingLocalAutoPlay,
+    } = useContext(PlayerContext);
+    const router = useRouter();
+    const [globalVolume, setGlobalVolume] = useSetting(GlobalVolume);
+    const { smallCover, largeCover } = extractImages(anime);
+    const [audioMode, setAudioMode] = useSetting(AudioMode, { storageSync: false });
+    const { addToHistory } = useWatchHistory();
+    const isRelaxed = useMouseRelax();
+
+    const previousVideo = getWatchListVideo(-1);
+    const previousEntry = previousVideo?.entries[0];
+    const previousTheme = previousEntry?.theme;
+    const previousAnime = previousTheme?.anime;
+
+    const previousVideoPath = (previousAnime && previousTheme && previousVideo)
+        ? `/anime/${previousAnime.slug}/${createVideoSlug(previousTheme, previousEntry, previousVideo)}`
+        : null;
+
+    const playPreviousTrack = useCallback((navigate = false) => {
+        if (previousVideoPath) {
+            setCurrentWatchListItem(previousVideo);
+            if (navigate) {
+                router.push(previousVideoPath);
+            }
+        }
+    }, [previousVideo, previousVideoPath, router, setCurrentWatchListItem]);
+    
+    const nextVideo = getWatchListVideo(1);
+    const nextEntry = nextVideo?.entries[0];
+    const nextTheme = nextEntry?.theme;
+    const nextAnime = nextTheme?.anime;
+
+    const nextVideoPath = (nextAnime && nextTheme && nextVideo)
+        ? `/anime/${nextAnime.slug}/${createVideoSlug(nextTheme, nextEntry, nextVideo)}`
+        : null;
+
+    const playNextTrack = useCallback((navigate = false) => {
+        if (
+            (
+                isWatchListUsingLocalAutoPlay && isLocalAutoPlay || 
+                !isWatchListUsingLocalAutoPlay && isGlobalAutoPlay
+            ) &&
+            nextVideoPath
+        ) {
+            setCurrentWatchListItem(nextVideo);
+            if (navigate) {
+                router.push(nextVideoPath);
+            }
+        }
+    }, [isGlobalAutoPlay, isLocalAutoPlay, isWatchListUsingLocalAutoPlay, nextVideo, nextVideoPath, router, setCurrentWatchListItem]);
 
     useEffect(() => {
         if (playerRef.current) {
@@ -70,10 +130,65 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
         }
     }, [globalVolume]);
 
+    useEffect(() => {
+        addToHistory({
+            ...theme,
+            entries: [
+                {
+                    ...entry,
+                    videos: [
+                        video,
+                    ],
+                },
+            ],
+        });
+
+        // Reset the progress bar (otherwise we'd have to wait for the player to load).
+        if (progressRef.current) {
+            progressRef.current.style.width = "0%";
+        }
+
+        // We don't want to re-add the theme when the history changes, because it can cause
+        // various issues when multiple tabs are open.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [theme]);
+
+    useEffect(() => {
+        if (theme && smallCover && navigator.mediaSession) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: `${theme.slug} • ${theme.song?.title || "T.B.A."}`,
+                artist: theme.song?.performances
+                    ? theme.song.performances.map((performance) => performance.as || performance.artist.name).join(", ")
+                    : undefined,
+                album: anime.name,
+                artwork: [
+                    { src: smallCover, sizes: "512x512", type: "image/jpeg" }
+                ]
+            });
+            
+            navigator.mediaSession.setActionHandler("previoustrack", () => { playPreviousTrack(true); });
+            navigator.mediaSession.setActionHandler("nexttrack", () => { playNextTrack(true); });
+        }
+    }, [anime, theme, smallCover, playNextTrack, playPreviousTrack]);
+
     function onPlayerMount(player: HTMLVideoElement) {
         playerRef.current = player;
         if (playerRef.current) {
+            setPlaying(!playerRef.current.paused);
+            if ("videoWidth" in playerRef.current) {
+                setAspectRatio(playerRef.current.videoWidth / playerRef.current.videoHeight);
+            }
             playerRef.current.volume = globalVolume;
+            if (currentTimeBeforeModeSwitch.current) {
+                playerRef.current.currentTime = currentTimeBeforeModeSwitch.current;
+                currentTimeBeforeModeSwitch.current = null;
+            }
+        }
+    }
+
+    function onPlayerClick(event: PointerEvent) {
+        if (!background && event.nativeEvent.pointerType === "mouse" && event.nativeEvent.button === 0) {
+            togglePlay();
         }
     }
 
@@ -85,175 +200,128 @@ export function VideoPlayer({ anime, theme, entry, video, background, ...props }
         }
     }
 
-    function maximize() {
-        const videoSlug = createVideoSlug(theme, entry, video);
-        router.push(`/anime/${anime.slug}/${videoSlug}`);
-    }
-
-    function preventTextSelection(event: MouseEvent) {
-        if (event.detail > 1) {
-            event.preventDefault();
-        }
-    }
-
     function updateProgress(event: SyntheticEvent<HTMLVideoElement | HTMLAudioElement>) {
-        if (background && isMobile && progressRef.current) {
+        if (progressRef.current) {
             // Update the progress bar using a ref to prevent re-rendering.
             const progress = event.currentTarget.currentTime / event.currentTarget.duration * 100;
             progressRef.current.style.width = `${progress}%`;
         }
     }
 
-    if (!canPlayVideo) {
-        // We don't want the mini player if there's no video to play.
-        if (background) {
-            return null;
-        } else {
-            return (
-                <Container>
-                    <Card>
-                        <Column style={{ "--gap": "16px" }}>
-                            <Text as="p">Your browser or device doesn&apos;t seem to support WebM video which is required to play video files.</Text>
-                            <Text as="p">You can try one of the options below to still watch the video:</Text>
-                            <Row $wrap style={{ "--gap": "16px" }}>
-                                <IconTextButton
-                                    variant="solid"
-                                    forwardedAs="a"
-                                    href={`vlc-x-callback://x-callback-url/stream?url=${videoUrl}`}
-                                    icon={faPlay}
-                                >Play in VLC</IconTextButton>
-                                <IconTextButton
-                                    variant="solid"
-                                    forwardedAs="a"
-                                    href={videoUrl}
-                                    download
-                                    icon={faDownload}
-                                >Download</IconTextButton>
-                            </Row>
-                        </Column>
-                    </Card>
-                </Container>
-            );
-        }
+    function updateAudioMode(audioMode: string) {
+        currentTimeBeforeModeSwitch.current = playerRef.current?.currentTime ?? null;
+        setAudioMode(audioMode);
     }
 
+    function getWatchListVideo(offset: 1 | -1) {
+        if (!currentWatchListItem) {
+            return null;
+        }
+
+        const currentTrackIndex = watchList.findIndex((item) => item.watchListId === currentWatchListItem.watchListId);
+
+        if (currentTrackIndex < 0) {
+            return null;
+        }
+
+        const nextTrackIndex = currentTrackIndex + offset;
+
+        if (!watchList[nextTrackIndex]) {
+            return null;
+        }
+
+        return watchList[nextTrackIndex];
+    }
+
+    const constraintRef = useRef<HTMLDivElement>(null);
+
     return (
-        <StyledPlayer
-            $background={background}
-            onDoubleClick={background ? maximize : undefined}
-            onMouseDown={preventTextSelection}
-
-            layout={!isMobile}
-            transition={{ type: "tween" }}
-
-            {...props}
-        >
-            {canRenderPlayer ? (
-                audioMode === AudioMode.ENABLED ? (
-                    <StyledAudioBackground>
-                        <StyledAudioCover src={largeCover} onClick={background && isMobile ? maximize : undefined}/>
-                        <StyledAudio
-                            ref={onPlayerMount}
-                            src={audioUrl}
-                            controls={!background}
-                            autoPlay
-                            onPlay={() => setPlaying(true)}
-                            onPause={() => setPlaying(false)}
-                            onEnded={() => setPlaying(false)}
-                            onTimeUpdate={updateProgress}
-                            onVolumeChange={(event: SyntheticEvent<HTMLAudioElement>) => setGlobalVolume(event.currentTarget.volume)}
-                        />
-                    </StyledAudioBackground>
-                ) : (
-                    <StyledVideo
-                        ref={onPlayerMount}
-                        src={videoUrl}
-                        controls={!background}
-                        autoPlay
-                        onPlay={() => setPlaying(true)}
-                        onPause={() => setPlaying(false)}
-                        onEnded={() => setPlaying(false)}
-                        onClick={background && isMobile ? maximize : undefined}
-                        onTimeUpdate={updateProgress}
-                        onVolumeChange={(event: SyntheticEvent<HTMLVideoElement>) => setGlobalVolume(event.currentTarget.volume)}
-                    />
-                )
-            ) : null}
-            {background && (
-                <>
-                    <StyledPlayerProgress>
-                        <StyledPlayerProgressBar ref={progressRef} />
-                    </StyledPlayerProgress>
-                    <StyledPlayerInfo onClick={maximize}>
-                        <Text
-                            variant="small"
-                            color="text-primary"
-                            noWrap="ellipsis"
-                        >
-                            <SongTitle song={theme.song}/>
-                        </Text>
-                        <Text
-                            variant="small"
-                            color="text-muted"
-                            noWrap="ellipsis"
-                        >
-                            {anime.name}
-                        </Text>
-                    </StyledPlayerInfo>
-                    <StyledOverlay force={!isPlaying}>
-                        <StyledPlayerButton onClick={clearCurrentVideo}>
-                            <Icon icon={faTimes} />
-                        </StyledPlayerButton>
-                        <StyledPlayerButton size="32px" onClick={togglePlay}>
-                            <Icon icon={isPlaying ? faPause : faPlay} />
-                        </StyledPlayerButton>
-                        <StyledPlayerButton onClick={maximize} hideOnMobile>
-                            <Icon icon={faExpandAlt} />
-                        </StyledPlayerButton>
-                    </StyledOverlay>
-                </>
-            )}
-        </StyledPlayer>
+        <VideoPlayerContext.Provider value={{
+            video,
+            background,
+            videoPagePath,
+            playerRef,
+            progressRef,
+            previousVideoPath,
+            playPreviousTrack,
+            nextVideoPath,
+            playNextTrack,
+            isPlaying,
+            togglePlay,
+            videoUrl,
+            audioUrl,
+            updateAudioMode,
+        }}>
+            <StyledPlayer
+                ref={containerRef}
+                data-background={background || undefined}
+                data-relaxed={isRelaxed || undefined}
+                {...props}
+            >
+                <StyledPlayerContent ref={constraintRef}>
+                    <StyledPlaybackArea
+                        layout
+                        drag={background}
+                        dragConstraints={constraintRef}
+                        animate={background ? undefined : {
+                            x: 0,
+                            y: 0,
+                        }}
+                        onDoubleClick={() => router.push(videoPagePath)}
+                    >
+                        {audioMode === AudioMode.ENABLED ? (
+                            <StyledAudioBackground style={{ aspectRatio }}>
+                                <StyledAudioCover
+                                    src={largeCover}
+                                    onPointerDown={onPlayerClick}
+                                    onLoad={(event) => {
+                                        setAspectRatio(event.currentTarget.naturalWidth / event.currentTarget.naturalHeight);
+                                    }}
+                                />
+                                <StyledAudio
+                                    ref={onPlayerMount}
+                                    src={audioUrl}
+                                    autoPlay
+                                    onPlay={() => setPlaying(true)}
+                                    onPause={() => setPlaying(false)}
+                                    onEnded={() => {
+                                        setPlaying(false);
+                                        playNextTrack(!background);
+                                    }}
+                                    onTimeUpdate={updateProgress}
+                                    onVolumeChange={(event: SyntheticEvent<HTMLAudioElement>) => setGlobalVolume(event.currentTarget.volume)}
+                                />
+                                {overlay}
+                            </StyledAudioBackground>
+                        ) : (
+                            <StyledVideoBackground style={{ aspectRatio }}>
+                                <StyledVideo
+                                    ref={onPlayerMount}
+                                    src={videoUrl}
+                                    autoPlay
+                                    onPlay={() => setPlaying(true)}
+                                    onPause={() => setPlaying(false)}
+                                    onEnded={() => {
+                                        setPlaying(false);
+                                        playNextTrack(!background);
+                                    }}
+                                    onPointerDown={onPlayerClick}
+                                    onTimeUpdate={updateProgress}
+                                    onVolumeChange={(event: SyntheticEvent<HTMLVideoElement>) => setGlobalVolume(event.currentTarget.volume)}
+                                    onLoadedMetadata={(event) => {
+                                        setAspectRatio(event.currentTarget.videoWidth / event.currentTarget.videoHeight);
+                                    }}
+                                />
+                                {overlay}
+                            </StyledVideoBackground>
+                        )}
+                    </StyledPlaybackArea>
+                    <StyledAside>
+                        {children}
+                    </StyledAside>
+                </StyledPlayerContent>
+                <VideoPlayerBar />
+            </StyledPlayer>
+        </VideoPlayerContext.Provider>
     );
 }
-
-VideoPlayer.fragments = {
-    anime: gql`
-        ${extractImages.fragments.resourceWithImages}
-        
-        fragment VideoPlayerAnime on Anime {
-            ...extractImagesResourceWithImages
-            slug
-            name
-        }
-    `,
-    theme: gql`
-        ${createVideoSlug.fragments.theme}
-        ${SongTitle.fragments.song}
-        
-        fragment VideoPlayerTheme on Theme {
-            ...createVideoSlugTheme
-            song {
-                ...SongTitleSong
-            }
-        }
-    `,
-    entry: gql`
-        ${createVideoSlug.fragments.entry}
-
-        fragment VideoPlayerEntry on Entry {
-            ...createVideoSlugEntry
-        }
-    `,
-    video: gql`
-        ${createVideoSlug.fragments.video}
-
-        fragment VideoPlayerVideo on Video {
-            ...createVideoSlugVideo
-            basename
-            audio {
-                basename
-            }
-        }
-    `,
-};

@@ -12,15 +12,14 @@ import {
 } from "./Navigation.style";
 import { IconTextButton } from "components/button";
 import useCurrentSeason from "hooks/useCurrentSeason";
-import useRandomThemes from "hooks/useRandomThemes";
 import { useRouter } from "next/router";
 import useAuth from "hooks/useAuth";
+import { ShuffleDialog } from "../dialog/ShuffleDialog";
 
 export function Navigation() {
     const { me } = useAuth();
 
     const { currentYear, currentSeason } = useCurrentSeason();
-    const { playRandomThemes } = useRandomThemes();
 
     const router = useRouter();
     const [ prevPathname, setPrevPathname ] = useState(router.pathname);
@@ -58,9 +57,11 @@ export function Navigation() {
                             Search
                         </IconTextButton>
                     </Link>
-                    <IconTextButton variant="silent" icon={faRandom} collapsible style={{ "--gap": "8px" }} onClick={playRandomThemes}>
-                        Shuffle
-                    </IconTextButton>
+                    <ShuffleDialog trigger={
+                        <IconTextButton variant="silent" icon={faRandom} collapsible style={{ "--gap": "8px" }}>
+                            Shuffle
+                        </IconTextButton>
+                    } />
                     <Link
                         href={(currentYear && currentSeason) ? `/year/${currentYear}/${currentSeason}` : "/"}
                         passHref

@@ -13,10 +13,10 @@ import { Icon } from "components/icon";
 import { VideoTags } from "components/tag/VideoTags";
 import type { VideoPageProps } from "pages/anime/[animeSlug]/[videoSlug]";
 import PlayerContext from "context/playerContext";
-import { VideoPlayerContext } from "components/video-player-2/VideoPlayer2";
+import { VideoPlayerContext } from "components/video-player/VideoPlayer";
 import useSetting from "hooks/useSetting";
 import { AudioMode } from "utils/settings";
-import { StyledPlaybackArea, StyledPlayer } from "components/video-player-2/VideoPlayer2.style";
+import { StyledPlaybackArea, StyledPlayer } from "components/video-player/VideoPlayer.style";
 
 const StyledOverlay = styled.div`
     position: absolute;

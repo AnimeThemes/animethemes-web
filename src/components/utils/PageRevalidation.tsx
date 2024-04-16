@@ -1,8 +1,7 @@
 import { useRouter } from "next/router";
-import useSetting from "hooks/useSetting";
-import { RevalidationToken } from "utils/settings";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Text } from "components/text";
+import useAuth from "../../hooks/useAuth";
 
 interface PageRevalidationProps {
     lastBuildAt: number
@@ -11,12 +10,26 @@ interface PageRevalidationProps {
 
 export function PageRevalidation({ lastBuildAt, apiRequests, ...props }: PageRevalidationProps) {
     const router = useRouter();
-    const [secret] = useSetting(RevalidationToken);
+    const { me } = useAuth();
+    const canRevalidate = useMemo(() => {
+        const userPermissions = me.user?.permissions ?? [];
+        const rolePermissions = me.user?.roles.flatMap((role) => role.permissions) ?? [];
+        for (const permission of [...userPermissions, ...rolePermissions]) {
+            if (permission.name === "revalidate pages") {
+                return true;
+            }
+        }
+        return false;
+    }, [me]);
 
     const [isRevalidating, setRevalidating] = useState(false);
 
+    if (!canRevalidate) {
+        return null;
+    }
+    
     function revalidate() {
-        if (isRevalidating || !secret) {
+        if (isRevalidating || !canRevalidate) {
             return;
         }
 
@@ -29,7 +42,7 @@ export function PageRevalidation({ lastBuildAt, apiRequests, ...props }: PageRev
     }
 
     async function revalidateAsync() {
-        const res = await fetch(`${router.basePath}/api/revalidate?secret=${secret}&id=${router.asPath}`);
+        const res = await fetch(`${router.basePath}/api/revalidate?id=${router.asPath}`);
         if (!res.ok) {
             throw new Error((await res.json()).message);
         }
@@ -51,13 +64,10 @@ export function PageRevalidation({ lastBuildAt, apiRequests, ...props }: PageRev
         ? ` using ${apiRequests} API request${apiRequests === 1 ? "" : "s"}`
         : "";
 
-    const canRebuild = !isRevalidating && !!secret;
+    const canRebuild = !isRevalidating;
     const rebuildDescription = isRevalidating
         ? "Rebuild in progress... The page will automatically reload after it's finished."
-        : (secret
-            ? "Click to start a rebuild."
-            : "Setup the revalidation token on your profile to manually start a rebuild."
-        );
+        : "Click to start a rebuild.";
 
     return (
         <Text variant="small" color="text-disabled" link={canRebuild} onClick={revalidate} {...props}>
