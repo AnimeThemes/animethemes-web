@@ -204,7 +204,7 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
                         {!!relatedPlaylists.length && (
                             <>
                                 <Text variant="h2">Part of these Playlists</Text>
-                                {relatedPlaylists.slice(0, showMoreRelatedThemes ? undefined : 3).map((playlist) => (
+                                {relatedPlaylists.slice(0, showMoreRelatedPlaylists ? undefined : 3).map((playlist) => (
                                     <PlaylistSummaryCard key={playlist.id} playlist={playlist} />
                                 ))}
                                 {relatedPlaylists.length > 3 ? (
