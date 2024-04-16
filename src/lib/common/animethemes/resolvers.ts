@@ -8,7 +8,7 @@ const resolvers: IResolvers = {
             extractor: (result) => result.anime
         }),
         animeAll: apiResolver({
-            endpoint: () => `/anime`,
+            endpoint: () => `/anime?fields[playlist]=id,name,visibility,tracks_count`,
             extractor: (result) => result.anime,
             pagination: true
         }),
