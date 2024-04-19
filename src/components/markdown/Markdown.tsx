@@ -33,9 +33,13 @@ const StyledMarkdown = styled.div`
         margin-top: 32px;
     }
 
-    & p {
+    & p, & ul, & ol {
         margin-top: 0;
         margin-bottom: 16px;
+    }
+    
+    & ul ul, & ol ol {
+        margin-bottom: 0;
     }
 
     & table {
