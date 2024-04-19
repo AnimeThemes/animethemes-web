@@ -110,19 +110,22 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
         : null;
 
     const playNextTrack = useCallback((navigate = false) => {
-        if (
-            (
-                isWatchListUsingLocalAutoPlay && isLocalAutoPlay || 
-                !isWatchListUsingLocalAutoPlay && isGlobalAutoPlay
-            ) &&
-            nextVideoPath
-        ) {
+        if (nextVideoPath) {
             setCurrentWatchListItem(nextVideo);
             if (navigate) {
                 router.push(nextVideoPath);
             }
         }
-    }, [isGlobalAutoPlay, isLocalAutoPlay, isWatchListUsingLocalAutoPlay, nextVideo, nextVideoPath, router, setCurrentWatchListItem]);
+    }, [nextVideo, nextVideoPath, router, setCurrentWatchListItem]);
+
+    const autoPlayNextTrack = useCallback(() => {
+        if (
+            isWatchListUsingLocalAutoPlay && isLocalAutoPlay ||
+            !isWatchListUsingLocalAutoPlay && isGlobalAutoPlay
+        ) {
+            playNextTrack(!background);
+        }
+    }, [background, isGlobalAutoPlay, isLocalAutoPlay, isWatchListUsingLocalAutoPlay, playNextTrack]);
 
     useEffect(() => {
         if (playerRef.current) {
@@ -286,7 +289,7 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
                                     onPause={() => setPlaying(false)}
                                     onEnded={() => {
                                         setPlaying(false);
-                                        playNextTrack(!background);
+                                        autoPlayNextTrack();
                                     }}
                                     onTimeUpdate={updateProgress}
                                     onVolumeChange={(event: SyntheticEvent<HTMLAudioElement>) => setGlobalVolume(event.currentTarget.volume)}
@@ -303,7 +306,7 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
                                     onPause={() => setPlaying(false)}
                                     onEnded={() => {
                                         setPlaying(false);
-                                        playNextTrack(!background);
+                                        autoPlayNextTrack();
                                     }}
                                     onPointerDown={onPlayerClick}
                                     onTimeUpdate={updateProgress}

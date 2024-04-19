@@ -24,10 +24,6 @@ export function PageRevalidation({ lastBuildAt, apiRequests, ...props }: PageRev
 
     const [isRevalidating, setRevalidating] = useState(false);
 
-    if (!canRevalidate) {
-        return null;
-    }
-    
     function revalidate() {
         if (isRevalidating || !canRevalidate) {
             return;
@@ -64,14 +60,21 @@ export function PageRevalidation({ lastBuildAt, apiRequests, ...props }: PageRev
         ? ` using ${apiRequests} API request${apiRequests === 1 ? "" : "s"}`
         : "";
 
-    const canRebuild = !isRevalidating;
     const rebuildDescription = isRevalidating
         ? "Rebuild in progress... The page will automatically reload after it's finished."
         : "Click to start a rebuild.";
 
+    if (canRevalidate) {
+        return (
+            <Text variant="small" color="text-disabled" link={!isRevalidating} onClick={revalidate} {...props}>
+                Page was last updated {lastBuildDescription} ago{apiRequestsDescription}. {rebuildDescription}
+            </Text>
+        );
+    }
+
     return (
-        <Text variant="small" color="text-disabled" link={canRebuild} onClick={revalidate} {...props}>
-            Page was last built {lastBuildDescription} ago{apiRequestsDescription}. {rebuildDescription}
+        <Text variant="small" color="text-disabled" {...props}>
+            Page was last updated {lastBuildDescription} ago.
         </Text>
     );
 }
