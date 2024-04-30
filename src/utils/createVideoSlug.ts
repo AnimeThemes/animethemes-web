@@ -22,17 +22,17 @@ interface CreateVideoSlug {
 /**
  * Slug format is:
  *
- * `<OP|ED><#>[-<Group>][v#][-<Tags>]`
+ * `<OP|ED><#>[v#][-<Group>][-<Tags>]`
  */
 const createVideoSlug: CreateVideoSlug = (theme, entry, video) => {
     let slug = theme.type + (theme.sequence || 1);
 
-    if (theme.group) {
-        slug += `-${theme.group.slug}`;
-    }
-
     if (entry.version && entry.version !== 1) {
         slug += `v${entry.version}`;
+    }
+
+    if (theme.group) {
+        slug += `-${theme.group.slug}`;
     }
 
     if (video.tags) {
