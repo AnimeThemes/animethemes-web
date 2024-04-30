@@ -70,7 +70,7 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
                 return data.searchTheme;
             }}
             renderResult={(theme) => (
-                <ThemeSummaryCard key={theme.anime?.slug + theme.slug} theme={theme} expandable/>
+                <ThemeSummaryCard key={`${theme.anime?.slug}-${theme.id}`} theme={theme} expandable/>
             )}
             filters={
                 <>

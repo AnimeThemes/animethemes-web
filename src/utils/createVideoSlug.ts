@@ -22,10 +22,14 @@ interface CreateVideoSlug {
 /**
  * Slug format is:
  *
- * `<OP|ED>[v#][-[Tags]]`
+ * `<OP|ED><#>[-<Group>][v#][-<Tags>]`
  */
 const createVideoSlug: CreateVideoSlug = (theme, entry, video) => {
-    let slug = theme.slug;
+    let slug = theme.type + (theme.sequence || 1);
+
+    if (theme.group) {
+        slug += `-${theme.group.slug}`;
+    }
 
     if (entry.version && entry.version !== 1) {
         slug += `v${entry.version}`;
@@ -43,7 +47,11 @@ export default createVideoSlug;
 createVideoSlug.fragments = {
     theme: gql`
         fragment createVideoSlugTheme on Theme {
-            slug
+            type
+            sequence
+            group {
+                slug
+            }
         }
     `,
     entry: gql`

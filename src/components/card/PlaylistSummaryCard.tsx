@@ -43,10 +43,11 @@ export default function PlaylistSummaryCard({ playlist, children, menu, showOwne
     const description = (
         <SummaryCard.Description>
             <span>Playlist</span>
-            <span>{playlist.visibility}</span>
             {showOwner ? (
                 <Text link>{playlist.user.name}</Text>
-            ) : null}
+            ) : (
+                <span>{playlist.visibility}</span>
+            )}
             <span>{playlist.tracks_count} theme{playlist.tracks_count !== 1 ? "s" : null}</span>
         </SummaryCard.Description>
     );

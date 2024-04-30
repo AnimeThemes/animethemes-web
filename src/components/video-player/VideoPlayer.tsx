@@ -159,7 +159,7 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
     useEffect(() => {
         if (theme && smallCover && navigator.mediaSession) {
             navigator.mediaSession.metadata = new MediaMetadata({
-                title: `${theme.slug} • ${theme.song?.title || "T.B.A."}`,
+                title: `${theme.type + (theme.sequence || "")} • ${theme.song?.title || "T.B.A."}`,
                 artist: theme.song?.performances
                     ? theme.song.performances.map((performance) => performance.as || performance.artist.name).join(", ")
                     : undefined,

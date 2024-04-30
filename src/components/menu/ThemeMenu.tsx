@@ -63,10 +63,12 @@ ThemeMenu.fragments = {
         fragment ThemeMenuTheme on Theme {
             ...createVideoSlugTheme
             id
-            slug
             type
             sequence
-            group
+            group {
+                name
+                slug
+            }
             anime {
                 ...extractImagesResourceWithImages
                 slug

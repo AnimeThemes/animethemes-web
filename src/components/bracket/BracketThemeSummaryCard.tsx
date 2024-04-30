@@ -54,7 +54,7 @@ export function BracketThemeSummaryCard({ contestant, isVoted, isWinner, seed, v
 
         description = (
             <SummaryCard.Description>
-                <span>{theme.slug}</span>
+                <span>{theme.type + (theme.sequence || "")}</span>
                 <TextLink href={`/anime/${theme.anime.slug}`}>{theme.anime.name}</TextLink>
             </SummaryCard.Description>
         );

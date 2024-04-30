@@ -180,6 +180,13 @@ const resolvers: IResolvers = {
             type: "Theme",
             baseInclude: INCLUDES.Theme.song
         }),
+        group: apiResolver({
+            endpoint: (theme) => `/animetheme/${theme.id}`,
+            field: "group",
+            extractor: (result) => result.animetheme.group,
+            type: "Theme",
+            baseInclude: INCLUDES.Theme.group
+        }),
         anime: apiResolver({
             endpoint: (theme) => `/animetheme/${theme.id}`,
             field: "anime",

@@ -129,7 +129,7 @@ export function VideoPlayerBar() {
                 <Text color="text-muted" maxLines={1}>
                     <SongTitle song={theme.song} href={videoPagePath} />
                     <Text variant="small"> - </Text>
-                    <Text weight={600}>{theme.type}{theme.sequence || null}{theme.group && ` (${theme.group})`}</Text>
+                    <Text weight={600}>{theme.type}{theme.sequence || null}{theme.group && ` (${theme.group.name})`}</Text>
                     <Text variant="small"> from </Text>
                     <Link href={`/anime/${anime.slug}`} passHref legacyBehavior>
                         <Text as="a" link>{anime.name}</Text>

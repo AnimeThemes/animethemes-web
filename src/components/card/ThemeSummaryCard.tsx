@@ -120,7 +120,7 @@ export function ThemeSummaryCard({ theme, artist, children, expandable, onPlay, 
                         <Performances song={theme.song} artist={artist} />
                     </SummaryCard.Title>
                     <SummaryCard.Description>
-                        <span>{theme.type}{theme.sequence || null}{theme.group && ` (${theme.group})`}</span>
+                        <span>{theme.type}{theme.sequence || null}{theme.group && ` (${theme.group.name})`}</span>
                         <TextLink href={`/anime/${anime.slug}`}>{anime.name}</TextLink>
                     </SummaryCard.Description>
                 </SummaryCard.Body>
@@ -193,10 +193,12 @@ ThemeSummaryCard.fragments = {
         fragment ThemeSummaryCardTheme on Theme {
             ...createVideoSlugTheme
             ...ThemeMenuTheme
-            slug
             type
             sequence
-            group
+            group {
+                name
+                slug
+            }
             anime {
                 ...extractImagesResourceWithImages
                 slug
