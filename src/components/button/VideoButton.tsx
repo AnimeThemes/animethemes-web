@@ -49,22 +49,27 @@ VideoButton.fragments = {
         }
     `,
     theme: gql`
+        ${createVideoSlug.fragments.theme}
+
         fragment VideoButtonTheme on Theme {
-            slug
+            ...createVideoSlugTheme
         }
     `,
     entry: gql`
+        ${createVideoSlug.fragments.entry}
+
         fragment VideoButtonEntry on Entry {
-            version
+            ...createVideoSlugEntry
         }
     `,
     video: gql`
+        ${createVideoSlug.fragments.video}
         ${VideoTags.fragments.video}
         
         fragment VideoButtonVideo on Video {
+            ...createVideoSlugVideo
             ...VideoTagsVideo
             id
-            tags
         }
     `,
 };

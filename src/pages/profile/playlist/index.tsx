@@ -149,7 +149,7 @@ export default function PlaylistPage() {
                         {sortBy === UNSORTED ? (
                             <Reorder.Group as="div" axis="y" values={themes} onReorder={setPlaylist}>
                                 {themes.map((theme) => (
-                                    <Reorder.Item as="div" key={theme.anime?.slug + theme.slug + theme.group} value={theme}>
+                                    <Reorder.Item as="div" key={`${theme.anime?.slug}-${theme.id}`} value={theme}>
                                         <ThemeSummaryCard theme={theme}/>
                                     </Reorder.Item>
                                 ))}
@@ -157,11 +157,10 @@ export default function PlaylistPage() {
                         ) : (
                             <div>
                                 {themes.map((theme) => (
-                                    <ThemeSummaryCard key={theme.anime?.slug + theme.slug + theme.group} theme={theme}/>
+                                    <ThemeSummaryCard key={`${theme.anime?.slug}-${theme.id}`} theme={theme}/>
                                 ))}
                             </div>
                         )}
-
                     </StyledReorderContainer>
                 </Column>
             </SidebarContainer>

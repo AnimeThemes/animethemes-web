@@ -144,7 +144,6 @@ StudioDetailPage.fragments = {
                 year
                 season
                 themes {
-                    slug
                     type
                     sequence
                     entries {

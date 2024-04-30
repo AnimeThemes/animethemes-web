@@ -63,7 +63,7 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
     const [showMoreRelatedPlaylists, setShowMoreRelatedPlaylists] = useState(false);
 
     const relatedThemes = anime.themes
-        .filter((relatedTheme) => relatedTheme.slug !== theme.slug)
+        .filter((relatedTheme) => relatedTheme.id !== theme.id)
         .slice(0, showMoreRelatedThemes ? undefined : 3);
     const relatedPlaylists = video.tracks.map((track) => track.playlist);
 
@@ -72,8 +72,8 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
         .filter((otherTheme) => otherTheme?.anime && otherTheme.anime.slug !== anime.slug);
 
     const pageTitle = entry.version
-        ? `${songTitle} (${anime.name} ${theme.slug} v${entry.version})`
-        : `${songTitle} (${anime.name} ${theme.slug})`;
+        ? `${songTitle} (${anime.name} ${theme.type + (theme.sequence || "")} v${entry.version})`
+        : `${songTitle} (${anime.name} ${theme.type + (theme.sequence || "")})`;
 
     const pageDesc = (() => {
         // Generates and returns page description for SEO
@@ -89,7 +89,7 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
                 return str;
             }, " by ");
         }
-        return `Watch ${anime.name} ${theme.slug}${version}: ${songTitle}${artistStr} on AnimeThemes.`;
+        return `Watch ${anime.name} ${theme.type + (theme.sequence || "")}${version}: ${songTitle}${artistStr} on AnimeThemes.`;
     })();
 
     const videoUrl = `${VIDEO_URL}/${video.basename}`;
@@ -231,7 +231,7 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
                             <>
                                 <Text variant="h2">Related themes</Text>
                                 {relatedThemes.map((theme) => (
-                                    <ThemeSummaryCard key={theme.slug} theme={{ ...theme, anime }}/>
+                                    <ThemeSummaryCard key={theme.id} theme={{ ...theme, anime }}/>
                                 ))}
                                 {anime.themes.length > 4 ? (
                                     <Row style={{ "--justify-content": "center" }}>
@@ -268,7 +268,6 @@ VideoPage.fragments = {
             themes {
                 ...ThemeSummaryCardTheme
                 id
-                slug
                 song {
                     title
                     performances {

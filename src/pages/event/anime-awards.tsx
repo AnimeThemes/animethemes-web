@@ -266,7 +266,7 @@ function AwardThemeSummaryCard({ theme, rank, votes, ...props }: AwardThemeSumma
 
     const description = (
         <SummaryCard.Description>
-            <span>{theme.slug}{(entry.version && entry.version > 1) ? `v${entry.version}` : null}</span>
+            <span>{theme.type + (theme.sequence || "")}{(entry.version && entry.version > 1) ? `v${entry.version}` : null}</span>
             <Link
                 href={`/anime/${theme.anime.slug}`}
                 passHref
@@ -353,10 +353,14 @@ export const getStaticProps: GetStaticProps<AnimeAwardsPage> = async () => {
 
 async function fetchTheme(themeId: number, version?: number) {
     const { data, apiRequests } = await fetchData<AwardPageThemeQuery>(gql`
+        ${createVideoSlug.fragments.theme}
+        ${createVideoSlug.fragments.entry}
+        ${createVideoSlug.fragments.video}
+        
         query AwardPageTheme($themeId: Int) {
             theme(id: $themeId) {
+                ...createVideoSlugTheme
                 id
-                slug
                 anime {
                     slug
                     name
@@ -376,8 +380,10 @@ async function fetchTheme(themeId: number, version?: number) {
                     }
                 }
                 entries {
+                    ...createVideoSlugEntry
                     version
                     videos {
+                        ...createVideoSlugVideo
                         basename
                         tags
                     }

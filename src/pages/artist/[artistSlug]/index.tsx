@@ -275,7 +275,7 @@ const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemes
 
     const themeCards = themes.map((theme, index) => (
         <ThemeSummaryCard
-            key={theme.anime?.slug + theme.slug + theme.group}
+            key={`${theme.anime?.slug}-${theme.id}`}
             theme={theme}
             artist={artist}
             expandable
@@ -313,8 +313,10 @@ ArtistDetailPage.fragements = {
                         ...ThemeSummaryCardTheme
                         ...ThemeSummaryCardThemeExpandable
                         id
-                        slug
-                        group
+                        group {
+                            name
+                            slug
+                        }
                         anime {
                             slug
                             year
@@ -350,8 +352,10 @@ ArtistDetailPage.fragements = {
                                 ...ThemeSummaryCardTheme
                                 ...ThemeSummaryCardThemeExpandable
                                 id
-                                slug
-                                group
+                                group {
+                                    name
+                                    slug
+                                }
                                 anime {
                                     slug
                                     year

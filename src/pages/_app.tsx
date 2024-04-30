@@ -315,7 +315,7 @@ function createDefaultWatchList(pageProps: VideoPageProps): WatchListItem[] {
             const entry = themeIndex == index ? theme.entries[entryIndex] : theme.entries[0];
             const video = themeIndex == index ? entry?.videos[videoIndex] : entry?.videos[0];
 
-            if (!entry || !video || theme.group !== anime.themes[themeIndex].group) {
+            if (!entry || !video || theme.group?.slug !== anime.themes[themeIndex].group?.slug) {
                 return [];
             }
 

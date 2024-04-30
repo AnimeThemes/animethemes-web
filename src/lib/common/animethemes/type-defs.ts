@@ -71,13 +71,18 @@ const typeDefs = `
     
     type Theme {
         id: Int!
-        slug: String!
         type: String!
         sequence: Int
-        group: String
         song: Song
+        group: ThemeGroup
         anime: Anime!
         entries: [Entry!]!
+    }
+    
+    type ThemeGroup {
+        id: Int!
+        name: String!
+        slug: String!
     }
 
     type Entry {

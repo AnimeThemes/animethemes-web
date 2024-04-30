@@ -97,10 +97,12 @@ ThemeDetailCard.fragments = {
         
         fragment ThemeDetailCardTheme on Theme {
             ...ThemeMenuTheme
-            slug
             type
             sequence
-            group
+            group {
+                name
+                slug
+            }
             anime {
                 slug
                 name

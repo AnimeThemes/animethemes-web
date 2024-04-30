@@ -87,7 +87,7 @@ export const VideoSummaryCard = forwardRef(
                             <Performances song={theme.song} />
                         </SummaryCard.Title>
                         <SummaryCard.Description>
-                            <span>{videoSlug}{theme.group && ` (${theme.group})`}</span>
+                            <span>{videoSlug}{theme.group && ` (${theme.group.name})`}</span>
                             <TextLink href={`/anime/${anime.slug}`}>{anime.name}</TextLink>
                         </SummaryCard.Description>
                     </SummaryCard.Body>
@@ -118,10 +118,12 @@ export const VideoSummaryCardFragmentVideo = gql`
             theme {
                 ...createVideoSlugTheme
                 id
-                slug
                 type
                 sequence
-                group
+                group {
+                    name
+                    slug
+                }
                 anime {
                     ...extractImagesResourceWithImages
                     slug

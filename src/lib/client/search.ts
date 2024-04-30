@@ -100,11 +100,12 @@ export const searchResolvers = {
 
             // TODO: Hardcoded includes and fields should be generate dynamically by API resolver instead
             searchParams.append("include[anime]", "animethemes.animethemeentries.videos,animethemes.song,images");
-            searchParams.append("include[animetheme]", "animethemeentries.videos,anime.images,song.artists");
+            searchParams.append("include[animetheme]", "animethemeentries.videos,anime.images,song.artists,group");
             searchParams.append("include[artist]", "images,songs");
             searchParams.append("include[playlist]", "user");
             searchParams.append("fields[anime]", "name,slug,year,season");
-            searchParams.append("fields[animetheme]", "type,sequence,slug,group,id");
+            searchParams.append("fields[animetheme]", "type,sequence,id");
+            searchParams.append("fields[group]", "name,slug");
             searchParams.append("fields[animethemeentry]", "version,episodes,spoiler,nsfw");
             searchParams.append("fields[video]", "id,tags,resolution,nc,subbed,lyrics,uncen,source,overlap,basename");
             searchParams.append("fields[image]", "facet,link");

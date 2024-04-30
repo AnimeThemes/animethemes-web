@@ -8,7 +8,7 @@ import { SummaryCard } from "components/card";
 import styled from "styled-components";
 import useToggle from "hooks/useToggle";
 import theme from "theme";
-import { uniq } from "lodash-es";
+import { uniqBy } from "lodash-es";
 import { Collapse } from "components/utils";
 import { ThemeTable } from "components/table";
 import useMediaQuery from "hooks/useMediaQuery";
@@ -71,7 +71,7 @@ export function AnimeSummaryCard({ anime, expandable = false, ...props }: AnimeS
     const { smallCover } = extractImages(anime);
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
 
-    const groups = uniq(anime.themes.map((theme) => theme.group));
+    const groups = uniqBy(anime.themes.map((theme) => theme.group), (group) => group?.slug);
 
     const animeLink = `/anime/${anime.slug}`;
 
@@ -137,11 +137,11 @@ export function AnimeSummaryCard({ anime, expandable = false, ...props }: AnimeS
                 <Collapse collapse={!isExpanded}>
                     <StyledThemeGroupContainer>
                         {groups.map((group) => (
-                            <Fragment key={group}>
+                            <Fragment key={group?.slug}>
                                 {!!group && (
-                                    <Text variant="h2">{group}</Text>
+                                    <Text variant="h2">{group.name}</Text>
                                 )}
-                                <ThemeTable themes={(anime as AnimeSummaryCardAnimeExpandableFragment).themes.filter((theme) => theme.group === group)}/>
+                                <ThemeTable themes={(anime as AnimeSummaryCardAnimeExpandableFragment).themes.filter((theme) => theme.group?.slug === group?.slug)}/>
                             </Fragment>
                         ))}
                     </StyledThemeGroupContainer>
@@ -163,7 +163,10 @@ AnimeSummaryCard.fragments = {
             season
             media_format
             themes {
-                group
+                group {
+                    name
+                    slug
+                }
             }
         }
     `,
@@ -173,7 +176,10 @@ AnimeSummaryCard.fragments = {
         fragment AnimeSummaryCardAnimeExpandable on Anime {
             themes {
                 ...ThemeTableTheme
-                group
+                group {
+                    name
+                    slug
+                }
             }
         }
     `
