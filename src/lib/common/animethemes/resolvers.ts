@@ -96,6 +96,11 @@ const resolvers: IResolvers = {
             endpoint: (_, { id }) => `/playlist/${id}?fields[playlist]=id,name,visibility,tracks_count`,
             extractor: (result) => result.playlist,
         }),
+        playlistAll: apiResolver({
+            endpoint: (_, { limit, orderBy, orderDesc }) =>
+                `/playlist?sort=${orderDesc ? "-" : ""}${orderBy}&page[size]=${limit}&fields[playlist]=id,name,visibility,tracks_count`,
+            extractor: (result) => result.playlists
+        }),
         me: () => ({}),
     },
     UserScopedQuery: {

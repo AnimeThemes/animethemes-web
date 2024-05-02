@@ -26,7 +26,14 @@ export const MenuContent = forwardRef<HTMLDivElement, DropdownMenuContentProps>(
     function MenuContent({ children, ...props }, forwardedRef) {
         return (
             <RadixMenu.Portal>
-                <StyledMenuContent align="start" sideOffset={8} collisionPadding={8} {...props} ref={forwardedRef}>
+                <StyledMenuContent
+                    align="start"
+                    sideOffset={8}
+                    collisionPadding={8}
+                    collisionBoundary={typeof document !== "undefined" ? document.body : []}
+                    {...props}
+                    ref={forwardedRef}
+                >
                     {children}
                 </StyledMenuContent>
             </RadixMenu.Portal>

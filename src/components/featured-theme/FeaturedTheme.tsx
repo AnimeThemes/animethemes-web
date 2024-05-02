@@ -121,9 +121,10 @@ interface FeaturedThemeProps {
     theme: FeaturedThemeThemeFragment;
     hasGrill?: boolean;
     card?: ReactNode;
+    onPlay?(): void;
 }
 
-export function FeaturedTheme({ theme, hasGrill = true, card }: FeaturedThemeProps) {
+export function FeaturedTheme({ theme, hasGrill = true, card, onPlay }: FeaturedThemeProps) {
     const [ grill, setGrill ] = useState<string | null>(null);
     const [ featuredThemePreview ] = useSetting(FeaturedThemePreview);
 
@@ -149,7 +150,7 @@ export function FeaturedTheme({ theme, hasGrill = true, card }: FeaturedThemePro
 
     return (
         <FeaturedThemeWrapper>
-            <FeaturedThemeBackground theme={theme}/>
+            <FeaturedThemeBackground theme={theme} onPlay={onPlay}/>
             {featuredThemePreview !== FeaturedThemePreview.DISABLED && grill && (
                 <StyledGrillContainer>
                     <StyledGrill src={grill}/>
@@ -160,7 +161,7 @@ export function FeaturedTheme({ theme, hasGrill = true, card }: FeaturedThemePro
     );
 }
 
-function FeaturedThemeBackground({ theme }: FeaturedThemeProps) {
+function FeaturedThemeBackground({ theme, onPlay }: FeaturedThemeProps) {
     const [ featuredThemePreview ] = useSetting(FeaturedThemePreview);
     const { canPlayVideo } = useCompatability();
     const [ fallbackToCover, setFallbackToCover ] = useState(false);
@@ -183,7 +184,7 @@ function FeaturedThemeBackground({ theme }: FeaturedThemeProps) {
 
     if (featuredThemePreview === FeaturedThemePreview.VIDEO && canPlayVideo && !fallbackToCover) {
         return (
-            <StyledOverflowHidden href={href}>
+            <StyledOverflowHidden href={href} onClick={onPlay}>
                 <StyledVideo
                     key={video.basename}
                     autoPlay
@@ -200,7 +201,7 @@ function FeaturedThemeBackground({ theme }: FeaturedThemeProps) {
         );
     } else if (featuredThemePreview !== FeaturedThemePreview.DISABLED) {
         return (
-            <StyledOverflowHidden href={href}>
+            <StyledOverflowHidden href={href} onClick={onPlay}>
                 <StyledCover src={featuredCover}/>
             </StyledOverflowHidden>
         );
