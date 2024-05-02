@@ -1,16 +1,12 @@
 import { SearchFilterFirstLetter, SearchFilterSortBy } from "components/search-filter";
 import { SearchEntity } from "components/search";
-import { SummaryCard } from "components/card";
-import type { SyntheticEvent } from "react";
 import { useState } from "react";
 import { fetchDataClient } from "lib/client";
 import type { SearchStudioQuery, SearchStudioQueryVariables } from "generated/graphql";
 import gql from "graphql-tag";
 import { StudioCoverImage } from "components/image/StudioCoverImage";
-import extractImages from "utils/extractImages";
-import extractBackgroundColor from "utils/extractBackgroundColor";
-import type { Property } from "csstype";
 import useFilterStorage from "hooks/useFilterStorage";
+import { StudioSummaryCard } from "components/card/StudioSummaryCard";
 
 const initialFilter = {
     firstLetter: null,
@@ -87,37 +83,6 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
                     </SearchFilterSortBy>
                 </>
             }
-        />
-    );
-}
-
-interface StudioSummaryCardProps {
-    studio: SearchStudioQuery["searchStudio"]["data"][number]
-}
-
-function StudioSummaryCard({ studio }: StudioSummaryCardProps) {
-    const [backgroundColor, setBackgroundColor] = useState<Property.Background>();
-
-    function handleLoad(event: SyntheticEvent<HTMLImageElement>) {
-        const image = event.currentTarget;
-        const color = extractBackgroundColor(image);
-        if (color) {
-            setBackgroundColor(color);
-        }
-    }
-
-    return (
-        <SummaryCard
-            key={studio.slug}
-            title={studio.name}
-            description="Studio"
-            to={`/studio/${studio.slug}`}
-            image={extractImages(studio).largeCover}
-            imageProps={{
-                objectFit: "contain",
-                backgroundColor,
-                onLoad: handleLoad
-            }}
         />
     );
 }

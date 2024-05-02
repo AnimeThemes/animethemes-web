@@ -24,7 +24,8 @@ import extractImages from "utils/extractImages";
 import { VIDEO_URL } from "utils/config.mjs";
 import { faChevronDown, faChevronUp } from "@fortawesome/pro-solid-svg-icons";
 import Switch from "components/form/Switch";
-import PlaylistSummaryCard from "../../../../components/card/PlaylistSummaryCard";
+import PlaylistSummaryCard from "components/card/PlaylistSummaryCard";
+import { StudioSummaryCard } from "components/card/StudioSummaryCard";
 
 export interface VideoPageProps extends SharedPageProps, RequiredNonNullable<VideoPageQuery> {
     themeIndex: number
@@ -177,7 +178,7 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
                             <SummaryCard key={series.slug} title={series.name} description="Series" to={`/series/${series.slug}`} />
                         ))}
                         {anime.studios.map((studio) => (
-                            <SummaryCard key={studio.slug} title={studio.name} description="Studio" to={`/studio/${studio.slug}`} />
+                            <StudioSummaryCard key={studio.slug} studio={studio} />
                         ))}
                         {!!theme.song?.performances?.length && (
                             <>
@@ -201,32 +202,6 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
             {selectedTab === "related" ? (
                 <StyledScrollArea>
                     <Column style={{ "--gap": "16px" }}>
-                        {!!relatedPlaylists.length && (
-                            <>
-                                <Text variant="h2">Part of these Playlists</Text>
-                                {relatedPlaylists.slice(0, showMoreRelatedPlaylists ? undefined : 3).map((playlist) => (
-                                    <PlaylistSummaryCard key={playlist.id} playlist={playlist} />
-                                ))}
-                                {relatedPlaylists.length > 3 ? (
-                                    <Row style={{ "--justify-content": "center" }}>
-                                        <IconTextButton
-                                            icon={showMoreRelatedPlaylists ? faChevronUp : faChevronDown}
-                                            variant="silent"
-                                            isCircle
-                                            onClick={() => setShowMoreRelatedPlaylists(!showMoreRelatedPlaylists)}
-                                        />
-                                    </Row>
-                                ) : null}
-                            </>
-                        )}
-                        {!!usedAlsoAs.length && (
-                            <>
-                                <Text variant="h2">Also Used As</Text>
-                                {usedAlsoAs.map((theme) => theme?.anime ? (
-                                    <ThemeSummaryCard key={theme.anime.slug} theme={theme}/>
-                                ) : null)}
-                            </>
-                        )}
                         {!!relatedThemes.length && (
                             <>
                                 <Text variant="h2">Related themes</Text>
@@ -245,6 +220,32 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
                                 ) : null}
                             </>
                         )}
+                        {!!usedAlsoAs.length && (
+                            <>
+                                <Text variant="h2">Also Used As</Text>
+                                {usedAlsoAs.map((theme) => theme?.anime ? (
+                                    <ThemeSummaryCard key={theme.anime.slug} theme={theme}/>
+                                ) : null)}
+                            </>
+                        )}
+                        {!!relatedPlaylists.length && (
+                            <>
+                                <Text variant="h2">Part of these Playlists</Text>
+                                {relatedPlaylists.slice(0, showMoreRelatedPlaylists ? undefined : 3).map((playlist) => (
+                                    <PlaylistSummaryCard key={playlist.id} playlist={playlist} showOwner />
+                                ))}
+                                {relatedPlaylists.length > 3 ? (
+                                    <Row style={{ "--justify-content": "center" }}>
+                                        <IconTextButton
+                                            icon={showMoreRelatedPlaylists ? faChevronUp : faChevronDown}
+                                            variant="silent"
+                                            isCircle
+                                            onClick={() => setShowMoreRelatedPlaylists(!showMoreRelatedPlaylists)}
+                                        />
+                                    </Row>
+                                ) : null}
+                            </>
+                        )}
                     </Column>
                 </StyledScrollArea>
             ) : null}
@@ -258,6 +259,9 @@ VideoPage.fragments = {
         ${ThemeSummaryCard.fragments.theme}
         ${ArtistSummaryCard.fragments.artist}
         ${VideoScript.fragments.video}
+        ${PlaylistSummaryCard.fragments.playlist}
+        ${PlaylistSummaryCard.fragments.showOwner}
+        ${StudioSummaryCard.fragments.studio}
 
         fragment VideoPageAnime on Anime {
             ...AnimeSummaryCardAnime
@@ -278,6 +282,7 @@ VideoPage.fragments = {
                     }
                 }
                 entries {
+                    id
                     episodes
                     nsfw
                     spoiler
@@ -302,10 +307,8 @@ VideoPage.fragments = {
                         }
                         tracks {
                             playlist {
-                                id
-                                name
-                                visibility
-                                tracks_count
+                                ...PlaylistSummaryCardPlaylist
+                                ...PlaylistSummaryCardShowOwner
                             }
                         }
                     }
@@ -320,8 +323,7 @@ VideoPage.fragments = {
                 name
             }
             studios {
-                slug
-                name
+                ...StudioSummaryCardStudio
             }
         }
     `,

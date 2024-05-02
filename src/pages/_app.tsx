@@ -91,8 +91,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     const [isLocalAutoPlay, setLocalAutoPlay] = useState(true);
     const [isWatchListUsingLocalAutoPlay, setIsWatchListUsingLocalAutoPlay] = useState(false);
 
-    const currentBasename = getBasename(pageProps);
-    const [previousBasename, setPreviousBasename] = useState<string | null>(() => getBasename(pageProps));
+    const currentVideoIdentifier = getVideoIdentifier(pageProps);
+    const [previousVideoIdentifier, setPreviousVideoIdentifier] = useState<string | null>(() => getVideoIdentifier(pageProps));
 
     const [isFullscreen, { toggleFullscreen }] = useFullscreen(
         () => document.documentElement,
@@ -138,9 +138,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         return null;
     }
 
-    if (isVideoPage && currentBasename !== previousBasename) {
-        setPreviousBasename(currentBasename);
-        if (currentBasename !== currentWatchListItem?.basename) {
+    if (isVideoPage && currentVideoIdentifier !== previousVideoIdentifier) {
+        setPreviousVideoIdentifier(currentVideoIdentifier);
+        const watchListVideoIdentifier = currentWatchListItem ? `${currentWatchListItem.entries[0].id}-${currentWatchListItem.id}` : null;
+        if (currentVideoIdentifier !== watchListVideoIdentifier) {
             const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
             const video = anime.themes[themeIndex].entries[entryIndex].videos[videoIndex];
 
@@ -294,7 +295,7 @@ function MultiContextProvider({ providers = [], children }: MultiContextProvider
     return <>{stack}</>;
 }
 
-function getBasename(pageProps: any): string | null {
+function getVideoIdentifier(pageProps: any): string | null {
     if (pageProps.isVideoPage) {
         const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
 
@@ -302,7 +303,7 @@ function getBasename(pageProps: any): string | null {
         const entry = theme.entries[entryIndex];
         const video = entry.videos[videoIndex];
 
-        return video.basename;
+        return `${entry.id}-${video.id}`;
     }
     return null;
 }

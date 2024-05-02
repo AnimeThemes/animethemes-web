@@ -115,6 +115,7 @@ export const VideoSummaryCardFragmentVideo = gql`
         ...createVideoSlugVideo
         entries {
             ...createVideoSlugEntry
+            id
             theme {
                 ...createVideoSlugTheme
                 id

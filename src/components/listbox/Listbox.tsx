@@ -139,7 +139,7 @@ export const Listbox = forwardRef<HTMLButtonElement, ListboxProps>(
                     </StyledListboxButton>
                 </RadixSelect.Trigger>
                 <StyledListboxPopover>
-                    <StyledListboxList position="popper" sideOffset={8}>
+                    <StyledListboxList position="popper" sideOffset={8} collisionBoundary={typeof document !== "undefined" ? document.body : []}>
                         <RadixSelect.Viewport>{children}</RadixSelect.Viewport>
                     </StyledListboxList>
                 </StyledListboxPopover>

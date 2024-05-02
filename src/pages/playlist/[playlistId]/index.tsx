@@ -336,6 +336,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                             }}
                             hasGrill={false}
                             card={trackElements.find(([track]) => track.rank === 1)?.[1]}
+                            onPlay={() => playAll(0)}
                         />
                     ) : null}
                     <StyledHeader>
