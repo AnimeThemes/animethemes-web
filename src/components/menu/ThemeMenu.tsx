@@ -79,6 +79,7 @@ ThemeMenu.fragments = {
             }
             entries {
                 ...createVideoSlugEntry
+                id
                 videos {
                     ...createVideoSlugVideo
                     id
