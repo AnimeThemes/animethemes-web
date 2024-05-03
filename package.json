@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "graphql-codegen": "graphql-codegen --config codegen.ts"
+    "type-check": "tsc",
+    "graphql-codegen": "graphql-codegen --config codegen.ts",
+    "prepare": "husky"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
@@ -66,7 +68,8 @@
     "@typescript-eslint/parser": "^5.27.1",
     "eslint": "7.32.0",
     "eslint-config-next": "^13.3.0",
+    "husky": "^9.0.11",
     "ts-node": "^10.8.1",
-    "typescript": "^4.7.3"
+    "typescript": "^4.9.5"
   }
 }

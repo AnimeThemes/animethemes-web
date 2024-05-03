@@ -1,0 +1,3 @@
+npm run graphql-codegen
+npm run lint
+npm run type-check
