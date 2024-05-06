@@ -6,8 +6,6 @@ export interface WatchListItem extends VideoSummaryCardVideoFragment {
 }
 
 interface PlayerContextInterface {
-    currentVideo: VideoSummaryCardVideoFragment | null;
-    clearCurrentVideo: () => void;
     watchList: WatchListItem[];
     setWatchList: (watchList: WatchListItem[], forceAutoPlay?: boolean) => void;
     watchListFactory: (() => Promise<WatchListItem[]>) | null;
@@ -16,6 +14,7 @@ interface PlayerContextInterface {
     setCurrentWatchListItem: (watchListItem: WatchListItem | null) => void;
     addWatchListItem: (video: VideoSummaryCardVideoFragment) => void;
     addWatchListItemNext: (video: VideoSummaryCardVideoFragment) => void;
+    clearWatchList: () => void;
     isGlobalAutoPlay: boolean;
     setGlobalAutoPlay: (autoPlay: boolean) => void;
     isLocalAutoPlay: boolean;
@@ -24,10 +23,6 @@ interface PlayerContextInterface {
 }
 
 const PlayerContext = createContext<PlayerContextInterface>({
-    currentVideo: null,
-    clearCurrentVideo: () => {
-        // Do nothing
-    },
     watchList: [],
     setWatchList: () => {
         // Do nothing
@@ -44,6 +39,9 @@ const PlayerContext = createContext<PlayerContextInterface>({
         // Do nothing
     },
     addWatchListItemNext: () => {
+        // Do nothing
+    },
+    clearWatchList: () => {
         // Do nothing
     },
     isGlobalAutoPlay: false,
