@@ -34,6 +34,7 @@ import { VideoPlayerOverlay } from "components/video-player/VideoPlayerOverlay";
 import { useFullscreen } from "ahooks";
 import { either, sortTransformed, themeIndexComparator, themeTypeComparator } from "utils/comparators";
 import useLocalStorageState from "use-local-storage-state";
+import { getVideoSlugByProps, getVideoSlugByWatchListItem } from "utils/createVideoSlug";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "styles/prism.scss";
@@ -91,8 +92,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     const [isLocalAutoPlay, setLocalAutoPlay] = useState(true);
     const [isWatchListUsingLocalAutoPlay, setIsWatchListUsingLocalAutoPlay] = useState(false);
 
-    const currentVideoIdentifier = getVideoIdentifier(pageProps);
-    const [previousVideoIdentifier, setPreviousVideoIdentifier] = useState<string | null>(() => getVideoIdentifier(pageProps));
+    const currentVideoSlug = getVideoSlugByProps(pageProps);
+    const [previousVideoSlug, setPreviousVideoSlug] = useState<string | null>(() => getVideoSlugByProps(pageProps));
 
     const [isFullscreen, { toggleFullscreen }] = useFullscreen(
         () => document.documentElement,
@@ -138,10 +139,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         return null;
     }
 
-    if (isVideoPage && currentVideoIdentifier !== previousVideoIdentifier) {
-        setPreviousVideoIdentifier(currentVideoIdentifier);
-        const watchListVideoIdentifier = currentWatchListItem ? `${currentWatchListItem.entries[0].id}-${currentWatchListItem.id}` : null;
-        if (currentVideoIdentifier !== watchListVideoIdentifier) {
+    if (isVideoPage && currentVideoSlug !== previousVideoSlug) {
+        setPreviousVideoSlug(currentVideoSlug);
+        const watchListVideoSlug = currentWatchListItem ? getVideoSlugByWatchListItem(currentWatchListItem) : null;
+        if (currentVideoSlug !== watchListVideoSlug) {
             const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
             const video = anime.themes[themeIndex].entries[entryIndex].videos[videoIndex];
 
@@ -163,10 +164,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             stackContext(FullscreenContext.Provider, { value: { isFullscreen, toggleFullscreen } }),
             stackContext(ColorThemeContext.Provider, { value: { colorTheme, setColorTheme } }),
             stackContext(PlayerContext.Provider, { value: {
-                currentVideo: null,
-                clearCurrentVideo: () => {
-                    // Do nothing
-                },
                 watchList,
                 setWatchList: (watchList, useLocalAutoPlay = false) => {
                     setWatchList(watchList);
@@ -202,6 +199,13 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                         createWatchListItem(video),
                         ...watchList.slice(currentIndex + 1)
                     ]);
+                },
+                clearWatchList: () => {
+                    setWatchList([]);
+                    setWatchListFactory(null);
+                    setCurrentWatchListItemId(null);
+                    setIsWatchListUsingLocalAutoPlay(false);
+                    setPreviousVideoSlug(null);
                 },
                 isGlobalAutoPlay,
                 setGlobalAutoPlay,
@@ -293,19 +297,6 @@ function MultiContextProvider({ providers = [], children }: MultiContextProvider
     const stack = providers.reduce((previousValue, stackContext) => stackContext(previousValue), children);
 
     return <>{stack}</>;
-}
-
-function getVideoIdentifier(pageProps: any): string | null {
-    if (pageProps.isVideoPage) {
-        const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
-
-        const theme = anime.themes[themeIndex];
-        const entry = theme.entries[entryIndex];
-        const video = entry.videos[videoIndex];
-
-        return `${entry.id}-${video.id}`;
-    }
-    return null;
 }
 
 function createDefaultWatchList(pageProps: VideoPageProps): WatchListItem[] {

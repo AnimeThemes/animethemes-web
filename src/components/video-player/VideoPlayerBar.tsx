@@ -116,7 +116,7 @@ export function VideoPlayerBar() {
 
     const { dispatchToast } = useToasts();
     const [audioMode] = useSetting(AudioMode, { storageSync: false });
-    const { setCurrentWatchListItem } = useContext(PlayerContext);
+    const { clearWatchList } = useContext(PlayerContext);
 
     function saveToClipboard(url: string) {
         navigator.clipboard.writeText(url)
@@ -228,7 +228,7 @@ export function VideoPlayerBar() {
                     icon={faXmark}
                     isCircle
                     disabled={!background}
-                    onClick={() => setCurrentWatchListItem(null)}
+                    onClick={() => clearWatchList()}
                 />
             </StyledPlayerBarActions>
             <ProgressBar />
