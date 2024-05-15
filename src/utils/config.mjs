@@ -23,7 +23,9 @@ const AUTH_PATH = process.env.NEXT_PUBLIC_AUTH_PATH;
 
 const STAGING = !!process.env.NEXT_PUBLIC_STAGING;
 const VERBOSE_LOGS = !!process.env.NEXT_PUBLIC_VERBOSE_LOGS;
-
+const PAGINATION_PAGE_SIZE = process.env.NEXT_PUBLIC_PAGINATION_PAGE_SIZE
+    ? Number(process.env.NEXT_PUBLIC_PAGINATION_PAGE_SIZE)
+    : null;
 
 function validateConfig() {
     let isValid = true;
@@ -59,5 +61,6 @@ export {
     STAGING,
     VERBOSE_LOGS,
     AUTH_REFERER,
+    PAGINATION_PAGE_SIZE,
     validateConfig,
 };

@@ -99,7 +99,8 @@ const resolvers: IResolvers = {
         playlistAll: apiResolver({
             endpoint: (_, { limit, orderBy, orderDesc }) =>
                 `/playlist?sort=${orderDesc ? "-" : ""}${orderBy}&page[size]=${limit}&fields[playlist]=id,name,visibility,tracks_count`,
-            extractor: (result) => result.playlists
+            extractor: (result) => result.playlists,
+            pagination: true,
         }),
         me: () => ({}),
     },
@@ -111,6 +112,7 @@ const resolvers: IResolvers = {
         playlistAll: apiResolver({
             endpoint: (_, { filterVideoId }) => `/me/playlist?fields[playlist]=id,name,visibility,tracks_count${filterVideoId ? `&filter[track][video_id]=${filterVideoId}` : ``}`,
             extractor: (result) => result.playlists,
+            pagination: true,
         }),
     },
     Year: {

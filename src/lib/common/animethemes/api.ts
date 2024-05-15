@@ -2,7 +2,7 @@ import pLimit from "p-limit";
 import type { ResolveTree } from "graphql-parse-resolve-info";
 import { parseResolveInfo } from "graphql-parse-resolve-info";
 import devLog from "utils/devLog";
-import { CLIENT_API_URL, SERVER_API_KEY, SERVER_API_URL, AUTH_REFERER } from "utils/config.mjs";
+import { CLIENT_API_URL, SERVER_API_KEY, SERVER_API_URL, AUTH_REFERER, PAGINATION_PAGE_SIZE } from "utils/config.mjs";
 import type { GraphQLFieldResolver, GraphQLOutputType, GraphQLResolveInfo } from "graphql";
 import type { Path } from "graphql/jsutils/Path";
 import type { IncomingMessage } from "node:http";
@@ -303,7 +303,7 @@ export function apiResolver(config: ApiResolverConfig): GraphQLFieldResolver<Rec
             } else {
                 devLog.info(`Collecting: ${url}`);
                 const results = [];
-                let nextUrl = `${url}${url.includes("?") ? "&" : "?"}page[size]=25`;
+                let nextUrl = `${url}${url.includes("?") ? "&" : "?"}page[size]=${PAGINATION_PAGE_SIZE ?? 25}`;
                 while (nextUrl) {
                     const json = await fetchJson(nextUrl, { headers }) as Record<string, unknown> & { links: { next: string } };
                     context.apiRequests++;
