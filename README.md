@@ -64,6 +64,10 @@ NEXT_PUBLIC_STAGING=true
 
 ; To enable verbose logging.
 NEXT_PUBLIC_VERBOSE_LOGS=true
+
+; Set the page size to fetch when resolving paginated resources.
+; If not set, 25 will be used.
+NEXT_PUBLIC_PAGINATION_PAGE_SIZE=10
 ```
 
 For more information on environment variables see the [Next.js documentation](https://nextjs.org/docs/basic-features/environment-variables).
