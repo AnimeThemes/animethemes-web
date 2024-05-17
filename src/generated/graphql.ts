@@ -287,6 +287,7 @@ export type QueryPlaylistArgs = {
 
 export type QueryPlaylistAllArgs = {
   limit: InputMaybe<Scalars['Int']>;
+  onlyNonEmpty: InputMaybe<Scalars['Boolean']>;
   orderBy: InputMaybe<Scalars['String']>;
   orderDesc: InputMaybe<Scalars['Boolean']>;
 };

@@ -124,7 +124,7 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
                 ${PlaylistSummaryCard.fragments.showOwner}
 
                 query HomePageRecentlyAddedPlaylists {
-                    playlistAll(orderBy: "created_at", orderDesc: true, limit: 10) {
+                    playlistAll(orderBy: "created_at", orderDesc: true, limit: 10, onlyNonEmpty: true) {
                         ...PlaylistSummaryCardPlaylist
                         ...PlaylistSummaryCardShowOwner
                     }

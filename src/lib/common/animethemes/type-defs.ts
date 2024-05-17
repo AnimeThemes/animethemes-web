@@ -23,7 +23,7 @@ const typeDefs = `
         featuredTheme: FeaturedTheme
         dumpAll: [Dump!]!
         playlist(id: String!): Playlist
-        playlistAll(limit: Int, orderBy: String, orderDesc: Boolean): [Playlist!]!
+        playlistAll(limit: Int, orderBy: String, orderDesc: Boolean, onlyNonEmpty: Boolean): [Playlist!]!
         announcementAll: [Announcement!]!
         me: UserScopedQuery!
     }

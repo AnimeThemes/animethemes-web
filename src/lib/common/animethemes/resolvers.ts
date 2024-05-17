@@ -17,9 +17,10 @@ const resolvers: IResolvers = {
             extractor: (result) => result.animetheme
         }),
         themeAll: apiResolver({
-            endpoint: (_, { limit, orderBy, orderDesc, has }) =>
-                `/animetheme?sort=${orderDesc ? "-" : ""}${orderBy}&page[size]=${limit}&filter[has]=${has}`,
-            extractor: (result) => result.animethemes
+            endpoint: (_, { orderBy, orderDesc, has }) =>
+                `/animetheme?sort=${orderDesc ? "-" : ""}${orderBy}&filter[has]=${has}`,
+            extractor: (result) => result.animethemes,
+            pagination: true,
         }),
         artist: apiResolver({
             endpoint: (_, { slug }) => `/artist/${slug}`,
@@ -49,9 +50,10 @@ const resolvers: IResolvers = {
             pagination: true
         }),
         videoAll: apiResolver({
-            endpoint: (_, { limit, orderBy, orderDesc }) =>
-                `/video?sort=${orderDesc ? "-" : ""}${orderBy}&page[size]=${limit}`,
-            extractor: (result) => result.videos
+            endpoint: (_, { orderBy, orderDesc }) =>
+                `/video?sort=${orderDesc ? "-" : ""}${orderBy}`,
+            extractor: (result) => result.videos,
+            pagination: true,
         }),
         year: (_, { value }) => ({ value }),
         yearAll: apiResolver({
@@ -97,8 +99,8 @@ const resolvers: IResolvers = {
             extractor: (result) => result.playlist,
         }),
         playlistAll: apiResolver({
-            endpoint: (_, { limit, orderBy, orderDesc }) =>
-                `/playlist?sort=${orderDesc ? "-" : ""}${orderBy}&page[size]=${limit}&fields[playlist]=id,name,visibility,tracks_count`,
+            endpoint: (_, { orderBy, orderDesc, onlyNonEmpty }) =>
+                `/playlist?sort=${orderDesc ? "-" : ""}${orderBy}&fields[playlist]=id,name,visibility,tracks_count${onlyNonEmpty ? "&filter[playlist][tracks_count-gte]=1" : ""}`,
             extractor: (result) => result.playlists,
             pagination: true,
         }),
