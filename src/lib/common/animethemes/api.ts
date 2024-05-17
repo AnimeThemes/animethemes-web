@@ -277,7 +277,7 @@ export function apiResolver(config: ApiResolverConfig): GraphQLFieldResolver<Rec
         devLog.info(path + ": " + url);
 
         // Limiting the concurrect requests is necessary to prevent timeouts.
-        return await limit(() => (async () => {
+        return limit(() => (async () => {
             if (!pagination) {
                 devLog.info(`Fetching: ${url}`);
                 let json: Record<string, unknown> | null;
@@ -303,13 +303,14 @@ export function apiResolver(config: ApiResolverConfig): GraphQLFieldResolver<Rec
             } else {
                 devLog.info(`Collecting: ${url}`);
                 const results = [];
-                let nextUrl = `${url}${url.includes("?") ? "&" : "?"}page[size]=${PAGINATION_PAGE_SIZE ?? 25}`;
+                const pageSize = args.limit ?? PAGINATION_PAGE_SIZE ?? 25;
+                let nextUrl: string | null = `${url}${url.includes("?") ? "&" : "?"}page[size]=${pageSize}`;
                 while (nextUrl) {
                     const json = await fetchJson(nextUrl, { headers }) as Record<string, unknown> & { links: { next: string } };
                     context.apiRequests++;
                     results.push(...transformer(extractor(json, parent, args), parent, args) as Array<unknown>);
                     devLog.info(`Collecting: ${url}, Got ${results.length}`);
-                    nextUrl = json.links.next;
+                    nextUrl = !args.limit ? json.links.next : null;
                 }
 
                 return results;
