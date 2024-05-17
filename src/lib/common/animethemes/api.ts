@@ -308,6 +308,11 @@ export function apiResolver(config: ApiResolverConfig): GraphQLFieldResolver<Rec
                 while (nextUrl) {
                     const json = await fetchJson(nextUrl, { headers }) as Record<string, unknown> & { links: { next: string } };
                     context.apiRequests++;
+
+                    if (!json) {
+                        return null;
+                    }
+
                     results.push(...transformer(extractor(json, parent, args), parent, args) as Array<unknown>);
                     devLog.info(`Collecting: ${url}, Got ${results.length}`);
                     nextUrl = !args.limit ? json.links.next : null;
