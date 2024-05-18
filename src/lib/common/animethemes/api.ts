@@ -76,6 +76,8 @@ export const INCLUDES = {
     PlaylistTrack: {
         video: "video",
         playlist: "playlist",
+        previous: "previous",
+        next: "next",
     },
     UserAuth: {
         permissions: "permissions",
@@ -113,7 +115,7 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
         "animethemes.group",
         "images",
         "resources",
-        "studios",
+        "studios.images",
         "animethemes.animethemeentries.videos.audio",
         "animethemes.animethemeentries.videos.videoscript",
         "animethemes.animethemeentries.videos.tracks.playlist",
@@ -179,6 +181,13 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
     Playlist: [
         "user",
         "tracks",
+        "tracks.video.animethemeentries.animetheme.song.artists",
+        "tracks.video.audio",
+        "tracks.video.animethemeentries.animetheme.anime.images",
+        "tracks.video",
+        "tracks.video.animethemeentries.animetheme.group",
+        "tracks.previous",
+        "tracks.next",
     ],
     PlaylistTrack: [
         "video.animethemeentries.animetheme.anime.images",
