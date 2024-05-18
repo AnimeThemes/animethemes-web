@@ -50,7 +50,7 @@ import { Reorder } from "framer-motion";
 import axios from "lib/client/axios";
 import { FeaturedTheme } from "components/featured-theme";
 import { shuffle } from "lodash-es";
-import createVideoSlug from "../../../utils/createVideoSlug";
+import createVideoSlug from "utils/createVideoSlug";
 import { useRouter } from "next/router";
 
 const StyledDesktopOnly = styled.div`
@@ -112,6 +112,29 @@ function getRankComparator(name: string): Comparator<number> {
     }
 }
 
+type LinkedList<T> = Array<{
+    id: string;
+    previous?: { id: string } | null;
+    next?: { id: string } | null;
+} & T>;
+
+function sortLinkedList<T>(list: LinkedList<T>) {
+    const lookUp = list.reduce((prev, curr) => {
+        prev[curr.id] = curr;
+        return prev;
+    }, {} as Record<string, typeof list[number]>);
+
+    let next = list.find((item) => !item.previous);
+    const sortedList = [];
+
+    while (next) {
+        sortedList.push(next);
+        next = next.next ? lookUp[next.next.id] : undefined;
+    }
+
+    return sortedList;
+}
+
 interface PlaylistDetailPageProps extends SharedPageProps, RequiredNonNullable<PlaylistDetailPageQuery> {}
 
 interface PlaylistDetailPageParams extends ParsedUrlQuery {
@@ -139,6 +162,8 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                 location.reload();
                 throw new Error("Playlist was removed or user lost auth.");
             }
+
+            data.playlist.tracks = sortLinkedList(data.playlist.tracks);
 
             return data.playlist;
         },
@@ -170,7 +195,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
     const isOwner = me.user?.name === playlist.user.name;
     const isRanking = playlist.name.startsWith("[#] ");
 
-    const tracks = [...playlist.forward].map((track, index) => ({ ...track, rank: index + 1 }));
+    const tracks = [...playlist.tracks].map((track, index) => ({ ...track, rank: index + 1 }));
     const tracksSorted = [...tracks].sort(
         sortTransformed(
             getComparator(sortBy) ?? getRankComparator(sortBy),
@@ -224,7 +249,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
     async function updateTrackOrder(newTracks: typeof tracks) {
         await mutate({
             ...playlist,
-            forward: newTracks,
+            tracks: newTracks,
         }, { revalidate: false });
     }
 
@@ -307,8 +332,8 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                 <Column style={{ "--gap": "24px" }}>
                     <StyledDesktopOnly>
                         <MultiCoverImage
-                            key={JSON.stringify(playlist.forward)}
-                            resourcesWithImages={playlist.forward.flatMap((track) => {
+                            key={JSON.stringify(playlist.tracks.slice(0, 4))}
+                            resourcesWithImages={playlist.tracks.slice(0, 4).flatMap((track) => {
                                 const anime = track.video.entries[0].theme?.anime;
 
                                 return anime ? [anime] : [];
@@ -399,7 +424,7 @@ PlaylistDetailPage.fragments = {
             name
             visibility
             tracks_count
-            forward {
+            tracks {
                 id
                 video {
                     ...VideoSummaryCardVideo
@@ -412,6 +437,12 @@ PlaylistDetailPage.fragments = {
                             }
                         }
                     }
+                }
+                previous {
+                    id
+                }
+                next {
+                    id
                 }
             }
             user {
@@ -452,6 +483,8 @@ export const getServerSideProps: GetServerSideProps<PlaylistDetailPageProps, Pla
             notFound: true
         };
     }
+
+    data.playlist.tracks = sortLinkedList(data.playlist.tracks);
 
     return {
         props: {

@@ -261,6 +261,8 @@ const typeDefs = `
         id: String!
         video: Video!
         playlist: Playlist!
+        previous: PlaylistTrack
+        next: PlaylistTrack
     }
     
     interface User {
