@@ -1,16 +1,18 @@
-import Link from "next/link";
-import { Text } from "components/text";
-import { Column } from "components/box";
-import { SEO } from "components/seo";
 import styled from "styled-components";
-import { Button } from "components/button";
-import { fetchData } from "lib/server";
+import Link from "next/link";
+
 import { faArrowRight, faAward, faTrophy } from "@fortawesome/pro-solid-svg-icons";
-import { Icon } from "components/icon";
-import theme from "theme";
-import getSharedPageProps from "utils/getSharedPageProps";
 import gql from "graphql-tag";
-import type { EventPageQuery } from "generated/graphql";
+
+import { Column } from "@/components/box/Flex";
+import { Button } from "@/components/button/Button";
+import { Icon } from "@/components/icon/Icon";
+import { SEO } from "@/components/seo/SEO";
+import { Text } from "@/components/text/Text";
+import type { EventPageQuery } from "@/generated/graphql";
+import { fetchData } from "@/lib/server";
+import theme from "@/theme";
+import getSharedPageProps from "@/utils/getSharedPageProps";
 
 const BigButton = styled(Button)`
     overflow: hidden;

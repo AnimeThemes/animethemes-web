@@ -1,7 +1,8 @@
-import { fetchDataClient } from "lib/client/index";
-import type { RandomThemeQuery, RandomThemeQueryVariables } from "generated/graphql";
 import gql from "graphql-tag";
-import { ThemeSummaryCard } from "components/card";
+
+import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
+import type { RandomThemeQuery, RandomThemeQueryVariables } from "@/generated/graphql";
+import { fetchDataClient } from "@/lib/client/index";
 
 export interface RandomThemesOptions {
     themeType?: string;

@@ -1,6 +1,7 @@
-import { apiResolver, fetchJson } from "lib/common/animethemes/api";
 import gql from "graphql-tag";
-import type { SearchArgs } from "generated/graphql";
+
+import type { SearchArgs } from "@/generated/graphql";
+import { apiResolver, fetchJson } from "@/lib/common/animethemes/api";
 
 export interface SimpleSearchArgs {
     query?: string | null

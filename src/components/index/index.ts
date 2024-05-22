@@ -1,1 +1,0 @@
-export { AlphabeticalIndex } from "./AlphabeticalIndex";

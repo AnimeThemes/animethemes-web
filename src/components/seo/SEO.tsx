@@ -1,6 +1,7 @@
 import type { PropsWithChildren } from "react";
 import Head from "next/head";
-import withBasePath from "utils/withBasePath";
+
+import withBasePath from "@/utils/withBasePath";
 
 interface SEOProps {
     title?: string

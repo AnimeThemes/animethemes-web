@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { Toast } from "components/toast";
-import { Text } from "components/text";
-import { Row } from "components/box";
-import { SongTitle } from "components/utils";
-import type { FetchThemeSummaryCardData } from "components/card/ThemeSummaryCard";
+
+import { Row } from "@/components/box/Flex";
+import type { FetchThemeSummaryCardData } from "@/components/card/ThemeSummaryCard";
+import { Text } from "@/components/text/Text";
+import { Toast } from "@/components/toast/Toast";
+import { SongTitle } from "@/components/utils/SongTitle";
 
 interface PlaylistAddToastProps {
     theme: Exclude<FetchThemeSummaryCardData, null>

@@ -1,7 +1,8 @@
-import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
-import { Text } from "components/text";
-import useAuth from "../../hooks/useAuth";
+import { useRouter } from "next/router";
+
+import { Text } from "@/components/text/Text";
+import useAuth from "@/hooks/useAuth";
 
 interface PageRevalidationProps {
     lastBuildAt: number

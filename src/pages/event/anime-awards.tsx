@@ -1,27 +1,29 @@
-import type { ComponentPropsWithoutRef } from "react";
 import { useState } from "react";
-import event from "lib/server/animeawards/index.json";
-import { fetchData } from "lib/server";
-import { SEO } from "components/seo";
-import { Text } from "components/text";
-import { SummaryCard } from "components/card";
-import { Switcher } from "components/switcher";
+import type { ComponentPropsWithoutRef } from "react";
 import styled from "styled-components";
-import theme from "theme";
-import extractImages from "utils/extractImages";
-import createVideoSlug from "utils/createVideoSlug";
+import type { GetStaticProps } from "next";
 import Link from "next/link";
-import { SongTitleWithArtists } from "components/utils";
-import { Icon } from "components/icon";
+
 import { faAward, faHashtag, faUsers } from "@fortawesome/pro-solid-svg-icons";
 import { m } from "framer-motion";
-import getSharedPageProps from "utils/getSharedPageProps";
-import type { GetStaticProps } from "next";
 import gql from "graphql-tag";
-import type { AwardPageThemeQuery } from "generated/graphql";
-import type { Comparator } from "utils/types";
-import { SwitcherOption, SwitcherReset } from "components/switcher/Switcher";
-import { CornerIcon } from "components/icon/CornerIcon";
+
+import { SummaryCard } from "@/components/card/SummaryCard";
+import { CornerIcon } from "@/components/icon/CornerIcon";
+import { Icon } from "@/components/icon/Icon";
+import { SEO } from "@/components/seo/SEO";
+import { Switcher } from "@/components/switcher/Switcher";
+import { SwitcherOption, SwitcherReset } from "@/components/switcher/Switcher";
+import { Text } from "@/components/text/Text";
+import { SongTitleWithArtists } from "@/components/utils/SongTitleWithArtists";
+import type { AwardPageThemeQuery } from "@/generated/graphql";
+import { fetchData } from "@/lib/server";
+import event from "@/lib/server/animeawards/index.json";
+import theme from "@/theme";
+import createVideoSlug from "@/utils/createVideoSlug";
+import extractImages from "@/utils/extractImages";
+import getSharedPageProps from "@/utils/getSharedPageProps";
+import type { Comparator } from "@/utils/types";
 
 const StyledHeader = styled.div`
     display: flex;

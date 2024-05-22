@@ -1,17 +1,19 @@
-import { AnimeSummaryCard } from "components/card";
-import { Text } from "components/text";
-import { Column } from "components/box";
-import { fetchData } from "lib/server";
-import { SEO } from "components/seo";
-import gql from "graphql-tag";
-import fetchStaticPaths from "utils/fetchStaticPaths";
-import type { SharedPageProps } from "utils/getSharedPageProps";
-import getSharedPageProps from "utils/getSharedPageProps";
 import type { GetStaticPaths, GetStaticProps } from "next";
-import type { SeasonDetailPageAllQuery, SeasonDetailPageQuery, SeasonDetailPageQueryVariables } from "generated/graphql";
-import type { ParsedUrlQuery } from "querystring";
-import type { RequiredNonNullable } from "utils/types";
+
+import gql from "graphql-tag";
 import { capitalize } from "lodash-es";
+import type { ParsedUrlQuery } from "querystring";
+
+import { Column } from "@/components/box/Flex";
+import { AnimeSummaryCard } from "@/components/card/AnimeSummaryCard";
+import { SEO } from "@/components/seo/SEO";
+import { Text } from "@/components/text/Text";
+import type { SeasonDetailPageAllQuery, SeasonDetailPageQuery, SeasonDetailPageQueryVariables } from "@/generated/graphql";
+import { fetchData } from "@/lib/server";
+import fetchStaticPaths from "@/utils/fetchStaticPaths";
+import type { SharedPageProps } from "@/utils/getSharedPageProps";
+import getSharedPageProps from "@/utils/getSharedPageProps";
+import type { RequiredNonNullable } from "@/utils/types";
 
 const seasonOrder = [ "winter", "spring", "summer", "fall" ];
 

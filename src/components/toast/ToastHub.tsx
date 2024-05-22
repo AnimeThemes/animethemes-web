@@ -1,8 +1,10 @@
-import { useToasts } from "context/toastContext";
 import styled from "styled-components";
-import { Container } from "components/container";
-import theme from "theme";
+
 import { AnimatePresence, m } from "framer-motion";
+
+import { Container } from "@/components/container/Container";
+import { useToasts } from "@/context/toastContext";
+import theme from "@/theme";
 
 const StyledToastHub = styled(Container)`
     position: fixed;

@@ -1,13 +1,15 @@
 import Link from "next/link";
-import { Toast } from "components/toast";
-import { Text } from "components/text";
-import { Row } from "components/box";
-import { SongTitle } from "components/utils";
+
+import gql from "graphql-tag";
+
+import { Row } from "@/components/box/Flex";
+import { Text } from "@/components/text/Text";
+import { Toast } from "@/components/toast/Toast";
+import { SongTitle } from "@/components/utils/SongTitle";
 import type {
     PlaylistTrackRemoveToastPlaylistFragment,
     PlaylistTrackRemoveToastVideoFragment
-} from "generated/graphql";
-import gql from "graphql-tag";
+} from "@/generated/graphql";
 
 interface PlaylistTrackRemoveToastProps {
     playlist: PlaylistTrackRemoveToastPlaylistFragment;

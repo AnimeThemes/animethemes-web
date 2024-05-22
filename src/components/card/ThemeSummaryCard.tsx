@@ -1,29 +1,34 @@
-import Link from "next/link";
-import { Collapse, Performances, SongTitle, SongTitleWithArtists } from "components/utils";
-import { Text } from "components/text";
-import extractImages from "utils/extractImages";
-import createVideoSlug from "utils/createVideoSlug";
-import { SummaryCard } from "components/card/SummaryCard2";
-import { ThemeMenu } from "components/menu/ThemeMenu";
-import gql from "graphql-tag";
-import { fetchDataClient } from "lib/client";
-import { Icon } from "components/icon";
-import { faChevronDown } from "@fortawesome/pro-solid-svg-icons";
-import { Button } from "components/button";
-import useToggle from "hooks/useToggle";
+import type { PropsWithChildren } from "react";
 import styled from "styled-components";
-import { Table, ThemeTable } from "components/table";
-import theme from "theme";
-import useMediaQuery from "hooks/useMediaQuery";
+import Link from "next/link";
+
+import { faChevronDown } from "@fortawesome/pro-solid-svg-icons";
+import gql from "graphql-tag";
+
+import { Button } from "@/components/button/Button";
+import { SummaryCard } from "@/components/card/SummaryCard2";
+import { Icon } from "@/components/icon/Icon";
+import { ThemeMenu } from "@/components/menu/ThemeMenu";
+import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "@/components/table/Table";
+import { ThemeTable } from "@/components/table/ThemeTable";
+import { Text } from "@/components/text/Text";
+import { TextLink } from "@/components/text/TextLink";
+import { Collapse } from "@/components/utils/Collapse";
+import { Performances } from "@/components/utils/Performances";
+import { SongTitle } from "@/components/utils/SongTitle";
+import { SongTitleWithArtists } from "@/components/utils/SongTitleWithArtists";
 import type {
     ThemeSummaryCardArtistFragment,
     ThemeSummaryCardQuery,
     ThemeSummaryCardThemeExpandableFragment,
     ThemeSummaryCardThemeFragment
-} from "generated/graphql";
-import type { PropsWithChildren } from "react";
-import { TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "components/table/Table";
-import { TextLink } from "components/text/TextLink";
+} from "@/generated/graphql";
+import useMediaQuery from "@/hooks/useMediaQuery";
+import useToggle from "@/hooks/useToggle";
+import { fetchDataClient } from "@/lib/client";
+import theme from "@/theme";
+import createVideoSlug from "@/utils/createVideoSlug";
+import extractImages from "@/utils/extractImages";
 
 const StyledWrapper = styled.div`
     position: relative

@@ -1,12 +1,14 @@
+import React, { useContext,useEffect, useState } from "react";
 import styled from "styled-components";
-import { Button } from "./Button";
-import { Icon } from "components/icon";
+
 import { faChevronUp } from "@fortawesome/pro-solid-svg-icons";
-import React, { useState, useEffect, useContext } from "react";
-import theme from "theme";
-import { withHover } from "styles/mixins";
-import PlayerContext from "context/playerContext";
 import { AnimatePresence, m } from "framer-motion";
+
+import { Button } from "@/components/button/Button";
+import { Icon } from "@/components/icon/Icon";
+import PlayerContext from "@/context/playerContext";
+import { withHover } from "@/styles/mixins";
+import theme from "@/theme";
 
 const ScrollButton = styled(m(Button))<{ $bottomOffset: number }>`
   position: fixed;

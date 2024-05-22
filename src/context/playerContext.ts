@@ -1,5 +1,6 @@
 import { createContext } from "react";
-import type { VideoSummaryCardVideoFragment } from "generated/graphql";
+
+import type { VideoSummaryCardVideoFragment } from "@/generated/graphql";
 
 export interface WatchListItem extends VideoSummaryCardVideoFragment {
     watchListId: number;

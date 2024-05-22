@@ -1,19 +1,21 @@
-import type { ComponentPropsWithoutRef } from "react";
 import { useContext } from "react";
+import type { ComponentPropsWithoutRef } from "react";
 import Link from "next/link";
+
 import { faCompactDisc, faPlay } from "@fortawesome/pro-solid-svg-icons";
-import PlayerContext from "context/playerContext";
-import createVideoSlug, { getVideoSlugByWatchListItem } from "utils/createVideoSlug";
-import { Icon } from "components/icon";
-import { Button } from "components/button";
-import { VideoTags } from "components/tag/VideoTags";
 import gql from "graphql-tag";
+
+import { Button } from "@/components/button/Button";
+import { Icon } from "@/components/icon/Icon";
+import { VideoTags } from "@/components/tag/VideoTags";
+import PlayerContext from "@/context/playerContext";
 import type {
     VideoButtonAnimeFragment,
     VideoButtonEntryFragment,
     VideoButtonThemeFragment,
     VideoButtonVideoFragment
-} from "generated/graphql";
+} from "@/generated/graphql";
+import createVideoSlug, { getVideoSlugByWatchListItem } from "@/utils/createVideoSlug";
 
 interface VideoButtonProps extends ComponentPropsWithoutRef<typeof Button> {
     anime: VideoButtonAnimeFragment

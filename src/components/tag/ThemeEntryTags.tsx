@@ -1,8 +1,9 @@
-import { ContentWarningTags } from "components/tag/ContentWarningTags";
-import { EpisodeTag } from "components/tag/EpisodeTag";
-import { Row } from "components/box";
 import gql from "graphql-tag";
-import type { ThemeEntryTagsEntryFragment } from "generated/graphql";
+
+import { Row } from "@/components/box/Flex";
+import { ContentWarningTags } from "@/components/tag/ContentWarningTags";
+import { EpisodeTag } from "@/components/tag/EpisodeTag";
+import type { ThemeEntryTagsEntryFragment } from "@/generated/graphql";
 
 type ThemeEntryTagsProps = {
     entry: ThemeEntryTagsEntryFragment

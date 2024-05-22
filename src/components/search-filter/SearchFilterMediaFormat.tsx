@@ -1,6 +1,6 @@
-import { Text } from "components/text";
-import { SearchFilter } from "components/search-filter";
-import { Listbox, ListboxOption } from "components/listbox/Listbox";
+import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
+import { SearchFilter } from "@/components/search-filter/SearchFilter";
+import { Text } from "@/components/text/Text";
 
 interface SearchFilterMediaFormatProps {
     value: string | null

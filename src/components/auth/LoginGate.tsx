@@ -1,9 +1,10 @@
-import useAuth from "hooks/useAuth";
 import type { ReactNode } from "react";
-import { Text } from "components/text";
-import { Column, Row } from "components/box";
-import { LoginDialog } from "components/dialog/LoginDialog";
-import { RegisterDialog } from "components/dialog/RegisterDialog";
+
+import { Column, Row } from "@/components/box/Flex";
+import { LoginDialog } from "@/components/dialog/LoginDialog";
+import { RegisterDialog } from "@/components/dialog/RegisterDialog";
+import { Text } from "@/components/text/Text";
+import useAuth from "@/hooks/useAuth";
 
 interface LoginGateProps {
     children: ReactNode;

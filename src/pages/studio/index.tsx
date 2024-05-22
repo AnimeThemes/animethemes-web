@@ -1,14 +1,16 @@
 import React from "react";
-import Link from "next/link";
-import { Text } from "components/text";
-import { AlphabeticalIndex } from "components/index";
-import type { SharedPageProps } from "utils/getSharedPageProps";
-import getSharedPageProps from "utils/getSharedPageProps";
 import type { GetStaticProps } from "next";
-import { fetchData } from "lib/server";
+import Link from "next/link";
+
 import gql from "graphql-tag";
-import type { StudioIndexPageQuery } from "generated/graphql";
-import { BackToTopButton } from "components/button";
+
+import { BackToTopButton } from "@/components/button/BackToTopButton";
+import { AlphabeticalIndex } from "@/components/index/AlphabeticalIndex";
+import { Text } from "@/components/text/Text";
+import type { StudioIndexPageQuery } from "@/generated/graphql";
+import { fetchData } from "@/lib/server";
+import type { SharedPageProps } from "@/utils/getSharedPageProps";
+import getSharedPageProps from "@/utils/getSharedPageProps";
 
 interface StudioIndexPageProps extends SharedPageProps, StudioIndexPageQuery {}
 

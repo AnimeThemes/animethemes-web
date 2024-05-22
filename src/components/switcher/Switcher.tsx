@@ -1,13 +1,15 @@
-import styled from "styled-components";
-import { LayoutGroup, m } from "framer-motion";
-import theme from "theme";
-import { uniqueId as createUniqueId } from "lodash-es";
-import type { ComponentPropsWithoutRef, ComponentPropsWithRef, ReactNode } from "react";
 import { createContext, useContext, useMemo } from "react";
+import type { ComponentPropsWithoutRef, ComponentPropsWithRef, ReactNode } from "react";
+import styled from "styled-components";
+
 import { faTimes } from "@fortawesome/pro-solid-svg-icons";
-import { Icon } from "components/icon";
-import { withHover } from "styles/mixins";
-import { Solid } from "components/box";
+import { LayoutGroup, m } from "framer-motion";
+import { uniqueId as createUniqueId } from "lodash-es";
+
+import { Solid } from "@/components/box/Solid";
+import { Icon } from "@/components/icon/Icon";
+import { withHover } from "@/styles/mixins";
+import theme from "@/theme";
 
 interface SwitcherContextValue {
     selectedItem: string | null

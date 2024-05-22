@@ -1,12 +1,14 @@
+import type { ComponentPropsWithoutRef } from "react";
+import styled from "styled-components";
 import type { MDXRemoteSerializeResult } from "next-mdx-remote";
 import { MDXRemote } from "next-mdx-remote";
-import type { ComponentPropsWithoutRef } from "react";
-import { TextLink } from "components/text/TextLink";
-import { Text } from "components/text";
-import { Card } from "components/card";
-import styled from "styled-components";
-import theme from "theme";
+
 import type { MDXComponents } from "mdx/types";
+
+import { Card } from "@/components/card/Card";
+import { Text } from "@/components/text/Text";
+import { TextLink } from "@/components/text/TextLink";
+import theme from "@/theme";
 
 const StyledMarkdown = styled.div`
     line-height: 1.75;

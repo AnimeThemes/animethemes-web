@@ -1,13 +1,26 @@
-import styled from "styled-components";
-import { Text } from "components/text";
-import { Column, Row } from "components/box";
-import { SidebarContainer } from "components/container";
-import { Card, ThemeSummaryCard } from "components/card";
-import useToggle from "hooks/useToggle";
 import { useState } from "react";
-import { Button, FilterToggleButton } from "components/button";
-import { SearchFilterGroup, SearchFilterSortBy } from "components/search-filter";
-import { Collapse } from "components/utils";
+import styled from "styled-components";
+
+import { faExclamationCircle } from "@fortawesome/pro-solid-svg-icons";
+import { Reorder } from "framer-motion";
+
+import { Column, Row } from "@/components/box/Flex";
+import { Button } from "@/components/button/Button";
+import { FilterToggleButton } from "@/components/button/FilterToggleButton";
+import { Card } from "@/components/card/Card";
+import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
+import { fetchThemeSummaryCardData } from "@/components/card/ThemeSummaryCard";
+import { SidebarContainer } from "@/components/container/SidebarContainer";
+import { Icon } from "@/components/icon/Icon";
+import { MultiCoverImage } from "@/components/image/MultiCoverImage";
+import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
+import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
+import { SEO } from "@/components/seo/SEO";
+import { Text } from "@/components/text/Text";
+import { Collapse } from "@/components/utils/Collapse";
+import useLocalPlaylist from "@/hooks/useLocalPlaylist";
+import useToggle from "@/hooks/useToggle";
+import theme from "@/theme";
 import {
     getComparator,
     SONG_A_Z,
@@ -17,15 +30,7 @@ import {
     SONG_Z_A,
     SONG_Z_A_ANIME,
     UNSORTED
-} from "utils/comparators";
-import { SEO } from "components/seo";
-import { Reorder } from "framer-motion";
-import useLocalPlaylist from "hooks/useLocalPlaylist";
-import theme from "theme";
-import { MultiCoverImage } from "components/image";
-import { faExclamationCircle } from "@fortawesome/pro-solid-svg-icons";
-import { Icon } from "components/icon";
-import { fetchThemeSummaryCardData } from "components/card/ThemeSummaryCard";
+} from "@/utils/comparators";
 
 const StyledDesktopOnly = styled.div`
     gap: 24px;

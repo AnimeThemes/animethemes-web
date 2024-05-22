@@ -1,4 +1,4 @@
-import { CLIENT_API_URL } from "utils/config.mjs";
+import { CLIENT_API_URL } from "@/utils/config";
 
 export interface Announcement {
     id: number

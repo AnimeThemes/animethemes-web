@@ -7,6 +7,7 @@
     "ignorePatterns": [
         "src/generated"
     ],
+    "plugins": ["simple-import-sort"],
     "rules": {
         "semi": [
             "error",
@@ -37,8 +38,25 @@
         "react/react-in-jsx-scope": "off",
         "react/self-closing-comp": "error",
         // For now we don't habe prop-types validation
-        "react/prop-types": "off"
-
+        "react/prop-types": "off",
+        // Sort imports
+        "simple-import-sort/imports": [
+            "error",
+            {
+                "groups": [
+                    // Packages that are used in almost all files.
+                    ["^react$", "^react\\u0000$", "^styled-components", "^next"],
+                    // All other packages.
+                    ["^@?\\w"],
+                    // Absolute imports and other imports such as Vue-style `@/foo`.
+                    // Anything not matched in another group.
+                    ["^"],
+                    // Side effect imports.
+                    ["^\\u0000"]
+                ]
+            }
+        ],
+        "simple-import-sort/exports": "error"
     },
     "overrides": [
         {
@@ -65,7 +83,12 @@
                         "allowSingleExtends": true
                     }
                 ],
-                "@typescript-eslint/consistent-type-imports": "error",
+                "@typescript-eslint/consistent-type-imports": [
+                    "error",
+                    {
+                        "fixStyle": "inline-type-imports"
+                    }
+                ],
                 "@typescript-eslint/consistent-type-exports": "error"
             }
         }

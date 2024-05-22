@@ -1,5 +1,5 @@
-import * as log from "utils/log.mjs";
-import { VERBOSE_LOGS } from "./config.mjs";
+import { VERBOSE_LOGS } from "@/utils/config";
+import * as log from "@/utils/log";
 
 function info(...message: string[]) {
     logIfDevelopment(log.info, ...message);

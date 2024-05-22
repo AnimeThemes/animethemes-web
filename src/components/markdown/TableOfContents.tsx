@@ -1,9 +1,11 @@
-import type { Heading } from "utils/rehypeExtractHeadings";
 import { useEffect, useState } from "react";
-import { Text } from "components/text";
 import styled from "styled-components";
+
 import { m } from "framer-motion";
-import theme from "theme";
+
+import { Text } from "@/components/text/Text";
+import theme from "@/theme";
+import type { Heading } from "@/utils/rehypeExtractHeadings";
 
 const StyledTableOfContents = styled.ul`
     position: sticky;

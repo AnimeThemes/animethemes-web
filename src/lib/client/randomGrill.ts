@@ -1,4 +1,4 @@
-import { CLIENT_API_URL } from "utils/config.mjs";
+import { CLIENT_API_URL } from "@/utils/config";
 
 export async function fetchRandomGrill(): Promise<string> {
     const res = await fetch(`${CLIENT_API_URL}/image?filter[facet]=Grill&sort=random&page[size]=1`);

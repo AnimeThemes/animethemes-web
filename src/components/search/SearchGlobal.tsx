@@ -1,17 +1,23 @@
-import Link from "next/link";
-import { faChevronDown } from "@fortawesome/pro-solid-svg-icons";
-import { Button } from "components/button";
-import { Text } from "components/text";
-import { Column, Row } from "components/box";
-import { Icon } from "components/icon";
-import { useQuery } from "react-query";
-import { AnimeSummaryCard, ArtistSummaryCard, ErrorCard, SummaryCard, ThemeSummaryCard } from "components/card";
-import { useRouter } from "next/router";
-import { fetchDataClient } from "lib/client";
-import gql from "graphql-tag";
-import type { SearchGlobalQuery, SearchGlobalQueryVariables } from "generated/graphql";
 import type { ReactNode } from "react";
-import PlaylistSummaryCard from "components/card/PlaylistSummaryCard";
+import Link from "next/link";
+import { useRouter } from "next/router";
+
+import { faChevronDown } from "@fortawesome/pro-solid-svg-icons";
+import gql from "graphql-tag";
+import { useQuery } from "react-query";
+
+import { Column, Row } from "@/components/box/Flex";
+import { Button } from "@/components/button/Button";
+import { AnimeSummaryCard } from "@/components/card/AnimeSummaryCard";
+import { ArtistSummaryCard } from "@/components/card/ArtistSummaryCard";
+import { ErrorCard } from "@/components/card/ErrorCard";
+import PlaylistSummaryCard from "@/components/card/PlaylistSummaryCard";
+import { SummaryCard } from "@/components/card/SummaryCard";
+import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
+import { Icon } from "@/components/icon/Icon";
+import { Text } from "@/components/text/Text";
+import type { SearchGlobalQuery, SearchGlobalQueryVariables } from "@/generated/graphql";
+import { fetchDataClient } from "@/lib/client";
 
 interface SearchGlobalProps {
     searchQuery?: string

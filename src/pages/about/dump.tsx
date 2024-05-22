@@ -1,17 +1,19 @@
 import type { GetStaticProps } from "next";
-import { fetchData } from "lib/server";
-import gql from "graphql-tag";
-import type { SharedPageProps } from "utils/getSharedPageProps";
-import getSharedPageProps from "utils/getSharedPageProps";
-import type { DumpIndexPageQuery } from "generated/graphql";
-import { Text } from "components/text";
-import { SummaryCard } from "components/card";
-import { IconTextButton } from "components/button";
-import type { Comparator } from "utils/types";
-import { faDownload } from "@fortawesome/pro-solid-svg-icons";
-import { SEO } from "components/seo";
 import Link from "next/link";
-import { Column } from "components/box";
+
+import { faDownload } from "@fortawesome/pro-solid-svg-icons";
+import gql from "graphql-tag";
+
+import { Column } from "@/components/box/Flex";
+import { IconTextButton } from "@/components/button/IconTextButton";
+import { SummaryCard } from "@/components/card/SummaryCard";
+import { SEO } from "@/components/seo/SEO";
+import { Text } from "@/components/text/Text";
+import type { DumpIndexPageQuery } from "@/generated/graphql";
+import { fetchData } from "@/lib/server";
+import type { SharedPageProps } from "@/utils/getSharedPageProps";
+import getSharedPageProps from "@/utils/getSharedPageProps";
+import type { Comparator } from "@/utils/types";
 
 interface DumpIndexPageProps extends SharedPageProps, DumpIndexPageQuery {}
 

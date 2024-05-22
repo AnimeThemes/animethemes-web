@@ -1,7 +1,8 @@
+import { ServerStyleSheet } from "styled-components";
 import type { DocumentContext } from "next/document";
 import Document, { Head, Html, Main, NextScript } from "next/document";
-import { ServerStyleSheet } from "styled-components";
-import { API_URL } from "lib/common/animethemes/api";
+
+import { API_URL } from "@/lib/common/animethemes/api";
 
 const ThemeInjection = () => {
     // language=JavaScript

@@ -1,8 +1,9 @@
-import { Text } from "components/text";
-import { SearchFilter } from "components/search-filter";
 import type { ReactNode } from "react";
-import type { ListboxOptionProps } from "components/listbox/Listbox";
-import { Listbox, ListboxOption } from "components/listbox/Listbox";
+
+import type { ListboxOptionProps } from "@/components/listbox/Listbox";
+import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
+import { SearchFilter } from "@/components/search-filter/SearchFilter";
+import { Text } from "@/components/text/Text";
 
 interface SearchFilterSortByProps<T extends string | null> {
     children: ReactNode

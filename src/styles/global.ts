@@ -1,9 +1,10 @@
 import { createGlobalStyle } from "styled-components";
-import { colors, shadows } from "theme/colors";
-import { darkColors, darkShadows } from "theme/colors/dark";
-import theme, { createCssDefinition } from "theme";
-import { defineColorTheme } from "styles/mixins";
 import { Nunito } from "next/font/google";
+
+import { defineColorTheme } from "@/styles/mixins";
+import theme, { createCssDefinition } from "@/theme";
+import { colors, shadows } from "@/theme/colors";
+import { darkColors, darkShadows } from "@/theme/colors/dark";
 
 const nunito = Nunito({ subsets: ["latin"], weight: "variable" });
 

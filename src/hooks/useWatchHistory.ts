@@ -1,6 +1,8 @@
-import useLocalStorageState from "use-local-storage-state";
-import type { ThemeSummaryCardThemeFragment } from "generated/graphql";
 import { useCallback } from "react";
+
+import useLocalStorageState from "use-local-storage-state";
+
+import type { ThemeSummaryCardThemeFragment } from "@/generated/graphql";
 
 interface WatchHistoryTheme extends ThemeSummaryCardThemeFragment {
     id: number

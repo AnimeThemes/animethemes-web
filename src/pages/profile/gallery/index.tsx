@@ -1,14 +1,16 @@
-import { Text } from "components/text";
-import styled from "styled-components";
-import { Button } from "components/button";
 import { useState } from "react";
-import { SEO } from "components/seo";
-import type { SharedPageProps } from "utils/getSharedPageProps";
-import getSharedPageProps from "utils/getSharedPageProps";
+import styled from "styled-components";
 import type { GetStaticProps } from "next";
-import { fetchData } from "lib/server";
-import type { GalleryPageQuery } from "generated/graphql";
+
 import gql from "graphql-tag";
+
+import { Button } from "@/components/button/Button";
+import { SEO } from "@/components/seo/SEO";
+import { Text } from "@/components/text/Text";
+import type { GalleryPageQuery } from "@/generated/graphql";
+import { fetchData } from "@/lib/server";
+import type { SharedPageProps } from "@/utils/getSharedPageProps";
+import getSharedPageProps from "@/utils/getSharedPageProps";
 
 const StyledGrid = styled.div`
     display: grid;

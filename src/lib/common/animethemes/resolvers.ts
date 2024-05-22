@@ -1,5 +1,6 @@
-import { apiResolver, INCLUDES } from "./api";
 import type { IResolvers } from "@graphql-tools/utils";
+
+import { apiResolver, INCLUDES } from "@/lib/common/animethemes/api";
 
 const resolvers: IResolvers = {
     Query: {

@@ -1,5 +1,6 @@
 import type { ASTNode } from "graphql";
-import type { ApiExecutionResult } from "lib/common";
+
+import type { ApiExecutionResult } from "@/lib/common";
 
 export async function fetchDataClient<T>(
     query: string | ASTNode
@@ -17,7 +18,7 @@ export async function fetchDataClient<T, P extends Record<string, unknown>>(
     root?: Record<string, unknown>
 ): Promise<ApiExecutionResult<T>> {
     // Code-split anything GraphQL related to reduce initial bundle size.
-    const { fetchDataClient } = await import("./chunk");
+    const { fetchDataClient } = await import("lib/client/chunk");
 
     if (!args) {
         return fetchDataClient<T>(query);

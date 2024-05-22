@@ -1,16 +1,17 @@
-import type { SyntheticEvent } from "react";
 import { useState } from "react";
-import { Button } from "components/button";
-import { Input } from "components/form";
-import { Text } from "components/text";
-import { SearchFilter } from "components/search-filter";
+import type { SyntheticEvent } from "react";
 import styled from "styled-components";
-import useAuth from "hooks/useAuth";
-import { Dialog, DialogContent, DialogTrigger } from "components/dialog/Dialog";
-import { Column, Row } from "components/box";
-import { Busy } from "components/utils/Busy";
-import Switch from "components/form/Switch";
-import { ForgotPasswordDialog } from "components/dialog/ForgotPasswordDialog";
+
+import { Column, Row } from "@/components/box/Flex";
+import { Button } from "@/components/button/Button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
+import { ForgotPasswordDialog } from "@/components/dialog/ForgotPasswordDialog";
+import { Input } from "@/components/form/Input";
+import Switch from "@/components/form/Switch";
+import { SearchFilter } from "@/components/search-filter/SearchFilter";
+import { Text } from "@/components/text/Text";
+import { Busy } from "@/components/utils/Busy";
+import useAuth from "@/hooks/useAuth";
 
 const StyledForm = styled.form`
     display: flex;

@@ -1,8 +1,9 @@
-import type { ErrorInfo, ReactNode } from "react";
 import { Component } from "react";
+import type { ErrorInfo, ReactNode } from "react";
 import Link from "next/link";
-import { Text } from "components/text";
-import { Container } from "components/container";
+
+import { Container } from "@/components/container/Container";
+import { Text } from "@/components/text/Text";
 
 interface ErrorBoundaryProps {
     children?: ReactNode

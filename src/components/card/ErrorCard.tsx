@@ -1,10 +1,12 @@
-import { Card } from "components/card";
-import { Row } from "components/box";
-import { Text } from "components/text";
-import { faExclamation } from "@fortawesome/pro-solid-svg-icons";
 import styled from "styled-components";
-import theme from "theme";
-import { Icon } from "components/icon";
+
+import { faExclamation } from "@fortawesome/pro-solid-svg-icons";
+
+import { Row } from "@/components/box/Flex";
+import { Card } from "@/components/card/Card";
+import { Icon } from "@/components/icon/Icon";
+import { Text } from "@/components/text/Text";
+import theme from "@/theme";
 
 const StyledCard = styled(Card)`
     display: flex;

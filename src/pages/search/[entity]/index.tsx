@@ -1,10 +1,16 @@
-import { SearchAnime, SearchArtist, SearchSeries, SearchStudio, SearchTheme } from "components/search";
-import { useRouter } from "next/router";
-import { SEO } from "components/seo";
-import { capitalize } from "lodash-es";
 import type { GetStaticPaths, GetStaticProps } from "next";
+import { useRouter } from "next/router";
+
+import { capitalize } from "lodash-es";
 import type { ParsedUrlQuery } from "querystring";
-import { SearchPlaylist } from "components/search/SearchPlaylist";
+
+import { SearchAnime } from "@/components/search/SearchAnime";
+import { SearchArtist } from "@/components/search/SearchArtist";
+import { SearchPlaylist } from "@/components/search/SearchPlaylist";
+import { SearchSeries } from "@/components/search/SearchSeries";
+import { SearchStudio } from "@/components/search/SearchStudio";
+import { SearchTheme } from "@/components/search/SearchTheme";
+import { SEO } from "@/components/seo/SEO";
 
 const SEARCH_ENTITIES = [ "anime", "theme", "artist", "series", "studio", "playlist" ] as const;
 

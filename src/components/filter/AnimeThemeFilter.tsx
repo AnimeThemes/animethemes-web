@@ -1,12 +1,14 @@
 import { memo, useMemo, useState } from "react";
-import { Column, Row } from "components/box";
-import { ThemeDetailCard } from "components/card";
-import { HorizontalScroll } from "components/utils";
-import { either, themeGroupComparator, themeIndexComparator, themeTypeComparator } from "utils/comparators";
+
 import gql from "graphql-tag";
-import type { AnimeThemeFilterThemeFragment } from "generated/graphql";
-import { Listbox, ListboxOption } from "components/listbox/Listbox";
-import { Text } from "components/text/Text";
+
+import { Column, Row } from "@/components/box/Flex";
+import { ThemeDetailCard } from "@/components/card/ThemeDetailCard";
+import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
+import { Text } from "@/components/text/Text";
+import { HorizontalScroll } from "@/components/utils/HorizontalScroll";
+import type { AnimeThemeFilterThemeFragment } from "@/generated/graphql";
+import { either, themeGroupComparator, themeIndexComparator, themeTypeComparator } from "@/utils/comparators";
 
 interface AnimeThemeFilterProps {
     themes: Array<AnimeThemeFilterThemeFragment>

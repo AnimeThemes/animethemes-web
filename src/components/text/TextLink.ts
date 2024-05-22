@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Link from "next/link";
-import theme from "theme";
+
+import theme from "@/theme";
 
 export const TextLink = styled(Link)`
     cursor: pointer;

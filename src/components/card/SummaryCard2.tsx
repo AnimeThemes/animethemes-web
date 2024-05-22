@@ -1,12 +1,14 @@
-import { Text } from "components/text";
-import styled, { css } from "styled-components";
-import { Card } from "components/card";
-import { Column } from "components/box";
-import withBasePath from "utils/withBasePath";
-import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { useState } from "react";
-import { loadingAnimation } from "styles/mixins";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
+import styled, { css } from "styled-components";
+
 import type { Property } from "csstype";
+
+import { Column } from "@/components/box/Flex";
+import { Card } from "@/components/card/Card";
+import { Text } from "@/components/text/Text";
+import { loadingAnimation } from "@/styles/mixins";
+import withBasePath from "@/utils/withBasePath";
 
 const StyledSummaryCard = styled(Card)`
     display: flex;

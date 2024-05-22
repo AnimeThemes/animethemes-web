@@ -1,7 +1,8 @@
-import styled from "styled-components";
-import theme from "theme";
-import { Logo } from "components/image/Logo";
 import type { ComponentPropsWithoutRef } from "react";
+import styled from "styled-components";
+
+import { Logo } from "@/components/image/Logo";
+import theme from "@/theme";
 
 const StyledPlaceholder = styled.div`
     width: 100%;

@@ -1,10 +1,12 @@
 import { type SyntheticEvent, useState } from "react";
+
 import type { Property } from "csstype";
 import gql from "graphql-tag";
-import type { StudioSummaryCardStudioFragment } from "generated/graphql";
-import extractBackgroundColor from "utils/extractBackgroundColor";
-import { SummaryCard } from "components/card/SummaryCard";
-import extractImages from "utils/extractImages";
+
+import { SummaryCard } from "@/components/card/SummaryCard";
+import type { StudioSummaryCardStudioFragment } from "@/generated/graphql";
+import extractBackgroundColor from "@/utils/extractBackgroundColor";
+import extractImages from "@/utils/extractImages";
 
 interface StudioSummaryCardProps {
     studio: StudioSummaryCardStudioFragment;

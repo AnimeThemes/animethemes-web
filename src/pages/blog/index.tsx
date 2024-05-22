@@ -1,17 +1,20 @@
-import { fetchData } from "lib/server";
-import { SEO } from "components/seo";
-import { Text } from "components/text";
-import type { SharedPageProps } from "utils/getSharedPageProps";
-import getSharedPageProps from "utils/getSharedPageProps";
-import type { GetStaticProps } from "next";
-import gql from "graphql-tag";
-import type { DocumentIndexPageQuery } from "generated/graphql";
-import { BackToTopButton, Button } from "components/button";
-import { Card } from "components/card";
-import Link from "next/link";
-import { Column, Row } from "components/box";
-import { groupBy } from "lodash-es";
 import { Fragment } from "react";
+import type { GetStaticProps } from "next";
+import Link from "next/link";
+
+import gql from "graphql-tag";
+import { groupBy } from "lodash-es";
+
+import { Column, Row } from "@/components/box/Flex";
+import { BackToTopButton } from "@/components/button/BackToTopButton";
+import { Button } from "@/components/button/Button";
+import { Card } from "@/components/card/Card";
+import { SEO } from "@/components/seo/SEO";
+import { Text } from "@/components/text/Text";
+import type { DocumentIndexPageQuery } from "@/generated/graphql";
+import { fetchData } from "@/lib/server";
+import type { SharedPageProps } from "@/utils/getSharedPageProps";
+import getSharedPageProps from "@/utils/getSharedPageProps";
 
 interface DocumentIndexPageProps extends SharedPageProps, DocumentIndexPageQuery {}
 

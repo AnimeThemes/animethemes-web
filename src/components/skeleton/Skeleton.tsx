@@ -1,9 +1,11 @@
-import styled from "styled-components";
-import { loadingAnimation } from "styles/mixins";
-import { fadeIn } from "styles/animations";
-import theme from "theme";
 import type { ReactNode } from "react";
+import styled from "styled-components";
+
 import type { Property } from "csstype";
+
+import { fadeIn } from "@/styles/animations";
+import { loadingAnimation } from "@/styles/mixins";
+import theme from "@/theme";
 
 const StyledSkeleton = styled.div`    
     ${loadingAnimation}

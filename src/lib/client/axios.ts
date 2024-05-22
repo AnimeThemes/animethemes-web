@@ -1,6 +1,7 @@
 import type { AxiosError } from "axios";
 import Axios from "axios";
-import { CLIENT_API_URL } from "utils/config.mjs";
+
+import { CLIENT_API_URL } from "@/utils/config";
 
 const axios = Axios.create({
     baseURL: CLIENT_API_URL,

@@ -1,7 +1,6 @@
-// @ts-check
-
 import pico from "picocolors";
-import { error, warn } from "./log.mjs";
+
+import { error, warn } from "@/utils/log";
 
 // Server-side
 
@@ -49,18 +48,18 @@ function validateConfig() {
 }
 
 export {
-    SERVER_API_URL,
-    SERVER_API_KEY,
     ANALYZE,
-    MINIMAL_BUILD,
-    BASE_PATH,
-    CLIENT_API_URL,
-    VIDEO_URL,
     AUDIO_URL,
     AUTH_PATH,
-    STAGING,
-    VERBOSE_LOGS,
     AUTH_REFERER,
+    BASE_PATH,
+    CLIENT_API_URL,
+    MINIMAL_BUILD,
     PAGINATION_PAGE_SIZE,
+    SERVER_API_KEY,
+    SERVER_API_URL,
+    STAGING,
     validateConfig,
+    VERBOSE_LOGS,
+    VIDEO_URL,
 };

@@ -1,17 +1,20 @@
-import styled from "styled-components";
-import { SummaryCard, ThemeSummaryCard } from "components/card";
-import { Text } from "components/text";
-import extractImages from "utils/extractImages";
-import createVideoSlug from "utils/createVideoSlug";
-import { SongTitleWithArtists } from "components/utils";
-import { Column } from "components/box";
-import { Icon } from "components/icon";
-import { faAward, faSeedling, faUsers } from "@fortawesome/pro-solid-svg-icons";
-import { CornerIcon } from "components/icon/CornerIcon";
-import gql from "graphql-tag";
-import type { BracketThemeSummaryCardConstestantFragment } from "generated/graphql";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
-import { TextLink } from "components/text/TextLink";
+import styled from "styled-components";
+
+import { faAward, faSeedling, faUsers } from "@fortawesome/pro-solid-svg-icons";
+import gql from "graphql-tag";
+
+import { Column } from "@/components/box/Flex";
+import { SummaryCard } from "@/components/card/SummaryCard";
+import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
+import { CornerIcon } from "@/components/icon/CornerIcon";
+import { Icon } from "@/components/icon/Icon";
+import { Text } from "@/components/text/Text";
+import { TextLink } from "@/components/text/TextLink";
+import { SongTitleWithArtists } from "@/components/utils/SongTitleWithArtists";
+import type { BracketThemeSummaryCardConstestantFragment } from "@/generated/graphql";
+import createVideoSlug from "@/utils/createVideoSlug";
+import extractImages from "@/utils/extractImages";
 
 const StyledSummaryCardWrapper = styled.div`
     position: relative;

@@ -1,10 +1,12 @@
-import { SearchGlobal } from "components/search";
-import { Column, Row } from "components/box";
-import { faCompass, faSearch } from "@fortawesome/pro-solid-svg-icons";
-import { Text } from "components/text";
-import { Icon } from "components/icon";
 import { useRouter } from "next/router";
-import { SEO } from "components/seo";
+
+import { faCompass, faSearch } from "@fortawesome/pro-solid-svg-icons";
+
+import { Column, Row } from "@/components/box/Flex";
+import { Icon } from "@/components/icon/Icon";
+import { SearchGlobal } from "@/components/search/SearchGlobal";
+import { SEO } from "@/components/seo/SEO";
+import { Text } from "@/components/text/Text";
 
 export default function SearchGlobalPage() {
     const router = useRouter();

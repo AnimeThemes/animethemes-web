@@ -1,21 +1,24 @@
-import { Dialog, DialogContent, DialogTrigger } from "components/dialog/Dialog";
-import { Button, IconTextButton } from "components/button";
-import { faPen } from "@fortawesome/pro-solid-svg-icons";
-import { Column, Row } from "components/box";
-import { Text } from "components/text";
-import { SearchFilter } from "components/search-filter";
-import { Input } from "components/form";
-import type { FormEvent, ReactNode } from "react";
 import { useState } from "react";
-import { Listbox, ListboxOption } from "components/listbox/Listbox";
-import axios from "lib/client/axios";
+import type { FormEvent, ReactNode } from "react";
 import styled from "styled-components";
-import { LoginGate } from "components/auth/LoginGate";
-import { mutate } from "swr";
-import { Busy } from "components/utils/Busy";
+
+import { faPen } from "@fortawesome/pro-solid-svg-icons";
 import { isAxiosError } from "axios";
 import gql from "graphql-tag";
-import type { PlaylistEditDialogPlaylistFragment } from "generated/graphql";
+import { mutate } from "swr";
+
+import { LoginGate } from "@/components/auth/LoginGate";
+import { Column, Row } from "@/components/box/Flex";
+import { Button } from "@/components/button/Button";
+import { IconTextButton } from "@/components/button/IconTextButton";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
+import { Input } from "@/components/form/Input";
+import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
+import { SearchFilter } from "@/components/search-filter/SearchFilter";
+import { Text } from "@/components/text/Text";
+import { Busy } from "@/components/utils/Busy";
+import type { PlaylistEditDialogPlaylistFragment } from "@/generated/graphql";
+import axios from "@/lib/client/axios";
 
 interface PlaylistEditDialogProps {
     playlist: PlaylistEditDialogPlaylistFragment;

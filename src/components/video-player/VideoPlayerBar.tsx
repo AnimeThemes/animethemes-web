@@ -1,32 +1,24 @@
-import { Column, Solid } from "components/box";
-import { Text } from "components/text";
-import { Performances, SongTitle } from "components/utils";
-import Link from "next/link";
-import { ConditionalWrapper } from "components/utils/ConditionalWrapper";
-import {
-    faBackwardStep,
-    faForwardStep,
-    faListMusic,
-    faPause,
-    faPlay,
-    faShare,
-    faXmark
-} from "@fortawesome/pro-solid-svg-icons";
-import { Icon } from "components/icon";
-import { PlaylistTrackAddDialog } from "components/dialog/PlaylistTrackAddDialog";
-import { Menu, MenuContent, MenuItem, MenuTrigger } from "components/menu/Menu";
-import { IconTextButton } from "components/button";
-import { AudioMode } from "utils/settings";
-import { ProgressBar } from "components/video-player/ProgressBar";
-import styled from "styled-components";
-import theme from "theme";
-import { Toast } from "components/toast";
-import { useToasts } from "context/toastContext";
 import { useContext } from "react";
-import { VideoPlayerContext } from "components/video-player/VideoPlayer";
-import useSetting from "hooks/useSetting";
-import PlayerContext from "context/playerContext";
-import { VolumeControl } from "components/video-player/VolumeControl";
+import styled from "styled-components";
+import Link from "next/link";
+
+import { faBackwardStep, faForwardStep, faListMusic, faPause, faPlay, faXmark } from "@fortawesome/pro-solid-svg-icons";
+
+import { Column } from "@/components/box/Flex";
+import { Solid } from "@/components/box/Solid";
+import { IconTextButton } from "@/components/button/IconTextButton";
+import { PlaylistTrackAddDialog } from "@/components/dialog/PlaylistTrackAddDialog";
+import { Icon } from "@/components/icon/Icon";
+import { ShareMenu } from "@/components/menu/ShareMenu";
+import { Text } from "@/components/text/Text";
+import { ConditionalWrapper } from "@/components/utils/ConditionalWrapper";
+import { Performances } from "@/components/utils/Performances";
+import { SongTitle } from "@/components/utils/SongTitle";
+import { ProgressBar } from "@/components/video-player/ProgressBar";
+import { VideoPlayerContext } from "@/components/video-player/VideoPlayer";
+import { VolumeControl } from "@/components/video-player/VolumeControl";
+import PlayerContext from "@/context/playerContext";
+import theme from "@/theme";
 
 const StyledPlayerBar = styled(Solid)`
     position: relative;
@@ -114,14 +106,7 @@ export function VideoPlayerBar() {
     const theme = entry.theme;
     const anime = theme.anime;
 
-    const { dispatchToast } = useToasts();
-    const [audioMode] = useSetting(AudioMode, { storageSync: false });
     const { clearWatchList } = useContext(PlayerContext);
-
-    function saveToClipboard(url: string) {
-        navigator.clipboard.writeText(url)
-            .then(() => dispatchToast("clipboard", <Toast>Copied to clipboard!</Toast>));
-    }
 
     return (
         <StyledPlayerBar>
@@ -201,29 +186,7 @@ export function VideoPlayerBar() {
                         <IconTextButton icon={faListMusic} variant="solid" collapsible="socialListMax">Add to Playlist</IconTextButton>
                     }
                 />
-                <Menu modal={false}>
-                    <MenuTrigger asChild>
-                        <IconTextButton icon={faShare} variant="solid" collapsible="socialListMax">Share</IconTextButton>
-                    </MenuTrigger>
-                    <MenuContent>
-                        <MenuItem onSelect={() => saveToClipboard(location.href)}>Copy URL to this Page</MenuItem>
-                        {audioMode === AudioMode.ENABLED ? (
-                            <>
-                                <MenuItem onSelect={() => saveToClipboard(audioUrl)}>Copy URL to Embeddable Audio</MenuItem>
-                                <a href={`${audioUrl}?download`}>
-                                    <MenuItem>Download Audio</MenuItem>
-                                </a>
-                            </>
-                        ) : (
-                            <>
-                                <MenuItem onSelect={() => saveToClipboard(videoUrl)}>Copy URL to Embeddable Video</MenuItem>
-                                <a href={`${videoUrl}?download`}>
-                                    <MenuItem>Download Video</MenuItem>
-                                </a>
-                            </>
-                        )}
-                    </MenuContent>
-                </Menu>
+                <ShareMenu pagePath={videoPagePath} videoUrl={videoUrl} audioUrl={audioUrl} />
                 <IconTextButton
                     icon={faXmark}
                     isCircle

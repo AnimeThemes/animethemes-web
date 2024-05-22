@@ -1,15 +1,17 @@
-import styled from "styled-components";
-import { Text } from "components/text";
-import { faDiagramProject } from "@fortawesome/pro-solid-svg-icons";
-import { Icon } from "components/icon";
-import type { RefObject } from "react";
 import { memo, useCallback, useRef, useState } from "react";
-import theme from "theme";
+import type { RefObject } from "react";
+import styled from "styled-components";
+
+import { faDiagramProject } from "@fortawesome/pro-solid-svg-icons";
 import { m } from "framer-motion";
-import { Button } from "components/button";
-import { BracketThemeSummaryCard } from "components/bracket/BracketThemeSummaryCard";
-import type { BracketPageQuery } from "generated/graphql";
-import type { RequiredNonNullable } from "utils/types";
+
+import { BracketThemeSummaryCard } from "@/components/bracket/BracketThemeSummaryCard";
+import { Button } from "@/components/button/Button";
+import { Icon } from "@/components/icon/Icon";
+import { Text } from "@/components/text/Text";
+import type { BracketPageQuery } from "@/generated/graphql";
+import theme from "@/theme";
+import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledBracketContainer = styled.div`
     flex: 1 1 0;

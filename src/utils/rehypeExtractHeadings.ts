@@ -1,8 +1,8 @@
+import type { Root } from "hast";
 import { hasProperty } from "hast-util-has-property";
 import { headingRank } from "hast-util-heading-rank";
 import { toString } from "hast-util-to-string";
 import { visit } from "unist-util-visit";
-import type { Root } from "hast";
 
 export interface Heading {
     text: string

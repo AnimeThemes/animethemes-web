@@ -1,8 +1,10 @@
-import styled, { css } from "styled-components";
-import theme from "theme";
-import type { Property } from "csstype";
-import type { Colors } from "theme/colors";
 import type { ReactElement } from "react";
+import styled, { css } from "styled-components";
+
+import type { Property } from "csstype";
+
+import theme from "@/theme";
+import type { Colors } from "@/theme/colors";
 
 interface TextProps {
     variant?: "h1" | "h2" | "h3" | "small" | "code";

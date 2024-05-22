@@ -1,18 +1,20 @@
-import { FeaturedThemePreview } from "utils/settings";
-import styled, { keyframes } from "styled-components";
-import theme from "theme";
-import { ThemeSummaryCard } from "components/card";
-import extractImages from "utils/extractImages";
-import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
-import useSetting from "hooks/useSetting";
-import useCompatability from "hooks/useCompatability";
-import { fetchRandomGrill } from "lib/client/randomGrill";
-import createVideoSlug from "utils/createVideoSlug";
+import type { ReactNode } from "react";
+import styled, { keyframes } from "styled-components";
 import Link from "next/link";
-import { VIDEO_URL } from "utils/config.mjs";
+
 import gql from "graphql-tag";
-import type { FeaturedThemeThemeFragment } from "generated/graphql";
+
+import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
+import type { FeaturedThemeThemeFragment } from "@/generated/graphql";
+import useCompatability from "@/hooks/useCompatability";
+import useSetting from "@/hooks/useSetting";
+import { fetchRandomGrill } from "@/lib/client/randomGrill";
+import theme from "@/theme";
+import { VIDEO_URL } from "@/utils/config";
+import createVideoSlug from "@/utils/createVideoSlug";
+import extractImages from "@/utils/extractImages";
+import { FeaturedThemePreview } from "@/utils/settings";
 
 const slowPan = keyframes`
     from {

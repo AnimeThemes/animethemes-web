@@ -1,10 +1,12 @@
-import styled, { css } from "styled-components";
-import { Text } from "components/text";
-import { Icon } from "components/icon";
-import theme from "theme";
-import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import type { HTMLAttributes, ReactComponentElement, ReactElement, ReactNode } from "react";
-import type { Colors } from "theme/colors";
+import styled, { css } from "styled-components";
+
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+
+import { Icon } from "@/components/icon/Icon";
+import { Text } from "@/components/text/Text";
+import theme from "@/theme";
+import type { Colors } from "@/theme/colors";
 
 const StyledTag = styled.span`
     display: flex;

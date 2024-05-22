@@ -1,28 +1,31 @@
-import { Dialog, DialogContent, DialogTrigger } from "components/dialog/Dialog";
-import { Button, IconTextButton } from "components/button";
-import { faArrowDown, faListMusic, faMinus, faPlus } from "@fortawesome/pro-solid-svg-icons";
-import { Column, Row } from "components/box";
-import type { ReactNode } from "react";
 import { useState } from "react";
-import axios from "lib/client/axios";
+import type { ReactNode } from "react";
+
+import { faArrowDown, faListMusic, faMinus, faPlus } from "@fortawesome/pro-solid-svg-icons";
+import gql from "graphql-tag";
 import useSWR, { mutate } from "swr";
-import { Icon } from "components/icon";
-import PlaylistSummaryCard from "components/card/PlaylistSummaryCard";
-import { useToasts } from "context/toastContext";
+
+import { LoginGate } from "@/components/auth/LoginGate";
+import { Column, Row } from "@/components/box/Flex";
+import { Button } from "@/components/button/Button";
+import { IconTextButton } from "@/components/button/IconTextButton";
+import PlaylistSummaryCard from "@/components/card/PlaylistSummaryCard";
+import { VideoSummaryCard, VideoSummaryCardFragmentVideo } from "@/components/card/VideoSummaryCard";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
+import { PlaylistAddDialog } from "@/components/dialog/PlaylistAddDialog";
+import { Icon } from "@/components/icon/Icon";
+import { Skeleton } from "@/components/skeleton/Skeleton";
+import { Text } from "@/components/text/Text";
+import { PlaylistTrackAddToast } from "@/components/toast/PlaylistTrackAddToast";
+import { PlaylistTrackRemoveToast } from "@/components/toast/PlaylistTrackRemoveToast";
+import { Busy } from "@/components/utils/Busy";
+import { useToasts } from "@/context/toastContext";
 import type {
     PlaylistTrackAddDialogVideoFragment,
     PlaylistTrackAddFormPlaylistQuery, PlaylistTrackAddFormPlaylistQueryVariables
-} from "generated/graphql";
-import { Text } from "components/text";
-import { PlaylistTrackAddToast } from "components/toast/PlaylistTrackAddToast";
-import { PlaylistTrackRemoveToast } from "components/toast/PlaylistTrackRemoveToast";
-import { LoginGate } from "components/auth/LoginGate";
-import { VideoSummaryCard, VideoSummaryCardFragmentVideo } from "components/card/VideoSummaryCard";
-import gql from "graphql-tag";
-import { Skeleton } from "components/skeleton/Skeleton";
-import { Busy } from "components/utils/Busy";
-import { fetchDataClient } from "lib/client";
-import { PlaylistAddDialog } from "components/dialog/PlaylistAddDialog";
+} from "@/generated/graphql";
+import { fetchDataClient } from "@/lib/client";
+import axios from "@/lib/client/axios";
 
 interface PlaylistTrackAddDialogProps {
     video: PlaylistTrackAddDialogVideoFragment;

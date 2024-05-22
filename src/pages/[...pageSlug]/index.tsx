@@ -1,24 +1,26 @@
-import Link from "next/link";
-import { fetchData } from "lib/server";
 import styled from "styled-components";
-import { Icon } from "components/icon";
-import { faArrowLeft } from "@fortawesome/pro-solid-svg-icons";
-import { Text } from "components/text";
-import theme from "theme";
-import { SEO } from "components/seo";
-import fetchStaticPaths from "utils/fetchStaticPaths";
-import gql from "graphql-tag";
-import type { SharedPageProps } from "utils/getSharedPageProps";
-import getSharedPageProps from "utils/getSharedPageProps";
 import type { GetStaticPaths, GetStaticProps } from "next";
-import type { ParsedUrlQuery } from "querystring";
-import type { DocumentPageAllQuery, DocumentPageQuery, DocumentPageQueryVariables } from "generated/graphql";
-import type { RequiredNonNullable } from "utils/types";
+import Link from "next/link";
 import type { MDXRemoteSerializeResult } from "next-mdx-remote";
-import serializeMarkdown from "utils/serializeMarkdown";
-import type { Heading } from "utils/rehypeExtractHeadings";
-import { Markdown } from "components/markdown/Markdown";
-import { TableOfContents } from "components/markdown/TableOfContents";
+
+import { faArrowLeft } from "@fortawesome/pro-solid-svg-icons";
+import gql from "graphql-tag";
+import type { ParsedUrlQuery } from "querystring";
+
+import { Icon } from "@/components/icon/Icon";
+import { Markdown } from "@/components/markdown/Markdown";
+import { TableOfContents } from "@/components/markdown/TableOfContents";
+import { SEO } from "@/components/seo/SEO";
+import { Text } from "@/components/text/Text";
+import type { DocumentPageAllQuery, DocumentPageQuery, DocumentPageQueryVariables } from "@/generated/graphql";
+import { fetchData } from "@/lib/server";
+import theme from "@/theme";
+import fetchStaticPaths from "@/utils/fetchStaticPaths";
+import type { SharedPageProps } from "@/utils/getSharedPageProps";
+import getSharedPageProps from "@/utils/getSharedPageProps";
+import type { Heading } from "@/utils/rehypeExtractHeadings";
+import serializeMarkdown from "@/utils/serializeMarkdown";
+import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledGrid = styled.div`
     display: flex;

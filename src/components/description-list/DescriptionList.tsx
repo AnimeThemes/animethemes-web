@@ -1,6 +1,7 @@
-import styled from "styled-components";
-import { Text } from "components/text";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
+import styled from "styled-components";
+
+import { Text } from "@/components/text/Text";
 
 const StyledDescriptionList = styled.dl`
     display: flex;

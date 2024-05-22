@@ -1,5 +1,7 @@
-import type { PointerEvent, ReactNode, RefObject, SyntheticEvent } from "react";
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import type { PointerEvent, ReactNode, RefObject, SyntheticEvent } from "react";
+import { useRouter } from "next/router";
+
 import {
     StyledAside,
     StyledAudio,
@@ -10,18 +12,17 @@ import {
     StyledPlayerContent,
     StyledVideo,
     StyledVideoBackground
-} from "./VideoPlayer.style";
-import PlayerContext from "context/playerContext";
-import createVideoSlug from "utils/createVideoSlug";
-import { useRouter } from "next/router";
-import useSetting from "hooks/useSetting";
-import { AudioMode, GlobalVolume } from "utils/settings";
-import { AUDIO_URL, VIDEO_URL } from "utils/config.mjs";
-import extractImages from "utils/extractImages";
-import useWatchHistory from "hooks/useWatchHistory";
-import type { VideoSummaryCardVideoFragment } from "generated/graphql";
-import { VideoPlayerBar } from "components/video-player/VideoPlayerBar";
-import useMouseRelax from "hooks/useMouseRelax";
+} from "@/components/video-player/VideoPlayer.style";
+import { VideoPlayerBar } from "@/components/video-player/VideoPlayerBar";
+import PlayerContext from "@/context/playerContext";
+import type { VideoSummaryCardVideoFragment } from "@/generated/graphql";
+import useMouseRelax from "@/hooks/useMouseRelax";
+import useSetting from "@/hooks/useSetting";
+import useWatchHistory from "@/hooks/useWatchHistory";
+import { AUDIO_URL, VIDEO_URL } from "@/utils/config";
+import createVideoSlug from "@/utils/createVideoSlug";
+import extractImages from "@/utils/extractImages";
+import { AudioMode, GlobalVolume } from "@/utils/settings";
 
 interface VideoPlayerContextValue {
     video: VideoSummaryCardVideoFragment;

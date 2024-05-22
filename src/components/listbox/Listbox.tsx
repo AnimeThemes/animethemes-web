@@ -1,11 +1,13 @@
-import styled from "styled-components";
-import { faCheck, faSort, faTimes } from "@fortawesome/pro-solid-svg-icons";
-import { Button } from "components/button";
-import theme from "theme";
-import * as RadixSelect from "@radix-ui/react-select";
-import { flipDown } from "styles/animations";
-import { Icon } from "components/icon";
 import { forwardRef } from "react";
+import styled from "styled-components";
+
+import { faCheck, faSort, faTimes } from "@fortawesome/pro-solid-svg-icons";
+import * as RadixSelect from "@radix-ui/react-select";
+
+import { Button } from "@/components/button/Button";
+import { Icon } from "@/components/icon/Icon";
+import { flipDown } from "@/styles/animations";
+import theme from "@/theme";
 
 // Radix' listbox can't handle null values, so we are giving it a fake null value.
 const NULL_VALUE = "__NULL__";

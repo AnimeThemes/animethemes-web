@@ -1,31 +1,36 @@
-import { AnimeSummaryCard, ArtistSummaryCard, SummaryCard, ThemeSummaryCard } from "components/card";
-import createVideoSlug from "utils/createVideoSlug";
-import fetchStaticPaths from "utils/fetchStaticPaths";
-import type { SharedPageProps } from "utils/getSharedPageProps";
-import getSharedPageProps from "utils/getSharedPageProps";
-import type { VideoPageAllQuery, VideoPageQuery, VideoPageQueryVariables } from "generated/graphql";
-import type { GetStaticPaths, GetStaticProps } from "next";
-import { fetchData } from "lib/server";
-import gql from "graphql-tag";
-import type { RequiredNonNullable } from "utils/types";
-import VideoScript from "components/video-script/VideoScript";
-import { HorizontalScroll } from "components/utils";
-import { StyledScrollArea, StyledSwitcher } from "components/video-player/VideoPlayer.style";
-import { SwitcherOption } from "components/switcher/Switcher";
-import { Column, Row } from "components/box";
-import { VideoSummaryCard } from "components/card/VideoSummaryCard";
-import { Text } from "components/text";
-import { IconTextButton } from "components/button";
 import { useContext, useEffect, useRef, useState } from "react";
-import PlayerContext from "context/playerContext";
-import { PageRevalidation } from "components/utils/PageRevalidation";
-import { SEO } from "components/seo";
-import extractImages from "utils/extractImages";
-import { VIDEO_URL } from "utils/config.mjs";
+import type { GetStaticPaths, GetStaticProps } from "next";
+
 import { faChevronDown, faChevronUp } from "@fortawesome/pro-solid-svg-icons";
-import Switch from "components/form/Switch";
-import PlaylistSummaryCard from "components/card/PlaylistSummaryCard";
-import { StudioSummaryCard } from "components/card/StudioSummaryCard";
+import gql from "graphql-tag";
+
+import { Column, Row } from "@/components/box/Flex";
+import { IconTextButton } from "@/components/button/IconTextButton";
+import { AnimeSummaryCard } from "@/components/card/AnimeSummaryCard";
+import { ArtistSummaryCard } from "@/components/card/ArtistSummaryCard";
+import PlaylistSummaryCard from "@/components/card/PlaylistSummaryCard";
+import { StudioSummaryCard } from "@/components/card/StudioSummaryCard";
+import { SummaryCard } from "@/components/card/SummaryCard";
+import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
+import { VideoSummaryCard } from "@/components/card/VideoSummaryCard";
+import Switch from "@/components/form/Switch";
+import { SEO } from "@/components/seo/SEO";
+import { SwitcherOption } from "@/components/switcher/Switcher";
+import { Text } from "@/components/text/Text";
+import { HorizontalScroll } from "@/components/utils/HorizontalScroll";
+import { PageRevalidation } from "@/components/utils/PageRevalidation";
+import { StyledScrollArea, StyledSwitcher } from "@/components/video-player/VideoPlayer.style";
+import VideoScript from "@/components/video-script/VideoScript";
+import PlayerContext from "@/context/playerContext";
+import type { VideoPageAllQuery, VideoPageQuery, VideoPageQueryVariables } from "@/generated/graphql";
+import { fetchData } from "@/lib/server";
+import { VIDEO_URL } from "@/utils/config";
+import createVideoSlug from "@/utils/createVideoSlug";
+import extractImages from "@/utils/extractImages";
+import fetchStaticPaths from "@/utils/fetchStaticPaths";
+import type { SharedPageProps } from "@/utils/getSharedPageProps";
+import getSharedPageProps from "@/utils/getSharedPageProps";
+import type { RequiredNonNullable } from "@/utils/types";
 
 export interface VideoPageProps extends SharedPageProps, RequiredNonNullable<VideoPageQuery> {
     themeIndex: number

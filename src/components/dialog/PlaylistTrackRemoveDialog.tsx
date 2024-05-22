@@ -1,22 +1,25 @@
+import { useState } from "react";
+import type { ReactNode } from "react";
+
+import { faMinus } from "@fortawesome/pro-solid-svg-icons";
+import gql from "graphql-tag";
+import { mutate } from "swr";
+
+import { LoginGate } from "@/components/auth/LoginGate";
+import { Column, Row } from "@/components/box/Flex";
+import { Button } from "@/components/button/Button";
+import { IconTextButton } from "@/components/button/IconTextButton";
+import { VideoSummaryCard, VideoSummaryCardFragmentVideo } from "@/components/card/VideoSummaryCard";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
+import { Text } from "@/components/text/Text";
+import { PlaylistTrackRemoveToast } from "@/components/toast/PlaylistTrackRemoveToast";
+import { Busy } from "@/components/utils/Busy";
+import { useToasts } from "@/context/toastContext";
 import type {
     PlaylistTrackRemoveDialogPlaylistFragment,
     PlaylistTrackRemoveDialogVideoFragment
-} from "generated/graphql";
-import type { ReactNode } from "react";
-import { useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "components/dialog/Dialog";
-import { Button, IconTextButton } from "components/button";
-import { faMinus } from "@fortawesome/pro-solid-svg-icons";
-import { LoginGate } from "components/auth/LoginGate";
-import axios from "lib/client/axios";
-import { Column, Row } from "components/box";
-import { VideoSummaryCard, VideoSummaryCardFragmentVideo } from "components/card/VideoSummaryCard";
-import { Text } from "components/text";
-import { PlaylistTrackRemoveToast } from "components/toast/PlaylistTrackRemoveToast";
-import { useToasts } from "context/toastContext";
-import { mutate } from "swr";
-import gql from "graphql-tag";
-import { Busy } from "components/utils/Busy";
+} from "@/generated/graphql";
+import axios from "@/lib/client/axios";
 
 interface PlaylistTrackRemoveDialogProps {
     playlist: PlaylistTrackRemoveDialogPlaylistFragment;

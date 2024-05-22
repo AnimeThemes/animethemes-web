@@ -1,11 +1,13 @@
-import { SummaryCard } from "components/card/SummaryCard";
 import type { PropsWithChildren } from "react";
-import gql from "graphql-tag";
-import type { PlaylistSummaryCardPlaylistFragment, PlaylistSummaryCardShowOwnerFragment } from "generated/graphql";
 import type { ReactNode } from "react";
 import styled from "styled-components";
-import theme from "theme";
-import { Text } from "components/text";
+
+import gql from "graphql-tag";
+
+import { SummaryCard } from "@/components/card/SummaryCard";
+import { Text } from "@/components/text/Text";
+import type { PlaylistSummaryCardPlaylistFragment, PlaylistSummaryCardShowOwnerFragment } from "@/generated/graphql";
+import theme from "@/theme";
 
 const StyledWrapper = styled.div`
     position: relative

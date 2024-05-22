@@ -1,9 +1,11 @@
-import { fetchData } from "lib/server";
-import gql from "graphql-tag";
-import createVideoSlug from "utils/createVideoSlug";
-import { BASE_PATH } from "utils/config.mjs";
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { RevalidateAnimeQuery, RevalidateApiQuery } from "generated/graphql";
+
+import gql from "graphql-tag";
+
+import type { RevalidateAnimeQuery, RevalidateApiQuery } from "@/generated/graphql";
+import { fetchData } from "@/lib/server";
+import { BASE_PATH } from "@/utils/config";
+import createVideoSlug from "@/utils/createVideoSlug";
 
 interface RevalidateQuery {
     secret?: string

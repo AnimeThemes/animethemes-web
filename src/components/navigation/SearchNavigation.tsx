@@ -1,15 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { Text } from "components/text";
-import { Input } from "components/form";
-import { HorizontalScroll } from "components/utils";
-import { Switcher } from "components/switcher";
 import styled from "styled-components";
-import theme from "theme";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import { debounce } from "lodash-es";
+
 import { faSearch } from "@fortawesome/pro-solid-svg-icons";
-import { SwitcherOption, SwitcherReset } from "components/switcher/Switcher";
+import { debounce } from "lodash-es";
+
+import { Input } from "@/components/form/Input";
+import { Switcher, SwitcherOption, SwitcherReset } from "@/components/switcher/Switcher";
+import { Text } from "@/components/text/Text";
+import { HorizontalScroll } from "@/components/utils/HorizontalScroll";
+import theme from "@/theme";
 
 const StyledSearchOptions = styled.div`
     display: grid;

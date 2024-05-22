@@ -1,9 +1,10 @@
-import useSWR, { mutate as mutateGlobal } from "swr";
-import axios from "lib/client/axios";
-import { fetchDataClient } from "lib/client";
 import gql from "graphql-tag";
-import type { CheckAuthQuery } from "generated/graphql";
-import { AUTH_PATH } from "utils/config.mjs";
+import useSWR, { mutate as mutateGlobal } from "swr";
+
+import type { CheckAuthQuery } from "@/generated/graphql";
+import { fetchDataClient } from "@/lib/client";
+import axios from "@/lib/client/axios";
+import { AUTH_PATH } from "@/utils/config";
 
 export default function useAuth() {
     const { data: me } = useSWR(
