@@ -1,10 +1,12 @@
 import styled, { keyframes } from "styled-components";
-import theme from "theme";
 import Link from "next/link";
+
 import { faArrowRight, faTrophy } from "@fortawesome/pro-solid-svg-icons";
-import { Text } from "components/text";
-import { Icon } from "components/icon";
-import { Button } from "components/button";
+
+import { Button } from "@/components/button/Button";
+import { Icon } from "@/components/icon/Icon";
+import { Text } from "@/components/text/Text";
+import theme from "@/theme";
 
 const EventButtonContainer = styled.div`
     position: relative;

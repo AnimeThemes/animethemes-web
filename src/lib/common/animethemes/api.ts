@@ -1,11 +1,12 @@
-import pLimit from "p-limit";
-import type { ResolveTree } from "graphql-parse-resolve-info";
-import { parseResolveInfo } from "graphql-parse-resolve-info";
-import devLog from "utils/devLog";
-import { CLIENT_API_URL, SERVER_API_KEY, SERVER_API_URL, AUTH_REFERER, PAGINATION_PAGE_SIZE } from "utils/config.mjs";
 import type { GraphQLFieldResolver, GraphQLOutputType, GraphQLResolveInfo } from "graphql";
 import type { Path } from "graphql/jsutils/Path";
+import type { ResolveTree } from "graphql-parse-resolve-info";
+import { parseResolveInfo } from "graphql-parse-resolve-info";
 import type { IncomingMessage } from "node:http";
+import pLimit from "p-limit";
+
+import { AUTH_REFERER, CLIENT_API_URL, PAGINATION_PAGE_SIZE,SERVER_API_KEY, SERVER_API_URL } from "@/utils/config";
+import devLog from "@/utils/devLog";
 
 const limit = pLimit(5);
 

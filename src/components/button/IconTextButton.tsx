@@ -1,10 +1,12 @@
-import { Icon } from "components/icon";
-import { Button } from "components/button";
-import styled from "styled-components";
-import theme from "theme";
-import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { forwardRef } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
+import styled from "styled-components";
+
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+
+import { Button } from "@/components/button/Button";
+import { Icon } from "@/components/icon/Icon";
+import theme from "@/theme";
 
 const StyledButton = styled(Button)<{ $collapseBreakpoint: string }>`
     gap: 8px;

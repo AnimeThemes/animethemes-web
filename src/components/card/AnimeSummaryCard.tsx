@@ -1,20 +1,22 @@
 import { Fragment } from "react";
-import { faChevronDown } from "@fortawesome/pro-solid-svg-icons";
-import { Button } from "components/button";
-import { Text } from "components/text";
-import extractImages from "utils/extractImages";
-import { Icon } from "components/icon";
-import { SummaryCard } from "components/card";
 import styled from "styled-components";
-import useToggle from "hooks/useToggle";
-import theme from "theme";
-import { uniqBy } from "lodash-es";
-import { Collapse } from "components/utils";
-import { ThemeTable } from "components/table";
-import useMediaQuery from "hooks/useMediaQuery";
+
+import { faChevronDown } from "@fortawesome/pro-solid-svg-icons";
 import gql from "graphql-tag";
-import type { AnimeSummaryCardAnimeExpandableFragment, AnimeSummaryCardAnimeFragment } from "generated/graphql";
-import { TextLink } from "components/text/TextLink";
+import { uniqBy } from "lodash-es";
+
+import { Button } from "@/components/button/Button";
+import { SummaryCard } from "@/components/card/SummaryCard";
+import { Icon } from "@/components/icon/Icon";
+import { ThemeTable } from "@/components/table/ThemeTable";
+import { Text } from "@/components/text/Text";
+import { TextLink } from "@/components/text/TextLink";
+import { Collapse } from "@/components/utils/Collapse";
+import type { AnimeSummaryCardAnimeExpandableFragment, AnimeSummaryCardAnimeFragment } from "@/generated/graphql";
+import useMediaQuery from "@/hooks/useMediaQuery";
+import useToggle from "@/hooks/useToggle";
+import theme from "@/theme";
+import extractImages from "@/utils/extractImages";
 
 const StyledWrapper = styled.div`
     position: relative

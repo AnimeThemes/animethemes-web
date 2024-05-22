@@ -1,9 +1,11 @@
 import { forwardRef } from "react";
-import * as RadixDialog from "@radix-ui/react-dialog";
 import styled, { keyframes } from "styled-components";
-import { Card } from "components/card";
-import theme from "theme";
-import { Text } from "components/text";
+
+import * as RadixDialog from "@radix-ui/react-dialog";
+
+import { Card } from "@/components/card/Card";
+import { Text } from "@/components/text/Text";
+import theme from "@/theme";
 
 const overlayAnimation = keyframes`
     from {

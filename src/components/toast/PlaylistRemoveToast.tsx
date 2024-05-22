@@ -1,7 +1,8 @@
-import { Toast } from "components/toast";
-import { Text } from "components/text";
-import type { PlaylistTrackRemoveToastPlaylistFragment } from "generated/graphql";
 import gql from "graphql-tag";
+
+import { Text } from "@/components/text/Text";
+import { Toast } from "@/components/toast/Toast";
+import type { PlaylistTrackRemoveToastPlaylistFragment } from "@/generated/graphql";
 
 interface PlaylistRemoveToastProps {
     playlist: PlaylistTrackRemoveToastPlaylistFragment;

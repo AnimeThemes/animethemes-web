@@ -1,7 +1,9 @@
 import styled from "styled-components";
-import theme from "theme";
-import { Switcher } from "components/switcher";
+
 import { m } from "framer-motion";
+
+import { Switcher } from "@/components/switcher/Switcher";
+import theme from "@/theme";
 
 export const StyledPlayer = styled.div`    
     position: sticky;

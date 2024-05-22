@@ -1,16 +1,20 @@
-import { Performances, SongTitle, SongTitleWithArtists } from "components/utils";
-import extractImages from "utils/extractImages";
-import createVideoSlug from "utils/createVideoSlug";
-import { SummaryCard } from "components/card/SummaryCard2";
-import gql from "graphql-tag";
-import styled from "styled-components";
-import theme from "theme";
-import type { VideoSummaryCardVideoFragment } from "generated/graphql";
 import { type ForwardedRef, forwardRef, type ReactNode } from "react";
-import { TextLink } from "components/text/TextLink";
+import styled from "styled-components";
 import Link from "next/link";
-import { Icon } from "components/icon";
+
 import { faPlay } from "@fortawesome/pro-solid-svg-icons";
+import gql from "graphql-tag";
+
+import { SummaryCard } from "@/components/card/SummaryCard2";
+import { Icon } from "@/components/icon/Icon";
+import { TextLink } from "@/components/text/TextLink";
+import { Performances } from "@/components/utils/Performances";
+import { SongTitle } from "@/components/utils/SongTitle";
+import { SongTitleWithArtists } from "@/components/utils/SongTitleWithArtists";
+import type { VideoSummaryCardVideoFragment } from "@/generated/graphql";
+import theme from "@/theme";
+import createVideoSlug from "@/utils/createVideoSlug";
+import extractImages from "@/utils/extractImages";
 
 const StyledWrapper = styled.div`
     position: relative;
@@ -52,12 +56,13 @@ const StyledCoverOverlay = styled.div`
 interface VideoSummaryCardProps {
     video: VideoSummaryCardVideoFragment;
     menu?: ReactNode;
+    append?: ReactNode;
     onPlay?(): void;
     isPlaying?: boolean;
 }
 
 export const VideoSummaryCard = forwardRef(
-    function VideoSummaryCard({ video, menu, onPlay, isPlaying, ...props }: VideoSummaryCardProps, ref: ForwardedRef<HTMLDivElement>) {
+    function VideoSummaryCard({ video, menu, append, onPlay, isPlaying, ...props }: VideoSummaryCardProps, ref: ForwardedRef<HTMLDivElement>) {
         const entry = video.entries[0];
         const theme = entry.theme;
         const anime = theme?.anime;
@@ -96,6 +101,7 @@ export const VideoSummaryCard = forwardRef(
                             {menu}
                         </StyledOverlayButtons>
                     ) : null}
+                    {append}
                 </SummaryCard>
             </StyledWrapper>
         );

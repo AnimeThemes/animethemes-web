@@ -1,24 +1,26 @@
-import styled from "styled-components";
-import { SEO } from "components/seo";
-import { Text } from "components/text";
-import { Column, Solid } from "components/box";
-import { faStopwatch } from "@fortawesome/pro-solid-svg-icons";
-import theme from "theme";
 import { useState } from "react";
-import { Switcher } from "components/switcher";
-import { fetchData } from "lib/server";
-import type { SharedPageProps } from "utils/getSharedPageProps";
-import getSharedPageProps from "utils/getSharedPageProps";
-import fetchStaticPaths from "utils/fetchStaticPaths";
-import gql from "graphql-tag";
-import { CornerIcon } from "components/icon/CornerIcon";
-import { BracketThemeSummaryCard } from "components/bracket/BracketThemeSummaryCard";
-import { BracketChart } from "components/bracket/BracketChart";
-import type { RequiredNonNullable } from "utils/types";
-import type { BracketPageAllQuery, BracketPageQuery, BracketPageQueryVariables } from "generated/graphql";
-import type { ParsedUrlQuery } from "querystring";
+import styled from "styled-components";
 import type { GetStaticPaths, GetStaticProps } from "next";
-import { SwitcherOption } from "components/switcher/Switcher";
+
+import { faStopwatch } from "@fortawesome/pro-solid-svg-icons";
+import gql from "graphql-tag";
+import type { ParsedUrlQuery } from "querystring";
+
+import { Column } from "@/components/box/Flex";
+import { Solid } from "@/components/box/Solid";
+import { BracketChart } from "@/components/bracket/BracketChart";
+import { BracketThemeSummaryCard } from "@/components/bracket/BracketThemeSummaryCard";
+import { CornerIcon } from "@/components/icon/CornerIcon";
+import { SEO } from "@/components/seo/SEO";
+import { Switcher, SwitcherOption } from "@/components/switcher/Switcher";
+import { Text } from "@/components/text/Text";
+import type { BracketPageAllQuery, BracketPageQuery, BracketPageQueryVariables } from "@/generated/graphql";
+import { fetchData } from "@/lib/server";
+import theme from "@/theme";
+import fetchStaticPaths from "@/utils/fetchStaticPaths";
+import type { SharedPageProps } from "@/utils/getSharedPageProps";
+import getSharedPageProps from "@/utils/getSharedPageProps";
+import type { RequiredNonNullable } from "@/utils/types";
 
 const CurrentRound = styled(Solid)`
     position: relative;

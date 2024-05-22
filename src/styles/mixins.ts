@@ -1,5 +1,6 @@
 import { css, keyframes } from "styled-components";
-import { Solid } from "components/box";
+
+import { Solid } from "@/components/box/Solid";
 
 const loadingAnimationKeyframes = keyframes`
     50% {

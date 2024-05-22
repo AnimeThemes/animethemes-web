@@ -1,9 +1,11 @@
-import type { ReactNode } from "react";
 import React from "react";
-import Link from "next/link";
-import { groupBy } from "lodash-es";
-import { Text } from "components/text";
+import type { ReactNode } from "react";
 import styled from "styled-components";
+import Link from "next/link";
+
+import { groupBy } from "lodash-es";
+
+import { Text } from "@/components/text/Text";
 
 const StyledLetterList = styled.div`
     display: flex;

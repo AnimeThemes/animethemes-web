@@ -1,9 +1,10 @@
-import Link from "next/link";
-import { Button } from "components/button";
 import styled from "styled-components";
-import { Row } from "components/box";
-import { Text } from "components/text";
-import type { YearDetailPageProps } from "pages/year/[year]";
+import Link from "next/link";
+
+import { Row } from "@/components/box/Flex";
+import { Button } from "@/components/button/Button";
+import { Text } from "@/components/text/Text";
+import type { YearDetailPageProps } from "@/pages/year/[year]";
 
 const StyledYear = styled.div`
     flex: 1;

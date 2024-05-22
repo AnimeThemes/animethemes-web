@@ -1,8 +1,9 @@
 import styled, { css } from "styled-components";
-import { Solid } from "components/box";
-import theme from "theme";
-import { withHover } from "styles/mixins";
-import type { Colors } from "theme/colors";
+
+import { Solid } from "@/components/box/Solid";
+import { withHover } from "@/styles/mixins";
+import theme from "@/theme";
+import type { Colors } from "@/theme/colors";
 
 export const Card = styled(Solid)<{
     hoverable?: boolean

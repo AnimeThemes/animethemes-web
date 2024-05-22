@@ -1,17 +1,17 @@
-import {
-    SearchFilterFirstLetter,
-    SearchFilterSeason,
-    SearchFilterSortBy,
-    SearchFilterYear
-} from "components/search-filter";
-import { SearchEntity } from "components/search";
-import { AnimeSummaryCard } from "components/card";
 import { useState } from "react";
+
 import gql from "graphql-tag";
-import type { SearchAnimeQuery, SearchAnimeQueryVariables } from "generated/graphql";
-import { fetchDataClient } from "lib/client";
-import useFilterStorage from "hooks/useFilterStorage";
-import { SearchFilterMediaFormat } from "components/search-filter/SearchFilterMediaFormat";
+
+import { AnimeSummaryCard } from "@/components/card/AnimeSummaryCard";
+import { SearchEntity } from "@/components/search/SearchEntity";
+import { SearchFilterFirstLetter } from "@/components/search-filter/SearchFilterFirstLetter";
+import { SearchFilterMediaFormat } from "@/components/search-filter/SearchFilterMediaFormat";
+import { SearchFilterSeason } from "@/components/search-filter/SearchFilterSeason";
+import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
+import { SearchFilterYear } from "@/components/search-filter/SearchFilterYear";
+import type { SearchAnimeQuery, SearchAnimeQueryVariables } from "@/generated/graphql";
+import useFilterStorage from "@/hooks/useFilterStorage";
+import { fetchDataClient } from "@/lib/client";
 
 const initialFilter = {
     firstLetter: null,

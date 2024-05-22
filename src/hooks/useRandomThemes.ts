@@ -1,8 +1,9 @@
-import { fetchRandomThemes, type RandomThemesOptions } from "lib/client/randomTheme";
-import PlayerContext, { createWatchListItem } from "context/playerContext";
 import { useContext } from "react";
 import { useRouter } from "next/router";
-import createVideoSlug from "utils/createVideoSlug";
+
+import PlayerContext, { createWatchListItem } from "@/context/playerContext";
+import { fetchRandomThemes, type RandomThemesOptions } from "@/lib/client/randomTheme";
+import createVideoSlug from "@/utils/createVideoSlug";
 
 export default function useRandomThemes() {
     const router = useRouter();

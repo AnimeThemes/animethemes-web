@@ -1,12 +1,13 @@
-import gql from "graphql-tag";
 import type { ASTNode } from "graphql";
+import gql from "graphql-tag";
+
+import type { WatchListItem } from "@/context/playerContext";
 import type {
     CreateVideoSlugEntryFragment,
     CreateVideoSlugThemeFragment,
     CreateVideoSlugVideoFragment
-} from "generated/graphql";
-import type { VideoPageProps } from "pages/anime/[animeSlug]/[videoSlug]";
-import type { WatchListItem } from "context/playerContext";
+} from "@/generated/graphql";
+import type { VideoPageProps } from "@/pages/anime/[animeSlug]/[videoSlug]";
 
 interface CreateVideoSlug {
     (

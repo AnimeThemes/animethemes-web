@@ -1,4 +1,5 @@
 import type { SVGProps } from "react";
+
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 export type FontAwesomeIconProps = SVGProps<SVGSVGElement> & {

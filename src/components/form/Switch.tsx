@@ -1,7 +1,9 @@
-import * as RadixSwitch from "@radix-ui/react-switch";
 import styled from "styled-components";
-import theme from "theme";
-import { withColorTheme } from "styles/mixins";
+
+import * as RadixSwitch from "@radix-ui/react-switch";
+
+import { withColorTheme } from "@/styles/mixins";
+import theme from "@/theme";
 
 const StyledSwitch = styled(RadixSwitch.Root)`
     width: 50px;

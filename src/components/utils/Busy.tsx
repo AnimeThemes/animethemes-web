@@ -1,7 +1,9 @@
-import styled from "styled-components";
-import { Icon } from "components/icon";
 import type { ReactNode } from "react";
+import styled from "styled-components";
+
 import { faSpinnerThird } from "@fortawesome/pro-solid-svg-icons";
+
+import { Icon } from "@/components/icon/Icon";
 
 const StyledWrapper = styled.div`
     position: relative;

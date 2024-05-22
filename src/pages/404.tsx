@@ -1,6 +1,6 @@
-import { Text } from "components/text";
-import { SEO } from "components/seo";
-import { TextLink } from "components/text/TextLink";
+import { SEO } from "@/components/seo/SEO";
+import { Text } from "@/components/text/Text";
+import { TextLink } from "@/components/text/TextLink";
 
 export default function NotFoundPage() {
     return <>

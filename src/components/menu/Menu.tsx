@@ -1,9 +1,11 @@
-import styled from "styled-components";
-import theme from "theme";
-import { flipDown } from "styles/animations";
 import { forwardRef } from "react";
+import styled from "styled-components";
+
 import type { DropdownMenuContentProps } from "@radix-ui/react-dropdown-menu";
 import * as RadixMenu from "@radix-ui/react-dropdown-menu";
+
+import { flipDown } from "@/styles/animations";
+import theme from "@/theme";
 
 const StyledMenuContent = styled(RadixMenu.Content)`
     width: max-content;

@@ -1,11 +1,13 @@
-import styled from "styled-components";
-import theme from "theme";
-import { Icon } from "components/icon";
-import { faTimes } from "@fortawesome/pro-solid-svg-icons";
-import { Button } from "components/button";
-import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import type { ComponentPropsWithoutRef } from "react";
-import { withColorTheme } from "styles/mixins";
+import styled from "styled-components";
+
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import { faTimes } from "@fortawesome/pro-solid-svg-icons";
+
+import { Button } from "@/components/button/Button";
+import { Icon } from "@/components/icon/Icon";
+import { withColorTheme } from "@/styles/mixins";
+import theme from "@/theme";
 
 const StyledSearchInput = styled.div`
     display: flex;

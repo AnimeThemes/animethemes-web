@@ -1,13 +1,26 @@
-import { SidebarContainer } from "components/container";
-import styled from "styled-components";
-import { AnimeSummaryCard } from "components/card";
-import { Column, Row } from "components/box";
-import { Text } from "components/text";
-import { Collapse } from "components/utils";
 import { memo, useMemo, useState } from "react";
-import { SearchFilterGroup, SearchFilterSortBy } from "components/search-filter";
-import useToggle from "hooks/useToggle";
-import { FilterToggleButton } from "components/button";
+import styled from "styled-components";
+import type { GetStaticPaths, GetStaticProps } from "next";
+
+import gql from "graphql-tag";
+import type { ParsedUrlQuery } from "querystring";
+
+import { Column, Row } from "@/components/box/Flex";
+import { FilterToggleButton } from "@/components/button/FilterToggleButton";
+import { AnimeSummaryCard } from "@/components/card/AnimeSummaryCard";
+import { SidebarContainer } from "@/components/container/SidebarContainer";
+import { DescriptionList } from "@/components/description-list/DescriptionList";
+import { ExternalLink } from "@/components/external-link/ExternalLink";
+import { StudioCoverImage } from "@/components/image/StudioCoverImage";
+import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
+import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
+import { SEO } from "@/components/seo/SEO";
+import { Text } from "@/components/text/Text";
+import { Collapse } from "@/components/utils/Collapse";
+import type { StudioDetailPageAllQuery, StudioDetailPageQuery, StudioDetailPageQueryVariables } from "@/generated/graphql";
+import useToggle from "@/hooks/useToggle";
+import { fetchData } from "@/lib/server";
+import theme from "@/theme";
 import {
     ANIME_A_Z,
     ANIME_NEW_OLD,
@@ -17,21 +30,11 @@ import {
     getComparator,
     resourceAsComparator,
     resourceSiteComparator,
-} from "utils/comparators";
-import { fetchData } from "lib/server";
-import { DescriptionList } from "components/description-list";
-import { ExternalLink } from "components/external-link";
-import { SEO } from "components/seo";
-import theme from "theme";
-import gql from "graphql-tag";
-import fetchStaticPaths from "utils/fetchStaticPaths";
-import getSharedPageProps from "utils/getSharedPageProps";
-import type { GetStaticPaths, GetStaticProps } from "next";
-import type { RequiredNonNullable } from "utils/types";
-import type { StudioDetailPageAllQuery, StudioDetailPageQuery, StudioDetailPageQueryVariables } from "generated/graphql";
-import type { ParsedUrlQuery } from "querystring";
-import extractImages from "utils/extractImages";
-import { StudioCoverImage } from "components/image/StudioCoverImage";
+} from "@/utils/comparators";
+import extractImages from "@/utils/extractImages";
+import fetchStaticPaths from "@/utils/fetchStaticPaths";
+import getSharedPageProps from "@/utils/getSharedPageProps";
+import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledDesktopOnly = styled.div`    
     @media (max-width: ${theme.breakpoints.mobileMax}) {

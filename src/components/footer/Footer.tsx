@@ -1,13 +1,16 @@
-import Link from "next/link";
-import { Column, Row, Solid } from "components/box";
-import { Container } from "components/container";
-import { Text } from "components/text";
-import { Icon } from "components/icon";
-import { faDiscord, faGithub, faReddit, faTwitter } from "@fortawesome/free-brands-svg-icons";
-import { Button } from "components/button";
-import styled from "styled-components";
-import theme from "theme";
 import type { ComponentPropsWithoutRef } from "react";
+import styled from "styled-components";
+import Link from "next/link";
+
+import { faDiscord, faGithub, faReddit, faTwitter } from "@fortawesome/free-brands-svg-icons";
+
+import { Column, Row } from "@/components/box/Flex";
+import { Solid } from "@/components/box/Solid";
+import { Button } from "@/components/button/Button";
+import { Container } from "@/components/container/Container";
+import { Icon } from "@/components/icon/Icon";
+import { Text } from "@/components/text/Text";
+import theme from "@/theme";
 
 const StyledFooter = styled(Solid)`
     margin-top: auto;

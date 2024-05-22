@@ -1,11 +1,13 @@
-import { IconTextButton } from "components/button";
-import { faVolume, faVolumeHigh, faVolumeLow, faVolumeSlash } from "@fortawesome/pro-solid-svg-icons";
-import useSetting from "hooks/useSetting";
-import { GlobalVolume } from "utils/settings";
-import styled from "styled-components";
-import { Row } from "components/box";
-import { Slider } from "components/slider/Slider";
 import type { ComponentPropsWithoutRef } from "react";
+import styled from "styled-components";
+
+import { faVolume, faVolumeHigh, faVolumeLow, faVolumeSlash } from "@fortawesome/pro-solid-svg-icons";
+
+import { Row } from "@/components/box/Flex";
+import { IconTextButton } from "@/components/button/IconTextButton";
+import { Slider } from "@/components/slider/Slider";
+import useSetting from "@/hooks/useSetting";
+import { GlobalVolume } from "@/utils/settings";
 
 const StyledRow = styled(Row)`
     align-self: stretch;

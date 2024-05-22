@@ -1,9 +1,11 @@
-import Link from "next/link";
-import { Text } from "components/text";
-import styled from "styled-components";
 import { useState } from "react";
+import styled from "styled-components";
+import Link from "next/link";
+
 import gql from "graphql-tag";
-import type { PerformancesArtistFragment, PerformancesSongFragment } from "generated/graphql";
+
+import { Text } from "@/components/text/Text";
+import type { PerformancesArtistFragment, PerformancesSongFragment } from "@/generated/graphql";
 
 const StyledArtist = styled(Text)`
     &:not(:first-of-type)::before {

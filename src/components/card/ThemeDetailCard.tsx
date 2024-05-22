@@ -1,16 +1,19 @@
-import { VideoButton } from "components/button";
-import { Performances, SongTitle } from "components/utils";
-import { Text } from "components/text";
-import { ThemeMenu } from "components/menu/ThemeMenu";
-import { ThemeEntryTags } from "components/tag/ThemeEntryTags";
-import { VideoTags } from "components/tag/VideoTags";
-import gql from "graphql-tag";
-import type { ThemeDetailCardThemeFragment } from "generated/graphql";
 import styled from "styled-components";
-import { Card } from "components/card/Card";
-import theme from "theme";
-import { Row } from "components/box";
-import { entryVersionComparator } from "utils/comparators";
+
+import gql from "graphql-tag";
+
+import { Row } from "@/components/box/Flex";
+import { VideoButton } from "@/components/button/VideoButton";
+import { Card } from "@/components/card/Card";
+import { ThemeMenu } from "@/components/menu/ThemeMenu";
+import { ThemeEntryTags } from "@/components/tag/ThemeEntryTags";
+import { VideoTags } from "@/components/tag/VideoTags";
+import { Text } from "@/components/text/Text";
+import { Performances } from "@/components/utils/Performances";
+import { SongTitle } from "@/components/utils/SongTitle";
+import type { ThemeDetailCardThemeFragment } from "@/generated/graphql";
+import theme from "@/theme";
+import { entryVersionComparator } from "@/utils/comparators";
 
 const StyledThemeCard = styled(Card)`
     display: flex;

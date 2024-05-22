@@ -1,8 +1,9 @@
 import styled, { css } from "styled-components";
-import { Container } from "components/container";
-import theme from "theme";
-import { Logo } from "components/image";
-import { ProfileImage } from "components/image/ProfileImage";
+
+import { Container } from "@/components/container/Container";
+import { Logo } from "@/components/image/Logo";
+import { ProfileImage } from "@/components/image/ProfileImage";
+import theme from "@/theme";
 
 export const StyledNavigation = styled.nav<{ $floating: boolean }>`
     position: sticky;

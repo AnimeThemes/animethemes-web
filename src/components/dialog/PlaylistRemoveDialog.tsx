@@ -1,19 +1,22 @@
-import { Dialog, DialogContent, DialogTrigger } from "components/dialog/Dialog";
-import { Button, IconTextButton } from "components/button";
-import { faMinus } from "@fortawesome/pro-solid-svg-icons";
-import { Column, Row } from "components/box";
-import { Text } from "components/text";
-import type { ReactNode } from "react";
 import { useState } from "react";
-import axios from "lib/client/axios";
-import { LoginGate } from "components/auth/LoginGate";
-import { mutate } from "swr";
-import { Busy } from "components/utils/Busy";
+import type { ReactNode } from "react";
+
+import { faMinus } from "@fortawesome/pro-solid-svg-icons";
 import gql from "graphql-tag";
-import { useToasts } from "context/toastContext";
-import { PlaylistRemoveToast } from "components/toast/PlaylistRemoveToast";
-import PlaylistSummaryCard from "components/card/PlaylistSummaryCard";
-import type { PlaylistRemoveDialogPlaylistFragment } from "generated/graphql";
+import { mutate } from "swr";
+
+import { LoginGate } from "@/components/auth/LoginGate";
+import { Column, Row } from "@/components/box/Flex";
+import { Button } from "@/components/button/Button";
+import { IconTextButton } from "@/components/button/IconTextButton";
+import PlaylistSummaryCard from "@/components/card/PlaylistSummaryCard";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
+import { Text } from "@/components/text/Text";
+import { PlaylistRemoveToast } from "@/components/toast/PlaylistRemoveToast";
+import { Busy } from "@/components/utils/Busy";
+import { useToasts } from "@/context/toastContext";
+import type { PlaylistRemoveDialogPlaylistFragment } from "@/generated/graphql";
+import axios from "@/lib/client/axios";
 
 interface PlaylistRemoveDialogProps {
     playlist: PlaylistRemoveDialogPlaylistFragment;

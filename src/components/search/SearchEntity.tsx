@@ -1,14 +1,16 @@
-import { faChevronDown, faSpinner } from "@fortawesome/pro-solid-svg-icons";
-import { Button } from "components/button";
-import { Text } from "components/text";
-import { Column, Row } from "components/box";
-import { Icon } from "components/icon";
-import { SearchFilterGroup } from "components/search-filter";
-import { ErrorCard } from "components/card";
-import useEntitySearch from "hooks/useEntitySearch";
 import type { ReactNode } from "react";
-import type { SearchArgs } from "generated/graphql";
-import type { SimpleSearchArgs } from "lib/client/search";
+
+import { faChevronDown, faSpinner } from "@fortawesome/pro-solid-svg-icons";
+
+import { Column, Row } from "@/components/box/Flex";
+import { Button } from "@/components/button/Button";
+import { ErrorCard } from "@/components/card/ErrorCard";
+import { Icon } from "@/components/icon/Icon";
+import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
+import { Text } from "@/components/text/Text";
+import type { SearchArgs } from "@/generated/graphql";
+import useEntitySearch from "@/hooks/useEntitySearch";
+import type { SimpleSearchArgs } from "@/lib/client/search";
 
 interface SearchEntityProps<T> {
     entity: string

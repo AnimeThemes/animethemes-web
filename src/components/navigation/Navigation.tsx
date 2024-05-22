@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+
 import { faRandom, faSearch, faTv, faUser } from "@fortawesome/pro-solid-svg-icons";
+
+import { IconTextButton } from "@/components/button/IconTextButton";
+import { ShuffleDialog } from "@/components/dialog/ShuffleDialog";
 import {
     StyledLogo,
     StyledLogoContainer,
@@ -9,12 +14,9 @@ import {
     StyledNavigationLinks,
     StyledProfileImage,
     StyledProfileImageIcon
-} from "./Navigation.style";
-import { IconTextButton } from "components/button";
-import useCurrentSeason from "hooks/useCurrentSeason";
-import { useRouter } from "next/router";
-import useAuth from "hooks/useAuth";
-import { ShuffleDialog } from "../dialog/ShuffleDialog";
+} from "@/components/navigation/Navigation.style";
+import useAuth from "@/hooks/useAuth";
+import useCurrentSeason from "@/hooks/useCurrentSeason";
 
 export function Navigation() {
     const { me } = useAuth();

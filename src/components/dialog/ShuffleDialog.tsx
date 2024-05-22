@@ -1,15 +1,16 @@
 import { type FormEvent, type ReactNode, useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "components/dialog/Dialog";
-import { Button } from "components/button";
 import styled from "styled-components";
-import { Row } from "components/box";
-import useRandomThemes from "hooks/useRandomThemes";
-import { Busy } from "components/utils/Busy";
-import { Switcher } from "../switcher";
-import { SwitcherOption } from "../switcher/Switcher";
-import { Text } from "../text";
-import { SearchFilter, SearchFilterGroup } from "../search-filter";
-import { Input } from "../form";
+
+import { Row } from "@/components/box/Flex";
+import { Button } from "@/components/button/Button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
+import { Input } from "@/components/form/Input";
+import { SearchFilter } from "@/components/search-filter/SearchFilter";
+import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
+import { Switcher, SwitcherOption } from "@/components/switcher/Switcher";
+import { Text } from "@/components/text/Text";
+import { Busy } from "@/components/utils/Busy";
+import useRandomThemes from "@/hooks/useRandomThemes";
 
 interface ShuffleDialogProps {
     trigger: ReactNode;

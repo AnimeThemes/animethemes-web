@@ -1,8 +1,10 @@
-import Link from "next/link";
-import { Text } from "components/text";
-import gql from "graphql-tag";
-import type { SongTitleSongFragment } from "generated/graphql";
 import type { ComponentPropsWithoutRef } from "react";
+import Link from "next/link";
+
+import gql from "graphql-tag";
+
+import { Text } from "@/components/text/Text";
+import type { SongTitleSongFragment } from "@/generated/graphql";
 
 export interface SongTitleProps extends ComponentPropsWithoutRef<typeof Text> {
     song: SongTitleSongFragment | null

@@ -1,24 +1,13 @@
-// @ts-check
-
 import pico from "picocolors";
 
-/**
- * @param {...any} message
- */
-export function error(...message) {
+export function error(...message: any) {
     console.error(" " + pico.red(pico.bold("⨯")), ...message);
 }
 
-/**
- * @param {...any} message
- */
-export function warn(...message) {
+export function warn(...message: any) {
     console.warn(" " + pico.yellow(pico.bold("⚠")), ...message);
 }
 
-/**
- * @param {...any} message
- */
-export function info(...message) {
+export function info(...message: any) {
     console.warn(" " + pico.white(pico.bold(" ")), ...message);
 }

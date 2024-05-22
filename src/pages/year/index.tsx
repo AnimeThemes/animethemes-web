@@ -1,16 +1,18 @@
 import styled from "styled-components";
-import { fetchData } from "lib/server";
-import { SEO } from "components/seo";
-import type { SharedPageProps } from "utils/getSharedPageProps";
-import getSharedPageProps from "utils/getSharedPageProps";
-import gql from "graphql-tag";
-import type { YearIndexPageQuery } from "generated/graphql";
 import type { GetStaticProps } from "next";
-import { TextLink } from "components/text/TextLink";
-import { Text } from "components/text";
-import { Card } from "components/card";
-import theme from "theme";
-import { BackToTopButton } from "components/button";
+
+import gql from "graphql-tag";
+
+import { BackToTopButton } from "@/components/button/BackToTopButton";
+import { Card } from "@/components/card/Card";
+import { SEO } from "@/components/seo/SEO";
+import { Text } from "@/components/text/Text";
+import { TextLink } from "@/components/text/TextLink";
+import type { YearIndexPageQuery } from "@/generated/graphql";
+import { fetchData } from "@/lib/server";
+import theme from "@/theme";
+import type { SharedPageProps } from "@/utils/getSharedPageProps";
+import getSharedPageProps from "@/utils/getSharedPageProps";
 
 const StyledYearGrid = styled.div`
     display: grid;

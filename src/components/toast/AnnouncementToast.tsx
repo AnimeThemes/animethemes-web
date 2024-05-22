@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Toast } from "components/toast";
-import { Text } from "components/text";
-import type { Announcement } from "lib/client/announcement";
-import { fetchAnnouncements } from "lib/client/announcement";
-import { ShowAnnouncements } from "utils/settings";
-import theme from "theme";
-import { useToasts } from "context/toastContext";
-import useSetting from "hooks/useSetting";
+
+import { Text } from "@/components/text/Text";
+import { Toast } from "@/components/toast/Toast";
+import { useToasts } from "@/context/toastContext";
+import useSetting from "@/hooks/useSetting";
+import type { Announcement } from "@/lib/client/announcement";
+import { fetchAnnouncements } from "@/lib/client/announcement";
+import theme from "@/theme";
+import { ShowAnnouncements } from "@/utils/settings";
 
 const StyledBody = styled.div`
     display: flex;

@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
-import type { ProfileImageUserFragment } from "generated/graphql";
 import md5 from "md5";
+
+import type { ProfileImageUserFragment } from "@/generated/graphql";
 
 interface ProfileImageProps {
     user: ProfileImageUserFragment;

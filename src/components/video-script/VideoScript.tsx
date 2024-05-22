@@ -1,9 +1,11 @@
-import { Text } from "components/text";
-import gql from "graphql-tag";
-import type { VideoScriptVideoFragment } from "generated/graphql";
 import { useState } from "react";
 import styled from "styled-components";
-import { Column } from "components/box";
+
+import gql from "graphql-tag";
+
+import { Column } from "@/components/box/Flex";
+import { Text } from "@/components/text/Text";
+import type { VideoScriptVideoFragment } from "@/generated/graphql";
 
 const StyledCodeBlock = styled.pre`
     overflow-x: auto;

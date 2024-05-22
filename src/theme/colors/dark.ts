@@ -1,5 +1,5 @@
-import type { Colors, Shadows } from "./index";
-import { colors } from "./index";
+import type { Colors, Shadows } from "@/theme/colors/index";
+import { colors } from "@/theme/colors/index";
 
 export const darkColors: Colors = {
     ...colors,

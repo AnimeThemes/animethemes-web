@@ -1,25 +1,28 @@
-import { SidebarContainer } from "components/container";
-import styled from "styled-components";
-import { AnimeSummaryCard } from "components/card";
-import { Column, Row } from "components/box";
-import { Text } from "components/text";
-import { Collapse } from "components/utils";
-import useToggle from "hooks/useToggle";
 import { memo, useMemo, useState } from "react";
-import { SearchFilterGroup, SearchFilterSortBy } from "components/search-filter";
-import { FilterToggleButton } from "components/button";
-import { ANIME_A_Z, ANIME_NEW_OLD, ANIME_OLD_NEW, ANIME_Z_A, getComparator } from "utils/comparators";
-import { fetchData } from "lib/server";
-import { SEO } from "components/seo";
-import theme from "theme";
-import { MultiCoverImage } from "components/image";
-import gql from "graphql-tag";
-import fetchStaticPaths from "utils/fetchStaticPaths";
-import getSharedPageProps from "utils/getSharedPageProps";
+import styled from "styled-components";
 import type { GetStaticPaths, GetStaticProps } from "next";
-import type { RequiredNonNullable } from "utils/types";
-import type { SeriesDetailPageAllQuery, SeriesDetailPageQuery, SeriesDetailPageQueryVariables } from "generated/graphql";
+
+import gql from "graphql-tag";
 import type { ParsedUrlQuery } from "querystring";
+
+import { Column, Row } from "@/components/box/Flex";
+import { FilterToggleButton } from "@/components/button/FilterToggleButton";
+import { AnimeSummaryCard } from "@/components/card/AnimeSummaryCard";
+import { SidebarContainer } from "@/components/container/SidebarContainer";
+import { MultiCoverImage } from "@/components/image/MultiCoverImage";
+import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
+import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
+import { SEO } from "@/components/seo/SEO";
+import { Text } from "@/components/text/Text";
+import { Collapse } from "@/components/utils/Collapse";
+import type { SeriesDetailPageAllQuery, SeriesDetailPageQuery, SeriesDetailPageQueryVariables } from "@/generated/graphql";
+import useToggle from "@/hooks/useToggle";
+import { fetchData } from "@/lib/server";
+import theme from "@/theme";
+import { ANIME_A_Z, ANIME_NEW_OLD, ANIME_OLD_NEW, ANIME_Z_A, getComparator } from "@/utils/comparators";
+import fetchStaticPaths from "@/utils/fetchStaticPaths";
+import getSharedPageProps from "@/utils/getSharedPageProps";
+import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledDesktopOnly = styled.div`
     gap: 24px;

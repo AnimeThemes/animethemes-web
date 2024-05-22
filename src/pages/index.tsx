@@ -1,9 +1,8 @@
-import Link from "next/link";
-import { Column } from "components/box";
-import { Text } from "components/text";
 import styled from "styled-components";
-import { Button } from "components/button";
-import { Icon } from "components/icon";
+import type { GetStaticProps } from "next";
+import Link from "next/link";
+import type { MDXRemoteSerializeResult } from "next-mdx-remote";
+
 import {
     faArrowRight,
     faAward,
@@ -13,33 +12,36 @@ import {
     faTv,
     faUser
 } from "@fortawesome/pro-solid-svg-icons";
-import theme from "theme";
-import { ExternalLink } from "components/external-link";
-import useCurrentSeason from "hooks/useCurrentSeason";
-import { fetchData } from "lib/server";
-import { SEO } from "components/seo";
-import { FeaturedTheme } from "components/featured-theme";
-import getSharedPageProps from "utils/getSharedPageProps";
+import gql from "graphql-tag";
 import { range } from "lodash-es";
-import { Skeleton } from "components/skeleton";
+import useSWR from "swr";
+
+import { Column } from "@/components/box/Flex";
+import { Button } from "@/components/button/Button";
+import { AnnouncementCard } from "@/components/card/AnnouncementCard";
+import PlaylistSummaryCard from "@/components/card/PlaylistSummaryCard";
+import { VideoSummaryCard, VideoSummaryCardFragmentVideo } from "@/components/card/VideoSummaryCard";
+import { ShuffleDialog } from "@/components/dialog/ShuffleDialog";
+import { ExternalLink } from "@/components/external-link/ExternalLink";
+import { FeaturedTheme } from "@/components/featured-theme/FeaturedTheme";
+import { Icon } from "@/components/icon/Icon";
+import { ProfileImage } from "@/components/image/ProfileImage";
+import { SEO } from "@/components/seo/SEO";
+import { Skeleton } from "@/components/skeleton/Skeleton";
+import { Text } from "@/components/text/Text";
 import type {
     HomePageMostViewedQuery,
     HomePageQuery,
     HomePageRecentlyAddedPlaylistsQuery,
     HomePageRecentlyAddedQuery
-} from "generated/graphql";
-import type { GetStaticProps } from "next";
-import { AnnouncementCard } from "components/card/AnnouncementCard";
-import type { MDXRemoteSerializeResult } from "next-mdx-remote";
-import serializeMarkdown from "utils/serializeMarkdown";
-import { VideoSummaryCard, VideoSummaryCardFragmentVideo } from "components/card/VideoSummaryCard";
-import useSWR from "swr";
-import { fetchDataClient } from "lib/client";
-import gql from "graphql-tag";
-import { ShuffleDialog } from "components/dialog/ShuffleDialog";
-import useAuth from "hooks/useAuth";
-import { ProfileImage } from "components/image/ProfileImage";
-import PlaylistSummaryCard from "components/card/PlaylistSummaryCard";
+} from "@/generated/graphql";
+import useAuth from "@/hooks/useAuth";
+import useCurrentSeason from "@/hooks/useCurrentSeason";
+import { fetchDataClient } from "@/lib/client";
+import { fetchData } from "@/lib/server";
+import theme from "@/theme";
+import getSharedPageProps from "@/utils/getSharedPageProps";
+import serializeMarkdown from "@/utils/serializeMarkdown";
 
 const BigButton = styled(Button)`
     justify-content: flex-end;

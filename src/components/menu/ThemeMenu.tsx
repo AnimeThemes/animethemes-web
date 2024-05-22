@@ -1,14 +1,15 @@
-import { Icon } from "components/icon";
 import { faEllipsisV, faListMusic } from "@fortawesome/pro-solid-svg-icons";
-import { Text } from "components/text";
-import type { ThemeMenuThemeFragment } from "generated/graphql";
-import { PlaylistTrackAddDialog } from "components/dialog/PlaylistTrackAddDialog";
 import gql from "graphql-tag";
-import { SongTitleWithArtists } from "components/utils";
-import extractImages from "utils/extractImages";
-import createVideoSlug from "utils/createVideoSlug";
-import { Menu, MenuContent, MenuItem, MenuTrigger } from "components/menu/Menu";
-import { Button } from "components/button";
+
+import { Button } from "@/components/button/Button";
+import { PlaylistTrackAddDialog } from "@/components/dialog/PlaylistTrackAddDialog";
+import { Icon } from "@/components/icon/Icon";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/menu/Menu";
+import { Text } from "@/components/text/Text";
+import { SongTitleWithArtists } from "@/components/utils/SongTitleWithArtists";
+import type { ThemeMenuThemeFragment } from "@/generated/graphql";
+import createVideoSlug from "@/utils/createVideoSlug";
+import extractImages from "@/utils/extractImages";
 
 interface ThemeMenuProps {
     theme: ThemeMenuThemeFragment;

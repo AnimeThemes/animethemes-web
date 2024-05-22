@@ -1,9 +1,9 @@
-// @ts-check
-
-import { ANALYZE, BASE_PATH, STAGING, validateConfig } from "./src/utils/config.mjs";
-import { error, info } from "./src/utils/log.mjs";
+import type { NextConfig } from "next";
 
 import NextBundleAnalyzer from "@next/bundle-analyzer";
+
+import { ANALYZE, BASE_PATH, STAGING, validateConfig } from "@/utils/config";
+import { error, info } from "@/utils/log";
 
 const withBundleAnalyzer = NextBundleAnalyzer({
     enabled: ANALYZE,
@@ -18,10 +18,7 @@ if (STAGING) {
     info("Running animethemes-web in staging mode!");
 }
 
-/**
- * @type {import('next').NextConfig}
- **/
-const nextConfig = {
+const nextConfig: NextConfig = {
     basePath: BASE_PATH,
     reactStrictMode: true,
     compiler: {

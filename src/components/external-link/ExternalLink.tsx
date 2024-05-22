@@ -1,7 +1,9 @@
-import { faChevronCircleRight } from "@fortawesome/pro-solid-svg-icons";
-import { Text } from "components/text";
-import { Icon } from "components/icon";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
+
+import { faChevronCircleRight } from "@fortawesome/pro-solid-svg-icons";
+
+import { Icon } from "@/components/icon/Icon";
+import { Text } from "@/components/text/Text";
 
 interface ExternalLinkProps extends ComponentPropsWithoutRef<typeof Text> {
     href?: string | null

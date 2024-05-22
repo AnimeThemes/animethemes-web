@@ -1,16 +1,17 @@
-import type { SyntheticEvent } from "react";
 import { useState } from "react";
-import { Text } from "components/text";
-import { SearchFilter } from "components/search-filter";
-import { Input } from "components/form";
-import { Button } from "components/button";
-import useAuth from "hooks/useAuth";
+import type { SyntheticEvent } from "react";
 import styled from "styled-components";
-import Switch from "components/form/Switch";
-import { Column, Row } from "components/box";
-import { Dialog, DialogContent, DialogTrigger } from "components/dialog/Dialog";
-import { Busy } from "components/utils/Busy";
 import Link from "next/link";
+
+import { Column, Row } from "@/components/box/Flex";
+import { Button } from "@/components/button/Button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
+import { Input } from "@/components/form/Input";
+import Switch from "@/components/form/Switch";
+import { SearchFilter } from "@/components/search-filter/SearchFilter";
+import { Text } from "@/components/text/Text";
+import { Busy } from "@/components/utils/Busy";
+import useAuth from "@/hooks/useAuth";
 
 export function RegisterDialog() {
     const [open, setOpen] = useState(false);

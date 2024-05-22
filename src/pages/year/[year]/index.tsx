@@ -1,21 +1,23 @@
-import Link from "next/link";
-import { AnimeSummaryCard } from "components/card";
-import { Button } from "components/button";
-import { Column, Row } from "components/box";
-import { faChevronDown } from "@fortawesome/pro-solid-svg-icons";
-import { Icon } from "components/icon";
-import { Text } from "components/text";
-import { fetchData } from "lib/server";
-import { SEO } from "components/seo";
-import gql from "graphql-tag";
-import { ANIME_A_Z, getComparator } from "utils/comparators";
-import fetchStaticPaths from "utils/fetchStaticPaths";
-import type { SharedPageProps } from "utils/getSharedPageProps";
-import getSharedPageProps from "utils/getSharedPageProps";
-import type { ParsedUrlQuery } from "querystring";
 import type { GetStaticPaths, GetStaticProps } from "next";
-import type { YearDetailPageAllQuery, YearDetailPageQuery, YearDetailPageQueryVariables } from "generated/graphql";
-import type { RequiredNonNullable } from "utils/types";
+import Link from "next/link";
+
+import { faChevronDown } from "@fortawesome/pro-solid-svg-icons";
+import gql from "graphql-tag";
+import type { ParsedUrlQuery } from "querystring";
+
+import { Column, Row } from "@/components/box/Flex";
+import { Button } from "@/components/button/Button";
+import { AnimeSummaryCard } from "@/components/card/AnimeSummaryCard";
+import { Icon } from "@/components/icon/Icon";
+import { SEO } from "@/components/seo/SEO";
+import { Text } from "@/components/text/Text";
+import type { YearDetailPageAllQuery, YearDetailPageQuery, YearDetailPageQueryVariables } from "@/generated/graphql";
+import { fetchData } from "@/lib/server";
+import { ANIME_A_Z, getComparator } from "@/utils/comparators";
+import fetchStaticPaths from "@/utils/fetchStaticPaths";
+import type { SharedPageProps } from "@/utils/getSharedPageProps";
+import getSharedPageProps from "@/utils/getSharedPageProps";
+import type { RequiredNonNullable } from "@/utils/types";
 
 const seasonOrder = [ "winter", "spring", "summer", "fall" ];
 

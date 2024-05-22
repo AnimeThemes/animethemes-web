@@ -1,18 +1,35 @@
 import React, { useCallback } from "react";
-import Link from "next/link";
-import styled from "styled-components";
-import { ExternalLink } from "components/external-link";
-import { DescriptionList } from "components/description-list";
-import { Text } from "components/text";
-import { Column } from "components/box";
-import { SidebarContainer } from "components/container";
-import { ThemeSummaryCard } from "components/card";
-import { CoverImage } from "components/image";
-import useToggle from "hooks/useToggle";
 import { memo, useMemo, useState } from "react";
-import { FilterToggleButton } from "components/button";
-import { SearchFilter, SearchFilterGroup, SearchFilterSortBy } from "components/search-filter";
-import { Collapse } from "components/utils";
+import { useContext } from "react";
+import styled from "styled-components";
+import type { GetStaticPaths, GetStaticProps } from "next";
+import Link from "next/link";
+
+import gql from "graphql-tag";
+import type { ParsedUrlQuery } from "querystring";
+
+import { Column } from "@/components/box/Flex";
+import { FilterToggleButton } from "@/components/button/FilterToggleButton";
+import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
+import { SidebarContainer } from "@/components/container/SidebarContainer";
+import { DescriptionList } from "@/components/description-list/DescriptionList";
+import { ExternalLink } from "@/components/external-link/ExternalLink";
+import { CoverImage } from "@/components/image/CoverImage";
+import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
+import { SearchFilter } from "@/components/search-filter/SearchFilter";
+import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
+import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
+import { SEO } from "@/components/seo/SEO";
+import { Text } from "@/components/text/Text";
+import { Collapse } from "@/components/utils/Collapse";
+import PlayerContext, { createWatchListItem } from "@/context/playerContext";
+import type {
+    ArtistDetailPageAllQuery,
+    ArtistDetailPageQuery,
+    ArtistDetailPageQueryVariables, ThemeSummaryCardArtistFragment
+} from "@/generated/graphql";
+import useToggle from "@/hooks/useToggle";
+import { fetchData } from "@/lib/server";
 import {
     either,
     getComparator,
@@ -24,24 +41,11 @@ import {
     SONG_OLD_NEW,
     SONG_Z_A,
     SONG_Z_A_ANIME
-} from "utils/comparators";
-import { fetchData } from "lib/server";
-import { SEO } from "components/seo";
-import extractImages from "utils/extractImages";
-import gql from "graphql-tag";
-import fetchStaticPaths from "utils/fetchStaticPaths";
-import getSharedPageProps from "utils/getSharedPageProps";
-import type { GetStaticPaths, GetStaticProps } from "next";
-import type {
-    ArtistDetailPageAllQuery,
-    ArtistDetailPageQuery,
-    ArtistDetailPageQueryVariables, ThemeSummaryCardArtistFragment
-} from "generated/graphql";
-import type { ParsedUrlQuery } from "querystring";
-import type { RequiredNonNullable } from "utils/types";
-import { Listbox, ListboxOption } from "components/listbox/Listbox";
-import { useContext } from "react";
-import PlayerContext, { createWatchListItem } from "context/playerContext";
+} from "@/utils/comparators";
+import extractImages from "@/utils/extractImages";
+import fetchStaticPaths from "@/utils/fetchStaticPaths";
+import getSharedPageProps from "@/utils/getSharedPageProps";
+import type { RequiredNonNullable } from "@/utils/types";
 
 
 const StyledList = styled.div`

@@ -1,33 +1,36 @@
 import { useState } from "react";
-import Link from "next/link";
 import styled from "styled-components";
-import { ExternalLink } from "components/external-link";
-import { DescriptionList } from "components/description-list";
-import { Text } from "components/text";
-import { Column } from "components/box";
-import { SidebarContainer } from "components/container";
-import { Card, ThemeDetailCard } from "components/card";
-import { HeightTransition } from "components/utils";
-import { CoverImage } from "components/image";
-import { AnimeThemeFilter } from "components/filter";
-import { SEO } from "components/seo";
-import extractImages from "utils/extractImages";
+import type { GetStaticPaths, GetStaticProps } from "next";
+import Link from "next/link";
+
+import gql from "graphql-tag";
+import type { ParsedUrlQuery } from "querystring";
+
+import { Column } from "@/components/box/Flex";
+import { Card } from "@/components/card/Card";
+import { ThemeDetailCard } from "@/components/card/ThemeDetailCard";
+import { SidebarContainer } from "@/components/container/SidebarContainer";
+import { DescriptionList } from "@/components/description-list/DescriptionList";
+import { ExternalLink } from "@/components/external-link/ExternalLink";
+import { AnimeThemeFilter } from "@/components/filter/AnimeThemeFilter";
+import { CoverImage } from "@/components/image/CoverImage";
+import { SEO } from "@/components/seo/SEO";
+import { Text } from "@/components/text/Text";
+import { HeightTransition } from "@/components/utils/HeightTransition";
+import type { AnimeDetailPageAllQuery, AnimeDetailPageQuery, AnimeDetailPageQueryVariables } from "@/generated/graphql";
+import { fetchData } from "@/lib/server";
 import {
     either,
     resourceAsComparator,
     resourceSiteComparator,
     seriesNameComparator,
     studioNameComparator
-} from "utils/comparators";
-import fetchStaticPaths from "utils/fetchStaticPaths";
-import type { SharedPageProps } from "utils/getSharedPageProps";
-import getSharedPageProps from "utils/getSharedPageProps";
-import type { GetStaticPaths, GetStaticProps } from "next";
-import type { ParsedUrlQuery } from "querystring";
-import { fetchData } from "lib/server";
-import gql from "graphql-tag";
-import type { AnimeDetailPageAllQuery, AnimeDetailPageQuery, AnimeDetailPageQueryVariables } from "generated/graphql";
-import type { RequiredNonNullable } from "utils/types";
+} from "@/utils/comparators";
+import extractImages from "@/utils/extractImages";
+import fetchStaticPaths from "@/utils/fetchStaticPaths";
+import type { SharedPageProps } from "@/utils/getSharedPageProps";
+import getSharedPageProps from "@/utils/getSharedPageProps";
+import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledList = styled.div`
     display: flex;

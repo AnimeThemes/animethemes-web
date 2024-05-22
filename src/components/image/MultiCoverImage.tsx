@@ -1,10 +1,12 @@
-import extractImages from "utils/extractImages";
-import { AspectRatio } from "components/utils";
-import styled, { css } from "styled-components";
 import type { ComponentPropsWithoutRef } from "react";
-import type { MultiCoverImageResourceWithImagesFragment } from "generated/graphql";
+import styled, { css } from "styled-components";
+
 import gql from "graphql-tag";
-import { LogoPlaceholder } from "components/image/LogoPlaceholder";
+
+import { LogoPlaceholder } from "@/components/image/LogoPlaceholder";
+import { AspectRatio } from "@/components/utils/AspectRatio";
+import type { MultiCoverImageResourceWithImagesFragment } from "@/generated/graphql";
+import extractImages from "@/utils/extractImages";
 
 function getTranslationX(item: number, itemCount: number) {
     switch (itemCount) {

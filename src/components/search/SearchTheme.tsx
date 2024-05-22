@@ -1,11 +1,15 @@
-import { SearchFilterFirstLetter, SearchFilterSortBy, SearchFilterThemeType } from "components/search-filter";
-import { SearchEntity } from "components/search";
-import { ThemeSummaryCard } from "components/card";
 import { useState } from "react";
-import { fetchDataClient } from "lib/client";
-import type { SearchThemeQuery, SearchThemeQueryVariables } from "generated/graphql";
+
 import gql from "graphql-tag";
-import useFilterStorage from "hooks/useFilterStorage";
+
+import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
+import { SearchEntity } from "@/components/search/SearchEntity";
+import { SearchFilterFirstLetter } from "@/components/search-filter/SearchFilterFirstLetter";
+import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
+import { SearchFilterThemeType } from "@/components/search-filter/SearchFilterThemeType";
+import type { SearchThemeQuery, SearchThemeQueryVariables } from "@/generated/graphql";
+import useFilterStorage from "@/hooks/useFilterStorage";
+import { fetchDataClient } from "@/lib/client";
 
 const initialFilter = {
     firstLetter: null,

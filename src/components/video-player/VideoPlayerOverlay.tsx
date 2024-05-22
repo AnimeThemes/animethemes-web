@@ -1,22 +1,26 @@
-import { Row } from "components/box";
-import { IconTextButton } from "components/button";
-import { faCheck, faCog, faCompress, faExpand } from "@fortawesome/pro-solid-svg-icons";
-import styled from "styled-components";
 import { Fragment, useContext } from "react";
-import FullscreenContext from "context/fullscreenContext";
-import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from "components/menu/Menu";
-import { Text } from "components/text";
-import { ThemeEntryTags } from "components/tag/ThemeEntryTags";
+import styled from "styled-components";
 import Link from "next/link";
-import createVideoSlug from "utils/createVideoSlug";
-import { Icon } from "components/icon";
-import { VideoTags } from "components/tag/VideoTags";
-import type { VideoPageProps } from "pages/anime/[animeSlug]/[videoSlug]";
-import PlayerContext from "context/playerContext";
-import { VideoPlayerContext } from "components/video-player/VideoPlayer";
-import useSetting from "hooks/useSetting";
-import { AudioMode } from "utils/settings";
-import { StyledPlaybackArea, StyledPlayer } from "components/video-player/VideoPlayer.style";
+
+import { faCheck, faCog, faCompress, faExpand, faListMusic, faShare } from "@fortawesome/pro-solid-svg-icons";
+
+import { Row } from "@/components/box/Flex";
+import { IconTextButton } from "@/components/button/IconTextButton";
+import { PlaylistTrackAddDialog } from "@/components/dialog/PlaylistTrackAddDialog";
+import { Icon } from "@/components/icon/Icon";
+import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from "@/components/menu/Menu";
+import { ShareMenu } from "@/components/menu/ShareMenu";
+import { ThemeEntryTags } from "@/components/tag/ThemeEntryTags";
+import { VideoTags } from "@/components/tag/VideoTags";
+import { Text } from "@/components/text/Text";
+import { VideoPlayerContext } from "@/components/video-player/VideoPlayer";
+import { StyledPlaybackArea, StyledPlayer } from "@/components/video-player/VideoPlayer.style";
+import FullscreenContext from "@/context/fullscreenContext";
+import PlayerContext from "@/context/playerContext";
+import useSetting from "@/hooks/useSetting";
+import type { VideoPageProps } from "@/pages/anime/[animeSlug]/[videoSlug]";
+import createVideoSlug from "@/utils/createVideoSlug";
+import { AudioMode } from "@/utils/settings";
 
 const StyledOverlay = styled.div`
     position: absolute;
@@ -73,6 +77,26 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
     return (
         <StyledOverlay>
             <Row style={{ "--gap": "16px" }}>
+                <PlaylistTrackAddDialog
+                    video={{
+                        // Flip the structure on it's head,
+                        // because we need video as the root object here.
+                        ...video,
+                        entries: [{
+                            ...entry,
+                            theme,
+                        }],
+                    }}
+                    trigger={
+                        <StyledOverlayButton icon={faListMusic} isCircle />
+                    }
+                />
+                <ShareMenu
+                    pagePath={context.videoPagePath}
+                    videoUrl={context.videoUrl}
+                    audioUrl={context.audioUrl}
+                    trigger={<StyledOverlayButton icon={faShare} isCircle />}
+                />
                 <Menu modal={false}>
                     <MenuTrigger asChild>
                         <StyledOverlayButton icon={faCog} isCircle />

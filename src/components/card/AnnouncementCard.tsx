@@ -1,6 +1,7 @@
 import type { MDXRemoteSerializeResult } from "next-mdx-remote";
-import { Markdown } from "components/markdown/Markdown";
-import { AnimeAwardsNowAvailable } from "components/event/AnimeAwardsNowAvailable";
+
+import { AnimeAwardsNowAvailable } from "@/components/event/AnimeAwardsNowAvailable";
+import { Markdown } from "@/components/markdown/Markdown";
 
 interface AnnouncementCardProps {
     announcementSource: MDXRemoteSerializeResult;

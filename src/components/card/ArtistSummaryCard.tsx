@@ -1,7 +1,8 @@
-import extractImages from "utils/extractImages";
-import { SummaryCard } from "components/card";
 import gql from "graphql-tag";
-import type { ArtistSummaryCardArtistFragment } from "generated/graphql";
+
+import { SummaryCard } from "@/components/card/SummaryCard";
+import type { ArtistSummaryCardArtistFragment } from "@/generated/graphql";
+import extractImages from "@/utils/extractImages";
 
 type ArtistSummaryCardProps = {
     artist: ArtistSummaryCardArtistFragment

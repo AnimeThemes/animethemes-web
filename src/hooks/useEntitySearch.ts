@@ -1,7 +1,8 @@
 import { useInfiniteQuery } from "react-query";
-import type { SimpleSearchArgs } from "lib/client/search";
-import { toSearchArgs } from "lib/client/search";
-import type { SearchArgs } from "generated/graphql";
+
+import type { SearchArgs } from "@/generated/graphql";
+import type { SimpleSearchArgs } from "@/lib/client/search";
+import { toSearchArgs } from "@/lib/client/search";
 
 export default function useEntitySearch<T>(
     entity: string,

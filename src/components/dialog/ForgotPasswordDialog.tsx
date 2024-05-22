@@ -1,17 +1,19 @@
-import type { SyntheticEvent } from "react";
 import { useState } from "react";
-import { Button } from "components/button";
-import { Input } from "components/form";
-import { Text } from "components/text";
-import { SearchFilter } from "components/search-filter";
+import type { SyntheticEvent } from "react";
 import styled from "styled-components";
-import useAuth from "hooks/useAuth";
-import { Dialog, DialogContent, DialogTrigger } from "components/dialog/Dialog";
-import { Column, Row } from "components/box";
-import { Busy } from "components/utils/Busy";
-import { Toast } from "components/toast";
-import { useToasts } from "context/toastContext";
+
 import { isAxiosError } from "axios";
+
+import { Column, Row } from "@/components/box/Flex";
+import { Button } from "@/components/button/Button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
+import { Input } from "@/components/form/Input";
+import { SearchFilter } from "@/components/search-filter/SearchFilter";
+import { Text } from "@/components/text/Text";
+import { Toast } from "@/components/toast/Toast";
+import { Busy } from "@/components/utils/Busy";
+import { useToasts } from "@/context/toastContext";
+import useAuth from "@/hooks/useAuth";
 
 const StyledForm = styled.form`
     display: flex;

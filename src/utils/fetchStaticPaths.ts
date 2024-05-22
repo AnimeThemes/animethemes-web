@@ -1,5 +1,6 @@
-import { MINIMAL_BUILD } from "utils/config.mjs";
 import type { ParsedUrlQuery } from "querystring";
+
+import { MINIMAL_BUILD } from "@/utils/config";
 
 export default async function fetchStaticPaths<T extends ParsedUrlQuery = ParsedUrlQuery>(
     fetchPaths: () => Promise<Array<{ params: T }>>,

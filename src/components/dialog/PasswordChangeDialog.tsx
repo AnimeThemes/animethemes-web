@@ -1,18 +1,20 @@
-import type { SyntheticEvent } from "react";
 import { useState } from "react";
-import { Text } from "components/text";
-import { SearchFilter } from "components/search-filter";
-import { Input } from "components/form";
-import { Button } from "components/button";
+import type { SyntheticEvent } from "react";
 import styled from "styled-components";
-import { Column, Row } from "components/box";
-import { Dialog, DialogContent, DialogTrigger } from "components/dialog/Dialog";
-import { Busy } from "components/utils/Busy";
-import axios from "lib/client/axios";
+
 import { isAxiosError } from "axios";
-import { useToasts } from "context/toastContext";
-import { Toast } from "components/toast";
-import { AUTH_PATH } from "utils/config.mjs";
+
+import { Column, Row } from "@/components/box/Flex";
+import { Button } from "@/components/button/Button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
+import { Input } from "@/components/form/Input";
+import { SearchFilter } from "@/components/search-filter/SearchFilter";
+import { Text } from "@/components/text/Text";
+import { Toast } from "@/components/toast/Toast";
+import { Busy } from "@/components/utils/Busy";
+import { useToasts } from "@/context/toastContext";
+import axios from "@/lib/client/axios";
+import { AUTH_PATH } from "@/utils/config";
 
 export function PasswordChangeDialog() {
     const [open, setOpen] = useState(false);

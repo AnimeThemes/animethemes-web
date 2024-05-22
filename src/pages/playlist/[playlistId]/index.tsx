@@ -1,21 +1,47 @@
+import { useContext, useMemo, useState } from "react";
+import styled from "styled-components";
 import type { GetServerSideProps } from "next";
-import { Text } from "components/text";
-import { fetchData } from "lib/server";
+import { useRouter } from "next/router";
+
+import { faEllipsisV, faGrid, faListMusic, faMinus, faPlus, faShuffle, faTrophy } from "@fortawesome/pro-solid-svg-icons";
+import { Reorder, useDragControls } from "framer-motion";
+import gql from "graphql-tag";
+import { shuffle } from "lodash-es";
+import type { ParsedUrlQuery } from "querystring";
+import useSWR from "swr";
+
+import { Column } from "@/components/box/Flex";
+import { Button } from "@/components/button/Button";
+import { FilterToggleButton } from "@/components/button/FilterToggleButton";
+import { IconTextButton } from "@/components/button/IconTextButton";
+import { VideoSummaryCard, VideoSummaryCardFragmentVideo } from "@/components/card/VideoSummaryCard";
+import { SidebarContainer } from "@/components/container/SidebarContainer";
+import { DescriptionList } from "@/components/description-list/DescriptionList";
+import { PlaylistEditDialog } from "@/components/dialog/PlaylistEditDialog";
+import { PlaylistTrackAddDialog } from "@/components/dialog/PlaylistTrackAddDialog";
+import { PlaylistTrackRemoveDialog } from "@/components/dialog/PlaylistTrackRemoveDialog";
+import { FeaturedTheme } from "@/components/featured-theme/FeaturedTheme";
+import { Icon } from "@/components/icon/Icon";
+import { MultiCoverImage } from "@/components/image/MultiCoverImage";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/menu/Menu";
+import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
+import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
+import { SEO } from "@/components/seo/SEO";
+import { Text } from "@/components/text/Text";
+import { Collapse } from "@/components/utils/Collapse";
+import PlayerContext, { createWatchListItem } from "@/context/playerContext";
 import type {
     PlaylistDetailPageMeQuery,
     PlaylistDetailPagePlaylistQuery,
     PlaylistDetailPagePlaylistQueryVariables,
     PlaylistDetailPageQuery,
     PlaylistDetailPageQueryVariables
-} from "generated/graphql";
-import gql from "graphql-tag";
-import { VideoSummaryCard, VideoSummaryCardFragmentVideo } from "components/card/VideoSummaryCard";
-import type { SharedPageProps } from "utils/getSharedPageProps";
-import getSharedPageProps from "utils/getSharedPageProps";
-import type { Comparator, RequiredNonNullable } from "utils/types";
-import type { ParsedUrlQuery } from "querystring";
-import useToggle from "hooks/useToggle";
-import { useContext, useState } from "react";
+} from "@/generated/graphql";
+import useToggle from "@/hooks/useToggle";
+import { fetchDataClient } from "@/lib/client";
+import axios from "@/lib/client/axios";
+import { fetchData } from "@/lib/server";
+import theme from "@/theme";
 import {
     ANIME_A_Z,
     ANIME_NEW_OLD,
@@ -26,32 +52,11 @@ import {
     SONG_Z_A,
     sortTransformed,
     UNSORTED
-} from "utils/comparators";
-import { SEO } from "components/seo";
-import { SidebarContainer } from "components/container";
-import { MultiCoverImage } from "components/image";
-import { Column } from "components/box";
-import { Button, FilterToggleButton, IconTextButton } from "components/button";
-import { Collapse } from "components/utils";
-import { SearchFilterGroup, SearchFilterSortBy } from "components/search-filter";
-import styled from "styled-components";
-import theme from "theme";
-import { DescriptionList } from "components/description-list";
-import { Icon } from "components/icon";
-import { faEllipsisV, faListMusic, faMinus, faPlus, faShuffle, faTrophy } from "@fortawesome/pro-solid-svg-icons";
-import { PlaylistTrackAddDialog } from "components/dialog/PlaylistTrackAddDialog";
-import { PlaylistTrackRemoveDialog } from "components/dialog/PlaylistTrackRemoveDialog";
-import useSWR from "swr";
-import { fetchDataClient } from "lib/client";
-import PlayerContext, { createWatchListItem } from "context/playerContext";
-import { Menu, MenuContent, MenuItem, MenuTrigger } from "components/menu/Menu";
-import { PlaylistEditDialog } from "components/dialog/PlaylistEditDialog";
-import { Reorder } from "framer-motion";
-import axios from "lib/client/axios";
-import { FeaturedTheme } from "components/featured-theme";
-import { shuffle } from "lodash-es";
-import createVideoSlug from "utils/createVideoSlug";
-import { useRouter } from "next/router";
+} from "@/utils/comparators";
+import createVideoSlug from "@/utils/createVideoSlug";
+import type { SharedPageProps } from "@/utils/getSharedPageProps";
+import getSharedPageProps from "@/utils/getSharedPageProps";
+import type { Comparator, RequiredNonNullable } from "@/utils/types";
 
 const StyledDesktopOnly = styled.div`
     gap: 24px;
@@ -142,7 +147,7 @@ interface PlaylistDetailPageParams extends ParsedUrlQuery {
 }
 
 export default function PlaylistDetailPage({ playlist: initialPlaylist, me: initialMe }: PlaylistDetailPageProps) {
-    const { setWatchList, setWatchListFactory, setCurrentWatchListItem, addWatchListItem, addWatchListItemNext } = useContext(PlayerContext);
+    const { setWatchList, setWatchListFactory, setCurrentWatchListItem } = useContext(PlayerContext);
     const router = useRouter();
 
     const { data: playlist, mutate } = useSWR(
@@ -269,11 +274,148 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
         }
     }
 
-    const trackElements = tracksSorted.map((track, index) => [track, (
+    const coverImageResources = useMemo(() => playlist.tracks.flatMap((track) => {
+        const anime = track.video.entries[0].theme?.anime;
+
+        return anime ? [anime] : [];
+    }), [playlist.tracks]);
+
+    const topRankedTrack = tracks.find((track) => track.rank === 1);
+
+    return (
+        <>
+            <SEO title={playlist.name} />
+            <Text variant="h1">{playlist.name}</Text>
+            <SidebarContainer>
+                <Column style={{ "--gap": "24px" }}>
+                    <StyledDesktopOnly>
+                        <MultiCoverImage
+                            key={JSON.stringify(coverImageResources)}
+                            resourcesWithImages={coverImageResources}
+                        />
+                    </StyledDesktopOnly>
+                    {isOwner ? (
+                        <PlaylistEditDialog playlist={playlist} />
+                    ) : null}
+                    <DescriptionList>
+                        <DescriptionList.Item title="Playlist by">
+                            <Text link>{playlist.user.name}</Text>
+                        </DescriptionList.Item>
+                    </DescriptionList>
+                </Column>
+                <Column style={{ "--gap": "24px" }}>
+                    {(isRanking && topRankedTrack) ? (
+                        <FeaturedTheme
+                            theme={{
+                                ...tracks[0].video.entries[0].theme,
+                                entries: [{
+                                    ...tracks[0].video.entries[0],
+                                    videos: [tracks[0].video],
+                                }],
+                            }}
+                            hasGrill={false}
+                            card={
+                                <PlaylistTrack
+                                    playlist={playlist}
+                                    track={topRankedTrack}
+                                    isOwner={isOwner}
+                                    isRanking={isRanking}
+                                    onPlay={() => playAll(0)}
+                                />
+                            }
+                            onPlay={() => playAll(0)}
+                        />
+                    ) : null}
+                    <StyledHeader>
+                        <Text variant="h2">
+                            Themes
+                            <Text color="text-disabled"> ({playlist.tracks_count})</Text>
+                        </Text>
+                        {tracksSorted.length > 0 && (
+                            <IconTextButton icon={faShuffle} collapsible onClick={shuffleAll}>Shuffle All</IconTextButton>
+                        )}
+                        <FilterToggleButton onClick={toggleShowFilter}/>
+                    </StyledHeader>
+                    <Collapse collapse={!showFilter}>
+                        <SearchFilterGroup>
+                            <SearchFilterSortBy value={sortBy} setValue={setSortBy}>
+                                <SearchFilterSortBy.Option value={UNSORTED}>Custom</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={RANK_DESC}>Reversed</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={SONG_A_Z}>A ➜ Z (Song)</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={SONG_Z_A}>Z ➜ A (Song)</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={ANIME_A_Z}>A ➜ Z (Anime)</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={ANIME_Z_A}>Z ➜ A (Anime)</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={ANIME_OLD_NEW}>Old ➜ New</SearchFilterSortBy.Option>
+                                <SearchFilterSortBy.Option value={ANIME_NEW_OLD}>New ➜ Old</SearchFilterSortBy.Option>
+                            </SearchFilterSortBy>
+                        </SearchFilterGroup>
+                    </Collapse>
+                    <StyledReorderContainer>
+                        {(sortBy === UNSORTED && isOwner) ? (
+                            <Reorder.Group as="div" axis="y" values={tracksSorted} onReorder={updateTrackOrder}>
+                                {tracksSorted.map((track, index) => (
+                                    <PlaylistTrack
+                                        key={track.id}
+                                        playlist={playlist}
+                                        track={track}
+                                        isOwner={isOwner}
+                                        isRanking={isRanking}
+                                        isDraggable
+                                        onPlay={() => playAll(index)}
+                                        onDragEnd={() => updateTrackOrderRemote(track.id)}
+                                    />
+                                ))}
+                            </Reorder.Group>
+                        ) : (
+                            <div>
+                                {tracksSorted.map((track, index) => (
+                                    <PlaylistTrack
+                                        key={track.id}
+                                        playlist={playlist}
+                                        track={track}
+                                        isOwner={isOwner}
+                                        isRanking={isRanking}
+                                        onPlay={() => playAll(index)}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </StyledReorderContainer>
+                </Column>
+            </SidebarContainer>
+        </>
+    );
+}
+
+const StyledDragHandle = styled(Icon)`
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    
+    &:active:hover {
+        cursor: grabbing;
+    }
+`;
+
+interface PlaylistTrackProps {
+    playlist: PlaylistDetailPageProps["playlist"];
+    track: PlaylistDetailPageProps["playlist"]["tracks"][number] & { rank: number };
+    isOwner: boolean;
+    isRanking: boolean;
+    isDraggable?: boolean;
+    onPlay: () => void;
+    onDragEnd?: () => void;
+}
+
+function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPlay, onDragEnd }: PlaylistTrackProps) {
+    const { addWatchListItem, addWatchListItemNext } = useContext(PlayerContext);
+    const controls = useDragControls();
+
+    const element = (
         <StyledSummaryCardWrapper key={track.id}>
             <VideoSummaryCard
                 video={track.video}
-                onPlay={() => playAll(index)}
+                onPlay={() => onPlay()}
                 menu={
                     <Menu modal={false}>
                         <MenuTrigger asChild>
@@ -315,6 +457,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                         </MenuContent>
                     </Menu>
                 }
+                append={isDraggable ? <StyledDragHandle icon={faGrid} color="text-disabled" onPointerDown={(event) => controls.start(event)} /> : null}
             />
             {isRanking ? (
                 <StyledRank>{track.rank === 1 ? (
@@ -322,93 +465,17 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                 ) : `#${track.rank}`}</StyledRank>
             ) : null}
         </StyledSummaryCardWrapper>
-    )] as const);
-
-    return (
-        <>
-            <SEO title={playlist.name} />
-            <Text variant="h1">{playlist.name}</Text>
-            <SidebarContainer>
-                <Column style={{ "--gap": "24px" }}>
-                    <StyledDesktopOnly>
-                        <MultiCoverImage
-                            key={JSON.stringify(playlist.tracks.slice(0, 4))}
-                            resourcesWithImages={playlist.tracks.slice(0, 4).flatMap((track) => {
-                                const anime = track.video.entries[0].theme?.anime;
-
-                                return anime ? [anime] : [];
-                            })}
-                        />
-                    </StyledDesktopOnly>
-                    {isOwner ? (
-                        <PlaylistEditDialog playlist={playlist} />
-                    ) : null}
-                    <DescriptionList>
-                        <DescriptionList.Item title="Playlist by">
-                            <Text link>{playlist.user.name}</Text>
-                        </DescriptionList.Item>
-                    </DescriptionList>
-                </Column>
-                <Column style={{ "--gap": "24px" }}>
-                    {isRanking ? (
-                        <FeaturedTheme
-                            theme={{
-                                ...tracks[0].video.entries[0].theme,
-                                entries: [{
-                                    ...tracks[0].video.entries[0],
-                                    videos: [tracks[0].video],
-                                }],
-                            }}
-                            hasGrill={false}
-                            card={trackElements.find(([track]) => track.rank === 1)?.[1]}
-                            onPlay={() => playAll(0)}
-                        />
-                    ) : null}
-                    <StyledHeader>
-                        <Text variant="h2">
-                            Themes
-                            <Text color="text-disabled"> ({playlist.tracks_count})</Text>
-                        </Text>
-                        {tracksSorted.length > 0 && (
-                            <IconTextButton icon={faShuffle} collapsible onClick={shuffleAll}>Shuffle All</IconTextButton>
-                        )}
-                        <FilterToggleButton onClick={toggleShowFilter}/>
-                    </StyledHeader>
-                    <Collapse collapse={!showFilter}>
-                        <SearchFilterGroup>
-                            <SearchFilterSortBy value={sortBy} setValue={setSortBy}>
-                                <SearchFilterSortBy.Option value={UNSORTED}>Custom</SearchFilterSortBy.Option>
-                                {isRanking ? (
-                                    <SearchFilterSortBy.Option value={RANK_DESC}>Reversed</SearchFilterSortBy.Option>
-                                ) : null}
-                                <SearchFilterSortBy.Option value={SONG_A_Z}>A ➜ Z (Song)</SearchFilterSortBy.Option>
-                                <SearchFilterSortBy.Option value={SONG_Z_A}>Z ➜ A (Song)</SearchFilterSortBy.Option>
-                                <SearchFilterSortBy.Option value={ANIME_A_Z}>A ➜ Z (Anime)</SearchFilterSortBy.Option>
-                                <SearchFilterSortBy.Option value={ANIME_Z_A}>Z ➜ A (Anime)</SearchFilterSortBy.Option>
-                                <SearchFilterSortBy.Option value={ANIME_OLD_NEW}>Old ➜ New</SearchFilterSortBy.Option>
-                                <SearchFilterSortBy.Option value={ANIME_NEW_OLD}>New ➜ Old</SearchFilterSortBy.Option>
-                            </SearchFilterSortBy>
-                        </SearchFilterGroup>
-                    </Collapse>
-                    <StyledReorderContainer>
-                        {(sortBy === UNSORTED && isOwner) ? (
-                            <Reorder.Group as="div" axis="y" values={tracksSorted} onReorder={updateTrackOrder}>
-                                {trackElements.map(([track, node]) => (
-                                    <Reorder.Item key={track.id} as="div" value={track} onDragEnd={() => updateTrackOrderRemote(track.id)}>
-                                        {node}
-                                    </Reorder.Item>
-                                ))}
-                            </Reorder.Group>
-                        ) : (
-                            <div>
-                                {trackElements.map(([, node]) => node)}
-                            </div>
-                        )}
-                    </StyledReorderContainer>
-                </Column>
-            </SidebarContainer>
-        </>
     );
+
+    if (isDraggable) {
+        return (
+            <Reorder.Item as="div" value={track} dragListener={false} dragControls={controls} onDragEnd={() => onDragEnd?.()}>
+                {element}
+            </Reorder.Item>
+        );
+    }
+
+    return element;
 }
 
 PlaylistDetailPage.fragments = {

@@ -1,6 +1,7 @@
 import type { ASTNode, GraphQLSchema } from "graphql";
 import { graphql, print } from "graphql";
-import type { ApiResolverContext } from "lib/common/animethemes/api";
+
+import type { ApiResolverContext } from "@/lib/common/animethemes/api";
 
 export interface ApiExecutionResult<T> {
     data: T

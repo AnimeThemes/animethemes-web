@@ -1,11 +1,13 @@
-import { SearchFilterSortBy } from "components/search-filter";
-import { SearchEntity } from "components/search";
 import { useState } from "react";
+
 import gql from "graphql-tag";
-import type { SearchPlaylistQuery, SearchPlaylistQueryVariables } from "generated/graphql";
-import { fetchDataClient } from "lib/client";
-import useFilterStorage from "hooks/useFilterStorage";
-import PlaylistSummaryCard from "components/card/PlaylistSummaryCard";
+
+import PlaylistSummaryCard from "@/components/card/PlaylistSummaryCard";
+import { SearchEntity } from "@/components/search/SearchEntity";
+import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
+import type { SearchPlaylistQuery, SearchPlaylistQueryVariables } from "@/generated/graphql";
+import useFilterStorage from "@/hooks/useFilterStorage";
+import { fetchDataClient } from "@/lib/client";
 
 const initialFilter = {
     sortBy: "name",

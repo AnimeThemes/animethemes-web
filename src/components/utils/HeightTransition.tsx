@@ -1,6 +1,7 @@
-import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import styled from "styled-components";
+
 import type { Property } from "csstype";
 
 const StyledShadowFix = styled.div`

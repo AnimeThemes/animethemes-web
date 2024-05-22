@@ -1,6 +1,7 @@
 import styled from "styled-components";
-import { Icon } from "components/icon/Icon";
-import theme from "theme";
+
+import { Icon } from "@/components/icon/Icon";
+import theme from "@/theme";
 
 export const CornerIcon = styled(Icon)`
     position: absolute;

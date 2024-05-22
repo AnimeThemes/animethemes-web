@@ -1,16 +1,18 @@
-import { either, themeIndexComparator, themeTypeComparator } from "utils/comparators";
-import createVideoSlug from "utils/createVideoSlug";
 import Link from "next/link";
-import { Table } from "components/table";
-import { Text } from "components/text";
-import { SongTitle } from "components/utils";
-import { ContentWarningTags } from "components/tag/ContentWarningTags";
-import { EpisodeTag } from "components/tag/EpisodeTag";
-import { VideoTags } from "components/tag/VideoTags";
-import { Row } from "components/box";
-import { TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "components/table/Table";
+
 import gql from "graphql-tag";
-import type { ThemeTableThemeFragment } from "generated/graphql";
+
+import { Row } from "@/components/box/Flex";
+import { Table } from "@/components/table/Table";
+import { TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "@/components/table/Table";
+import { ContentWarningTags } from "@/components/tag/ContentWarningTags";
+import { EpisodeTag } from "@/components/tag/EpisodeTag";
+import { VideoTags } from "@/components/tag/VideoTags";
+import { Text } from "@/components/text/Text";
+import { SongTitle } from "@/components/utils/SongTitle";
+import type { ThemeTableThemeFragment } from "@/generated/graphql";
+import { either, themeIndexComparator, themeTypeComparator } from "@/utils/comparators";
+import createVideoSlug from "@/utils/createVideoSlug";
 
 export interface ThemeTableProps {
     themes: Array<ThemeTableThemeFragment>

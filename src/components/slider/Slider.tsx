@@ -1,7 +1,9 @@
 import { forwardRef } from "react";
-import * as RadixSlider from "@radix-ui/react-slider";
 import styled from "styled-components";
-import theme from "theme";
+
+import * as RadixSlider from "@radix-ui/react-slider";
+
+import theme from "@/theme";
 
 const StyledSlider = styled(RadixSlider.Root)`
     position: relative;

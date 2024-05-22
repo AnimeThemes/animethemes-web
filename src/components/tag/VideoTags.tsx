@@ -1,3 +1,5 @@
+import styled from "styled-components";
+
 import {
     faAlignSlash,
     faBringForward,
@@ -6,11 +8,11 @@ import {
     faCompactDisc,
     faEyes
 } from "@fortawesome/pro-solid-svg-icons";
-import { Tag } from "components/tag/Tag";
-import { Row } from "components/box";
-import styled from "styled-components";
 import gql from "graphql-tag";
-import type { VideoTagsVideoFragment } from "generated/graphql";
+
+import { Row } from "@/components/box/Flex";
+import { Tag } from "@/components/tag/Tag";
+import type { VideoTagsVideoFragment } from "@/generated/graphql";
 
 const StyledVideoTags = styled(Row)`
     align-items: baseline;

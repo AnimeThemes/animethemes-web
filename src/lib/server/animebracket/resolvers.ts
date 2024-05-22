@@ -1,7 +1,7 @@
-import brackets from "./brackets.json";
-import mappings from "./mappings.json";
-import { apiResolver } from "lib/common/animethemes/api";
-import devLog from "utils/devLog";
+import { apiResolver } from "@/lib/common/animethemes/api";
+import brackets from "@/lib/server/animebracket/brackets.json";
+import mappings from "@/lib/server/animebracket/mappings.json";
+import devLog from "@/utils/devLog";
 
 interface SourceBracket {
     name: string
