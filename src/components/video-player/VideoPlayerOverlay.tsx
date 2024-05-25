@@ -2,7 +2,7 @@ import { Fragment, useContext } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
-import { faCheck, faCog, faCompress, faExpand, faListMusic, faShare } from "@fortawesome/pro-solid-svg-icons";
+import { faCheck, faCog, faCompress, faExpand, faPlus, faShare } from "@fortawesome/pro-solid-svg-icons";
 
 import { Row } from "@/components/box/Flex";
 import { IconTextButton } from "@/components/button/IconTextButton";
@@ -88,18 +88,18 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
                         }],
                     }}
                     trigger={
-                        <StyledOverlayButton icon={faListMusic} isCircle />
+                        <StyledOverlayButton icon={faPlus} isCircle title="Add to playlist" />
                     }
                 />
                 <ShareMenu
                     pagePath={context.videoPagePath}
                     videoUrl={context.videoUrl}
                     audioUrl={context.audioUrl}
-                    trigger={<StyledOverlayButton icon={faShare} isCircle />}
+                    trigger={<StyledOverlayButton icon={faShare} isCircle title="Share" />}
                 />
                 <Menu modal={false}>
                     <MenuTrigger asChild>
-                        <StyledOverlayButton icon={faCog} isCircle />
+                        <StyledOverlayButton icon={faCog} isCircle title="Change media type" />
                     </MenuTrigger>
                     <MenuContent collisionPadding={16}>
                         <MenuLabel>
@@ -153,7 +153,7 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
                         ) : null)}
                     </MenuContent>
                 </Menu>
-                <StyledOverlayButton icon={isFullscreen ? faCompress : faExpand} isCircle onClick={toggleFullscreen} />
+                <StyledOverlayButton icon={isFullscreen ? faCompress : faExpand} isCircle onClick={toggleFullscreen} title="Toggle fullscreen" />
             </Row>
         </StyledOverlay>
     );

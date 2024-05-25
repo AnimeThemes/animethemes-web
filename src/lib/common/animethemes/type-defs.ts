@@ -244,6 +244,7 @@ const typeDefs = `
     type Playlist {
         id: String!
         name: String!
+        description: String
         visibility: PlaylistVisibility!
         tracks_count: Int!
         tracks: [PlaylistTrack!]!

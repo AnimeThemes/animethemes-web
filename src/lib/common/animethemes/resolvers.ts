@@ -96,12 +96,12 @@ const resolvers: IResolvers = {
             pagination: true
         }),
         playlist: apiResolver({
-            endpoint: (_, { id }) => `/playlist/${id}?fields[playlist]=id,name,visibility,tracks_count`,
+            endpoint: (_, { id }) => `/playlist/${id}?fields[playlist]=id,name,description,visibility,tracks_count`,
             extractor: (result) => result.playlist,
         }),
         playlistAll: apiResolver({
             endpoint: (_, { orderBy, orderDesc, onlyNonEmpty }) =>
-                `/playlist?sort=${orderDesc ? "-" : ""}${orderBy}&fields[playlist]=id,name,visibility,tracks_count${onlyNonEmpty ? "&filter[playlist][tracks_count-gte]=1" : ""}`,
+                `/playlist?sort=${orderDesc ? "-" : ""}${orderBy}&fields[playlist]=id,name,description,visibility,tracks_count${onlyNonEmpty ? "&filter[playlist][tracks_count-gte]=1" : ""}`,
             extractor: (result) => result.playlists,
             pagination: true,
         }),

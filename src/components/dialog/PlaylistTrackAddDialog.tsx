@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 
-import { faArrowDown, faListMusic, faMinus, faPlus } from "@fortawesome/pro-solid-svg-icons";
+import { faArrowDown, faMinus, faPlus } from "@fortawesome/pro-solid-svg-icons";
 import gql from "graphql-tag";
 import useSWR, { mutate } from "swr";
 
@@ -22,7 +22,8 @@ import { Busy } from "@/components/utils/Busy";
 import { useToasts } from "@/context/toastContext";
 import type {
     PlaylistTrackAddDialogVideoFragment,
-    PlaylistTrackAddFormPlaylistQuery, PlaylistTrackAddFormPlaylistQueryVariables
+    PlaylistTrackAddFormPlaylistQuery,
+    PlaylistTrackAddFormPlaylistQueryVariables
 } from "@/generated/graphql";
 import { fetchDataClient } from "@/lib/client";
 import axios from "@/lib/client/axios";
@@ -39,7 +40,7 @@ export function PlaylistTrackAddDialog({ video, trigger }: PlaylistTrackAddDialo
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 {trigger ?? (
-                    <IconTextButton icon={faListMusic} variant="solid" collapsible>Add to Playlist</IconTextButton>
+                    <IconTextButton icon={faPlus} variant="solid" collapsible>Add to Playlist</IconTextButton>
                 )}
             </DialogTrigger>
             <DialogContent title="Add to playlist">

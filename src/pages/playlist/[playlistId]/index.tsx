@@ -1,19 +1,33 @@
-import { useContext, useMemo, useState } from "react";
+import { memo, startTransition, useCallback, useContext, useMemo, useState } from "react";
 import styled from "styled-components";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 
-import { faEllipsisV, faGrid, faListMusic, faMinus, faPlus, faShuffle, faTrophy } from "@fortawesome/pro-solid-svg-icons";
+import {
+    faArrowTurnDownRight,
+    faArrowTurnRight,
+    faCheck,
+    faEllipsisV,
+    faGripVertical,
+    faPen,
+    faPlus,
+    faShuffle,
+    faTrash,
+    faTrophy,
+    faXmark
+} from "@fortawesome/pro-solid-svg-icons";
+import { isAxiosError } from "axios";
 import { Reorder, useDragControls } from "framer-motion";
 import gql from "graphql-tag";
 import { shuffle } from "lodash-es";
 import type { ParsedUrlQuery } from "querystring";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
-import { Column } from "@/components/box/Flex";
+import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
 import { FilterToggleButton } from "@/components/button/FilterToggleButton";
 import { IconTextButton } from "@/components/button/IconTextButton";
+import { Card } from "@/components/card/Card";
 import { VideoSummaryCard, VideoSummaryCardFragmentVideo } from "@/components/card/VideoSummaryCard";
 import { SidebarContainer } from "@/components/container/SidebarContainer";
 import { DescriptionList } from "@/components/description-list/DescriptionList";
@@ -21,14 +35,17 @@ import { PlaylistEditDialog } from "@/components/dialog/PlaylistEditDialog";
 import { PlaylistTrackAddDialog } from "@/components/dialog/PlaylistTrackAddDialog";
 import { PlaylistTrackRemoveDialog } from "@/components/dialog/PlaylistTrackRemoveDialog";
 import { FeaturedTheme } from "@/components/featured-theme/FeaturedTheme";
+import { TextArea } from "@/components/form/TextArea";
 import { Icon } from "@/components/icon/Icon";
 import { MultiCoverImage } from "@/components/image/MultiCoverImage";
-import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/menu/Menu";
+import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@/components/menu/Menu";
 import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
+import { Busy } from "@/components/utils/Busy";
 import { Collapse } from "@/components/utils/Collapse";
+import { HeightTransition } from "@/components/utils/HeightTransition";
 import PlayerContext, { createWatchListItem } from "@/context/playerContext";
 import type {
     PlaylistDetailPageMeQuery,
@@ -70,7 +87,7 @@ const StyledHeader = styled.div`
     align-items: center;
     gap: 16px;
     
-    & > :last-child {
+    & > :last-child:not(:first-child) {
         margin-inline-start: auto;
     }
 `;
@@ -197,11 +214,14 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
     const [ showFilter, toggleShowFilter ] = useToggle();
     const [ sortBy, setSortBy ] = useState(UNSORTED);
 
+    const [ isDescriptionEditable, setDescriptionEditable ] = useState(false);
+    const [ description, setDescription ] = useState(playlist.description ?? "");
+
     const isOwner = me.user?.name === playlist.user.name;
     const isRanking = playlist.name.startsWith("[#] ");
 
-    const tracks = [...playlist.tracks].map((track, index) => ({ ...track, rank: index + 1 }));
-    const tracksSorted = [...tracks].sort(
+    const tracks = useMemo(() => [...playlist.tracks].map((track, index) => ({ ...track, rank: index + 1 })), [playlist.tracks]);
+    const tracksSorted = useMemo(() => [...tracks].sort(
         sortTransformed(
             getComparator(sortBy) ?? getRankComparator(sortBy),
             (track) => {
@@ -222,16 +242,16 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                 }
             }
         )
-    );
+    ), [sortBy, tracks]);
 
-    function playAll(initiatingVideoIndex: number) {
+    const playAll = useCallback((initiatingVideoIndex: number) => {
         const watchList = tracksSorted.map((track) => createWatchListItem(track.video));
         setWatchList(watchList, true);
         setWatchListFactory(null);
         setCurrentWatchListItem(watchList[initiatingVideoIndex]);
-    }
+    }, [setCurrentWatchListItem, setWatchList, setWatchListFactory, tracksSorted]);
 
-    function shuffleAll() {
+    const shuffleAll = useCallback(() => {
         if (tracksSorted.length === 0) {
             return;
         }
@@ -249,16 +269,16 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
             const videoSlug = createVideoSlug(theme, entry, video);
             void router.push(`/anime/${anime.slug}/${videoSlug}`);
         }
-    }
+    }, [router, setCurrentWatchListItem, setWatchList, setWatchListFactory, tracksSorted]);
 
-    async function updateTrackOrder(newTracks: typeof tracks) {
+    const updateTrackOrder = useCallback(async (newTracks: typeof tracks) => {
         await mutate({
             ...playlist,
             tracks: newTracks,
         }, { revalidate: false });
-    }
+    }, [mutate, playlist]);
 
-    async function updateTrackOrderRemote(trackId: string) {
+    const updateTrackOrderRemote = useCallback(async (trackId: string) => {
         const trackIndex = tracks.findIndex((track) => track.id === trackId);
 
         const nextId = tracks[trackIndex + 1]?.id;
@@ -272,7 +292,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
 
             await mutate();
         }
-    }
+    }, [mutate, playlist.id, tracks]);
 
     const coverImageResources = useMemo(() => playlist.tracks.flatMap((track) => {
         const anime = track.video.entries[0].theme?.anime;
@@ -294,9 +314,14 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                             resourcesWithImages={coverImageResources}
                         />
                     </StyledDesktopOnly>
-                    {isOwner ? (
-                        <PlaylistEditDialog playlist={playlist} />
-                    ) : null}
+                    {isOwner && (
+                        <Column style={{ "--gap": "16px" }}>
+                            <PlaylistEditDialog playlist={playlist} />
+                            {!isDescriptionEditable && !description && (
+                                <IconTextButton icon={faPlus} variant="solid" onClick={() => setDescriptionEditable(true)}>Add Description</IconTextButton>
+                            )}
+                        </Column>
+                    )}
                     <DescriptionList>
                         <DescriptionList.Item title="Playlist by">
                             <Text link>{playlist.user.name}</Text>
@@ -304,6 +329,16 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                     </DescriptionList>
                 </Column>
                 <Column style={{ "--gap": "24px" }}>
+                    {(isDescriptionEditable || description) ? (
+                        <Description
+                            playlist={playlist}
+                            description={description}
+                            setDescription={setDescription}
+                            isEditable={isDescriptionEditable}
+                            setEditable={setDescriptionEditable}
+                            isOwner={isOwner}
+                        />
+                    ) : null}
                     {(isRanking && topRankedTrack) ? (
                         <FeaturedTheme
                             theme={{
@@ -338,7 +373,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                     </StyledHeader>
                     <Collapse collapse={!showFilter}>
                         <SearchFilterGroup>
-                            <SearchFilterSortBy value={sortBy} setValue={setSortBy}>
+                            <SearchFilterSortBy value={sortBy} setValue={(sortBy) => startTransition(() => setSortBy(sortBy))}>
                                 <SearchFilterSortBy.Option value={UNSORTED}>Custom</SearchFilterSortBy.Option>
                                 <SearchFilterSortBy.Option value={RANK_DESC}>Reversed</SearchFilterSortBy.Option>
                                 <SearchFilterSortBy.Option value={SONG_A_Z}>A ➜ Z (Song)</SearchFilterSortBy.Option>
@@ -350,42 +385,158 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                             </SearchFilterSortBy>
                         </SearchFilterGroup>
                     </Collapse>
-                    <StyledReorderContainer>
-                        {(sortBy === UNSORTED && isOwner) ? (
-                            <Reorder.Group as="div" axis="y" values={tracksSorted} onReorder={updateTrackOrder}>
-                                {tracksSorted.map((track, index) => (
-                                    <PlaylistTrack
-                                        key={track.id}
-                                        playlist={playlist}
-                                        track={track}
-                                        isOwner={isOwner}
-                                        isRanking={isRanking}
-                                        isDraggable
-                                        onPlay={() => playAll(index)}
-                                        onDragEnd={() => updateTrackOrderRemote(track.id)}
-                                    />
-                                ))}
-                            </Reorder.Group>
-                        ) : (
-                            <div>
-                                {tracksSorted.map((track, index) => (
-                                    <PlaylistTrack
-                                        key={track.id}
-                                        playlist={playlist}
-                                        track={track}
-                                        isOwner={isOwner}
-                                        isRanking={isRanking}
-                                        onPlay={() => playAll(index)}
-                                    />
-                                ))}
-                            </div>
-                        )}
-                    </StyledReorderContainer>
+                    <PlaylistTrackList 
+                        playlist={playlist}
+                        tracks={tracksSorted}
+                        isReorderable={sortBy === UNSORTED && isOwner}
+                        isOwner={isOwner}
+                        isRanking={isRanking}
+                        playAll={playAll}
+                        updateTrackOrderRemote={updateTrackOrderRemote}
+                        updateTrackOrder={updateTrackOrder}
+                    />
                 </Column>
             </SidebarContainer>
         </>
     );
 }
+
+interface DescriptionProps {
+    playlist: PlaylistDetailPageProps["playlist"];
+    description: string;
+    setDescription: (newValue: string) => void;
+    isEditable: boolean;
+    setEditable: (newIsEditable: boolean) => void;
+    isOwner: boolean;
+}
+
+function Description({ playlist, description, setDescription, isEditable, setEditable, isOwner }: DescriptionProps) {
+    const [ isCollapsed, setCollapsed ] = useState(true);
+
+    const [isBusy, setBusy] = useState(false);
+    const [error, setError] = useState("");
+
+    async function submit() {
+        setBusy(true);
+        setError("");
+
+        try {
+            await axios.put(`/playlist/${playlist.id}`, {
+                description,
+            });
+            await mutate((key) => (
+                [key].flat().some((key) =>
+                    key === `/api/playlist/${playlist.id}` ||
+                    key === "/api/me/playlist"
+                )
+            ));
+        } catch (error: unknown) {
+            if (isAxiosError(error) && error.response) {
+                setError(error.response.data.message ?? "An unknown error occured!");
+            }
+
+            return;
+        } finally {
+            setBusy(false);
+        }
+
+        setEditable(false);
+    }
+
+    function cancel() {
+        setDescription(playlist.description ?? "");
+        setEditable(false);
+    }
+
+    return (
+        <>
+            <StyledHeader>
+                <Text variant="h2">Description</Text>
+                {isOwner ? (isEditable ? (
+                    <Row>
+                        {!isBusy && <IconTextButton icon={faXmark} collapsible onClick={() => cancel()}>Cancel</IconTextButton>}
+                        <Busy isBusy={isBusy}>
+                            <IconTextButton icon={faCheck} collapsible onClick={() => submit()}>Save</IconTextButton>
+                        </Busy>
+                    </Row>
+                ) : (
+                    <IconTextButton icon={faPen} collapsible onClick={() => setEditable(!isEditable)}>Edit</IconTextButton>
+                )) : null}
+            </StyledHeader>
+            {(isOwner && isEditable) ? (
+                <div>
+                    <TextArea value={description} onChange={(event) => setDescription(event.target.value)} rows={5} maxLength={1000} placeholder="Write your description here" />
+                    <Text variant="small" color="text-muted">{description.length} / 1000</Text>
+                </div>
+            ) : (
+                <Card hoverable onClick={() => setCollapsed(!isCollapsed)}>
+                    <HeightTransition>
+                        <Text as="p" maxLines={isCollapsed ? 2 : null}>{description}</Text>
+                    </HeightTransition>
+                </Card>
+            )}
+            {error ? (
+                <Text color="text-warning"><strong>The playlist could not be updated: </strong>{error}</Text>
+            ) : null}
+        </>
+    );
+}
+
+interface PlaylistTrackListProps {
+    playlist: PlaylistDetailPageProps["playlist"];
+    tracks: Array<PlaylistDetailPageProps["playlist"]["tracks"][number] & { rank: number }>;
+    isReorderable: boolean;
+    isOwner: boolean;
+    isRanking: boolean;
+    playAll: (index: number) => void;
+    updateTrackOrderRemote: (trackId: string) => void;
+    updateTrackOrder: (tracks: Array<PlaylistDetailPageProps["playlist"]["tracks"][number] & { rank: number }>) => void;
+}
+
+const PlaylistTrackList = memo(function PlaylistTrackList({
+    playlist,
+    tracks,
+    isReorderable,
+    isOwner,
+    isRanking,
+    playAll,
+    updateTrackOrderRemote,
+    updateTrackOrder
+}: PlaylistTrackListProps) {
+    return (
+        <StyledReorderContainer>
+            {isReorderable ? (
+                <Reorder.Group as="div" axis="y" values={tracks} onReorder={updateTrackOrder}>
+                    {tracks.map((track, index) => (
+                        <PlaylistTrack
+                            key={track.id}
+                            playlist={playlist}
+                            track={track}
+                            isOwner={isOwner}
+                            isRanking={isRanking}
+                            isDraggable
+                            onPlay={() => playAll(index)}
+                            onDragEnd={() => updateTrackOrderRemote(track.id)}
+                        />
+                    ))}
+                </Reorder.Group>
+            ) : (
+                <div>
+                    {tracks.map((track, index) => (
+                        <PlaylistTrack
+                            key={track.id}
+                            playlist={playlist}
+                            track={track}
+                            isOwner={isOwner}
+                            isRanking={isRanking}
+                            onPlay={() => playAll(index)}
+                        />
+                    ))}
+                </div>
+            )}
+        </StyledReorderContainer>
+    );
+});
 
 const StyledDragHandle = styled(Icon)`
     cursor: grab;
@@ -408,7 +559,7 @@ interface PlaylistTrackProps {
 }
 
 function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPlay, onDragEnd }: PlaylistTrackProps) {
-    const { addWatchListItem, addWatchListItemNext } = useContext(PlayerContext);
+    const { watchList, addWatchListItem, addWatchListItemNext } = useContext(PlayerContext);
     const controls = useDragControls();
 
     const element = (
@@ -428,36 +579,44 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
                                 video={track.video}
                                 trigger={
                                     <MenuItem onSelect={(event) => event.preventDefault()}>
-                                        <Icon icon={faListMusic}/>
-                                        <Text>Add to Playlist</Text>
+                                        <Icon icon={faPlus} color="text-disabled" />
+                                        <Text>Add to another Playlist</Text>
                                     </MenuItem>
                                 }
                             />
-                            {isOwner ? (
-                                <PlaylistTrackRemoveDialog
-                                    playlist={playlist}
-                                    trackId={track.id}
-                                    video={track.video}
-                                    trigger={
-                                        <MenuItem onSelect={(event) => event.preventDefault()}>
-                                            <Icon icon={faMinus}/>
-                                            <Text>Remove from Playlist</Text>
-                                        </MenuItem>
-                                    }
-                                />
+                            {watchList.length ? (
+                                <>
+                                    <MenuSeparator />
+                                    <MenuItem onSelect={() => addWatchListItem(track.video)}>
+                                        <Icon icon={faArrowTurnDownRight} color="text-disabled" />
+                                        <Text>Add to Watch List</Text>
+                                    </MenuItem>
+                                    <MenuItem onSelect={() => addWatchListItemNext(track.video)}>
+                                        <Icon icon={faArrowTurnRight} color="text-disabled" />
+                                        <Text>Play Next</Text>
+                                    </MenuItem>
+                                </>
                             ) : null}
-                            <MenuItem onSelect={() => addWatchListItem(track.video)}>
-                                <Icon icon={faPlus}/>
-                                <Text>Add to Watch List</Text>
-                            </MenuItem>
-                            <MenuItem onSelect={() => addWatchListItemNext(track.video)}>
-                                <Icon icon={faPlus}/>
-                                <Text>Play Next</Text>
-                            </MenuItem>
+                            {isOwner ? (
+                                <>
+                                    <MenuSeparator />
+                                    <PlaylistTrackRemoveDialog
+                                        playlist={playlist}
+                                        trackId={track.id}
+                                        video={track.video}
+                                        trigger={
+                                            <MenuItem onSelect={(event) => event.preventDefault()}>
+                                                <Icon icon={faTrash} color="text-disabled" />
+                                                <Text>Remove from Playlist</Text>
+                                            </MenuItem>
+                                        }
+                                    />
+                                </>
+                            ) : null}
                         </MenuContent>
                     </Menu>
                 }
-                append={isDraggable ? <StyledDragHandle icon={faGrid} color="text-disabled" onPointerDown={(event) => controls.start(event)} /> : null}
+                append={isDraggable ? <StyledDragHandle icon={faGripVertical} color="text-disabled" onPointerDown={(event) => controls.start(event)} /> : null}
             />
             {isRanking ? (
                 <StyledRank>{track.rank === 1 ? (
@@ -489,6 +648,7 @@ PlaylistDetailPage.fragments = {
             ...PlaylistTrackRemoveDialogPlaylist
             id
             name
+            description
             visibility
             tracks_count
             tracks {

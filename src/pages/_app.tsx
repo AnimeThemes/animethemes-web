@@ -121,7 +121,12 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
     useEffect(() => {
         const hotkeyListener = (event: KeyboardEvent) => {
-            if (!pageProps.isSearch && ((event.key === "s" && event.ctrlKey) || event.key === "/")) {
+            if (
+                !pageProps.isSearch &&
+                !(event.target instanceof HTMLInputElement) &&
+                !(event.target instanceof HTMLTextAreaElement) &&
+                ((event.key === "s" && event.ctrlKey) || event.key === "/")
+            ) {
                 event.preventDefault();
                 router.push("/search");
             }
