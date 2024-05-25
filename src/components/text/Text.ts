@@ -93,7 +93,7 @@ export const Text = styled.span.attrs(getAttributes)<TextProps>`
     font-style: ${(props) => props.italics && "italic"};
     font-weight: ${(props) => props.weight};
     color: ${(props) => props.color && theme.colors[props.color]};
-    overflow-wrap: ${(props) => props.wrapAnywhere && "anywhere"};
+    overflow-wrap: ${(props) => props.wrapAnywhere ? "anywhere" : "break-word"};
 `;
 
 function getAttributes(props: TextProps) {
