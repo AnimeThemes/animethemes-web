@@ -98,7 +98,7 @@ export default createGlobalStyle`
         -webkit-appearance: none;
     }
 
-    input {
+    input, textarea {
         width: 100%;
         border: none;
         outline: none;

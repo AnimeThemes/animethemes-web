@@ -2,7 +2,7 @@ import { useContext } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
-import { faBackwardStep, faForwardStep, faListMusic, faPause, faPlay, faXmark } from "@fortawesome/pro-solid-svg-icons";
+import { faBackwardStep, faForwardStep, faPause, faPlay, faPlus, faXmark } from "@fortawesome/pro-solid-svg-icons";
 
 import { Column } from "@/components/box/Flex";
 import { Solid } from "@/components/box/Solid";
@@ -183,7 +183,7 @@ export function VideoPlayerBar() {
                         }],
                     }}
                     trigger={
-                        <IconTextButton icon={faListMusic} variant="solid" collapsible="socialListMax">Add to Playlist</IconTextButton>
+                        <IconTextButton icon={faPlus} variant="solid" collapsible="socialListMax">Add to Playlist</IconTextButton>
                     }
                 />
                 <ShareMenu pagePath={videoPagePath} videoUrl={videoUrl} audioUrl={audioUrl} />

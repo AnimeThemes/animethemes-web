@@ -1,12 +1,15 @@
-import { faEllipsisV, faListMusic } from "@fortawesome/pro-solid-svg-icons";
+import { useContext } from "react";
+
+import { faArrowTurnDownRight, faArrowTurnRight, faEllipsisV, faPlus } from "@fortawesome/pro-solid-svg-icons";
 import gql from "graphql-tag";
 
 import { Button } from "@/components/button/Button";
 import { PlaylistTrackAddDialog } from "@/components/dialog/PlaylistTrackAddDialog";
 import { Icon } from "@/components/icon/Icon";
-import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/menu/Menu";
+import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@/components/menu/Menu";
 import { Text } from "@/components/text/Text";
 import { SongTitleWithArtists } from "@/components/utils/SongTitleWithArtists";
+import PlayerContext from "@/context/playerContext";
 import type { ThemeMenuThemeFragment } from "@/generated/graphql";
 import createVideoSlug from "@/utils/createVideoSlug";
 import extractImages from "@/utils/extractImages";
@@ -16,12 +19,23 @@ interface ThemeMenuProps {
 }
 
 export function ThemeMenu({ theme }: ThemeMenuProps) {
+    const { watchList, addWatchListItem, addWatchListItemNext } = useContext(PlayerContext);
+
     const entry = theme.entries[0];
     const video = entry?.videos[0];
 
     if (!entry || !video) {
         return null;
     }
+
+    // Flip the structure on it's head, because we need video as the root object here.
+    const videoFlipped = {
+        ...video,
+        entries: [{
+            ...entry,
+            theme,
+        }],
+    };
 
     return (
         <Menu modal={false}>
@@ -32,22 +46,27 @@ export function ThemeMenu({ theme }: ThemeMenuProps) {
             </MenuTrigger>
             <MenuContent>
                 <PlaylistTrackAddDialog
-                    video={{
-                        // Flip the structure on it's head,
-                        // because we need video as the root object here.
-                        ...video,
-                        entries: [{
-                            ...entry,
-                            theme,
-                        }],
-                    }}
+                    video={videoFlipped}
                     trigger={
                         <MenuItem onSelect={(event) => event.preventDefault()}>
-                            <Icon icon={faListMusic} />
+                            <Icon icon={faPlus} />
                             <Text>Add to Playlist</Text>
                         </MenuItem>
                     }
                 />
+                {watchList.length ? (
+                    <>
+                        <MenuSeparator />
+                        <MenuItem onSelect={() => addWatchListItem(videoFlipped)}>
+                            <Icon icon={faArrowTurnDownRight} color="text-disabled" />
+                            <Text>Add to Watch List</Text>
+                        </MenuItem>
+                        <MenuItem onSelect={() => addWatchListItemNext(videoFlipped)}>
+                            <Icon icon={faArrowTurnRight} color="text-disabled" />
+                            <Text>Play Next</Text>
+                        </MenuItem>
+                    </>
+                ) : null}
             </MenuContent>
         </Menu>
     );

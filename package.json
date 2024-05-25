@@ -16,9 +16,9 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.1.1",
-    "@fortawesome/free-brands-svg-icons": "^6.1.1",
-    "@fortawesome/pro-solid-svg-icons": "^6.1.1",
+    "@fortawesome/fontawesome-svg-core": "^6.5.2",
+    "@fortawesome/free-brands-svg-icons": "^6.5.2",
+    "@fortawesome/pro-solid-svg-icons": "^6.5.2",
     "@graphql-tools/merge": "^8.2.1",
     "@graphql-tools/schema": "^8.2.0",
     "@graphql-tools/utils": "^8.6.5",
