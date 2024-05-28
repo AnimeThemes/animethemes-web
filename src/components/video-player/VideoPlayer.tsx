@@ -62,6 +62,7 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
 
     const [isPlaying, setPlaying] = useState(false);
     const [aspectRatio, setAspectRatio] = useState(16 / 9);
+    const [isMiniPlayerAnimating, setMiniPlayerAnimating] = useState(false);
 
     const containerRef = useRef<HTMLDivElement>(null);
     const playerRef = useRef<HTMLVideoElement | HTMLAudioElement | null>(null);
@@ -265,12 +266,14 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
                 <StyledPlayerContent ref={constraintRef}>
                     <StyledPlaybackArea
                         layout
-                        drag={background}
+                        drag={background && !isMiniPlayerAnimating}
                         dragConstraints={constraintRef}
                         animate={background ? undefined : {
                             x: 0,
                             y: 0,
                         }}
+                        onLayoutAnimationStart={() => setMiniPlayerAnimating(true)}
+                        onLayoutAnimationComplete={() => setMiniPlayerAnimating(false)}
                         onDoubleClick={() => router.push(videoPagePath)}
                     >
                         {audioMode === AudioMode.ENABLED ? (

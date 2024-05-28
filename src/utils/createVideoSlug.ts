@@ -77,7 +77,7 @@ export function getVideoSlugByProps(pageProps: any): string | null {
         const entry = theme.entries[entryIndex];
         const video = entry.videos[videoIndex];
 
-        return createVideoSlug(theme, entry, video);
+        return `${anime.slug}/${createVideoSlug(theme, entry, video)}`;
     }
     return null;
 }
@@ -86,5 +86,5 @@ export function getVideoSlugByWatchListItem(watchListItem: WatchListItem): strin
     const entry = watchListItem.entries[0];
     const theme = entry.theme;
 
-    return createVideoSlug(theme, entry, watchListItem);
+    return `${theme.anime.slug}/${createVideoSlug(theme, entry, watchListItem)}`;
 }
