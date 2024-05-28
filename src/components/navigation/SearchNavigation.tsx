@@ -107,13 +107,13 @@ export function SearchNavigation() {
             />
             <HorizontalScroll fixShadows>
                 <Switcher selectedItem={entity as string || null}>
-                    <SwitcherReset as={Link} href={{ pathname: "/search", query }}/>
-                    <SwitcherOption as={Link} href={{ pathname: "/search/anime", query }} value="anime">Anime</SwitcherOption>
-                    <SwitcherOption as={Link} href={{ pathname: "/search/theme", query }} value="theme">Theme</SwitcherOption>
-                    <SwitcherOption as={Link} href={{ pathname: "/search/artist", query }} value="artist">Artist</SwitcherOption>
-                    <SwitcherOption as={Link} href={{ pathname: "/search/series", query }} value="series">Series</SwitcherOption>
-                    <SwitcherOption as={Link} href={{ pathname: "/search/studio", query }} value="studio">Studio</SwitcherOption>
-                    <SwitcherOption as={Link} href={{ pathname: "/search/playlist", query }} value="playlist">Playlist</SwitcherOption>
+                    <SwitcherReset as={Link} prefetch={false} href={{ pathname: "/search", query }}/>
+                    <SwitcherOption as={Link} prefetch={false} href={{ pathname: "/search/anime", query }} value="anime">Anime</SwitcherOption>
+                    <SwitcherOption as={Link} prefetch={false} href={{ pathname: "/search/theme", query }} value="theme">Theme</SwitcherOption>
+                    <SwitcherOption as={Link} prefetch={false} href={{ pathname: "/search/artist", query }} value="artist">Artist</SwitcherOption>
+                    <SwitcherOption as={Link} prefetch={false} href={{ pathname: "/search/series", query }} value="series">Series</SwitcherOption>
+                    <SwitcherOption as={Link} prefetch={false} href={{ pathname: "/search/studio", query }} value="studio">Studio</SwitcherOption>
+                    <SwitcherOption as={Link} prefetch={false} href={{ pathname: "/search/playlist", query }} value="playlist">Playlist</SwitcherOption>
                 </Switcher>
             </HorizontalScroll>
         </StyledSearchOptions>
