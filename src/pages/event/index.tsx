@@ -24,7 +24,7 @@ const BigButton = styled(Button)`
     gap: 16px;
 `;
 
-const BigIcon = styled(Icon)`    
+const BigIcon = styled(Icon)`
     font-size: 1.5em;
     color: ${theme.colors["text-disabled"]};
 `;
@@ -41,50 +41,44 @@ const StyledEventName = styled(Text)`
 
 interface EventPageProps extends EventPageQuery {
     awardAll: Array<{
-        slug: string
-        name: string
-    }>
+        slug: string;
+        name: string;
+    }>;
 }
 
 export default function EventPage({ awardAll, bracketAll }: EventPageProps) {
-    return <>
-        <SEO title="Events" description="Watch themes featured in awards and brackets."/>
-        <Text variant="h1">Events</Text>
-        <StyledEventList>
-            <Column style={{ "--gap": "16px" }}>
-                <Text variant="h2">Awards</Text>
-                {awardAll.map(({ name, slug }) => (
-                    <Link
-                        key={slug}
-                        href={`/event/${slug}`}
-                        passHref
-                        legacyBehavior>
-                        <BigButton forwardedAs="a">
-                            <BigIcon icon={faAward}/>
-                            <StyledEventName>{name}</StyledEventName>
-                            <Icon icon={faArrowRight} color="text-primary"/>
-                        </BigButton>
-                    </Link>
-                ))}
-            </Column>
-            <Column style={{ "--gap": "16px" }}>
-                <Text variant="h2">Brackets</Text>
-                {bracketAll.map(({ name, slug }) => (
-                    <Link
-                        key={slug}
-                        href={`/event/${slug}`}
-                        passHref
-                        legacyBehavior>
-                        <BigButton forwardedAs="a">
-                            <BigIcon icon={faTrophy}/>
-                            <StyledEventName>{name}</StyledEventName>
-                            <Icon icon={faArrowRight} color="text-primary"/>
-                        </BigButton>
-                    </Link>
-                ))}
-            </Column>
-        </StyledEventList>
-    </>;
+    return (
+        <>
+            <SEO title="Events" description="Watch themes featured in awards and brackets." />
+            <Text variant="h1">Events</Text>
+            <StyledEventList>
+                <Column style={{ "--gap": "16px" }}>
+                    <Text variant="h2">Awards</Text>
+                    {awardAll.map(({ name, slug }) => (
+                        <Link key={slug} href={`/event/${slug}`} passHref legacyBehavior>
+                            <BigButton forwardedAs="a">
+                                <BigIcon icon={faAward} />
+                                <StyledEventName>{name}</StyledEventName>
+                                <Icon icon={faArrowRight} color="text-primary" />
+                            </BigButton>
+                        </Link>
+                    ))}
+                </Column>
+                <Column style={{ "--gap": "16px" }}>
+                    <Text variant="h2">Brackets</Text>
+                    {bracketAll.map(({ name, slug }) => (
+                        <Link key={slug} href={`/event/${slug}`} passHref legacyBehavior>
+                            <BigButton forwardedAs="a">
+                                <BigIcon icon={faTrophy} />
+                                <StyledEventName>{name}</StyledEventName>
+                                <Icon icon={faArrowRight} color="text-primary" />
+                            </BigButton>
+                        </Link>
+                    ))}
+                </Column>
+            </StyledEventList>
+        </>
+    );
 }
 
 export async function getStaticProps() {
@@ -100,15 +94,15 @@ export async function getStaticProps() {
     const awardAll = [
         {
             slug: "anime-awards",
-            name: "/r/anime Awards"
-        }
+            name: "/r/anime Awards",
+        },
     ];
 
     return {
         props: {
             ...getSharedPageProps(apiRequests),
             bracketAll: data.bracketAll,
-            awardAll
-        }
+            awardAll,
+        },
     };
 }

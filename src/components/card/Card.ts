@@ -6,12 +6,12 @@ import theme from "@/theme";
 import type { Colors } from "@/theme/colors";
 
 export const Card = styled(Solid)<{
-    hoverable?: boolean
-    color?: keyof Colors
+    hoverable?: boolean;
+    color?: keyof Colors;
 }>`
     display: block;
     position: relative;
-    
+
     padding: 16px 24px 16px 28px;
     border-radius: ${theme.scalars.borderRadiusCard};
     overflow: hidden;
@@ -22,14 +22,16 @@ export const Card = styled(Solid)<{
         background-color: ${theme.colors["solid-on-card"]};
     }
 
-    ${(props) => props.hoverable && css`
-        cursor: pointer;
+    ${(props) =>
+        props.hoverable &&
+        css`
+            cursor: pointer;
 
-        ${withHover`
+            ${withHover`
             background-color: ${theme.colors["solid-on-card"]};
         `}
-    `}
-    
+        `}
+
     &:before {
         content: " ";
         display: block;
@@ -38,6 +40,6 @@ export const Card = styled(Solid)<{
         left: 0;
         width: 4px;
         height: 100%;
-        background-color: ${(props) => props.color ? theme.colors[props.color] : theme.colors["text-primary"]};
+        background-color: ${(props) => (props.color ? theme.colors[props.color] : theme.colors["text-primary"])};
     }
 `;

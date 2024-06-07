@@ -7,26 +7,19 @@ import { toSearchArgs } from "@/lib/client/search";
 export default function useEntitySearch<T>(
     entity: string,
     fetchResults: (searchArgs: SearchArgs) => Promise<{
-        data: Array<T>
-        nextPage: number | null
+        data: Array<T>;
+        nextPage: number | null;
     }>,
-    searchArgs: SimpleSearchArgs
+    searchArgs: SimpleSearchArgs,
 ) {
-    const fetchEntityPage = ({ pageParam = 1 }) => fetchResults({
-        ...toSearchArgs(searchArgs),
-        page: pageParam
-    });
+    const fetchEntityPage = ({ pageParam = 1 }) =>
+        fetchResults({
+            ...toSearchArgs(searchArgs),
+            page: pageParam,
+        });
 
-    return useInfiniteQuery(
-        [
-            "searchEntity",
-            entity,
-            searchArgs,
-        ],
-        fetchEntityPage,
-        {
-            getNextPageParam: (lastPage) => lastPage.nextPage,
-            keepPreviousData: true,
-        }
-    );
+    return useInfiniteQuery(["searchEntity", entity, searchArgs], fetchEntityPage, {
+        getNextPageParam: (lastPage) => lastPage.nextPage,
+        keepPreviousData: true,
+    });
 }

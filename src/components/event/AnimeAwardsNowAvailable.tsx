@@ -10,7 +10,7 @@ import theme from "@/theme";
 
 const EventButtonContainer = styled.div`
     position: relative;
-    
+
     display: flex;
     flex-direction: column;
 `;
@@ -26,7 +26,7 @@ const EventButton = styled(Button)`
 
 const EventIcon = styled(Icon)`
     margin: 0 0 -1rem -2rem;
-    
+
     font-size: 56px;
     color: ${theme.colors["text-disabled"]};
 `;
@@ -39,15 +39,15 @@ const GradientBorder = styled.div`
     width: calc(100% + 4px);
     height: calc(100% + 4px);
     transform: translate(-2px, -2px);
-    
+
     @property --gradient-angle {
-        syntax: '<angle>';
+        syntax: "<angle>";
         initial-value: 0deg;
         inherits: false;
     }
 
     --gradient-angle: 360deg;
-    
+
     background: linear-gradient(var(--gradient-angle), ${theme.colors["text-primary"]}, #fff);
     animation: ${keyframes`
         from {
@@ -57,10 +57,10 @@ const GradientBorder = styled.div`
             --gradient-angle: 360deg;
         }
     `} 5s linear infinite;
-    
+
     transition: opacity 250ms;
     opacity: 0;
-    
+
     ${EventButtonContainer}:hover & {
         opacity: 1;
     }
@@ -77,7 +77,9 @@ export function AnimeAwardsNowAvailable({ year }: AnimeAwardsNowAvailableProps) 
             <Link href="/event/anime-awards" passHref legacyBehavior>
                 <EventButton forwardedAs="a">
                     <EventIcon icon={faTrophy} />
-                    <Text><Text color="text-primary">/r/anime Awards {year}</Text>: Results are now available!</Text>
+                    <Text>
+                        <Text color="text-primary">/r/anime Awards {year}</Text>: Results are now available!
+                    </Text>
                     <Icon icon={faArrowRight} color="text-primary" />
                 </EventButton>
             </Link>

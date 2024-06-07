@@ -7,7 +7,7 @@ import { fadeIn } from "@/styles/animations";
 import { loadingAnimation } from "@/styles/mixins";
 import theme from "@/theme";
 
-const StyledSkeleton = styled.div`    
+const StyledSkeleton = styled.div`
     ${loadingAnimation}
 `;
 
@@ -21,22 +21,18 @@ const StyledContent = styled.div<{ style: { "--delay": Property.AnimationDelay }
 `;
 
 interface SkeletonProps {
-    children?: ReactNode
-    variant?: "summary-card"
-    delay?: number
+    children?: ReactNode;
+    variant?: "summary-card";
+    delay?: number;
 }
 
 export function Skeleton({ children, variant, delay = 0 }: SkeletonProps) {
     if (!children) {
         switch (variant) {
             case "summary-card":
-                return <StyledSkeletonSummaryCard/>;
+                return <StyledSkeletonSummaryCard />;
         }
     }
 
-    return (
-        <StyledContent style={{ "--delay": `${delay}ms` }}>
-            {children}
-        </StyledContent>
-    );
+    return <StyledContent style={{ "--delay": `${delay}ms` }}>{children}</StyledContent>;
 }

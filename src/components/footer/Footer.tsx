@@ -32,17 +32,16 @@ const StyledSocialList = styled(Row)`
     justify-content: flex-end;
     align-items: flex-end;
     gap: 4px;
-    
+
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         flex-basis: 100%;
         justify-content: flex-start;
     }
 
     // To avoid overlap with scroll back to top button as window width gets smaller
-    @media (max-width: ${theme.breakpoints.socialListMax}) and (min-width:${theme.breakpoints.mobileMax}) {
+    @media (max-width: ${theme.breakpoints.socialListMax}) and (min-width: ${theme.breakpoints.mobileMax}) {
         margin-right: 64px;
     }
-    
 `;
 
 const StyledSocialButton = styled(Button).attrs({ variant: "silent", isCircle: true })`
@@ -54,23 +53,13 @@ export function Footer() {
         <StyledFooter>
             <StyledContainer>
                 <StyledLinkList>
-                    <FooterTextLink href="/about/transparency">
-                        Transparency
-                    </FooterTextLink>
-                    <FooterTextLink href="/about/donate">
-                        Donate
-                    </FooterTextLink>
-                    <FooterTextLink href="/about/faq">
-                        FAQ
-                    </FooterTextLink>
+                    <FooterTextLink href="/about/transparency">Transparency</FooterTextLink>
+                    <FooterTextLink href="/about/donate">Donate</FooterTextLink>
+                    <FooterTextLink href="/about/faq">FAQ</FooterTextLink>
                 </StyledLinkList>
                 <StyledLinkList>
-                    <FooterTextLink href="/about/terms-of-service">
-                        Terms of Service
-                    </FooterTextLink>
-                    <FooterTextLink href="/about/privacy-policy">
-                        Privacy Policy
-                    </FooterTextLink>
+                    <FooterTextLink href="/about/terms-of-service">Terms of Service</FooterTextLink>
+                    <FooterTextLink href="/about/privacy-policy">Privacy Policy</FooterTextLink>
                     <FooterTextLink as="a" href="mailto:admin@animethemes.moe">
                         Contact
                     </FooterTextLink>
@@ -78,22 +67,22 @@ export function Footer() {
                 <StyledSocialList>
                     <FooterLink href="https://reddit.com/r/AnimeThemes">
                         <StyledSocialButton title="Reddit">
-                            <Icon icon={faReddit}/>
+                            <Icon icon={faReddit} />
                         </StyledSocialButton>
                     </FooterLink>
                     <FooterLink href="https://discordapp.com/invite/m9zbVyQ">
                         <StyledSocialButton title="Discord">
-                            <Icon icon={faDiscord}/>
+                            <Icon icon={faDiscord} />
                         </StyledSocialButton>
                     </FooterLink>
                     <FooterLink href="https://twitter.com/AnimeThemesMoe">
                         <StyledSocialButton title="Twitter">
-                            <Icon icon={faTwitter}/>
+                            <Icon icon={faTwitter} />
                         </StyledSocialButton>
                     </FooterLink>
                     <FooterLink href="https://github.com/AnimeThemes">
                         <StyledSocialButton title="GitHub">
-                            <Icon icon={faGithub}/>
+                            <Icon icon={faGithub} />
                         </StyledSocialButton>
                     </FooterLink>
                 </StyledSocialList>
@@ -103,13 +92,9 @@ export function Footer() {
 }
 
 function FooterLink(props: ComponentPropsWithoutRef<typeof Text>) {
-    return (
-        <Text as={Link} {...props}/>
-    );
+    return <Text as={Link} {...props} />;
 }
 
 function FooterTextLink(props: ComponentPropsWithoutRef<typeof FooterLink>) {
-    return (
-        <FooterLink link block color="text-muted" noWrap {...props}/>
-    );
+    return <FooterLink link block color="text-muted" noWrap {...props} />;
 }

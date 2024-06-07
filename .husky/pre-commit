@@ -1,3 +1,4 @@
 npm run graphql-codegen
+git add src/generated
 npm run lint
 npm run type-check

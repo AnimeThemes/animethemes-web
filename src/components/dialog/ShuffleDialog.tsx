@@ -21,17 +21,10 @@ export function ShuffleDialog({ trigger }: ShuffleDialogProps) {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                {trigger}
-            </DialogTrigger>
+            <DialogTrigger asChild>{trigger}</DialogTrigger>
             <DialogContent title="Shuffle">
                 {/* Only render the form when dialog is open, so it will reset after closing. */}
-                {open ? (
-                    <ShuffleForm
-                        onCancel={() => setOpen(false)}
-                        onSuccess={() => setOpen(false)}
-                    />
-                ) : null}
+                {open ? <ShuffleForm onCancel={() => setOpen(false)} onSuccess={() => setOpen(false)} /> : null}
             </DialogContent>
         </Dialog>
     );
@@ -39,7 +32,7 @@ export function ShuffleDialog({ trigger }: ShuffleDialogProps) {
 
 const StyledForm = styled.form`
     position: relative;
-    
+
     display: flex;
     flex-direction: column;
     gap: 32px;
@@ -89,15 +82,25 @@ function ShuffleForm({ onSuccess, onCancel }: ShuffleFormProps) {
                 </SearchFilter>
                 <SearchFilter>
                     <Text variant="h2">Premiered After</Text>
-                    <Input value={filterAnimeYearMin} onChange={setFilterAnimeYearMin} inputProps={{ type: "number", placeholder: "1900" }} />
+                    <Input
+                        value={filterAnimeYearMin}
+                        onChange={setFilterAnimeYearMin}
+                        inputProps={{ type: "number", placeholder: "1900" }}
+                    />
                 </SearchFilter>
                 <SearchFilter>
                     <Text variant="h2">Premiered Before</Text>
-                    <Input value={filterAnimeYearMax} onChange={setFilterAnimeYearMax} inputProps={{ type: "number", placeholder: "2100" }} />
+                    <Input
+                        value={filterAnimeYearMax}
+                        onChange={setFilterAnimeYearMax}
+                        inputProps={{ type: "number", placeholder: "2100" }}
+                    />
                 </SearchFilter>
             </SearchFilterGroup>
             <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
-                <Button type="button" variant="silent" onClick={onCancel}>Cancel</Button>
+                <Button type="button" variant="silent" onClick={onCancel}>
+                    Cancel
+                </Button>
                 <Button type="submit" variant="primary" disabled={isBusy}>
                     <Busy isBusy={isBusy}>Start Shuffle</Busy>
                 </Button>

@@ -46,11 +46,11 @@ import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledProfileGrid = styled.div`
     --columns: 2;
-    
+
     display: grid;
     grid-template-columns: repeat(var(--columns), 1fr);
     grid-gap: 24px 128px;
-    
+
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         --columns: 1;
     }
@@ -73,7 +73,7 @@ const StyledHeaderTop = styled(StyledHeader)`
             margin-left: auto;
         }
     }
-    
+
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         flex-direction: column;
         gap: 16px;
@@ -84,10 +84,14 @@ const StyledProfileImage = styled(ProfileImage)<{ $borderColor?: string }>`
     width: 128px;
     height: 128px;
     border-radius: 9999px;
-    
-    ${(props) => props.$borderColor && css`
-        box-shadow: 0 0 0 4px ${props.$borderColor}, 0 0 10px 6px ${props.$borderColor}7F;
-    `}
+
+    ${(props) =>
+        props.$borderColor &&
+        css`
+            box-shadow:
+                0 0 0 4px ${props.$borderColor},
+                0 0 10px 6px ${props.$borderColor}7F;
+        `}
 `;
 
 const StyledUsername = styled.span<{ $color: string }>`
@@ -121,10 +125,10 @@ const StyledRoleBadge = styled.span<{ $color: string }>`
     display: inline-block;
     padding: 2px 4px;
     border-radius: 4px;
-    
+
     background-color: ${(props) => props.$color || "#FFFFFF"}3F;
     color: ${(props) => props.$color};
-    
+
     font-size: 0.8rem;
     font-weight: bold;
     text-transform: uppercase;
@@ -155,7 +159,7 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
 
             return data.me;
         },
-        { fallbackData: initialMe }
+        { fallbackData: initialMe },
     );
 
     const { localPlaylist } = useLocalPlaylist();
@@ -174,17 +178,22 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
 
     return (
         <>
-            <SEO title="My Profile"/>
+            <SEO title="My Profile" />
             {me.user ? (
                 <>
                     <StyledProfileImageBackground user={me.user} />
                     <StyledHeaderTop>
                         <StyledProfileImage user={me.user} size={128} $borderColor={highlightColor} />
                         <Column>
-                            <Text variant="h1">Welcome {isNewUser ? "on AnimeThemes" : "back"}, <StyledUsername $color={highlightColor}>{me.user.name}</StyledUsername>!</Text>
+                            <Text variant="h1">
+                                Welcome {isNewUser ? "on AnimeThemes" : "back"},{" "}
+                                <StyledUsername $color={highlightColor}>{me.user.name}</StyledUsername>!
+                            </Text>
                             <StyledRoles>
                                 {roles.map((role) => (
-                                    <StyledRoleBadge key={role.name} $color={role.color ?? ""}>{role.name}</StyledRoleBadge>
+                                    <StyledRoleBadge key={role.name} $color={role.color ?? ""}>
+                                        {role.name}
+                                    </StyledRoleBadge>
                                 ))}
                             </StyledRoles>
                         </Column>
@@ -193,9 +202,16 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                     {!me.user.email_verified_at ? (
                         <Card color="text-warning">
                             <Column style={{ "--gap": "8px" }}>
-                                <Text color="text-warning" weight="bold"><Icon icon={faExclamationCircle} /> Your email address is not verified!</Text>
-                                <Text>You haven&apos;t verified your email address, yet. Please do so to unlock all features.</Text>
-                                <Text>No email received? <ResendVerificationEmailLink /></Text>
+                                <Text color="text-warning" weight="bold">
+                                    <Icon icon={faExclamationCircle} /> Your email address is not verified!
+                                </Text>
+                                <Text>
+                                    You haven&apos;t verified your email address, yet. Please do so to unlock all
+                                    features.
+                                </Text>
+                                <Text>
+                                    No email received? <ResendVerificationEmailLink />
+                                </Text>
                             </Column>
                         </Card>
                     ) : null}
@@ -206,7 +222,10 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
             {!me.user ? (
                 <Card>
                     <Column style={{ "--gap": "16px" }}>
-                        <Text>Share your favorite anime themes with others and more. Create your AnimeThemes account today!</Text>
+                        <Text>
+                            Share your favorite anime themes with others and more. Create your AnimeThemes account
+                            today!
+                        </Text>
                         <Row $wrap style={{ "--gap": "16px" }}>
                             <LoginDialog />
                             <RegisterDialog />
@@ -223,32 +242,34 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                                 <PlaylistAddDialog />
                             </StyledHeader>
                             <Column style={{ "--gap": "16px" }}>
-                                {me.playlistAll.length ? me.playlistAll.map((playlist) => (
-                                    <PlaylistSummaryCard
-                                        key={playlist.id}
-                                        playlist={playlist}
-                                        menu={
-                                            <Menu modal={false}>
-                                                <MenuTrigger asChild>
-                                                    <Button variant="silent" isCircle>
-                                                        <Icon icon={faEllipsisV} />
-                                                    </Button>
-                                                </MenuTrigger>
-                                                <MenuContent>
-                                                    <PlaylistRemoveDialog
-                                                        playlist={playlist}
-                                                        trigger={
-                                                            <MenuItem onSelect={(event) => event.preventDefault()}>
-                                                                <Icon icon={faTrash} />
-                                                                <Text>Delete Playlist</Text>
-                                                            </MenuItem>
-                                                        }
-                                                    />
-                                                </MenuContent>
-                                            </Menu>
-                                        }
-                                    />
-                                )) : (
+                                {me.playlistAll.length ? (
+                                    me.playlistAll.map((playlist) => (
+                                        <PlaylistSummaryCard
+                                            key={playlist.id}
+                                            playlist={playlist}
+                                            menu={
+                                                <Menu modal={false}>
+                                                    <MenuTrigger asChild>
+                                                        <Button variant="silent" isCircle>
+                                                            <Icon icon={faEllipsisV} />
+                                                        </Button>
+                                                    </MenuTrigger>
+                                                    <MenuContent>
+                                                        <PlaylistRemoveDialog
+                                                            playlist={playlist}
+                                                            trigger={
+                                                                <MenuItem onSelect={(event) => event.preventDefault()}>
+                                                                    <Icon icon={faTrash} />
+                                                                    <Text>Delete Playlist</Text>
+                                                                </MenuItem>
+                                                            }
+                                                        />
+                                                    </MenuContent>
+                                                </Menu>
+                                            }
+                                        />
+                                    ))
+                                ) : (
                                     <Text>You have not created a playlist, yet.</Text>
                                 )}
                             </Column>
@@ -293,20 +314,22 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                     </Column>
                     <Column style={{ "--gap": "24px" }}>
                         <Text variant="h2">Legacy</Text>
-                        <SummaryCard title="Local Playlist" description={`${localPlaylist.length} themes`} to="/profile/playlist"/>
+                        <SummaryCard
+                            title="Local Playlist"
+                            description={`${localPlaylist.length} themes`}
+                            to="/profile/playlist"
+                        />
                     </Column>
                 </Column>
                 <Column style={{ "--gap": "24px" }}>
                     <StyledHeader>
                         <Text variant="h2">Recently Watched</Text>
-                        <IconTextButton
-                            icon={faTrash}
-                            collapsible
-                            onClick={clearHistory}
-                        >Clear</IconTextButton>
+                        <IconTextButton icon={faTrash} collapsible onClick={clearHistory}>
+                            Clear
+                        </IconTextButton>
                     </StyledHeader>
                     <Column style={{ "--gap": "16px" }}>
-                        <WatchHistoryThemes themes={history}/>
+                        <WatchHistoryThemes themes={history} />
                     </Column>
                 </Column>
             </StyledProfileGrid>
@@ -315,14 +338,14 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
 }
 
 interface WatchHistoryThemesProps {
-    themes: WatchHistory
+    themes: WatchHistory;
 }
 
 const WatchHistoryThemes = memo(function WatchHistoryThemes({ themes }: WatchHistoryThemesProps) {
     return (
         <>
             {[...themes].reverse().map((theme) => (
-                <ThemeSummaryCard key={theme.id} theme={theme}/>
+                <ThemeSummaryCard key={theme.id} theme={theme} />
             ))}
         </>
     );
@@ -336,8 +359,7 @@ function LogoutButton() {
     function performLogout() {
         setBusy(true);
 
-        logout()
-            .finally(() => setBusy(false));
+        logout().finally(() => setBusy(false));
     }
 
     return (
@@ -391,7 +413,7 @@ function ResendVerificationEmailLink() {
 ProfilePage.fragments = {
     playlist: gql`
         ${PlaylistSummaryCard.fragments.playlist}
-        
+
         fragment ProfilePagePlaylist on Playlist {
             ...PlaylistSummaryCardPlaylist
             id
@@ -414,21 +436,25 @@ ProfilePage.fragments = {
 };
 
 export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async ({ req }) => {
-    const { data, apiRequests } = await fetchData<ProfilePageQuery>(gql`
-        ${ProfilePage.fragments.playlist}
-        ${ProfilePage.fragments.user}
-        
-        query ProfilePage {
-            me {
-                user {
-                    ...ProfilePageUser
-                }
-                playlistAll {
-                    ...ProfilePagePlaylist
+    const { data, apiRequests } = await fetchData<ProfilePageQuery>(
+        gql`
+            ${ProfilePage.fragments.playlist}
+            ${ProfilePage.fragments.user}
+
+            query ProfilePage {
+                me {
+                    user {
+                        ...ProfilePageUser
+                    }
+                    playlistAll {
+                        ...ProfilePagePlaylist
+                    }
                 }
             }
-        }
-    `, undefined, { req });
+        `,
+        undefined,
+        { req },
+    );
 
     return {
         props: {

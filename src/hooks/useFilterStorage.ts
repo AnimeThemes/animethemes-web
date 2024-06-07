@@ -1,9 +1,12 @@
 import useSessionStorageState from "use-session-storage-state";
 
-export default function useFilterStorage<T>(key: string, defaultValue: T): {
-    filter: T
-    updateFilter(key: keyof T, value: T[typeof key]): void
-    bindUpdateFilter(key: keyof T): (value: T[typeof key]) => void
+export default function useFilterStorage<T>(
+    key: string,
+    defaultValue: T,
+): {
+    filter: T;
+    updateFilter(key: keyof T, value: T[typeof key]): void;
+    bindUpdateFilter(key: keyof T): (value: T[typeof key]) => void;
 } {
     const [filter, setFilter] = useSessionStorageState(key, { defaultValue });
 

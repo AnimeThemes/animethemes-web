@@ -9,7 +9,7 @@ const FullscreenContext = createContext<FullscreenContextValue>({
     isFullscreen: false,
     toggleFullscreen() {
         // Do nothing.
-    }
+    },
 });
 
 export default FullscreenContext;

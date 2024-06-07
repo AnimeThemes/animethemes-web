@@ -7,7 +7,7 @@ import { Toast } from "@/components/toast/Toast";
 import { SongTitle } from "@/components/utils/SongTitle";
 
 interface PlaylistAddToastProps {
-    theme: Exclude<FetchThemeSummaryCardData, null>
+    theme: Exclude<FetchThemeSummaryCardData, null>;
 }
 
 export function PlaylistAddToast({ theme }: PlaylistAddToastProps) {
@@ -16,7 +16,7 @@ export function PlaylistAddToast({ theme }: PlaylistAddToastProps) {
             <Toast as="a" hoverable>
                 <Row $wrap style={{ "--justify-content": "space-between", "--gap": "8px" }}>
                     <span>
-                        <SongTitle song={theme.song}/> was added to the playlist!
+                        <SongTitle song={theme.song} /> was added to the playlist!
                     </span>
                     <Text color="text-disabled">(Click to view playlist.)</Text>
                 </Row>

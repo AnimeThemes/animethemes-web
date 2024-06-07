@@ -18,7 +18,7 @@ import { entryVersionComparator } from "@/utils/comparators";
 const StyledThemeCard = styled(Card)`
     display: flex;
     flex-direction: column;
-    
+
     gap: 1rem;
 `;
 
@@ -26,7 +26,7 @@ const StyledRow = styled.div`
     display: grid;
     grid-template-columns: 2rem 1fr auto;
     align-items: baseline;
-    
+
     grid-gap: 1rem;
 `;
 
@@ -39,14 +39,14 @@ const StyledVideoListContainer = styled.div`
 const StyledVideoList = styled(Row)`
     flex-wrap: wrap;
     gap: 0.75rem;
-    
+
     @media (min-width: 721px) {
         justify-content: flex-end;
     }
 `;
 
 interface ThemeDetailCardProps {
-    theme: ThemeDetailCardThemeFragment
+    theme: ThemeDetailCardThemeFragment;
 }
 
 export function ThemeDetailCard({ theme }: ThemeDetailCardProps) {
@@ -59,30 +59,29 @@ export function ThemeDetailCard({ theme }: ThemeDetailCardProps) {
     return (
         <StyledThemeCard>
             <StyledRow>
-                <Text variant="small" color="text">{theme.type}{theme.sequence || null}</Text>
-                <Text>
-                    <SongTitle song={theme.song}/>
-                    <Performances song={theme.song} expandable/>
+                <Text variant="small" color="text">
+                    {theme.type}
+                    {theme.sequence || null}
                 </Text>
-                <ThemeMenu theme={theme}/>
+                <Text>
+                    <SongTitle song={theme.song} />
+                    <Performances song={theme.song} expandable />
+                </Text>
+                <ThemeMenu theme={theme} />
             </StyledRow>
-            {theme.entries.sort(entryVersionComparator).map(entry => (
+            {theme.entries.sort(entryVersionComparator).map((entry) => (
                 <StyledRow key={entry.version || 0}>
-                    <Text variant="small" color="text-muted">{!!entry.version && `v${entry.version}`}</Text>
+                    <Text variant="small" color="text-muted">
+                        {!!entry.version && `v${entry.version}`}
+                    </Text>
                     <Text color="text-muted">
-                        <ThemeEntryTags entry={entry}/>
+                        <ThemeEntryTags entry={entry} />
                     </Text>
                     <StyledVideoListContainer>
                         {!!entry.videos && (
                             <StyledVideoList>
                                 {entry.videos.map((video, index) => (
-                                    <VideoButton
-                                        key={index}
-                                        anime={anime}
-                                        theme={theme}
-                                        entry={entry}
-                                        video={video}
-                                    />
+                                    <VideoButton key={index} anime={anime} theme={theme} entry={entry} video={video} />
                                 ))}
                             </StyledVideoList>
                         )}
@@ -97,7 +96,7 @@ ThemeDetailCard.fragments = {
     theme: gql`
         ${ThemeMenu.fragments.theme}
         ${VideoTags.fragments.video}
-        
+
         fragment ThemeDetailCardTheme on Theme {
             ...ThemeMenuTheme
             type
@@ -132,5 +131,5 @@ ThemeDetailCard.fragments = {
                 }
             }
         }
-    `
+    `,
 };

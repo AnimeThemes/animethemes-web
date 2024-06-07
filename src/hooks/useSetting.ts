@@ -5,7 +5,7 @@ import type { Setting } from "@/utils/settings";
 
 export default function useSetting<T>(
     { __KEY__: key, __INITIAL_VALUE__: initialValue }: Setting<T>,
-    localStorageOptions: Pick<LocalStorageOptions<T>, "storageSync"> = {}
+    localStorageOptions: Pick<LocalStorageOptions<T>, "storageSync"> = {},
 ) {
     const [setting, setSetting] = useLocalStorageState<T>(key, { defaultValue: initialValue, ...localStorageOptions });
 

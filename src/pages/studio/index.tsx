@@ -15,23 +15,21 @@ import getSharedPageProps from "@/utils/getSharedPageProps";
 interface StudioIndexPageProps extends SharedPageProps, StudioIndexPageQuery {}
 
 export default function StudioIndexPage({ studioAll }: StudioIndexPageProps) {
-    return <>
-        <BackToTopButton/>
-        <Text variant="h1">Studio Index</Text>
-        <AlphabeticalIndex items={studioAll}>
-            {(studio) => (
-                <Link
-                    key={studio.slug}
-                    href={`/studio/${studio.slug}`}
-                    passHref
-                    legacyBehavior
-                    prefetch={false}
-                >
-                    <Text as="a" block link>{studio.name}</Text>
-                </Link>
-            )}
-        </AlphabeticalIndex>
-    </>;
+    return (
+        <>
+            <BackToTopButton />
+            <Text variant="h1">Studio Index</Text>
+            <AlphabeticalIndex items={studioAll}>
+                {(studio) => (
+                    <Link key={studio.slug} href={`/studio/${studio.slug}`} passHref legacyBehavior prefetch={false}>
+                        <Text as="a" block link>
+                            {studio.name}
+                        </Text>
+                    </Link>
+                )}
+            </AlphabeticalIndex>
+        </>
+    );
 }
 
 export const getStaticProps: GetStaticProps<StudioIndexPageProps> = async () => {
@@ -52,6 +50,6 @@ export const getStaticProps: GetStaticProps<StudioIndexPageProps> = async () => 
     return {
         props,
         // Revalidate after 3 hours (= 10800 seconds).
-        revalidate: 10800
+        revalidate: 10800,
     };
 };

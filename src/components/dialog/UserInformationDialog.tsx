@@ -28,12 +28,7 @@ export function UserInformationDialog() {
             </DialogTrigger>
             <DialogContent title="Change User Information">
                 {/* Only render the form when dialog is open, so it will reset after closing. */}
-                {open ? (
-                    <UserInformationForm
-                        onSuccess={() => setOpen(false)}
-                        onCancel={() => setOpen(false)}
-                    />
-                ) : null}
+                {open ? <UserInformationForm onSuccess={() => setOpen(false)} onCancel={() => setOpen(false)} /> : null}
             </DialogContent>
         </Dialog>
     );
@@ -72,21 +67,13 @@ function UserInformationForm({ onSuccess, onCancel }: UserInformationFormProps) 
         setErrors({});
 
         try {
-            await axios.put(
-                `${AUTH_PATH}/user/profile-information`,
-                {
-                    name: username,
-                    email: email,
-                }
-            );
-            await mutate((key) => (
-                [key].flat().some((key) => key === "/api/me")
-            ));
+            await axios.put(`${AUTH_PATH}/user/profile-information`, {
+                name: username,
+                email: email,
+            });
+            await mutate((key) => [key].flat().some((key) => key === "/api/me"));
 
-            dispatchToast(
-                "email-change",
-                <Toast>User information changed successfully.</Toast>
-            );
+            dispatchToast("email-change", <Toast>User information changed successfully.</Toast>);
 
             onSuccess();
         } catch (error) {
@@ -113,9 +100,13 @@ function UserInformationForm({ onSuccess, onCancel }: UserInformationFormProps) 
                                 required: true,
                             }}
                         />
-                        {errors.name ? errors.name.map((error) => (
-                            <Text key={error} color="text-warning">{error}</Text>
-                        )) : null}
+                        {errors.name
+                            ? errors.name.map((error) => (
+                                  <Text key={error} color="text-warning">
+                                      {error}
+                                  </Text>
+                              ))
+                            : null}
                     </SearchFilter>
                     <SearchFilter>
                         <Text>E-Mail Address</Text>
@@ -127,12 +118,18 @@ function UserInformationForm({ onSuccess, onCancel }: UserInformationFormProps) 
                                 required: true,
                             }}
                         />
-                        {errors.email ? errors.email.map((error) => (
-                            <Text key={error} color="text-warning">{error}</Text>
-                        )) : null}
+                        {errors.email
+                            ? errors.email.map((error) => (
+                                  <Text key={error} color="text-warning">
+                                      {error}
+                                  </Text>
+                              ))
+                            : null}
                     </SearchFilter>
                     <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
-                        <Button type="button" variant="silent" onClick={onCancel}>Cancel</Button>
+                        <Button type="button" variant="silent" onClick={onCancel}>
+                            Cancel
+                        </Button>
                         <Button type="submit" variant="primary" disabled={!isValid || isBusy}>
                             <Busy isBusy={isBusy}>Update</Busy>
                         </Button>

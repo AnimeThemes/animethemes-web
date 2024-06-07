@@ -12,11 +12,11 @@ const StyledToastHub = styled(Container)`
     right: 0;
     bottom: 0;
     z-index: ${theme.zIndices.toast};
-    
+
     display: flex;
     flex-direction: column;
     gap: 16px;
-    
+
     pointer-events: none;
 `;
 

@@ -10,7 +10,7 @@ export const SidebarContainer = styled.div`
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         grid-template-columns: 1fr;
     }
-    
+
     // This will prevent columns from overflowing
     & > * {
         min-width: 0;

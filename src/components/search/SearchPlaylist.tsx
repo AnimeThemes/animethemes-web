@@ -14,7 +14,7 @@ const initialFilter = {
 };
 
 interface SearchPlaylistProps {
-    searchQuery?: string
+    searchQuery?: string;
 }
 
 export function SearchPlaylist({ searchQuery }: SearchPlaylistProps) {
@@ -22,7 +22,7 @@ export function SearchPlaylist({ searchQuery }: SearchPlaylistProps) {
         ...initialFilter,
         sortBy: searchQuery ? null : initialFilter.sortBy,
     });
-    const [ prevSearchQuery, setPrevSearchQuery ] = useState(searchQuery);
+    const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
 
     if (!searchQuery && filter.sortBy === null) {
         updateFilter("sortBy", initialFilter.sortBy);
@@ -39,34 +39,34 @@ export function SearchPlaylist({ searchQuery }: SearchPlaylistProps) {
     }
 
     return (
-        <SearchEntity
-            <SearchPlaylistQuery["searchPlaylist"]["data"][number]>
+        <SearchEntity<SearchPlaylistQuery["searchPlaylist"]["data"][number]>
             entity="playlist"
             searchArgs={{
                 query: searchQuery,
                 sortBy: filter.sortBy,
             }}
             fetchResults={async (searchArgs) => {
-                const { data } = await fetchDataClient<SearchPlaylistQuery, SearchPlaylistQueryVariables>(gql`
-                    ${PlaylistSummaryCard.fragments.playlist}
-                    ${PlaylistSummaryCard.fragments.showOwner}
-                    
-                    query SearchPlaylist($args: SearchArgs!) {
-                        searchPlaylist(args: $args) {
-                            data {
-                                ...PlaylistSummaryCardPlaylist
-                                ...PlaylistSummaryCardShowOwner
+                const { data } = await fetchDataClient<SearchPlaylistQuery, SearchPlaylistQueryVariables>(
+                    gql`
+                        ${PlaylistSummaryCard.fragments.playlist}
+                        ${PlaylistSummaryCard.fragments.showOwner}
+
+                        query SearchPlaylist($args: SearchArgs!) {
+                            searchPlaylist(args: $args) {
+                                data {
+                                    ...PlaylistSummaryCardPlaylist
+                                    ...PlaylistSummaryCardShowOwner
+                                }
+                                nextPage
                             }
-                            nextPage
                         }
-                    }
-                `, { args: searchArgs });
+                    `,
+                    { args: searchArgs },
+                );
 
                 return data.searchPlaylist;
             }}
-            renderResult={(playlist) => (
-                <PlaylistSummaryCard key={playlist.id} playlist={playlist} showOwner />
-            )}
+            renderResult={(playlist) => <PlaylistSummaryCard key={playlist.id} playlist={playlist} showOwner />}
             filters={
                 <>
                     <SearchFilterSortBy value={filter.sortBy} setValue={bindUpdateFilter("sortBy")}>

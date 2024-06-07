@@ -3,16 +3,16 @@ import { colors, shadows } from "@/theme/colors";
 
 interface Theme {
     breakpoints: {
-        [key: string]: string
-    }
-    shadows: ThemeDefinition<Shadows>
-    colors: ThemeDefinition<Colors>
+        [key: string]: string;
+    };
+    shadows: ThemeDefinition<Shadows>;
+    colors: ThemeDefinition<Colors>;
     zIndices: {
-        [key: string]: number
-    }
+        [key: string]: number;
+    };
     scalars: {
-        [key: string]: string | number
-    }
+        [key: string]: string | number;
+    };
 }
 
 type VariableDefinition = Colors | Shadows;
@@ -48,8 +48,8 @@ const theme = {
         dialogBackdrop: 49,
     },
     scalars: {
-        borderRadiusCard: "4px"
-    }
+        borderRadiusCard: "4px",
+    },
 } satisfies Theme;
 
 export default theme;

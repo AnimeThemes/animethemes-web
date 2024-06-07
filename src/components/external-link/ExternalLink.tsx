@@ -6,8 +6,8 @@ import { Icon } from "@/components/icon/Icon";
 import { Text } from "@/components/text/Text";
 
 interface ExternalLinkProps extends ComponentPropsWithoutRef<typeof Text> {
-    href?: string | null
-    children: ReactNode
+    href?: string | null;
+    children: ReactNode;
 }
 
 export function ExternalLink({ href, children, ...props }: ExternalLinkProps) {
@@ -16,7 +16,7 @@ export function ExternalLink({ href, children, ...props }: ExternalLinkProps) {
             <Text>{children}</Text>
             <Text noWrap>
                 &nbsp;
-                <Icon icon={faChevronCircleRight}/>
+                <Icon icon={faChevronCircleRight} />
             </Text>
         </Text>
     );

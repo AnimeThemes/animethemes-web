@@ -16,7 +16,7 @@ const initialFilter = {
 };
 
 interface SearchArtistProps {
-    searchQuery?: string
+    searchQuery?: string;
 }
 
 export function SearchArtist({ searchQuery }: SearchArtistProps) {
@@ -24,7 +24,7 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
         ...initialFilter,
         sortBy: searchQuery ? null : initialFilter.sortBy,
     });
-    const [ prevSearchQuery, setPrevSearchQuery ] = useState(searchQuery);
+    const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
 
     if (!searchQuery && filter.sortBy === null) {
         updateFilter("sortBy", initialFilter.sortBy);
@@ -41,38 +41,38 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
     }
 
     return (
-        <SearchEntity
-            <SearchArtistQuery["searchArtist"]["data"][number]>
+        <SearchEntity<SearchArtistQuery["searchArtist"]["data"][number]>
             entity="artist"
             searchArgs={{
                 query: searchQuery,
                 filters: {
                     "name-like": filter.firstLetter ? `${filter.firstLetter}%` : null,
                 },
-                sortBy: filter.sortBy
+                sortBy: filter.sortBy,
             }}
             fetchResults={async (searchArgs) => {
-                const { data } = await fetchDataClient<SearchArtistQuery, SearchArtistQueryVariables>(gql`
-                    ${ArtistSummaryCard.fragments.artist}
-                    
-                    query SearchArtist($args: SearchArgs!) {
-                        searchArtist(args: $args) {
-                            data {
-                                ...ArtistSummaryCardArtist
+                const { data } = await fetchDataClient<SearchArtistQuery, SearchArtistQueryVariables>(
+                    gql`
+                        ${ArtistSummaryCard.fragments.artist}
+
+                        query SearchArtist($args: SearchArgs!) {
+                            searchArtist(args: $args) {
+                                data {
+                                    ...ArtistSummaryCardArtist
+                                }
+                                nextPage
                             }
-                            nextPage
                         }
-                    }
-                `, { args: searchArgs });
+                    `,
+                    { args: searchArgs },
+                );
 
                 return data.searchArtist;
             }}
-            renderResult={(artist) => (
-                <ArtistSummaryCard key={artist.slug} artist={artist}/>
-            )}
+            renderResult={(artist) => <ArtistSummaryCard key={artist.slug} artist={artist} />}
             filters={
                 <>
-                    <SearchFilterFirstLetter value={filter.firstLetter} setValue={bindUpdateFilter("firstLetter")}/>
+                    <SearchFilterFirstLetter value={filter.firstLetter} setValue={bindUpdateFilter("firstLetter")} />
                     <SearchFilterSortBy value={filter.sortBy} setValue={bindUpdateFilter("sortBy")}>
                         {searchQuery ? (
                             <SearchFilterSortBy.Option value={null}>Relevance</SearchFilterSortBy.Option>

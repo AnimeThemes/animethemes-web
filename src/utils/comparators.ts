@@ -1,26 +1,17 @@
-import type { Anime, Entry, Resource, Series, Studio, Theme } from "@/generated/graphql";
 import type { Comparator } from "@/utils/types";
 
-const seasonOrder = [
-    "winter",
-    "spring",
-    "summer",
-    "fall"
-];
-const themeTypeOrder = [
-    "op",
-    "ed"
-];
+const seasonOrder = ["winter", "spring", "summer", "fall"];
+const themeTypeOrder = ["op", "ed"];
 
 interface ComparatorChain<T> {
-    chain: () => Comparator<T>
-    or: <K>(or: Comparator<K>) => ComparatorChain<T & K>
+    chain: () => Comparator<T>;
+    or: <K>(or: Comparator<K>) => ComparatorChain<T & K>;
 }
 
 export function either<T>(comparator: Comparator<T>): ComparatorChain<T> {
     return {
         chain: () => comparator,
-        or: <K>(or: Comparator<K>) => either<T & K>((a, b) => comparator(a, b) || or(a, b))
+        or: <K>(or: Comparator<K>) => either<T & K>((a, b) => comparator(a, b) || or(a, b)),
     };
 }
 
@@ -50,36 +41,42 @@ function enumComparator<T>(target: Array<T | undefined>): Comparator<T | undefin
     return (a, b) => target.indexOf(a) - target.indexOf(b);
 }
 
-function nestedComparator<S, V>(extractor: (source: S) => V, comparator: Comparator<V> = automaticComparator): Comparator<S> {
+function nestedComparator<S, V>(
+    extractor: (source: S) => V,
+    comparator: Comparator<V> = automaticComparator,
+): Comparator<S> {
     return (a, b) => comparator(extractor(a), extractor(b));
 }
 
-export const animeNameComparator: Comparator<Pick<Anime, "name">> =
-    nestedComparator((anime) => anime.name);
-export const animeYearComparator: Comparator<Pick<Anime, "year">> =
-    nestedComparator((anime) => anime.year);
-export const animeSeasonComparator: Comparator<Pick<Anime, "season">> =
-    nestedComparator((anime) => anime.season?.toLowerCase(), enumComparator(seasonOrder));
-export const animePremiereComparator: Comparator<Pick<Anime, "year" | "season">> =
-    either(animeYearComparator).or(animeSeasonComparator).chain();
-export const songTitleComparator: Comparator<Theme> =
-    nestedComparator((theme) => theme.song?.title);
-export const entryVersionComparator: Comparator<Pick<Entry, "version">> =
-    nestedComparator((entry) => entry.version);
-export const themeTypeComparator: Comparator<Pick<Theme, "type">> =
-    nestedComparator((theme) => theme.type.toLowerCase(), enumComparator(themeTypeOrder));
-export const themeIndexComparator: Comparator<Pick<Theme, "sequence">> =
-    nestedComparator((theme) => theme.sequence);
-export const themeGroupComparator: Comparator<{ group: { name: string } | null }> =
-    nestedComparator((theme) => theme.group?.name);
-export const studioNameComparator: Comparator<Pick<Studio, "name">> =
-    nestedComparator((studio) => studio.name);
-export const seriesNameComparator: Comparator<Pick<Series, "name">> =
-    nestedComparator((series) => series.name);
-export const resourceSiteComparator: Comparator<Pick<Resource, "site">> =
-    nestedComparator((resource) => resource.site);
-export const resourceAsComparator: Comparator<Pick<Resource, "as">> =
-    nestedComparator((resource) => resource.as);
+export const animeNameComparator: Comparator<{ name: string }> = nestedComparator((anime) => anime.name);
+export const animeYearComparator: Comparator<{ year: number | null }> = nestedComparator((anime) => anime.year);
+export const animeSeasonComparator: Comparator<{ season: string | null }> = nestedComparator(
+    (anime) => anime.season?.toLowerCase(),
+    enumComparator(seasonOrder),
+);
+export const animePremiereComparator = either(animeYearComparator).or(animeSeasonComparator).chain();
+export const songTitleComparator: Comparator<{ song: { title: string | null } | null }> = nestedComparator(
+    (theme) => theme.song?.title,
+);
+export const entryVersionComparator: Comparator<{ version: number | null }> = nestedComparator(
+    (entry) => entry.version,
+);
+export const themeTypeComparator: Comparator<{ type: string }> = nestedComparator(
+    (theme) => theme.type.toLowerCase(),
+    enumComparator(themeTypeOrder),
+);
+export const themeIndexComparator: Comparator<{ sequence: number | null }> = nestedComparator(
+    (theme) => theme.sequence,
+);
+export const themeGroupComparator: Comparator<{ group: { name: string } | null }> = nestedComparator(
+    (theme) => theme.group?.name,
+);
+export const studioNameComparator: Comparator<{ name: string }> = nestedComparator((studio) => studio.name);
+export const seriesNameComparator: Comparator<{ name: string }> = nestedComparator((series) => series.name);
+export const resourceSiteComparator: Comparator<{ site: string | null }> = nestedComparator(
+    (resource) => resource.site,
+);
+export const resourceAsComparator: Comparator<{ as: string | null }> = nestedComparator((resource) => resource.as);
 
 export const UNSORTED = "unsorted";
 
@@ -95,9 +92,12 @@ export const SONG_Z_A_ANIME = "song-z-a-anime";
 export const SONG_OLD_NEW = "song-old-new";
 export const SONG_NEW_OLD = "song-new-old";
 
-const toAnime = <T>(comparator: Comparator<T>): Comparator<{ anime: T }> => (a, b) => comparator(a.anime, b.anime);
+const toAnime =
+    <T>(comparator: Comparator<T>): Comparator<{ anime: T }> =>
+    (a, b) =>
+        comparator(a.anime, b.anime);
 
-const comparators: Record<string, Comparator<any>> = {
+const comparators = {
     [UNSORTED]: () => 0,
     [ANIME_A_Z]: animeNameComparator,
     [ANIME_Z_A]: reverse(animeNameComparator),
@@ -106,15 +106,24 @@ const comparators: Record<string, Comparator<any>> = {
     [SONG_A_Z]: songTitleComparator,
     [SONG_Z_A]: reverse(songTitleComparator),
     [SONG_A_Z_ANIME]: either(toAnime(animeNameComparator)).or(themeTypeComparator).or(themeIndexComparator).chain(),
-    [SONG_Z_A_ANIME]: either(reverse(toAnime(animeNameComparator))).or(themeTypeComparator).or(themeIndexComparator).chain(),
-    [SONG_OLD_NEW]: either(toAnime(animePremiereComparator)).or(toAnime(animeNameComparator)).or(songTitleComparator).chain(),
-    [SONG_NEW_OLD]: either(reverse(toAnime(animePremiereComparator))).or(toAnime(animeNameComparator)).or(songTitleComparator).chain()
+    [SONG_Z_A_ANIME]: either(reverse(toAnime(animeNameComparator)))
+        .or(themeTypeComparator)
+        .or(themeIndexComparator)
+        .chain(),
+    [SONG_OLD_NEW]: either(toAnime(animePremiereComparator))
+        .or(toAnime(animeNameComparator))
+        .or(songTitleComparator)
+        .chain(),
+    [SONG_NEW_OLD]: either(reverse(toAnime(animePremiereComparator)))
+        .or(toAnime(animeNameComparator))
+        .or(songTitleComparator)
+        .chain(),
 } as const;
 
-export function getComparator(name: keyof typeof comparators) {
+export function getComparator<T extends keyof typeof comparators>(name: T): (typeof comparators)[T] {
     return comparators[name];
 }
 
-export function sortTransformed<T, K>(comparator: Comparator<T>, tranformator: (from: K) => T): Comparator<K> {
-    return (a, b) => comparator(tranformator(a), tranformator(b));
+export function sortTransformed<T, K>(comparator: Comparator<T>, transformator: (from: K) => T): Comparator<K> {
+    return (a, b) => comparator(transformator(a), transformator(b));
 }

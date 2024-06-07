@@ -38,11 +38,11 @@ const StyledWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    
+
     height: 200px;
-    
+
     position: relative;
-    
+
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         margin-inline-start: -16px;
         margin-inline-end: -16px;
@@ -63,7 +63,7 @@ const StyledOverflowHidden = styled(Link)`
 
 const StyledCenter = styled.div`
     position: absolute;
-    
+
     width: 400px;
 
     @media (max-width: ${theme.breakpoints.mobileMax}) {
@@ -91,12 +91,12 @@ const StyledCover = styled.img`
 
 const StyledGrillContainer = styled.div`
     position: absolute;
-    
+
     height: 130%;
     bottom: 0;
     right: 32px;
     overflow: hidden;
-    
+
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         right: 0;
     }
@@ -108,10 +108,10 @@ const StyledGrill = styled.img`
     object-fit: contain;
     object-position: bottom;
     animation: ${slideIn} 2s 2s backwards cubic-bezier(0.34, 1.56, 0.64, 1);
-    
+
     transition: transform 1s;
     transform: translateY(10%);
-    
+
     &:hover {
         transform: none;
     }
@@ -127,8 +127,8 @@ interface FeaturedThemeProps {
 }
 
 export function FeaturedTheme({ theme, hasGrill = true, card, onPlay }: FeaturedThemeProps) {
-    const [ grill, setGrill ] = useState<string | null>(null);
-    const [ featuredThemePreview ] = useSetting(FeaturedThemePreview);
+    const [grill, setGrill] = useState<string | null>(null);
+    const [featuredThemePreview] = useSetting(FeaturedThemePreview);
 
     useEffect(() => {
         if (hasGrill) {
@@ -136,26 +136,21 @@ export function FeaturedTheme({ theme, hasGrill = true, card, onPlay }: Featured
         }
     }, [hasGrill]);
 
-    const FeaturedThemeWrapper = featuredThemePreview !== FeaturedThemePreview.DISABLED
-        ? StyledWrapper
-        : Box;
+    const FeaturedThemeWrapper = featuredThemePreview !== FeaturedThemePreview.DISABLED ? StyledWrapper : Box;
 
-    const featuredThemeSummaryCard = featuredThemePreview !== FeaturedThemePreview.DISABLED
-        ? (
-            <StyledCenter>
-                {card ?? <ThemeSummaryCard theme={theme}/>}
-            </StyledCenter>
-        )
-        : (
-            card ?? <ThemeSummaryCard theme={theme}/>
+    const featuredThemeSummaryCard =
+        featuredThemePreview !== FeaturedThemePreview.DISABLED ? (
+            <StyledCenter>{card ?? <ThemeSummaryCard theme={theme} />}</StyledCenter>
+        ) : (
+            card ?? <ThemeSummaryCard theme={theme} />
         );
 
     return (
         <FeaturedThemeWrapper>
-            <FeaturedThemeBackground theme={theme} onPlay={onPlay}/>
+            <FeaturedThemeBackground theme={theme} onPlay={onPlay} />
             {featuredThemePreview !== FeaturedThemePreview.DISABLED && grill && (
                 <StyledGrillContainer>
-                    <StyledGrill src={grill}/>
+                    <StyledGrill src={grill} />
                 </StyledGrillContainer>
             )}
             {featuredThemeSummaryCard}
@@ -164,9 +159,9 @@ export function FeaturedTheme({ theme, hasGrill = true, card, onPlay }: Featured
 }
 
 function FeaturedThemeBackground({ theme, onPlay }: FeaturedThemeProps) {
-    const [ featuredThemePreview ] = useSetting(FeaturedThemePreview);
+    const [featuredThemePreview] = useSetting(FeaturedThemePreview);
     const { canPlayVideo } = useCompatability();
-    const [ fallbackToCover, setFallbackToCover ] = useState(false);
+    const [fallbackToCover, setFallbackToCover] = useState(false);
     const { smallCover: featuredCover } = extractImages(theme.anime);
 
     if (!theme.anime || !theme.entries.length) {
@@ -187,24 +182,15 @@ function FeaturedThemeBackground({ theme, onPlay }: FeaturedThemeProps) {
     if (featuredThemePreview === FeaturedThemePreview.VIDEO && canPlayVideo && !fallbackToCover) {
         return (
             <StyledOverflowHidden href={href} onClick={onPlay}>
-                <StyledVideo
-                    key={video.basename}
-                    autoPlay
-                    muted
-                    loop
-                    onError={() => setFallbackToCover(true)}
-                >
-                    <source
-                        src={`${VIDEO_URL}/${video.basename}`}
-                        type={`video/webm; codecs="vp8, vp9, opus`}
-                    />
+                <StyledVideo key={video.basename} autoPlay muted loop onError={() => setFallbackToCover(true)}>
+                    <source src={`${VIDEO_URL}/${video.basename}`} type={`video/webm; codecs="vp8, vp9, opus`} />
                 </StyledVideo>
             </StyledOverflowHidden>
         );
     } else if (featuredThemePreview !== FeaturedThemePreview.DISABLED) {
         return (
             <StyledOverflowHidden href={href} onClick={onPlay}>
-                <StyledCover src={featuredCover}/>
+                <StyledCover src={featuredCover} />
             </StyledOverflowHidden>
         );
     }
@@ -216,7 +202,7 @@ FeaturedTheme.fragments = {
     theme: gql`
         ${ThemeSummaryCard.fragments.theme}
         ${extractImages.fragments.resourceWithImages}
-        
+
         fragment FeaturedThemeTheme on Theme {
             ...ThemeSummaryCardTheme
             anime {
@@ -228,5 +214,5 @@ FeaturedTheme.fragments = {
                 }
             }
         }
-    `
+    `,
 };

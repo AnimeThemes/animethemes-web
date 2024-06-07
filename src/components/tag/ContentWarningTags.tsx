@@ -6,19 +6,19 @@ import { Tag } from "@/components/tag/Tag";
 import type { ContentWarningTagsEntryFragment } from "@/generated/graphql";
 
 interface ContentWarningTagsProps {
-    entry: ContentWarningTagsEntryFragment
+    entry: ContentWarningTagsEntryFragment;
 }
 
 export function ContentWarningTags({ entry }: ContentWarningTagsProps) {
     return (
         <>
             {entry.spoiler && (
-                <Tag icon={<Icon icon={faExclamationCircle} color="text-warning"/>} textColor="text-warning-muted">
+                <Tag icon={<Icon icon={faExclamationCircle} color="text-warning" />} textColor="text-warning-muted">
                     SPOILER
                 </Tag>
             )}
             {entry.nsfw && (
-                <Tag icon={<Icon icon={faExclamationCircle} color="text-warning"/>} textColor="text-warning-muted">
+                <Tag icon={<Icon icon={faExclamationCircle} color="text-warning" />} textColor="text-warning-muted">
                     NSFW
                 </Tag>
             )}

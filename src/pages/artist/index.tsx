@@ -15,23 +15,21 @@ import getSharedPageProps from "@/utils/getSharedPageProps";
 interface ArtistIndexPageProps extends SharedPageProps, ArtistIndexPageQuery {}
 
 export default function ArtistIndexPage({ artistAll }: ArtistIndexPageProps) {
-    return <>
-        <BackToTopButton/>
-        <Text variant="h1">Artist Index</Text>
-        <AlphabeticalIndex items={artistAll}>
-            {(artist) => (
-                <Link
-                    key={artist.slug}
-                    href={`/artist/${artist.slug}`}
-                    passHref
-                    legacyBehavior
-                    prefetch={false}
-                >
-                    <Text as="a" block link>{artist.name}</Text>
-                </Link>
-            )}
-        </AlphabeticalIndex>
-    </>;
+    return (
+        <>
+            <BackToTopButton />
+            <Text variant="h1">Artist Index</Text>
+            <AlphabeticalIndex items={artistAll}>
+                {(artist) => (
+                    <Link key={artist.slug} href={`/artist/${artist.slug}`} passHref legacyBehavior prefetch={false}>
+                        <Text as="a" block link>
+                            {artist.name}
+                        </Text>
+                    </Link>
+                )}
+            </AlphabeticalIndex>
+        </>
+    );
 }
 
 export const getStaticProps: GetStaticProps<ArtistIndexPageProps> = async () => {
@@ -52,6 +50,6 @@ export const getStaticProps: GetStaticProps<ArtistIndexPageProps> = async () => 
     return {
         props,
         // Revalidate after 3 hours (= 10800 seconds).
-        revalidate: 10800
+        revalidate: 10800,
     };
 };

@@ -19,7 +19,8 @@ export function PlaylistTrackAddToast({ playlist, video }: PlaylistTrackAddToast
             <Toast as="a" hoverable>
                 <Row $wrap style={{ "--justify-content": "space-between", "--gap": "8px" }}>
                     <span>
-                        <SongTitle song={video.entries[0]?.theme?.song ?? null} /> was added to <Text color="text-primary">{playlist.name}</Text>!
+                        <SongTitle song={video.entries[0]?.theme?.song ?? null} /> was added to{" "}
+                        <Text color="text-primary">{playlist.name}</Text>!
                     </span>
                     <Text color="text-disabled">(Click to view playlist.)</Text>
                 </Row>

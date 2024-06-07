@@ -5,8 +5,8 @@ import { Text } from "@/components/text/Text";
 import useAuth from "@/hooks/useAuth";
 
 interface PageRevalidationProps {
-    lastBuildAt: number
-    apiRequests: number
+    lastBuildAt: number;
+    apiRequests: number;
 }
 
 export function PageRevalidation({ lastBuildAt, apiRequests, ...props }: PageRevalidationProps) {

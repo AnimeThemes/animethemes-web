@@ -11,7 +11,7 @@ import Switch from "@/components/form/Switch";
 import { SearchFilter } from "@/components/search-filter/SearchFilter";
 import { Text } from "@/components/text/Text";
 import { Busy } from "@/components/utils/Busy";
-import useAuth from "@/hooks/useAuth";
+import useAuth, { type RegisterErrors } from "@/hooks/useAuth";
 
 export function RegisterDialog() {
     const [open, setOpen] = useState(false);
@@ -23,9 +23,7 @@ export function RegisterDialog() {
             </DialogTrigger>
             <DialogContent title="Create a new account">
                 {/* Only render the form when dialog is open, so it will reset after closing. */}
-                {open ? (
-                    <RegisterForm onCancel={() => setOpen(false)} />
-                ) : null}
+                {open ? <RegisterForm onCancel={() => setOpen(false)} /> : null}
             </DialogContent>
         </Dialog>
     );
@@ -53,11 +51,7 @@ function RegisterForm({ onCancel }: RegisterFormProps) {
     const isValid = username && email && password && passwordConfirmation && isTermsAccepted;
 
     const [isBusy, setBusy] = useState(false);
-    const [errors, setErrors] = useState<{
-        name?: string[];
-        email?: string[];
-        password?: string[]
-    }>({});
+    const [errors, setErrors] = useState<RegisterErrors>({});
 
     function performRegister(event: SyntheticEvent) {
         event.preventDefault();
@@ -71,8 +65,7 @@ function RegisterForm({ onCancel }: RegisterFormProps) {
             password,
             password_confirmation: passwordConfirmation,
             terms: isTermsAccepted,
-        })
-            .finally(() => setBusy(false));
+        }).finally(() => setBusy(false));
     }
 
     return (
@@ -88,9 +81,13 @@ function RegisterForm({ onCancel }: RegisterFormProps) {
                                 required: true,
                             }}
                         />
-                        {errors.name ? errors.name.map((error) => (
-                            <Text key={error} color="text-warning">{error}</Text>
-                        )) : null}
+                        {errors.name
+                            ? errors.name.map((error) => (
+                                  <Text key={error} color="text-warning">
+                                      {error}
+                                  </Text>
+                              ))
+                            : null}
                     </SearchFilter>
                     <SearchFilter>
                         <Text>E-Mail</Text>
@@ -102,9 +99,13 @@ function RegisterForm({ onCancel }: RegisterFormProps) {
                                 required: true,
                             }}
                         />
-                        {errors.email ? errors.email.map((error) => (
-                            <Text key={error} color="text-warning">{error}</Text>
-                        )) : null}
+                        {errors.email
+                            ? errors.email.map((error) => (
+                                  <Text key={error} color="text-warning">
+                                      {error}
+                                  </Text>
+                              ))
+                            : null}
                     </SearchFilter>
                     <SearchFilter>
                         <Text>Password</Text>
@@ -116,9 +117,13 @@ function RegisterForm({ onCancel }: RegisterFormProps) {
                                 required: true,
                             }}
                         />
-                        {errors.password ? errors.password.map((error) => (
-                            <Text key={error} color="text-warning">{error}</Text>
-                        )) : null}
+                        {errors.password
+                            ? errors.password.map((error) => (
+                                  <Text key={error} color="text-warning">
+                                      {error}
+                                  </Text>
+                              ))
+                            : null}
                     </SearchFilter>
                     <SearchFilter>
                         <Text>Confirm Password</Text>
@@ -132,18 +137,23 @@ function RegisterForm({ onCancel }: RegisterFormProps) {
                         />
                     </SearchFilter>
                     <Row style={{ "--gap": "12px", "--align-items": "center" }}>
-                        <Switch
-                            id="input-terms"
-                            isChecked={isTermsAccepted}
-                            onCheckedChange={setTermsAccepted}
-                        />
-                        <Text as="label" htmlFor="input-terms">I accept the{" "}
-                            <Text as={Link} href="/about/terms-of-service" link>Terms of Service</Text> and{" "}
-                            <Text as={Link} href="/about/privacy-policy" link>Privacy Policy</Text>.
+                        <Switch id="input-terms" isChecked={isTermsAccepted} onCheckedChange={setTermsAccepted} />
+                        <Text as="label" htmlFor="input-terms">
+                            I accept the{" "}
+                            <Text as={Link} href="/about/terms-of-service" link>
+                                Terms of Service
+                            </Text>{" "}
+                            and{" "}
+                            <Text as={Link} href="/about/privacy-policy" link>
+                                Privacy Policy
+                            </Text>
+                            .
                         </Text>
                     </Row>
                     <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
-                        <Button type="button" variant="silent" onClick={onCancel}>Cancel</Button>
+                        <Button type="button" variant="silent" onClick={onCancel}>
+                            Cancel
+                        </Button>
                         <Button type="submit" variant="primary" disabled={!isValid || isBusy}>
                             <Busy isBusy={isBusy}>Create Account</Busy>
                         </Button>

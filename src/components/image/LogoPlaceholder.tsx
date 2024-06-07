@@ -8,10 +8,10 @@ const StyledPlaceholder = styled.div`
     width: 100%;
     height: 100%;
     padding: 32px;
-    
+
     background: ${theme.colors["solid"]};
     color: ${theme.colors["text-disabled"]};
-    
+
     & svg {
         width: 100%;
         height: 100%;
@@ -22,7 +22,7 @@ const StyledPlaceholder = styled.div`
 export function LogoPlaceholder(props: ComponentPropsWithoutRef<typeof StyledPlaceholder>) {
     return (
         <StyledPlaceholder {...props}>
-            <Logo/>
+            <Logo />
         </StyledPlaceholder>
     );
 }

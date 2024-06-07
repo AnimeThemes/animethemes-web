@@ -21,7 +21,7 @@ import type {
     ThemeSummaryCardArtistFragment,
     ThemeSummaryCardQuery,
     ThemeSummaryCardThemeExpandableFragment,
-    ThemeSummaryCardThemeFragment
+    ThemeSummaryCardThemeFragment,
 } from "@/generated/graphql";
 import useMediaQuery from "@/hooks/useMediaQuery";
 import useToggle from "@/hooks/useToggle";
@@ -31,7 +31,7 @@ import createVideoSlug from "@/utils/createVideoSlug";
 import extractImages from "@/utils/extractImages";
 
 const StyledWrapper = styled.div`
-    position: relative
+    position: relative;
 `;
 
 const StyledOverlayButtons = styled.div`
@@ -67,20 +67,29 @@ const StyledPerformedWith = styled.div`
 
 const useIsMobile = () => useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
 
-type ThemeSummaryCardProps = {
-    theme: ThemeSummaryCardThemeFragment
-    artist?: ThemeSummaryCardArtistFragment
-    expandable?: false
-    onPlay?(entryIndex?: number, videoIndex?: number): void
-} | {
-    theme: ThemeSummaryCardThemeFragment & ThemeSummaryCardThemeExpandableFragment
-    artist?: ThemeSummaryCardArtistFragment
-    expandable: true
-    onPlay?(entryIndex?: number, videoIndex?: number): void
-};
+type ThemeSummaryCardProps =
+    | {
+          theme: ThemeSummaryCardThemeFragment;
+          artist?: ThemeSummaryCardArtistFragment;
+          expandable?: false;
+          onPlay?(entryIndex?: number, videoIndex?: number): void;
+      }
+    | {
+          theme: ThemeSummaryCardThemeFragment & ThemeSummaryCardThemeExpandableFragment;
+          artist?: ThemeSummaryCardArtistFragment;
+          expandable: true;
+          onPlay?(entryIndex?: number, videoIndex?: number): void;
+      };
 
 // Specify an artist if you want to display this in an artist context (e.g. artist page)
-export function ThemeSummaryCard({ theme, artist, children, expandable, onPlay, ...props }: PropsWithChildren<ThemeSummaryCardProps>) {
+export function ThemeSummaryCard({
+    theme,
+    artist,
+    children,
+    expandable,
+    onPlay,
+    ...props
+}: PropsWithChildren<ThemeSummaryCardProps>) {
     const [isExpanded, toggleExpanded] = useToggle();
     const isMobile = useIsMobile();
 
@@ -125,13 +134,17 @@ export function ThemeSummaryCard({ theme, artist, children, expandable, onPlay, 
                         <Performances song={theme.song} artist={artist} />
                     </SummaryCard.Title>
                     <SummaryCard.Description>
-                        <span>{theme.type}{theme.sequence || null}{theme.group && ` (${theme.group.name})`}</span>
+                        <span>
+                            {theme.type}
+                            {theme.sequence || null}
+                            {theme.group && ` (${theme.group.name})`}
+                        </span>
                         <TextLink href={`/anime/${anime.slug}`}>{anime.name}</TextLink>
                     </SummaryCard.Description>
                 </SummaryCard.Body>
                 {children}
                 <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>
-                    <ThemeMenu theme={theme}/>
+                    <ThemeMenu theme={theme} />
                     {expandable && (
                         <StyledExpandButton
                             variant="silent"
@@ -151,7 +164,10 @@ export function ThemeSummaryCard({ theme, artist, children, expandable, onPlay, 
             {expandable && (
                 <Collapse collapse={!isExpanded}>
                     <StyledPerformedWith>
-                        <ThemeTable themes={[theme]} onPlay={(_, entryIndex, videoIndex) => onPlay?.(entryIndex, videoIndex)}/>
+                        <ThemeTable
+                            themes={[theme]}
+                            onPlay={(_, entryIndex, videoIndex) => onPlay?.(entryIndex, videoIndex)}
+                        />
                         {(theme.song?.performances.length ?? 0) > (artist ? 1 : 0) && (
                             <Table style={{ "--columns": "1fr" }}>
                                 <TableHead>
@@ -166,11 +182,14 @@ export function ThemeSummaryCard({ theme, artist, children, expandable, onPlay, 
                                                 key={performance.artist.slug}
                                                 href={`/artist/${performance.artist.slug}`}
                                                 passHref
-                                                legacyBehavior>
+                                                legacyBehavior
+                                            >
                                                 <TableRow as="a">
                                                     <TableCell>
                                                         <Text color="text-primary" weight="600">
-                                                            {performance.as ? `${performance.as} (CV: ${performance.artist.name})` : performance.artist.name}
+                                                            {performance.as
+                                                                ? `${performance.as} (CV: ${performance.artist.name})`
+                                                                : performance.artist.name}
                                                         </Text>
                                                     </TableCell>
                                                 </TableRow>
@@ -222,7 +241,7 @@ ThemeSummaryCard.fragments = {
     `,
     artist: gql`
         ${SongTitleWithArtists.fragments.artist}
-        
+
         fragment ThemeSummaryCardArtist on Artist {
             ...SongTitleWithArtistsArtist
         }
@@ -233,23 +252,26 @@ ThemeSummaryCard.fragments = {
         fragment ThemeSummaryCardThemeExpandable on Theme {
             ...ThemeTableTheme
         }
-    `
+    `,
 };
 
 export type FetchThemeSummaryCardData = ThemeSummaryCardQuery["theme"] | null;
 
 export const fetchThemeSummaryCardData = async function (id: number): Promise<FetchThemeSummaryCardData> {
-    return fetchDataClient<ThemeSummaryCardQuery, { themeId: number }>(gql`
-        ${ThemeSummaryCard.fragments.theme}
-        
-        query ThemeSummaryCard($themeId: Int!) {
-            theme(id: $themeId) {
-                ...ThemeSummaryCardTheme
-                anime {
-                    year
-                    season
+    return fetchDataClient<ThemeSummaryCardQuery, { themeId: number }>(
+        gql`
+            ${ThemeSummaryCard.fragments.theme}
+
+            query ThemeSummaryCard($themeId: Int!) {
+                theme(id: $themeId) {
+                    ...ThemeSummaryCardTheme
+                    anime {
+                        year
+                        season
+                    }
                 }
             }
-        }
-    `, { themeId: id }).then((result) => result.data?.theme ?? null);
+        `,
+        { themeId: id },
+    ).then((result) => result.data?.theme ?? null);
 };

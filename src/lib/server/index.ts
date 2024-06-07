@@ -8,14 +8,8 @@ import resolversAnimeBracket from "@/lib/server/animebracket/resolvers";
 import typeDefsAnimeBracket from "@/lib/server/animebracket/type-defs";
 
 export const schema = makeExecutableSchema({
-    typeDefs: mergeTypeDefs([
-        typeDefsAnimeThemes,
-        typeDefsAnimeBracket,
-    ]),
-    resolvers: mergeResolvers([
-        resolversAnimeThemes,
-        resolversAnimeBracket,
-    ])
+    typeDefs: mergeTypeDefs([typeDefsAnimeThemes, typeDefsAnimeBracket]),
+    resolvers: mergeResolvers([resolversAnimeThemes, resolversAnimeBracket]),
 });
 
 export const fetchData = buildFetchData(schema);

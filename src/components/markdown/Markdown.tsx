@@ -13,7 +13,7 @@ import theme from "@/theme";
 const StyledMarkdown = styled.div`
     line-height: 1.75;
     word-break: break-word;
-    
+
     & h1 {
         margin-bottom: 32px;
     }
@@ -26,21 +26,34 @@ const StyledMarkdown = styled.div`
     & h3 {
         margin-bottom: 16px;
     }
-    
-    & p + h2, & ul + h2, & ol + h2, & ${Card} + h2, & pre + h2, & table + h2 {
+
+    & p + h2,
+    & ul + h2,
+    & ol + h2,
+    & ${Card} + h2,
+    & pre + h2,
+    & table + h2 {
         margin-top: 48px;
     }
 
-    & p + h3, & ul + h3, & ol + h3, & ${Card} + h3, & pre + h3, & table + h3 {
+    & p + h3,
+    & ul + h3,
+    & ol + h3,
+    & ${Card} + h3,
+    & pre + h3,
+    & table + h3 {
         margin-top: 32px;
     }
 
-    & p, & ul, & ol {
+    & p,
+    & ul,
+    & ol {
         margin-top: 0;
         margin-bottom: 16px;
     }
-    
-    & ul ul, & ol ol {
+
+    & ul ul,
+    & ol ol {
         margin-bottom: 0;
     }
 
@@ -91,23 +104,23 @@ const StyledMarkdown = styled.div`
             padding-right: 0;
         }
     }
-    
+
     & pre {
         margin-bottom: 16px;
         overflow-x: auto;
     }
-    
+
     & pre > code {
         display: block;
         min-width: 100%;
         width: max-content;
         padding: 16px;
     }
-    
+
     & ${Card} {
         margin-bottom: 16px;
     }
-    
+
     & img {
         border-radius: ${theme.scalars.borderRadiusCard};
     }
@@ -128,15 +141,15 @@ export function Markdown({ source, components = {} }: MarkdownProps) {
                         const { href } = props;
 
                         if (href?.startsWith("/")) {
-                            return <TextLink href={href} {...props}/>;
+                            return <TextLink href={href} {...props} />;
                         }
 
-                        return <Text as="a" link href={href} {...props}/>;
+                        return <Text as="a" link href={href} {...props} />;
                     },
-                    h1: (props: ComponentPropsWithoutRef<typeof Text>) => <Text variant="h1" {...props}/>,
-                    h2: (props: ComponentPropsWithoutRef<typeof Text>) => <Text variant="h2" {...props}/>,
-                    h3: (props: ComponentPropsWithoutRef<typeof Text>) => <Text variant="h2" as="h3" {...props}/>,
-                    code: (props: ComponentPropsWithoutRef<typeof Text>) => <Text variant="code" {...props}/>,
+                    h1: (props: ComponentPropsWithoutRef<typeof Text>) => <Text variant="h1" {...props} />,
+                    h2: (props: ComponentPropsWithoutRef<typeof Text>) => <Text variant="h2" {...props} />,
+                    h3: (props: ComponentPropsWithoutRef<typeof Text>) => <Text variant="h2" as="h3" {...props} />,
+                    code: (props: ComponentPropsWithoutRef<typeof Text>) => <Text variant="code" {...props} />,
                     Card,
                     ...components,
                 }}

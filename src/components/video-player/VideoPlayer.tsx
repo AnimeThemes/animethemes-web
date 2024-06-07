@@ -11,7 +11,7 @@ import {
     StyledPlayer,
     StyledPlayerContent,
     StyledVideo,
-    StyledVideoBackground
+    StyledVideoBackground,
 } from "@/components/video-player/VideoPlayer.style";
 import { VideoPlayerBar } from "@/components/video-player/VideoPlayerBar";
 import PlayerContext from "@/context/playerContext";
@@ -48,7 +48,7 @@ type VideoPlayerProps = {
     background: boolean;
     children?: ReactNode;
     overlay?: ReactNode;
-}
+};
 
 export function VideoPlayer({ video, background, children, overlay, ...props }: VideoPlayerProps) {
     const entry = video.entries[0];
@@ -89,41 +89,49 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
     const previousTheme = previousEntry?.theme;
     const previousAnime = previousTheme?.anime;
 
-    const previousVideoPath = (previousAnime && previousTheme && previousVideo)
-        ? `/anime/${previousAnime.slug}/${createVideoSlug(previousTheme, previousEntry, previousVideo)}`
-        : null;
+    const previousVideoPath =
+        previousAnime && previousTheme && previousVideo
+            ? `/anime/${previousAnime.slug}/${createVideoSlug(previousTheme, previousEntry, previousVideo)}`
+            : null;
 
-    const playPreviousTrack = useCallback((navigate = false) => {
-        if (previousVideoPath) {
-            setCurrentWatchListItem(previousVideo);
-            if (navigate) {
-                router.push(previousVideoPath);
+    const playPreviousTrack = useCallback(
+        (navigate = false) => {
+            if (previousVideoPath) {
+                setCurrentWatchListItem(previousVideo);
+                if (navigate) {
+                    router.push(previousVideoPath);
+                }
             }
-        }
-    }, [previousVideo, previousVideoPath, router, setCurrentWatchListItem]);
-    
+        },
+        [previousVideo, previousVideoPath, router, setCurrentWatchListItem],
+    );
+
     const nextVideo = getWatchListVideo(1);
     const nextEntry = nextVideo?.entries[0];
     const nextTheme = nextEntry?.theme;
     const nextAnime = nextTheme?.anime;
 
-    const nextVideoPath = (nextAnime && nextTheme && nextVideo)
-        ? `/anime/${nextAnime.slug}/${createVideoSlug(nextTheme, nextEntry, nextVideo)}`
-        : null;
+    const nextVideoPath =
+        nextAnime && nextTheme && nextVideo
+            ? `/anime/${nextAnime.slug}/${createVideoSlug(nextTheme, nextEntry, nextVideo)}`
+            : null;
 
-    const playNextTrack = useCallback((navigate = false) => {
-        if (nextVideoPath) {
-            setCurrentWatchListItem(nextVideo);
-            if (navigate) {
-                router.push(nextVideoPath);
+    const playNextTrack = useCallback(
+        (navigate = false) => {
+            if (nextVideoPath) {
+                setCurrentWatchListItem(nextVideo);
+                if (navigate) {
+                    router.push(nextVideoPath);
+                }
             }
-        }
-    }, [nextVideo, nextVideoPath, router, setCurrentWatchListItem]);
+        },
+        [nextVideo, nextVideoPath, router, setCurrentWatchListItem],
+    );
 
     const autoPlayNextTrack = useCallback(() => {
         if (
-            isWatchListUsingLocalAutoPlay && isLocalAutoPlay ||
-            !isWatchListUsingLocalAutoPlay && isGlobalAutoPlay
+            (isWatchListUsingLocalAutoPlay && isLocalAutoPlay) ||
+            (!isWatchListUsingLocalAutoPlay && isGlobalAutoPlay)
         ) {
             playNextTrack(!background);
         }
@@ -141,9 +149,7 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
             entries: [
                 {
                     ...entry,
-                    videos: [
-                        video,
-                    ],
+                    videos: [video],
                 },
             ],
         });
@@ -166,13 +172,15 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
                     ? theme.song.performances.map((performance) => performance.as || performance.artist.name).join(", ")
                     : undefined,
                 album: anime.name,
-                artwork: [
-                    { src: smallCover, sizes: "512x512", type: "image/jpeg" }
-                ]
+                artwork: [{ src: smallCover, sizes: "512x512", type: "image/jpeg" }],
             });
-            
-            navigator.mediaSession.setActionHandler("previoustrack", () => { playPreviousTrack(true); });
-            navigator.mediaSession.setActionHandler("nexttrack", () => { playNextTrack(true); });
+
+            navigator.mediaSession.setActionHandler("previoustrack", () => {
+                playPreviousTrack(true);
+            });
+            navigator.mediaSession.setActionHandler("nexttrack", () => {
+                playNextTrack(true);
+            });
         }
     }, [anime, theme, smallCover, playNextTrack, playPreviousTrack]);
 
@@ -208,7 +216,7 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
     function updateProgress(event: SyntheticEvent<HTMLVideoElement | HTMLAudioElement>) {
         if (progressRef.current) {
             // Update the progress bar using a ref to prevent re-rendering.
-            const progress = event.currentTarget.currentTime / event.currentTarget.duration * 100;
+            const progress = (event.currentTarget.currentTime / event.currentTarget.duration) * 100;
             progressRef.current.style.width = `${progress}%`;
         }
     }
@@ -241,22 +249,24 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
     const constraintRef = useRef<HTMLDivElement>(null);
 
     return (
-        <VideoPlayerContext.Provider value={{
-            video,
-            background,
-            videoPagePath,
-            playerRef,
-            progressRef,
-            previousVideoPath,
-            playPreviousTrack,
-            nextVideoPath,
-            playNextTrack,
-            isPlaying,
-            togglePlay,
-            videoUrl,
-            audioUrl,
-            updateAudioMode,
-        }}>
+        <VideoPlayerContext.Provider
+            value={{
+                video,
+                background,
+                videoPagePath,
+                playerRef,
+                progressRef,
+                previousVideoPath,
+                playPreviousTrack,
+                nextVideoPath,
+                playNextTrack,
+                isPlaying,
+                togglePlay,
+                videoUrl,
+                audioUrl,
+                updateAudioMode,
+            }}
+        >
             <StyledPlayer
                 ref={containerRef}
                 data-background={background || undefined}
@@ -268,10 +278,14 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
                         layout
                         drag={background && !isMiniPlayerAnimating}
                         dragConstraints={constraintRef}
-                        animate={background ? undefined : {
-                            x: 0,
-                            y: 0,
-                        }}
+                        animate={
+                            background
+                                ? undefined
+                                : {
+                                      x: 0,
+                                      y: 0,
+                                  }
+                        }
                         onLayoutAnimationStart={() => setMiniPlayerAnimating(true)}
                         onLayoutAnimationComplete={() => setMiniPlayerAnimating(false)}
                         onDoubleClick={() => router.push(videoPagePath)}
@@ -282,7 +296,9 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
                                     src={largeCover}
                                     onPointerDown={onPlayerClick}
                                     onLoad={(event) => {
-                                        setAspectRatio(event.currentTarget.naturalWidth / event.currentTarget.naturalHeight);
+                                        setAspectRatio(
+                                            event.currentTarget.naturalWidth / event.currentTarget.naturalHeight,
+                                        );
                                     }}
                                 />
                                 <StyledAudio
@@ -296,7 +312,9 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
                                         autoPlayNextTrack();
                                     }}
                                     onTimeUpdate={updateProgress}
-                                    onVolumeChange={(event: SyntheticEvent<HTMLAudioElement>) => setGlobalVolume(event.currentTarget.volume)}
+                                    onVolumeChange={(event: SyntheticEvent<HTMLAudioElement>) =>
+                                        setGlobalVolume(event.currentTarget.volume)
+                                    }
                                 />
                                 {overlay}
                             </StyledAudioBackground>
@@ -314,18 +332,20 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
                                     }}
                                     onPointerDown={onPlayerClick}
                                     onTimeUpdate={updateProgress}
-                                    onVolumeChange={(event: SyntheticEvent<HTMLVideoElement>) => setGlobalVolume(event.currentTarget.volume)}
+                                    onVolumeChange={(event: SyntheticEvent<HTMLVideoElement>) =>
+                                        setGlobalVolume(event.currentTarget.volume)
+                                    }
                                     onLoadedMetadata={(event) => {
-                                        setAspectRatio(event.currentTarget.videoWidth / event.currentTarget.videoHeight);
+                                        setAspectRatio(
+                                            event.currentTarget.videoWidth / event.currentTarget.videoHeight,
+                                        );
                                     }}
                                 />
                                 {overlay}
                             </StyledVideoBackground>
                         )}
                     </StyledPlaybackArea>
-                    <StyledAside>
-                        {children}
-                    </StyledAside>
+                    <StyledAside>{children}</StyledAside>
                 </StyledPlayerContent>
                 <VideoPlayerBar />
             </StyledPlayer>

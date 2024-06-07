@@ -15,11 +15,7 @@ export function LoginGate({ children }: LoginGateProps) {
 
     if (me.user) {
         // User is already logged in, so we can safely show the content.
-        return (
-            <>
-                {children}
-            </>
-        );
+        return <>{children}</>;
     }
 
     return (

@@ -29,10 +29,12 @@ const StyledSwitchThumb = styled(RadixSwitch.Thumb)`
     height: 25px;
     background-color: ${theme.colors["text-disabled"]};
     border-radius: 9999px;
-    transition: transform 250ms, background-color 250ms;
+    transition:
+        transform 250ms,
+        background-color 250ms;
     will-change: transform;
-    
-    &[data-state='checked'] {
+
+    &[data-state="checked"] {
         transform: translateX(25px);
         background-color: ${theme.colors["text-primary"]};
     }

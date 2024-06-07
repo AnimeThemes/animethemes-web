@@ -23,7 +23,7 @@ const StyledCell = styled.div`
     display: flex;
     flex-direction: column;
     cursor: grab;
-    
+
     &:active {
         cursor: grabbing;
     }
@@ -32,7 +32,7 @@ const StyledCell = styled.div`
 const StyledImageContainer = styled.div<{ $isPushed: boolean }>`
     align-self: center;
     padding: 16px 16px 0 16px;
-    
+
     transform: ${(props) => props.$isPushed && "scale(1.1, 0.9)"};
     transform-origin: bottom;
     will-change: transform;
@@ -44,19 +44,15 @@ interface GalleryPageProps extends SharedPageProps, GalleryPageQuery {}
 export default function GalleryPage({ grills }: GalleryPageProps) {
     return (
         <>
-            <SEO title="Grill Gallery"/>
+            <SEO title="Grill Gallery" />
             <Text variant="h1">Grill Gallery</Text>
-            <StyledGrid>
-                {grills?.map((grill) => (
-                    <Grill key={grill.id} grill={grill}/>
-                ))}
-            </StyledGrid>
+            <StyledGrid>{grills?.map((grill) => <Grill key={grill.id} grill={grill} />)}</StyledGrid>
         </>
     );
 }
 
 interface GrillProps {
-    grill: GalleryPageProps["grills"][number]
+    grill: GalleryPageProps["grills"][number];
 }
 
 function Grill({ grill }: GrillProps) {
@@ -65,7 +61,7 @@ function Grill({ grill }: GrillProps) {
     return (
         <StyledCell key={grill.id} onMouseDown={() => setPushed(true)} onMouseUp={() => setPushed(false)}>
             <StyledImageContainer $isPushed={isPushed}>
-                <img src={grill.link} alt="Grill"/>
+                <img src={grill.link} alt="Grill" />
             </StyledImageContainer>
             <Button>Pat Head</Button>
         </StyledCell>
@@ -85,9 +81,9 @@ export const getStaticProps: GetStaticProps = async () => {
     return {
         props: {
             ...getSharedPageProps(apiRequests),
-            grills: data.grills
+            grills: data.grills,
         },
         // Revalidate after 3 hours (= 10800 seconds).
-        revalidate: 10800
+        revalidate: 10800,
     };
 };

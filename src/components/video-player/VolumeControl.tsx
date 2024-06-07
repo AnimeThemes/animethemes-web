@@ -17,9 +17,9 @@ const StyledRow = styled(Row)`
 const StyledSlider = styled(Slider)`
     opacity: 0;
     pointer-events: none;
-    
+
     transition: opacity 250ms;
-    
+
     ${StyledRow}:hover & {
         opacity: 1;
         pointer-events: revert;

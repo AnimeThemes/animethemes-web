@@ -16,7 +16,7 @@ const StyledHeightTransition = styled.div<{ height: Property.Height }>`
 `;
 
 interface HeightTransitionProps {
-    children: ReactNode
+    children: ReactNode;
 }
 
 export function HeightTransition({ children }: HeightTransitionProps) {

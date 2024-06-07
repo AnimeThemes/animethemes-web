@@ -7,8 +7,8 @@ import { Text } from "@/components/text/Text";
 import type { SongTitleSongFragment } from "@/generated/graphql";
 
 export interface SongTitleProps extends ComponentPropsWithoutRef<typeof Text> {
-    song: SongTitleSongFragment | null
-    href?: ComponentPropsWithoutRef<typeof Link>["href"]
+    song: SongTitleSongFragment | null;
+    href?: ComponentPropsWithoutRef<typeof Link>["href"];
 }
 
 export function SongTitle({ song, href, ...props }: SongTitleProps) {
@@ -17,13 +17,17 @@ export function SongTitle({ song, href, ...props }: SongTitleProps) {
     if (href) {
         return (
             <Link href={href} passHref legacyBehavior>
-                <Text as="a" link title={songTitle} italics={!song?.title} wrapAnywhere {...props}>{songTitle}</Text>
+                <Text as="a" link title={songTitle} italics={!song?.title} wrapAnywhere {...props}>
+                    {songTitle}
+                </Text>
             </Link>
         );
     }
 
     return (
-        <Text color="text-primary" weight="600" italics={!song?.title} wrapAnywhere {...props}>{songTitle}</Text>
+        <Text color="text-primary" weight="600" italics={!song?.title} wrapAnywhere {...props}>
+            {songTitle}
+        </Text>
     );
 }
 
@@ -32,5 +36,5 @@ SongTitle.fragments = {
         fragment SongTitleSong on Song {
             title
         }
-    `
+    `,
 };

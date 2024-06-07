@@ -5,7 +5,7 @@ import { Tag } from "@/components/tag/Tag";
 import type { EpisodeTagEntryFragment } from "@/generated/graphql";
 
 interface EpisodeTagProps {
-    entry: EpisodeTagEntryFragment
+    entry: EpisodeTagEntryFragment;
 }
 
 export function EpisodeTag({ entry }: EpisodeTagProps) {

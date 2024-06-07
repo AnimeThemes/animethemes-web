@@ -8,7 +8,5 @@ interface AnnouncementCardProps {
 }
 
 export function AnnouncementCard({ announcementSource }: AnnouncementCardProps) {
-    return (
-        <Markdown source={announcementSource} components={{ AnimeAwardsNowAvailable }} />
-    );
+    return <Markdown source={announcementSource} components={{ AnimeAwardsNowAvailable }} />;
 }

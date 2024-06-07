@@ -14,13 +14,15 @@ export const StyledNavigation = styled.nav<{ $floating: boolean }>`
 
     transition: 100ms ease;
     transition-property: background-color, box-shadow;
-    
-    ${(props) => props.$floating && css`
-        transition: 500ms ease;
-        background-color: transparent;
-        box-shadow: none;
-    `}
-    
+
+    ${(props) =>
+        props.$floating &&
+        css`
+            transition: 500ms ease;
+            background-color: transparent;
+            box-shadow: none;
+        `}
+
     [data-fullscreen] & {
         display: none;
     }
@@ -32,7 +34,7 @@ export const StyledNavigationContainer = styled(Container)`
     justify-content: space-between;
     align-items: stretch;
     gap: 16px;
-    
+
     padding: 8px 16px;
 `;
 

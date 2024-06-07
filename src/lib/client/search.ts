@@ -1,13 +1,28 @@
 import gql from "graphql-tag";
 
-import type { SearchArgs } from "@/generated/graphql";
-import { apiResolver, fetchJson } from "@/lib/common/animethemes/api";
+import type { Resolvers, SearchArgs } from "@/generated/graphql-resolvers";
+import { createApiResolverNotNull, fetchJson } from "@/lib/common/animethemes/api";
+import type {
+    ApiAnime,
+    ApiAnimeIndex,
+    ApiArtist,
+    ApiArtistIndex,
+    ApiIndex,
+    ApiPlaylist,
+    ApiPlaylistIndex,
+    ApiSeries,
+    ApiSeriesIndex,
+    ApiStudio,
+    ApiStudioIndex,
+    ApiTheme,
+    ApiThemeIndex,
+} from "@/lib/common/animethemes/types";
 
 export interface SimpleSearchArgs {
-    query?: string | null
-    filters?: Record<string, string | null>
-    sortBy?: string | null
-    page?: number
+    query?: string | null;
+    filters?: Record<string, string | null>;
+    sortBy?: string | null;
+    page?: number;
 }
 
 export const searchTypeDefs = gql`
@@ -29,11 +44,11 @@ export const searchTypeDefs = gql`
         studios: [Studio!]!
         playlists: [Playlist!]!
     }
-    
+
     interface EntitySearchResult {
         nextPage: Int
     }
-    
+
     type AnimeSearchResult implements EntitySearchResult {
         data: [Anime!]!
         nextPage: Int
@@ -58,45 +73,41 @@ export const searchTypeDefs = gql`
         data: [Studio!]!
         nextPage: Int
     }
-    
+
     type PlaylistSearchResult implements EntitySearchResult {
         data: [Playlist!]!
         nextPage: Int
     }
-    
+
     input SearchArgs {
         query: String
         filters: [Filter!]
         sortBy: String
         page: Int
     }
-    
+
     input Filter {
         key: String!
         value: String
     }
 `;
 
-interface Args {
-    args: SearchArgs
-}
-
 interface GlobalSearchResult {
     search: {
-        anime: unknown
-        animethemes: unknown
-        artists: unknown
-        series: unknown
-        studios: unknown
-        playlists: unknown
-    }
+        anime: Array<ApiAnime>;
+        animethemes: Array<ApiTheme>;
+        artists: Array<ApiArtist>;
+        series: Array<ApiSeries>;
+        studios: Array<ApiStudio>;
+        playlists: Array<ApiPlaylist>;
+    };
 }
 
-export const searchResolvers = {
+export const searchResolvers: Resolvers = {
     Query: {
         // TODO: This resolver has to be custom, because the search endpoint uses scoped includes
         // TODO: which isn't supported by the default API resolver.
-        search: async (_: never, { args }: Args) => {
+        search: async (_, { args }) => {
             const searchParams = getSearchParams(args, true);
 
             // TODO: Hardcoded includes and fields should be generate dynamically by API resolver instead
@@ -119,64 +130,69 @@ export const searchResolvers = {
 
             const result = await fetchJson<GlobalSearchResult>(`/search?${searchParams}`);
 
+            if (!result) {
+                throw new Error("Search returned null.");
+            }
+
             return {
-                anime: result?.search.anime,
-                themes: result?.search.animethemes,
-                artists: result?.search.artists,
-                series: result?.search.series,
-                studios: result?.search.studios,
-                playlists: result?.search.playlists,
+                anime: result.search.anime,
+                themes: result.search.animethemes,
+                artists: result.search.artists,
+                series: result.search.series,
+                studios: result.search.studios,
+                playlists: result.search.playlists,
             };
         },
-        searchAnime: apiResolver({
-            endpoint: (_, { args }) => `/anime?${getSearchParams(args as SearchArgs)}`,
-            extractor: (result, _, args) => ({
-                data: result.anime,
-                nextPage: getNextPage(result, args)
+        searchAnime: createApiResolverNotNull<ApiAnimeIndex>()({
+            endpoint: (_, { args }) => `/anime?${getSearchParams(args)}`,
+            extractFromResponse: (response, _, args) => ({
+                data: response.anime,
+                nextPage: getNextPage(response, args),
             }),
-            type: "Anime"
+            type: "Anime",
         }),
-        searchTheme: apiResolver({
-            endpoint: (_, { args }) => `/animetheme?${getSearchParams(args as SearchArgs)}`,
-            extractor: (result, _, args) => ({
-                data: result.animethemes,
-                nextPage: getNextPage(result, args)
+        searchTheme: createApiResolverNotNull<ApiThemeIndex>()({
+            endpoint: (_, { args }) => `/animetheme?${getSearchParams(args)}`,
+            extractFromResponse: (response, _, args) => ({
+                data: response.animethemes,
+                nextPage: getNextPage(response, args),
             }),
-            type: "Theme"
+            type: "Theme",
         }),
-        searchArtist: apiResolver({
-            endpoint: (_, { args }) => `/artist?${getSearchParams(args as SearchArgs)}`,
-            extractor: (result, _, args) => ({
-                data: result.artists,
-                nextPage: getNextPage(result, args)
+        searchArtist: createApiResolverNotNull<ApiArtistIndex>()({
+            endpoint: (_, { args }) => `/artist?${getSearchParams(args)}`,
+            extractFromResponse: (response, _, args) => ({
+                data: response.artists,
+                nextPage: getNextPage(response, args),
             }),
-            type: "Artist"
+            type: "Artist",
         }),
-        searchSeries: apiResolver({
-            endpoint: (_, { args }) => `/series?${getSearchParams(args as SearchArgs)}`,
-            extractor: (result, _, args) => ({
-                data: result.series,
-                nextPage: getNextPage(result, args)
+        searchSeries: createApiResolverNotNull<ApiSeriesIndex>()({
+            endpoint: (_, { args }) => `/series?${getSearchParams(args)}`,
+            extractFromResponse: (response, _, args) => ({
+                data: response.series,
+                nextPage: getNextPage(response, args),
             }),
-            type: "Series"
+            type: "Series",
         }),
-        searchStudio: apiResolver({
-            endpoint: (_, { args }) => `/studio?${getSearchParams(args as SearchArgs)}`,
-            extractor: (result, _, args) => ({
-                data: result.studios,
-                nextPage: getNextPage(result, args)
+        searchStudio: createApiResolverNotNull<ApiStudioIndex>()({
+            endpoint: (_, { args }) => `/studio?${getSearchParams(args)}`,
+            extractFromResponse: (response, _, args) => ({
+                data: response.studios,
+                nextPage: getNextPage(response, args),
             }),
-            type: "Studio"
+            type: "Studio",
         }),
-        searchPlaylist: apiResolver({
-            endpoint: (_, { args }) => `/playlist?fields[playlist]=id,name,visibility,tracks_count&${getSearchParams(args as SearchArgs)}`,
-            extractor: (result, _, args) => ({
-                data: result.playlists,
-                nextPage: getNextPage(result, args)
+        searchPlaylist: createApiResolverNotNull<ApiPlaylistIndex>()({
+            endpoint: (_, { args }) =>
+                `/playlist?fields[playlist]=id,name,visibility,tracks_count&${getSearchParams(args)}`,
+            extractFromResponse: (response, _, args) => ({
+                data: response.playlists,
+                nextPage: getNextPage(response, args),
             }),
-            type: "Playlist"
+            type: "Playlist",
         }),
-    }
+    },
 };
 
 function getSearchParams({ query, filters, sortBy, page = 1 }: SearchArgs, isGlobalSearch = false): URLSearchParams {
@@ -209,8 +225,8 @@ function getSearchParams({ query, filters, sortBy, page = 1 }: SearchArgs, isGlo
     return searchParams;
 }
 
-function getNextPage(result: Record<string, any>, args: Record<string, unknown>) {
-    return result.links.next !== null ? ((args.args as SearchArgs)?.page as number) + 1 : undefined;
+function getNextPage(response: ApiIndex, args: Record<string, unknown>) {
+    return response.links.next !== null ? ((args.args as SearchArgs)?.page as number) + 1 : undefined;
 }
 
 export function toSearchArgs(simpleSearchArgs: SimpleSearchArgs): SearchArgs {

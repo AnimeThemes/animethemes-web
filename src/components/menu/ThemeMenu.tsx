@@ -31,10 +31,12 @@ export function ThemeMenu({ theme }: ThemeMenuProps) {
     // Flip the structure on it's head, because we need video as the root object here.
     const videoFlipped = {
         ...video,
-        entries: [{
-            ...entry,
-            theme,
-        }],
+        entries: [
+            {
+                ...entry,
+                theme,
+            },
+        ],
     };
 
     return (
@@ -79,7 +81,7 @@ ThemeMenu.fragments = {
         ${createVideoSlug.fragments.theme}
         ${createVideoSlug.fragments.entry}
         ${createVideoSlug.fragments.video}
-        
+
         fragment ThemeMenuTheme on Theme {
             ...createVideoSlugTheme
             id

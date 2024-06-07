@@ -5,9 +5,9 @@ import { toString } from "hast-util-to-string";
 import { visit } from "unist-util-visit";
 
 export interface Heading {
-    text: string
-    depth: number
-    slug: string
+    text: string;
+    depth: number;
+    slug: string;
 }
 
 interface ExtractHeadingsConfig {
@@ -16,21 +16,11 @@ interface ExtractHeadingsConfig {
     headings: Heading[];
 }
 
-export default function rehypeExtractHeadings({
-    minRank = 2,
-    maxRank = 3,
-    headings,
-}: ExtractHeadingsConfig) {
+export default function rehypeExtractHeadings({ minRank = 2, maxRank = 3, headings }: ExtractHeadingsConfig) {
     return (tree: Root) => {
         visit(tree, "element" as const, (node) => {
             const rank = headingRank(node);
-            if (
-                rank &&
-                rank >= minRank &&
-                rank <= maxRank &&
-                hasProperty(node, "id") &&
-                node.properties?.id
-            ) {
+            if (rank && rank >= minRank && rank <= maxRank && hasProperty(node, "id") && node.properties?.id) {
                 headings.push({
                     text: toString(node),
                     slug: node.properties.id.toString(),

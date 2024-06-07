@@ -4,7 +4,7 @@ import { rangeRight } from "lodash-es";
 
 export default function useYearList() {
     // Server-side
-    const [ yearList, setYearList ] = useState(() => getYearList());
+    const [yearList, setYearList] = useState(() => getYearList());
 
     useEffect(() => {
         // Client-side (hydration)

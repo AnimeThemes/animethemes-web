@@ -37,7 +37,9 @@ const StyledListboxPopover = styled(RadixSelect.Portal)`
     overflow: auto;
 
     background-color: ${theme.colors["solid"]};
-    box-shadow: 0 0 0 2px ${theme.colors["text-primary"]}, ${theme.shadows.high};
+    box-shadow:
+        0 0 0 2px ${theme.colors["text-primary"]},
+        ${theme.shadows.high};
 
     transform-origin: top;
     animation: ${flipDown} 200ms ease-out;
@@ -57,7 +59,7 @@ const StyledListboxList = styled(RadixSelect.Content)`
     padding: 8px 0;
 `;
 const StyledListboxOption = styled(RadixSelect.Item)`
-    display: ${(props) => props.hidden ? "none" : "flex"};
+    display: ${(props) => (props.hidden ? "none" : "flex")};
     align-items: center;
     justify-content: space-between;
 
@@ -72,16 +74,14 @@ const StyledListboxOption = styled(RadixSelect.Item)`
         color: ${theme.colors["text"]};
         outline: none;
     }
-    
+
     &[data-state="checked"] {
         color: ${theme.colors["text-primary"]};
     }
 `;
 
-type ListboxProps =
-    Omit<RadixSelect.SelectProps, "value" | "defaultValue" | "onValueChange">
-    & (PropsNullable | PropsNotNullable)
-    & {
+type ListboxProps = Omit<RadixSelect.SelectProps, "value" | "defaultValue" | "onValueChange"> &
+    (PropsNullable | PropsNotNullable) & {
         resettable?: boolean;
         highlightNonDefault?: boolean;
     };
@@ -100,71 +100,73 @@ interface PropsNotNullable {
     defaultValue?: string;
 }
 
-export const Listbox = forwardRef<HTMLButtonElement, ListboxProps>(
-    function Listbox({
-        value,
-        onValueChange,
-        defaultValue,
-        nullable,
-        resettable,
-        highlightNonDefault,
-        children,
-        ...props
-    }, ref) {
-        const radixValue = value === null ? NULL_VALUE : value;
-        const radixOnValueChange = (newValue: string) => {
-            if (nullable) {
-                onValueChange(newValue === NULL_VALUE ? null : newValue);
-            } else {
-                onValueChange(newValue);
-            }
-        };
-        const radixDefaultValue = defaultValue === null ? NULL_VALUE : defaultValue;
+export const Listbox = forwardRef<HTMLButtonElement, ListboxProps>(function Listbox(
+    { value, onValueChange, defaultValue, nullable, resettable, highlightNonDefault, children, ...props },
+    ref,
+) {
+    const radixValue = value === null ? NULL_VALUE : value;
+    const radixOnValueChange = (newValue: string) => {
+        if (nullable) {
+            onValueChange(newValue === NULL_VALUE ? null : newValue);
+        } else {
+            onValueChange(newValue);
+        }
+    };
+    const radixDefaultValue = defaultValue === null ? NULL_VALUE : defaultValue;
 
-        return (
-            <RadixSelect.Root value={radixValue} onValueChange={radixOnValueChange} defaultValue={radixDefaultValue} {...props}>
-                <RadixSelect.Trigger asChild ref={ref}>
-                    <StyledListboxButton variant={highlightNonDefault && value !== defaultValue ? "primary" : undefined}>
-                        <RadixSelect.Value />
-                        <RadixSelect.Icon>
-                            {(resettable && radixDefaultValue && value !== defaultValue) ? (
-                                <StyledListboxReset
-                                    onClick={() => radixOnValueChange(radixDefaultValue)}
-                                    onPointerDown={(event) => event.stopPropagation()}
-                                >
-                                    <Icon icon={faTimes}/>
-                                </StyledListboxReset>
-                            ) : (
-                                <Icon icon={faSort} />
-                            )}
-                        </RadixSelect.Icon>
-                    </StyledListboxButton>
-                </RadixSelect.Trigger>
-                <StyledListboxPopover>
-                    <StyledListboxList position="popper" sideOffset={8} collisionBoundary={typeof document !== "undefined" ? document.body : []}>
-                        <RadixSelect.Viewport>{children}</RadixSelect.Viewport>
-                    </StyledListboxList>
-                </StyledListboxPopover>
-            </RadixSelect.Root>
-        );
-    }
-);
+    return (
+        <RadixSelect.Root
+            value={radixValue}
+            onValueChange={radixOnValueChange}
+            defaultValue={radixDefaultValue}
+            {...props}
+        >
+            <RadixSelect.Trigger asChild ref={ref}>
+                <StyledListboxButton variant={highlightNonDefault && value !== defaultValue ? "primary" : undefined}>
+                    <RadixSelect.Value />
+                    <RadixSelect.Icon>
+                        {resettable && radixDefaultValue && value !== defaultValue ? (
+                            <StyledListboxReset
+                                onClick={() => radixOnValueChange(radixDefaultValue)}
+                                onPointerDown={(event) => event.stopPropagation()}
+                            >
+                                <Icon icon={faTimes} />
+                            </StyledListboxReset>
+                        ) : (
+                            <Icon icon={faSort} />
+                        )}
+                    </RadixSelect.Icon>
+                </StyledListboxButton>
+            </RadixSelect.Trigger>
+            <StyledListboxPopover>
+                <StyledListboxList
+                    position="popper"
+                    sideOffset={8}
+                    collisionBoundary={typeof document !== "undefined" ? document.body : []}
+                >
+                    <RadixSelect.Viewport>{children}</RadixSelect.Viewport>
+                </StyledListboxList>
+            </StyledListboxPopover>
+        </RadixSelect.Root>
+    );
+});
 
 export interface ListboxOptionProps extends Omit<RadixSelect.SelectItemProps, "value"> {
     value: string | null;
 }
 
-export const ListboxOption = forwardRef<HTMLDivElement, ListboxOptionProps>(
-    function ListboxOption({ value, children, ...props }, ref) {
-        const radixValue = value === null ? NULL_VALUE : value;
+export const ListboxOption = forwardRef<HTMLDivElement, ListboxOptionProps>(function ListboxOption(
+    { value, children, ...props },
+    ref,
+) {
+    const radixValue = value === null ? NULL_VALUE : value;
 
-        return (
-            <StyledListboxOption value={radixValue} {...props} ref={ref}>
-                <RadixSelect.ItemText>{children}</RadixSelect.ItemText>
-                <RadixSelect.ItemIndicator>
-                    <Icon icon={faCheck} />
-                </RadixSelect.ItemIndicator>
-            </StyledListboxOption>
-        );
-    }
-);
+    return (
+        <StyledListboxOption value={radixValue} {...props} ref={ref}>
+            <RadixSelect.ItemText>{children}</RadixSelect.ItemText>
+            <RadixSelect.ItemIndicator>
+                <Icon icon={faCheck} />
+            </RadixSelect.ItemIndicator>
+        </StyledListboxOption>
+    );
+});

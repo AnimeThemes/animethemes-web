@@ -45,11 +45,11 @@ const StyledCoverLink = styled(Link)`
 const StyledCoverOverlay = styled.div`
     position: absolute;
     inset: 0;
-    
+
     display: flex;
     justify-content: center;
     align-items: center;
-    
+
     background-color: rgba(0, 0, 0, 0.5);
 `;
 
@@ -61,52 +61,54 @@ interface VideoSummaryCardProps {
     isPlaying?: boolean;
 }
 
-export const VideoSummaryCard = forwardRef(
-    function VideoSummaryCard({ video, menu, append, onPlay, isPlaying, ...props }: VideoSummaryCardProps, ref: ForwardedRef<HTMLDivElement>) {
-        const entry = video.entries[0];
-        const theme = entry.theme;
-        const anime = theme?.anime;
+export const VideoSummaryCard = forwardRef(function VideoSummaryCard(
+    { video, menu, append, onPlay, isPlaying, ...props }: VideoSummaryCardProps,
+    ref: ForwardedRef<HTMLDivElement>,
+) {
+    const entry = video.entries[0];
+    const theme = entry.theme;
+    const anime = theme?.anime;
 
-        if (!entry || !theme || !anime) {
-            return null;
-        }
-
-        const { smallCover } = extractImages(anime);
-        const videoSlug = createVideoSlug(theme, entry, video);
-        const href = `/anime/${anime.slug}/${videoSlug}`;
-
-        return (
-            <StyledWrapper ref={ref}>
-                <SummaryCard {...props}>
-                    <StyledCoverLink href={href} onClick={onPlay}>
-                        <SummaryCard.Cover src={smallCover} />
-                        {isPlaying ? (
-                            <StyledCoverOverlay>
-                                <Icon icon={faPlay} />
-                            </StyledCoverOverlay>
-                        ) : null}
-                    </StyledCoverLink>
-                    <SummaryCard.Body>
-                        <SummaryCard.Title>
-                            <SongTitle song={theme.song} as={Link} href={href} onClick={onPlay} />
-                            <Performances song={theme.song} />
-                        </SummaryCard.Title>
-                        <SummaryCard.Description>
-                            <span>{videoSlug}{theme.group && ` (${theme.group.name})`}</span>
-                            <TextLink href={`/anime/${anime.slug}`}>{anime.name}</TextLink>
-                        </SummaryCard.Description>
-                    </SummaryCard.Body>
-                    {menu ? (
-                        <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>
-                            {menu}
-                        </StyledOverlayButtons>
-                    ) : null}
-                    {append}
-                </SummaryCard>
-            </StyledWrapper>
-        );
+    if (!entry || !theme || !anime) {
+        return null;
     }
-);
+
+    const { smallCover } = extractImages(anime);
+    const videoSlug = createVideoSlug(theme, entry, video);
+    const href = `/anime/${anime.slug}/${videoSlug}`;
+
+    return (
+        <StyledWrapper ref={ref}>
+            <SummaryCard {...props}>
+                <StyledCoverLink href={href} onClick={onPlay}>
+                    <SummaryCard.Cover src={smallCover} />
+                    {isPlaying ? (
+                        <StyledCoverOverlay>
+                            <Icon icon={faPlay} />
+                        </StyledCoverOverlay>
+                    ) : null}
+                </StyledCoverLink>
+                <SummaryCard.Body>
+                    <SummaryCard.Title>
+                        <SongTitle song={theme.song} as={Link} href={href} onClick={onPlay} />
+                        <Performances song={theme.song} />
+                    </SummaryCard.Title>
+                    <SummaryCard.Description>
+                        <span>
+                            {videoSlug}
+                            {theme.group && ` (${theme.group.name})`}
+                        </span>
+                        <TextLink href={`/anime/${anime.slug}`}>{anime.name}</TextLink>
+                    </SummaryCard.Description>
+                </SummaryCard.Body>
+                {menu ? (
+                    <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>{menu}</StyledOverlayButtons>
+                ) : null}
+                {append}
+            </SummaryCard>
+        </StyledWrapper>
+    );
+});
 
 export const VideoSummaryCardFragmentVideo = gql`
     ${SongTitleWithArtists.fragments.song}

@@ -13,9 +13,7 @@ export default async function serializeMarkdown(markdown: Compatible) {
 
     const source = await serialize(markdown, {
         mdxOptions: {
-            remarkPlugins: [
-                remarkGfm,
-            ],
+            remarkPlugins: [remarkGfm],
             rehypePlugins: [
                 rehypeSlug,
                 [rehypeExtractHeadings, { headings }],

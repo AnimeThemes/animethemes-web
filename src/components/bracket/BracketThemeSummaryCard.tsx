@@ -18,13 +18,13 @@ import extractImages from "@/utils/extractImages";
 
 const StyledSummaryCardWrapper = styled.div`
     position: relative;
-    
+
     justify-self: stretch;
 `;
 
 const StyledSummaryCard = styled(SummaryCard)`
     padding-inline-end: 24px;
-    
+
     opacity: var(--opacity);
 `;
 
@@ -34,14 +34,21 @@ const StyledRank = styled(Text)`
 `;
 
 interface BracketThemeSummaryCardProps extends ComponentPropsWithoutRef<typeof StyledSummaryCardWrapper> {
-    contestant: BracketThemeSummaryCardConstestantFragment
-    isVoted: boolean
-    isWinner: boolean
-    seed: number | null
-    votes: number | null
+    contestant: BracketThemeSummaryCardConstestantFragment;
+    isVoted: boolean;
+    isWinner: boolean;
+    seed: number | null;
+    votes: number | null;
 }
 
-export function BracketThemeSummaryCard({ contestant, isVoted, isWinner, seed, votes, ...props }: BracketThemeSummaryCardProps) {
+export function BracketThemeSummaryCard({
+    contestant,
+    isVoted,
+    isWinner,
+    seed,
+    votes,
+    ...props
+}: BracketThemeSummaryCardProps) {
     const theme = contestant.theme;
     const { smallCover } = extractImages(theme?.anime);
 
@@ -66,7 +73,7 @@ export function BracketThemeSummaryCard({ contestant, isVoted, isWinner, seed, v
     return (
         <StyledSummaryCardWrapper {...props}>
             <StyledSummaryCard
-                title={theme ? <SongTitleWithArtists song={theme.song} songTitleLinkTo={to}/> : contestant.name}
+                title={theme ? <SongTitleWithArtists song={theme.song} songTitleLinkTo={to} /> : contestant.name}
                 description={description}
                 image={smallCover ?? contestant.image}
                 to={to}
@@ -74,21 +81,18 @@ export function BracketThemeSummaryCard({ contestant, isVoted, isWinner, seed, v
             >
                 <Column style={{ "--gap": "8px" }}>
                     <Text variant="small" color="text-muted" noWrap title="Seed">
-                        <Icon icon={faSeedling}/>
+                        <Icon icon={faSeedling} />
                         <StyledRank> {seed}</StyledRank>
                     </Text>
                     {isVoted && (
                         <Text variant="small" color={isWinner ? "text-primary" : "text-muted"} noWrap title="Votes">
-                            <Icon icon={faUsers}/>
+                            <Icon icon={faUsers} />
                             <StyledRank> {votes}</StyledRank>
                         </Text>
                     )}
                 </Column>
-
             </StyledSummaryCard>
-            {isWinner && (
-                <CornerIcon icon={faAward} title="Winner"/>
-            )}
+            {isWinner && <CornerIcon icon={faAward} title="Winner" />}
         </StyledSummaryCardWrapper>
     );
 }
@@ -96,7 +100,7 @@ export function BracketThemeSummaryCard({ contestant, isVoted, isWinner, seed, v
 BracketThemeSummaryCard.fragments = {
     contestant: gql`
         ${ThemeSummaryCard.fragments.theme}
-        
+
         fragment BracketThemeSummaryCardConstestant on BracketCharacter {
             name
             source

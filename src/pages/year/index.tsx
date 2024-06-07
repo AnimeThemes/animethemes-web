@@ -22,7 +22,7 @@ const StyledYearGrid = styled.div`
 
 const StyledYear = styled(TextLink)`
     font-size: 1.5rem;
-    color: ${theme.colors["text"]}
+    color: ${theme.colors["text"]};
 `;
 
 const StyledSeasonList = styled.div`
@@ -30,7 +30,7 @@ const StyledSeasonList = styled.div`
     grid-template-columns: 1fr 1fr;
     grid-gap: 8px 16px;
     margin-top: 8px;
-    
+
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -41,8 +41,8 @@ interface YearIndexPageProps extends SharedPageProps, YearIndexPageQuery {}
 export default function YearIndexPage({ yearAll }: YearIndexPageProps) {
     return (
         <>
-            <SEO title="Browse by Year"/>
-            <BackToTopButton/>
+            <SEO title="Browse by Year" />
+            <BackToTopButton />
             <Text variant="h1">Year Index</Text>
             <StyledYearGrid>
                 {yearAll.map((year) => (
@@ -50,7 +50,9 @@ export default function YearIndexPage({ yearAll }: YearIndexPageProps) {
                         <StyledYear href={`/year/${year.value}`}>{year.value}</StyledYear>
                         <StyledSeasonList>
                             {year.seasons?.map((season) => (
-                                <TextLink key={season.value} href={`/year/${year.value}/${season.value}`}>{season.value}</TextLink>
+                                <TextLink key={season.value} href={`/year/${year.value}/${season.value}`}>
+                                    {season.value}
+                                </TextLink>
                             )) ?? null}
                         </StyledSeasonList>
                     </Card>
@@ -75,7 +77,7 @@ export const getStaticProps: GetStaticProps<YearIndexPageProps> = async () => {
     return {
         props: {
             ...getSharedPageProps(apiRequests),
-            yearAll: data.yearAll.sort((a, b) => b.value - a.value)
-        }
+            yearAll: data.yearAll.sort((a, b) => b.value - a.value),
+        },
     };
 };

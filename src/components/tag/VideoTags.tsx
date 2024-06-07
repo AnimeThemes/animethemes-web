@@ -6,7 +6,7 @@ import {
     faCommentLines,
     faCommentMusic,
     faCompactDisc,
-    faEyes
+    faEyes,
 } from "@fortawesome/pro-solid-svg-icons";
 import gql from "graphql-tag";
 
@@ -21,32 +21,22 @@ const StyledVideoTags = styled(Row)`
 `;
 
 interface VideoTagsProps {
-    video: VideoTagsVideoFragment
-    hideTextOnMobile?: boolean
+    video: VideoTagsVideoFragment;
+    hideTextOnMobile?: boolean;
 }
 
 export function VideoTags({ video, hideTextOnMobile = false }: VideoTagsProps) {
     return (
         <StyledVideoTags>
-            <Tag title="Resolution">
-                {video.resolution}p
-            </Tag>
+            <Tag title="Resolution">{video.resolution}p</Tag>
 
-            {video.nc && (
-                <Tag icon={faAlignSlash} title="No Credits"/>
-            )}
+            {video.nc && <Tag icon={faAlignSlash} title="No Credits" />}
 
-            {video.subbed && (
-                <Tag icon={faCommentLines} title="With Subtitles"/>
-            )}
+            {video.subbed && <Tag icon={faCommentLines} title="With Subtitles" />}
 
-            {video.lyrics && (
-                <Tag icon={faCommentMusic} title="With Lyrics"/>
-            )}
+            {video.lyrics && <Tag icon={faCommentMusic} title="With Lyrics" />}
 
-            {video.uncen && (
-                <Tag icon={faEyes} title="Uncensored"/>
-            )}
+            {video.uncen && <Tag icon={faEyes} title="Uncensored" />}
 
             {!!video.source && (
                 <Tag icon={faCompactDisc} title="Source">
@@ -74,5 +64,5 @@ VideoTags.fragments = {
             source
             overlap
         }
-    `
+    `,
 };

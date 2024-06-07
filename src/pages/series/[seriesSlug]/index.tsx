@@ -15,7 +15,11 @@ import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortB
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
 import { Collapse } from "@/components/utils/Collapse";
-import type { SeriesDetailPageAllQuery, SeriesDetailPageQuery, SeriesDetailPageQueryVariables } from "@/generated/graphql";
+import type {
+    SeriesDetailPageAllQuery,
+    SeriesDetailPageQuery,
+    SeriesDetailPageQueryVariables,
+} from "@/generated/graphql";
 import useToggle from "@/hooks/useToggle";
 import { fetchData } from "@/lib/server";
 import theme from "@/theme";
@@ -26,7 +30,7 @@ import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledDesktopOnly = styled.div`
     gap: 24px;
-    
+
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         display: none;
     }
@@ -35,24 +39,26 @@ const StyledDesktopOnly = styled.div`
 interface SeriesDetailPageProps extends RequiredNonNullable<SeriesDetailPageQuery> {}
 
 interface SeriesDetailPageParams extends ParsedUrlQuery {
-    seriesSlug: string
+    seriesSlug: string;
 }
 
 export default function SeriesDetailPage({ series }: SeriesDetailPageProps) {
     const anime = series.anime;
 
-    const [ showFilter, toggleShowFilter ] = useToggle();
-    const [ sortBy, setSortBy ] = useState(ANIME_OLD_NEW);
+    const [showFilter, toggleShowFilter] = useToggle();
+    const [sortBy, setSortBy] = useState<
+        typeof ANIME_OLD_NEW | typeof ANIME_NEW_OLD | typeof ANIME_A_Z | typeof ANIME_Z_A
+    >(ANIME_OLD_NEW);
 
-    const animeSorted = useMemo(() => [ ...anime ].sort(getComparator(sortBy)), [anime, sortBy]);
+    const animeSorted = useMemo(() => [...anime].sort(getComparator(sortBy)), [anime, sortBy]);
 
     return (
         <>
-            <SEO title={series.name}/>
+            <SEO title={series.name} />
             <Text variant="h1">{series.name}</Text>
             <SidebarContainer>
                 <StyledDesktopOnly>
-                    <MultiCoverImage resourcesWithImages={anime}/>
+                    <MultiCoverImage resourcesWithImages={anime} />
                 </StyledDesktopOnly>
                 <Column style={{ "--gap": "24px" }}>
                     <Row style={{ "--justify-content": "space-between", "--align-items": "center" }}>
@@ -60,7 +66,7 @@ export default function SeriesDetailPage({ series }: SeriesDetailPageProps) {
                             Anime
                             <Text color="text-disabled"> ({anime.length})</Text>
                         </Text>
-                        <FilterToggleButton onClick={toggleShowFilter}/>
+                        <FilterToggleButton onClick={toggleShowFilter} />
                     </Row>
                     <Collapse collapse={!showFilter}>
                         <SearchFilterGroup>
@@ -73,7 +79,7 @@ export default function SeriesDetailPage({ series }: SeriesDetailPageProps) {
                         </SearchFilterGroup>
                     </Collapse>
                     <Column style={{ "--gap": "16px" }}>
-                        <SeriesAnime anime={animeSorted}/>
+                        <SeriesAnime anime={animeSorted} />
                     </Column>
                 </Column>
             </SidebarContainer>
@@ -82,13 +88,11 @@ export default function SeriesDetailPage({ series }: SeriesDetailPageProps) {
 }
 
 interface SeriesAnimeProps {
-    anime: SeriesDetailPageProps["series"]["anime"]
+    anime: SeriesDetailPageProps["series"]["anime"];
 }
 
 const SeriesAnime = memo(function SeriesAnime({ anime }: SeriesAnimeProps) {
-    const animeCards = anime.map((anime) => (
-        <AnimeSummaryCard key={anime.slug} anime={anime} expandable/>
-    ));
+    const animeCards = anime.map((anime) => <AnimeSummaryCard key={anime.slug} anime={anime} expandable />);
 
     return <>{animeCards}</>;
 });
@@ -97,7 +101,7 @@ SeriesDetailPage.fragments = {
     series: gql`
         ${AnimeSummaryCard.fragments.anime}
         ${AnimeSummaryCard.fragments.expandable}
-        
+
         fragment SeriesDetailPageSeries on Series {
             slug
             name
@@ -134,30 +138,33 @@ export const getStaticProps: GetStaticProps<SeriesDetailPageProps, SeriesDetailP
     let apiRequests = 0;
 
     if (!data) {
-        ({ data, apiRequests } = await fetchData<SeriesDetailPageQuery, SeriesDetailPageQueryVariables>(gql`
-            ${SeriesDetailPage.fragments.series}
+        ({ data, apiRequests } = await fetchData<SeriesDetailPageQuery, SeriesDetailPageQueryVariables>(
+            gql`
+                ${SeriesDetailPage.fragments.series}
 
-            query SeriesDetailPage($seriesSlug: String!) {
-                series(slug: $seriesSlug) {
-                    ...SeriesDetailPageSeries
+                query SeriesDetailPage($seriesSlug: String!) {
+                    series(slug: $seriesSlug) {
+                        ...SeriesDetailPageSeries
+                    }
                 }
-            }
-        `, params));
+            `,
+            params,
+        ));
     }
 
     if (!data.series) {
         return {
-            notFound: true
+            notFound: true,
         };
     }
 
     return {
         props: {
             ...getSharedPageProps(apiRequests),
-            series: data.series
+            series: data.series,
         },
         // Revalidate after 1 hour (= 3600 seconds).
-        revalidate: 3600
+        revalidate: 3600,
     };
 };
 
@@ -165,7 +172,7 @@ export const getStaticPaths: GetStaticPaths<SeriesDetailPageParams> = async () =
     return fetchStaticPaths(async () => {
         const { data } = await fetchData<SeriesDetailPageAllQuery>(gql`
             ${SeriesDetailPage.fragments.series}
-            
+
             query SeriesDetailPageAll {
                 seriesAll {
                     ...SeriesDetailPageSeries
@@ -177,8 +184,8 @@ export const getStaticPaths: GetStaticPaths<SeriesDetailPageParams> = async () =
 
         return data.seriesAll.map((series) => ({
             params: {
-                seriesSlug: series.slug
-            }
+                seriesSlug: series.slug,
+            },
         }));
     });
 };

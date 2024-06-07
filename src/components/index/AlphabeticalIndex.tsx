@@ -25,8 +25,8 @@ const StyledItemGrid = styled.div`
 type AlphabeticalIndexItem = { name: string };
 
 type AlphabeticalIndexProps<T extends AlphabeticalIndexItem> = {
-    items: Array<T>
-    children: (item: T) => ReactNode
+    items: Array<T>;
+    children: (item: T) => ReactNode;
 };
 
 export function AlphabeticalIndex<T extends AlphabeticalIndexItem>({ items, children }: AlphabeticalIndexProps<T>) {
@@ -39,30 +39,29 @@ export function AlphabeticalIndex<T extends AlphabeticalIndexItem>({ items, chil
                     return firstLetter;
                 }
                 return "0-9";
-            }
-        )
-    )
-        .sort(([ a ], [ b ]) => a.localeCompare(b));
+            },
+        ),
+    ).sort(([a], [b]) => a.localeCompare(b));
 
-    return <>
-        <StyledLetterList>
-            {itemsByFirstLetter.map(([ firstLetter ]) => (
-                <Link
-                    key={firstLetter}
-                    href={`#${firstLetter}`}
-                    passHref
-                    legacyBehavior>
-                    <Text as="a" link>{firstLetter.toUpperCase()} </Text>
-                </Link>
+    return (
+        <>
+            <StyledLetterList>
+                {itemsByFirstLetter.map(([firstLetter]) => (
+                    <Link key={firstLetter} href={`#${firstLetter}`} passHref legacyBehavior>
+                        <Text as="a" link>
+                            {firstLetter.toUpperCase()}{" "}
+                        </Text>
+                    </Link>
+                ))}
+            </StyledLetterList>
+            {itemsByFirstLetter.map(([firstLetter, itemsWithFirstLetter]) => (
+                <React.Fragment key={firstLetter}>
+                    <Text id={firstLetter} variant="h2">
+                        {firstLetter}
+                    </Text>
+                    <StyledItemGrid>{itemsWithFirstLetter.map((item) => children(item))}</StyledItemGrid>
+                </React.Fragment>
             ))}
-        </StyledLetterList>
-        {itemsByFirstLetter.map(([ firstLetter, itemsWithFirstLetter ]) => (
-            <React.Fragment key={firstLetter}>
-                <Text id={firstLetter} variant="h2">{firstLetter}</Text>
-                <StyledItemGrid>
-                    {itemsWithFirstLetter.map((item) => children(item))}
-                </StyledItemGrid>
-            </React.Fragment>
-        ))}
-    </>;
+        </>
+    );
 }

@@ -6,13 +6,15 @@ import { PlaylistAddToast } from "@/components/toast/PlaylistAddToast";
 import { useToasts } from "@/context/toastContext";
 
 interface LocalPlaylistTheme {
-    id: number
+    id: number;
 }
 
 type LocalPlaylist = Array<NonNullable<FetchThemeSummaryCardData> & LocalPlaylistTheme>;
 
 export default function useLocalPlaylist() {
-    const [ localPlaylist, setLocalPlaylist ] = useLocalStorageState<LocalPlaylist>("local-playlist", { defaultValue: [] });
+    const [localPlaylist, setLocalPlaylist] = useLocalStorageState<LocalPlaylist>("local-playlist", {
+        defaultValue: [],
+    });
     const { dispatchToast } = useToasts();
 
     function addToPlaylist(theme: LocalPlaylistTheme) {
@@ -23,10 +25,10 @@ export default function useLocalPlaylist() {
                     {
                         ...theme,
                         ...themeFresh,
-                    }
+                    },
                 ]);
 
-                dispatchToast(String(theme.id), <PlaylistAddToast theme={themeFresh}/>);
+                dispatchToast(String(theme.id), <PlaylistAddToast theme={themeFresh} />);
             }
         });
     }

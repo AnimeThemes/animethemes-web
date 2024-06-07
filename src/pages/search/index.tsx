@@ -15,18 +15,20 @@ export default function SearchGlobalPage() {
 
     return (
         <>
-            <SEO title={searchQuery ? `${searchQuery} - Search` : "Search"}/>
+            <SEO title={searchQuery ? `${searchQuery} - Search` : "Search"} />
             {searchQuery ? (
-                <SearchGlobal searchQuery={searchQuery}/>
+                <SearchGlobal searchQuery={searchQuery} />
             ) : (
                 <Column style={{ "--gap": "16px" }}>
                     <Row style={{ "--gap": "16px" }}>
-                        <Icon icon={faSearch} color="text-primary"/>
+                        <Icon icon={faSearch} color="text-primary" />
                         <Text color="text-muted">Looking for something specific? Use the search bar on the left!</Text>
                     </Row>
                     <Row style={{ "--gap": "16px" }}>
-                        <Icon icon={faCompass} color="text-primary"/>
-                        <Text color="text-muted">Feeling adventurous? Explore the database by choosing a category on the right!</Text>
+                        <Icon icon={faCompass} color="text-primary" />
+                        <Text color="text-muted">
+                            Feeling adventurous? Explore the database by choosing a category on the right!
+                        </Text>
                     </Row>
                 </Column>
             )}
@@ -37,7 +39,7 @@ export default function SearchGlobalPage() {
 export async function getStaticProps() {
     return {
         props: {
-            isSearch: true
-        }
+            isSearch: true,
+        },
     };
 }

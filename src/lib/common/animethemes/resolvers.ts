@@ -1,391 +1,405 @@
-import type { IResolvers } from "@graphql-tools/utils";
+import type { Resolvers } from "@/generated/graphql-resolvers";
+import {
+    createApiResolver,
+    createApiResolverNotNull,
+    createApiResolverPaginated,
+    INCLUDES,
+    transformedResolver,
+} from "@/lib/common/animethemes/api";
+import type {
+    ApiAnimeIndex,
+    ApiAnimeShow,
+    ApiAnnouncementIndex,
+    ApiArtistIndex,
+    ApiArtistShow,
+    ApiAudioShow,
+    ApiDumpIndex,
+    ApiEntryShow,
+    ApiFeaturedThemeShow,
+    ApiImageIndex,
+    ApiPageIndex,
+    ApiPageShow,
+    ApiPlaylistIndex,
+    ApiPlaylistShow,
+    ApiPlaylistTrackIndex,
+    ApiPlaylistTrackShow,
+    ApiSeriesIndex,
+    ApiSeriesShow,
+    ApiSongShow,
+    ApiStudioIndex,
+    ApiStudioShow,
+    ApiThemeIndex,
+    ApiThemeShow,
+    ApiUserShow,
+    ApiVideoIndex,
+    ApiVideoShow,
+    ApiYearIndex,
+    ApiYearShow,
+} from "@/lib/common/animethemes/types";
 
-import { apiResolver, INCLUDES } from "@/lib/common/animethemes/api";
-
-const resolvers: IResolvers = {
+const resolvers: Resolvers = {
     Query: {
-        anime: apiResolver({
+        anime: createApiResolver<ApiAnimeShow>()({
             endpoint: (_, { slug }) => `/anime/${slug}?fields[playlist]=id,name,visibility,tracks_count`,
-            extractor: (result) => result.anime
+            extractFromResponse: (response) => response.anime,
         }),
-        animeAll: apiResolver({
+        animeAll: createApiResolverPaginated<ApiAnimeIndex>()({
             endpoint: () => `/anime?fields[playlist]=id,name,visibility,tracks_count`,
-            extractor: (result) => result.anime,
-            pagination: true
+            extractFromResponse: (response) => response.anime,
         }),
-        theme: apiResolver({
+        theme: createApiResolver<ApiThemeShow>()({
             endpoint: (_, { id }) => `/animetheme/${id}`,
-            extractor: (result) => result.animetheme
+            extractFromResponse: (response) => response.animetheme,
         }),
-        themeAll: apiResolver({
+        themeAll: createApiResolverPaginated<ApiThemeIndex>()({
             endpoint: (_, { orderBy, orderDesc, has }) =>
                 `/animetheme?sort=${orderDesc ? "-" : ""}${orderBy}&filter[has]=${has}`,
-            extractor: (result) => result.animethemes,
-            pagination: true,
+            extractFromResponse: (response) => response.animethemes,
         }),
-        artist: apiResolver({
+        artist: createApiResolver<ApiArtistShow>()({
             endpoint: (_, { slug }) => `/artist/${slug}`,
-            extractor: (result) => result.artist
+            extractFromResponse: (response) => response.artist,
         }),
-        artistAll: apiResolver({
+        artistAll: createApiResolverPaginated<ApiArtistIndex>()({
             endpoint: () => `/artist`,
-            extractor: (result) => result.artists,
-            pagination: true
+            extractFromResponse: (response) => response.artists,
         }),
-        series: apiResolver({
+        series: createApiResolver<ApiSeriesShow>()({
             endpoint: (_, { slug }) => `/series/${slug}`,
-            extractor: (result) => result.series
+            extractFromResponse: (response) => response.series,
         }),
-        seriesAll: apiResolver({
+        seriesAll: createApiResolverPaginated<ApiSeriesIndex>()({
             endpoint: () => `/series`,
-            extractor: (result) => result.series,
-            pagination: true
+            extractFromResponse: (response) => response.series,
         }),
-        studio: apiResolver({
+        studio: createApiResolver<ApiStudioShow>()({
             endpoint: (_, { slug }) => `/studio/${slug}`,
-            extractor: (result) => result.studio
+            extractFromResponse: (response) => response.studio,
         }),
-        studioAll: apiResolver({
+        studioAll: createApiResolverPaginated<ApiStudioIndex>()({
             endpoint: () => `/studio`,
-            extractor: (result) => result.studios,
-            pagination: true
+            extractFromResponse: (response) => response.studios,
         }),
-        videoAll: apiResolver({
-            endpoint: (_, { orderBy, orderDesc }) =>
-                `/video?sort=${orderDesc ? "-" : ""}${orderBy}`,
-            extractor: (result) => result.videos,
-            pagination: true,
+        videoAll: createApiResolverPaginated<ApiVideoIndex>()({
+            endpoint: (_, { orderBy, orderDesc }) => `/video?sort=${orderDesc ? "-" : ""}${orderBy}`,
+            extractFromResponse: (response) => response.videos,
         }),
         year: (_, { value }) => ({ value }),
-        yearAll: apiResolver({
+        yearAll: createApiResolverNotNull<ApiYearIndex>()({
             endpoint: () => `/animeyear`,
-            transformer: (yearList) => yearList.map((year: number) => ({ value: year }))
+            extractFromResponse: (yearList) => yearList.map((year) => ({ value: year })),
         }),
         season: (_, { year, value }) => ({ value, year: { value: year } }),
-        seasonAll: apiResolver({
-            endpoint: (_, { year }) => `/animeyear/${year}`,
-            extractor: (result) => Object.keys(result),
-            transformer: (seasons, _, { year }) => seasons.map((season: string) => ({ value: season, year: { value: year } }))
-        }),
-        page: apiResolver({
+        page: createApiResolver<ApiPageShow>()({
             endpoint: (_, { slug }) => `/page/${slug}?fields[page]=id,slug,name,body,created_at`,
-            extractor: (result) => result.page
+            extractFromResponse: (response) => response.page,
         }),
-        pageAll: apiResolver({
+        pageAll: createApiResolverPaginated<ApiPageIndex>()({
             endpoint: () => `/page?fields[page]=id,slug,name,body,created_at`,
-            extractor: (result) => result.pages,
-            pagination: true
+            extractFromResponse: (response) => response.pages,
         }),
-        imageAll: apiResolver({
+        imageAll: createApiResolverPaginated<ApiImageIndex>()({
             endpoint: (_, { facet }) => `/image?${facet ? `filter[facet]=${facet}` : ``}`,
-            extractor: (result) => result.images,
-            pagination: true
+            extractFromResponse: (response) => response.images,
         }),
-        featuredTheme: apiResolver({
+        featuredTheme: createApiResolver<ApiFeaturedThemeShow>()({
             endpoint: () => `/current/featuredtheme`,
-            extractor: (result) => result.featuredtheme,
+            extractFromResponse: (response) => response.featuredtheme,
         }),
-        dumpAll: apiResolver({
+        dumpAll: createApiResolverPaginated<ApiDumpIndex>()({
             endpoint: () => `/dump?fields[dump]=id,path,link,created_at`,
-            extractor: (result) => result.dumps,
-            pagination: true
+            extractFromResponse: (response) => response.dumps,
         }),
-        announcementAll: apiResolver({
+        announcementAll: createApiResolverPaginated<ApiAnnouncementIndex>()({
             endpoint: () => `/announcement`,
-            extractor: (result) => result.announcements,
-            pagination: true
+            extractFromResponse: (response) => response.announcements,
         }),
-        playlist: apiResolver({
+        playlist: createApiResolver<ApiPlaylistShow>()({
             endpoint: (_, { id }) => `/playlist/${id}?fields[playlist]=id,name,description,visibility,tracks_count`,
-            extractor: (result) => result.playlist,
+            extractFromResponse: (response) => response.playlist,
         }),
-        playlistAll: apiResolver({
+        playlistAll: createApiResolverPaginated<ApiPlaylistIndex>()({
             endpoint: (_, { orderBy, orderDesc, onlyNonEmpty }) =>
                 `/playlist?sort=${orderDesc ? "-" : ""}${orderBy}&fields[playlist]=id,name,description,visibility,tracks_count${onlyNonEmpty ? "&filter[playlist][tracks_count-gte]=1" : ""}`,
-            extractor: (result) => result.playlists,
-            pagination: true,
+            extractFromResponse: (response) => response.playlists,
         }),
         me: () => ({}),
     },
     UserScopedQuery: {
-        user: apiResolver({
+        user: createApiResolver<ApiUserShow>()({
             endpoint: () => `/me?fields[user]=id,name,email,email_verified_at,created_at`,
-            extractor: (result) => result.user,
+            extractFromResponse: (response) => response.user,
         }),
-        playlistAll: apiResolver({
-            endpoint: (_, { filterVideoId }) => `/me/playlist?fields[playlist]=id,name,visibility,tracks_count${filterVideoId ? `&filter[track][video_id]=${filterVideoId}` : ``}`,
-            extractor: (result) => result.playlists,
-            pagination: true,
+        playlistAll: createApiResolverPaginated<ApiPlaylistIndex>()({
+            endpoint: (_, { filterVideoId }) =>
+                `/me/playlist?fields[playlist]=id,name,visibility,tracks_count${filterVideoId ? `&filter[track][video_id]=${filterVideoId}` : ``}`,
+            extractFromResponse: (response) => response.playlists,
         }),
     },
     Year: {
-        seasons: apiResolver({
+        seasons: createApiResolverNotNull<ApiYearShow>()({
             endpoint: (year) => `/animeyear/${year.value}`,
-            extractor: (result) => Object.keys(result),
-            transformer: (seasons, year) => seasons.map((season: string) => ({ value: season, year }))
+            extractFromResponse: (response, year) => Object.keys(response).map((season) => ({ value: season, year })),
         }),
     },
     Season: {
-        anime: apiResolver({
+        anime: createApiResolverPaginated<ApiAnimeIndex>()({
             endpoint: (season) => `/anime?filter[year]=${season.year.value}&filter[season]=${season.value}`,
-            extractor: (result) => result.anime,
-            pagination: true,
-            type: "Anime"
+            extractFromResponse: (response) => response.anime,
+            type: "Anime",
         }),
     },
     Anime: {
-        synonyms: apiResolver({
+        synonyms: createApiResolverNotNull<ApiAnimeShow<"animesynonyms">>()({
+            extractFromParent: (anime) => anime.animesynonyms,
             endpoint: (anime) => `/anime/${anime.slug}`,
-            field: "animesynonyms",
-            extractor: (result) => result.anime.animesynonyms,
+            extractFromResponse: (response) => response.anime.animesynonyms,
             type: "Anime",
-            baseInclude: INCLUDES.Anime.synonyms
+            baseInclude: INCLUDES.Anime.synonyms,
         }),
-        themes: apiResolver({
+        themes: transformedResolver(
+            createApiResolverNotNull<ApiAnimeShow<"animethemes">>()({
+                extractFromParent: (anime) => anime.animethemes,
+                endpoint: (anime) => `/anime/${anime.slug}`,
+                extractFromResponse: (response) => response.anime.animethemes,
+                type: "Anime",
+                baseInclude: INCLUDES.Anime.themes,
+            }),
+            (themes, anime) => themes.map((theme) => ({ ...theme, anime })),
+        ),
+        series: createApiResolverNotNull<ApiAnimeShow<"series">>()({
+            extractFromParent: (anime) => anime.series,
             endpoint: (anime) => `/anime/${anime.slug}`,
-            field: "animethemes",
-            extractor: (result) => result.anime.animethemes,
-            transformer: (themes, anime) => themes.map((theme: Record<string, unknown>) => ({ ...theme, anime })),
+            extractFromResponse: (response) => response.anime.series,
             type: "Anime",
-            baseInclude: INCLUDES.Anime.themes
+            baseInclude: INCLUDES.Anime.series,
         }),
-        series: apiResolver({
+        studios: createApiResolverNotNull<ApiAnimeShow<"studios">>()({
+            extractFromParent: (anime) => anime.studios,
             endpoint: (anime) => `/anime/${anime.slug}`,
-            field: "series",
-            extractor: (result) => result.anime.series,
+            extractFromResponse: (response) => response.anime.studios,
             type: "Anime",
-            baseInclude: INCLUDES.Anime.series
+            baseInclude: INCLUDES.Anime.studios,
         }),
-        studios: apiResolver({
+        resources: transformedResolver(
+            createApiResolverNotNull<ApiAnimeShow<"resources">>()({
+                extractFromParent: (anime) => anime.resources,
+                endpoint: (anime) => `/anime/${anime.slug}`,
+                extractFromResponse: (response) => response.anime.resources,
+                type: "Anime",
+                baseInclude: INCLUDES.Anime.resources,
+            }),
+            (resources) => resources.map(({ animeresource, ...resource }) => ({ ...animeresource, ...resource })),
+        ),
+        images: createApiResolverNotNull<ApiAnimeShow<"images">>()({
+            extractFromParent: (anime) => anime.images,
             endpoint: (anime) => `/anime/${anime.slug}`,
-            field: "studios",
-            extractor: (result) => result.anime.studios,
+            extractFromResponse: (response) => response.anime.images,
             type: "Anime",
-            baseInclude: INCLUDES.Anime.studios
-        }),
-        resources: apiResolver({
-            endpoint: (anime) => `/anime/${anime.slug}`,
-            field: "resources",
-            extractor: (result) => result.anime.resources,
-            transformer: (resources) => resources.map(({ animeresource, ...resource }: any) => (
-                { ...animeresource, ...resource }
-            )),
-            type: "Anime",
-            baseInclude: INCLUDES.Anime.resources
-        }),
-        images: apiResolver({
-            endpoint: (anime) => `/anime/${anime.slug}`,
-            field: "images",
-            extractor: (result) => result.anime.images,
-            type: "Anime",
-            baseInclude: INCLUDES.Anime.images
+            baseInclude: INCLUDES.Anime.images,
         }),
     },
     Theme: {
         sequence: (theme) => theme.sequence || 0,
-        song: apiResolver({
+        song: createApiResolver<ApiThemeShow<"song">>()({
+            extractFromParent: (theme) => theme.song,
             endpoint: (theme) => `/animetheme/${theme.id}`,
-            field: "song",
-            extractor: (result) => result.animetheme.song,
+            extractFromResponse: (response) => response.animetheme.song,
             type: "Theme",
-            baseInclude: INCLUDES.Theme.song
+            baseInclude: INCLUDES.Theme.song,
         }),
-        group: apiResolver({
+        group: createApiResolver<ApiThemeShow<"group">>()({
+            extractFromParent: (theme) => theme.group,
             endpoint: (theme) => `/animetheme/${theme.id}`,
-            field: "group",
-            extractor: (result) => result.animetheme.group,
+            extractFromResponse: (response) => response.animetheme.group,
             type: "Theme",
-            baseInclude: INCLUDES.Theme.group
+            baseInclude: INCLUDES.Theme.group,
         }),
-        anime: apiResolver({
+        anime: createApiResolverNotNull<ApiThemeShow<"anime">>()({
+            extractFromParent: (theme) => theme.anime,
             endpoint: (theme) => `/animetheme/${theme.id}`,
-            field: "anime",
-            extractor: (result) => result.animetheme.anime,
+            extractFromResponse: (response) => response.animetheme.anime,
             type: "Theme",
-            baseInclude: INCLUDES.Theme.anime
+            baseInclude: INCLUDES.Theme.anime,
         }),
-        entries: apiResolver({
+        entries: createApiResolverNotNull<ApiThemeShow<"animethemeentries">>()({
+            extractFromParent: (theme) => theme.animethemeentries,
             endpoint: (theme) => `/animetheme/${theme.id}`,
-            field: "animethemeentries",
-            extractor: (result) => result.animetheme.animethemeentries,
+            extractFromResponse: (response) => response.animetheme.animethemeentries,
             type: "Theme",
-            baseInclude: INCLUDES.Theme.entries
+            baseInclude: INCLUDES.Theme.entries,
         }),
     },
     Artist: {
-        performances: apiResolver({
+        performances: transformedResolver(
+            createApiResolverNotNull<ApiArtistShow<"songs">>()({
+                extractFromParent: (artist) => artist.songs,
+                endpoint: (artist) => `/artist/${artist.slug}`,
+                extractFromResponse: (response) => response.artist.songs,
+                type: "Artist",
+                baseInclude: INCLUDES.Artist.performances,
+            }),
+            (songs, artist) => songs.map((song) => ({ ...song.artistsong, song, artist })),
+        ),
+        resources: transformedResolver(
+            createApiResolverNotNull<ApiArtistShow<"resources">>()({
+                extractFromParent: (artist) => artist.resources,
+                endpoint: (artist) => `/artist/${artist.slug}`,
+                extractFromResponse: (response) => response.artist.resources,
+                type: "Artist",
+                baseInclude: INCLUDES.Artist.resources,
+            }),
+            (resources) => resources.map(({ artistresource, ...resource }) => ({ ...artistresource, ...resource })),
+        ),
+        images: createApiResolverNotNull<ApiArtistShow<"images">>()({
+            extractFromParent: (artist) => artist.images,
             endpoint: (artist) => `/artist/${artist.slug}`,
-            field: "songs",
-            extractor: (result) => result.artist.songs,
-            transformer: (songs, artist) => songs.map((song: any) => (
-                { ...song.artistsong, song, artist }
-            )),
+            extractFromResponse: (response) => response.artist.images,
             type: "Artist",
-            baseInclude: INCLUDES.Artist.performances
+            baseInclude: INCLUDES.Artist.images,
         }),
-        resources: apiResolver({
-            endpoint: (artist) => `/artist/${artist.slug}`,
-            field: "resources",
-            extractor: (result) => result.artist.resources,
-            transformer: (resources) => resources.map(({ artistresource, ...resource }: any) => (
-                { ...artistresource, ...resource }
-            )),
-            type: "Artist",
-            baseInclude: INCLUDES.Artist.resources
-        }),
-        images: apiResolver({
-            endpoint: (artist) => `/artist/${artist.slug}`,
-            field: "images",
-            extractor: (result) => result.artist.images,
-            type: "Artist",
-            baseInclude: INCLUDES.Artist.images
-        }),
-        groups: apiResolver({
-            endpoint: (artist) => `/artist/${artist.slug}`,
-            field: "groups",
-            extractor: (result) => result.artist.groups,
-            transformer: (groups, artist) => groups.map((group: any) => (
-                { ...group.artistmember, group, member: artist }
-            )),
-            type: "Artist",
-            baseInclude: INCLUDES.Artist.groups
-        }),
-        members: apiResolver({
-            endpoint: (artist) => `/artist/${artist.slug}`,
-            field: "members",
-            extractor: (result) => result.artist.members,
-            transformer: (members, artist) => members.map((member: any) => (
-                { ...member.artistmember, member, group: artist }
-            )),
-            type: "Artist",
-            baseInclude: INCLUDES.Artist.members
-        }),
+        groups: transformedResolver(
+            createApiResolverNotNull<ApiArtistShow<"groups">>()({
+                extractFromParent: (artist) => artist.groups,
+                endpoint: (artist) => `/artist/${artist.slug}`,
+                extractFromResponse: (response) => response.artist.groups,
+                type: "Artist",
+                baseInclude: INCLUDES.Artist.groups,
+            }),
+            (groups, artist) => groups.map((group) => ({ ...group.artistmember, group, member: artist })),
+        ),
+        members: transformedResolver(
+            createApiResolverNotNull<ApiArtistShow<"members">>()({
+                extractFromParent: (artist) => artist.members,
+                endpoint: (artist) => `/artist/${artist.slug}`,
+                extractFromResponse: (response) => response.artist.members,
+                type: "Artist",
+                baseInclude: INCLUDES.Artist.members,
+            }),
+            (members, artist) => members.map((member) => ({ ...member.artistmember, member, group: artist })),
+        ),
     },
     Song: {
-        themes: apiResolver({
+        themes: createApiResolverNotNull<ApiSongShow<"animethemes">>()({
+            extractFromParent: (song) => song.animethemes,
             endpoint: (song) => `/song/${song.id}`,
-            field: "animethemes",
-            extractor: (result) => result.song.animethemes,
+            extractFromResponse: (response) => response.song.animethemes,
             type: "Song",
-            baseInclude: INCLUDES.Song.themes
+            baseInclude: INCLUDES.Song.themes,
         }),
-        performances: apiResolver({
-            endpoint: (song) => `/song/${song.id}`,
-            field: "artists",
-            extractor: (result) => result.song.artists,
-            transformer: (artists, song) => artists.map((artist: any) => (
-                { ...artist.artistsong, artist, song }
-            )),
-            type: "Song",
-            baseInclude: INCLUDES.Song.performances
-        }),
+        performances: transformedResolver(
+            createApiResolverNotNull<ApiSongShow<"artists">>()({
+                extractFromParent: (song) => song.artists,
+                endpoint: (song) => `/song/${song.id}`,
+                extractFromResponse: (response) => response.song.artists,
+                type: "Song",
+                baseInclude: INCLUDES.Song.performances,
+            }),
+            (artists, song) => artists.map((artist) => ({ ...artist.artistsong, artist, song })),
+        ),
     },
     Entry: {
         version: (entry) => entry.version || 1,
-        videos: apiResolver({
+        videos: createApiResolverNotNull<ApiEntryShow<"videos">>()({
+            extractFromParent: (entry) => entry.videos,
             endpoint: (entry) => `/animethemeentry/${entry.id}`,
-            field: "videos",
-            extractor: (result) => result.animethemeentry.videos,
+            extractFromResponse: (response) => response.animethemeentry.videos,
             type: "Entry",
-            baseInclude: INCLUDES.Entry.videos
+            baseInclude: INCLUDES.Entry.videos,
         }),
-        theme: apiResolver({
+        theme: createApiResolverNotNull<ApiEntryShow<"animetheme">>()({
+            extractFromParent: (entry) => entry.animetheme,
             endpoint: (entry) => `/animethemeentry/${entry.id}`,
-            field: "animetheme",
-            extractor: (result) => result.animethemeentry.animetheme,
+            extractFromResponse: (response) => response.animethemeentry.animetheme,
             type: "Entry",
-            baseInclude: INCLUDES.Entry.theme
+            baseInclude: INCLUDES.Entry.theme,
         }),
     },
     Video: {
-        audio: apiResolver({
+        audio: createApiResolverNotNull<ApiVideoShow<"audio">>()({
+            extractFromParent: (video) => video.audio,
             endpoint: (video) => `/video/${video.basename}`,
-            field: "audio",
-            extractor: (result) => result.video.audio,
+            extractFromResponse: (response) => response.video.audio,
             type: "Video",
-            baseInclude: INCLUDES.Video.audio
+            baseInclude: INCLUDES.Video.audio,
         }),
-        script: apiResolver({
+        script: createApiResolver<ApiVideoShow<"videoscript">>()({
+            extractFromParent: (video) => video.videoscript,
             endpoint: (video) => `/video/${video.basename}`,
-            field: "videoscript",
-            extractor: (result) => result.video.videoscript,
+            extractFromResponse: (response) => response.video.videoscript,
             type: "Video",
-            baseInclude: INCLUDES.Video.script
+            baseInclude: INCLUDES.Video.script,
         }),
-        entries: apiResolver({
+        entries: createApiResolverNotNull<ApiVideoShow<"animethemeentries">>()({
+            extractFromParent: (video) => video.animethemeentries,
             endpoint: (video) => `/video/${video.basename}`,
-            field: "animethemeentries",
-            extractor: (result) => result.video.animethemeentries,
+            extractFromResponse: (response) => response.video.animethemeentries,
             type: "Video",
-            baseInclude: INCLUDES.Video.entries
+            baseInclude: INCLUDES.Video.entries,
         }),
     },
     Audio: {
-        videos: apiResolver({
+        videos: createApiResolverNotNull<ApiAudioShow<"videos">>()({
+            extractFromParent: (audio) => audio.videos,
             endpoint: (audio) => `/audio/${audio.basename}`,
-            field: "videos",
-            extractor: (result) => result.audio.videos,
+            extractFromResponse: (response) => response.audio.videos,
             type: "Audio",
-            baseInclude: INCLUDES.Audio.videos
+            baseInclude: INCLUDES.Audio.videos,
         }),
     },
     Series: {
-        anime: apiResolver({
+        anime: createApiResolverNotNull<ApiSeriesShow<"anime">>()({
+            extractFromParent: (series) => series.anime,
             endpoint: (series) => `/series/${series.slug}`,
-            field: "anime",
-            extractor: (result) => result.series.anime,
+            extractFromResponse: (response) => response.series.anime,
             type: "Series",
-            baseInclude: INCLUDES.Series.anime
+            baseInclude: INCLUDES.Series.anime,
         }),
     },
     Studio: {
-        anime: apiResolver({
+        anime: createApiResolverNotNull<ApiStudioShow<"anime">>()({
+            extractFromParent: (studio) => studio.anime,
             endpoint: (studio) => `/studio/${studio.slug}`,
-            field: "anime",
-            extractor: (result) => result.studio.anime,
+            extractFromResponse: (response) => response.studio.anime,
             type: "Studio",
-            baseInclude: INCLUDES.Studio.anime
+            baseInclude: INCLUDES.Studio.anime,
         }),
-        resources: apiResolver({
+        resources: transformedResolver(
+            createApiResolverNotNull<ApiStudioShow<"resources">>()({
+                extractFromParent: (studio) => studio.resources,
+                endpoint: (studio) => `/studio/${studio.slug}`,
+                extractFromResponse: (response) => response.studio.resources,
+                type: "Studio",
+                baseInclude: INCLUDES.Studio.resources,
+            }),
+            (resources) => resources.map(({ studioresource, ...resource }) => ({ ...studioresource, ...resource })),
+        ),
+        images: createApiResolverNotNull<ApiStudioShow<"images">>()({
+            extractFromParent: (studio) => studio.images,
             endpoint: (studio) => `/studio/${studio.slug}`,
-            field: "resources",
-            extractor: (result) => result.studio.resources,
-            transformer: (resources) => resources.map(({ studioresource, ...resource }: any) => (
-                { ...studioresource, ...resource }
-            )),
+            extractFromResponse: (response) => response.studio.images,
             type: "Studio",
-            baseInclude: INCLUDES.Studio.resources
-        }),
-        images: apiResolver({
-            endpoint: (studio) => `/studio/${studio.slug}`,
-            field: "images",
-            extractor: (result) => result.studio.images,
-            type: "Studio",
-            baseInclude: INCLUDES.Studio.images
+            baseInclude: INCLUDES.Studio.images,
         }),
     },
     Performance: {
-        artist: apiResolver({
-            field: "artist"
-        }),
-        song: apiResolver({
-            field: "song"
-        }),
+        artist: (performance) => performance.artist,
+        song: (performance) => performance.song,
     },
     FeaturedTheme: {
-        entry: apiResolver({
+        entry: createApiResolver<ApiFeaturedThemeShow<"animethemeentry">>()({
+            extractFromParent: (featuredTheme) => featuredTheme.animethemeentry,
             endpoint: (featuredTheme) => `/featuredtheme/${featuredTheme.id}`,
-            field: "animethemeentry",
-            extractor: (result) => result.animethemeentry,
+            extractFromResponse: (response) => response.featuredtheme.animethemeentry,
             type: "FeaturedTheme",
-            baseInclude: INCLUDES.FeaturedTheme.entry
+            baseInclude: INCLUDES.FeaturedTheme.entry,
         }),
-        video: apiResolver({
+        video: createApiResolver<ApiFeaturedThemeShow<"video">>()({
+            extractFromParent: (featuredTheme) => featuredTheme.video,
             endpoint: (featuredTheme) => `/featuredtheme/${featuredTheme.id}`,
-            field: "video",
-            extractor: (result) => result.video,
+            extractFromResponse: (response) => response.featuredtheme.video,
             type: "FeaturedTheme",
-            baseInclude: INCLUDES.FeaturedTheme.video
+            baseInclude: INCLUDES.FeaturedTheme.video,
         }),
     },
     VideoOverlap: {
@@ -394,41 +408,44 @@ const resolvers: IResolvers = {
         OVER: "Over",
     },
     Playlist: {
-        tracks: apiResolver({
-            endpoint: (playlist) => `/playlist/${playlist.id}/track`,
-            field: "tracks",
-            extractor: (result) => result.tracks,
-            transformer: (tracks, playlist) => tracks.map((track: Record<string, unknown>) => ({ ...track, playlist }))
-        }),
-        forward: apiResolver({
-            endpoint: (playlist) => `/playlist/${playlist.id}/forward`,
-            field: "tracks",
-            extractor: (result) => result.tracks,
-            transformer: (tracks, playlist) => tracks.map((track: Record<string, unknown>) => ({ ...track, playlist })),
-            pagination: true,
-        }),
-        user: apiResolver({
+        tracks: transformedResolver(
+            createApiResolverPaginated<ApiPlaylistTrackIndex>()({
+                extractFromParent: (playlist) => playlist.tracks,
+                endpoint: (playlist) => `/playlist/${playlist.id}/track`,
+                extractFromResponse: (response) => response.tracks,
+            }),
+            (tracks, playlist) => tracks.map((track) => ({ ...track, playlist })),
+        ),
+        forward: transformedResolver(
+            createApiResolverPaginated<ApiPlaylistTrackIndex>()({
+                extractFromParent: (playlist) => playlist.tracks,
+                endpoint: (playlist) => `/playlist/${playlist.id}/forward`,
+                extractFromResponse: (response) => response.tracks,
+            }),
+            (tracks, playlist) => tracks.map((track) => ({ ...track, playlist })),
+        ),
+        user: createApiResolverNotNull<ApiPlaylistShow<"user">>()({
+            extractFromParent: (playlist) => playlist.user,
             endpoint: (playlist) => `/playlist/${playlist.id}`,
-            field: "user",
-            extractor: (result) => result.playlist.user,
+            extractFromResponse: (response) => response.playlist.user,
             type: "Playlist",
             baseInclude: INCLUDES.Playlist.user,
         }),
     },
     PlaylistTrack: {
-        video: apiResolver({
+        video: createApiResolverNotNull<ApiPlaylistTrackShow<"video">>()({
+            extractFromParent: (track) => track.video,
             endpoint: (track) => `/playlist/${track.playlist.id}/track/${track.id}`,
-            field: "video",
-            extractor: (result) => result.video,
+            extractFromResponse: (response) => response.track.video,
             type: "PlaylistTrack",
             baseInclude: INCLUDES.PlaylistTrack.video,
         }),
     },
     UserAuth: {
-        roles: apiResolver({
+        roles: createApiResolverNotNull<ApiUserShow<"roles">>()({
+            extractFromParent: (user) => user.roles,
             endpoint: () => `/me`,
-            field: "roles",
-            extractor: (result) => result.roles,
+            extractFromResponse: (response) => response.user.roles,
         }),
     },
 };

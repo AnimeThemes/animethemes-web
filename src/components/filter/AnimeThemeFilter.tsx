@@ -11,27 +11,26 @@ import type { AnimeThemeFilterThemeFragment } from "@/generated/graphql";
 import { either, themeGroupComparator, themeIndexComparator, themeTypeComparator } from "@/utils/comparators";
 
 interface AnimeThemeFilterProps {
-    themes: Array<AnimeThemeFilterThemeFragment>
+    themes: Array<AnimeThemeFilterThemeFragment>;
 }
 
 function AnimeThemeFilterInternal({ themes }: AnimeThemeFilterProps) {
-    const hasMultipleTypes = (
-        themes.some((theme) => theme.type === "OP") &&
-        themes.some((theme) => theme.type === "ED")
-    );
-    const [ filterType, setFilterType ] = useState<string | null>(null);
+    const hasMultipleTypes = themes.some((theme) => theme.type === "OP") && themes.some((theme) => theme.type === "ED");
+    const [filterType, setFilterType] = useState<string | null>(null);
 
     const filteredThemes = themes
         .filter((theme) => !filterType || theme.type === filterType)
         .sort(either(themeGroupComparator).or(themeTypeComparator).or(themeIndexComparator).chain());
 
     const groups = useMemo(
-        () => filteredThemes.reduce<{
-            name: string,
-            slug: string,
-            themes: typeof themes
-        }[]>(
-            (groups, theme) => {
+        () =>
+            filteredThemes.reduce<
+                {
+                    name: string;
+                    slug: string;
+                    themes: typeof themes;
+                }[]
+            >((groups, theme) => {
                 const groupName = theme.group?.name || "Original";
                 const groupSlug = theme.group?.slug || "original";
                 const group = groups.find((group) => group.name === groupName);
@@ -45,13 +44,11 @@ function AnimeThemeFilterInternal({ themes }: AnimeThemeFilterProps) {
                     group.themes.push(theme);
                 }
                 return groups;
-            },
-            []
-        ),
-        [ filteredThemes ]
+            }, []),
+        [filteredThemes],
     );
 
-    const [ activeGroup, setActiveGroup ] = useState<string | null>(null);
+    const [activeGroup, setActiveGroup] = useState<string | null>(null);
     const activeGroupThemes = groups.find((group) => group.slug === activeGroup)?.themes;
 
     return (
@@ -60,16 +57,36 @@ function AnimeThemeFilterInternal({ themes }: AnimeThemeFilterProps) {
                 <HorizontalScroll fixShadows>
                     <Row style={{ "--gap": "16px" }}>
                         {groups.length > 1 && (
-                            <Listbox value={activeGroup} onValueChange={setActiveGroup} defaultValue={null} resettable nullable highlightNonDefault>
-                                <ListboxOption value={null} hidden>All Groups</ListboxOption>
+                            <Listbox
+                                value={activeGroup}
+                                onValueChange={setActiveGroup}
+                                defaultValue={null}
+                                resettable
+                                nullable
+                                highlightNonDefault
+                            >
+                                <ListboxOption value={null} hidden>
+                                    All Groups
+                                </ListboxOption>
                                 {groups.map((group) => (
-                                    <ListboxOption key={group.slug} value={group.slug}>{group.name}</ListboxOption>
+                                    <ListboxOption key={group.slug} value={group.slug}>
+                                        {group.name}
+                                    </ListboxOption>
                                 ))}
                             </Listbox>
                         )}
                         {hasMultipleTypes && (
-                            <Listbox value={filterType} onValueChange={setFilterType} defaultValue={null} resettable nullable highlightNonDefault>
-                                <ListboxOption value={null} hidden>OP & ED</ListboxOption>
+                            <Listbox
+                                value={filterType}
+                                onValueChange={setFilterType}
+                                defaultValue={null}
+                                resettable
+                                nullable
+                                highlightNonDefault
+                            >
+                                <ListboxOption value={null} hidden>
+                                    OP & ED
+                                </ListboxOption>
                                 <ListboxOption value="OP">OP</ListboxOption>
                                 <ListboxOption value="ED">ED</ListboxOption>
                             </Listbox>
@@ -84,16 +101,16 @@ function AnimeThemeFilterInternal({ themes }: AnimeThemeFilterProps) {
                             <ThemeDetailCard key={theme.id} theme={theme} />
                         ))}
                     </Column>
-                ) : groups.map((group) => (
-                    <Column key={group.slug} style={{ "--gap": "16px" }}>
-                        {groups.length > 1 && (
-                            <Text variant="h3">{group.name}</Text>
-                        )}
-                        {group.themes.map((theme) => (
-                            <ThemeDetailCard key={theme.id} theme={theme} />
-                        ))}
-                    </Column>
-                ))}
+                ) : (
+                    groups.map((group) => (
+                        <Column key={group.slug} style={{ "--gap": "16px" }}>
+                            {groups.length > 1 && <Text variant="h3">{group.name}</Text>}
+                            {group.themes.map((theme) => (
+                                <ThemeDetailCard key={theme.id} theme={theme} />
+                            ))}
+                        </Column>
+                    ))
+                )}
             </Column>
         </Column>
     );
@@ -102,7 +119,7 @@ function AnimeThemeFilterInternal({ themes }: AnimeThemeFilterProps) {
 AnimeThemeFilterInternal.fragments = {
     theme: gql`
         ${ThemeDetailCard.fragments.theme}
-        
+
         fragment AnimeThemeFilterTheme on Theme {
             ...ThemeDetailCardTheme
             type
@@ -111,7 +128,7 @@ AnimeThemeFilterInternal.fragments = {
                 slug
             }
         }
-    `
+    `,
 };
 
 export const AnimeThemeFilter = memo(AnimeThemeFilterInternal);

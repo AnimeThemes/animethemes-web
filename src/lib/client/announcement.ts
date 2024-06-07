@@ -1,8 +1,8 @@
 import { CLIENT_API_URL } from "@/utils/config";
 
 export interface Announcement {
-    id: number
-    content: string
+    id: number;
+    content: string;
 }
 
 export async function fetchAnnouncements(): Promise<Array<Announcement>> {

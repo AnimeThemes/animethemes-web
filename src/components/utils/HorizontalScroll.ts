@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 
 export const HorizontalScroll = styled.div<{
-    fixShadows?: boolean
+    fixShadows?: boolean;
 }>`
     display: flex;
     overflow: auto;
@@ -10,18 +10,20 @@ export const HorizontalScroll = styled.div<{
     margin-right: -16px;
     padding-left: 16px;
     padding-right: 16px;
-    
+
     & > * {
         min-width: max-content;
     }
-    
-    ${(props) => !!props.fixShadows && css`
-        margin-top: -16px;
-        margin-bottom: -16px;
-        
-        & > * {
-            margin-top: 16px;
-            margin-bottom: 16px;
-        }
-    `}
+
+    ${(props) =>
+        !!props.fixShadows &&
+        css`
+            margin-top: -16px;
+            margin-bottom: -16px;
+
+            & > * {
+                margin-top: 16px;
+                margin-bottom: 16px;
+            }
+        `}
 `;

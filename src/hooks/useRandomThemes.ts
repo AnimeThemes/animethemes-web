@@ -19,10 +19,12 @@ export default function useRandomThemes() {
 
                 return createWatchListItem({
                     ...video,
-                    entries: [{
-                        ...entry,
-                        theme,
-                    }],
+                    entries: [
+                        {
+                            ...entry,
+                            theme,
+                        },
+                    ],
                 });
             });
         };
@@ -46,6 +48,6 @@ export default function useRandomThemes() {
     }
 
     return {
-        playRandomThemes
+        playRandomThemes,
     };
 }

@@ -2,26 +2,30 @@ import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
 
 interface IToastContext {
-    activeToasts: Array<Toast>
-    dispatchToast: (id: string, toast: ReactNode, duration?: number) => void
-    closeToast: (id: string) => void
+    activeToasts: Array<Toast>;
+    dispatchToast: (id: string, toast: ReactNode, duration?: number) => void;
+    closeToast: (id: string) => void;
 }
 
 const ToastContext = createContext<IToastContext>({
     activeToasts: [],
-    dispatchToast: () => { /* Do nothing. */ },
-    closeToast: () => { /* Do nothing. */ },
+    dispatchToast: () => {
+        /* Do nothing. */
+    },
+    closeToast: () => {
+        /* Do nothing. */
+    },
 });
 
 interface Toast {
-    id: string
-    content: ReactNode
-    timeoutId?: number
+    id: string;
+    content: ReactNode;
+    timeoutId?: number;
 }
 
 interface ToastProviderProps {
-    children?: ReactNode
-    initialToasts?: Array<Toast>
+    children?: ReactNode;
+    initialToasts?: Array<Toast>;
 }
 
 export function ToastProvider({ children, initialToasts = [] }: ToastProviderProps) {
@@ -54,14 +58,10 @@ export function ToastProvider({ children, initialToasts = [] }: ToastProviderPro
     const value: IToastContext = {
         activeToasts,
         dispatchToast,
-        closeToast
+        closeToast,
     };
 
-    return (
-        <ToastContext.Provider value={value}>
-            {children}
-        </ToastContext.Provider>
-    );
+    return <ToastContext.Provider value={value}>{children}</ToastContext.Provider>;
 }
 
 export function useToasts() {

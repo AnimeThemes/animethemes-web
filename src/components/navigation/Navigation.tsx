@@ -13,7 +13,7 @@ import {
     StyledNavigationContainer,
     StyledNavigationLinks,
     StyledProfileImage,
-    StyledProfileImageIcon
+    StyledProfileImageIcon,
 } from "@/components/navigation/Navigation.style";
 import useAuth from "@/hooks/useAuth";
 import useCurrentSeason from "@/hooks/useCurrentSeason";
@@ -24,9 +24,9 @@ export function Navigation() {
     const { currentYear, currentSeason } = useCurrentSeason();
 
     const router = useRouter();
-    const [ prevPathname, setPrevPathname ] = useState(router.pathname);
+    const [prevPathname, setPrevPathname] = useState(router.pathname);
 
-    const [ isFloating, setFloating ] = useState(true);
+    const [isFloating, setFloating] = useState(true);
 
     useEffect(() => {
         function onScroll() {
@@ -45,50 +45,71 @@ export function Navigation() {
         return null;
     }
 
-    return <>
-        <StyledNavigation $floating={isFloating}>
-            <StyledNavigationContainer onClick={(event) => event.stopPropagation()}>
-                <Link href="/" passHref legacyBehavior>
-                    <StyledLogoContainer>
-                        <StyledLogo width="277" height="150"/>
-                    </StyledLogoContainer>
-                </Link>
-                <StyledNavigationLinks>
-                    <Link href="/search" passHref legacyBehavior>
-                        <IconTextButton forwardedAs="a" icon={faSearch} variant="silent" collapsible style={{ "--gap": "8px" }}>
-                            Search
-                        </IconTextButton>
+    return (
+        <>
+            <StyledNavigation $floating={isFloating}>
+                <StyledNavigationContainer onClick={(event) => event.stopPropagation()}>
+                    <Link href="/" passHref legacyBehavior>
+                        <StyledLogoContainer>
+                            <StyledLogo width="277" height="150" />
+                        </StyledLogoContainer>
                     </Link>
-                    <ShuffleDialog trigger={
-                        <IconTextButton variant="silent" icon={faRandom} collapsible style={{ "--gap": "8px" }}>
-                            Shuffle
-                        </IconTextButton>
-                    } />
-                    <Link
-                        href={(currentYear && currentSeason) ? `/year/${currentYear}/${currentSeason}` : "/"}
-                        passHref
-                        legacyBehavior>
-                        <IconTextButton forwardedAs="a" variant="silent" icon={faTv} collapsible style={{ "--gap": "8px" }}>
-                            Current Season
-                        </IconTextButton>
-                    </Link>
-                    <Link href="/profile" passHref legacyBehavior>
-                        <IconTextButton
-                            forwardedAs="a"
-                            variant="silent"
-                            icon={me.user ? (
-                                <StyledProfileImageIcon>
-                                    <StyledProfileImage user={me.user} />
-                                </StyledProfileImageIcon>
-                            ) : faUser}
-                            title="My Profile"
-                            collapsible
+                    <StyledNavigationLinks>
+                        <Link href="/search" passHref legacyBehavior>
+                            <IconTextButton
+                                forwardedAs="a"
+                                icon={faSearch}
+                                variant="silent"
+                                collapsible
+                                style={{ "--gap": "8px" }}
+                            >
+                                Search
+                            </IconTextButton>
+                        </Link>
+                        <ShuffleDialog
+                            trigger={
+                                <IconTextButton variant="silent" icon={faRandom} collapsible style={{ "--gap": "8px" }}>
+                                    Shuffle
+                                </IconTextButton>
+                            }
+                        />
+                        <Link
+                            href={currentYear && currentSeason ? `/year/${currentYear}/${currentSeason}` : "/"}
+                            passHref
+                            legacyBehavior
                         >
-                            My Profile
-                        </IconTextButton>
-                    </Link>
-                </StyledNavigationLinks>
-            </StyledNavigationContainer>
-        </StyledNavigation>
-    </>;
+                            <IconTextButton
+                                forwardedAs="a"
+                                variant="silent"
+                                icon={faTv}
+                                collapsible
+                                style={{ "--gap": "8px" }}
+                            >
+                                Current Season
+                            </IconTextButton>
+                        </Link>
+                        <Link href="/profile" passHref legacyBehavior>
+                            <IconTextButton
+                                forwardedAs="a"
+                                variant="silent"
+                                icon={
+                                    me.user ? (
+                                        <StyledProfileImageIcon>
+                                            <StyledProfileImage user={me.user} />
+                                        </StyledProfileImageIcon>
+                                    ) : (
+                                        faUser
+                                    )
+                                }
+                                title="My Profile"
+                                collapsible
+                            >
+                                My Profile
+                            </IconTextButton>
+                        </Link>
+                    </StyledNavigationLinks>
+                </StyledNavigationContainer>
+            </StyledNavigation>
+        </>
+    );
 }

@@ -12,7 +12,7 @@ const StyledTableOfContents = styled.ul`
     // TODO: Magic value neccessary?
     top: 92px;
     align-self: flex-start;
-    
+
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -20,13 +20,13 @@ const StyledTableOfContents = styled.ul`
     max-height: calc(100vh - 92px);
     padding-left: 16px;
     padding-bottom: 16px;
-    
+
     list-style: none;
     overflow-y: auto;
-    
+
     & > li {
         position: relative;
-        
+
         display: flex;
         align-items: center;
     }
@@ -75,10 +75,10 @@ export function TableOfContents({ headings }: { headings: Array<Heading> }) {
         <StyledTableOfContents>
             {headings.map(({ text, slug, depth }) => (
                 <StyledTableOfContentsHeading key={slug} $depth={depth}>
-                    {slug === currentSlug && (
-                        <StyledDot layoutId="dot"/>
-                    )}
-                    <Text as="a" link color={slug === currentSlug ? "text-muted" : "text-disabled"} href={`#${slug}`}>{text}</Text>
+                    {slug === currentSlug && <StyledDot layoutId="dot" />}
+                    <Text as="a" link color={slug === currentSlug ? "text-muted" : "text-disabled"} href={`#${slug}`}>
+                        {text}
+                    </Text>
                 </StyledTableOfContentsHeading>
             ))}
         </StyledTableOfContents>

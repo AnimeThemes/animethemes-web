@@ -17,7 +17,11 @@ import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortB
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
 import { Collapse } from "@/components/utils/Collapse";
-import type { StudioDetailPageAllQuery, StudioDetailPageQuery, StudioDetailPageQueryVariables } from "@/generated/graphql";
+import type {
+    StudioDetailPageAllQuery,
+    StudioDetailPageQuery,
+    StudioDetailPageQueryVariables,
+} from "@/generated/graphql";
 import useToggle from "@/hooks/useToggle";
 import { fetchData } from "@/lib/server";
 import theme from "@/theme";
@@ -36,7 +40,7 @@ import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 import type { RequiredNonNullable } from "@/utils/types";
 
-const StyledDesktopOnly = styled.div`    
+const StyledDesktopOnly = styled.div`
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         display: none;
     }
@@ -53,36 +57,41 @@ const StyledList = styled.div`
 interface StudioDetailPageProps extends RequiredNonNullable<StudioDetailPageQuery> {}
 
 interface StudioDetailPageParams extends ParsedUrlQuery {
-    studioSlug: string
+    studioSlug: string;
 }
 
 export default function StudioDetailPage({ studio }: StudioDetailPageProps) {
     const anime = studio.anime;
     const { largeCover } = extractImages(studio);
 
-    const [ showFilter, toggleShowFilter ] = useToggle();
-    const [ sortBy, setSortBy ] = useState(ANIME_A_Z);
+    const [showFilter, toggleShowFilter] = useToggle();
+    const [sortBy, setSortBy] = useState<
+        typeof ANIME_A_Z | typeof ANIME_Z_A | typeof ANIME_OLD_NEW | typeof ANIME_NEW_OLD
+    >(ANIME_A_Z);
 
-    const animeSorted = useMemo(() => [ ...anime ].sort(getComparator(sortBy)), [anime, sortBy]);
+    const animeSorted = useMemo(() => [...anime].sort(getComparator(sortBy)), [anime, sortBy]);
 
     return (
         <>
-            <SEO title={studio.name} image={largeCover}/>
+            <SEO title={studio.name} image={largeCover} />
             <Text variant="h1">{studio.name}</Text>
             <SidebarContainer>
                 <Column style={{ "--gap": "24px" }}>
                     <StyledDesktopOnly>
-                        <StudioCoverImage studio={studio} alt={`Logo of ${studio.name}`}/>
+                        <StudioCoverImage studio={studio} alt={`Logo of ${studio.name}`} />
                     </StyledDesktopOnly>
                     <DescriptionList>
                         {!!studio.resources && !!studio.resources.length && (
                             <DescriptionList.Item title="Links">
                                 <StyledList>
-                                    {studio.resources.sort(either(resourceSiteComparator).or(resourceAsComparator).chain()).map((resource) => (
-                                        <ExternalLink key={resource.link} href={resource.link}>
-                                            {resource.site}{!!resource.as && ` (${resource.as})`}
-                                        </ExternalLink>
-                                    ))}
+                                    {studio.resources
+                                        .sort(either(resourceSiteComparator).or(resourceAsComparator).chain())
+                                        .map((resource) => (
+                                            <ExternalLink key={resource.link} href={resource.link}>
+                                                {resource.site}
+                                                {!!resource.as && ` (${resource.as})`}
+                                            </ExternalLink>
+                                        ))}
                                 </StyledList>
                             </DescriptionList.Item>
                         )}
@@ -94,7 +103,7 @@ export default function StudioDetailPage({ studio }: StudioDetailPageProps) {
                             Anime
                             <Text color="text-disabled"> ({anime.length})</Text>
                         </Text>
-                        <FilterToggleButton onClick={toggleShowFilter}/>
+                        <FilterToggleButton onClick={toggleShowFilter} />
                     </Row>
                     <Collapse collapse={!showFilter}>
                         <SearchFilterGroup>
@@ -107,7 +116,7 @@ export default function StudioDetailPage({ studio }: StudioDetailPageProps) {
                         </SearchFilterGroup>
                     </Collapse>
                     <Column style={{ "--gap": "16px" }}>
-                        <StudioAnime anime={animeSorted}/>
+                        <StudioAnime anime={animeSorted} />
                     </Column>
                 </Column>
             </SidebarContainer>
@@ -116,13 +125,11 @@ export default function StudioDetailPage({ studio }: StudioDetailPageProps) {
 }
 
 interface StudioAnimeProps {
-    anime: StudioDetailPageProps["studio"]["anime"]
+    anime: StudioDetailPageProps["studio"]["anime"];
 }
 
 const StudioAnime = memo(function StudioAnime({ anime }: StudioAnimeProps) {
-    const animeCards = anime.map((anime) => (
-        <AnimeSummaryCard key={anime.slug} anime={anime} expandable/>
-    ));
+    const animeCards = anime.map((anime) => <AnimeSummaryCard key={anime.slug} anime={anime} expandable />);
 
     return <>{animeCards}</>;
 });
@@ -133,7 +140,7 @@ StudioDetailPage.fragments = {
         ${AnimeSummaryCard.fragments.expandable}
         ${StudioCoverImage.fragments.studio}
         ${extractImages.fragments.resourceWithImages}
-        
+
         fragment StudioDetailPageStudio on Studio {
             ...StudioCoverImageStudio
             ...extractImagesResourceWithImages
@@ -177,30 +184,33 @@ export const getStaticProps: GetStaticProps<StudioDetailPageProps, StudioDetailP
     let apiRequests = 0;
 
     if (!data) {
-        ({ data, apiRequests } = await fetchData<StudioDetailPageQuery, StudioDetailPageQueryVariables>(gql`
-            ${StudioDetailPage.fragments.studio}
+        ({ data, apiRequests } = await fetchData<StudioDetailPageQuery, StudioDetailPageQueryVariables>(
+            gql`
+                ${StudioDetailPage.fragments.studio}
 
-            query StudioDetailPage($studioSlug: String!) {
-                studio(slug: $studioSlug) {
-                    ...StudioDetailPageStudio
+                query StudioDetailPage($studioSlug: String!) {
+                    studio(slug: $studioSlug) {
+                        ...StudioDetailPageStudio
+                    }
                 }
-            }
-        `, params));
+            `,
+            params,
+        ));
     }
 
     if (!data.studio) {
         return {
-            notFound: true
+            notFound: true,
         };
     }
 
     return {
         props: {
             ...getSharedPageProps(apiRequests),
-            studio: data.studio
+            studio: data.studio,
         },
         // Revalidate after 1 hour (= 3600 seconds).
-        revalidate: 3600
+        revalidate: 3600,
     };
 };
 
@@ -208,7 +218,7 @@ export const getStaticPaths: GetStaticPaths<StudioDetailPageParams> = async () =
     return fetchStaticPaths(async () => {
         const { data } = await fetchData<StudioDetailPageAllQuery>(gql`
             ${StudioDetailPage.fragments.studio}
-            
+
             query StudioDetailPageAll {
                 studioAll {
                     ...StudioDetailPageStudio
@@ -220,8 +230,8 @@ export const getStaticPaths: GetStaticPaths<StudioDetailPageParams> = async () =
 
         return data.studioAll.map((studio) => ({
             params: {
-                studioSlug: studio.slug
-            }
+                studioSlug: studio.slug,
+            },
         }));
     });
 };
