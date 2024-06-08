@@ -20,71 +20,62 @@ import type { SearchGlobalQuery, SearchGlobalQueryVariables } from "@/generated/
 import { fetchDataClient } from "@/lib/client";
 
 interface SearchGlobalProps {
-    searchQuery?: string
+    searchQuery?: string;
 }
 
 export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
-    const fetchSearchResults = () => fetchDataClient<SearchGlobalQuery, SearchGlobalQueryVariables>(gql`
-        ${AnimeSummaryCard.fragments.anime}
-        ${AnimeSummaryCard.fragments.expandable}
-        ${ThemeSummaryCard.fragments.theme}
-        ${ThemeSummaryCard.fragments.expandable}
-        ${ArtistSummaryCard.fragments.artist}
-        ${PlaylistSummaryCard.fragments.playlist}
-        ${PlaylistSummaryCard.fragments.showOwner}
-        
-        query SearchGlobal($args: SearchArgs!) {
-            search(args: $args) {
-                anime {
-                    ...AnimeSummaryCardAnime
-                    ...AnimeSummaryCardAnimeExpandable
-                }
-                themes {
-                    ...ThemeSummaryCardTheme
-                    ...ThemeSummaryCardThemeExpandable
-                }
-                artists {
-                    ...ArtistSummaryCardArtist
-                }
-                series {
-                    slug
-                    name
-                }
-                studios {
-                    slug
-                    name
-                }
-                playlists {
-                    ...PlaylistSummaryCardPlaylist
-                    ...PlaylistSummaryCardShowOwner
-                }
-            }
-        }
-    `, { args: { query: searchQuery ?? null } });
+    const fetchSearchResults = () =>
+        fetchDataClient<SearchGlobalQuery, SearchGlobalQueryVariables>(
+            gql`
+                ${AnimeSummaryCard.fragments.anime}
+                ${AnimeSummaryCard.fragments.expandable}
+                ${ThemeSummaryCard.fragments.theme}
+                ${ThemeSummaryCard.fragments.expandable}
+                ${ArtistSummaryCard.fragments.artist}
+                ${PlaylistSummaryCard.fragments.playlist}
+                ${PlaylistSummaryCard.fragments.showOwner}
 
-    const {
-        data,
-        error,
-        isLoading,
-        isError
-    } = useQuery(
-        ["searchGlobal", searchQuery],
-        fetchSearchResults,
-        {
-            keepPreviousData: true
-        }
-    );
+                query SearchGlobal($args: SearchArgs!) {
+                    search(args: $args) {
+                        anime {
+                            ...AnimeSummaryCardAnime
+                            ...AnimeSummaryCardAnimeExpandable
+                        }
+                        themes {
+                            ...ThemeSummaryCardTheme
+                            ...ThemeSummaryCardThemeExpandable
+                        }
+                        artists {
+                            ...ArtistSummaryCardArtist
+                        }
+                        series {
+                            slug
+                            name
+                        }
+                        studios {
+                            slug
+                            name
+                        }
+                        playlists {
+                            ...PlaylistSummaryCardPlaylist
+                            ...PlaylistSummaryCardShowOwner
+                        }
+                    }
+                }
+            `,
+            { args: { query: searchQuery ?? null } },
+        );
+
+    const { data, error, isLoading, isError } = useQuery(["searchGlobal", searchQuery], fetchSearchResults, {
+        keepPreviousData: true,
+    });
 
     if (isError) {
-        return (
-            <ErrorCard error={error}/>
-        );
+        return <ErrorCard error={error} />;
     }
 
     if (isLoading || !data) {
-        return (
-            <Text block>Searching...</Text>
-        );
+        return <Text block>Searching...</Text>;
     }
 
     const {
@@ -105,9 +96,7 @@ export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
         playlistResults.length;
 
     if (!totalResults) {
-        return (
-            <Text block>No results found for query &quot;{searchQuery}&quot;. Did you spell it correctly?</Text>
-        );
+        return <Text block>No results found for query &quot;{searchQuery}&quot;. Did you spell it correctly?</Text>;
     }
 
     return (
@@ -116,27 +105,33 @@ export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
                 entity="anime"
                 title="Anime"
                 results={animeResults}
-                renderSummaryCard={(anime) => <AnimeSummaryCard key={anime.slug} anime={anime} expandable/>}
+                renderSummaryCard={(anime) => <AnimeSummaryCard key={anime.slug} anime={anime} expandable />}
             />
             <GlobalSearchSection
                 entity="theme"
                 title="Themes"
                 results={themeResults}
-                renderSummaryCard={(theme) => <ThemeSummaryCard key={`${theme.anime?.slug}-${theme.id}`} theme={theme} expandable/>}
+                renderSummaryCard={(theme) => (
+                    <ThemeSummaryCard key={`${theme.anime?.slug}-${theme.id}`} theme={theme} expandable />
+                )}
             />
             <GlobalSearchSection
                 entity="artist"
                 title="Artist"
                 results={artistResults}
-                renderSummaryCard={(artist) => <ArtistSummaryCard key={artist.slug} artist={artist}/>}
+                renderSummaryCard={(artist) => <ArtistSummaryCard key={artist.slug} artist={artist} />}
             />
             <GlobalSearchSection
                 entity="series"
                 title="Series"
                 results={seriesResults}
                 renderSummaryCard={(series) => (
-                    <SummaryCard key={series.slug} title={series.name} description="Series"
-                        to={`/series/${series.slug}`}/>
+                    <SummaryCard
+                        key={series.slug}
+                        title={series.name}
+                        description="Series"
+                        to={`/series/${series.slug}`}
+                    />
                 )}
             />
             <GlobalSearchSection
@@ -144,25 +139,31 @@ export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
                 title="Studios"
                 results={studioResults}
                 renderSummaryCard={(studio) => (
-                    <SummaryCard key={studio.slug} title={studio.name} description="Studio"
-                        to={`/studio/${studio.slug}`}/>
+                    <SummaryCard
+                        key={studio.slug}
+                        title={studio.name}
+                        description="Studio"
+                        to={`/studio/${studio.slug}`}
+                    />
                 )}
             />
             <GlobalSearchSection
                 entity="playlist"
                 title="Playlists"
                 results={playlistResults}
-                renderSummaryCard={(playlist) => <PlaylistSummaryCard key={playlist.id} playlist={playlist} showOwner />}
+                renderSummaryCard={(playlist) => (
+                    <PlaylistSummaryCard key={playlist.id} playlist={playlist} showOwner />
+                )}
             />
         </>
     );
 }
 
 interface GlobalSearchSectionProps<T> {
-    entity: string
-    title: string
-    results: Array<T>
-    renderSummaryCard: (result: T) => ReactNode
+    entity: string;
+    title: string;
+    results: Array<T>;
+    renderSummaryCard: (result: T) => ReactNode;
 }
 
 function GlobalSearchSection<T>({ entity, title, results, renderSummaryCard }: GlobalSearchSectionProps<T>) {
@@ -176,22 +177,19 @@ function GlobalSearchSection<T>({ entity, title, results, renderSummaryCard }: G
     const resultsPreview = results.slice(0, 3);
     const hasMoreResults = results.length > 3;
 
-    return <>
-        <Text variant="h2">{title}</Text>
-        <Column style={{ "--gap": "16px" }}>
-            {resultsPreview.map(renderSummaryCard)}
-        </Column>
-        {hasMoreResults && (
-            <Row style={{ "--justify-content": "center" }}>
-                <Link
-                    href={{ pathname: `/search/${entity}`, query: urlParams }}
-                    passHref
-                    legacyBehavior>
-                    <Button as="a" variant="silent" isCircle title="See all results">
-                        <Icon icon={faChevronDown}/>
-                    </Button>
-                </Link>
-            </Row>
-        )}
-    </>;
+    return (
+        <>
+            <Text variant="h2">{title}</Text>
+            <Column style={{ "--gap": "16px" }}>{resultsPreview.map(renderSummaryCard)}</Column>
+            {hasMoreResults && (
+                <Row style={{ "--justify-content": "center" }}>
+                    <Link href={{ pathname: `/search/${entity}`, query: urlParams }} passHref legacyBehavior>
+                        <Button as="a" variant="silent" isCircle title="See all results">
+                            <Icon icon={faChevronDown} />
+                        </Button>
+                    </Link>
+                </Row>
+            )}
+        </>
+    );
 }

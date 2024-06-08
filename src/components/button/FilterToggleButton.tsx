@@ -6,6 +6,8 @@ import { IconTextButton } from "@/components/button/IconTextButton";
 
 export function FilterToggleButton(props: Partial<ComponentPropsWithoutRef<typeof IconTextButton>>) {
     return (
-        <IconTextButton icon={faFilter} collapsible {...props}>Filter</IconTextButton>
+        <IconTextButton icon={faFilter} collapsible {...props}>
+            Filter
+        </IconTextButton>
     );
 }

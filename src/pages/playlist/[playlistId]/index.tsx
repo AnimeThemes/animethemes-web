@@ -14,7 +14,7 @@ import {
     faShuffle,
     faTrash,
     faTrophy,
-    faXmark
+    faXmark,
 } from "@fortawesome/pro-solid-svg-icons";
 import { isAxiosError } from "axios";
 import { Reorder, useDragControls } from "framer-motion";
@@ -52,7 +52,7 @@ import type {
     PlaylistDetailPagePlaylistQuery,
     PlaylistDetailPagePlaylistQueryVariables,
     PlaylistDetailPageQuery,
-    PlaylistDetailPageQueryVariables
+    PlaylistDetailPageQueryVariables,
 } from "@/generated/graphql";
 import useToggle from "@/hooks/useToggle";
 import { fetchDataClient } from "@/lib/client";
@@ -68,7 +68,7 @@ import {
     SONG_A_Z,
     SONG_Z_A,
     sortTransformed,
-    UNSORTED
+    UNSORTED,
 } from "@/utils/comparators";
 import createVideoSlug from "@/utils/createVideoSlug";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
@@ -77,7 +77,7 @@ import type { Comparator, RequiredNonNullable } from "@/utils/types";
 
 const StyledDesktopOnly = styled.div`
     gap: 24px;
-    
+
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         display: none;
     }
@@ -86,7 +86,7 @@ const StyledHeader = styled.div`
     display: flex;
     align-items: center;
     gap: 16px;
-    
+
     & > :last-child:not(:first-child) {
         margin-inline-start: auto;
     }
@@ -109,11 +109,11 @@ const StyledRank = styled.span`
     width: 32px;
     height: 32px;
     border-radius: 16px;
-    
+
     display: flex;
     justify-content: center;
     align-items: center;
-    
+
     font-size: 16px;
     color: ${theme.colors["text-primary"]};
     background-color: ${theme.colors["solid-on-card"]};
@@ -123,28 +123,37 @@ const StyledRank = styled.span`
 const RANK_ASC = "rank-asc";
 const RANK_DESC = "rank-desc";
 
-function getRankComparator(name: string): Comparator<number> {
-    switch (name) {
-        case RANK_ASC:
-            return (a, b) => a - b;
-        case RANK_DESC:
-            return (a, b) => b - a;
-        default:
-            return () => 0;
-    }
-}
+const comparators = {
+    [UNSORTED]: () => 0,
+    [SONG_A_Z]: sortTransformed(getComparator(SONG_A_Z), (track) => track.video.entries[0].theme),
+    [SONG_Z_A]: sortTransformed(getComparator(SONG_Z_A), (track) => track.video.entries[0].theme),
+    [ANIME_A_Z]: sortTransformed(getComparator(ANIME_A_Z), (track) => track.video.entries[0].theme?.anime),
+    [ANIME_Z_A]: sortTransformed(getComparator(ANIME_Z_A), (track) => track.video.entries[0].theme?.anime),
+    [ANIME_OLD_NEW]: sortTransformed(getComparator(ANIME_OLD_NEW), (track) => track.video.entries[0].theme?.anime),
+    [ANIME_NEW_OLD]: sortTransformed(getComparator(ANIME_NEW_OLD), (track) => track.video.entries[0].theme?.anime),
+    [RANK_ASC]: (a, b) => a.rank - b.rank,
+    [RANK_DESC]: (a, b) => a.rank - b.rank,
+} satisfies Record<
+    string,
+    Comparator<NonNullable<PlaylistDetailPageQuery["playlist"]>["tracks"][number] & { rank: number }>
+>;
 
-type LinkedList<T> = Array<{
-    id: string;
-    previous?: { id: string } | null;
-    next?: { id: string } | null;
-} & T>;
+type LinkedList<T> = Array<
+    {
+        id: string;
+        previous?: { id: string } | null;
+        next?: { id: string } | null;
+    } & T
+>;
 
 function sortLinkedList<T>(list: LinkedList<T>) {
-    const lookUp = list.reduce((prev, curr) => {
-        prev[curr.id] = curr;
-        return prev;
-    }, {} as Record<string, typeof list[number]>);
+    const lookUp = list.reduce(
+        (prev, curr) => {
+            prev[curr.id] = curr;
+            return prev;
+        },
+        {} as Record<string, (typeof list)[number]>,
+    );
 
     let next = list.find((item) => !item.previous);
     const sortedList = [];
@@ -160,7 +169,7 @@ function sortLinkedList<T>(list: LinkedList<T>) {
 interface PlaylistDetailPageProps extends SharedPageProps, RequiredNonNullable<PlaylistDetailPageQuery> {}
 
 interface PlaylistDetailPageParams extends ParsedUrlQuery {
-    playlistId: string
+    playlistId: string;
 }
 
 export default function PlaylistDetailPage({ playlist: initialPlaylist, me: initialMe }: PlaylistDetailPageProps) {
@@ -170,15 +179,21 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
     const { data: playlist, mutate } = useSWR(
         ["PlaylistDetailPagePlaylist", `/api/playlist/${initialPlaylist.id}`],
         async () => {
-            const { data } = await fetchDataClient<PlaylistDetailPagePlaylistQuery, PlaylistDetailPagePlaylistQueryVariables>(gql`
-                ${PlaylistDetailPage.fragments.playlist}
-                
-                query PlaylistDetailPagePlaylist($playlistId: String!) {
-                    playlist(id: $playlistId) {
-                        ...PlaylistDetailPagePlaylist
+            const { data } = await fetchDataClient<
+                PlaylistDetailPagePlaylistQuery,
+                PlaylistDetailPagePlaylistQueryVariables
+            >(
+                gql`
+                    ${PlaylistDetailPage.fragments.playlist}
+
+                    query PlaylistDetailPagePlaylist($playlistId: String!) {
+                        playlist(id: $playlistId) {
+                            ...PlaylistDetailPagePlaylist
+                        }
                     }
-                }
-            `, { playlistId: initialPlaylist.id });
+                `,
+                { playlistId: initialPlaylist.id },
+            );
 
             if (!data.playlist) {
                 location.reload();
@@ -189,7 +204,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
 
             return data.playlist;
         },
-        { fallbackData: initialPlaylist }
+        { fallbackData: initialPlaylist },
     );
     const { data: me } = useSWR(
         ["PlaylistDetailPageMe", "/api/me"],
@@ -208,48 +223,33 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
 
             return data.me;
         },
-        { fallbackData: initialMe }
+        { fallbackData: initialMe },
     );
 
-    const [ showFilter, toggleShowFilter ] = useToggle();
-    const [ sortBy, setSortBy ] = useState(UNSORTED);
+    const [showFilter, toggleShowFilter] = useToggle();
+    const [sortBy, setSortBy] = useState<keyof typeof comparators>(UNSORTED);
 
-    const [ isDescriptionEditable, setDescriptionEditable ] = useState(false);
-    const [ description, setDescription ] = useState(playlist.description ?? "");
+    const [isDescriptionEditable, setDescriptionEditable] = useState(false);
+    const [description, setDescription] = useState(playlist.description ?? "");
 
     const isOwner = me.user?.name === playlist.user.name;
     const isRanking = playlist.name.startsWith("[#] ");
 
-    const tracks = useMemo(() => [...playlist.tracks].map((track, index) => ({ ...track, rank: index + 1 })), [playlist.tracks]);
-    const tracksSorted = useMemo(() => [...tracks].sort(
-        sortTransformed(
-            getComparator(sortBy) ?? getRankComparator(sortBy),
-            (track) => {
-                switch (sortBy) {
-                    case UNSORTED:
-                        return track;
-                    case SONG_A_Z:
-                    case SONG_Z_A:
-                        return track.video.entries[0].theme;
-                    case ANIME_A_Z:
-                    case ANIME_Z_A:
-                    case ANIME_OLD_NEW:
-                    case ANIME_NEW_OLD:
-                        return track.video.entries[0].theme?.anime;
-                    case RANK_ASC:
-                    case RANK_DESC:
-                        return track.rank;
-                }
-            }
-        )
-    ), [sortBy, tracks]);
+    const tracks = useMemo(
+        () => [...playlist.tracks].map((track, index) => ({ ...track, rank: index + 1 })),
+        [playlist.tracks],
+    );
+    const tracksSorted = useMemo(() => [...tracks].sort(comparators[sortBy]), [sortBy, tracks]);
 
-    const playAll = useCallback((initiatingVideoIndex: number) => {
-        const watchList = tracksSorted.map((track) => createWatchListItem(track.video));
-        setWatchList(watchList, true);
-        setWatchListFactory(null);
-        setCurrentWatchListItem(watchList[initiatingVideoIndex]);
-    }, [setCurrentWatchListItem, setWatchList, setWatchListFactory, tracksSorted]);
+    const playAll = useCallback(
+        (initiatingVideoIndex: number) => {
+            const watchList = tracksSorted.map((track) => createWatchListItem(track.video));
+            setWatchList(watchList, true);
+            setWatchListFactory(null);
+            setCurrentWatchListItem(watchList[initiatingVideoIndex]);
+        },
+        [setCurrentWatchListItem, setWatchList, setWatchListFactory, tracksSorted],
+    );
 
     const shuffleAll = useCallback(() => {
         if (tracksSorted.length === 0) {
@@ -271,34 +271,47 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
         }
     }, [router, setCurrentWatchListItem, setWatchList, setWatchListFactory, tracksSorted]);
 
-    const updateTrackOrder = useCallback(async (newTracks: typeof tracks) => {
-        await mutate({
-            ...playlist,
-            tracks: newTracks,
-        }, { revalidate: false });
-    }, [mutate, playlist]);
+    const updateTrackOrder = useCallback(
+        async (newTracks: typeof tracks) => {
+            await mutate(
+                {
+                    ...playlist,
+                    tracks: newTracks,
+                },
+                { revalidate: false },
+            );
+        },
+        [mutate, playlist],
+    );
 
-    const updateTrackOrderRemote = useCallback(async (trackId: string) => {
-        const trackIndex = tracks.findIndex((track) => track.id === trackId);
+    const updateTrackOrderRemote = useCallback(
+        async (trackId: string) => {
+            const trackIndex = tracks.findIndex((track) => track.id === trackId);
 
-        const nextId = tracks[trackIndex + 1]?.id;
-        const previousId = tracks[trackIndex - 1]?.id;
+            const nextId = tracks[trackIndex + 1]?.id;
+            const previousId = tracks[trackIndex - 1]?.id;
 
-        if (nextId || previousId) {
-            await axios.put(`/playlist/${playlist.id}/track/${trackId}`, {
-                next: nextId,
-                previous: nextId ? undefined : previousId,
-            });
+            if (nextId || previousId) {
+                await axios.put(`/playlist/${playlist.id}/track/${trackId}`, {
+                    next: nextId,
+                    previous: nextId ? undefined : previousId,
+                });
 
-            await mutate();
-        }
-    }, [mutate, playlist.id, tracks]);
+                await mutate();
+            }
+        },
+        [mutate, playlist.id, tracks],
+    );
 
-    const coverImageResources = useMemo(() => playlist.tracks.flatMap((track) => {
-        const anime = track.video.entries[0].theme?.anime;
+    const coverImageResources = useMemo(
+        () =>
+            playlist.tracks.flatMap((track) => {
+                const anime = track.video.entries[0].theme?.anime;
 
-        return anime ? [anime] : [];
-    }), [playlist.tracks]);
+                return anime ? [anime] : [];
+            }),
+        [playlist.tracks],
+    );
 
     const topRankedTrack = tracks.find((track) => track.rank === 1);
 
@@ -318,7 +331,13 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                         <Column style={{ "--gap": "16px" }}>
                             <PlaylistEditDialog playlist={playlist} />
                             {!isDescriptionEditable && !description && (
-                                <IconTextButton icon={faPlus} variant="solid" onClick={() => setDescriptionEditable(true)}>Add Description</IconTextButton>
+                                <IconTextButton
+                                    icon={faPlus}
+                                    variant="solid"
+                                    onClick={() => setDescriptionEditable(true)}
+                                >
+                                    Add Description
+                                </IconTextButton>
                             )}
                         </Column>
                     )}
@@ -329,7 +348,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                     </DescriptionList>
                 </Column>
                 <Column style={{ "--gap": "24px" }}>
-                    {(isDescriptionEditable || description) ? (
+                    {isDescriptionEditable || description ? (
                         <Description
                             playlist={playlist}
                             description={description}
@@ -339,14 +358,16 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                             isOwner={isOwner}
                         />
                     ) : null}
-                    {(isRanking && topRankedTrack) ? (
+                    {isRanking && topRankedTrack ? (
                         <FeaturedTheme
                             theme={{
                                 ...tracks[0].video.entries[0].theme,
-                                entries: [{
-                                    ...tracks[0].video.entries[0],
-                                    videos: [tracks[0].video],
-                                }],
+                                entries: [
+                                    {
+                                        ...tracks[0].video.entries[0],
+                                        videos: [tracks[0].video],
+                                    },
+                                ],
                             }}
                             hasGrill={false}
                             card={
@@ -367,13 +388,18 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                             <Text color="text-disabled"> ({playlist.tracks_count})</Text>
                         </Text>
                         {tracksSorted.length > 0 && (
-                            <IconTextButton icon={faShuffle} collapsible onClick={shuffleAll}>Shuffle All</IconTextButton>
+                            <IconTextButton icon={faShuffle} collapsible onClick={shuffleAll}>
+                                Shuffle All
+                            </IconTextButton>
                         )}
-                        <FilterToggleButton onClick={toggleShowFilter}/>
+                        <FilterToggleButton onClick={toggleShowFilter} />
                     </StyledHeader>
                     <Collapse collapse={!showFilter}>
                         <SearchFilterGroup>
-                            <SearchFilterSortBy value={sortBy} setValue={(sortBy) => startTransition(() => setSortBy(sortBy))}>
+                            <SearchFilterSortBy
+                                value={sortBy}
+                                setValue={(sortBy) => startTransition(() => setSortBy(sortBy))}
+                            >
                                 <SearchFilterSortBy.Option value={UNSORTED}>Custom</SearchFilterSortBy.Option>
                                 <SearchFilterSortBy.Option value={RANK_DESC}>Reversed</SearchFilterSortBy.Option>
                                 <SearchFilterSortBy.Option value={SONG_A_Z}>A ➜ Z (Song)</SearchFilterSortBy.Option>
@@ -385,7 +411,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                             </SearchFilterSortBy>
                         </SearchFilterGroup>
                     </Collapse>
-                    <PlaylistTrackList 
+                    <PlaylistTrackList
                         playlist={playlist}
                         tracks={tracksSorted}
                         isReorderable={sortBy === UNSORTED && isOwner}
@@ -411,7 +437,7 @@ interface DescriptionProps {
 }
 
 function Description({ playlist, description, setDescription, isEditable, setEditable, isOwner }: DescriptionProps) {
-    const [ isCollapsed, setCollapsed ] = useState(true);
+    const [isCollapsed, setCollapsed] = useState(true);
 
     const [isBusy, setBusy] = useState(false);
     const [error, setError] = useState("");
@@ -424,12 +450,9 @@ function Description({ playlist, description, setDescription, isEditable, setEdi
             await axios.put(`/playlist/${playlist.id}`, {
                 description,
             });
-            await mutate((key) => (
-                [key].flat().some((key) =>
-                    key === `/api/playlist/${playlist.id}` ||
-                    key === "/api/me/playlist"
-                )
-            ));
+            await mutate((key) =>
+                [key].flat().some((key) => key === `/api/playlist/${playlist.id}` || key === "/api/me/playlist"),
+            );
         } catch (error: unknown) {
             if (isAxiosError(error) && error.response) {
                 setError(error.response.data.message ?? "An unknown error occured!");
@@ -452,31 +475,54 @@ function Description({ playlist, description, setDescription, isEditable, setEdi
         <>
             <StyledHeader>
                 <Text variant="h2">Description</Text>
-                {isOwner ? (isEditable ? (
-                    <Row>
-                        {!isBusy && <IconTextButton icon={faXmark} collapsible onClick={() => cancel()}>Cancel</IconTextButton>}
-                        <Busy isBusy={isBusy}>
-                            <IconTextButton icon={faCheck} collapsible onClick={() => submit()}>Save</IconTextButton>
-                        </Busy>
-                    </Row>
-                ) : (
-                    <IconTextButton icon={faPen} collapsible onClick={() => setEditable(!isEditable)}>Edit</IconTextButton>
-                )) : null}
+                {isOwner ? (
+                    isEditable ? (
+                        <Row>
+                            {!isBusy && (
+                                <IconTextButton icon={faXmark} collapsible onClick={() => cancel()}>
+                                    Cancel
+                                </IconTextButton>
+                            )}
+                            <Busy isBusy={isBusy}>
+                                <IconTextButton icon={faCheck} collapsible onClick={() => submit()}>
+                                    Save
+                                </IconTextButton>
+                            </Busy>
+                        </Row>
+                    ) : (
+                        <IconTextButton icon={faPen} collapsible onClick={() => setEditable(!isEditable)}>
+                            Edit
+                        </IconTextButton>
+                    )
+                ) : null}
             </StyledHeader>
-            {(isOwner && isEditable) ? (
+            {isOwner && isEditable ? (
                 <div>
-                    <TextArea value={description} onChange={(event) => setDescription(event.target.value)} rows={5} maxLength={1000} placeholder="Write your description here" />
-                    <Text variant="small" color="text-muted">{description.length} / 1000</Text>
+                    <TextArea
+                        value={description}
+                        onChange={(event) => setDescription(event.target.value)}
+                        rows={5}
+                        maxLength={1000}
+                        placeholder="Write your description here"
+                    />
+                    <Text variant="small" color="text-muted">
+                        {description.length} / 1000
+                    </Text>
                 </div>
             ) : (
                 <Card hoverable onClick={() => setCollapsed(!isCollapsed)}>
                     <HeightTransition>
-                        <Text as="p" maxLines={isCollapsed ? 2 : null}>{description}</Text>
+                        <Text as="p" maxLines={isCollapsed ? 2 : null}>
+                            {description}
+                        </Text>
                     </HeightTransition>
                 </Card>
             )}
             {error ? (
-                <Text color="text-warning"><strong>The playlist could not be updated: </strong>{error}</Text>
+                <Text color="text-warning">
+                    <strong>The playlist could not be updated: </strong>
+                    {error}
+                </Text>
             ) : null}
         </>
     );
@@ -501,7 +547,7 @@ const PlaylistTrackList = memo(function PlaylistTrackList({
     isRanking,
     playAll,
     updateTrackOrderRemote,
-    updateTrackOrder
+    updateTrackOrder,
 }: PlaylistTrackListProps) {
     return (
         <StyledReorderContainer>
@@ -542,7 +588,7 @@ const StyledDragHandle = styled(Icon)`
     cursor: grab;
     user-select: none;
     touch-action: none;
-    
+
     &:active:hover {
         cursor: grabbing;
     }
@@ -616,19 +662,31 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
                         </MenuContent>
                     </Menu>
                 }
-                append={isDraggable ? <StyledDragHandle icon={faGripVertical} color="text-disabled" onPointerDown={(event) => controls.start(event)} /> : null}
+                append={
+                    isDraggable ? (
+                        <StyledDragHandle
+                            icon={faGripVertical}
+                            color="text-disabled"
+                            onPointerDown={(event) => controls.start(event)}
+                        />
+                    ) : null
+                }
             />
             {isRanking ? (
-                <StyledRank>{track.rank === 1 ? (
-                    <Icon icon={faTrophy} color="gold" />
-                ) : `#${track.rank}`}</StyledRank>
+                <StyledRank>{track.rank === 1 ? <Icon icon={faTrophy} color="gold" /> : `#${track.rank}`}</StyledRank>
             ) : null}
         </StyledSummaryCardWrapper>
     );
 
     if (isDraggable) {
         return (
-            <Reorder.Item as="div" value={track} dragListener={false} dragControls={controls} onDragEnd={() => onDragEnd?.()}>
+            <Reorder.Item
+                as="div"
+                value={track}
+                dragListener={false}
+                dragControls={controls}
+                onDragEnd={() => onDragEnd?.()}
+            >
                 {element}
             </Reorder.Item>
         );
@@ -642,7 +700,7 @@ PlaylistDetailPage.fragments = {
         ${VideoSummaryCardFragmentVideo}
         ${PlaylistEditDialog.fragments.playlist}
         ${PlaylistTrackRemoveDialog.fragments.playlist}
-        
+
         fragment PlaylistDetailPagePlaylist on Playlist {
             ...PlaylistEditDialogPlaylist
             ...PlaylistTrackRemoveDialogPlaylist
@@ -684,30 +742,37 @@ PlaylistDetailPage.fragments = {
     `,
 };
 
-export const getServerSideProps: GetServerSideProps<PlaylistDetailPageProps, PlaylistDetailPageParams> = async ({ params, req }) => {
+export const getServerSideProps: GetServerSideProps<PlaylistDetailPageProps, PlaylistDetailPageParams> = async ({
+    params,
+    req,
+}) => {
     if (!params) {
         return { notFound: true };
     }
 
-    const { data, apiRequests } = await fetchData<PlaylistDetailPageQuery, PlaylistDetailPageQueryVariables>(gql`
-        ${PlaylistDetailPage.fragments.playlist}
-        ${PlaylistDetailPage.fragments.user}
-        
-        query PlaylistDetailPage($playlistId: String!) {
-            playlist(id: $playlistId) {
-                ...PlaylistDetailPagePlaylist
-            }
-            me {
-                user {
-                    ...PlaylistDetailPageUser
+    const { data, apiRequests } = await fetchData<PlaylistDetailPageQuery, PlaylistDetailPageQueryVariables>(
+        gql`
+            ${PlaylistDetailPage.fragments.playlist}
+            ${PlaylistDetailPage.fragments.user}
+
+            query PlaylistDetailPage($playlistId: String!) {
+                playlist(id: $playlistId) {
+                    ...PlaylistDetailPagePlaylist
+                }
+                me {
+                    user {
+                        ...PlaylistDetailPageUser
+                    }
                 }
             }
-        }
-    `, { playlistId: params.playlistId }, { req });
+        `,
+        { playlistId: params.playlistId },
+        { req },
+    );
 
     if (!data.playlist) {
         return {
-            notFound: true
+            notFound: true,
         };
     }
 

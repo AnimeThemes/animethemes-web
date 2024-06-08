@@ -15,23 +15,21 @@ import getSharedPageProps from "@/utils/getSharedPageProps";
 interface SeriesIndexPageProps extends SharedPageProps, SeriesIndexPageQuery {}
 
 export default function SeriesIndexPage({ seriesAll }: SeriesIndexPageProps) {
-    return <>
-        <BackToTopButton/>
-        <Text variant="h1">Series Index</Text>
-        <AlphabeticalIndex items={seriesAll}>
-            {(series) => (
-                <Link
-                    key={series.slug}
-                    href={`/series/${series.slug}`}
-                    passHref
-                    legacyBehavior
-                    prefetch={false}
-                >
-                    <Text as="a" block link>{series.name}</Text>
-                </Link>
-            )}
-        </AlphabeticalIndex>
-    </>;
+    return (
+        <>
+            <BackToTopButton />
+            <Text variant="h1">Series Index</Text>
+            <AlphabeticalIndex items={seriesAll}>
+                {(series) => (
+                    <Link key={series.slug} href={`/series/${series.slug}`} passHref legacyBehavior prefetch={false}>
+                        <Text as="a" block link>
+                            {series.name}
+                        </Text>
+                    </Link>
+                )}
+            </AlphabeticalIndex>
+        </>
+    );
 }
 
 export const getStaticProps: GetStaticProps<SeriesIndexPageProps> = async () => {
@@ -52,6 +50,6 @@ export const getStaticProps: GetStaticProps<SeriesIndexPageProps> = async () => 
     return {
         props,
         // Revalidate after 3 hours (= 10800 seconds).
-        revalidate: 10800
+        revalidate: 10800,
     };
 };

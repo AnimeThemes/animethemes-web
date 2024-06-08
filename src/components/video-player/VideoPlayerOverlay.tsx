@@ -49,7 +49,7 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
     const video = entry.videos[videoIndex];
 
     const { watchList, setWatchList, currentWatchListItem } = useContext(PlayerContext);
-    const { isFullscreen, toggleFullscreen, } = useContext(FullscreenContext);
+    const { isFullscreen, toggleFullscreen } = useContext(FullscreenContext);
     const context = useContext(VideoPlayerContext);
     const [audioMode] = useSetting(AudioMode, { storageSync: false });
 
@@ -57,22 +57,22 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
         throw new Error("VideoPlayerOverlay needs to be inside VideoPlayer!");
     }
 
-    const {
-        updateAudioMode,
-    } = context;
+    const { updateAudioMode } = context;
 
-    const otherEntries = theme.entries.map((otherEntry) => {
-        const videos = otherEntry.videos;
+    const otherEntries = theme.entries
+        .map((otherEntry) => {
+            const videos = otherEntry.videos;
 
-        if (!videos.length) {
-            return null;
-        }
+            if (!videos.length) {
+                return null;
+            }
 
-        return {
-            ...otherEntry,
-            videos
-        };
-    }).filter((otherEntry) => !!otherEntry);
+            return {
+                ...otherEntry,
+                videos,
+            };
+        })
+        .filter((otherEntry) => !!otherEntry);
 
     return (
         <StyledOverlay>
@@ -82,14 +82,14 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
                         // Flip the structure on it's head,
                         // because we need video as the root object here.
                         ...video,
-                        entries: [{
-                            ...entry,
-                            theme,
-                        }],
+                        entries: [
+                            {
+                                ...entry,
+                                theme,
+                            },
+                        ],
                     }}
-                    trigger={
-                        <StyledOverlayButton icon={faPlus} isCircle title="Add to playlist" />
-                    }
+                    trigger={<StyledOverlayButton icon={faPlus} isCircle title="Add to playlist" />}
                 />
                 <ShareMenu
                     pagePath={context.videoPagePath}
@@ -106,54 +106,82 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
                             <Text variant="small">Media type</Text>
                         </MenuLabel>
                         <MenuItem onSelect={() => updateAudioMode(AudioMode.DISABLED)}>
-                            <Icon icon={faCheck} color={audioMode === AudioMode.DISABLED ? "text-primary" : "transparent"} />
+                            <Icon
+                                icon={faCheck}
+                                color={audioMode === AudioMode.DISABLED ? "text-primary" : "transparent"}
+                            />
                             Video
                         </MenuItem>
                         <MenuItem onSelect={() => updateAudioMode(AudioMode.ENABLED)}>
-                            <Icon icon={faCheck} color={audioMode === AudioMode.ENABLED ? "text-primary" : "transparent"} />
+                            <Icon
+                                icon={faCheck}
+                                color={audioMode === AudioMode.ENABLED ? "text-primary" : "transparent"}
+                            />
                             Audio
                         </MenuItem>
                         <MenuSeparator />
-                        {otherEntries.map((otherEntry) => otherEntry ? (
-                            <Fragment key={otherEntry.version ?? 1}>
-                                <MenuLabel>
-                                    <Row style={{ "--gap": "8px", "--align-items": "baseline" }}>
-                                        <Text variant="small">Version {otherEntry.version || 1}</Text>
-                                        <ThemeEntryTags entry={otherEntry}/>
-                                    </Row>
-                                </MenuLabel>
-                                {otherEntry.videos.map((otherVideo) => (
-                                    <MenuItem key={otherVideo.basename} asChild onSelect={() => {
-                                        const currentItemIndex = watchList.findIndex((item) => item.watchListId === currentWatchListItem?.watchListId);
-                                        const currentItem = watchList[currentItemIndex];
+                        {otherEntries.map((otherEntry) =>
+                            otherEntry ? (
+                                <Fragment key={otherEntry.version ?? 1}>
+                                    <MenuLabel>
+                                        <Row style={{ "--gap": "8px", "--align-items": "baseline" }}>
+                                            <Text variant="small">Version {otherEntry.version || 1}</Text>
+                                            <ThemeEntryTags entry={otherEntry} />
+                                        </Row>
+                                    </MenuLabel>
+                                    {otherEntry.videos.map((otherVideo) => (
+                                        <MenuItem
+                                            key={otherVideo.basename}
+                                            asChild
+                                            onSelect={() => {
+                                                const currentItemIndex = watchList.findIndex(
+                                                    (item) => item.watchListId === currentWatchListItem?.watchListId,
+                                                );
+                                                const currentItem = watchList[currentItemIndex];
 
-                                        const newItem = {
-                                            watchListId: currentItem.watchListId,
-                                            ...otherVideo,
-                                            entries: [
-                                                {
-                                                    ...otherEntry,
-                                                    theme,
-                                                },
-                                            ],
-                                        };
-                                        const newWatchList = [...watchList];
+                                                const newItem = {
+                                                    watchListId: currentItem.watchListId,
+                                                    ...otherVideo,
+                                                    entries: [
+                                                        {
+                                                            ...otherEntry,
+                                                            theme,
+                                                        },
+                                                    ],
+                                                };
+                                                const newWatchList = [...watchList];
 
-                                        newWatchList[currentItemIndex] = newItem;
+                                                newWatchList[currentItemIndex] = newItem;
 
-                                        setWatchList(newWatchList);
-                                    }}>
-                                        <Link href={`/anime/${anime.slug}/${createVideoSlug(theme, otherEntry, otherVideo)}`}>
-                                            <Icon icon={faCheck} color={otherVideo.basename === video.basename ? "text-primary" : "transparent"} />
-                                            <VideoTags video={otherVideo} hideTextOnMobile />
-                                        </Link>
-                                    </MenuItem>
-                                ))}
-                            </Fragment>
-                        ) : null)}
+                                                setWatchList(newWatchList);
+                                            }}
+                                        >
+                                            <Link
+                                                href={`/anime/${anime.slug}/${createVideoSlug(theme, otherEntry, otherVideo)}`}
+                                            >
+                                                <Icon
+                                                    icon={faCheck}
+                                                    color={
+                                                        otherVideo.basename === video.basename
+                                                            ? "text-primary"
+                                                            : "transparent"
+                                                    }
+                                                />
+                                                <VideoTags video={otherVideo} hideTextOnMobile />
+                                            </Link>
+                                        </MenuItem>
+                                    ))}
+                                </Fragment>
+                            ) : null,
+                        )}
                     </MenuContent>
                 </Menu>
-                <StyledOverlayButton icon={isFullscreen ? faCompress : faExpand} isCircle onClick={toggleFullscreen} title="Toggle fullscreen" />
+                <StyledOverlayButton
+                    icon={isFullscreen ? faCompress : faExpand}
+                    isCircle
+                    onClick={toggleFullscreen}
+                    title="Toggle fullscreen"
+                />
             </Row>
         </StyledOverlay>
     );

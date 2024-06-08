@@ -1,37 +1,76 @@
-import { apiResolver } from "@/lib/common/animethemes/api";
+import type { Resolvers } from "@/generated/graphql-resolvers";
+import { createApiResolver } from "@/lib/common/animethemes/api";
+import type { ApiThemeShow } from "@/lib/common/animethemes/types";
 import brackets from "@/lib/server/animebracket/brackets.json";
 import mappings from "@/lib/server/animebracket/mappings.json";
 import devLog from "@/utils/devLog";
 
 interface SourceBracket {
-    name: string
-    winnerCharacterId: number | null
+    name: string;
+    winnerCharacterId: number | null;
 }
 
 type SourceRound = Array<SourcePairing>;
 
 interface SourcePairing {
-    tier: number
-    group: number
-    filler: boolean
-    order: number
-    character1: SourceCharacter
-    character2: SourceCharacter
+    tier: number;
+    group: number;
+    filler: boolean;
+    order: number;
+    character1: SourceCharacter;
+    character2: SourceCharacter;
 }
 
 interface SourceCharacter {
-    id: number
-    seed: number
-    name: string
-    source: string
-    image: string
-    votes: number
+    id: number;
+    seed: number;
+    name: string;
+    source: string;
+    image: string;
+    votes: number;
 }
 
-const resolvers = {
+export interface ModelBracket {
+    slug: string;
+    name: string;
+    currentRound?: ModelBracketRound | null;
+    currentGroup?: number | null;
+    rounds?: Array<ModelBracketRound>;
+}
+
+export interface ModelBracketRound {
+    tier: number;
+    pairings: Array<SourcePairing>;
+}
+
+export interface ModelBracketPairing {
+    order: number;
+    group: number;
+    characterA: ModelBracketCharacter;
+    characterB: ModelBracketCharacter;
+    votesA: number | null;
+    votesB: number | null;
+}
+
+export interface ModelBracketCharacter {
+    id: number;
+    seed: number;
+    name: string;
+    source: string;
+    image: string;
+    votes?: number;
+    theme?: null;
+    themeMapping?: number;
+}
+
+const resolvers: Resolvers = {
     Query: {
-        bracket: async (_: never, { slug }: { slug: keyof typeof brackets }) => {
-            const config = brackets[slug] ?? { slug };
+        bracket: async (_, { slug }) => {
+            if (!Object.hasOwn(brackets, slug)) {
+                return null;
+            }
+
+            const config = brackets[slug as keyof typeof brackets] ?? { slug };
 
             devLog.info(`Fetching bracket: ${config.slug}`);
             const bracket = await fetchJson<SourceBracket>(`https://animebracket.com/api/bracket/${config.slug}`);
@@ -51,15 +90,17 @@ const resolvers = {
             return {
                 slug,
                 name: config.name,
-                currentRound: currentPairings ? {
-                    tier: currentPairings[0].tier,
-                    pairings: currentPairings
-                } : null,
+                currentRound: currentPairings
+                    ? {
+                          tier: currentPairings[0].tier,
+                          pairings: currentPairings,
+                      }
+                    : null,
                 currentGroup: currentPairings ? currentPairings[0].group : null,
                 rounds: rounds.map((round) => ({
                     tier: round[0].tier,
-                    pairings: round
-                }))
+                    pairings: round,
+                })),
             };
         },
         bracketAll: async () => {
@@ -67,10 +108,10 @@ const resolvers = {
                 slug,
                 name: bracket.name,
             }));
-        }
+        },
     },
     BracketRound: {
-        name: (round: { pairings: Array<SourcePairing> }) => {
+        name: (round) => {
             switch (round.pairings.length) {
                 case 1:
                     return "Finals";
@@ -82,7 +123,7 @@ const resolvers = {
                     return null;
             }
         },
-        pairings: (round: { pairings: Array<SourcePairing> }) => {
+        pairings: (round) => {
             return round.pairings
                 .filter((pairing) => !pairing.filler)
                 .map((pairing) => ({
@@ -91,42 +132,38 @@ const resolvers = {
                     characterA: pairing.character1,
                     characterB: pairing.character2,
                     votesA: pairing.character1.votes || null,
-                    votesB: pairing.character2.votes || null
+                    votesB: pairing.character2.votes || null,
                 }));
-        }
+        },
     },
     BracketPairing: {
-        characterA: bracketCharacterResolver("characterA"),
-        characterB: bracketCharacterResolver("characterB")
+        characterA: (pairing) => createBracketCharacter(pairing.characterA),
+        characterB: (pairing) => createBracketCharacter(pairing.characterB),
     },
     BracketCharacter: {
-        theme: apiResolver({
+        theme: createApiResolver<ApiThemeShow>()({
+            extractFromParent: (character) => character.theme,
             endpoint: (character) => `/animetheme/${character.themeMapping}`,
-            extractor: (result) => result.animetheme,
-            field: "theme"
+            extractFromResponse: (response) => response.animetheme,
         }),
-    }
+    },
 };
 
 export default resolvers;
 
-function bracketCharacterResolver(field: "characterA" | "characterB") {
-    return (pairing: Record<typeof field, SourceCharacter>) => {
-        const character = pairing[field];
-
-        return {
-            id: character.id,
-            seed: character.seed,
-            name: character.name,
-            source: character.source,
-            image: character.image,
-            theme: String(character.id) in mappings ? undefined : null,
-            themeMapping: mappings[String(character.id) as keyof typeof mappings],
-        };
+function createBracketCharacter(modelCharacter: ModelBracketCharacter) {
+    return {
+        id: modelCharacter.id,
+        seed: modelCharacter.seed,
+        name: modelCharacter.name,
+        source: modelCharacter.source,
+        image: modelCharacter.image,
+        theme: String(modelCharacter.id) in mappings ? undefined : null,
+        themeMapping: mappings[String(modelCharacter.id) as keyof typeof mappings],
     };
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
     const response = await fetch(url);
-    return await response.json() as T;
+    return (await response.json()) as T;
 }

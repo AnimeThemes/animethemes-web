@@ -31,7 +31,9 @@ export function YearNavigation({ year, yearAll }: YearDetailPageProps) {
             <StyledYearPrevious>
                 {previousYear && (
                     <Link href={`/year/${previousYear}`} passHref legacyBehavior>
-                        <Button as="a" variant="silent">{previousYear}</Button>
+                        <Button as="a" variant="silent">
+                            {previousYear}
+                        </Button>
                     </Link>
                 )}
             </StyledYearPrevious>
@@ -43,7 +45,9 @@ export function YearNavigation({ year, yearAll }: YearDetailPageProps) {
             <StyledYearNext>
                 {nextYear && (
                     <Link href={`/year/${nextYear}`} passHref legacyBehavior>
-                        <Button as="a" variant="silent">{nextYear}</Button>
+                        <Button as="a" variant="silent">
+                            {nextYear}
+                        </Button>
                     </Link>
                 )}
             </StyledYearNext>

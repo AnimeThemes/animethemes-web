@@ -18,15 +18,10 @@ const ThemeInjection = () => {
         })();
     `;
 
-    return (
-        <script
-            dangerouslySetInnerHTML={{ __html: injectTheme }}
-        />
-    );
+    return <script dangerouslySetInnerHTML={{ __html: injectTheme }} />;
 };
 
 export default class MyDocument extends Document {
-
     render() {
         return (
             <Html lang="en" data-theme="system">
@@ -34,9 +29,9 @@ export default class MyDocument extends Document {
                     <link rel="preload" href={`${API_URL}/me`} as="fetch" crossOrigin="use-credentials" />
                 </Head>
                 <body>
-                    <ThemeInjection/>
-                    <Main/>
-                    <NextScript/>
+                    <ThemeInjection />
+                    <Main />
+                    <NextScript />
                 </body>
             </Html>
         );
@@ -47,9 +42,10 @@ export default class MyDocument extends Document {
         const originalRenderPage = ctx.renderPage;
 
         try {
-            ctx.renderPage = () => originalRenderPage({
-                enhanceApp: (App) => (props) => sheet.collectStyles(<App {...props} />)
-            });
+            ctx.renderPage = () =>
+                originalRenderPage({
+                    enhanceApp: (App) => (props) => sheet.collectStyles(<App {...props} />),
+                });
 
             const initialProps = await Document.getInitialProps(ctx);
 
@@ -66,5 +62,4 @@ export default class MyDocument extends Document {
             sheet.seal();
         }
     }
-
 }

@@ -1,6 +1,6 @@
-const typeDefs = `
-    #graphql
-    
+import gql from "graphql-tag";
+
+const typeDefs = gql`
     type Query {
         anime(id: Int, slug: String): Anime
         animeAll(limit: Int, year: Int, season: String): [Anime!]!
@@ -16,10 +16,9 @@ const typeDefs = `
         year(value: Int!): Year
         yearAll: [Year!]!
         season(year: Int!, value: String!): Season
-        seasonAll(year: Int): [Season!]!
         page(id: Int, slug: String): Page
         pageAll: [Page!]!
-        imageAll(facet: String): [Image!]! 
+        imageAll(limit: Int, facet: String): [Image!]!
         featuredTheme: FeaturedTheme
         dumpAll: [Dump!]!
         playlist(id: String!): Playlist
@@ -27,27 +26,27 @@ const typeDefs = `
         announcementAll: [Announcement!]!
         me: UserScopedQuery!
     }
-    
+
     type UserScopedQuery {
         user: UserAuth
-        playlistAll(filterVideoId: Int): [Playlist!]
+        playlistAll(limit: Int, filterVideoId: Int): [Playlist!]
     }
 
     interface ResourceWithImages {
         images: [Image!]!
     }
-    
+
     type Year {
         value: Int!
         seasons: [Season!]!
     }
-    
+
     type Season {
         value: String!
         year: Year
         anime: [Anime!]!
     }
-    
+
     type Anime implements ResourceWithImages {
         id: Int!
         name: String!
@@ -57,19 +56,19 @@ const typeDefs = `
         synopsis: String
         media_format: String
         synonyms: [Synonym!]!
-        themes: [Theme!]!           
+        themes: [Theme!]!
         series: [Series!]!
         resources: [Resource!]!
         images: [Image!]!
         studios: [Studio!]!
     }
-    
+
     type Synonym {
         id: Int!
         text: String
         anime: Anime
     }
-    
+
     type Theme {
         id: Int!
         type: String!
@@ -79,7 +78,7 @@ const typeDefs = `
         anime: Anime!
         entries: [Entry!]!
     }
-    
+
     type ThemeGroup {
         id: Int!
         name: String!
@@ -95,7 +94,7 @@ const typeDefs = `
         theme: Theme!
         videos: [Video!]!
     }
-    
+
     type Video {
         id: Int!
         filename: String!
@@ -117,13 +116,13 @@ const typeDefs = `
         entries: [Entry!]!
         tracks: [PlaylistTrack!]!
     }
-    
+
     type VideoScript {
         id: Int!
         path: String!
         link: String!
     }
-    
+
     enum VideoSource {
         WEB
         RAW
@@ -132,13 +131,13 @@ const typeDefs = `
         VHS
         LD
     }
-    
+
     enum VideoOverlap {
         NONE
         TRANSITION
         OVER
     }
-    
+
     type Audio {
         id: Int!
         filename: String!
@@ -149,44 +148,44 @@ const typeDefs = `
         link: String!
         videos: [Video!]!
     }
-    
+
     type Song {
         id: Int
         title: String
         themes: [Theme!]!
         performances: [Performance!]!
     }
-    
+
     type Performance {
         song: Song!
         artist: Artist!
         as: String
     }
-    
+
     type Artist implements ResourceWithImages {
         id: Int!
         slug: String!
-        name: String!            
+        name: String!
         performances: [Performance!]!
         members: [ArtistMembership!]!
         groups: [ArtistMembership!]!
         resources: [Resource!]!
         images: [Image!]!
     }
-    
+
     type ArtistMembership {
         group: Artist!
         member: Artist!
         as: String
     }
-    
+
     type Series {
         id: Int!
         slug: String!
         name: String!
         anime: [Anime!]!
     }
-    
+
     type Resource {
         id: Int!
         link: String
@@ -194,7 +193,7 @@ const typeDefs = `
         site: String
         as: String
     }
-    
+
     type Image {
         id: Int!
         path: String!
@@ -203,7 +202,7 @@ const typeDefs = `
         facet: String
         link: String!
     }
-    
+
     type Studio implements ResourceWithImages {
         id: Int!
         slug: String!
@@ -212,7 +211,7 @@ const typeDefs = `
         resources: [Resource!]!
         images: [Image!]!
     }
-    
+
     type Announcement {
         id: Int
         content: String!
@@ -233,14 +232,14 @@ const typeDefs = `
         video: Video
         entry: Entry
     }
-    
+
     type Dump {
         id: Int!
         path: String!
         link: String!
         created_at: String!
     }
-    
+
     type Playlist {
         id: String!
         name: String!
@@ -251,13 +250,13 @@ const typeDefs = `
         forward: [PlaylistTrack!]!
         user: UserPublic!
     }
-    
+
     enum PlaylistVisibility {
         Public
         Unlisted
         Private
     }
-    
+
     type PlaylistTrack {
         id: String!
         video: Video!
@@ -265,7 +264,7 @@ const typeDefs = `
         previous: PlaylistTrack
         next: PlaylistTrack
     }
-    
+
     interface User {
         id: Int!
         name: String!
@@ -275,7 +274,7 @@ const typeDefs = `
         id: Int!
         name: String!
     }
-    
+
     type UserAuth implements User {
         id: Int!
         name: String!
@@ -285,7 +284,7 @@ const typeDefs = `
         permissions: [Permission!]!
         roles: [UserRole!]!
     }
-    
+
     type UserRole {
         name: String!
         color: String
@@ -293,14 +292,14 @@ const typeDefs = `
         default: Boolean!
         permissions: [Permission!]!
     }
-    
+
     type Permission {
         id: Int!
         name: String!
     }
-    
+
     schema {
-      query: Query
+        query: Query
     }
 `;
 

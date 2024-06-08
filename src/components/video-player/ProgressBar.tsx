@@ -10,7 +10,7 @@ const StyledPlayerProgress = styled.div`
     left: 0;
     width: 100%;
     padding: 16px 0;
-    
+
     cursor: pointer;
     touch-action: none;
     transform: translateY(-50%);
@@ -19,7 +19,7 @@ const StyledPlayerProgress = styled.div`
 const StyledPlayerProgressBackground = styled.div`
     width: 100%;
     height: 2px;
-    
+
     background-color: ${theme.colors["solid-on-card"]};
 
     ${StyledPlayerProgress}:hover & {
@@ -30,7 +30,7 @@ const StyledPlayerProgressBackground = styled.div`
 const StyledPlayerProgressBar = styled.div`
     position: relative;
     height: 100%;
-    
+
     background-color: ${theme.colors["text-primary"]};
 
     &:after {
@@ -47,7 +47,7 @@ const StyledPlayerProgressBar = styled.div`
         transition: opacity 200ms;
         opacity: 0;
     }
-    
+
     ${StyledPlayerProgress}:hover &:after {
         opacity: 1;
         transform: translateY(-50%);
@@ -60,12 +60,12 @@ const StyledPlayerProgressBarHover = styled.div`
     top: -24px;
     padding: 4px 8px;
     border-radius: 4px;
-    
+
     background-color: ${theme.colors["solid"]};
     transform: translateX(-50%);
-    
+
     display: none;
-    
+
     ${StyledPlayerProgress}:hover & {
         display: block;
     }
@@ -78,13 +78,10 @@ export function ProgressBar() {
         throw new Error("ProgressBar needs to be inside VideoPlayer!");
     }
 
-    const {
-        playerRef,
-        progressRef,
-    } = context;
+    const { playerRef, progressRef } = context;
 
     const progressHoverRef = useRef<HTMLDivElement>(null);
-    
+
     const nextProgressRef = useRef(0);
     const isDraggingRef = useRef(false);
 
@@ -98,7 +95,7 @@ export function ProgressBar() {
                 }
             }
         }
-        
+
         function onMouseMove(event: MouseEvent) {
             const nextProgress = Math.min(1, event.clientX / document.body.getBoundingClientRect().width);
             if (isDraggingRef.current) {
@@ -108,16 +105,16 @@ export function ProgressBar() {
                 }
             }
         }
-        
+
         window.addEventListener("pointerup", onMouseUp);
         window.addEventListener("pointermove", onMouseMove);
-        
+
         return () => {
             window.removeEventListener("pointerup", onMouseUp);
             window.removeEventListener("pointermove", onMouseMove);
         };
     }, [playerRef, progressRef]);
-    
+
     return (
         <StyledPlayerProgress
             onPointerDown={(event) => {
@@ -132,14 +129,16 @@ export function ProgressBar() {
             onPointerMove={(event) => {
                 const nextProgress = event.clientX / event.currentTarget.getBoundingClientRect().width;
                 if (progressHoverRef.current) {
-                    progressHoverRef.current.innerText = playerRef.current ? formatTime(nextProgress * playerRef.current.duration) : "";
+                    progressHoverRef.current.innerText = playerRef.current
+                        ? formatTime(nextProgress * playerRef.current.duration)
+                        : "";
 
                     const widthCard = progressHoverRef.current.getBoundingClientRect().width;
                     const widthBody = document.body.getBoundingClientRect().width;
                     let left = nextProgress * widthBody;
                     if (left < 8 + widthCard / 2) {
                         left = 8 + widthCard / 2;
-                    } else if (left > widthBody -8 - widthCard / 2) {
+                    } else if (left > widthBody - 8 - widthCard / 2) {
                         left = widthBody - 8 - widthCard / 2;
                     }
                     progressHoverRef.current.style.left = `${left}px`;

@@ -5,7 +5,7 @@ import type { WatchListItem } from "@/context/playerContext";
 import type {
     CreateVideoSlugEntryFragment,
     CreateVideoSlugThemeFragment,
-    CreateVideoSlugVideoFragment
+    CreateVideoSlugVideoFragment,
 } from "@/generated/graphql";
 import type { VideoPageProps } from "@/pages/anime/[animeSlug]/[videoSlug]";
 
@@ -13,13 +13,13 @@ interface CreateVideoSlug {
     (
         theme: CreateVideoSlugThemeFragment,
         entry: CreateVideoSlugEntryFragment,
-        video: CreateVideoSlugVideoFragment
-    ): string
+        video: CreateVideoSlugVideoFragment,
+    ): string;
     fragments: {
-        theme: ASTNode
-        entry: ASTNode
-        video: ASTNode
-    }
+        theme: ASTNode;
+        entry: ASTNode;
+        video: ASTNode;
+    };
 }
 
 /**
@@ -69,9 +69,9 @@ createVideoSlug.fragments = {
     `,
 };
 
-export function getVideoSlugByProps(pageProps: any): string | null {
-    if (pageProps.isVideoPage) {
-        const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
+export function getVideoSlugByProps(pageProps: object): string | null {
+    if (isVideoPageProps(pageProps)) {
+        const { anime, themeIndex, entryIndex, videoIndex } = pageProps;
 
         const theme = anime.themes[themeIndex];
         const entry = theme.entries[entryIndex];
@@ -87,4 +87,8 @@ export function getVideoSlugByWatchListItem(watchListItem: WatchListItem): strin
     const theme = entry.theme;
 
     return `${theme.anime.slug}/${createVideoSlug(theme, entry, watchListItem)}`;
+}
+
+function isVideoPageProps(pageProps: object): pageProps is VideoPageProps {
+    return "isVideoPage" in pageProps && !!pageProps.isVideoPage;
 }

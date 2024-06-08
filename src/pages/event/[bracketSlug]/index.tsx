@@ -41,7 +41,7 @@ const StyledBracketPairing = styled.div`
     justify-items: center;
     align-items: center;
     grid-gap: 16px 32px;
-    
+
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         grid-template-columns: 1fr;
     }
@@ -50,7 +50,7 @@ const StyledBracketPairing = styled.div`
 interface BracketPageProps extends SharedPageProps, RequiredNonNullable<BracketPageQuery> {}
 
 interface BracketPageParams extends ParsedUrlQuery {
-    bracketSlug: string
+    bracketSlug: string;
 }
 
 export default function BracketPage({ bracket }: BracketPageProps) {
@@ -58,24 +58,28 @@ export default function BracketPage({ bracket }: BracketPageProps) {
         <>
             <SEO title={bracket.name} />
             <Text variant="h1">{bracket.name}</Text>
-            <BracketChart bracket={bracket}/>
+            <BracketChart bracket={bracket} />
             {!!bracket.currentRound && (
-                <BracketRound round={bracket.currentRound} initialGroup={bracket.currentGroup ?? undefined} isCurrent/>
+                <BracketRound round={bracket.currentRound} initialGroup={bracket.currentGroup ?? undefined} isCurrent />
             )}
-            {bracket.rounds.sort((a, b) => a.tier - b.tier).map((round) => <BracketRound key={round.tier} round={round}/>)}
+            {bracket.rounds
+                .sort((a, b) => a.tier - b.tier)
+                .map((round) => (
+                    <BracketRound key={round.tier} round={round} />
+                ))}
         </>
     );
 }
 
 interface BracketRoundProps {
-    round: BracketPageProps["bracket"]["rounds"][number]
-    isCurrent?: boolean
-    initialGroup?: number
+    round: BracketPageProps["bracket"]["rounds"][number];
+    isCurrent?: boolean;
+    initialGroup?: number;
 }
 
 function BracketRound({ round, isCurrent = false, initialGroup = 0 }: BracketRoundProps) {
     const hasGroups = !round.name;
-    const [ currentGroup, setCurrentGroup ] = useState(initialGroup);
+    const [currentGroup, setCurrentGroup] = useState(initialGroup);
 
     let content;
 
@@ -96,7 +100,9 @@ function BracketRound({ round, isCurrent = false, initialGroup = 0 }: BracketRou
 
         content = (
             <>
-                <Text variant="h2">{isCurrent && "Current Vote: "}Round {round.tier}</Text>
+                <Text variant="h2">
+                    {isCurrent && "Current Vote: "}Round {round.tier}
+                </Text>
                 <StyledHeader>
                     <Text variant="h3">Group {String.fromCharCode(65 + currentGroup)}</Text>
                     <Switcher
@@ -104,18 +110,20 @@ function BracketRound({ round, isCurrent = false, initialGroup = 0 }: BracketRou
                         onChange={(groupAsString: string) => setCurrentGroup(parseInt(groupAsString))}
                     >
                         {groups.map((_, index) => (
-                            <SwitcherOption key={index} value={String(index)}>{String.fromCharCode(65 + index)}</SwitcherOption>
+                            <SwitcherOption key={index} value={String(index)}>
+                                {String.fromCharCode(65 + index)}
+                            </SwitcherOption>
                         ))}
                     </Switcher>
                 </StyledHeader>
-                <BracketPairings key={currentGroup} pairings={groups[currentGroup]}/>
+                <BracketPairings key={currentGroup} pairings={groups[currentGroup]} />
             </>
         );
     } else {
         content = (
             <>
                 <Text variant="h2">{round.name}</Text>
-                <BracketPairings pairings={round.pairings}/>
+                <BracketPairings pairings={round.pairings} />
             </>
         );
     }
@@ -123,10 +131,8 @@ function BracketRound({ round, isCurrent = false, initialGroup = 0 }: BracketRou
     if (isCurrent) {
         return (
             <CurrentRound>
-                <CornerIcon icon={faStopwatch}/>
-                <Column style={{ "--gap": "24px" }}>
-                    {content}
-                </Column>
+                <CornerIcon icon={faStopwatch} />
+                <Column style={{ "--gap": "24px" }}>{content}</Column>
             </CurrentRound>
         );
     }
@@ -135,43 +141,47 @@ function BracketRound({ round, isCurrent = false, initialGroup = 0 }: BracketRou
 }
 
 interface BracketPairingsProps {
-    pairings: BracketRoundProps["round"]["pairings"]
+    pairings: BracketRoundProps["round"]["pairings"];
 }
 
 function BracketPairings({ pairings }: BracketPairingsProps) {
-    const items = pairings.sort((a, b) => a.order - b.order).map((pairing, index) => (
-        <StyledBracketPairing key={index}>
-            <ContestantCard
-                key={pairing.characterA.id}
-                contestant={pairing.characterA}
-                opponent={pairing.characterB}
-                contestantVotes={pairing.votesA}
-                opponentVotes={pairing.votesB}
-            />
-            <Text variant="small">VS</Text>
-            <ContestantCard
-                key={pairing.characterA.id}
-                contestant={pairing.characterB}
-                opponent={pairing.characterA}
-                contestantVotes={pairing.votesB}
-                opponentVotes={pairing.votesA}
-            />
-        </StyledBracketPairing>
-    ));
+    const items = pairings
+        .sort((a, b) => a.order - b.order)
+        .map((pairing, index) => (
+            <StyledBracketPairing key={index}>
+                <ContestantCard
+                    key={pairing.characterA.id}
+                    contestant={pairing.characterA}
+                    opponent={pairing.characterB}
+                    contestantVotes={pairing.votesA}
+                    opponentVotes={pairing.votesB}
+                />
+                <Text variant="small">VS</Text>
+                <ContestantCard
+                    key={pairing.characterA.id}
+                    contestant={pairing.characterB}
+                    opponent={pairing.characterA}
+                    contestantVotes={pairing.votesB}
+                    opponentVotes={pairing.votesA}
+                />
+            </StyledBracketPairing>
+        ));
 
     return <>{items}</>;
 }
 
 interface ContestantCardProps {
-    contestant: BracketPairingsProps["pairings"][number]["characterA"]
-    opponent: BracketPairingsProps["pairings"][number]["characterB"]
-    contestantVotes: number | null
-    opponentVotes: number | null
+    contestant: BracketPairingsProps["pairings"][number]["characterA"];
+    opponent: BracketPairingsProps["pairings"][number]["characterB"];
+    contestantVotes: number | null;
+    opponentVotes: number | null;
 }
 
 function ContestantCard({ contestant, opponent, contestantVotes, opponentVotes }: ContestantCardProps) {
     const isVoted = !!contestantVotes && !!opponentVotes;
-    const isWinner = isVoted && (contestantVotes !== opponentVotes ? contestantVotes > opponentVotes : contestant.seed < opponent.seed);
+    const isWinner =
+        isVoted &&
+        (contestantVotes !== opponentVotes ? contestantVotes > opponentVotes : contestant.seed < opponent.seed);
 
     return (
         <BracketThemeSummaryCard
@@ -187,57 +197,61 @@ function ContestantCard({ contestant, opponent, contestantVotes, opponentVotes }
 const themeCache = new Map();
 
 export const getStaticProps: GetStaticProps<BracketPageProps, BracketPageParams> = async ({ params }) => {
-    const { data, apiRequests } = await fetchData<BracketPageQuery, BracketPageQueryVariables>(gql`
-        ${BracketThemeSummaryCard.fragments.contestant}
-        
-        fragment CharacterFragment on BracketCharacter {
-            id
-            seed
-            ...BracketThemeSummaryCardConstestant
-        }
-    
-        fragment RoundFragment on BracketRound {
-            tier
-            name
-            pairings {
-                order
-                group
-                characterA {
-                    ...CharacterFragment
-                }
-                characterB {
-                    ...CharacterFragment
-                }
-                votesA
-                votesB
+    const { data, apiRequests } = await fetchData<BracketPageQuery, BracketPageQueryVariables>(
+        gql`
+            ${BracketThemeSummaryCard.fragments.contestant}
+
+            fragment CharacterFragment on BracketCharacter {
+                id
+                seed
+                ...BracketThemeSummaryCardConstestant
             }
-        }
-    
-        query BracketPage($bracketSlug: String!) {
-            bracket(slug: $bracketSlug) {
+
+            fragment RoundFragment on BracketRound {
+                tier
                 name
-                currentRound {
-                    ...RoundFragment
-                }
-                currentGroup
-                rounds {
-                    ...RoundFragment
+                pairings {
+                    order
+                    group
+                    characterA {
+                        ...CharacterFragment
+                    }
+                    characterB {
+                        ...CharacterFragment
+                    }
+                    votesA
+                    votesB
                 }
             }
-        }
-    `, params, { cache: themeCache });
+
+            query BracketPage($bracketSlug: String!) {
+                bracket(slug: $bracketSlug) {
+                    name
+                    currentRound {
+                        ...RoundFragment
+                    }
+                    currentGroup
+                    rounds {
+                        ...RoundFragment
+                    }
+                }
+            }
+        `,
+        params,
+        { cache: themeCache },
+    );
 
     if (!data.bracket) {
         return {
-            notFound: true
+            notFound: true,
         };
     }
 
     return {
         props: {
             ...getSharedPageProps(apiRequests),
-            bracket: data.bracket
-        }
+            bracket: data.bracket,
+        },
     };
 };
 
@@ -253,8 +267,8 @@ export const getStaticPaths: GetStaticPaths<BracketPageParams> = async () => {
 
         return data.bracketAll.map((bracket) => ({
             params: {
-                bracketSlug: bracket.slug
-            }
+                bracketSlug: bracket.slug,
+            },
         }));
     });
 };

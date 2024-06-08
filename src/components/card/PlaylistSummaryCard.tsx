@@ -10,7 +10,7 @@ import type { PlaylistSummaryCardPlaylistFragment, PlaylistSummaryCardShowOwnerF
 import theme from "@/theme";
 
 const StyledWrapper = styled.div`
-    position: relative
+    position: relative;
 `;
 
 const StyledOverlayButtons = styled.div`
@@ -31,26 +31,32 @@ const StyledOverlayButtons = styled.div`
     }
 `;
 
-type PlaylistSummaryCardProps = {
-    playlist: PlaylistSummaryCardPlaylistFragment;
-    menu?: ReactNode;
-    showOwner?: false;
-} | {
-    playlist: PlaylistSummaryCardPlaylistFragment & PlaylistSummaryCardShowOwnerFragment;
-    menu?: ReactNode;
-    showOwner: true;
-};
+type PlaylistSummaryCardProps =
+    | {
+          playlist: PlaylistSummaryCardPlaylistFragment;
+          menu?: ReactNode;
+          showOwner?: false;
+      }
+    | {
+          playlist: PlaylistSummaryCardPlaylistFragment & PlaylistSummaryCardShowOwnerFragment;
+          menu?: ReactNode;
+          showOwner: true;
+      };
 
-export default function PlaylistSummaryCard({ playlist, children, menu, showOwner, ...props }: PropsWithChildren<PlaylistSummaryCardProps>) {
+export default function PlaylistSummaryCard({
+    playlist,
+    children,
+    menu,
+    showOwner,
+    ...props
+}: PropsWithChildren<PlaylistSummaryCardProps>) {
     const description = (
         <SummaryCard.Description>
             <span>Playlist</span>
-            {showOwner ? (
-                <Text link>{playlist.user.name}</Text>
-            ) : (
-                <span>{playlist.visibility}</span>
-            )}
-            <span>{playlist.tracks_count} theme{playlist.tracks_count !== 1 ? "s" : null}</span>
+            {showOwner ? <Text link>{playlist.user.name}</Text> : <span>{playlist.visibility}</span>}
+            <span>
+                {playlist.tracks_count} theme{playlist.tracks_count !== 1 ? "s" : null}
+            </span>
         </SummaryCard.Description>
     );
 
@@ -59,9 +65,7 @@ export default function PlaylistSummaryCard({ playlist, children, menu, showOwne
             <SummaryCard title={playlist.name} description={description} to={`/playlist/${playlist.id}`} {...props}>
                 {children}
                 {menu ? (
-                    <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>
-                        {menu}
-                    </StyledOverlayButtons>
+                    <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>{menu}</StyledOverlayButtons>
                 ) : null}
             </SummaryCard>
         </StyledWrapper>
@@ -75,7 +79,7 @@ PlaylistSummaryCard.fragments = {
             name
             visibility
             tracks_count
-        } 
+        }
     `,
     showOwner: gql`
         fragment PlaylistSummaryCardShowOwner on Playlist {

@@ -15,7 +15,9 @@ const StyledMenuContent = styled(RadixMenu.Content)`
     overflow: auto;
 
     background-color: ${theme.colors["solid"]};
-    box-shadow: 0 0 0 2px ${theme.colors["text-primary"]}, ${theme.shadows.high};
+    box-shadow:
+        0 0 0 2px ${theme.colors["text-primary"]},
+        ${theme.shadows.high};
 
     transform-origin: top;
     animation: ${flipDown} 200ms ease-out;
@@ -24,24 +26,25 @@ const StyledMenuContent = styled(RadixMenu.Content)`
 export const Menu = RadixMenu.Root;
 export const MenuTrigger = RadixMenu.Trigger;
 
-export const MenuContent = forwardRef<HTMLDivElement, DropdownMenuContentProps>(
-    function MenuContent({ children, ...props }, forwardedRef) {
-        return (
-            <RadixMenu.Portal>
-                <StyledMenuContent
-                    align="start"
-                    sideOffset={8}
-                    collisionPadding={8}
-                    collisionBoundary={typeof document !== "undefined" ? document.body : []}
-                    {...props}
-                    ref={forwardedRef}
-                >
-                    {children}
-                </StyledMenuContent>
-            </RadixMenu.Portal>
-        );
-    }
-);
+export const MenuContent = forwardRef<HTMLDivElement, DropdownMenuContentProps>(function MenuContent(
+    { children, ...props },
+    forwardedRef,
+) {
+    return (
+        <RadixMenu.Portal>
+            <StyledMenuContent
+                align="start"
+                sideOffset={8}
+                collisionPadding={8}
+                collisionBoundary={typeof document !== "undefined" ? document.body : []}
+                {...props}
+                ref={forwardedRef}
+            >
+                {children}
+            </StyledMenuContent>
+        </RadixMenu.Portal>
+    );
+});
 
 export const MenuItem = styled(RadixMenu.Item)`
     display: flex;
@@ -58,7 +61,7 @@ export const MenuItem = styled(RadixMenu.Item)`
         color: ${theme.colors["text"]};
         outline: none;
     }
-    
+
     &[data-disabled] {
         opacity: 0.5;
         cursor: revert;
@@ -69,7 +72,7 @@ export const MenuLabel = styled(RadixMenu.Label)`
     display: flex;
     align-items: center;
     gap: 8px;
-    
+
     width: 100%;
     padding: 8px 16px;
     color: ${theme.colors["text-muted"]};

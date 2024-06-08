@@ -3,8 +3,8 @@ import { SearchFilter } from "@/components/search-filter/SearchFilter";
 import { Text } from "@/components/text/Text";
 
 interface SearchFilterThemeTypeProps {
-    value: string | null
-    setValue: (newValue: string | null) => void
+    value: string | null;
+    setValue: (newValue: string | null) => void;
 }
 
 export function SearchFilterThemeType({ value, setValue }: SearchFilterThemeTypeProps) {
@@ -12,7 +12,9 @@ export function SearchFilterThemeType({ value, setValue }: SearchFilterThemeType
         <SearchFilter>
             <Text variant="h2">Type</Text>
             <Listbox value={value} onValueChange={setValue} defaultValue={null} resettable nullable highlightNonDefault>
-                <ListboxOption value={null} hidden>Any</ListboxOption>
+                <ListboxOption value={null} hidden>
+                    Any
+                </ListboxOption>
                 <ListboxOption value="OP">OP</ListboxOption>
                 <ListboxOption value="ED">ED</ListboxOption>
             </Listbox>

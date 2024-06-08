@@ -1,11 +1,13 @@
-import type { GraphQLFieldResolver, GraphQLOutputType, GraphQLResolveInfo } from "graphql";
+import type { GraphQLOutputType, GraphQLResolveInfo } from "graphql";
 import type { Path } from "graphql/jsutils/Path";
 import type { ResolveTree } from "graphql-parse-resolve-info";
 import { parseResolveInfo } from "graphql-parse-resolve-info";
 import type { IncomingMessage } from "node:http";
 import pLimit from "p-limit";
 
-import { AUTH_REFERER, CLIENT_API_URL, PAGINATION_PAGE_SIZE,SERVER_API_KEY, SERVER_API_URL } from "@/utils/config";
+import type { InputMaybe, ResolverFn } from "@/generated/graphql-resolvers";
+import type { ApiIndex } from "@/lib/common/animethemes/types";
+import { AUTH_REFERER, CLIENT_API_URL, PAGINATION_PAGE_SIZE, SERVER_API_KEY, SERVER_API_URL } from "@/utils/config";
 import devLog from "@/utils/devLog";
 
 const limit = pLimit(5);
@@ -19,28 +21,28 @@ export const INCLUDES = {
         series: "series",
         studios: "studios",
         resources: "resources",
-        images: "images"
+        images: "images",
     },
     Theme: {
         song: "song",
         group: "group",
         anime: "anime",
-        entries: "animethemeentries"
+        entries: "animethemeentries",
     },
     Artist: {
         performances: "songs",
         resources: "resources",
         images: "images",
         groups: "groups",
-        members: "members"
+        members: "members",
     },
     Song: {
         themes: "animethemes",
-        performances: "artists"
+        performances: "artists",
     },
     Entry: {
         videos: "videos",
-        theme: "animetheme"
+        theme: "animetheme",
     },
     Video: {
         audio: "audio",
@@ -49,22 +51,22 @@ export const INCLUDES = {
         tracks: "tracks",
     },
     Audio: {
-        videos: "videos"
+        videos: "videos",
     },
     Series: {
-        anime: "anime"
+        anime: "anime",
     },
     Studio: {
         anime: "anime",
         resources: "resources",
-        images: "images"
+        images: "images",
     },
     ResourceWithImages: {
-        images: "images"
+        images: "images",
     },
     Performance: {
         song: "_",
-        artist: "_"
+        artist: "_",
     },
     FeaturedTheme: {
         entry: "animethemeentry",
@@ -127,13 +129,7 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
         "animethemes.animethemeentries.videos.animethemeentries.animetheme.song.artists",
         "animethemes.animethemeentries.videos.animethemeentries.animetheme.group",
     ],
-    Theme: [
-        "anime.images",
-        "animethemeentries.videos",
-        "animethemeentries.videos.audio",
-        "song.artists",
-        "group",
-    ],
+    Theme: ["anime.images", "animethemeentries.videos", "animethemeentries.videos.audio", "song.artists", "group"],
     Artist: [
         "songs.animethemes.anime",
         "members",
@@ -163,22 +159,17 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
         "anime.animethemes.song",
         "anime.animethemes.group",
         "resources",
-        "images"
+        "images",
     ],
-    Song: [
-        "animethemes.anime",
-        "artists"
-    ],
+    Song: ["animethemes.anime", "artists"],
     Video: [
         "animethemeentries.animetheme.anime.images",
         "animethemeentries.animetheme.song.artists",
         "animethemeentries.animetheme.group",
         "videoscript",
-        "audio"
+        "audio",
     ],
-    Audio: [
-        "videos"
-    ],
+    Audio: ["videos"],
     Playlist: [
         "user",
         "tracks",
@@ -196,145 +187,268 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
         "video.animethemeentries.animetheme.group",
         "video.audio",
     ],
-    UserAuth: [
-        "permissions",
-        "roles.permissions",
-    ],
+    UserAuth: ["permissions", "roles.permissions"],
     FeaturedTheme: [
         "animethemeentry.animetheme.anime.images",
         "animethemeentry.animetheme.song.artists",
         "animethemeentry.animetheme.group",
         "user",
         "video",
-    ]
+    ],
 };
 
-interface ApiResolverConfig {
-    endpoint?: (parent: Record<string, any>, args: Record<string, unknown>) => string
-    field?: string
-    extractor?: (result: Record<string, any>, parent: Record<string, unknown>, args: Record<string, unknown>) => any
-    transformer?: (data: any, parent: Record<string, unknown>, args: Record<string, unknown>) => unknown
-    pagination?: boolean
-    type?: string | null
-    baseInclude?: string
+interface ApiResolverConfig<ApiResponse, ApiResource, Parent, Args> {
+    endpoint: (parent: Parent, args: Args) => string;
+    extractFromResponse: (response: ApiResponse, parent: Parent, args: Args) => ApiResource;
+    extractFromParent?: (parent: Parent, args: Args) => ApiResource | undefined;
+    type?: string | null;
+    baseInclude?: string;
 }
 
 export interface ApiResolverContext {
-    cache?: Map<string, Record<string, unknown> | null>
-    apiRequests: number
-    req?: IncomingMessage
+    cache?: Map<string, unknown | null>;
+    apiRequests: number;
+    req?: IncomingMessage;
 }
 
-export function apiResolver(config: ApiResolverConfig): GraphQLFieldResolver<Record<string, unknown>, ApiResolverContext> {
-    const {
-        endpoint,
-        field,
-        extractor = (a) => a,
-        transformer = (a) => a,
-        pagination = false,
-        type: defaultType = null,
-        baseInclude
-    } = config;
+export function transformedResolver<Result, Parent, Args, ResultTransformed>(
+    resolver: ResolverFn<Result, Parent, ApiResolverContext, Args>,
+    transform: (result: Result, parent: Parent, args: Args) => ResultTransformed,
+): ResolverFn<ResultTransformed, Parent, ApiResolverContext, Args> {
+    return async (parent, args, context, info) => transform(await resolver(parent, args, context, info), parent, args);
+}
 
-    return async (parent, args, context, info) => {
-        if (field && parent[field] !== undefined) {
-            return transformer(parent[field], parent, args);
-        }
+export function createApiResolver<ApiResponse>() {
+    return function createApiResolverCurried<ApiResource, Parent, Args>(
+        config: ApiResolverConfig<ApiResponse, ApiResource, Parent, Args>,
+    ) {
+        const { extractFromParent } = config;
 
-        if (!endpoint) {
-            throw new Error("Endpoint is required if field cannot be retrieved from parent safely.");
-        }
-
-        const type = defaultType || getTypeName(info.returnType);
-        const path = pathToString(info.path);
-
-        if (info.path.prev) {
-            devLog.warn(`Deep fetch at: ${path}`);
-        }
-
-        let url = endpoint(parent, args);
-
-        const includes = getIncludes(info, baseInclude);
-        if (baseInclude) {
-            includes.push(baseInclude);
-        }
-        const allowedIncludes = includes
-            // Remove includes that are not allowed by the API
-            .filter((include) => ALLOWED_INCLUDES[type]?.find((allowedInclude) => allowedInclude === include || allowedInclude.startsWith(include + ".")))
-            // Remove includes which are already included with another include
-            .filter((include, _, includes) => !includes.find((otherInclude) => otherInclude.startsWith(include + ".")))
-            // Remove duplicates
-            .filter((include, index, includes) => includes.lastIndexOf(include) === index);
-        const disallowedIncludes = includes.filter((include) => !ALLOWED_INCLUDES[type]?.find((allowedInclude) => allowedInclude === include || allowedInclude.startsWith(include + ".")));
-
-        if (disallowedIncludes.length) {
-            devLog.warn(`Disallowed includes for ${url}:`);
-            devLog.warn(disallowedIncludes.toString());
-            devLog.warn(`Or at least:`);
-            devLog.warn(disallowedIncludes.filter((include, _, includes) => !includes.find((otherInclude) => otherInclude.startsWith(include + "."))).toString());
-        }
-
-        if (allowedIncludes.length) {
-            url += `${url.includes("?") ? "&" : "?"}include=${allowedIncludes.join()}`;
-        }
-
-        const headers = context.req ? {
-            // Send auth headers from client forward, if provided.
-            referer: context.req.headers.referer ?? AUTH_REFERER,
-            cookie: context.req.headers.cookie ?? "",
-        } : undefined;
-
-        devLog.info(path + ": " + url);
-
-        // Limiting the concurrect requests is necessary to prevent timeouts.
-        return limit(() => (async () => {
-            if (!pagination) {
-                devLog.info(`Fetching: ${url}`);
-                let json: Record<string, unknown> | null;
-
-                const jsonCached = context?.cache?.get(url);
-                if (jsonCached) {
-                    devLog.info("CACHED: " + url);
-                    json = jsonCached;
-                } else {
-                    json = await fetchJson(url, { headers });
-                    context.apiRequests++;
-                    if (!context.cache) {
-                        context.cache = new Map();
-                    }
-                    context.cache.set(url, json);
+        return async (parent: Parent, args: Args, context: ApiResolverContext, info: GraphQLResolveInfo) => {
+            if (extractFromParent) {
+                const extracted = extractFromParent(parent, args);
+                if (extracted !== undefined) {
+                    return extracted;
                 }
-
-                if (!json) {
-                    return null;
-                }
-
-                return transformer(extractor(json, parent, args), parent, args);
-            } else {
-                devLog.info(`Collecting: ${url}`);
-                const results = [];
-                const pageSize = args.limit ?? PAGINATION_PAGE_SIZE ?? 25;
-                let nextUrl: string | null = `${url}${url.includes("?") ? "&" : "?"}page[size]=${pageSize}`;
-                while (nextUrl) {
-                    const json = await fetchJson(nextUrl, { headers }) as Record<string, unknown> & { links: { next: string } };
-                    context.apiRequests++;
-
-                    if (!json) {
-                        return null;
-                    }
-
-                    results.push(...transformer(extractor(json, parent, args), parent, args) as Array<unknown>);
-                    devLog.info(`Collecting: ${url}, Got ${results.length}`);
-                    nextUrl = !args.limit ? json.links.next : null;
-                }
-
-                return results;
             }
-        })());
+
+            const { url, headers } = buildRequest(config, parent, args, context, info);
+
+            // Limiting the concurrent requests is necessary to prevent timeouts.
+            return limit(() => fetchResults(url, headers, config, parent, args, context));
+        };
     };
 }
 
-export async function fetchJson<T = Record<string, unknown>>(path: string, config: RequestInit = {}): Promise<T | null> {
+export function createApiResolverNotNull<ApiResponse>() {
+    return function createApiResolverNotNullCurried<ApiResource, Parent, Args>(
+        config: ApiResolverConfig<ApiResponse, ApiResource, Parent, Args>,
+    ) {
+        const { extractFromParent } = config;
+
+        return async (parent: Parent, args: Args, context: ApiResolverContext, info: GraphQLResolveInfo) => {
+            if (extractFromParent) {
+                const extracted = extractFromParent(parent, args);
+                if (extracted !== undefined) {
+                    return extracted;
+                }
+            }
+
+            const { url, headers } = buildRequest(config, parent, args, context, info);
+
+            // Limiting the concurrent requests is necessary to prevent timeouts.
+            return limit(async () => {
+                const results = await fetchResults(url, headers, config, parent, args, context);
+
+                if (results === null) {
+                    throw new Error("Fetch returned null which isn't allowed in this resolver!");
+                }
+
+                return results;
+            });
+        };
+    };
+}
+
+export function createApiResolverPaginated<ApiResponse extends ApiIndex>() {
+    return function createApiResolverPaginatedCurried<ApiResource, Parent, Args extends { limit?: InputMaybe<number> }>(
+        config: ApiResolverConfig<ApiResponse, Array<ApiResource>, Parent, Args>,
+    ) {
+        const { extractFromParent } = config;
+
+        return async (parent: Parent, args: Args, context: ApiResolverContext, info: GraphQLResolveInfo) => {
+            if (extractFromParent) {
+                const extracted = extractFromParent(parent, args);
+                if (extracted !== undefined) {
+                    return extracted;
+                }
+            }
+
+            const { url, headers } = buildRequest(config, parent, args, context, info);
+
+            // Limiting the concurrent requests is necessary to prevent timeouts.
+            return limit(() => fetchResultsPaginated(url, headers, config, parent, args, context));
+        };
+    };
+}
+
+function buildRequest<ApiResponse, ApiResource, Parent, Args>(
+    config: ApiResolverConfig<ApiResponse, ApiResource, Parent, Args>,
+    parent: Parent,
+    args: Args,
+    context: ApiResolverContext,
+    info: GraphQLResolveInfo,
+) {
+    const { endpoint, type: defaultType = null, baseInclude } = config;
+
+    if (!endpoint) {
+        throw new Error("Endpoint is required if field cannot be retrieved from parent safely.");
+    }
+
+    const type = defaultType || getTypeName(info.returnType);
+    const path = pathToString(info.path);
+
+    if (info.path.prev) {
+        devLog.warn(`Deep fetch at: ${path}`);
+    }
+
+    let url = endpoint(parent, args);
+
+    const includes = getIncludes(info, baseInclude);
+    if (baseInclude) {
+        includes.push(baseInclude);
+    }
+    const allowedIncludes = includes
+        // Remove includes that are not allowed by the API
+        .filter((include) =>
+            ALLOWED_INCLUDES[type]?.find(
+                (allowedInclude) => allowedInclude === include || allowedInclude.startsWith(include + "."),
+            ),
+        )
+        // Remove includes which are already included with another include
+        .filter((include, _, includes) => !includes.find((otherInclude) => otherInclude.startsWith(include + ".")))
+        // Remove duplicates
+        .filter((include, index, includes) => includes.lastIndexOf(include) === index);
+    const disallowedIncludes = includes.filter(
+        (include) =>
+            !ALLOWED_INCLUDES[type]?.find(
+                (allowedInclude) => allowedInclude === include || allowedInclude.startsWith(include + "."),
+            ),
+    );
+
+    if (disallowedIncludes.length) {
+        devLog.warn(`Disallowed includes for ${url}:`);
+        devLog.warn(disallowedIncludes.toString());
+        devLog.warn(`Or at least:`);
+        devLog.warn(
+            disallowedIncludes
+                .filter(
+                    (include, _, includes) => !includes.find((otherInclude) => otherInclude.startsWith(include + ".")),
+                )
+                .toString(),
+        );
+    }
+
+    if (allowedIncludes.length) {
+        url += `${url.includes("?") ? "&" : "?"}include=${allowedIncludes.join()}`;
+    }
+
+    const headers: HeadersInit | undefined = context.req
+        ? {
+              // Send auth headers from client forward, if provided.
+              referer: context.req.headers.referer ?? AUTH_REFERER,
+              cookie: context.req.headers.cookie ?? "",
+          }
+        : undefined;
+
+    if (context.req && headers) {
+        // Forward IP address of the requester so we can have proper rate limiting.
+        // X-Real-IP is populated by the Nginx reverse proxy and includes the actual IP address of the requester.
+        // X-Forwarded-IP is read by the API and is used for rate limiting.
+        const realIp = context.req.headers["x-real-ip"];
+        if (realIp) {
+            headers["x-forwarded-ip"] = Array.isArray(realIp) ? realIp[0] : realIp;
+        }
+    }
+
+    devLog.info(path + ": " + url);
+
+    return { url, headers };
+}
+
+async function fetchResults<ApiResponse, ApiResource, Parent, Args>(
+    url: string,
+    headers: HeadersInit | undefined,
+    config: ApiResolverConfig<ApiResponse, ApiResource, Parent, Args>,
+    parent: Parent,
+    args: Args,
+    context: ApiResolverContext,
+) {
+    const { extractFromResponse } = config;
+
+    devLog.info(`Fetching: ${url}`);
+    let json: ApiResponse | null;
+
+    const jsonCached = context?.cache?.get(url);
+    if (jsonCached) {
+        devLog.info("CACHED: " + url);
+        json = jsonCached as ApiResponse;
+    } else {
+        json = await fetchJson(url, { headers });
+        context.apiRequests++;
+        if (!context.cache) {
+            context.cache = new Map();
+        }
+        context.cache.set(url, json);
+    }
+
+    if (!json) {
+        return null;
+    }
+
+    return extractFromResponse(json, parent, args);
+}
+
+async function fetchResultsPaginated<
+    ApiResponse extends ApiIndex,
+    ApiResource,
+    Parent,
+    Args extends { limit?: InputMaybe<number> },
+>(
+    url: string,
+    headers: HeadersInit | undefined,
+    config: ApiResolverConfig<ApiResponse, Array<ApiResource>, Parent, Args>,
+    parent: Parent,
+    args: Args,
+    context: ApiResolverContext,
+) {
+    const { extractFromResponse } = config;
+
+    devLog.info(`Collecting: ${url}`);
+    const results = [];
+    const pageSize = args.limit ?? PAGINATION_PAGE_SIZE ?? 25;
+    let nextUrl: string | null = `${url}${url.includes("?") ? "&" : "?"}page[size]=${pageSize}`;
+    while (nextUrl) {
+        const json: ApiResponse | null = await fetchJson(nextUrl, { headers });
+        context.apiRequests++;
+
+        if (!json) {
+            break;
+        }
+
+        results.push(...extractFromResponse(json, parent, args));
+
+        devLog.info(`Collecting: ${url}, Got ${results.length}`);
+        nextUrl = !args.limit ? json.links.next : null;
+    }
+
+    return results;
+}
+
+export async function fetchJson<T = Record<string, unknown>>(
+    path: string,
+    config: RequestInit = {},
+): Promise<T | null> {
     const url = path.startsWith(API_URL) ? path : `${API_URL}${path}`;
 
     config.credentials = "include";
@@ -353,7 +467,9 @@ export async function fetchJson<T = Record<string, unknown>>(path: string, confi
             return null;
         }
 
-        throw new Error(`API returned with non-ok status code: ${response.status} (${response.statusText}) for ${url}.`);
+        throw new Error(
+            `API returned with non-ok status code: ${response.status} (${response.statusText}) for ${url}.`,
+        );
     }
 
     try {
@@ -380,7 +496,7 @@ function pathToString(path: Path) {
 
 function getIncludes(info: GraphQLResolveInfo, baseInclude?: string) {
     const infoFragment = parseResolveInfo(info) as ResolveTree;
-    return getIncludesRecursive(infoFragment, baseInclude ? (baseInclude + ".") : "");
+    return getIncludesRecursive(infoFragment, baseInclude ? baseInclude + "." : "");
 }
 
 function getIncludesRecursive(infoFragment: ResolveTree, parent = "") {

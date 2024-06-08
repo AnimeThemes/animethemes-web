@@ -22,7 +22,7 @@ const initialFilter = {
 };
 
 interface SearchAnimeProps {
-    searchQuery?: string
+    searchQuery?: string;
 }
 
 export function SearchAnime({ searchQuery }: SearchAnimeProps) {
@@ -30,7 +30,7 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
         ...initialFilter,
         sortBy: searchQuery ? null : initialFilter.sortBy,
     });
-    const [ prevSearchQuery, setPrevSearchQuery ] = useState(searchQuery);
+    const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
 
     if (!searchQuery && filter.sortBy === null) {
         updateFilter("sortBy", initialFilter.sortBy);
@@ -47,8 +47,7 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
     }
 
     return (
-        <SearchEntity
-            <SearchAnimeQuery["searchAnime"]["data"][number]>
+        <SearchEntity<SearchAnimeQuery["searchAnime"]["data"][number]>
             entity="anime"
             searchArgs={{
                 query: searchQuery,
@@ -61,32 +60,33 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
                 sortBy: filter.sortBy,
             }}
             fetchResults={async (searchArgs) => {
-                const { data } = await fetchDataClient<SearchAnimeQuery, SearchAnimeQueryVariables>(gql`
-                    ${AnimeSummaryCard.fragments.anime}
-                    ${AnimeSummaryCard.fragments.expandable}
-                    
-                    query SearchAnime($args: SearchArgs!) {
-                        searchAnime(args: $args) {
-                            data {
-                                ...AnimeSummaryCardAnime
-                                ...AnimeSummaryCardAnimeExpandable
+                const { data } = await fetchDataClient<SearchAnimeQuery, SearchAnimeQueryVariables>(
+                    gql`
+                        ${AnimeSummaryCard.fragments.anime}
+                        ${AnimeSummaryCard.fragments.expandable}
+
+                        query SearchAnime($args: SearchArgs!) {
+                            searchAnime(args: $args) {
+                                data {
+                                    ...AnimeSummaryCardAnime
+                                    ...AnimeSummaryCardAnimeExpandable
+                                }
+                                nextPage
                             }
-                            nextPage
                         }
-                    }
-                `, { args: searchArgs });
+                    `,
+                    { args: searchArgs },
+                );
 
                 return data.searchAnime;
             }}
-            renderResult={(anime) => (
-                <AnimeSummaryCard key={anime.slug} anime={anime} expandable/>
-            )}
+            renderResult={(anime) => <AnimeSummaryCard key={anime.slug} anime={anime} expandable />}
             filters={
                 <>
-                    <SearchFilterFirstLetter value={filter.firstLetter} setValue={bindUpdateFilter("firstLetter")}/>
-                    <SearchFilterSeason value={filter.season} setValue={bindUpdateFilter("season")}/>
-                    <SearchFilterYear value={filter.year} setValue={bindUpdateFilter("year")}/>
-                    <SearchFilterMediaFormat value={filter.mediaFormat} setValue={bindUpdateFilter("mediaFormat")}/>
+                    <SearchFilterFirstLetter value={filter.firstLetter} setValue={bindUpdateFilter("firstLetter")} />
+                    <SearchFilterSeason value={filter.season} setValue={bindUpdateFilter("season")} />
+                    <SearchFilterYear value={filter.year} setValue={bindUpdateFilter("year")} />
+                    <SearchFilterMediaFormat value={filter.mediaFormat} setValue={bindUpdateFilter("mediaFormat")} />
                     <SearchFilterSortBy value={filter.sortBy} setValue={bindUpdateFilter("sortBy")}>
                         {searchQuery ? (
                             <SearchFilterSortBy.Option value={null}>Relevance</SearchFilterSortBy.Option>

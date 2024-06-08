@@ -8,7 +8,7 @@ import { Toast } from "@/components/toast/Toast";
 import { SongTitle } from "@/components/utils/SongTitle";
 import type {
     PlaylistTrackRemoveToastPlaylistFragment,
-    PlaylistTrackRemoveToastVideoFragment
+    PlaylistTrackRemoveToastVideoFragment,
 } from "@/generated/graphql";
 
 interface PlaylistTrackRemoveToastProps {
@@ -22,7 +22,8 @@ export function PlaylistTrackRemoveToast({ playlist, video }: PlaylistTrackRemov
             <Toast as="a" hoverable>
                 <Row $wrap style={{ "--justify-content": "space-between", "--gap": "8px" }}>
                     <span>
-                        <SongTitle song={video.entries[0]?.theme?.song ?? null} /> was removed from <Text color="text-primary">{playlist.name}</Text>!
+                        <SongTitle song={video.entries[0]?.theme?.song ?? null} /> was removed from{" "}
+                        <Text color="text-primary">{playlist.name}</Text>!
                     </span>
                     <Text color="text-disabled">(Click to view playlist.)</Text>
                 </Row>
@@ -38,9 +39,9 @@ PlaylistTrackRemoveToast.fragments = {
             name
         }
     `,
-    video: gql`        
+    video: gql`
         ${SongTitle.fragments.song}
-        
+
         fragment PlaylistTrackRemoveToastVideo on Video {
             entries {
                 theme {

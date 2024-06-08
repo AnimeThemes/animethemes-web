@@ -56,7 +56,7 @@ const StyledWrapper = styled(Column)`
 const StyledContainer = styled(Container)`
     display: flex;
     flex-direction: column;
-    
+
     margin-bottom: 32px;
     gap: 24px;
 `;
@@ -101,17 +101,14 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     const currentVideoSlug = getVideoSlugByProps(pageProps);
     const [previousVideoSlug, setPreviousVideoSlug] = useState<string | null>(() => getVideoSlugByProps(pageProps));
 
-    const [isFullscreen, { toggleFullscreen }] = useFullscreen(
-        () => document.documentElement,
-        {
-            onEnter() {
-                document.documentElement.dataset.fullscreen = "true";
-            },
-            onExit() {
-                delete document.documentElement.dataset.fullscreen;
-            },
-        }
-    );
+    const [isFullscreen, { toggleFullscreen }] = useFullscreen(() => document.documentElement, {
+        onEnter() {
+            document.documentElement.dataset.fullscreen = "true";
+        },
+        onExit() {
+            delete document.documentElement.dataset.fullscreen;
+        },
+    });
 
     useEffect(() => {
         if (!isVideoPage && isFullscreen) {
@@ -157,7 +154,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
             const video = anime.themes[themeIndex].entries[entryIndex].videos[videoIndex];
 
-            const watchList : WatchListItem[] = createDefaultWatchList(pageProps);
+            const watchList: WatchListItem[] = createDefaultWatchList(pageProps);
             setWatchList(watchList);
             setWatchListFactory(null);
             setCurrentWatchListItemId(watchList.find((item) => item.id === video.id)?.watchListId ?? null);
@@ -170,106 +167,107 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     const Container = isFullWidthPage ? StyledFullWidthContainer : StyledContainer;
 
     return (
-        <MultiContextProvider providers={[
-            stackContext(ThemeProvider, { theme }),
-            stackContext(FullscreenContext.Provider, { value: { isFullscreen, toggleFullscreen } }),
-            stackContext(ColorThemeContext.Provider, { value: { colorTheme, setColorTheme } }),
-            stackContext(PlayerContext.Provider, { value: {
-                watchList,
-                setWatchList: (watchList, useLocalAutoPlay = false) => {
-                    setWatchList(watchList);
-                    setIsWatchListUsingLocalAutoPlay(useLocalAutoPlay);
-                    if (useLocalAutoPlay) {
-                        setLocalAutoPlay(true);
-                    }
-                },
-                watchListFactory,
-                setWatchListFactory: (factory) => setWatchListFactory(() => factory),
-                currentWatchListItem,
-                setCurrentWatchListItem: (watchListItem) => {
-                    setCurrentWatchListItemId(watchListItem?.watchListId ?? null);
-                    if (watchListFactory && watchList.findIndex((item) => item.watchListId === watchListItem?.watchListId) === watchList.length - 1) {
-                        watchListFactory().then((nextWatchList) => {
-                            setWatchList([
-                                ...watchList,
-                                ...nextWatchList,
-                            ]);
-                        });
-                    }
-                },
-                addWatchListItem: (video) => {
-                    setWatchList((watchList) => [...watchList, createWatchListItem(video)]);
-                },
-                addWatchListItemNext: (video) => {
-                    const currentIndex = currentWatchListItem
-                        ? watchList.findIndex((item) => item.watchListId === currentWatchListItem.watchListId)
-                        : 0;
+        <MultiContextProvider
+            providers={[
+                stackContext(ThemeProvider, { theme }),
+                stackContext(FullscreenContext.Provider, { value: { isFullscreen, toggleFullscreen } }),
+                stackContext(ColorThemeContext.Provider, { value: { colorTheme, setColorTheme } }),
+                stackContext(PlayerContext.Provider, {
+                    value: {
+                        watchList,
+                        setWatchList: (watchList, useLocalAutoPlay = false) => {
+                            setWatchList(watchList);
+                            setIsWatchListUsingLocalAutoPlay(useLocalAutoPlay);
+                            if (useLocalAutoPlay) {
+                                setLocalAutoPlay(true);
+                            }
+                        },
+                        watchListFactory,
+                        setWatchListFactory: (factory) => setWatchListFactory(() => factory),
+                        currentWatchListItem,
+                        setCurrentWatchListItem: (watchListItem) => {
+                            setCurrentWatchListItemId(watchListItem?.watchListId ?? null);
+                            if (
+                                watchListFactory &&
+                                watchList.findIndex((item) => item.watchListId === watchListItem?.watchListId) ===
+                                    watchList.length - 1
+                            ) {
+                                watchListFactory().then((nextWatchList) => {
+                                    setWatchList([...watchList, ...nextWatchList]);
+                                });
+                            }
+                        },
+                        addWatchListItem: (video) => {
+                            setWatchList((watchList) => [...watchList, createWatchListItem(video)]);
+                        },
+                        addWatchListItemNext: (video) => {
+                            const currentIndex = currentWatchListItem
+                                ? watchList.findIndex((item) => item.watchListId === currentWatchListItem.watchListId)
+                                : 0;
 
-                    setWatchList((watchList) => [
-                        ...watchList.slice(0, currentIndex + 1),
-                        createWatchListItem(video),
-                        ...watchList.slice(currentIndex + 1)
-                    ]);
-                },
-                clearWatchList: () => {
-                    setWatchList([]);
-                    setWatchListFactory(null);
-                    setCurrentWatchListItemId(null);
-                    setIsWatchListUsingLocalAutoPlay(false);
-                    setPreviousVideoSlug(null);
-                },
-                isGlobalAutoPlay,
-                setGlobalAutoPlay,
-                isLocalAutoPlay,
-                setLocalAutoPlay,
-                isWatchListUsingLocalAutoPlay,
-            } }),
-            stackContext(QueryClientProvider, { client: queryClient }),
-            stackContext(ToastProvider, {}),
-            stackContext(LazyMotion, { features: () => import("utils/motionFeatures").then(res => res.default) }),
-            stackContext(ErrorBoundary, {}),
-        ]}>
-            <GlobalStyle/>
-            <SEO/>
+                            setWatchList((watchList) => [
+                                ...watchList.slice(0, currentIndex + 1),
+                                createWatchListItem(video),
+                                ...watchList.slice(currentIndex + 1),
+                            ]);
+                        },
+                        clearWatchList: () => {
+                            setWatchList([]);
+                            setWatchListFactory(null);
+                            setCurrentWatchListItemId(null);
+                            setIsWatchListUsingLocalAutoPlay(false);
+                            setPreviousVideoSlug(null);
+                        },
+                        isGlobalAutoPlay,
+                        setGlobalAutoPlay,
+                        isLocalAutoPlay,
+                        setLocalAutoPlay,
+                        isWatchListUsingLocalAutoPlay,
+                    },
+                }),
+                stackContext(QueryClientProvider, { client: queryClient }),
+                stackContext(ToastProvider, {}),
+                stackContext(LazyMotion, { features: () => import("utils/motionFeatures").then((res) => res.default) }),
+                stackContext(ErrorBoundary, {}),
+            ]}
+        >
+            <GlobalStyle />
+            <SEO />
             <Head>
-                <link rel="apple-touch-icon" sizes="180x180" href={withBasePath("/apple-touch-icon.png")}/>
-                <link rel="icon" type="image/png" sizes="32x32" href={withBasePath("/favicon-32x32.png")}/>
-                <link rel="icon" type="image/png" sizes="16x16" href={withBasePath("/favicon-16x16.png")}/>
-                <link rel="mask-icon" href={withBasePath("/safari-pinned-tab.svg")} color="#ffffff"/>
-                <meta name="msapplication-TileColor" content="#ffffff"/>
-                <meta name="theme-color" content="#1c1823"/>
+                <link rel="apple-touch-icon" sizes="180x180" href={withBasePath("/apple-touch-icon.png")} />
+                <link rel="icon" type="image/png" sizes="32x32" href={withBasePath("/favicon-32x32.png")} />
+                <link rel="icon" type="image/png" sizes="16x16" href={withBasePath("/favicon-16x16.png")} />
+                <link rel="mask-icon" href={withBasePath("/safari-pinned-tab.svg")} color="#ffffff" />
+                <meta name="msapplication-TileColor" content="#ffffff" />
+                <meta name="theme-color" content="#1c1823" />
             </Head>
             <StyledWrapper>
-                {!isFullWidthPage ? (
-                    <Navigation />
-                ) : null}
+                {!isFullWidthPage ? <Navigation /> : null}
                 {!isVideoPage ? (
                     <>
                         <Container>
                             {!!pageProps.year && (
                                 <Column style={{ "--gap": "16px" }}>
-                                    <YearNavigation {...pageProps}/>
-                                    <SeasonNavigation {...pageProps}/>
+                                    <YearNavigation {...pageProps} />
+                                    <SeasonNavigation {...pageProps} />
                                 </Column>
                             )}
-                            {pageProps.isSearch && (
-                                <SearchNavigation/>
-                            )}
+                            {pageProps.isSearch && <SearchNavigation />}
                             {STAGING ? (
                                 <Card color="text-warning">
                                     <Text as="p">
-                                        <strong>WARNING</strong>: This version of the website is for testing purposes only.
-                                        Some pages or functions might not work.
+                                        <strong>WARNING</strong>: This version of the website is for testing purposes
+                                        only. Some pages or functions might not work.
                                     </Text>
                                     <Text as="p">
-                                        <ExternalLink href={`https://animethemes.moe${router.asPath}`}>CLICK HERE TO GO BACK TO THE NORMAL SITE</ExternalLink>
+                                        <ExternalLink href={`https://animethemes.moe${router.asPath}`}>
+                                            CLICK HERE TO GO BACK TO THE NORMAL SITE
+                                        </ExternalLink>
                                     </Text>
                                 </Card>
                             ) : null}
-                            <Component {...pageProps}/>
-                            {lastBuildAt && (
-                                <PageRevalidation lastBuildAt={lastBuildAt} apiRequests={apiRequests}/>
-                            )}
+                            <Component {...pageProps} />
+                            {lastBuildAt && <PageRevalidation lastBuildAt={lastBuildAt} apiRequests={apiRequests} />}
                         </Container>
                         <Footer />
                     </>
@@ -280,28 +278,26 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                         background={!isVideoPage}
                         overlay={isVideoPage ? <VideoPlayerOverlay {...pageProps} /> : null}
                     >
-                        {isVideoPage ? (
-                            <Component {...pageProps}/>
-                        ) : null}
+                        {isVideoPage ? <Component {...pageProps} /> : null}
                     </VideoPlayer>
                 )}
             </StyledWrapper>
-            <ToastHub/>
+            <ToastHub />
         </MultiContextProvider>
     );
 }
 
 type StackContext = (children: ReactNode) => ReactNode;
 
-function stackContext<P, >(Provider: ComponentType<P>, props: P): StackContext {
+function stackContext<P>(Provider: ComponentType<P>, props: P): StackContext {
     return function StackContext(children) {
         return <Provider {...props}>{children}</Provider>;
     };
 }
 
 interface MultiContextProviderProps {
-    providers: Array<StackContext>
-    children: ReactNode
+    providers: Array<StackContext>;
+    children: ReactNode;
 }
 
 function MultiContextProvider({ providers = [], children }: MultiContextProviderProps) {
@@ -324,13 +320,7 @@ function createDefaultWatchList(pageProps: VideoPageProps): WatchListItem[] {
 
             return [{ theme, entry, video }];
         })
-        .sort(
-            sortTransformed(
-                either(themeTypeComparator)
-                    .or(themeIndexComparator)
-                    .chain(),
-                (value) => value.theme)
-        )
+        .sort(sortTransformed(either(themeTypeComparator).or(themeIndexComparator).chain(), (value) => value.theme))
         .map(({ theme, entry, video }) =>
             createWatchListItem({
                 ...video,
@@ -343,6 +333,6 @@ function createDefaultWatchList(pageProps: VideoPageProps): WatchListItem[] {
                         },
                     },
                 ],
-            })
+            }),
         );
 }

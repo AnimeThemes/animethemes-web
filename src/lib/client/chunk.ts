@@ -7,14 +7,8 @@ import resolversAnimeThemes from "@/lib/common/animethemes/resolvers";
 import typeDefsAnimeThemes from "@/lib/common/animethemes/type-defs";
 
 const schema = makeExecutableSchema({
-    typeDefs: mergeTypeDefs([
-        typeDefsAnimeThemes,
-        searchTypeDefs,
-    ]),
-    resolvers: mergeResolvers([
-        resolversAnimeThemes,
-        searchResolvers,
-    ])
+    typeDefs: mergeTypeDefs([typeDefsAnimeThemes, searchTypeDefs]),
+    resolvers: mergeResolvers([resolversAnimeThemes, searchResolvers]),
 });
 
 export const fetchDataClient = buildFetchData(schema);

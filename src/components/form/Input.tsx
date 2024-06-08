@@ -17,10 +17,10 @@ const StyledSearchInput = styled.div`
     padding: 0.5rem 1rem;
     border-radius: 2rem;
     gap: 8px;
-    
+
     background-color: ${theme.colors["solid-on-card"]};
     color: ${theme.colors["text-muted"]};
-    
+
     &:focus-within {
         box-shadow: ${theme.shadows.low};
 
@@ -34,7 +34,7 @@ const StyledInput = styled.input`
 `;
 const StyledResetButton = styled(Button).attrs({ variant: "silent", isCircle: true })`
     margin: -8px;
-    
+
     &:hover {
         background-color: transparent;
         box-shadow: none;
@@ -42,26 +42,17 @@ const StyledResetButton = styled(Button).attrs({ variant: "silent", isCircle: tr
 `;
 
 interface InputProps extends ComponentPropsWithoutRef<typeof StyledSearchInput> {
-    value: string
-    onChange: (value: string) => void
-    resettable?: boolean
-    icon?: IconDefinition
-    inputProps?: ComponentPropsWithoutRef<typeof StyledInput>
+    value: string;
+    onChange: (value: string) => void;
+    resettable?: boolean;
+    icon?: IconDefinition;
+    inputProps?: ComponentPropsWithoutRef<typeof StyledInput>;
 }
 
-export function Input({
-    value,
-    onChange,
-    resettable = false,
-    icon,
-    inputProps = {},
-    ...props
-}: InputProps) {
+export function Input({ value, onChange, resettable = false, icon, inputProps = {}, ...props }: InputProps) {
     return (
         <StyledSearchInput {...props}>
-            {icon && (
-                <Icon icon={icon} color="text-disabled"/>
-            )}
+            {icon && <Icon icon={icon} color="text-disabled" />}
             <StyledInput
                 type="text"
                 value={value}
@@ -70,7 +61,7 @@ export function Input({
             />
             {resettable && !!value && (
                 <StyledResetButton>
-                    <Icon icon={faTimes} onClick={() => onChange && onChange("")}/>
+                    <Icon icon={faTimes} onClick={() => onChange && onChange("")} />
                 </StyledResetButton>
             )}
         </StyledSearchInput>

@@ -3,9 +3,9 @@ import type { SVGProps } from "react";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 export type FontAwesomeIconProps = SVGProps<SVGSVGElement> & {
-    icon: IconDefinition
-    title?: string
-}
+    icon: IconDefinition;
+    title?: string;
+};
 
 const xmlns = "http://www.w3.org/2000/svg";
 
@@ -27,17 +27,15 @@ export function FontAwesomeIcon(props: FontAwesomeIconProps) {
             className={`${className} svg-inline--fa fa-fw`}
             {...rest}
         >
-            {title ? (
-                <title>{title}</title>
-            ) : null}
+            {title ? <title>{title}</title> : null}
             {children}
             {Array.isArray(svgPathData) ? (
                 <g>
-                    <path d={svgPathData[0]}/>
-                    <path d={svgPathData[1]}/>
+                    <path d={svgPathData[0]} />
+                    <path d={svgPathData[1]} />
                 </g>
             ) : (
-                <path fill="currentColor" d={svgPathData}/>
+                <path fill="currentColor" d={svgPathData} />
             )}
         </svg>
     );

@@ -5,8 +5,8 @@ import { Text } from "@/components/text/Text";
 const letters = createLetters();
 
 interface SearchFilterFirstLetterProps {
-    value: string | null
-    setValue: (newValue: string | null) => void
+    value: string | null;
+    setValue: (newValue: string | null) => void;
 }
 
 export function SearchFilterFirstLetter({ value, setValue }: SearchFilterFirstLetterProps) {
@@ -14,9 +14,13 @@ export function SearchFilterFirstLetter({ value, setValue }: SearchFilterFirstLe
         <SearchFilter>
             <Text variant="h2">First Letter</Text>
             <Listbox value={value} onValueChange={setValue} defaultValue={null} resettable nullable highlightNonDefault>
-                <ListboxOption value={null} hidden>Any</ListboxOption>
+                <ListboxOption value={null} hidden>
+                    Any
+                </ListboxOption>
                 {letters.map((letter) => (
-                    <ListboxOption key={letter} value={letter}>{letter}</ListboxOption>
+                    <ListboxOption key={letter} value={letter}>
+                        {letter}
+                    </ListboxOption>
                 ))}
             </Listbox>
         </SearchFilter>

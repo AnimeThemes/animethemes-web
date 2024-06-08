@@ -16,13 +16,13 @@ const StyledImage = styled(FullWidthImage)`
 `;
 
 interface StudioCoverImageProps extends ComponentPropsWithoutRef<typeof FullWidthImage> {
-    studio: StudioCoverImageStudioFragment
+    studio: StudioCoverImageStudioFragment;
 }
 
 export function StudioCoverImage({ studio, ...props }: StudioCoverImageProps) {
     const { largeCover } = extractImages(studio);
 
-    const [ imageNotFound, setImageNotFound ] = useState(!largeCover);
+    const [imageNotFound, setImageNotFound] = useState(!largeCover);
 
     return (
         <AspectRatio ratio={2 / 3}>
@@ -35,7 +35,7 @@ export function StudioCoverImage({ studio, ...props }: StudioCoverImageProps) {
                     {...props}
                 />
             ) : (
-                <MultiCoverImage resourcesWithImages={studio.anime} {...props}/>
+                <MultiCoverImage resourcesWithImages={studio.anime} {...props} />
             )}
         </AspectRatio>
     );
@@ -56,5 +56,5 @@ StudioCoverImage.fragments = {
                 }
             }
         }
-    `
+    `,
 };

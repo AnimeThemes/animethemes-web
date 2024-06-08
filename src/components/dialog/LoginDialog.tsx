@@ -11,7 +11,7 @@ import Switch from "@/components/form/Switch";
 import { SearchFilter } from "@/components/search-filter/SearchFilter";
 import { Text } from "@/components/text/Text";
 import { Busy } from "@/components/utils/Busy";
-import useAuth from "@/hooks/useAuth";
+import useAuth, { type LoginErrors } from "@/hooks/useAuth";
 
 const StyledForm = styled.form`
     display: flex;
@@ -29,9 +29,7 @@ export function LoginDialog() {
             </DialogTrigger>
             <DialogContent title="Login">
                 {/* Only render the form when dialog is open, so it will reset after closing. */}
-                {open ? (
-                    <LoginForm onCancel={() => setOpen(false)} />
-                ) : null}
+                {open ? <LoginForm onCancel={() => setOpen(false)} /> : null}
             </DialogContent>
         </Dialog>
     );
@@ -51,9 +49,7 @@ function LoginForm({ onCancel }: LoginFormProps) {
     const isValid = email && password;
 
     const [isBusy, setBusy] = useState(false);
-    const [errors, setErrors] = useState<{
-        email?: string;
-    }>({});
+    const [errors, setErrors] = useState<LoginErrors>({});
 
     function performLogin(event: SyntheticEvent) {
         event.preventDefault();
@@ -65,8 +61,7 @@ function LoginForm({ onCancel }: LoginFormProps) {
             email,
             password,
             remember: isRemember,
-        })
-            .finally(() => setBusy(false));
+        }).finally(() => setBusy(false));
     }
 
     return (
@@ -83,9 +78,13 @@ function LoginForm({ onCancel }: LoginFormProps) {
                                 required: true,
                             }}
                         />
-                        {errors.email ? (
-                            <Text color="text-warning">{errors.email}</Text>
-                        ) : null}
+                        {errors.email
+                            ? errors.email.map((error) => (
+                                  <Text key={error} color="text-warning">
+                                      {error}
+                                  </Text>
+                              ))
+                            : null}
                     </SearchFilter>
                     <SearchFilter>
                         <Text>Password</Text>
@@ -100,15 +99,15 @@ function LoginForm({ onCancel }: LoginFormProps) {
                         <ForgotPasswordDialog />
                     </SearchFilter>
                     <Row style={{ "--gap": "12px", "--align-items": "center" }}>
-                        <Switch
-                            id="input-remember"
-                            isChecked={isRemember}
-                            onCheckedChange={setRemember}
-                        />
-                        <Text as="label" htmlFor="input-remember">Remember my login on this device.</Text>
+                        <Switch id="input-remember" isChecked={isRemember} onCheckedChange={setRemember} />
+                        <Text as="label" htmlFor="input-remember">
+                            Remember my login on this device.
+                        </Text>
                     </Row>
                     <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
-                        <Button type="button" variant="silent" onClick={onCancel}>Cancel</Button>
+                        <Button type="button" variant="silent" onClick={onCancel}>
+                            Cancel
+                        </Button>
                         <Button type="submit" variant="primary" disabled={!isValid || isBusy}>
                             <Busy isBusy={isBusy}>Login</Busy>
                         </Button>

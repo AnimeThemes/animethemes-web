@@ -26,12 +26,7 @@ export function PasswordChangeDialog() {
             </DialogTrigger>
             <DialogContent title="Change Password">
                 {/* Only render the form when dialog is open, so it will reset after closing. */}
-                {open ? (
-                    <PasswordChangeForm
-                        onSuccess={() => setOpen(false)}
-                        onCancel={() => setOpen(false)}
-                    />
-                ) : null}
+                {open ? <PasswordChangeForm onSuccess={() => setOpen(false)} onCancel={() => setOpen(false)} /> : null}
             </DialogContent>
         </Dialog>
     );
@@ -70,19 +65,13 @@ function PasswordChangeForm({ onSuccess, onCancel }: PasswordChangeFormProps) {
         setErrors({});
 
         try {
-            await axios.put(
-                `${AUTH_PATH}/user/password`,
-                {
-                    current_password: currentPassword,
-                    password: newPassword,
-                    password_confirmation: newPasswordConfirmation,
-                }
-            );
+            await axios.put(`${AUTH_PATH}/user/password`, {
+                current_password: currentPassword,
+                password: newPassword,
+                password_confirmation: newPasswordConfirmation,
+            });
 
-            dispatchToast(
-                "password-change",
-                <Toast>Password changed successfully.</Toast>
-            );
+            dispatchToast("password-change", <Toast>Password changed successfully.</Toast>);
 
             onSuccess();
         } catch (error) {
@@ -110,9 +99,13 @@ function PasswordChangeForm({ onSuccess, onCancel }: PasswordChangeFormProps) {
                                 required: true,
                             }}
                         />
-                        {errors.current_password ? errors.current_password.map((error) => (
-                            <Text key={error} color="text-warning">{error}</Text>
-                        )) : null}
+                        {errors.current_password
+                            ? errors.current_password.map((error) => (
+                                  <Text key={error} color="text-warning">
+                                      {error}
+                                  </Text>
+                              ))
+                            : null}
                     </SearchFilter>
                     <SearchFilter>
                         <Text>New Password</Text>
@@ -124,9 +117,13 @@ function PasswordChangeForm({ onSuccess, onCancel }: PasswordChangeFormProps) {
                                 required: true,
                             }}
                         />
-                        {errors.password ? errors.password.map((error) => (
-                            <Text key={error} color="text-warning">{error}</Text>
-                        )) : null}
+                        {errors.password
+                            ? errors.password.map((error) => (
+                                  <Text key={error} color="text-warning">
+                                      {error}
+                                  </Text>
+                              ))
+                            : null}
                     </SearchFilter>
                     <SearchFilter>
                         <Text>Confirm New Password</Text>
@@ -140,7 +137,9 @@ function PasswordChangeForm({ onSuccess, onCancel }: PasswordChangeFormProps) {
                         />
                     </SearchFilter>
                     <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
-                        <Button type="button" variant="silent" onClick={onCancel}>Cancel</Button>
+                        <Button type="button" variant="silent" onClick={onCancel}>
+                            Cancel
+                        </Button>
                         <Button type="submit" variant="primary" disabled={!isValid || isBusy}>
                             <Busy isBusy={isBusy}>Change Password</Busy>
                         </Button>

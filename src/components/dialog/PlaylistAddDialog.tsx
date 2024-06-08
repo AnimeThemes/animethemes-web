@@ -29,17 +29,16 @@ export function PlaylistAddDialog({ trigger }: PlaylistAddDialogProps) {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 {trigger ?? (
-                    <IconTextButton icon={faPlus} collapsible>New</IconTextButton>
+                    <IconTextButton icon={faPlus} collapsible>
+                        New
+                    </IconTextButton>
                 )}
             </DialogTrigger>
             <DialogContent title="Create a new playlist">
                 {/* Only render the form when dialog is open, so it will reset after closing. */}
                 {open ? (
                     <LoginGate>
-                        <PlaylistAddForm
-                            onSuccess={() => setOpen(false)}
-                            onCancel={() => setOpen(false)}
-                        />
+                        <PlaylistAddForm onSuccess={() => setOpen(false)} onCancel={() => setOpen(false)} />
                     </LoginGate>
                 ) : null}
             </DialogContent>
@@ -95,10 +94,7 @@ function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
             <Column style={{ "--gap": "24px" }}>
                 <SearchFilter>
                     <Text>Title</Text>
-                    <Input
-                        value={title}
-                        onChange={setTitle}
-                    />
+                    <Input value={title} onChange={setTitle} />
                 </SearchFilter>
                 <SearchFilter>
                     <Text>Visibility</Text>
@@ -109,13 +105,18 @@ function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
                     </Listbox>
                 </SearchFilter>
                 <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
-                    <Button type="button" variant="silent" onClick={onCancel}>Cancel</Button>
+                    <Button type="button" variant="silent" onClick={onCancel}>
+                        Cancel
+                    </Button>
                     <Button type="submit" variant="primary" disabled={!isValid || isBusy}>
                         <Busy isBusy={isBusy}>Create Playlist</Busy>
                     </Button>
                 </Row>
                 {error ? (
-                    <Text color="text-warning"><strong>The playlist could not be created: </strong>{error}</Text>
+                    <Text color="text-warning">
+                        <strong>The playlist could not be created: </strong>
+                        {error}
+                    </Text>
                 ) : null}
             </Column>
         </StyledForm>

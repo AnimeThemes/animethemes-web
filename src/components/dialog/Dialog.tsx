@@ -38,11 +38,11 @@ const StyledDialogCard = styled(Card)`
     width: 100%;
     max-width: 450px;
     animation: ${contentAnimation} 250ms;
-    
+
     margin: auto;
     padding: 24px;
     box-shadow: 0 0 0 2px ${theme.colors["text-disabled"]};
-    
+
     &:before {
         display: none;
     }
@@ -57,26 +57,27 @@ interface DialogContentProps extends RadixDialog.DialogContentProps {
     title?: string;
 }
 
-export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(
-    function DialogContent({ title, children, ...props }, ref) {
-        return (
-            <RadixDialog.Portal>
-                <StyledOverlay>
-                    <RadixDialog.Content asChild {...props} ref={ref}>
-                        <StyledDialogCard>
-                            {title ? (
-                                <StyledHeader>
-                                    <Text variant="h2">{title}</Text>
-                                </StyledHeader>
-                            ) : null}
-                            {children}
-                        </StyledDialogCard>
-                    </RadixDialog.Content>
-                </StyledOverlay>
-            </RadixDialog.Portal>
-        );
-    }
-);
+export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(function DialogContent(
+    { title, children, ...props },
+    ref,
+) {
+    return (
+        <RadixDialog.Portal>
+            <StyledOverlay>
+                <RadixDialog.Content asChild {...props} ref={ref}>
+                    <StyledDialogCard>
+                        {title ? (
+                            <StyledHeader>
+                                <Text variant="h2">{title}</Text>
+                            </StyledHeader>
+                        ) : null}
+                        {children}
+                    </StyledDialogCard>
+                </RadixDialog.Content>
+            </StyledOverlay>
+        </RadixDialog.Portal>
+    );
+});
 
 export const Dialog = RadixDialog.Root;
 

@@ -18,13 +18,13 @@ const StyledBracketContainer = styled.div`
 
     overflow: hidden;
     user-select: none;
-    
+
     cursor: grab;
-    
+
     &:active {
         cursor: grabbing;
     }
-    
+
     &:fullscreen {
         background-color: ${theme.colors["background"]};
     }
@@ -33,7 +33,7 @@ const StyledBracketContainer = styled.div`
 const StyledBracket = styled(m.div)`
     display: flex;
     position: relative;
-    
+
     width: min-content;
     gap: 128px;
     padding: 16px;
@@ -54,7 +54,7 @@ const StyledRound = styled.div`
 
 const StyledPairing = styled.div`
     flex: 1;
-    
+
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -131,7 +131,7 @@ export function BracketChart({ bracket }: BracketChartProps) {
                     nextRect.left - (nextRect.left - (currentRect.left + currentRect.width)) / 2,
                     nextRect.top + nextRect.height / 2,
                     nextRect.left,
-                    nextRect.top + nextRect.height / 2
+                    nextRect.top + nextRect.height / 2,
                 );
                 ctx.stroke();
             }
@@ -141,16 +141,18 @@ export function BracketChart({ bracket }: BracketChartProps) {
     return (
         <>
             <Button variant="primary" onClick={() => setShowBracketChart(true)} style={{ "--gap": "8px" }}>
-                <Icon icon={faDiagramProject}/>
+                <Icon icon={faDiagramProject} />
                 <span>Open Bracket Chart</span>
             </Button>
             {showBracketChart ? (
                 <StyledBracketContainer ref={onBracketInit}>
                     <StyledBracket drag dragConstraints={bracketRef as RefObject<HTMLDivElement>}>
-                        <StyledCanvas ref={onCanvasInit}/>
-                        {bracket.rounds.sort((a, b) => a.tier - b.tier).map((round) => (
-                            <BracketRound key={round.tier} round={round}/>
-                        ))}
+                        <StyledCanvas ref={onCanvasInit} />
+                        {bracket.rounds
+                            .sort((a, b) => a.tier - b.tier)
+                            .map((round) => (
+                                <BracketRound key={round.tier} round={round} />
+                            ))}
                     </StyledBracket>
                 </StyledBracketContainer>
             ) : null}
@@ -159,7 +161,7 @@ export function BracketChart({ bracket }: BracketChartProps) {
 }
 
 interface BracketRoundProps {
-    round: BracketChartProps["bracket"]["rounds"][number]
+    round: BracketChartProps["bracket"]["rounds"][number];
 }
 
 const BracketRound = memo(function BracketRound({ round }: BracketRoundProps) {
@@ -170,49 +172,57 @@ const BracketRound = memo(function BracketRound({ round }: BracketRoundProps) {
     return (
         <StyledRound>
             <Text>{round.name}</Text>
-            <BracketPairings pairings={round.pairings}/>
+            <BracketPairings pairings={round.pairings} />
         </StyledRound>
     );
 });
 
 interface BracketPairingsProps {
-    pairings: BracketRoundProps["round"]["pairings"]
+    pairings: BracketRoundProps["round"]["pairings"];
 }
 
 function BracketPairings({ pairings }: BracketPairingsProps) {
-    const sortedPairings = pairings.sort((a, b) => (a.group - b.group) || (a.order - b.order)).map((pairing, index) => (
-        <StyledPairing key={index}>
-            <ContestantCard
-                key={pairing.characterA.id}
-                contestant={pairing.characterA}
-                opponent={pairing.characterB}
-                contestantVotes={pairing.votesA}
-                opponentVotes={pairing.votesB}
-            />
-            <Text variant="small">VS</Text>
-            <ContestantCard
-                key={pairing.characterB.id}
-                contestant={pairing.characterB}
-                opponent={pairing.characterA}
-                contestantVotes={pairing.votesB}
-                opponentVotes={pairing.votesA}
-            />
-        </StyledPairing>
-    ));
+    const sortedPairings = pairings
+        .sort((a, b) => a.group - b.group || a.order - b.order)
+        .map((pairing, index) => (
+            <StyledPairing key={index}>
+                <ContestantCard
+                    key={pairing.characterA.id}
+                    contestant={pairing.characterA}
+                    opponent={pairing.characterB}
+                    contestantVotes={pairing.votesA}
+                    opponentVotes={pairing.votesB}
+                />
+                <Text variant="small">VS</Text>
+                <ContestantCard
+                    key={pairing.characterB.id}
+                    contestant={pairing.characterB}
+                    opponent={pairing.characterA}
+                    contestantVotes={pairing.votesB}
+                    opponentVotes={pairing.votesA}
+                />
+            </StyledPairing>
+        ));
 
     return <>{sortedPairings}</>;
 }
 
 interface ContestantCardProps {
-    contestant: BracketPairingsProps["pairings"][number]["characterA"] | BracketPairingsProps["pairings"][number]["characterB"]
-    opponent: BracketPairingsProps["pairings"][number]["characterA"] | BracketPairingsProps["pairings"][number]["characterB"]
-    contestantVotes: number | null
-    opponentVotes: number | null
+    contestant:
+        | BracketPairingsProps["pairings"][number]["characterA"]
+        | BracketPairingsProps["pairings"][number]["characterB"];
+    opponent:
+        | BracketPairingsProps["pairings"][number]["characterA"]
+        | BracketPairingsProps["pairings"][number]["characterB"];
+    contestantVotes: number | null;
+    opponentVotes: number | null;
 }
 
 function ContestantCard({ contestant, opponent, contestantVotes, opponentVotes }: ContestantCardProps) {
     const isVoted = !!contestantVotes && !!opponentVotes;
-    const isWinner = isVoted && (contestantVotes !== opponentVotes ? contestantVotes > opponentVotes : contestant.seed < opponent.seed);
+    const isWinner =
+        isVoted &&
+        (contestantVotes !== opponentVotes ? contestantVotes > opponentVotes : contestant.seed < opponent.seed);
 
     return (
         <StyledBracketThemeSummaryCard

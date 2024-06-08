@@ -1,8 +1,8 @@
-const typeDefs = `
-    #graphql
-    
+import gql from "graphql-tag";
+
+const typeDefs = gql`
     type Query {
-        bracket(slug: String): Bracket
+        bracket(slug: String!): Bracket
         bracketAll: [Bracket!]!
     }
 

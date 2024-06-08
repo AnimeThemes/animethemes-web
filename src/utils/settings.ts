@@ -1,7 +1,7 @@
 export interface Setting<T> {
-    __KEY__: string
-    __INITIAL_VALUE__: T
-    [key: string]: string | T
+    __KEY__: string;
+    __INITIAL_VALUE__: T;
+    [key: string]: string | T;
 }
 
 export const ShowAnnouncements: Setting<string> = Object.freeze({

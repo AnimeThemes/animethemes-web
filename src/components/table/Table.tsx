@@ -21,11 +21,11 @@ export const TableRow = styled.div`
     grid-gap: 16px;
     align-items: baseline;
     padding: 8px;
-    
+
     &:not(:last-of-type) {
         border-bottom: 2px solid ${theme.colors["solid-on-card"]};
     }
-    
+
     ${withHover`
         background-color: ${theme.colors["solid"]};
     `}

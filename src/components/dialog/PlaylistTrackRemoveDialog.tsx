@@ -17,7 +17,7 @@ import { Busy } from "@/components/utils/Busy";
 import { useToasts } from "@/context/toastContext";
 import type {
     PlaylistTrackRemoveDialogPlaylistFragment,
-    PlaylistTrackRemoveDialogVideoFragment
+    PlaylistTrackRemoveDialogVideoFragment,
 } from "@/generated/graphql";
 import axios from "@/lib/client/axios";
 
@@ -35,7 +35,9 @@ export function PlaylistTrackRemoveDialog({ playlist, trackId, video, trigger }:
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 {trigger ?? (
-                    <IconTextButton icon={faMinus} variant="solid" collapsible>Remove from Playlist</IconTextButton>
+                    <IconTextButton icon={faMinus} variant="solid" collapsible>
+                        Remove from Playlist
+                    </IconTextButton>
                 )}
             </DialogTrigger>
             <DialogContent title="Remove from playlist">
@@ -69,7 +71,7 @@ PlaylistTrackRemoveDialog.fragments = {
     video: gql`
         ${VideoSummaryCardFragmentVideo}
         ${PlaylistTrackRemoveToast.fragments.video}
-        
+
         fragment PlaylistTrackRemoveDialogVideo on Video {
             ...VideoSummaryCardVideo
             ...PlaylistTrackRemoveToastVideo
@@ -95,30 +97,35 @@ function PlaylistTrackRemoveForm({ playlist, trackId, video, onSuccess, onCancel
 
         try {
             await axios.delete(`/playlist/${playlist.id}/track/${trackId}`);
-            await mutate((key) => (
-                [key].flat().some((key) =>
-                    key === `/api/playlist/${playlist.id}` ||
-                    key === "/api/me/playlist"
-                )
-            ));
+            await mutate((key) =>
+                [key].flat().some((key) => key === `/api/playlist/${playlist.id}` || key === "/api/me/playlist"),
+            );
         } finally {
             setBusy(false);
         }
 
         dispatchToast(
             `playlist-remove-track-${playlist.id}-${trackId}`,
-            <PlaylistTrackRemoveToast playlist={playlist} video={video} />
+            <PlaylistTrackRemoveToast playlist={playlist} video={video} />,
         );
 
         onSuccess();
     }
-    
+
     return (
         <Column style={{ "--gap": "24px" }}>
-            <Text>Do you really want to remove this video from <Text color="text-primary" link noWrap>{playlist.name}</Text>?</Text>
+            <Text>
+                Do you really want to remove this video from{" "}
+                <Text color="text-primary" link noWrap>
+                    {playlist.name}
+                </Text>
+                ?
+            </Text>
             <VideoSummaryCard video={video} />
             <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
-                <Button variant="silent" onClick={onCancel}>Close</Button>
+                <Button variant="silent" onClick={onCancel}>
+                    Close
+                </Button>
                 <Button variant="warning" disabled={isBusy} onClick={removeTrackFromPlaylist}>
                     <Busy isBusy={isBusy}>Remove from playlist</Busy>
                 </Button>

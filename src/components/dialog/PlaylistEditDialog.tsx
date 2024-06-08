@@ -32,7 +32,9 @@ export function PlaylistEditDialog({ playlist, trigger }: PlaylistEditDialogProp
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 {trigger ?? (
-                    <IconTextButton icon={faPen} variant="solid">Edit Playlist</IconTextButton>
+                    <IconTextButton icon={faPen} variant="solid">
+                        Edit Playlist
+                    </IconTextButton>
                 )}
             </DialogTrigger>
             <DialogContent title="Edit playlist details">
@@ -91,12 +93,9 @@ function PlaylistEditForm({ playlist, onSuccess, onCancel }: PlaylistEditFormPro
                 name: title,
                 visibility,
             });
-            await mutate((key) => (
-                [key].flat().some((key) =>
-                    key === `/api/playlist/${playlist.id}` ||
-                    key === "/api/me/playlist"
-                )
-            ));
+            await mutate((key) =>
+                [key].flat().some((key) => key === `/api/playlist/${playlist.id}` || key === "/api/me/playlist"),
+            );
         } catch (error: unknown) {
             if (isAxiosError(error) && error.response) {
                 setError(error.response.data.message ?? "An unknown error occured!");
@@ -115,10 +114,7 @@ function PlaylistEditForm({ playlist, onSuccess, onCancel }: PlaylistEditFormPro
             <Column style={{ "--gap": "24px" }}>
                 <SearchFilter>
                     <Text>Title</Text>
-                    <Input
-                        value={title}
-                        onChange={setTitle}
-                    />
+                    <Input value={title} onChange={setTitle} />
                 </SearchFilter>
                 <SearchFilter>
                     <Text>Visibility</Text>
@@ -129,13 +125,18 @@ function PlaylistEditForm({ playlist, onSuccess, onCancel }: PlaylistEditFormPro
                     </Listbox>
                 </SearchFilter>
                 <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
-                    <Button type="button" variant="silent" onClick={onCancel}>Cancel</Button>
+                    <Button type="button" variant="silent" onClick={onCancel}>
+                        Cancel
+                    </Button>
                     <Button type="submit" variant="primary" disabled={!isValid || isBusy}>
                         <Busy isBusy={isBusy}>Update Playlist</Busy>
                     </Button>
                 </Row>
                 {error ? (
-                    <Text color="text-warning"><strong>The playlist could not be updated: </strong>{error}</Text>
+                    <Text color="text-warning">
+                        <strong>The playlist could not be updated: </strong>
+                        {error}
+                    </Text>
                 ) : null}
             </Column>
         </StyledForm>

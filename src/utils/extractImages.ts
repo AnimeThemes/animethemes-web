@@ -4,15 +4,15 @@ import gql from "graphql-tag";
 import type { ExtractImagesResourceWithImagesFragment } from "@/generated/graphql";
 
 interface ExtractImages {
-    (resourcesWithImages?: ExtractImagesResourceWithImagesFragment | null): ExtractImagesResult
+    (resourcesWithImages?: ExtractImagesResourceWithImagesFragment | null): ExtractImagesResult;
     fragments: {
-        resourceWithImages: ASTNode
-    }
+        resourceWithImages: ASTNode;
+    };
 }
 
 interface ExtractImagesResult {
-    smallCover?: string
-    largeCover?: string
+    smallCover?: string;
+    largeCover?: string;
 }
 
 const extractImages: ExtractImages = (resourceWithImages) => {
@@ -46,5 +46,5 @@ extractImages.fragments = {
                 facet
             }
         }
-    `
+    `,
 };

@@ -12,14 +12,14 @@ import { SearchStudio } from "@/components/search/SearchStudio";
 import { SearchTheme } from "@/components/search/SearchTheme";
 import { SEO } from "@/components/seo/SEO";
 
-const SEARCH_ENTITIES = [ "anime", "theme", "artist", "series", "studio", "playlist" ] as const;
+const SEARCH_ENTITIES = ["anime", "theme", "artist", "series", "studio", "playlist"] as const;
 
 interface SearchEntityPageProps {
-    entity: typeof SEARCH_ENTITIES[number]
+    entity: (typeof SEARCH_ENTITIES)[number];
 }
 
 interface SearchEntityPageParams extends ParsedUrlQuery {
-    entity: typeof SEARCH_ENTITIES[number]
+    entity: (typeof SEARCH_ENTITIES)[number];
 }
 
 export default function SearchEntityPage({ entity }: SearchEntityPageProps) {
@@ -36,24 +36,24 @@ export default function SearchEntityPage({ entity }: SearchEntityPageProps) {
 }
 
 interface IndexProps {
-    searchQuery?: string
-    searchEntity: typeof SEARCH_ENTITIES[number]
+    searchQuery?: string;
+    searchEntity: (typeof SEARCH_ENTITIES)[number];
 }
 
 function Index({ searchQuery, searchEntity }: IndexProps) {
     switch (searchEntity) {
         case "anime":
-            return <SearchAnime searchQuery={searchQuery}/>;
+            return <SearchAnime searchQuery={searchQuery} />;
         case "theme":
-            return <SearchTheme searchQuery={searchQuery}/>;
+            return <SearchTheme searchQuery={searchQuery} />;
         case "artist":
-            return <SearchArtist searchQuery={searchQuery}/>;
+            return <SearchArtist searchQuery={searchQuery} />;
         case "series":
-            return <SearchSeries searchQuery={searchQuery}/>;
+            return <SearchSeries searchQuery={searchQuery} />;
         case "studio":
-            return <SearchStudio searchQuery={searchQuery}/>;
+            return <SearchStudio searchQuery={searchQuery} />;
         case "playlist":
-            return <SearchPlaylist searchQuery={searchQuery}/>;
+            return <SearchPlaylist searchQuery={searchQuery} />;
         default:
             // Should never happen
             return null;
@@ -70,16 +70,16 @@ export const getStaticProps: GetStaticProps<SearchEntityPageProps, SearchEntityP
     return {
         props: {
             entity: params.entity,
-            isSearch: true
-        }
+            isSearch: true,
+        },
     };
 };
 
 export const getStaticPaths: GetStaticPaths<SearchEntityPageParams> = () => {
     return {
         paths: SEARCH_ENTITIES.map((entity) => ({
-            params: { entity }
+            params: { entity },
         })),
-        fallback: false
+        fallback: false,
     };
 };

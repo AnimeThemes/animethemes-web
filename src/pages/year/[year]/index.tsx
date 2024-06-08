@@ -19,82 +19,87 @@ import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 import type { RequiredNonNullable } from "@/utils/types";
 
-const seasonOrder = [ "winter", "spring", "summer", "fall" ];
+const seasonOrder = ["winter", "spring", "summer", "fall"];
 
 export interface YearDetailPageProps extends SharedPageProps, RequiredNonNullable<YearDetailPageQuery> {}
 
 interface YearDetailPageParams extends ParsedUrlQuery {
-    year: string
+    year: string;
 }
 
 export default function YearDetailPage({ year }: YearDetailPageProps) {
     return (
         <>
-            <SEO title={String(year.value)}/>
+            <SEO title={String(year.value)} />
             {year.seasons.map((season) => (
-                <SeasonPreview key={season.value} season={season.value} year={year.value} animeList={season.anime}/>
+                <SeasonPreview key={season.value} season={season.value} year={year.value} animeList={season.anime} />
             ))}
         </>
     );
 }
 
 interface SeasonPreviewProps {
-    season: string
-    year: number
-    animeList: YearDetailPageProps["year"]["seasons"][number]["anime"]
+    season: string;
+    year: number;
+    animeList: YearDetailPageProps["year"]["seasons"][number]["anime"];
 }
 
 function SeasonPreview({ season, year, animeList }: SeasonPreviewProps) {
-    return <>
-        <Text variant="h2">{season}</Text>
-        <Column style={{ "--gap": "16px" }}>
-            {animeList.map((anime) => (
-                <AnimeSummaryCard key={anime.slug} anime={anime} expandable/>
-            ))}
-        </Column>
-        <Row style={{ "--justify-content": "center" }}>
-            <Button href={`/year/${year}/${season.toLowerCase()}`} as={Link} variant="silent" isCircle>
-                <Icon icon={faChevronDown}/>
-            </Button>
-        </Row>
-    </>;
+    return (
+        <>
+            <Text variant="h2">{season}</Text>
+            <Column style={{ "--gap": "16px" }}>
+                {animeList.map((anime) => (
+                    <AnimeSummaryCard key={anime.slug} anime={anime} expandable />
+                ))}
+            </Column>
+            <Row style={{ "--justify-content": "center" }}>
+                <Button href={`/year/${year}/${season.toLowerCase()}`} as={Link} variant="silent" isCircle>
+                    <Icon icon={faChevronDown} />
+                </Button>
+            </Row>
+        </>
+    );
 }
 
 export const getStaticProps: GetStaticProps<YearDetailPageProps, YearDetailPageParams> = async ({ params }) => {
-    const { data, apiRequests } = await fetchData<YearDetailPageQuery, YearDetailPageQueryVariables>(gql`
-        ${AnimeSummaryCard.fragments.anime}
-        ${AnimeSummaryCard.fragments.expandable}
+    const { data, apiRequests } = await fetchData<YearDetailPageQuery, YearDetailPageQueryVariables>(
+        gql`
+            ${AnimeSummaryCard.fragments.anime}
+            ${AnimeSummaryCard.fragments.expandable}
 
-        query YearDetailPage($year: Int!) {
-            year(value: $year) {
-                value
-                seasons {
+            query YearDetailPage($year: Int!) {
+                year(value: $year) {
                     value
-                    anime {
-                        slug
-                        ...AnimeSummaryCardAnime
-                        ...AnimeSummaryCardAnimeExpandable
+                    seasons {
+                        value
+                        anime {
+                            slug
+                            ...AnimeSummaryCardAnime
+                            ...AnimeSummaryCardAnimeExpandable
+                        }
                     }
                 }
+                yearAll {
+                    value
+                }
             }
-            yearAll {
-                value
-            }
-        }
-    `, params && {
-        year: +params.year
-    });
+        `,
+        params && {
+            year: +params.year,
+        },
+    );
 
     if (!data.year) {
         return {
-            notFound: true
+            notFound: true,
         };
     }
 
-    data.year.seasons.sort((a, b) =>
-        seasonOrder.indexOf(a.value.toLowerCase()) - seasonOrder.indexOf(b.value.toLowerCase())
+    data.year.seasons.sort(
+        (a, b) => seasonOrder.indexOf(a.value.toLowerCase()) - seasonOrder.indexOf(b.value.toLowerCase()),
     );
-    data.yearAll.sort((a, b) => a.value- b.value);
+    data.yearAll.sort((a, b) => a.value - b.value);
 
     for (const season of data.year.seasons) {
         season.anime = season.anime
@@ -110,7 +115,7 @@ export const getStaticProps: GetStaticProps<YearDetailPageProps, YearDetailPageP
             yearAll: data.yearAll,
         },
         // Revalidate after 3 hours (= 10800 seconds).
-        revalidate: 10800
+        revalidate: 10800,
     };
 };
 
@@ -126,8 +131,8 @@ export const getStaticPaths: GetStaticPaths<YearDetailPageParams> = () => {
 
         return data.yearAll.map((year) => ({
             params: {
-                year: String(year.value)
-            }
+                year: String(year.value),
+            },
         }));
     });
 };

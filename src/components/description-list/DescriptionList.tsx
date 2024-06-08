@@ -22,27 +22,25 @@ const StyledValue = styled.dd`
 `;
 
 interface DescriptionListProps extends ComponentPropsWithoutRef<typeof StyledDescriptionList> {
-    children: ReactNode
+    children: ReactNode;
 }
 
 export function DescriptionList({ children, ...props }: DescriptionListProps) {
-    return (
-        <StyledDescriptionList {...props}>
-            {children}
-        </StyledDescriptionList>
-    );
+    return <StyledDescriptionList {...props}>{children}</StyledDescriptionList>;
 }
 
 interface DescriptionListItemProps {
-    title: string
-    children: ReactNode
+    title: string;
+    children: ReactNode;
 }
 
 DescriptionList.Item = function DescriptionListItem({ title, children }: DescriptionListItemProps) {
     return (
         <>
             <StyledKey>
-                <Text as="span" variant="h2">{title}</Text>
+                <Text as="span" variant="h2">
+                    {title}
+                </Text>
             </StyledKey>
             <StyledValue>{children}</StyledValue>
         </>

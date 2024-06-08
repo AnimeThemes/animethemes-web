@@ -22,17 +22,22 @@ export function ShareMenu({ pagePath, videoUrl, audioUrl, trigger }: ShareMenuPr
     const [audioMode] = useSetting(AudioMode, { storageSync: false });
 
     function saveToClipboard(url: string) {
-        navigator.clipboard.writeText(url)
-            .then(() => dispatchToast("clipboard", <Toast>Copied to clipboard!</Toast>));
+        navigator.clipboard.writeText(url).then(() => dispatchToast("clipboard", <Toast>Copied to clipboard!</Toast>));
     }
 
     return (
         <Menu modal={false}>
             <MenuTrigger asChild>
-                {trigger ?? <IconTextButton icon={faShare} variant="solid" collapsible="socialListMax">Share</IconTextButton>}
+                {trigger ?? (
+                    <IconTextButton icon={faShare} variant="solid" collapsible="socialListMax">
+                        Share
+                    </IconTextButton>
+                )}
             </MenuTrigger>
             <MenuContent>
-                <MenuItem onSelect={() => saveToClipboard(location.origin + BASE_PATH + pagePath)}>Copy URL to this Page</MenuItem>
+                <MenuItem onSelect={() => saveToClipboard(location.origin + BASE_PATH + pagePath)}>
+                    Copy URL to this Page
+                </MenuItem>
                 {audioMode === AudioMode.ENABLED ? (
                     <>
                         <MenuItem onSelect={() => saveToClipboard(audioUrl)}>Copy URL to Embeddable Audio</MenuItem>

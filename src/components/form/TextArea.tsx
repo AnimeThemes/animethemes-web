@@ -13,7 +13,7 @@ export const TextArea = styled.textarea`
     background-color: ${theme.colors["solid-on-card"]};
     color: ${theme.colors["text-muted"]};
     scrollbar-color: ${theme.colors["gray-800"]} transparent;
-    
+
     &:focus-within {
         box-shadow: ${theme.shadows.low};
 

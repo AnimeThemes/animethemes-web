@@ -6,7 +6,7 @@ import type { ColorTheme } from "@/context/colorThemeContext";
 import { isColorTheme } from "@/context/colorThemeContext";
 
 export default function useColorTheme(): [ColorTheme, (colorTheme: ColorTheme) => void] {
-    const [ theme, setTheme ] = useLocalStorageState<ColorTheme>("theme", { defaultValue: "system" });
+    const [theme, setTheme] = useLocalStorageState<ColorTheme>("theme", { defaultValue: "system" });
 
     useEffect(() => {
         const injectedColorTheme = document.documentElement.dataset.theme;

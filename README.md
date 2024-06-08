@@ -86,12 +86,12 @@ For more information on environment variables see the [Next.js documentation](ht
 
 ## Used technologies
 
-- [Next.js](https://www.nextjs.org/)
-- [styled-components](https://styled-components.com/)
-- [react-query](https://react-query.tanstack.com/)
-- [Font Awesome](https://fontawesome.com/)
-- ...some other small packages, see the `package.json`.
+-   [Next.js](https://www.nextjs.org/)
+-   [styled-components](https://styled-components.com/)
+-   [react-query](https://react-query.tanstack.com/)
+-   [Font Awesome](https://fontawesome.com/)
+-   ...some other small packages, see the `package.json`.
 
 ### APIs
 
-- [AnimeThemes API](https://api-docs.animethemes.moe/)
+-   [AnimeThemes API](https://api-docs.animethemes.moe/)

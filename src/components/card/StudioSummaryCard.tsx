@@ -33,7 +33,7 @@ export function StudioSummaryCard({ studio }: StudioSummaryCardProps) {
             imageProps={{
                 objectFit: "contain",
                 backgroundColor,
-                onLoad: handleLoad
+                onLoad: handleLoad,
             }}
         />
     );
@@ -42,7 +42,7 @@ export function StudioSummaryCard({ studio }: StudioSummaryCardProps) {
 StudioSummaryCard.fragments = {
     studio: gql`
         ${extractImages.fragments.resourceWithImages}
-        
+
         fragment StudioSummaryCardStudio on Studio {
             slug
             name

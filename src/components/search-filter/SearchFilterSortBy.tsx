@@ -6,9 +6,9 @@ import { SearchFilter } from "@/components/search-filter/SearchFilter";
 import { Text } from "@/components/text/Text";
 
 interface SearchFilterSortByProps<T extends string | null> {
-    children: ReactNode
-    value: T
-    setValue: (newValue: T) => void
+    children: ReactNode;
+    value: T;
+    setValue: (newValue: T) => void;
 }
 
 export function SearchFilterSortBy<T extends string | null>({ children, value, setValue }: SearchFilterSortByProps<T>) {
@@ -23,5 +23,5 @@ export function SearchFilterSortBy<T extends string | null>({ children, value, s
 }
 
 SearchFilterSortBy.Option = function SearchFilterSortByOption(props: ListboxOptionProps) {
-    return <ListboxOption {...props}/>;
+    return <ListboxOption {...props} />;
 };

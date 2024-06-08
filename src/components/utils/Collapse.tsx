@@ -10,8 +10,8 @@ const StyledWrapper = styled.div`
 `;
 
 interface CollapseProps {
-    collapse: boolean
-    children: ReactNode
+    collapse: boolean;
+    children: ReactNode;
 }
 
 export function Collapse({ collapse, children }: CollapseProps) {
@@ -19,9 +19,5 @@ export function Collapse({ collapse, children }: CollapseProps) {
         return null;
     }
 
-    return (
-        <StyledWrapper>
-            {children}
-        </StyledWrapper>
-    );
+    return <StyledWrapper>{children}</StyledWrapper>;
 }

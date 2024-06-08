@@ -5,8 +5,8 @@ import type { ArtistSummaryCardArtistFragment } from "@/generated/graphql";
 import extractImages from "@/utils/extractImages";
 
 type ArtistSummaryCardProps = {
-    artist: ArtistSummaryCardArtistFragment
-    as?: string | null
+    artist: ArtistSummaryCardArtistFragment;
+    as?: string | null;
 };
 
 export function ArtistSummaryCard({ artist, as }: ArtistSummaryCardProps) {
@@ -15,19 +15,12 @@ export function ArtistSummaryCard({ artist, as }: ArtistSummaryCardProps) {
     const description = (
         <SummaryCard.Description>
             <span>Artist</span>
-            {!!as && (
-                <span>As {as}</span>
-            )}
+            {!!as && <span>As {as}</span>}
         </SummaryCard.Description>
     );
 
     return (
-        <SummaryCard
-            title={artist.name}
-            description={description}
-            image={smallCover}
-            to={`/artist/${artist.slug}`}
-        />
+        <SummaryCard title={artist.name} description={description} image={smallCover} to={`/artist/${artist.slug}`} />
     );
 }
 
@@ -41,5 +34,5 @@ ArtistSummaryCard.fragments = {
                 facet
             }
         }
-    `
+    `,
 };

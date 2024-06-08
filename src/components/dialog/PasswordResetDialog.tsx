@@ -26,10 +26,7 @@ export function PasswordResetDialog() {
     return (
         <Dialog open={open}>
             <DialogContent title="Reset Password">
-                <PasswordResetForm
-                    onSuccess={() => router.push("/profile")}
-                    onCancel={() => router.push("/")}
-                />
+                <PasswordResetForm onSuccess={() => router.push("/profile")} onCancel={() => router.push("/")} />
             </DialogContent>
         </Dialog>
     );
@@ -75,13 +72,10 @@ function PasswordResetForm({ onSuccess, onCancel }: PasswordResetFormProps) {
                 email,
                 password: newPassword,
                 password_confirmation: newPasswordConfirmation,
-                token,
+                token: (Array.isArray(token) ? token[0] : token) ?? "",
             });
 
-            dispatchToast(
-                "password-reset",
-                <Toast>Password reset successfully.</Toast>
-            );
+            dispatchToast("password-reset", <Toast>Password reset successfully.</Toast>);
 
             onSuccess();
         } catch (error) {
@@ -109,9 +103,13 @@ function PasswordResetForm({ onSuccess, onCancel }: PasswordResetFormProps) {
                                 required: true,
                             }}
                         />
-                        {errors.email ? errors.email.map((error) => (
-                            <Text key={error} color="text-warning">{error}</Text>
-                        )) : null}
+                        {errors.email
+                            ? errors.email.map((error) => (
+                                  <Text key={error} color="text-warning">
+                                      {error}
+                                  </Text>
+                              ))
+                            : null}
                     </SearchFilter>
                     <SearchFilter>
                         <Text>New Password</Text>
@@ -123,9 +121,13 @@ function PasswordResetForm({ onSuccess, onCancel }: PasswordResetFormProps) {
                                 required: true,
                             }}
                         />
-                        {errors.password ? errors.password.map((error) => (
-                            <Text key={error} color="text-warning">{error}</Text>
-                        )) : null}
+                        {errors.password
+                            ? errors.password.map((error) => (
+                                  <Text key={error} color="text-warning">
+                                      {error}
+                                  </Text>
+                              ))
+                            : null}
                     </SearchFilter>
                     <SearchFilter>
                         <Text>Confirm New Password</Text>
@@ -139,7 +141,9 @@ function PasswordResetForm({ onSuccess, onCancel }: PasswordResetFormProps) {
                         />
                     </SearchFilter>
                     <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
-                        <Button type="button" variant="silent" onClick={onCancel}>Cancel</Button>
+                        <Button type="button" variant="silent" onClick={onCancel}>
+                            Cancel
+                        </Button>
                         <Button type="submit" variant="primary" disabled={!isValid || isBusy}>
                             <Busy isBusy={isBusy}>Reset Password</Busy>
                         </Button>

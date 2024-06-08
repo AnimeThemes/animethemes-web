@@ -1,6 +1,6 @@
 const baseColors = {
-    "transparent": "#00000000",
-    "white": "#ffffff",
+    transparent: "#00000000",
+    white: "#ffffff",
     "gray-100": "#f5f2fa",
     "gray-200": "#e6e1f0",
     "gray-300": "#d1cae0",
@@ -28,24 +28,24 @@ const baseColors = {
     "warning-700": "#b91c1c",
     "warning-800": "#991b1b",
     "warning-900": "#7f1d1d",
-    "gold": "gold",
+    gold: "gold",
 };
 
 export const colors = {
     ...baseColors,
-    "background":           baseColors["gray-100"],
-    "solid":                baseColors["white"],
-    "solid-primary":        baseColors["primary-700"],
-    "solid-warning":        baseColors["warning-700"],
-    "solid-on-card":        baseColors["gray-200"],
-    "text":                 baseColors["gray-900"],
-    "text-muted":           baseColors["gray-500"],
-    "text-disabled":        baseColors["gray-400"],
-    "text-warning":         baseColors["warning-600"],
-    "text-warning-muted":   baseColors["warning-900"],
-    "text-on-warning":      baseColors["warning-100"],
-    "text-primary":         baseColors["primary-600"],
-    "text-on-primary":      baseColors["primary-100"]
+    background: baseColors["gray-100"],
+    solid: baseColors["white"],
+    "solid-primary": baseColors["primary-700"],
+    "solid-warning": baseColors["warning-700"],
+    "solid-on-card": baseColors["gray-200"],
+    text: baseColors["gray-900"],
+    "text-muted": baseColors["gray-500"],
+    "text-disabled": baseColors["gray-400"],
+    "text-warning": baseColors["warning-600"],
+    "text-warning-muted": baseColors["warning-900"],
+    "text-on-warning": baseColors["warning-100"],
+    "text-primary": baseColors["primary-600"],
+    "text-on-primary": baseColors["primary-100"],
 };
 
 export type Colors = typeof colors;
@@ -65,7 +65,7 @@ export const shadows = {
         4px 8px 8px hsl(262deg 20% 50% / 0.1),
         8px 16px 16px hsl(262deg 20% 50% / 0.1),
         16px 32px 32px hsl(262deg 20% 50% / 0.1)
-    `
+    `,
 };
 
 export type Shadows = typeof shadows;

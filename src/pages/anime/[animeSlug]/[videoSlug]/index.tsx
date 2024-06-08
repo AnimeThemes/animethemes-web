@@ -33,18 +33,25 @@ import getSharedPageProps from "@/utils/getSharedPageProps";
 import type { RequiredNonNullable } from "@/utils/types";
 
 export interface VideoPageProps extends SharedPageProps, RequiredNonNullable<VideoPageQuery> {
-    themeIndex: number
-    entryIndex: number
-    videoIndex: number
-    isVideoPage: true
+    themeIndex: number;
+    entryIndex: number;
+    videoIndex: number;
+    isVideoPage: true;
 }
 
 type VideoPageParams = {
-    animeSlug: string
-    videoSlug: string
+    animeSlug: string;
+    videoSlug: string;
 };
 
-export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, lastBuildAt, apiRequests }: VideoPageProps) {
+export default function VideoPage({
+    anime,
+    themeIndex,
+    entryIndex,
+    videoIndex,
+    lastBuildAt,
+    apiRequests,
+}: VideoPageProps) {
     const theme = anime.themes[themeIndex];
     const entry = theme.entries[entryIndex];
     const video = entry.videos[videoIndex];
@@ -90,7 +97,7 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
             artistStr = song.performances.reduce((str, performance, index, { length }) => {
                 str += performance.as || performance.artist.name;
                 if (index < length - 1) {
-                    str += (index === length - 2 ? " & " : ", ");
+                    str += index === length - 2 ? " & " : ", ";
                 }
                 return str;
             }, " by ");
@@ -101,30 +108,32 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
     const videoUrl = `${VIDEO_URL}/${video.basename}`;
 
     const videoHeight = video.resolution ?? 720;
-    const videoWidth = Math.floor(videoHeight / 9 * 16);
+    const videoWidth = Math.floor((videoHeight / 9) * 16);
 
     const currentVideoCard = useRef<HTMLDivElement>(null);
     useEffect(() => {
         let isCancelled = false;
-        
+
         setTimeout(() => {
             if (!isCancelled) {
                 currentVideoCard.current?.scrollIntoView({ block: "start", behavior: "smooth" });
             }
         }, 200);
-        
-        return () => { isCancelled = true; };
+
+        return () => {
+            isCancelled = true;
+        };
     }, [currentWatchListItem]);
-    
+
     return (
         <>
             <SEO title={pageTitle} description={pageDesc} image={largeCover}>
-                <meta name="og:video" content={videoUrl}/>
-                <meta name="og:video:url" content={videoUrl}/>
-                <meta name="og:video:secure_url" content={videoUrl}/>
-                <meta name="og:video:type" content="video/webm"/>
-                <meta name="og:video:width" content={String(videoWidth)}/>
-                <meta name="og:video:height" content={String(videoHeight)}/>
+                <meta name="og:video" content={videoUrl} />
+                <meta name="og:video:url" content={videoUrl} />
+                <meta name="og:video:secure_url" content={videoUrl} />
+                <meta name="og:video:type" content="video/webm" />
+                <meta name="og:video:width" content={String(videoWidth)} />
+                <meta name="og:video:height" content={String(videoHeight)} />
 
                 {/* Twitter card support */}
                 {/* See: https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/player-card */}
@@ -164,7 +173,11 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
                             {watchList.map((watchListItem) => (
                                 <VideoSummaryCard
                                     key={watchListItem.id}
-                                    ref={watchListItem.watchListId === currentWatchListItem?.watchListId ? currentVideoCard : undefined}
+                                    ref={
+                                        watchListItem.watchListId === currentWatchListItem?.watchListId
+                                            ? currentVideoCard
+                                            : undefined
+                                    }
                                     video={watchListItem}
                                     onPlay={() => setCurrentWatchListItem(watchListItem)}
                                     isPlaying={watchListItem.watchListId === currentWatchListItem?.watchListId}
@@ -178,9 +191,14 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
                 <StyledScrollArea>
                     <Column style={{ "--gap": "16px" }}>
                         <Text variant="h2">Origin</Text>
-                        <AnimeSummaryCard anime={anime}/>
+                        <AnimeSummaryCard anime={anime} />
                         {anime.series.map((series) => (
-                            <SummaryCard key={series.slug} title={series.name} description="Series" to={`/series/${series.slug}`} />
+                            <SummaryCard
+                                key={series.slug}
+                                title={series.name}
+                                description="Series"
+                                to={`/series/${series.slug}`}
+                            />
                         ))}
                         {anime.studios.map((studio) => (
                             <StudioSummaryCard key={studio.slug} studio={studio} />
@@ -188,18 +206,18 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
                         {!!theme.song?.performances?.length && (
                             <>
                                 <Text variant="h2">Artists</Text>
-                                {theme.song.performances.sort((a, b) => a.artist.name.localeCompare(b.artist.name)).map((performance) => (
-                                    <ArtistSummaryCard
-                                        key={performance.artist.name}
-                                        artist={performance.artist}
-                                        as={performance.as}
-                                    />
-                                ))}
+                                {theme.song.performances
+                                    .sort((a, b) => a.artist.name.localeCompare(b.artist.name))
+                                    .map((performance) => (
+                                        <ArtistSummaryCard
+                                            key={performance.artist.name}
+                                            artist={performance.artist}
+                                            as={performance.as}
+                                        />
+                                    ))}
                             </>
                         )}
-                        {lastBuildAt && (
-                            <PageRevalidation lastBuildAt={lastBuildAt} apiRequests={apiRequests} />
-                        )}
+                        {lastBuildAt && <PageRevalidation lastBuildAt={lastBuildAt} apiRequests={apiRequests} />}
                         <VideoScript key={video.id} video={video} />
                     </Column>
                 </StyledScrollArea>
@@ -211,7 +229,7 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
                             <>
                                 <Text variant="h2">Related themes</Text>
                                 {relatedThemes.map((theme) => (
-                                    <ThemeSummaryCard key={theme.id} theme={{ ...theme, anime }}/>
+                                    <ThemeSummaryCard key={theme.id} theme={{ ...theme, anime }} />
                                 ))}
                                 {anime.themes.length > 4 ? (
                                     <Row style={{ "--justify-content": "center" }}>
@@ -228,9 +246,9 @@ export default function VideoPage({ anime, themeIndex, entryIndex, videoIndex, l
                         {!!usedAlsoAs.length && (
                             <>
                                 <Text variant="h2">Also Used As</Text>
-                                {usedAlsoAs.map((theme) => theme?.anime ? (
-                                    <ThemeSummaryCard key={theme.anime.slug} theme={theme}/>
-                                ) : null)}
+                                {usedAlsoAs.map((theme) =>
+                                    theme?.anime ? <ThemeSummaryCard key={theme.anime.slug} theme={theme} /> : null,
+                                )}
                             </>
                         )}
                         {!!relatedPlaylists.length && (
@@ -341,15 +359,18 @@ export const getStaticProps: GetStaticProps<VideoPageProps, VideoPageParams> = a
     let apiRequests = 0;
 
     if (!data) {
-        ({ data, apiRequests } = await fetchData<VideoPageQuery, VideoPageQueryVariables>(gql`
-            ${VideoPage.fragments.anime}
+        ({ data, apiRequests } = await fetchData<VideoPageQuery, VideoPageQueryVariables>(
+            gql`
+                ${VideoPage.fragments.anime}
 
-            query VideoPage($animeSlug: String!) {
-                anime(slug: $animeSlug) {
-                    ...VideoPageAnime
+                query VideoPage($animeSlug: String!) {
+                    anime(slug: $animeSlug) {
+                        ...VideoPageAnime
+                    }
                 }
-            }
-        `, params && { animeSlug: params.animeSlug }));
+            `,
+            params && { animeSlug: params.animeSlug },
+        ));
     }
 
     const anime = data.anime;
@@ -366,10 +387,10 @@ export const getStaticProps: GetStaticProps<VideoPageProps, VideoPageParams> = a
                                 themeIndex,
                                 entryIndex,
                                 videoIndex,
-                                isVideoPage: true
+                                isVideoPage: true,
                             },
                             // Revalidate after 1 hour (= 3600 seconds).
-                            revalidate: 3600
+                            revalidate: 3600,
                         };
                     }
                 }
@@ -378,7 +399,7 @@ export const getStaticProps: GetStaticProps<VideoPageProps, VideoPageParams> = a
     }
 
     return {
-        notFound: true
+        notFound: true,
     };
 };
 
@@ -386,7 +407,7 @@ export const getStaticPaths: GetStaticPaths<VideoPageParams> = () => {
     return fetchStaticPaths(async () => {
         const { data } = await fetchData<VideoPageAllQuery>(gql`
             ${VideoPage.fragments.anime}
-            
+
             query VideoPageAll {
                 animeAll {
                     ...VideoPageAnime
@@ -396,19 +417,17 @@ export const getStaticPaths: GetStaticPaths<VideoPageParams> = () => {
 
         data.animeAll.forEach((anime) => buildTimeCache.set(anime.slug, { anime }));
 
-        return data.animeAll.flatMap(
-            (anime) => anime.themes.flatMap(
-                (theme) => theme.entries.flatMap(
-                    (entry) => entry.videos.flatMap(
-                        (video) => ({
-                            params: {
-                                animeSlug: anime.slug,
-                                videoSlug: createVideoSlug(theme, entry, video)
-                            }
-                        })
-                    )
-                )
-            )
+        return data.animeAll.flatMap((anime) =>
+            anime.themes.flatMap((theme) =>
+                theme.entries.flatMap((entry) =>
+                    entry.videos.flatMap((video) => ({
+                        params: {
+                            animeSlug: anime.slug,
+                            videoSlug: createVideoSlug(theme, entry, video),
+                        },
+                    })),
+                ),
+            ),
         );
     });
 };

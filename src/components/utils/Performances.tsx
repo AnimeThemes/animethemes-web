@@ -24,10 +24,10 @@ const StyledArtistLink = styled(Text).attrs({ as: "a", link: true })`
 `;
 
 export interface PerformancesProps {
-    song: PerformancesSongFragment | null
-    artist?: PerformancesArtistFragment
-    maxPerformances?: number | null
-    expandable?: boolean
+    song: PerformancesSongFragment | null;
+    artist?: PerformancesArtistFragment;
+    maxPerformances?: number | null;
+    expandable?: boolean;
 }
 
 export function Performances({ song, artist, maxPerformances = 3, expandable = false }: PerformancesProps) {
@@ -49,42 +49,38 @@ export function Performances({ song, artist, maxPerformances = 3, expandable = f
         const performedAs = performances.find((performance) => performance.artist.slug === artist.slug);
         const performedWith = performances.filter((performance) => performance.artist.slug !== artist.slug);
 
-        return <>
-            {performedAs?.as ? (
-                <Text variant="small" color="text-muted">
-                    <span> as </span>
-                    <span>
-                        <Link
-                            href={`/artist/${performedAs.artist.slug}`}
-                            passHref
-                            legacyBehavior>
-                            <StyledArtistLink>
-                                {performedAs.as}
-                            </StyledArtistLink>
-                        </Link>
-                    </span>
-                </Text>
-            ) : null}
-            {performedWith.length ? (
-                <Text variant="small" color="text-muted">
-                    <span> with </span>
-                    <span>
-                        {performedWith.map((performance) => (
-                            <StyledArtist key={performance.artist.slug}>
-                                <Link
-                                    href={`/artist/${performance.artist.slug}`}
-                                    passHref
-                                    legacyBehavior>
-                                    <StyledArtistLink>
-                                        {performance.as ? `${performance.as} (CV: ${performance.artist.name})` : performance.artist.name}
-                                    </StyledArtistLink>
-                                </Link>
-                            </StyledArtist>
-                        ))}
-                    </span>
-                </Text>
-            ) : null}
-        </>;
+        return (
+            <>
+                {performedAs?.as ? (
+                    <Text variant="small" color="text-muted">
+                        <span> as </span>
+                        <span>
+                            <Link href={`/artist/${performedAs.artist.slug}`} passHref legacyBehavior>
+                                <StyledArtistLink>{performedAs.as}</StyledArtistLink>
+                            </Link>
+                        </span>
+                    </Text>
+                ) : null}
+                {performedWith.length ? (
+                    <Text variant="small" color="text-muted">
+                        <span> with </span>
+                        <span>
+                            {performedWith.map((performance) => (
+                                <StyledArtist key={performance.artist.slug}>
+                                    <Link href={`/artist/${performance.artist.slug}`} passHref legacyBehavior>
+                                        <StyledArtistLink>
+                                            {performance.as
+                                                ? `${performance.as} (CV: ${performance.artist.name})`
+                                                : performance.artist.name}
+                                        </StyledArtistLink>
+                                    </Link>
+                                </StyledArtist>
+                            ))}
+                        </span>
+                    </Text>
+                ) : null}
+            </>
+        );
     }
 
     return (
@@ -93,12 +89,11 @@ export function Performances({ song, artist, maxPerformances = 3, expandable = f
             <Text>
                 {performancesShown.map((performance) => (
                     <StyledArtist key={performance.artist.slug}>
-                        <Link
-                            href={`/artist/${performance.artist.slug}`}
-                            passHref
-                            legacyBehavior>
+                        <Link href={`/artist/${performance.artist.slug}`} passHref legacyBehavior>
                             <Text as="a" link>
-                                {performance.as ? `${performance.as} (CV: ${performance.artist.name})` : performance.artist.name}
+                                {performance.as
+                                    ? `${performance.as} (CV: ${performance.artist.name})`
+                                    : performance.artist.name}
                             </Text>
                         </Link>
                     </StyledArtist>
@@ -131,5 +126,5 @@ Performances.fragments = {
         fragment PerformancesArtist on Artist {
             slug
         }
-    `
+    `,
 };

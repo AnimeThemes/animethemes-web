@@ -12,23 +12,25 @@ import { withHover } from "@/styles/mixins";
 import theme from "@/theme";
 
 interface SwitcherContextValue {
-    selectedItem: string | null
-    select?: (value: string | null) => void
+    selectedItem: string | null;
+    select?: (value: string | null) => void;
 }
 
 const SwitcherContext = createContext<SwitcherContextValue>({
     selectedItem: null,
-    select: () => { /* Do nothing. */ }
+    select: () => {
+        /* Do nothing. */
+    },
 });
 
 const StyledSwitcher = styled.div`
     display: flex;
     align-items: stretch;
-    
+
     width: fit-content;
     border-radius: 2rem;
     white-space: nowrap;
-    
+
     background-color: ${theme.colors["solid"]};
     box-shadow: ${theme.shadows.low};
 
@@ -38,31 +40,31 @@ const StyledSwitcher = styled.div`
 `;
 
 interface StyledButtonProps {
-    $isCircle?: boolean
-    $isSelected?: boolean
+    $isCircle?: boolean;
+    $isSelected?: boolean;
 }
 
-const StyledButton = styled.button<StyledButtonProps>`    
+const StyledButton = styled.button<StyledButtonProps>`
     position: relative;
-    
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
-    padding: ${(props) => props.$isCircle ? "8px" : "8px 16px"};
+    padding: ${(props) => (props.$isCircle ? "8px" : "8px 16px")};
     aspect-ratio: ${(props) => props.$isCircle && "1 / 1"};
-    
+
     font-size: 0.9rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1rem;
     cursor: pointer;
-    color: ${(props) => props.$isSelected ? theme.colors["text-on-primary"] : theme.colors["text-muted"]};
-    
+    color: ${(props) => (props.$isSelected ? theme.colors["text-on-primary"] : theme.colors["text-muted"])};
+
     transition: color 500ms;
 
     ${withHover`
-        color: ${(props) => props.$isSelected ? theme.colors["text-on-primary"] : theme.colors["text"]};;
+        color: ${(props) => (props.$isSelected ? theme.colors["text-on-primary"] : theme.colors["text"])};;
         transition-duration: 250ms;
     `}
 `;
@@ -82,33 +84,34 @@ const StyledTop = styled.span`
 `;
 
 type SwitcherProps<T extends string | null> = ComponentPropsWithoutRef<typeof StyledSwitcher> & {
-    selectedItem: T
-    onChange?: (value: T) => void
-    children: ReactNode
+    selectedItem: T;
+    onChange?: (value: T) => void;
+    children: ReactNode;
 };
 
 export function Switcher<T extends string | null>({ selectedItem, onChange, children, ...props }: SwitcherProps<T>) {
     const uniqueId = useMemo(createUniqueId, []);
 
-    const context = useMemo(() => ({
-        selectedItem,
-        select: onChange as (value: string | null) => void
-    }), [onChange, selectedItem]);
+    const context = useMemo(
+        () => ({
+            selectedItem,
+            select: onChange as (value: string | null) => void,
+        }),
+        [onChange, selectedItem],
+    );
 
     return (
         <StyledSwitcher {...props}>
             <SwitcherContext.Provider value={context}>
-                <LayoutGroup id={uniqueId}>
-                    {children}
-                </LayoutGroup>
+                <LayoutGroup id={uniqueId}>{children}</LayoutGroup>
             </SwitcherContext.Provider>
         </StyledSwitcher>
     );
 }
 
 interface SwitcherOptionProps extends ComponentPropsWithRef<typeof StyledButton> {
-    children: ReactNode
-    value: string
+    children: ReactNode;
+    value: string;
 }
 
 export function SwitcherOption({ children, value, ...props }: SwitcherOptionProps) {
@@ -116,18 +119,13 @@ export function SwitcherOption({ children, value, ...props }: SwitcherOptionProp
     const isSelected = context.selectedItem === value;
 
     return (
-        <StyledButton
-            type="button"
-            $isSelected={isSelected}
-            onClick={() => context.select?.(value)}
-            {...props}
-        >
+        <StyledButton type="button" $isSelected={isSelected} onClick={() => context.select?.(value)} {...props}>
             {isSelected && (
                 <StyledButtonBackground
                     layout
                     layoutId="button-bg"
                     layoutDependency={value}
-                    transition={{ duration: 0.250 }}
+                    transition={{ duration: 0.25 }}
                 />
             )}
             <StyledTop>{children}</StyledTop>
@@ -152,7 +150,7 @@ export function SwitcherReset(props: SwitcherResetProps) {
             onClick={() => context.select?.(null)}
             {...props}
         >
-            <Icon icon={faTimes}/>
+            <Icon icon={faTimes} />
         </StyledButton>
     );
 }

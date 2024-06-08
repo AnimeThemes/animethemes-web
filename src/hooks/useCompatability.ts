@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 interface Compatability {
-    canPlayVideo: boolean
+    canPlayVideo: boolean;
 }
 
 export default function useCompatability(initialValues: Partial<Compatability> = {}): Compatability {
@@ -16,6 +16,6 @@ export default function useCompatability(initialValues: Partial<Compatability> =
     }, []);
 
     return {
-        canPlayVideo
+        canPlayVideo,
     };
 }

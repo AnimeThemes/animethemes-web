@@ -13,32 +13,31 @@ import type {
     VideoButtonAnimeFragment,
     VideoButtonEntryFragment,
     VideoButtonThemeFragment,
-    VideoButtonVideoFragment
+    VideoButtonVideoFragment,
 } from "@/generated/graphql";
 import createVideoSlug, { getVideoSlugByWatchListItem } from "@/utils/createVideoSlug";
 
 interface VideoButtonProps extends ComponentPropsWithoutRef<typeof Button> {
-    anime: VideoButtonAnimeFragment
-    theme: VideoButtonThemeFragment
-    entry: VideoButtonEntryFragment
-    video: VideoButtonVideoFragment
+    anime: VideoButtonAnimeFragment;
+    theme: VideoButtonThemeFragment;
+    entry: VideoButtonEntryFragment;
+    video: VideoButtonVideoFragment;
 }
 
 export function VideoButton({ anime, theme, entry, video, ...props }: VideoButtonProps) {
     const { currentWatchListItem } = useContext(PlayerContext);
     const videoSlug = createVideoSlug(theme, entry, video);
-    const isPlaying = currentWatchListItem ? getVideoSlugByWatchListItem(currentWatchListItem) === videoSlug : false;
+    const isPlaying = currentWatchListItem
+        ? getVideoSlugByWatchListItem(currentWatchListItem) === `${anime.slug}/${videoSlug}`
+        : false;
 
     return (
-        <Link
-            href={`/anime/${anime.slug}/${videoSlug}`}
-            passHref
-            legacyBehavior>
+        <Link href={`/anime/${anime.slug}/${videoSlug}`} passHref legacyBehavior>
             <Button as="a" {...props}>
                 <Button as="span" variant="primary" isCircle>
-                    <Icon icon={isPlaying ? faCompactDisc : faPlay} className={isPlaying ? "fa-spin" : undefined}/>
+                    <Icon icon={isPlaying ? faCompactDisc : faPlay} className={isPlaying ? "fa-spin" : undefined} />
                 </Button>
-                <VideoTags video={video} hideTextOnMobile/>
+                <VideoTags video={video} hideTextOnMobile />
             </Button>
         </Link>
     );
@@ -67,7 +66,7 @@ VideoButton.fragments = {
     video: gql`
         ${createVideoSlug.fragments.video}
         ${VideoTags.fragments.video}
-        
+
         fragment VideoButtonVideo on Video {
             ...createVideoSlugVideo
             ...VideoTagsVideo

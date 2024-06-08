@@ -19,7 +19,7 @@ import theme from "@/theme";
 import extractImages from "@/utils/extractImages";
 
 const StyledWrapper = styled.div`
-    position: relative
+    position: relative;
 `;
 
 const StyledThemeContainerInline = styled.div`
@@ -32,7 +32,7 @@ const StyledThemeContainerInline = styled.div`
     right: 16px;
     opacity: 0;
     transition-property: opacity;
-    
+
     user-select: none;
 
     ${StyledWrapper}:hover & {
@@ -40,7 +40,7 @@ const StyledThemeContainerInline = styled.div`
         opacity: 1;
         transition-duration: 250ms;
     }
-    
+
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         position: static;
         opacity: 1;
@@ -60,20 +60,25 @@ const StyledThemeGroupContainer = styled.div`
     margin-top: 8px;
 `;
 
-type AnimeSummaryCardProps = {
-    anime: AnimeSummaryCardAnimeFragment
-    expandable?: false
-} | {
-    anime: AnimeSummaryCardAnimeFragment & AnimeSummaryCardAnimeExpandableFragment
-    expandable: true
-};
+type AnimeSummaryCardProps =
+    | {
+          anime: AnimeSummaryCardAnimeFragment;
+          expandable?: false;
+      }
+    | {
+          anime: AnimeSummaryCardAnimeFragment & AnimeSummaryCardAnimeExpandableFragment;
+          expandable: true;
+      };
 
 export function AnimeSummaryCard({ anime, expandable = false, ...props }: AnimeSummaryCardProps) {
     const [isExpanded, toggleExpanded] = useToggle();
     const { smallCover } = extractImages(anime);
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
 
-    const groups = uniqBy(anime.themes.map((theme) => theme.group), (group) => group?.slug);
+    const groups = uniqBy(
+        anime.themes.map((theme) => theme.group),
+        (group) => group?.slug,
+    );
 
     const animeLink = `/anime/${anime.slug}`;
 
@@ -87,11 +92,7 @@ export function AnimeSummaryCard({ anime, expandable = false, ...props }: AnimeS
     const description = (
         <SummaryCard.Description>
             <span>{anime.media_format ?? "Anime"}</span>
-            {!!anime.year && (
-                <TextLink href={premiereLink}>
-                    {premiere}
-                </TextLink>
-            )}
+            {!!anime.year && <TextLink href={premiereLink}>{premiere}</TextLink>}
             <span>{anime.themes.length} themes</span>
         </SummaryCard.Description>
     );
@@ -140,10 +141,12 @@ export function AnimeSummaryCard({ anime, expandable = false, ...props }: AnimeS
                     <StyledThemeGroupContainer>
                         {groups.map((group) => (
                             <Fragment key={group?.slug}>
-                                {!!group && (
-                                    <Text variant="h2">{group.name}</Text>
-                                )}
-                                <ThemeTable themes={(anime as AnimeSummaryCardAnimeExpandableFragment).themes.filter((theme) => theme.group?.slug === group?.slug)}/>
+                                {!!group && <Text variant="h2">{group.name}</Text>}
+                                <ThemeTable
+                                    themes={(anime as AnimeSummaryCardAnimeExpandableFragment).themes.filter(
+                                        (theme) => theme.group?.slug === group?.slug,
+                                    )}
+                                />
                             </Fragment>
                         ))}
                     </StyledThemeGroupContainer>
@@ -156,7 +159,7 @@ export function AnimeSummaryCard({ anime, expandable = false, ...props }: AnimeS
 AnimeSummaryCard.fragments = {
     anime: gql`
         ${extractImages.fragments.resourceWithImages}
-        
+
         fragment AnimeSummaryCardAnime on Anime {
             ...extractImagesResourceWithImages
             slug
@@ -184,5 +187,5 @@ AnimeSummaryCard.fragments = {
                 }
             }
         }
-    `
+    `,
 };

@@ -24,60 +24,54 @@ const StyledSummaryCard = styled(Card)`
 `;
 
 const StyledCover = styled.img.attrs({
-    loading: "lazy"
+    loading: "lazy",
 })<{
-    objectFit?: Property.ObjectFit
-    backgroundColor?: Property.Background
-    isLoading?: boolean
-    isPlaceholder?: boolean
+    objectFit?: Property.ObjectFit;
+    backgroundColor?: Property.Background;
+    isLoading?: boolean;
+    isPlaceholder?: boolean;
 }>`
     width: 48px;
     height: 64px;
     object-fit: ${(props) => props.objectFit ?? "cover"};
     background: ${(props) => props.backgroundColor};
-    
-    ${(props) => props.isPlaceholder ? css`
-        padding: 0.5rem;
-        object-fit: contain;
-        background-color: white;
-    ` : (props.isLoading ? loadingAnimation : null)}
+
+    ${(props) =>
+        props.isPlaceholder
+            ? css`
+                  padding: 0.5rem;
+                  object-fit: contain;
+                  background-color: white;
+              `
+            : props.isLoading
+              ? loadingAnimation
+              : null}
 `;
 
 const StyledBody = styled(Column)`
     flex: 1;
     justify-content: center;
     gap: 0.25rem;
-    
+
     word-break: break-all;
 `;
 
 type SummaryCardProps = ComponentPropsWithoutRef<typeof StyledSummaryCard> & {
-    title: string | ReactNode
-    description?: string | ReactNode
-    image?: string
-    imageProps?: ComponentPropsWithoutRef<typeof StyledCover>
-    to?: string
-    children?: ReactNode
+    title: string | ReactNode;
+    description?: string | ReactNode;
+    image?: string;
+    imageProps?: ComponentPropsWithoutRef<typeof StyledCover>;
+    to?: string;
+    children?: ReactNode;
 };
 
-export function SummaryCard({
-    title,
-    description,
-    image,
-    imageProps,
-    to,
-    children,
-    ...props
-}: SummaryCardProps) {
-    const [ imageNotFound, setImageNotFound ] = useState(false);
-    const [ imageLoading, setImageLoading ] = useState(true);
+export function SummaryCard({ title, description, image, imageProps, to, children, ...props }: SummaryCardProps) {
+    const [imageNotFound, setImageNotFound] = useState(false);
+    const [imageLoading, setImageLoading] = useState(true);
 
     return (
         <StyledSummaryCard {...props}>
-            <ConditionalWrapper
-                condition={!!to}
-                wrap={(children) => <Link href={to as string}>{children}</Link>}
-            >
+            <ConditionalWrapper condition={!!to} wrap={(children) => <Link href={to as string}>{children}</Link>}>
                 <StyledCover
                     alt="Cover"
                     src={(!imageNotFound && image) || withBasePath("/img/logo.svg")}
@@ -102,16 +96,15 @@ export function SummaryCard({
             </ConditionalWrapper>
             <StyledBody>
                 <Text maxLines={1} title={typeof title === "string" ? title : undefined}>
-                    {typeof title === "string" && to ? 
-                        <TextLink href={to}>{title}</TextLink> : title}
+                    {typeof title === "string" && to ? <TextLink href={to}>{title}</TextLink> : title}
                 </Text>
                 {!!description && (
                     <Text variant="small" maxLines={1}>
                         {typeof description === "string" ? (
-                            <SummaryCard.Description>
-                                {[description]}
-                            </SummaryCard.Description>
-                        ) : description}
+                            <SummaryCard.Description>{[description]}</SummaryCard.Description>
+                        ) : (
+                            description
+                        )}
                     </Text>
                 )}
             </StyledBody>
@@ -121,20 +114,20 @@ export function SummaryCard({
 }
 
 type SummaryCardDescriptionProps = {
-    children: Array<ReactNode>
+    children: Array<ReactNode>;
 };
 
 SummaryCard.Description = function SummaryCardDescription({ children }: SummaryCardDescriptionProps) {
     return (
         <>
-            {children.filter((child) => child).map((child, index, { length }) => (
-                <Text key={index} color="text-muted">
-                    <span>{child}</span>
-                    {index < length - 1 && (
-                        <span> &bull; </span>
-                    )}
-                </Text>
-            ))}
+            {children
+                .filter((child) => child)
+                .map((child, index, { length }) => (
+                    <Text key={index} color="text-muted">
+                        <span>{child}</span>
+                        {index < length - 1 && <span> &bull; </span>}
+                    </Text>
+                ))}
         </>
     );
 };

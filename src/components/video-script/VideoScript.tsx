@@ -9,7 +9,7 @@ import type { VideoScriptVideoFragment } from "@/generated/graphql";
 
 const StyledCodeBlock = styled.pre`
     overflow-x: auto;
-    
+
     & > code {
         display: block;
         min-width: 100%;
@@ -19,7 +19,7 @@ const StyledCodeBlock = styled.pre`
 `;
 
 interface Props {
-    video: VideoScriptVideoFragment
+    video: VideoScriptVideoFragment;
 }
 
 export default function VideoScript({ video }: Props) {
@@ -52,39 +52,50 @@ export default function VideoScript({ video }: Props) {
     return (
         <>
             {isLoading ? (
-                <Text variant="small" color="text-disabled">Downloading encoding script...</Text>
+                <Text variant="small" color="text-disabled">
+                    Downloading encoding script...
+                </Text>
             ) : videoScript ? (
                 <>
                     {videoScript ? (
                         <Column style={{ "--gap": "8px" }}>
-                            <StyledCodeBlock><Text variant="code">{videoScript}</Text></StyledCodeBlock>
-                            <Text variant="small" link color="text-disabled" onClick={() => navigator.clipboard.writeText(videoScript)}>
+                            <StyledCodeBlock>
+                                <Text variant="code">{videoScript}</Text>
+                            </StyledCodeBlock>
+                            <Text
+                                variant="small"
+                                link
+                                color="text-disabled"
+                                onClick={() => navigator.clipboard.writeText(videoScript)}
+                            >
                                 Click to copy to clipboard.
                             </Text>
                         </Column>
                     ) : null}
-                    {(videoFilter || audioFilter) ? (
+                    {videoFilter || audioFilter ? (
                         <Column style={{ "--gap": "8px" }}>
-                            <StyledCodeBlock><Text variant="code">{filter}</Text></StyledCodeBlock>
-                            <Text variant="small" link color="text-disabled" onClick={() => navigator.clipboard.writeText(filter)}>
+                            <StyledCodeBlock>
+                                <Text variant="code">{filter}</Text>
+                            </StyledCodeBlock>
+                            <Text
+                                variant="small"
+                                link
+                                color="text-disabled"
+                                onClick={() => navigator.clipboard.writeText(filter)}
+                            >
                                 Click to copy to clipboard.
                             </Text>
                         </Column>
                     ) : null}
                 </>
             ) : video.script ? (
-                <Text
-                    download
-                    variant="small"
-                    link
-                    color="text-disabled"
-                    onClick={downloadVideoScript}
-                >Click to download encoding script.</Text>
+                <Text download variant="small" link color="text-disabled" onClick={downloadVideoScript}>
+                    Click to download encoding script.
+                </Text>
             ) : (
-                <Text
-                    variant="small"
-                    color="text-disabled"
-                >No encoding script available.</Text>
+                <Text variant="small" color="text-disabled">
+                    No encoding script available.
+                </Text>
             )}
         </>
     );

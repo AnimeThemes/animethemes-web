@@ -17,7 +17,7 @@ const initialFilter = {
 };
 
 interface SearchStudioProps {
-    searchQuery?: string
+    searchQuery?: string;
 }
 
 export function SearchStudio({ searchQuery }: SearchStudioProps) {
@@ -25,7 +25,7 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
         ...initialFilter,
         sortBy: searchQuery ? null : initialFilter.sortBy,
     });
-    const [ prevSearchQuery, setPrevSearchQuery ] = useState(searchQuery);
+    const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
 
     if (!searchQuery && filter.sortBy === null) {
         updateFilter("sortBy", initialFilter.sortBy);
@@ -42,8 +42,7 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
     }
 
     return (
-        <SearchEntity
-            <SearchStudioQuery["searchStudio"]["data"][number]>
+        <SearchEntity<SearchStudioQuery["searchStudio"]["data"][number]>
             entity="studio"
             searchArgs={{
                 query: searchQuery,
@@ -53,29 +52,30 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
                 sortBy: filter.sortBy,
             }}
             fetchResults={async (searchArgs) => {
-                const { data } = await fetchDataClient<SearchStudioQuery, SearchStudioQueryVariables>(gql`
-                    ${StudioCoverImage.fragments.studio}
-                    
-                    query SearchStudio($args: SearchArgs!) {
-                        searchStudio(args: $args) {
-                            data {
-                                ...StudioCoverImageStudio
-                                slug
-                                name
+                const { data } = await fetchDataClient<SearchStudioQuery, SearchStudioQueryVariables>(
+                    gql`
+                        ${StudioCoverImage.fragments.studio}
+
+                        query SearchStudio($args: SearchArgs!) {
+                            searchStudio(args: $args) {
+                                data {
+                                    ...StudioCoverImageStudio
+                                    slug
+                                    name
+                                }
+                                nextPage
                             }
-                            nextPage
                         }
-                    }
-                `, { args: searchArgs });
+                    `,
+                    { args: searchArgs },
+                );
 
                 return data.searchStudio;
             }}
-            renderResult={(studio) => (
-                <StudioSummaryCard key={studio.slug} studio={studio}/>
-            )}
+            renderResult={(studio) => <StudioSummaryCard key={studio.slug} studio={studio} />}
             filters={
                 <>
-                    <SearchFilterFirstLetter value={filter.firstLetter} setValue={bindUpdateFilter("firstLetter")}/>
+                    <SearchFilterFirstLetter value={filter.firstLetter} setValue={bindUpdateFilter("firstLetter")} />
                     <SearchFilterSortBy value={filter.sortBy} setValue={bindUpdateFilter("sortBy")}>
                         {searchQuery ? (
                             <SearchFilterSortBy.Option value={null}>Relevance</SearchFilterSortBy.Option>

@@ -1,4 +1,4 @@
-import React, { useContext,useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 
 import { faChevronUp } from "@fortawesome/pro-solid-svg-icons";
@@ -11,12 +11,12 @@ import { withHover } from "@/styles/mixins";
 import theme from "@/theme";
 
 const ScrollButton = styled(m(Button))<{ $bottomOffset: number }>`
-  position: fixed;
-  right: 16px;
-  bottom: ${(props) => 16 + props.$bottomOffset}px;
-  padding: 16px;
+    position: fixed;
+    right: 16px;
+    bottom: ${(props) => 16 + props.$bottomOffset}px;
+    padding: 16px;
 
-  ${withHover`
+    ${withHover`
       background-color: ${theme.colors["solid-on-card"]}; 
       color: ${theme.colors["text-primary"]}; 
     `}

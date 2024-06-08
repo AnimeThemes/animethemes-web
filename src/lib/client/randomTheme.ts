@@ -29,27 +29,30 @@ export async function fetchRandomThemes(options?: RandomThemesOptions) {
         args.filters.push({ key: "anime][year-lte", value: String(options.animeYearMax) });
     }
 
-    const { data } = await fetchDataClient<RandomThemeQuery, RandomThemeQueryVariables>(gql`
-        ${ThemeSummaryCard.fragments.theme}
-        ${ThemeSummaryCard.fragments.expandable}
+    const { data } = await fetchDataClient<RandomThemeQuery, RandomThemeQueryVariables>(
+        gql`
+            ${ThemeSummaryCard.fragments.theme}
+            ${ThemeSummaryCard.fragments.expandable}
 
-        query RandomTheme($args: SearchArgs!) {
-            searchTheme(args: $args) {
-                data {
-                    ...ThemeSummaryCardTheme
-                    ...ThemeSummaryCardThemeExpandable
-                    entries {
-                        videos {
-                            basename
-                            audio {
+            query RandomTheme($args: SearchArgs!) {
+                searchTheme(args: $args) {
+                    data {
+                        ...ThemeSummaryCardTheme
+                        ...ThemeSummaryCardThemeExpandable
+                        entries {
+                            videos {
                                 basename
+                                audio {
+                                    basename
+                                }
                             }
                         }
                     }
                 }
             }
-        }
-    `, { args });
+        `,
+        { args },
+    );
 
     return data.searchTheme.data.map((theme) => {
         // Remove all entries which have spoilers (the filter parameter guarantees at least one spoiler-free entry)

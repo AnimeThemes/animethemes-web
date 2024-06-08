@@ -30,7 +30,9 @@ export function PlaylistRemoveDialog({ playlist, trigger }: PlaylistRemoveDialog
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 {trigger ?? (
-                    <IconTextButton icon={faMinus} variant="solid" collapsible>Delete playlist</IconTextButton>
+                    <IconTextButton icon={faMinus} variant="solid" collapsible>
+                        Delete playlist
+                    </IconTextButton>
                 )}
             </DialogTrigger>
             <DialogContent title="Delete playlist">
@@ -84,20 +86,25 @@ function PlaylistRemoveForm({ playlist, onSuccess, onCancel }: PlaylistRemoveFor
             setBusy(false);
         }
 
-        dispatchToast(
-            `playlist-remove-${playlist.id}`,
-            <PlaylistRemoveToast playlist={playlist} />
-        );
+        dispatchToast(`playlist-remove-${playlist.id}`, <PlaylistRemoveToast playlist={playlist} />);
 
         onSuccess();
     }
 
     return (
         <Column style={{ "--gap": "24px" }}>
-            <Text>Do you really want to delete <Text color="text-primary" link noWrap>{playlist.name}</Text>?</Text>
+            <Text>
+                Do you really want to delete{" "}
+                <Text color="text-primary" link noWrap>
+                    {playlist.name}
+                </Text>
+                ?
+            </Text>
             <PlaylistSummaryCard playlist={playlist} />
             <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
-                <Button variant="silent" onClick={onCancel}>Close</Button>
+                <Button variant="silent" onClick={onCancel}>
+                    Close
+                </Button>
                 <Button variant="warning" disabled={isBusy} onClick={removePlaylist}>
                     <Busy isBusy={isBusy}>Delete playlist</Busy>
                 </Button>

@@ -21,43 +21,44 @@ const StyledSummaryCard = styled(Card)`
 `;
 
 const StyledCover = styled.img.attrs({
-    loading: "lazy"
+    loading: "lazy",
 })<{
-    objectFit?: Property.ObjectFit
-    backgroundColor?: Property.Background
-    isLoading?: boolean
-    isPlaceholder?: boolean
+    objectFit?: Property.ObjectFit;
+    backgroundColor?: Property.Background;
+    isLoading?: boolean;
+    isPlaceholder?: boolean;
 }>`
     width: 48px;
     height: 64px;
     object-fit: ${(props) => props.objectFit ?? "cover"};
     background: ${(props) => props.backgroundColor};
-    
-    ${(props) => props.isPlaceholder ? css`
-        padding: 0.5rem;
-        object-fit: contain;
-        background-color: white;
-    ` : (props.isLoading ? loadingAnimation : null)}
+
+    ${(props) =>
+        props.isPlaceholder
+            ? css`
+                  padding: 0.5rem;
+                  object-fit: contain;
+                  background-color: white;
+              `
+            : props.isLoading
+              ? loadingAnimation
+              : null}
 `;
 
 const StyledBody = styled(Column)`
     flex: 1;
     justify-content: center;
     gap: 0.25rem;
-    
+
     word-break: break-all;
 `;
 
 type SummaryCardProps = ComponentPropsWithoutRef<typeof StyledSummaryCard> & {
-    children?: ReactNode
+    children?: ReactNode;
 };
 
 export function SummaryCard({ children, ...props }: SummaryCardProps) {
-    return (
-        <StyledSummaryCard {...props}>
-            {children}
-        </StyledSummaryCard>
-    );
+    return <StyledSummaryCard {...props}>{children}</StyledSummaryCard>;
 }
 
 SummaryCard.Body = StyledBody;
@@ -75,20 +76,22 @@ SummaryCard.Title = function SummaryCardTitle({ children, ...props }: SummaryCar
 };
 
 interface SummaryCardDescriptionProps {
-    children: string | Array<ReactNode>
+    children: string | Array<ReactNode>;
 }
 
 SummaryCard.Description = function SummaryCardDescription({ children }: SummaryCardDescriptionProps) {
     return (
         <Text variant="small" maxLines={1} color="text-muted">
-            {typeof children === "string" ? children : children.filter((child) => child).map((child, index, { length }) => (
-                <>
-                    {child}
-                    {index < length - 1 && (
-                        <span> &bull; </span>
-                    )}
-                </>
-            ))}
+            {typeof children === "string"
+                ? children
+                : children
+                      .filter((child) => child)
+                      .map((child, index, { length }) => (
+                          <>
+                              {child}
+                              {index < length - 1 && <span> &bull; </span>}
+                          </>
+                      ))}
         </Text>
     );
 };
@@ -98,8 +101,8 @@ interface SummaryCardCoverProps extends ComponentPropsWithoutRef<typeof StyledCo
 }
 
 SummaryCard.Cover = function SummaryCardCover({ src, ...props }: SummaryCardCoverProps) {
-    const [ imageNotFound, setImageNotFound ] = useState(false);
-    const [ imageLoading, setImageLoading ] = useState(true);
+    const [imageNotFound, setImageNotFound] = useState(false);
+    const [imageLoading, setImageLoading] = useState(true);
 
     return (
         <StyledCover

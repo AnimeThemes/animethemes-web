@@ -21,7 +21,7 @@ const StyledErrorMessage = styled(Text).attrs({ variant: "code" })`
 `;
 
 interface ErrorCardProps {
-    error: unknown
+    error: unknown;
 }
 
 export function ErrorCard({ error }: ErrorCardProps) {
@@ -29,14 +29,15 @@ export function ErrorCard({ error }: ErrorCardProps) {
         <StyledCard color="text-warning">
             <Row style={{ "--gap": "1rem" }}>
                 <Text color="text-warning">
-                    <Icon icon={faExclamation}/>
+                    <Icon icon={faExclamation} />
                 </Text>
-                <Text block>An error occurred while searching! Help improving the site by sending us the following error message:</Text>
+                <Text block>
+                    An error occurred while searching! Help improving the site by sending us the following error
+                    message:
+                </Text>
             </Row>
             <pre>
-                <StyledErrorMessage>
-                    {JSON.stringify(error, null, 2)}
-                </StyledErrorMessage>
+                <StyledErrorMessage>{JSON.stringify(error, null, 2)}</StyledErrorMessage>
             </pre>
         </StyledCard>
     );

@@ -35,30 +35,28 @@ const StyledThumb = styled(RadixSlider.Thumb)`
     box-shadow: ${theme.shadows.low};
     border-radius: 10px;
     cursor: pointer;
-    
+
     &:hover {
         background-color: ${theme.colors["text-muted"]};
     }
-    
+
     &:focus:focus-within {
         outline: none;
         box-shadow: 0 0 0 2px ${theme.colors["text-primary"]};
     }
 `;
 
-export const Slider = forwardRef<HTMLSpanElement, RadixSlider.SliderProps>(
-    function Slider(props, ref) {
-        const value = (props.value || props.defaultValue) ?? [];
+export const Slider = forwardRef<HTMLSpanElement, RadixSlider.SliderProps>(function Slider(props, ref) {
+    const value = (props.value || props.defaultValue) ?? [];
 
-        return (
-            <StyledSlider {...props} ref={ref}>
-                <StyledTrack>
-                    <StyledRange />
-                </StyledTrack>
-                {value.map((_, i) => (
-                    <StyledThumb key={i} />
-                ))}
-            </StyledSlider>
-        );
-    }
-);
+    return (
+        <StyledSlider {...props} ref={ref}>
+            <StyledTrack>
+                <StyledRange />
+            </StyledTrack>
+            {value.map((_, i) => (
+                <StyledThumb key={i} />
+            ))}
+        </StyledSlider>
+    );
+});

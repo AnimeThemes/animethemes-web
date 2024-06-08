@@ -27,16 +27,13 @@ export function ForgotPasswordDialog() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Text variant="small" link color="text-muted">Forgot Password?</Text>
+                <Text variant="small" link color="text-muted">
+                    Forgot Password?
+                </Text>
             </DialogTrigger>
             <DialogContent title="Request a Password Reset">
                 {/* Only render the form when dialog is open, so it will reset after closing. */}
-                {open ? (
-                    <ForgotPasswordForm
-                        onSuccess={() => setOpen(false)}
-                        onCancel={() => setOpen(false)}
-                    />
-                ) : null}
+                {open ? <ForgotPasswordForm onSuccess={() => setOpen(false)} onCancel={() => setOpen(false)} /> : null}
             </DialogContent>
         </Dialog>
     );
@@ -72,10 +69,7 @@ function ForgotPasswordForm({ onSuccess, onCancel }: ForgotPasswordProps) {
                 email,
             });
 
-            dispatchToast(
-                "forgot-password-sent",
-                <Toast>We sent you an e-mail with a password reset link.</Toast>
-            );
+            dispatchToast("forgot-password-sent", <Toast>We sent you an e-mail with a password reset link.</Toast>);
 
             onSuccess();
         } catch (error) {
@@ -103,12 +97,12 @@ function ForgotPasswordForm({ onSuccess, onCancel }: ForgotPasswordProps) {
                                 required: true,
                             }}
                         />
-                        {errors.email ? (
-                            <Text color="text-warning">{errors.email}</Text>
-                        ) : null}
+                        {errors.email ? <Text color="text-warning">{errors.email}</Text> : null}
                     </SearchFilter>
                     <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
-                        <Button type="button" variant="silent" onClick={onCancel}>Cancel</Button>
+                        <Button type="button" variant="silent" onClick={onCancel}>
+                            Cancel
+                        </Button>
                         <Button type="submit" variant="primary" disabled={!isValid || isBusy}>
                             <Busy isBusy={isBusy}>Submit</Busy>
                         </Button>

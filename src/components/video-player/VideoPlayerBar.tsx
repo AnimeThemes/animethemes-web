@@ -53,9 +53,10 @@ const StyledPlayerBar = styled(Solid)`
 const StyledPlayerBarControls = styled.div`
     display: flex;
     gap: 16px;
-    
+
     @media (max-width: ${theme.breakpoints.tabletMax}) {
-        & > :first-child, & > :last-child {
+        & > :first-child,
+        & > :last-child {
             display: none;
         }
     }
@@ -67,7 +68,7 @@ const StyledPlayerBarControl = styled(IconTextButton)`
 
 const StyledPlayerBarActions = styled.div`
     align-self: stretch;
-    
+
     display: flex;
     gap: 16px;
     align-items: center;
@@ -114,10 +115,16 @@ export function VideoPlayerBar() {
                 <Text color="text-muted" maxLines={1}>
                     <SongTitle song={theme.song} href={videoPagePath} />
                     <Text variant="small"> - </Text>
-                    <Text weight={600}>{theme.type}{theme.sequence || null}{theme.group && ` (${theme.group.name})`}</Text>
+                    <Text weight={600}>
+                        {theme.type}
+                        {theme.sequence || null}
+                        {theme.group && ` (${theme.group.name})`}
+                    </Text>
                     <Text variant="small"> from </Text>
                     <Link href={`/anime/${anime.slug}`} passHref legacyBehavior>
-                        <Text as="a" link>{anime.name}</Text>
+                        <Text as="a" link>
+                            {anime.name}
+                        </Text>
                     </Link>
                 </Text>
                 {!!theme.song?.performances?.length && (
@@ -140,14 +147,16 @@ export function VideoPlayerBar() {
                         />
                     </ConditionalWrapper>
                 ) : (
-                    <StyledPlayerBarControl
-                        icon={faBackwardStep}
-                        isCircle
-                        disabled
-                    />
+                    <StyledPlayerBarControl icon={faBackwardStep} isCircle disabled />
                 )}
                 <StyledPlayerBarControl
-                    icon={isPlaying ? faPause :  <Icon icon={faPlay} color="text-disabled" style={{ transform: "translateX(2px)" }} />}
+                    icon={
+                        isPlaying ? (
+                            faPause
+                        ) : (
+                            <Icon icon={faPlay} color="text-disabled" style={{ transform: "translateX(2px)" }} />
+                        )
+                    }
                     isCircle
                     onClick={togglePlay}
                 />
@@ -163,11 +172,7 @@ export function VideoPlayerBar() {
                         />
                     </ConditionalWrapper>
                 ) : (
-                    <StyledPlayerBarControl
-                        icon={faForwardStep}
-                        isCircle
-                        disabled
-                    />
+                    <StyledPlayerBarControl icon={faForwardStep} isCircle disabled />
                 )}
             </StyledPlayerBarControls>
             <StyledPlayerBarActions>
@@ -177,22 +182,21 @@ export function VideoPlayerBar() {
                         // Flip the structure on it's head,
                         // because we need video as the root object here.
                         ...video,
-                        entries: [{
-                            ...entry,
-                            theme,
-                        }],
+                        entries: [
+                            {
+                                ...entry,
+                                theme,
+                            },
+                        ],
                     }}
                     trigger={
-                        <IconTextButton icon={faPlus} variant="solid" collapsible="socialListMax">Add to Playlist</IconTextButton>
+                        <IconTextButton icon={faPlus} variant="solid" collapsible="socialListMax">
+                            Add to Playlist
+                        </IconTextButton>
                     }
                 />
                 <ShareMenu pagePath={videoPagePath} videoUrl={videoUrl} audioUrl={audioUrl} />
-                <IconTextButton
-                    icon={faXmark}
-                    isCircle
-                    disabled={!background}
-                    onClick={() => clearWatchList()}
-                />
+                <IconTextButton icon={faXmark} isCircle disabled={!background} onClick={() => clearWatchList()} />
             </StyledPlayerBarActions>
             <ProgressBar />
         </StyledPlayerBar>

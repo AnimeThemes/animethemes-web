@@ -1,28 +1,28 @@
 import { useEffect, useState } from "react";
 
 interface CurrentSeason {
-    currentYear: number
-    currentSeason: "winter" | "spring" | "summer" | "fall"
+    currentYear: number;
+    currentSeason: "winter" | "spring" | "summer" | "fall";
 }
 
 export default function useCurrentSeason(): CurrentSeason {
     // Server-side
-    const [ current, setCurrent ] = useState(() => ({
+    const [current, setCurrent] = useState(() => ({
         year: getCurrentYear(),
-        season: getCurrentSeason()
+        season: getCurrentSeason(),
     }));
 
     useEffect(() => {
         // Client-side (hydration)
         setCurrent({
             year: getCurrentYear(),
-            season: getCurrentSeason()
+            season: getCurrentSeason(),
         });
     }, []);
 
     return {
         currentYear: current.year,
-        currentSeason: current.season
+        currentSeason: current.season,
     };
 }
 

@@ -16,7 +16,7 @@ const initialFilter = {
 };
 
 interface SearchSeriesProps {
-    searchQuery?: string
+    searchQuery?: string;
 }
 
 export function SearchSeries({ searchQuery }: SearchSeriesProps) {
@@ -24,7 +24,7 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
         ...initialFilter,
         sortBy: searchQuery ? null : initialFilter.sortBy,
     });
-    const [ prevSearchQuery, setPrevSearchQuery ] = useState(searchQuery);
+    const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
 
     if (!searchQuery && filter.sortBy === null) {
         updateFilter("sortBy", initialFilter.sortBy);
@@ -41,8 +41,7 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
     }
 
     return (
-        <SearchEntity
-            <SearchSeriesQuery["searchSeries"]["data"][number]>
+        <SearchEntity<SearchSeriesQuery["searchSeries"]["data"][number]>
             entity="series"
             searchArgs={{
                 query: searchQuery,
@@ -52,17 +51,20 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
                 sortBy: filter.sortBy,
             }}
             fetchResults={async (searchArgs) => {
-                const { data } = await fetchDataClient<SearchSeriesQuery, SearchSeriesQueryVariables>(gql`
-                    query SearchSeries($args: SearchArgs!) {
-                        searchSeries(args: $args) {
-                            data {
-                                slug
-                                name
+                const { data } = await fetchDataClient<SearchSeriesQuery, SearchSeriesQueryVariables>(
+                    gql`
+                        query SearchSeries($args: SearchArgs!) {
+                            searchSeries(args: $args) {
+                                data {
+                                    slug
+                                    name
+                                }
+                                nextPage
                             }
-                            nextPage
                         }
-                    }
-                `, { args: searchArgs });
+                    `,
+                    { args: searchArgs },
+                );
 
                 return data.searchSeries;
             }}
@@ -71,7 +73,7 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
             )}
             filters={
                 <>
-                    <SearchFilterFirstLetter value={filter.firstLetter} setValue={bindUpdateFilter("firstLetter")}/>
+                    <SearchFilterFirstLetter value={filter.firstLetter} setValue={bindUpdateFilter("firstLetter")} />
                     <SearchFilterSortBy value={filter.sortBy} setValue={bindUpdateFilter("sortBy")}>
                         {searchQuery ? (
                             <SearchFilterSortBy.Option value={null}>Relevance</SearchFilterSortBy.Option>

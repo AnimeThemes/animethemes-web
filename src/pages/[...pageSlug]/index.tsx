@@ -25,15 +25,15 @@ import type { RequiredNonNullable } from "@/utils/types";
 const StyledGrid = styled.div`
     display: flex;
     gap: 32px;
-    
+
     & > :nth-child(1) {
         flex: 3;
         min-width: 0;
     }
-    
+
     & > :nth-child(2) {
         flex: 1;
-        
+
         @media (max-width: ${theme.breakpoints.mobileMax}) {
             display: none;
         }
@@ -45,17 +45,17 @@ const ArrowLink = styled(Link)`
     display: flex;
     align-items: center;
     gap: 8px;
-    `;
+`;
 
 export interface DocumentPageProps extends SharedPageProps {
     page: Omit<RequiredNonNullable<DocumentPageQuery>["page"], "body"> & {
         source: MDXRemoteSerializeResult;
         headings: Heading[];
-    }
+    };
 }
 
 interface DocumentPageParams extends ParsedUrlQuery {
-    pageSlug: Array<string>
+    pageSlug: Array<string>;
 }
 
 export default function DocumentPage({ page }: DocumentPageProps) {
@@ -63,13 +63,15 @@ export default function DocumentPage({ page }: DocumentPageProps) {
         <>
             <PageHeader title={page.name} author={page.source.frontmatter?.author} createdAt={page.created_at} />
             <StyledGrid>
-                <SEO title={page.name}/>
+                <SEO title={page.name} />
                 <Markdown source={page.source} />
                 <TableOfContents headings={page.headings} />
             </StyledGrid>
             <ArrowLink href="/wiki">
-                <Icon icon={faArrowLeft} color="text-disabled"/>
-                <Text link color="text-disabled">Back to overview</Text>
+                <Icon icon={faArrowLeft} color="text-disabled" />
+                <Text link color="text-disabled">
+                    Back to overview
+                </Text>
             </ArrowLink>
         </>
     );
@@ -85,28 +87,37 @@ function PageHeader({ title, author, createdAt }: PageHeaderProps) {
     return (
         <div>
             <Text variant="h1">{title}</Text>
-            { !!author && <Text variant="small" color="text-muted">By: {author} &bull; </Text> }
-            <Text variant="small" color="text-muted">{new Date(createdAt).toLocaleDateString("en", { dateStyle: "long" })}</Text>
+            {!!author && (
+                <Text variant="small" color="text-muted">
+                    By: {author} &bull;{" "}
+                </Text>
+            )}
+            <Text variant="small" color="text-muted">
+                {new Date(createdAt).toLocaleDateString("en", { dateStyle: "long" })}
+            </Text>
         </div>
     );
 }
 
 export const getStaticProps: GetStaticProps<DocumentPageProps, DocumentPageParams> = async ({ params }) => {
-    const { data, apiRequests } = await fetchData<DocumentPageQuery, DocumentPageQueryVariables>(gql`
-        query DocumentPage($pageSlug: String!) {
-            page(slug: $pageSlug) {
-                name
-                body
-                created_at
+    const { data, apiRequests } = await fetchData<DocumentPageQuery, DocumentPageQueryVariables>(
+        gql`
+            query DocumentPage($pageSlug: String!) {
+                page(slug: $pageSlug) {
+                    name
+                    body
+                    created_at
+                }
             }
-        }
-    `, params && {
-        pageSlug: params.pageSlug.join("/")
-    });
+        `,
+        params && {
+            pageSlug: params.pageSlug.join("/"),
+        },
+    );
 
     if (!data.page) {
         return {
-            notFound: true
+            notFound: true,
         };
     }
 
@@ -115,11 +126,11 @@ export const getStaticProps: GetStaticProps<DocumentPageProps, DocumentPageParam
             ...getSharedPageProps(apiRequests),
             page: {
                 ...data.page,
-                ...await serializeMarkdown(data.page.body),
+                ...(await serializeMarkdown(data.page.body)),
             },
         },
         // Revalidate after 1 hour (= 3600 seconds).
-        revalidate: 3600
+        revalidate: 3600,
     };
 };
 
@@ -135,8 +146,8 @@ export const getStaticPaths: GetStaticPaths<DocumentPageParams> = () => {
 
         return data.pageAll.map((page) => ({
             params: {
-                pageSlug: page.slug.split("/")
-            }
+                pageSlug: page.slug.split("/"),
+            },
         }));
     });
 };

@@ -15,23 +15,21 @@ import getSharedPageProps from "@/utils/getSharedPageProps";
 interface AnimeIndexPageProps extends SharedPageProps, AnimeIndexPageQuery {}
 
 export default function AnimeIndexPage({ animeAll }: AnimeIndexPageProps) {
-    return <>
-        <BackToTopButton/>
-        <Text variant="h1">Anime Index</Text>
-        <AlphabeticalIndex items={animeAll}>
-            {(anime) => (
-                <Link
-                    key={anime.slug}
-                    href={`/anime/${anime.slug}`}
-                    passHref
-                    legacyBehavior
-                    prefetch={false}
-                >
-                    <Text as="a" block link>{anime.name}</Text>
-                </Link>
-            )}
-        </AlphabeticalIndex>
-    </>;
+    return (
+        <>
+            <BackToTopButton />
+            <Text variant="h1">Anime Index</Text>
+            <AlphabeticalIndex items={animeAll}>
+                {(anime) => (
+                    <Link key={anime.slug} href={`/anime/${anime.slug}`} passHref legacyBehavior prefetch={false}>
+                        <Text as="a" block link>
+                            {anime.name}
+                        </Text>
+                    </Link>
+                )}
+            </AlphabeticalIndex>
+        </>
+    );
 }
 
 export const getStaticProps: GetStaticProps<AnimeIndexPageProps> = async () => {
@@ -52,6 +50,6 @@ export const getStaticProps: GetStaticProps<AnimeIndexPageProps> = async () => {
     return {
         props,
         // Revalidate after 3 hours (= 10800 seconds).
-        revalidate: 10800
+        revalidate: 10800,
     };
 };
