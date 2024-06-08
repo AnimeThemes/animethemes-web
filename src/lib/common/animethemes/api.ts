@@ -353,13 +353,23 @@ function buildRequest<ApiResponse, ApiResource, Parent, Args>(
         url += `${url.includes("?") ? "&" : "?"}include=${allowedIncludes.join()}`;
     }
 
-    const headers = context.req
+    const headers: HeadersInit | undefined = context.req
         ? {
               // Send auth headers from client forward, if provided.
               referer: context.req.headers.referer ?? AUTH_REFERER,
               cookie: context.req.headers.cookie ?? "",
           }
         : undefined;
+
+    if (context.req && headers) {
+        // Forward IP address of the requester so we can have proper rate limiting.
+        // X-Real-IP is populated by the Nginx reverse proxy and includes the actual IP address of the requester.
+        // X-Forwarded-IP is read by the API and is used for rate limiting.
+        const realIp = context.req.headers["x-real-ip"];
+        if (realIp) {
+            headers["x-forwarded-ip"] = Array.isArray(realIp) ? realIp[0] : realIp;
+        }
+    }
 
     devLog.info(path + ": " + url);
 
