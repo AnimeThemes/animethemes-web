@@ -37,7 +37,9 @@ export function ErrorCard({ error }: ErrorCardProps) {
                 </Text>
             </Row>
             <pre>
-                <StyledErrorMessage>{JSON.stringify(error, null, 2)}</StyledErrorMessage>
+                <StyledErrorMessage>
+                    {error instanceof Error ? error.message : JSON.stringify(error, null, 2)}
+                </StyledErrorMessage>
             </pre>
         </StyledCard>
     );

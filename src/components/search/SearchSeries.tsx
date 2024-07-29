@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import gql from "graphql-tag";
 
@@ -26,16 +26,18 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
     });
     const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
 
-    if (!searchQuery && filter.sortBy === null) {
-        updateFilter("sortBy", initialFilter.sortBy);
-        return null;
-    }
+    useEffect(() => {
+        if (!searchQuery && filter.sortBy === null) {
+            updateFilter("sortBy", initialFilter.sortBy);
+        }
 
-    if (searchQuery !== prevSearchQuery) {
         // Check if user is switching from non-searching to searching
-        if (searchQuery && !prevSearchQuery) {
+        if (searchQuery !== prevSearchQuery && searchQuery && !prevSearchQuery) {
             updateFilter("sortBy", null);
         }
+    });
+
+    if (searchQuery !== prevSearchQuery) {
         setPrevSearchQuery(searchQuery);
         return null;
     }

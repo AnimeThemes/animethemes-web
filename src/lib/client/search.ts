@@ -111,7 +111,10 @@ export const searchResolvers: Resolvers = {
             const searchParams = getSearchParams(args, true);
 
             // TODO: Hardcoded includes and fields should be generate dynamically by API resolver instead
-            searchParams.append("include[anime]", "animethemes.animethemeentries.videos,animethemes.song,images");
+            searchParams.append(
+                "include[anime]",
+                "animethemes.animethemeentries.videos,animethemes.group,animethemes.song,images",
+            );
             searchParams.append("include[animetheme]", "animethemeentries.videos,anime.images,song.artists,group");
             searchParams.append("include[artist]", "images,songs");
             searchParams.append("include[playlist]", "user");
