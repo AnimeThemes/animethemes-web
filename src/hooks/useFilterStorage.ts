@@ -1,3 +1,5 @@
+import { useCallback } from "react";
+
 import useSessionStorageState from "use-session-storage-state";
 
 export default function useFilterStorage<T>(
@@ -12,7 +14,10 @@ export default function useFilterStorage<T>(
 
     return {
         filter,
-        updateFilter: (key, value) => setFilter({ ...filter, [key]: value }),
-        bindUpdateFilter: (key) => (value) => setFilter({ ...filter, [key]: value }),
+        updateFilter: useCallback((key, value) => setFilter((filter) => ({ ...filter, [key]: value })), [setFilter]),
+        bindUpdateFilter: useCallback(
+            (key) => (value) => setFilter((filter) => ({ ...filter, [key]: value })),
+            [setFilter],
+        ),
     };
 }
