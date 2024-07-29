@@ -115,7 +115,10 @@ export const searchResolvers: Resolvers = {
                 "include[anime]",
                 "animethemes.animethemeentries.videos,animethemes.group,animethemes.song,images",
             );
-            searchParams.append("include[animetheme]", "animethemeentries.videos,anime.images,song.artists,group");
+            searchParams.append(
+                "include[animetheme]",
+                "animethemeentries.videos.audio,anime.images,song.artists,group",
+            );
             searchParams.append("include[artist]", "images,songs");
             searchParams.append("include[playlist]", "user");
             searchParams.append("fields[anime]", "name,slug,year,season");

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import gql from "graphql-tag";
 
@@ -26,18 +26,17 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
     });
     const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
 
-    useEffect(() => {
-        if (!searchQuery && filter.sortBy === null) {
-            updateFilter("sortBy", initialFilter.sortBy);
-        }
-
-        // Check if user is switching from non-searching to searching
-        if (searchQuery !== prevSearchQuery && searchQuery && !prevSearchQuery) {
-            updateFilter("sortBy", null);
-        }
-    });
+    if (!searchQuery && filter.sortBy === null) {
+        updateFilter("sortBy", initialFilter.sortBy);
+        return null;
+    }
 
     if (searchQuery !== prevSearchQuery) {
+        // Check if user is switching from non-searching to searching
+        if (searchQuery && !prevSearchQuery) {
+            updateFilter("sortBy", null);
+        }
+
         setPrevSearchQuery(searchQuery);
         return null;
     }
