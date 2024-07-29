@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 
@@ -26,6 +27,18 @@ export default function SearchEntityPage({ entity }: SearchEntityPageProps) {
     const router = useRouter();
     const urlParams = router.query;
     const searchQuery = Array.isArray(urlParams.q) ? urlParams.q.join() : urlParams.q;
+
+    const [shouldRender, setShouldRender] = useState(false);
+
+    useEffect(() => {
+        if (router.isReady) {
+            setShouldRender(true);
+        }
+    }, [router.isReady]);
+
+    if (!shouldRender) {
+        return <SEO title={`${capitalize(entity)} Index`} />;
+    }
 
     return (
         <>

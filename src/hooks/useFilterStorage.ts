@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import useSessionStorageState from "use-session-storage-state";
+import { useSessionStorageState } from "ahooks";
 
 export default function useFilterStorage<T>(
     key: string,
@@ -13,10 +13,25 @@ export default function useFilterStorage<T>(
     const [filter, setFilter] = useSessionStorageState(key, { defaultValue });
 
     return {
-        filter,
-        updateFilter: useCallback((key, value) => setFilter((filter) => ({ ...filter, [key]: value })), [setFilter]),
+        filter: filter ?? defaultValue,
+        updateFilter: useCallback(
+            (key, value) =>
+                setFilter((filter) => {
+                    if (!filter) {
+                        filter = {} as T;
+                    }
+                    return { ...filter, [key]: value };
+                }),
+            [setFilter],
+        ),
         bindUpdateFilter: useCallback(
-            (key) => (value) => setFilter((filter) => ({ ...filter, [key]: value })),
+            (key) => (value) =>
+                setFilter((filter) => {
+                    if (!filter) {
+                        filter = {} as T;
+                    }
+                    return { ...filter, [key]: value };
+                }),
             [setFilter],
         ),
     };

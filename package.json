@@ -55,8 +55,7 @@
         "styled-components": "^5.3.3",
         "swr": "^2.2.4",
         "unist-util-visit": "^4.1.2",
-        "use-local-storage-state": "^19.3.1",
-        "use-session-storage-state": "^19.0.0"
+        "use-local-storage-state": "^19.3.1"
     },
     "devDependencies": {
         "@graphql-codegen/cli": "^5.0.2",
