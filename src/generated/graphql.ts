@@ -196,6 +196,7 @@ export type PlaylistSearchResult = EntitySearchResult & {
 };
 
 export type PlaylistTrack = {
+    entry: Entry;
     id: Scalars["String"]["output"];
     next: Maybe<PlaylistTrack>;
     playlist: Playlist;
@@ -743,6 +744,8 @@ export type VideoSummaryCardVideoFragment = {
     audio: { basename: string };
 };
 
+export type VideoSummaryCardEntryFragment = { id: number };
+
 export type PlaylistEditDialogPlaylistFragment = { id: string; name: string; visibility: PlaylistVisibility };
 
 export type PlaylistRemoveDialogPlaylistFragment = {
@@ -773,6 +776,8 @@ export type PlaylistTrackAddDialogVideoFragment = {
     }>;
     audio: { basename: string };
 };
+
+export type PlaylistTrackAddDialogEntryFragment = { id: number };
 
 export type PlaylistTrackAddFormPlaylistQueryVariables = Exact<{
     filterVideoId: Scalars["Int"]["input"];
@@ -2395,6 +2400,7 @@ export type PlaylistDetailPagePlaylistQuery = {
                 }>;
                 audio: { basename: string };
             };
+            entry: { id: number };
             previous: { id: string } | null;
             next: { id: string } | null;
         }>;
@@ -2441,6 +2447,7 @@ export type PlaylistDetailPagePlaylistFragment = {
             }>;
             audio: { basename: string };
         };
+        entry: { id: number };
         previous: { id: string } | null;
         next: { id: string } | null;
     }>;
@@ -2495,6 +2502,7 @@ export type PlaylistDetailPageQuery = {
                 }>;
                 audio: { basename: string };
             };
+            entry: { id: number };
             previous: { id: string } | null;
             next: { id: string } | null;
         }>;

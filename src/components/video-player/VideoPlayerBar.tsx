@@ -189,6 +189,7 @@ export function VideoPlayerBar() {
                             },
                         ],
                     }}
+                    entry={entry}
                     trigger={
                         <IconTextButton icon={faPlus} variant="solid" collapsible="socialListMax">
                             Add to Playlist

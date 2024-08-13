@@ -11,7 +11,7 @@ import { TextLink } from "@/components/text/TextLink";
 import { Performances } from "@/components/utils/Performances";
 import { SongTitle } from "@/components/utils/SongTitle";
 import { SongTitleWithArtists } from "@/components/utils/SongTitleWithArtists";
-import type { VideoSummaryCardVideoFragment } from "@/generated/graphql";
+import type { VideoSummaryCardEntryFragment, VideoSummaryCardVideoFragment } from "@/generated/graphql";
 import theme from "@/theme";
 import createVideoSlug from "@/utils/createVideoSlug";
 import extractImages from "@/utils/extractImages";
@@ -55,6 +55,7 @@ const StyledCoverOverlay = styled.div`
 
 interface VideoSummaryCardProps {
     video: VideoSummaryCardVideoFragment;
+    entry?: VideoSummaryCardEntryFragment;
     menu?: ReactNode;
     append?: ReactNode;
     onPlay?(): void;
@@ -62,10 +63,10 @@ interface VideoSummaryCardProps {
 }
 
 export const VideoSummaryCard = forwardRef(function VideoSummaryCard(
-    { video, menu, append, onPlay, isPlaying, ...props }: VideoSummaryCardProps,
+    { video, entry: filterEntry, menu, append, onPlay, isPlaying, ...props }: VideoSummaryCardProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) {
-    const entry = video.entries[0];
+    const entry = video.entries.find((entry) => entry.id === filterEntry?.id) ?? video.entries[0];
     const theme = entry.theme;
     const anime = theme?.anime;
 
@@ -146,5 +147,11 @@ export const VideoSummaryCardFragmentVideo = gql`
         audio {
             basename
         }
+    }
+`;
+
+export const VideoSummaryCardFragmentEntry = gql`
+    fragment VideoSummaryCardEntry on Entry {
+        id
     }
 `;

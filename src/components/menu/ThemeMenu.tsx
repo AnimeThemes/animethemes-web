@@ -49,6 +49,7 @@ export function ThemeMenu({ theme }: ThemeMenuProps) {
             <MenuContent>
                 <PlaylistTrackAddDialog
                     video={videoFlipped}
+                    entry={entry}
                     trigger={
                         <MenuItem onSelect={(event) => event.preventDefault()}>
                             <Icon icon={faPlus} />
