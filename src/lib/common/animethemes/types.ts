@@ -134,6 +134,7 @@ export interface ApiPlaylist {
 export interface ApiPlaylistTrack {
     id: string;
     playlist: ApiPlaylist;
+    animethemeentry?: ApiEntry;
     video?: ApiVideo;
 }
 

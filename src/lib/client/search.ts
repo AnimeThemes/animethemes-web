@@ -121,18 +121,18 @@ export const searchResolvers: Resolvers = {
             );
             searchParams.append("include[artist]", "images,songs");
             searchParams.append("include[playlist]", "user");
-            searchParams.append("fields[anime]", "name,slug,year,season");
-            searchParams.append("fields[animetheme]", "type,sequence,id");
-            searchParams.append("fields[group]", "name,slug");
+            searchParams.append("fields[anime]", "id,name,slug,year,season");
+            searchParams.append("fields[animetheme]", "id,type,sequence");
+            searchParams.append("fields[group]", "id,name,slug");
             searchParams.append("fields[animethemeentry]", "id,version,episodes,spoiler,nsfw");
             searchParams.append("fields[video]", "id,tags,resolution,nc,subbed,lyrics,uncen,source,overlap,basename");
-            searchParams.append("fields[image]", "facet,link");
+            searchParams.append("fields[image]", "id,facet,link");
             searchParams.append("fields[song]", "id,title");
-            searchParams.append("fields[artist]", "name,slug");
-            searchParams.append("fields[series]", "name,slug");
-            searchParams.append("fields[studio]", "name,slug");
+            searchParams.append("fields[artist]", "id,name,slug");
+            searchParams.append("fields[series]", "id,name,slug");
+            searchParams.append("fields[studio]", "id,name,slug");
             searchParams.append("fields[playlist]", "id,name,visibility,tracks_count");
-            searchParams.append("fields[user]", "name");
+            searchParams.append("fields[user]", "id,name");
 
             const result = await fetchJson<GlobalSearchResult>(`/search?${searchParams}`);
 

@@ -28,7 +28,11 @@ import { Button } from "@/components/button/Button";
 import { FilterToggleButton } from "@/components/button/FilterToggleButton";
 import { IconTextButton } from "@/components/button/IconTextButton";
 import { Card } from "@/components/card/Card";
-import { VideoSummaryCard, VideoSummaryCardFragmentVideo } from "@/components/card/VideoSummaryCard";
+import {
+    VideoSummaryCard,
+    VideoSummaryCardFragmentEntry,
+    VideoSummaryCardFragmentVideo,
+} from "@/components/card/VideoSummaryCard";
 import { SidebarContainer } from "@/components/container/SidebarContainer";
 import { DescriptionList } from "@/components/description-list/DescriptionList";
 import { PlaylistEditDialog } from "@/components/dialog/PlaylistEditDialog";
@@ -306,7 +310,9 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
     const coverImageResources = useMemo(
         () =>
             playlist.tracks.flatMap((track) => {
-                const anime = track.video.entries[0].theme?.anime;
+                const entry =
+                    track.video.entries.find((entry) => entry.id === track.entry.id) ?? track.video.entries[0];
+                const anime = entry.theme?.anime;
 
                 return anime ? [anime] : [];
             }),
@@ -612,6 +618,7 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
         <StyledSummaryCardWrapper key={track.id}>
             <VideoSummaryCard
                 video={track.video}
+                entry={track.entry}
                 onPlay={() => onPlay()}
                 menu={
                     <Menu modal={false}>
@@ -623,6 +630,7 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
                         <MenuContent>
                             <PlaylistTrackAddDialog
                                 video={track.video}
+                                entry={track.entry}
                                 trigger={
                                     <MenuItem onSelect={(event) => event.preventDefault()}>
                                         <Icon icon={faPlus} color="text-disabled" />
@@ -698,6 +706,7 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
 PlaylistDetailPage.fragments = {
     playlist: gql`
         ${VideoSummaryCardFragmentVideo}
+        ${VideoSummaryCardFragmentEntry}
         ${PlaylistEditDialog.fragments.playlist}
         ${PlaylistTrackRemoveDialog.fragments.playlist}
 
@@ -722,6 +731,9 @@ PlaylistDetailPage.fragments = {
                             }
                         }
                     }
+                }
+                entry {
+                    ...VideoSummaryCardEntry
                 }
                 previous {
                     id

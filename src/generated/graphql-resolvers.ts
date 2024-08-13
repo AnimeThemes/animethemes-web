@@ -253,6 +253,7 @@ export type PlaylistSearchResult = EntitySearchResult & {
 
 export type PlaylistTrack = {
     __typename?: "PlaylistTrack";
+    entry: Entry;
     id: Scalars["String"]["output"];
     next?: Maybe<PlaylistTrack>;
     playlist: Playlist;
@@ -1112,6 +1113,7 @@ export type PlaylistTrackResolvers<
     ContextType = any,
     ParentType extends ResolversParentTypes["PlaylistTrack"] = ResolversParentTypes["PlaylistTrack"],
 > = {
+    entry?: Resolver<ResolversTypes["Entry"], ParentType, ContextType>;
     id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
     next?: Resolver<Maybe<ResolversTypes["PlaylistTrack"]>, ParentType, ContextType>;
     playlist?: Resolver<ResolversTypes["Playlist"], ParentType, ContextType>;

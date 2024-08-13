@@ -77,6 +77,7 @@ export const INCLUDES = {
         user: "user",
     },
     PlaylistTrack: {
+        entry: "animethemeentry",
         video: "video",
         playlist: "playlist",
         previous: "previous",
@@ -178,6 +179,7 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
         "tracks.video.animethemeentries.animetheme.anime.images",
         "tracks.video",
         "tracks.video.animethemeentries.animetheme.group",
+        "tracks.animethemeentry",
         "tracks.previous",
         "tracks.next",
     ],
@@ -186,6 +188,7 @@ const ALLOWED_INCLUDES: Record<string, Array<string>> = {
         "video.animethemeentries.animetheme.song.artists",
         "video.animethemeentries.animetheme.group",
         "video.audio",
+        "animethemeentry",
     ],
     UserAuth: ["permissions", "roles.permissions"],
     FeaturedTheme: [

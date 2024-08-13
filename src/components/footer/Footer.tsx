@@ -53,9 +53,12 @@ export function Footer() {
         <StyledFooter>
             <StyledContainer>
                 <StyledLinkList>
-                    <FooterTextLink href="/about/transparency">Transparency</FooterTextLink>
-                    <FooterTextLink href="/about/donate">Donate</FooterTextLink>
                     <FooterTextLink href="/about/faq">FAQ</FooterTextLink>
+                    <FooterTextLink href="/about/donate">Donate</FooterTextLink>
+                    <FooterTextLink href="/about/transparency">Transparency</FooterTextLink>
+                    <FooterTextLink as="a" href="https://api-docs.animethemes.moe" target="_blank">
+                        API Documentation
+                    </FooterTextLink>
                 </StyledLinkList>
                 <StyledLinkList>
                     <FooterTextLink href="/about/terms-of-service">Terms of Service</FooterTextLink>

@@ -433,6 +433,13 @@ const resolvers: Resolvers = {
         }),
     },
     PlaylistTrack: {
+        entry: createApiResolverNotNull<ApiPlaylistTrackShow<"animethemeentry">>()({
+            extractFromParent: (track) => track.animethemeentry,
+            endpoint: (track) => `/playlist/${track.playlist.id}/track/${track.id}`,
+            extractFromResponse: (response) => response.track.animethemeentry,
+            type: "PlaylistTrack",
+            baseInclude: INCLUDES.PlaylistTrack.entry,
+        }),
         video: createApiResolverNotNull<ApiPlaylistTrackShow<"video">>()({
             extractFromParent: (track) => track.video,
             endpoint: (track) => `/playlist/${track.playlist.id}/track/${track.id}`,

@@ -259,6 +259,7 @@ const typeDefs = gql`
 
     type PlaylistTrack {
         id: String!
+        entry: Entry!
         video: Video!
         playlist: Playlist!
         previous: PlaylistTrack

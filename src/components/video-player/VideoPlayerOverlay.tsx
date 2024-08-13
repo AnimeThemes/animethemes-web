@@ -89,6 +89,7 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
                             },
                         ],
                     }}
+                    entry={entry}
                     trigger={<StyledOverlayButton icon={faPlus} isCircle title="Add to playlist" />}
                 />
                 <ShareMenu

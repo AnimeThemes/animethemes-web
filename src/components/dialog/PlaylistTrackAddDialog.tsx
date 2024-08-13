@@ -21,6 +21,7 @@ import { PlaylistTrackRemoveToast } from "@/components/toast/PlaylistTrackRemove
 import { Busy } from "@/components/utils/Busy";
 import { useToasts } from "@/context/toastContext";
 import type {
+    PlaylistTrackAddDialogEntryFragment,
     PlaylistTrackAddDialogVideoFragment,
     PlaylistTrackAddFormPlaylistQuery,
     PlaylistTrackAddFormPlaylistQueryVariables,
@@ -30,10 +31,11 @@ import axios from "@/lib/client/axios";
 
 interface PlaylistTrackAddDialogProps {
     video: PlaylistTrackAddDialogVideoFragment;
+    entry: PlaylistTrackAddDialogEntryFragment;
     trigger?: ReactNode;
 }
 
-export function PlaylistTrackAddDialog({ video, trigger }: PlaylistTrackAddDialogProps) {
+export function PlaylistTrackAddDialog({ video, entry, trigger }: PlaylistTrackAddDialogProps) {
     const [open, setOpen] = useState(false);
 
     return (
@@ -49,7 +51,7 @@ export function PlaylistTrackAddDialog({ video, trigger }: PlaylistTrackAddDialo
                 {/* Only render the form when dialog is open, so it will reset after closing. */}
                 {open ? (
                     <LoginGate>
-                        <PlaylistTrackAddForm video={video} onCancel={() => setOpen(false)} />
+                        <PlaylistTrackAddForm video={video} entry={entry} onCancel={() => setOpen(false)} />
                     </LoginGate>
                 ) : null}
             </DialogContent>
@@ -68,14 +70,20 @@ PlaylistTrackAddDialog.fragments = {
             id
         }
     `,
+    entry: gql`
+        fragment PlaylistTrackAddDialogEntry on Entry {
+            id
+        }
+    `,
 };
 
 interface PlaylistTrackAddFormProps {
     video: PlaylistTrackAddDialogVideoFragment;
+    entry: PlaylistTrackAddDialogEntryFragment;
     onCancel(): void;
 }
 
-function PlaylistTrackAddForm({ video, onCancel }: PlaylistTrackAddFormProps) {
+function PlaylistTrackAddForm({ video, entry, onCancel }: PlaylistTrackAddFormProps) {
     const { data: playlists } = useSWR(["PlaylistTrackAddFormPlaylist", "/api/me/playlist", video.id], async () => {
         const { data } = await fetchDataClient<
             PlaylistTrackAddFormPlaylistQuery,
@@ -135,7 +143,7 @@ function PlaylistTrackAddForm({ video, onCancel }: PlaylistTrackAddFormProps) {
             <Column style={{ "--gap": "16px" }}>
                 {playlists?.length ? (
                     playlists.map((playlist) => (
-                        <PlaylistTrackAddCard key={playlist.id} playlist={playlist} video={video} />
+                        <PlaylistTrackAddCard key={playlist.id} playlist={playlist} video={video} entry={entry} />
                     ))
                 ) : (
                     <Text>You have not created a playlist, yet.</Text>
@@ -162,9 +170,10 @@ interface PlaylistTrackAddCardProps {
     playlist: NonNullable<PlaylistTrackAddFormPlaylistQuery["me"]["playlistAll"]>[number] &
         Partial<NonNullable<PlaylistTrackAddFormPlaylistQuery["me"]["playlistAllFiltered"]>[number]>;
     video: PlaylistTrackAddDialogVideoFragment;
+    entry: PlaylistTrackAddDialogEntryFragment;
 }
 
-function PlaylistTrackAddCard({ playlist, video }: PlaylistTrackAddCardProps) {
+function PlaylistTrackAddCard({ playlist, video, entry }: PlaylistTrackAddCardProps) {
     const { dispatchToast } = useToasts();
 
     const [isBusy, setBusy] = useState(false);
@@ -173,7 +182,7 @@ function PlaylistTrackAddCard({ playlist, video }: PlaylistTrackAddCardProps) {
         setBusy(true);
 
         try {
-            await axios.post(`/playlist/${playlist.id}/track`, { video_id: video.id });
+            await axios.post(`/playlist/${playlist.id}/track`, { video_id: video.id, entry_id: entry.id });
             await mutate((key) =>
                 [key].flat().some((key) => key === `/api/playlist/${playlist.id}` || key === "/api/me/playlist"),
             );
