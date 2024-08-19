@@ -53,7 +53,7 @@ export function SearchNavigation() {
     const { entity, ...query } = router.query;
     const { q: initialSearchQuery = "" } = query;
 
-    const [inputSearchQuery, setInputSearchQuery] = useState("");
+    const [inputSearchQuery, setInputSearchQuery] = useState(initialSearchQuery as string);
 
     const updateInputSearchQuery = (newInputSearchQuery: string) => {
         setInputSearchQuery(newInputSearchQuery);
