@@ -18,6 +18,9 @@ export function SearchFilterMediaFormat({ value, setValue }: SearchFilterMediaFo
                 <ListboxOption value="TV">TV</ListboxOption>
                 <ListboxOption value="TV Short">TV Short</ListboxOption>
                 <ListboxOption value="Movie">Movie</ListboxOption>
+                <ListboxOption value="OVA">OVA</ListboxOption>
+                <ListboxOption value="ONA">ONA</ListboxOption>
+                <ListboxOption value="Special">Special</ListboxOption>
             </Listbox>
         </SearchFilter>
     );

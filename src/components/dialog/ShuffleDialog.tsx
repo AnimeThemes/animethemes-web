@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog
 import { Input } from "@/components/form/Input";
 import { SearchFilter } from "@/components/search-filter/SearchFilter";
 import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
+import { SearchFilterMediaFormat } from "@/components/search-filter/SearchFilterMediaFormat";
 import { Switcher, SwitcherOption } from "@/components/switcher/Switcher";
 import { Text } from "@/components/text/Text";
 import { Busy } from "@/components/utils/Busy";
@@ -46,6 +47,7 @@ interface ShuffleFormProps {
 function ShuffleForm({ onSuccess, onCancel }: ShuffleFormProps) {
     const [isBusy, setBusy] = useState(false);
     const [filterThemeType, setFilterThemeType] = useState("");
+    const [filterMediaFormat, setFilterMediaFormat] = useState<string | null>(null);
     const [filterAnimeYearMin, setFilterAnimeYearMin] = useState("");
     const [filterAnimeYearMax, setFilterAnimeYearMax] = useState("");
 
@@ -59,6 +61,7 @@ function ShuffleForm({ onSuccess, onCancel }: ShuffleFormProps) {
         try {
             await playRandomThemes({
                 themeType: filterThemeType,
+                mediaFormat: filterMediaFormat ?? undefined,
                 animeYearMin: parseInt(filterAnimeYearMin),
                 animeYearMax: parseInt(filterAnimeYearMax),
             });
@@ -96,6 +99,7 @@ function ShuffleForm({ onSuccess, onCancel }: ShuffleFormProps) {
                         inputProps={{ type: "number", placeholder: "2100" }}
                     />
                 </SearchFilter>
+                <SearchFilterMediaFormat value={filterMediaFormat} setValue={setFilterMediaFormat} />
             </SearchFilterGroup>
             <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
                 <Button type="button" variant="silent" onClick={onCancel}>

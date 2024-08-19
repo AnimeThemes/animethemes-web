@@ -121,7 +121,7 @@ export const searchResolvers: Resolvers = {
             );
             searchParams.append("include[artist]", "images,songs");
             searchParams.append("include[playlist]", "user");
-            searchParams.append("fields[anime]", "id,name,slug,year,season");
+            searchParams.append("fields[anime]", "id,name,slug,year,season,media_format");
             searchParams.append("fields[animetheme]", "id,type,sequence");
             searchParams.append("fields[group]", "id,name,slug");
             searchParams.append("fields[animethemeentry]", "id,version,episodes,spoiler,nsfw");

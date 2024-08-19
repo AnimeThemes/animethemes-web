@@ -21,6 +21,8 @@ interface PlayerContextInterface {
     isLocalAutoPlay: boolean;
     setLocalAutoPlay: (autoPlay: boolean) => void;
     isWatchListUsingLocalAutoPlay: boolean;
+    isRepeat: boolean;
+    setRepeat: (repeat: boolean) => void;
 }
 
 const PlayerContext = createContext<PlayerContextInterface>({
@@ -54,6 +56,10 @@ const PlayerContext = createContext<PlayerContextInterface>({
         // Do nothing
     },
     isWatchListUsingLocalAutoPlay: false,
+    isRepeat: false,
+    setRepeat: () => {
+        // Do nothing
+    },
 });
 
 export default PlayerContext;

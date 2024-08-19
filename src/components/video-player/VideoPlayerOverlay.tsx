@@ -14,7 +14,7 @@ import { ThemeEntryTags } from "@/components/tag/ThemeEntryTags";
 import { VideoTags } from "@/components/tag/VideoTags";
 import { Text } from "@/components/text/Text";
 import { VideoPlayerContext } from "@/components/video-player/VideoPlayer";
-import { StyledPlaybackArea, StyledPlayer } from "@/components/video-player/VideoPlayer.style";
+import { StyledPlaybackArea } from "@/components/video-player/VideoPlayer.style";
 import FullscreenContext from "@/context/fullscreenContext";
 import PlayerContext from "@/context/playerContext";
 import useSetting from "@/hooks/useSetting";
@@ -31,9 +31,9 @@ const StyledOverlay = styled.div`
     opacity: 0;
     transition: opacity 500ms;
 
-    &:hover,
-    html:not([data-fullscreen]) ${StyledPlaybackArea}:hover &,
-    ${StyledPlayer}:not([data-relaxed]) ${StyledPlaybackArea}:hover & {
+    &:has([data-state="open"]),
+    &:has(:focus-visible),
+    ${StyledPlaybackArea}:not([data-relaxed]) & {
         opacity: 1;
         transition: opacity 100ms;
     }

@@ -6,6 +6,7 @@ import { fetchDataClient } from "@/lib/client/index";
 
 export interface RandomThemesOptions {
     themeType?: string;
+    mediaFormat?: string;
     animeYearMin?: number;
     animeYearMax?: number;
 }
@@ -21,6 +22,9 @@ export async function fetchRandomThemes(options?: RandomThemesOptions) {
 
     if (options?.themeType) {
         args.filters.push({ key: "type", value: options.themeType });
+    }
+    if (options?.mediaFormat) {
+        args.filters.push({ key: "anime][media_format", value: options.mediaFormat });
     }
     if (options?.animeYearMin) {
         args.filters.push({ key: "anime][year-gte", value: String(options.animeYearMin) });

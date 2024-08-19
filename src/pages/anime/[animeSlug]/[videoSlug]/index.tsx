@@ -68,6 +68,8 @@ export default function VideoPage({
         isLocalAutoPlay,
         setLocalAutoPlay,
         isWatchListUsingLocalAutoPlay,
+        isRepeat,
+        setRepeat,
     } = useContext(PlayerContext);
     const [selectedTab, setSelectedTab] = useState<"watch-list" | "info" | "related">(() => {
         return watchList.length > 1 ? "watch-list" : "info";
@@ -155,18 +157,19 @@ export default function VideoPage({
             </HorizontalScroll>
             {selectedTab === "watch-list" ? (
                 <>
-                    <Row style={{ "--justify-content": "space-between" }}>
-                        {isWatchListUsingLocalAutoPlay ? (
-                            <>
-                                <Text color="text-muted">Auto-play:</Text>
+                    <Row style={{ "--gap": "16px", "--justify-content": "space-between" }}>
+                        <Row style={{ "--gap": "16px" }}>
+                            <Text color="text-muted">Auto-play:</Text>
+                            {isWatchListUsingLocalAutoPlay ? (
                                 <Switch isChecked={isLocalAutoPlay} onCheckedChange={setLocalAutoPlay} />
-                            </>
-                        ) : (
-                            <>
-                                <Text color="text-muted">Auto-play related themes:</Text>
+                            ) : (
                                 <Switch isChecked={isGlobalAutoPlay} onCheckedChange={setGlobalAutoPlay} />
-                            </>
-                        )}
+                            )}
+                        </Row>
+                        <Row style={{ "--gap": "16px" }}>
+                            <Text color="text-muted">Repeat:</Text>
+                            <Switch isChecked={isRepeat} onCheckedChange={setRepeat} />
+                        </Row>
                     </Row>
                     <StyledScrollArea>
                         <Column style={{ "--gap": "16px" }}>

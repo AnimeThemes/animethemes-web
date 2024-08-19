@@ -76,13 +76,16 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
         isGlobalAutoPlay,
         isLocalAutoPlay,
         isWatchListUsingLocalAutoPlay,
+        isRepeat,
     } = useContext(PlayerContext);
     const router = useRouter();
     const [globalVolume, setGlobalVolume] = useSetting(GlobalVolume);
     const { smallCover, largeCover } = extractImages(anime);
     const [audioMode, setAudioMode] = useSetting(AudioMode, { storageSync: false });
     const { addToHistory } = useWatchHistory();
-    const isRelaxed = useMouseRelax();
+
+    const playerMouseRelaxProps = useMouseRelax();
+    const playbackAreaMouseRelaxProps = useMouseRelax();
 
     const previousVideo = getWatchListVideo(-1);
     const previousEntry = previousVideo?.entries[0];
@@ -123,9 +126,13 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
                 if (navigate) {
                     router.push(nextVideoPath);
                 }
+                // For repeating videos
+                if (currentWatchListItem?.basename === nextVideo?.basename) {
+                    playerRef.current?.play();
+                }
             }
         },
-        [nextVideo, nextVideoPath, router, setCurrentWatchListItem],
+        [currentWatchListItem?.basename, nextVideo, nextVideoPath, router, setCurrentWatchListItem],
     );
 
     const autoPlayNextTrack = useCallback(() => {
@@ -240,7 +247,15 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
         const nextTrackIndex = currentTrackIndex + offset;
 
         if (!watchList[nextTrackIndex]) {
-            return null;
+            if (!isRepeat) {
+                return null;
+            }
+
+            if (nextTrackIndex < 0) {
+                return watchList[watchList.length - 1];
+            } else if (nextTrackIndex > watchList.length - 1) {
+                return watchList[0];
+            }
         }
 
         return watchList[nextTrackIndex];
@@ -270,7 +285,7 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
             <StyledPlayer
                 ref={containerRef}
                 data-background={background || undefined}
-                data-relaxed={isRelaxed || undefined}
+                {...playerMouseRelaxProps}
                 {...props}
             >
                 <StyledPlayerContent ref={constraintRef}>
@@ -289,6 +304,7 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
                         onLayoutAnimationStart={() => setMiniPlayerAnimating(true)}
                         onLayoutAnimationComplete={() => setMiniPlayerAnimating(false)}
                         onDoubleClick={() => router.push(videoPagePath)}
+                        {...playbackAreaMouseRelaxProps}
                     >
                         {audioMode === AudioMode.ENABLED ? (
                             <StyledAudioBackground style={{ aspectRatio }}>

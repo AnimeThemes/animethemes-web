@@ -97,6 +97,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     const [isGlobalAutoPlay, setGlobalAutoPlay] = useLocalStorageState("auto-play", { defaultValue: false });
     const [isLocalAutoPlay, setLocalAutoPlay] = useState(true);
     const [isWatchListUsingLocalAutoPlay, setIsWatchListUsingLocalAutoPlay] = useState(false);
+    const [isRepeat, setRepeat] = useState(false);
 
     const currentVideoSlug = getVideoSlugByProps(pageProps);
     const [previousVideoSlug, setPreviousVideoSlug] = useState<string | null>(() => getVideoSlugByProps(pageProps));
@@ -223,6 +224,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                         isLocalAutoPlay,
                         setLocalAutoPlay,
                         isWatchListUsingLocalAutoPlay,
+                        isRepeat,
+                        setRepeat,
                     },
                 }),
                 stackContext(QueryClientProvider, { client: queryClient }),
