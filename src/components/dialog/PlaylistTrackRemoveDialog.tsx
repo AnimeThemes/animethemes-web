@@ -9,13 +9,18 @@ import { LoginGate } from "@/components/auth/LoginGate";
 import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
 import { IconTextButton } from "@/components/button/IconTextButton";
-import { VideoSummaryCard, VideoSummaryCardFragmentVideo } from "@/components/card/VideoSummaryCard";
+import {
+    VideoSummaryCard,
+    VideoSummaryCardFragmentEntry,
+    VideoSummaryCardFragmentVideo,
+} from "@/components/card/VideoSummaryCard";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
 import { Text } from "@/components/text/Text";
 import { PlaylistTrackRemoveToast } from "@/components/toast/PlaylistTrackRemoveToast";
 import { Busy } from "@/components/utils/Busy";
 import { useToasts } from "@/context/toastContext";
 import type {
+    PlaylistTrackRemoveDialogEntryFragment,
     PlaylistTrackRemoveDialogPlaylistFragment,
     PlaylistTrackRemoveDialogVideoFragment,
 } from "@/generated/graphql";
@@ -25,10 +30,17 @@ interface PlaylistTrackRemoveDialogProps {
     playlist: PlaylistTrackRemoveDialogPlaylistFragment;
     trackId: string;
     video: PlaylistTrackRemoveDialogVideoFragment;
+    entry: PlaylistTrackRemoveDialogEntryFragment;
     trigger?: ReactNode;
 }
 
-export function PlaylistTrackRemoveDialog({ playlist, trackId, video, trigger }: PlaylistTrackRemoveDialogProps) {
+export function PlaylistTrackRemoveDialog({
+    playlist,
+    trackId,
+    video,
+    entry,
+    trigger,
+}: PlaylistTrackRemoveDialogProps) {
     const [open, setOpen] = useState(false);
 
     return (
@@ -48,6 +60,7 @@ export function PlaylistTrackRemoveDialog({ playlist, trackId, video, trigger }:
                             playlist={playlist}
                             trackId={trackId}
                             video={video}
+                            entry={entry}
                             onSuccess={() => setOpen(false)}
                             onCancel={() => setOpen(false)}
                         />
@@ -70,11 +83,18 @@ PlaylistTrackRemoveDialog.fragments = {
     `,
     video: gql`
         ${VideoSummaryCardFragmentVideo}
-        ${PlaylistTrackRemoveToast.fragments.video}
 
         fragment PlaylistTrackRemoveDialogVideo on Video {
             ...VideoSummaryCardVideo
-            ...PlaylistTrackRemoveToastVideo
+        }
+    `,
+    entry: gql`
+        ${VideoSummaryCardFragmentEntry}
+        ${PlaylistTrackRemoveToast.fragments.entry}
+
+        fragment PlaylistTrackRemoveDialogEntry on Entry {
+            ...VideoSummaryCardEntry
+            ...PlaylistTrackRemoveToastEntry
         }
     `,
 };
@@ -83,11 +103,19 @@ interface PlaylistTrackRemoveFormProps {
     playlist: PlaylistTrackRemoveDialogPlaylistFragment;
     trackId: string;
     video: PlaylistTrackRemoveDialogVideoFragment;
+    entry: PlaylistTrackRemoveDialogEntryFragment;
     onSuccess(): void;
     onCancel(): void;
 }
 
-function PlaylistTrackRemoveForm({ playlist, trackId, video, onSuccess, onCancel }: PlaylistTrackRemoveFormProps) {
+function PlaylistTrackRemoveForm({
+    playlist,
+    trackId,
+    video,
+    entry,
+    onSuccess,
+    onCancel,
+}: PlaylistTrackRemoveFormProps) {
     const { dispatchToast } = useToasts();
 
     const [isBusy, setBusy] = useState(false);
@@ -106,7 +134,7 @@ function PlaylistTrackRemoveForm({ playlist, trackId, video, onSuccess, onCancel
 
         dispatchToast(
             `playlist-remove-track-${playlist.id}-${trackId}`,
-            <PlaylistTrackRemoveToast playlist={playlist} video={video} />,
+            <PlaylistTrackRemoveToast playlist={playlist} entry={entry} />,
         );
 
         onSuccess();
@@ -121,7 +149,7 @@ function PlaylistTrackRemoveForm({ playlist, trackId, video, onSuccess, onCancel
                 </Text>
                 ?
             </Text>
-            <VideoSummaryCard video={video} />
+            <VideoSummaryCard video={video} entry={entry} />
             <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
                 <Button variant="silent" onClick={onCancel}>
                     Close

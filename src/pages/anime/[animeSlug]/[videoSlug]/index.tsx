@@ -175,13 +175,14 @@ export default function VideoPage({
                         <Column style={{ "--gap": "16px" }}>
                             {watchList.map((watchListItem) => (
                                 <VideoSummaryCard
-                                    key={watchListItem.id}
+                                    key={watchListItem.watchListId}
                                     ref={
                                         watchListItem.watchListId === currentWatchListItem?.watchListId
                                             ? currentVideoCard
                                             : undefined
                                     }
-                                    video={watchListItem}
+                                    video={watchListItem.video}
+                                    entry={watchListItem.entry}
                                     onPlay={() => setCurrentWatchListItem(watchListItem)}
                                     isPlaying={watchListItem.watchListId === currentWatchListItem?.watchListId}
                                 />

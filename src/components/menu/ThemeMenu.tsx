@@ -28,15 +28,10 @@ export function ThemeMenu({ theme }: ThemeMenuProps) {
         return null;
     }
 
-    // Flip the structure on it's head, because we need video as the root object here.
-    const videoFlipped = {
-        ...video,
-        entries: [
-            {
-                ...entry,
-                theme,
-            },
-        ],
+    // Flip the structure on it's head, because we need entry as the root object here.
+    const entryFlipped = {
+        ...entry,
+        theme,
     };
 
     return (
@@ -48,8 +43,8 @@ export function ThemeMenu({ theme }: ThemeMenuProps) {
             </MenuTrigger>
             <MenuContent>
                 <PlaylistTrackAddDialog
-                    video={videoFlipped}
-                    entry={entry}
+                    video={video}
+                    entry={entryFlipped}
                     trigger={
                         <MenuItem onSelect={(event) => event.preventDefault()}>
                             <Icon icon={faPlus} />
@@ -60,11 +55,11 @@ export function ThemeMenu({ theme }: ThemeMenuProps) {
                 {watchList.length ? (
                     <>
                         <MenuSeparator />
-                        <MenuItem onSelect={() => addWatchListItem(videoFlipped)}>
+                        <MenuItem onSelect={() => addWatchListItem(video, entryFlipped)}>
                             <Icon icon={faArrowTurnDownRight} color="text-disabled" />
                             <Text>Add to Watch List</Text>
                         </MenuItem>
-                        <MenuItem onSelect={() => addWatchListItemNext(videoFlipped)}>
+                        <MenuItem onSelect={() => addWatchListItemNext(video, entryFlipped)}>
                             <Icon icon={faArrowTurnRight} color="text-disabled" />
                             <Text>Play Next</Text>
                         </MenuItem>

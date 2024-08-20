@@ -91,6 +91,7 @@ export function VideoPlayerBar() {
 
     const {
         video,
+        entry,
         background,
         videoPagePath,
         previousVideoPath,
@@ -103,7 +104,6 @@ export function VideoPlayerBar() {
         audioUrl,
     } = context;
 
-    const entry = video.entries[0];
     const theme = entry.theme;
     const anime = theme.anime;
 
@@ -178,17 +178,7 @@ export function VideoPlayerBar() {
             <StyledPlayerBarActions>
                 <StyledVolumeControl />
                 <PlaylistTrackAddDialog
-                    video={{
-                        // Flip the structure on it's head,
-                        // because we need video as the root object here.
-                        ...video,
-                        entries: [
-                            {
-                                ...entry,
-                                theme,
-                            },
-                        ],
-                    }}
+                    video={video}
                     entry={entry}
                     trigger={
                         <IconTextButton icon={faPlus} variant="solid" collapsible="socialListMax">

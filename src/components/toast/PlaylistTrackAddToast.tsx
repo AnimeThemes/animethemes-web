@@ -6,20 +6,20 @@ import { Row } from "@/components/box/Flex";
 import { Text } from "@/components/text/Text";
 import { Toast } from "@/components/toast/Toast";
 import { SongTitle } from "@/components/utils/SongTitle";
-import type { PlaylistTrackAddToastPlaylistFragment, PlaylistTrackAddToastVideoFragment } from "@/generated/graphql";
+import type { PlaylistTrackAddToastEntryFragment, PlaylistTrackAddToastPlaylistFragment } from "@/generated/graphql";
 
 interface PlaylistTrackAddToastProps {
     playlist: PlaylistTrackAddToastPlaylistFragment;
-    video: PlaylistTrackAddToastVideoFragment;
+    entry: PlaylistTrackAddToastEntryFragment;
 }
 
-export function PlaylistTrackAddToast({ playlist, video }: PlaylistTrackAddToastProps) {
+export function PlaylistTrackAddToast({ playlist, entry }: PlaylistTrackAddToastProps) {
     return (
         <Link href={`/playlist/${playlist.id}`} passHref legacyBehavior>
             <Toast as="a" hoverable>
                 <Row $wrap style={{ "--justify-content": "space-between", "--gap": "8px" }}>
                     <span>
-                        <SongTitle song={video.entries[0]?.theme?.song ?? null} /> was added to{" "}
+                        <SongTitle song={entry.theme?.song ?? null} /> was added to{" "}
                         <Text color="text-primary">{playlist.name}</Text>!
                     </span>
                     <Text color="text-disabled">(Click to view playlist.)</Text>
@@ -36,15 +36,13 @@ PlaylistTrackAddToast.fragments = {
             name
         }
     `,
-    video: gql`
+    entry: gql`
         ${SongTitle.fragments.song}
 
-        fragment PlaylistTrackAddToastVideo on Video {
-            entries {
-                theme {
-                    song {
-                        ...SongTitleSong
-                    }
+        fragment PlaylistTrackAddToastEntry on Entry {
+            theme {
+                song {
+                    ...SongTitleSong
                 }
             }
         }

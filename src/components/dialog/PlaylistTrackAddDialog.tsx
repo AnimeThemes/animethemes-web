@@ -10,7 +10,11 @@ import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
 import { IconTextButton } from "@/components/button/IconTextButton";
 import PlaylistSummaryCard from "@/components/card/PlaylistSummaryCard";
-import { VideoSummaryCard, VideoSummaryCardFragmentVideo } from "@/components/card/VideoSummaryCard";
+import {
+    VideoSummaryCard,
+    VideoSummaryCardFragmentEntry,
+    VideoSummaryCardFragmentVideo,
+} from "@/components/card/VideoSummaryCard";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
 import { PlaylistAddDialog } from "@/components/dialog/PlaylistAddDialog";
 import { Icon } from "@/components/icon/Icon";
@@ -62,16 +66,19 @@ export function PlaylistTrackAddDialog({ video, entry, trigger }: PlaylistTrackA
 PlaylistTrackAddDialog.fragments = {
     video: gql`
         ${VideoSummaryCardFragmentVideo}
-        ${PlaylistTrackRemoveToast.fragments.video}
 
         fragment PlaylistTrackAddDialogVideo on Video {
             ...VideoSummaryCardVideo
-            ...PlaylistTrackRemoveToastVideo
             id
         }
     `,
     entry: gql`
+        ${VideoSummaryCardFragmentEntry}
+        ${PlaylistTrackRemoveToast.fragments.entry}
+
         fragment PlaylistTrackAddDialogEntry on Entry {
+            ...VideoSummaryCardEntry
+            ...PlaylistTrackRemoveToastEntry
             id
         }
     `,
@@ -136,7 +143,7 @@ function PlaylistTrackAddForm({ video, entry, onCancel }: PlaylistTrackAddFormPr
 
     return (
         <Column style={{ "--gap": "24px" }}>
-            <VideoSummaryCard video={video} />
+            <VideoSummaryCard video={video} entry={entry} />
             <Row style={{ "--justify-content": "center" }}>
                 <Icon icon={faArrowDown} color="text-disabled" />
             </Row>
@@ -192,7 +199,7 @@ function PlaylistTrackAddCard({ playlist, video, entry }: PlaylistTrackAddCardPr
 
         dispatchToast(
             `playlist-add-track-${playlist.id}-${video.id}`,
-            <PlaylistTrackAddToast playlist={playlist} video={video} />,
+            <PlaylistTrackAddToast playlist={playlist} entry={entry} />,
         );
     }
 
@@ -216,7 +223,7 @@ function PlaylistTrackAddCard({ playlist, video, entry }: PlaylistTrackAddCardPr
 
         dispatchToast(
             `playlist-remove-track-${playlist.id}-${track.id}`,
-            <PlaylistTrackRemoveToast playlist={playlist} video={video} />,
+            <PlaylistTrackRemoveToast playlist={playlist} entry={entry} />,
         );
     }
 

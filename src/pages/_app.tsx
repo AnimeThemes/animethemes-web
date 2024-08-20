@@ -86,7 +86,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         if (watchList.length) {
             const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
             const video = anime.themes[themeIndex].entries[entryIndex].videos[videoIndex];
-            return watchList.find((item) => item.id === video.id)?.watchListId ?? null;
+            return watchList.find((item) => item.video.id === video.id)?.watchListId ?? null;
         }
         return null;
     });
@@ -158,7 +158,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             const watchList: WatchListItem[] = createDefaultWatchList(pageProps);
             setWatchList(watchList);
             setWatchListFactory(null);
-            setCurrentWatchListItemId(watchList.find((item) => item.id === video.id)?.watchListId ?? null);
+            setCurrentWatchListItemId(watchList.find((item) => item.video.id === video.id)?.watchListId ?? null);
             setIsWatchListUsingLocalAutoPlay(false);
         }
 
@@ -198,17 +198,17 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                                 });
                             }
                         },
-                        addWatchListItem: (video) => {
-                            setWatchList((watchList) => [...watchList, createWatchListItem(video)]);
+                        addWatchListItem: (video, entry) => {
+                            setWatchList((watchList) => [...watchList, createWatchListItem(video, entry)]);
                         },
-                        addWatchListItemNext: (video) => {
+                        addWatchListItemNext: (video, entry) => {
                             const currentIndex = currentWatchListItem
                                 ? watchList.findIndex((item) => item.watchListId === currentWatchListItem.watchListId)
                                 : 0;
 
                             setWatchList((watchList) => [
                                 ...watchList.slice(0, currentIndex + 1),
-                                createWatchListItem(video),
+                                createWatchListItem(video, entry),
                                 ...watchList.slice(currentIndex + 1),
                             ]);
                         },
@@ -277,7 +277,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                 ) : null}
                 {currentWatchListItem && !isWaitingForVideoPage && (
                     <VideoPlayer
-                        video={currentWatchListItem}
+                        watchListItem={currentWatchListItem}
                         background={!isVideoPage}
                         overlay={isVideoPage ? <VideoPlayerOverlay {...pageProps} /> : null}
                     >
@@ -324,18 +324,5 @@ function createDefaultWatchList(pageProps: VideoPageProps): WatchListItem[] {
             return [{ theme, entry, video }];
         })
         .sort(sortTransformed(either(themeTypeComparator).or(themeIndexComparator).chain(), (value) => value.theme))
-        .map(({ theme, entry, video }) =>
-            createWatchListItem({
-                ...video,
-                entries: [
-                    {
-                        ...entry,
-                        theme: {
-                            ...theme,
-                            anime,
-                        },
-                    },
-                ],
-            }),
-        );
+        .map(({ theme, entry, video }) => createWatchListItem(video, { ...entry, theme }));
 }

@@ -14,8 +14,8 @@ import {
     StyledVideoBackground,
 } from "@/components/video-player/VideoPlayer.style";
 import { VideoPlayerBar } from "@/components/video-player/VideoPlayerBar";
-import PlayerContext from "@/context/playerContext";
-import type { VideoSummaryCardVideoFragment } from "@/generated/graphql";
+import PlayerContext, { type WatchListItem } from "@/context/playerContext";
+import type { VideoSummaryCardEntryFragment, VideoSummaryCardVideoFragment } from "@/generated/graphql";
 import useMouseRelax from "@/hooks/useMouseRelax";
 import useSetting from "@/hooks/useSetting";
 import useWatchHistory from "@/hooks/useWatchHistory";
@@ -26,6 +26,7 @@ import { AudioMode, GlobalVolume } from "@/utils/settings";
 
 interface VideoPlayerContextValue {
     video: VideoSummaryCardVideoFragment;
+    entry: VideoSummaryCardEntryFragment;
     background: boolean;
     videoPagePath: string;
     playerRef: RefObject<HTMLVideoElement | HTMLAudioElement | null>;
@@ -44,14 +45,14 @@ interface VideoPlayerContextValue {
 export const VideoPlayerContext = createContext<VideoPlayerContextValue | null>(null);
 
 type VideoPlayerProps = {
-    video: VideoSummaryCardVideoFragment;
+    watchListItem: WatchListItem;
     background: boolean;
     children?: ReactNode;
     overlay?: ReactNode;
 };
 
-export function VideoPlayer({ video, background, children, overlay, ...props }: VideoPlayerProps) {
-    const entry = video.entries[0];
+export function VideoPlayer({ watchListItem, background, children, overlay, ...props }: VideoPlayerProps) {
+    const { video, entry } = watchListItem;
     const theme = entry.theme;
     const anime = theme.anime;
 
@@ -87,8 +88,9 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
     const playerMouseRelaxProps = useMouseRelax();
     const playbackAreaMouseRelaxProps = useMouseRelax();
 
-    const previousVideo = getWatchListVideo(-1);
-    const previousEntry = previousVideo?.entries[0];
+    const previousWatchListItem = getRelativeWatchListItem(-1);
+    const previousVideo = previousWatchListItem?.video;
+    const previousEntry = previousWatchListItem?.entry;
     const previousTheme = previousEntry?.theme;
     const previousAnime = previousTheme?.anime;
 
@@ -100,17 +102,18 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
     const playPreviousTrack = useCallback(
         (navigate = false) => {
             if (previousVideoPath) {
-                setCurrentWatchListItem(previousVideo);
+                setCurrentWatchListItem(previousWatchListItem);
                 if (navigate) {
                     router.push(previousVideoPath);
                 }
             }
         },
-        [previousVideo, previousVideoPath, router, setCurrentWatchListItem],
+        [previousVideoPath, previousWatchListItem, router, setCurrentWatchListItem],
     );
 
-    const nextVideo = getWatchListVideo(1);
-    const nextEntry = nextVideo?.entries[0];
+    const nextWatchListItem = getRelativeWatchListItem(1);
+    const nextVideo = nextWatchListItem?.video;
+    const nextEntry = nextWatchListItem?.entry;
     const nextTheme = nextEntry?.theme;
     const nextAnime = nextTheme?.anime;
 
@@ -122,17 +125,24 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
     const playNextTrack = useCallback(
         (navigate = false) => {
             if (nextVideoPath) {
-                setCurrentWatchListItem(nextVideo);
+                setCurrentWatchListItem(nextWatchListItem);
                 if (navigate) {
                     router.push(nextVideoPath);
                 }
                 // For repeating videos
-                if (currentWatchListItem?.basename === nextVideo?.basename) {
+                if (currentWatchListItem?.video.basename === nextVideo?.basename) {
                     playerRef.current?.play();
                 }
             }
         },
-        [currentWatchListItem?.basename, nextVideo, nextVideoPath, router, setCurrentWatchListItem],
+        [
+            currentWatchListItem?.video.basename,
+            nextVideo?.basename,
+            nextVideoPath,
+            nextWatchListItem,
+            router,
+            setCurrentWatchListItem,
+        ],
     );
 
     const autoPlayNextTrack = useCallback(() => {
@@ -233,7 +243,7 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
         setAudioMode(audioMode);
     }
 
-    function getWatchListVideo(offset: 1 | -1) {
+    function getRelativeWatchListItem(offset: 1 | -1) {
         if (!currentWatchListItem) {
             return null;
         }
@@ -267,6 +277,7 @@ export function VideoPlayer({ video, background, children, overlay, ...props }: 
         <VideoPlayerContext.Provider
             value={{
                 video,
+                entry,
                 background,
                 videoPagePath,
                 playerRef,

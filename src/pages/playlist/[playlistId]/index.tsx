@@ -129,12 +129,12 @@ const RANK_DESC = "rank-desc";
 
 const comparators = {
     [UNSORTED]: () => 0,
-    [SONG_A_Z]: sortTransformed(getComparator(SONG_A_Z), (track) => track.video.entries[0].theme),
-    [SONG_Z_A]: sortTransformed(getComparator(SONG_Z_A), (track) => track.video.entries[0].theme),
-    [ANIME_A_Z]: sortTransformed(getComparator(ANIME_A_Z), (track) => track.video.entries[0].theme?.anime),
-    [ANIME_Z_A]: sortTransformed(getComparator(ANIME_Z_A), (track) => track.video.entries[0].theme?.anime),
-    [ANIME_OLD_NEW]: sortTransformed(getComparator(ANIME_OLD_NEW), (track) => track.video.entries[0].theme?.anime),
-    [ANIME_NEW_OLD]: sortTransformed(getComparator(ANIME_NEW_OLD), (track) => track.video.entries[0].theme?.anime),
+    [SONG_A_Z]: sortTransformed(getComparator(SONG_A_Z), (track) => track.entry.theme),
+    [SONG_Z_A]: sortTransformed(getComparator(SONG_Z_A), (track) => track.entry.theme),
+    [ANIME_A_Z]: sortTransformed(getComparator(ANIME_A_Z), (track) => track.entry.theme?.anime),
+    [ANIME_Z_A]: sortTransformed(getComparator(ANIME_Z_A), (track) => track.entry.theme?.anime),
+    [ANIME_OLD_NEW]: sortTransformed(getComparator(ANIME_OLD_NEW), (track) => track.entry.theme?.anime),
+    [ANIME_NEW_OLD]: sortTransformed(getComparator(ANIME_NEW_OLD), (track) => track.entry.theme?.anime),
     [RANK_ASC]: (a, b) => a.rank - b.rank,
     [RANK_DESC]: (a, b) => a.rank - b.rank,
 } satisfies Record<
@@ -247,7 +247,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
 
     const playAll = useCallback(
         (initiatingVideoIndex: number) => {
-            const watchList = tracksSorted.map((track) => createWatchListItem(track.video));
+            const watchList = tracksSorted.map((track) => createWatchListItem(track.video, track.entry));
             setWatchList(watchList, true);
             setWatchListFactory(null);
             setCurrentWatchListItem(watchList[initiatingVideoIndex]);
@@ -259,13 +259,12 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
         if (tracksSorted.length === 0) {
             return;
         }
-        const watchList = shuffle(tracksSorted.map((track) => createWatchListItem(track.video)));
+        const watchList = shuffle(tracksSorted.map((track) => createWatchListItem(track.video, track.entry)));
         setWatchList(watchList, true);
         setWatchListFactory(null);
         setCurrentWatchListItem(watchList[0]);
 
-        const video = watchList[0];
-        const entry = video.entries[0];
+        const { video, entry } = watchList[0];
         const theme = entry.theme;
         const anime = theme?.anime;
 
@@ -310,9 +309,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
     const coverImageResources = useMemo(
         () =>
             playlist.tracks.flatMap((track) => {
-                const entry =
-                    track.video.entries.find((entry) => entry.id === track.entry.id) ?? track.video.entries[0];
-                const anime = entry.theme?.anime;
+                const anime = track.entry.theme?.anime;
 
                 return anime ? [anime] : [];
             }),
@@ -367,10 +364,10 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                     {isRanking && topRankedTrack ? (
                         <FeaturedTheme
                             theme={{
-                                ...tracks[0].video.entries[0].theme,
+                                ...tracks[0].entry.theme,
                                 entries: [
                                     {
-                                        ...tracks[0].video.entries[0],
+                                        ...tracks[0].entry,
                                         videos: [tracks[0].video],
                                     },
                                 ],
@@ -641,11 +638,11 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
                             {watchList.length ? (
                                 <>
                                     <MenuSeparator />
-                                    <MenuItem onSelect={() => addWatchListItem(track.video)}>
+                                    <MenuItem onSelect={() => addWatchListItem(track.video, track.entry)}>
                                         <Icon icon={faArrowTurnDownRight} color="text-disabled" />
                                         <Text>Add to Watch List</Text>
                                     </MenuItem>
-                                    <MenuItem onSelect={() => addWatchListItemNext(track.video)}>
+                                    <MenuItem onSelect={() => addWatchListItemNext(track.video, track.entry)}>
                                         <Icon icon={faArrowTurnRight} color="text-disabled" />
                                         <Text>Play Next</Text>
                                     </MenuItem>
@@ -658,6 +655,7 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
                                         playlist={playlist}
                                         trackId={track.id}
                                         video={track.video}
+                                        entry={track.entry}
                                         trigger={
                                             <MenuItem onSelect={(event) => event.preventDefault()}>
                                                 <Icon icon={faTrash} color="text-disabled" />
@@ -723,17 +721,15 @@ PlaylistDetailPage.fragments = {
                 video {
                     ...VideoSummaryCardVideo
                     id
-                    entries {
-                        theme {
-                            anime {
-                                year
-                                season
-                            }
-                        }
-                    }
                 }
                 entry {
                     ...VideoSummaryCardEntry
+                    theme {
+                        anime {
+                            year
+                            season
+                        }
+                    }
                 }
                 previous {
                     id
