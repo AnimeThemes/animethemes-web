@@ -78,18 +78,8 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
         <StyledOverlay>
             <Row style={{ "--gap": "16px" }}>
                 <PlaylistTrackAddDialog
-                    video={{
-                        // Flip the structure on it's head,
-                        // because we need video as the root object here.
-                        ...video,
-                        entries: [
-                            {
-                                ...entry,
-                                theme,
-                            },
-                        ],
-                    }}
-                    entry={entry}
+                    video={video}
+                    entry={{ ...entry, theme }}
                     trigger={<StyledOverlayButton icon={faPlus} isCircle title="Add to playlist" />}
                 />
                 <ShareMenu
@@ -142,13 +132,8 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
 
                                                 const newItem = {
                                                     watchListId: currentItem.watchListId,
-                                                    ...otherVideo,
-                                                    entries: [
-                                                        {
-                                                            ...otherEntry,
-                                                            theme,
-                                                        },
-                                                    ],
+                                                    video: otherVideo,
+                                                    entry: { ...otherEntry, theme },
                                                 };
                                                 const newWatchList = [...watchList];
 

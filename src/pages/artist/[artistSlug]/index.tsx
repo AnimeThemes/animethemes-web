@@ -295,17 +295,7 @@ const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemes
                 return [];
             }
 
-            return [
-                createWatchListItem({
-                    ...video,
-                    entries: [
-                        {
-                            ...entry,
-                            theme,
-                        },
-                    ],
-                }),
-            ];
+            return [createWatchListItem(video, { ...entry, theme })];
         });
 
         setWatchList(watchList);

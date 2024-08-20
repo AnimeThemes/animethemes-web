@@ -55,7 +55,7 @@ const StyledCoverOverlay = styled.div`
 
 interface VideoSummaryCardProps {
     video: VideoSummaryCardVideoFragment;
-    entry?: VideoSummaryCardEntryFragment;
+    entry: VideoSummaryCardEntryFragment;
     menu?: ReactNode;
     append?: ReactNode;
     onPlay?(): void;
@@ -63,10 +63,9 @@ interface VideoSummaryCardProps {
 }
 
 export const VideoSummaryCard = forwardRef(function VideoSummaryCard(
-    { video, entry: filterEntry, menu, append, onPlay, isPlaying, ...props }: VideoSummaryCardProps,
+    { video, entry, menu, append, onPlay, isPlaying, ...props }: VideoSummaryCardProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) {
-    const entry = video.entries.find((entry) => entry.id === filterEntry?.id) ?? video.entries[0];
     const theme = entry.theme;
     const anime = theme?.anime;
 
@@ -112,38 +111,12 @@ export const VideoSummaryCard = forwardRef(function VideoSummaryCard(
 });
 
 export const VideoSummaryCardFragmentVideo = gql`
-    ${SongTitleWithArtists.fragments.song}
-    ${extractImages.fragments.resourceWithImages}
-    ${createVideoSlug.fragments.theme}
-    ${createVideoSlug.fragments.entry}
     ${createVideoSlug.fragments.video}
 
     fragment VideoSummaryCardVideo on Video {
         id
         basename
         ...createVideoSlugVideo
-        entries {
-            ...createVideoSlugEntry
-            id
-            theme {
-                ...createVideoSlugTheme
-                id
-                type
-                sequence
-                group {
-                    name
-                    slug
-                }
-                anime {
-                    ...extractImagesResourceWithImages
-                    slug
-                    name
-                }
-                song {
-                    ...SongTitleWithArtistsSong
-                }
-            }
-        }
         audio {
             basename
         }
@@ -151,7 +124,31 @@ export const VideoSummaryCardFragmentVideo = gql`
 `;
 
 export const VideoSummaryCardFragmentEntry = gql`
+    ${SongTitleWithArtists.fragments.song}
+    ${extractImages.fragments.resourceWithImages}
+    ${createVideoSlug.fragments.theme}
+    ${createVideoSlug.fragments.entry}
+
     fragment VideoSummaryCardEntry on Entry {
+        ...createVideoSlugEntry
         id
+        theme {
+            ...createVideoSlugTheme
+            id
+            type
+            sequence
+            group {
+                name
+                slug
+            }
+            anime {
+                ...extractImagesResourceWithImages
+                slug
+                name
+            }
+            song {
+                ...SongTitleWithArtistsSong
+            }
+        }
     }
 `;

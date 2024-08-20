@@ -1,9 +1,11 @@
 import { createContext } from "react";
 
-import type { VideoSummaryCardVideoFragment } from "@/generated/graphql";
+import type { VideoSummaryCardEntryFragment, VideoSummaryCardVideoFragment } from "@/generated/graphql";
 
-export interface WatchListItem extends VideoSummaryCardVideoFragment {
+export interface WatchListItem {
     watchListId: number;
+    video: VideoSummaryCardVideoFragment;
+    entry: VideoSummaryCardEntryFragment;
 }
 
 interface PlayerContextInterface {
@@ -13,8 +15,8 @@ interface PlayerContextInterface {
     setWatchListFactory: (factory: (() => Promise<WatchListItem[]>) | null) => void;
     currentWatchListItem: WatchListItem | null;
     setCurrentWatchListItem: (watchListItem: WatchListItem | null) => void;
-    addWatchListItem: (video: VideoSummaryCardVideoFragment) => void;
-    addWatchListItemNext: (video: VideoSummaryCardVideoFragment) => void;
+    addWatchListItem: (video: VideoSummaryCardVideoFragment, entry: VideoSummaryCardEntryFragment) => void;
+    addWatchListItemNext: (video: VideoSummaryCardVideoFragment, entry: VideoSummaryCardEntryFragment) => void;
     clearWatchList: () => void;
     isGlobalAutoPlay: boolean;
     setGlobalAutoPlay: (autoPlay: boolean) => void;
@@ -66,9 +68,13 @@ export default PlayerContext;
 
 let nextWatchListId = 1;
 
-export function createWatchListItem(video: VideoSummaryCardVideoFragment): WatchListItem {
+export function createWatchListItem(
+    video: VideoSummaryCardVideoFragment,
+    entry: VideoSummaryCardEntryFragment,
+): WatchListItem {
     return {
         watchListId: nextWatchListId++,
-        ...video,
+        video,
+        entry,
     };
 }

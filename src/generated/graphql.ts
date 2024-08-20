@@ -722,29 +722,23 @@ export type ThemeSummaryCardQuery = {
     } | null;
 };
 
-export type VideoSummaryCardVideoFragment = {
-    id: number;
-    basename: string;
-    tags: string;
-    entries: Array<{
-        id: number;
-        version: number | null;
-        theme: {
-            id: number;
-            type: string;
-            sequence: number | null;
-            group: { name: string; slug: string } | null;
-            anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
-            song: {
-                title: string | null;
-                performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
-            } | null;
-        };
-    }>;
-    audio: { basename: string };
-};
+export type VideoSummaryCardVideoFragment = { id: number; basename: string; tags: string; audio: { basename: string } };
 
-export type VideoSummaryCardEntryFragment = { id: number };
+export type VideoSummaryCardEntryFragment = {
+    id: number;
+    version: number | null;
+    theme: {
+        id: number;
+        type: string;
+        sequence: number | null;
+        group: { name: string; slug: string } | null;
+        anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+        song: {
+            title: string | null;
+            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+        } | null;
+    };
+};
 
 export type PlaylistEditDialogPlaylistFragment = { id: string; name: string; visibility: PlaylistVisibility };
 
@@ -759,25 +753,24 @@ export type PlaylistTrackAddDialogVideoFragment = {
     id: number;
     basename: string;
     tags: string;
-    entries: Array<{
-        id: number;
-        version: number | null;
-        theme: {
-            id: number;
-            type: string;
-            sequence: number | null;
-            group: { name: string; slug: string } | null;
-            anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
-            song: {
-                title: string | null;
-                performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
-            } | null;
-        };
-    }>;
     audio: { basename: string };
 };
 
-export type PlaylistTrackAddDialogEntryFragment = { id: number };
+export type PlaylistTrackAddDialogEntryFragment = {
+    id: number;
+    version: number | null;
+    theme: {
+        id: number;
+        type: string;
+        sequence: number | null;
+        group: { name: string; slug: string } | null;
+        anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+        song: {
+            title: string | null;
+            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+        } | null;
+    };
+};
 
 export type PlaylistTrackAddFormPlaylistQueryVariables = Exact<{
     filterVideoId: Scalars["Int"]["input"];
@@ -796,22 +789,23 @@ export type PlaylistTrackRemoveDialogVideoFragment = {
     id: number;
     basename: string;
     tags: string;
-    entries: Array<{
-        id: number;
-        version: number | null;
-        theme: {
-            id: number;
-            type: string;
-            sequence: number | null;
-            group: { name: string; slug: string } | null;
-            anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
-            song: {
-                title: string | null;
-                performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
-            } | null;
-        };
-    }>;
     audio: { basename: string };
+};
+
+export type PlaylistTrackRemoveDialogEntryFragment = {
+    id: number;
+    version: number | null;
+    theme: {
+        id: number;
+        type: string;
+        sequence: number | null;
+        group: { name: string; slug: string } | null;
+        anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+        song: {
+            title: string | null;
+            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+        } | null;
+    };
 };
 
 export type FeaturedThemeThemeFragment = {
@@ -1181,15 +1175,11 @@ export type PlaylistRemoveToastPlaylistFragment = { id: string; name: string };
 
 export type PlaylistTrackAddToastPlaylistFragment = { id: string; name: string };
 
-export type PlaylistTrackAddToastVideoFragment = {
-    entries: Array<{ theme: { song: { title: string | null } | null } }>;
-};
+export type PlaylistTrackAddToastEntryFragment = { theme: { song: { title: string | null } | null } };
 
 export type PlaylistTrackRemoveToastPlaylistFragment = { id: string; name: string };
 
-export type PlaylistTrackRemoveToastVideoFragment = {
-    entries: Array<{ theme: { song: { title: string | null } | null } }>;
-};
+export type PlaylistTrackRemoveToastEntryFragment = { theme: { song: { title: string | null } | null } };
 
 export type PerformancesSongFragment = {
     performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
@@ -2373,58 +2363,8 @@ export type PlaylistDetailPagePlaylistQuery = {
         tracks_count: number;
         tracks: Array<{
             id: string;
-            video: {
-                id: number;
-                basename: string;
-                tags: string;
-                entries: Array<{
-                    id: number;
-                    version: number | null;
-                    theme: {
-                        id: number;
-                        type: string;
-                        sequence: number | null;
-                        anime: {
-                            year: number | null;
-                            season: string | null;
-                            slug: string;
-                            name: string;
-                            images: Array<{ link: string; facet: string | null }>;
-                        };
-                        group: { name: string; slug: string } | null;
-                        song: {
-                            title: string | null;
-                            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
-                        } | null;
-                    };
-                }>;
-                audio: { basename: string };
-            };
-            entry: { id: number };
-            previous: { id: string } | null;
-            next: { id: string } | null;
-        }>;
-        user: { name: string };
-    } | null;
-};
-
-export type PlaylistDetailPageMeQueryVariables = Exact<{ [key: string]: never }>;
-
-export type PlaylistDetailPageMeQuery = { me: { user: { name: string } | null } };
-
-export type PlaylistDetailPagePlaylistFragment = {
-    id: string;
-    name: string;
-    description: string | null;
-    visibility: PlaylistVisibility;
-    tracks_count: number;
-    tracks: Array<{
-        id: string;
-        video: {
-            id: number;
-            basename: string;
-            tags: string;
-            entries: Array<{
+            video: { id: number; basename: string; tags: string; audio: { basename: string } };
+            entry: {
                 id: number;
                 version: number | null;
                 theme: {
@@ -2444,10 +2384,48 @@ export type PlaylistDetailPagePlaylistFragment = {
                         performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
                     } | null;
                 };
-            }>;
-            audio: { basename: string };
+            };
+            previous: { id: string } | null;
+            next: { id: string } | null;
+        }>;
+        user: { name: string };
+    } | null;
+};
+
+export type PlaylistDetailPageMeQueryVariables = Exact<{ [key: string]: never }>;
+
+export type PlaylistDetailPageMeQuery = { me: { user: { name: string } | null } };
+
+export type PlaylistDetailPagePlaylistFragment = {
+    id: string;
+    name: string;
+    description: string | null;
+    visibility: PlaylistVisibility;
+    tracks_count: number;
+    tracks: Array<{
+        id: string;
+        video: { id: number; basename: string; tags: string; audio: { basename: string } };
+        entry: {
+            id: number;
+            version: number | null;
+            theme: {
+                id: number;
+                type: string;
+                sequence: number | null;
+                anime: {
+                    year: number | null;
+                    season: string | null;
+                    slug: string;
+                    name: string;
+                    images: Array<{ link: string; facet: string | null }>;
+                };
+                group: { name: string; slug: string } | null;
+                song: {
+                    title: string | null;
+                    performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                } | null;
+            };
         };
-        entry: { id: number };
         previous: { id: string } | null;
         next: { id: string } | null;
     }>;
@@ -2475,34 +2453,28 @@ export type PlaylistDetailPageQuery = {
         tracks_count: number;
         tracks: Array<{
             id: string;
-            video: {
+            video: { id: number; basename: string; tags: string; audio: { basename: string } };
+            entry: {
                 id: number;
-                basename: string;
-                tags: string;
-                entries: Array<{
+                version: number | null;
+                theme: {
                     id: number;
-                    version: number | null;
-                    theme: {
-                        id: number;
-                        type: string;
-                        sequence: number | null;
-                        anime: {
-                            year: number | null;
-                            season: string | null;
-                            slug: string;
-                            name: string;
-                            images: Array<{ link: string; facet: string | null }>;
-                        };
-                        group: { name: string; slug: string } | null;
-                        song: {
-                            title: string | null;
-                            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
-                        } | null;
+                    type: string;
+                    sequence: number | null;
+                    anime: {
+                        year: number | null;
+                        season: string | null;
+                        slug: string;
+                        name: string;
+                        images: Array<{ link: string; facet: string | null }>;
                     };
-                }>;
-                audio: { basename: string };
+                    group: { name: string; slug: string } | null;
+                    song: {
+                        title: string | null;
+                        performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                    } | null;
+                };
             };
-            entry: { id: number };
             previous: { id: string } | null;
             next: { id: string } | null;
         }>;

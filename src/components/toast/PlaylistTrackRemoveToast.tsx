@@ -7,22 +7,22 @@ import { Text } from "@/components/text/Text";
 import { Toast } from "@/components/toast/Toast";
 import { SongTitle } from "@/components/utils/SongTitle";
 import type {
+    PlaylistTrackRemoveToastEntryFragment,
     PlaylistTrackRemoveToastPlaylistFragment,
-    PlaylistTrackRemoveToastVideoFragment,
 } from "@/generated/graphql";
 
 interface PlaylistTrackRemoveToastProps {
     playlist: PlaylistTrackRemoveToastPlaylistFragment;
-    video: PlaylistTrackRemoveToastVideoFragment;
+    entry: PlaylistTrackRemoveToastEntryFragment;
 }
 
-export function PlaylistTrackRemoveToast({ playlist, video }: PlaylistTrackRemoveToastProps) {
+export function PlaylistTrackRemoveToast({ playlist, entry }: PlaylistTrackRemoveToastProps) {
     return (
         <Link href={`/playlist/${playlist.id}`} passHref legacyBehavior>
             <Toast as="a" hoverable>
                 <Row $wrap style={{ "--justify-content": "space-between", "--gap": "8px" }}>
                     <span>
-                        <SongTitle song={video.entries[0]?.theme?.song ?? null} /> was removed from{" "}
+                        <SongTitle song={entry.theme?.song ?? null} /> was removed from{" "}
                         <Text color="text-primary">{playlist.name}</Text>!
                     </span>
                     <Text color="text-disabled">(Click to view playlist.)</Text>
@@ -39,15 +39,13 @@ PlaylistTrackRemoveToast.fragments = {
             name
         }
     `,
-    video: gql`
+    entry: gql`
         ${SongTitle.fragments.song}
 
-        fragment PlaylistTrackRemoveToastVideo on Video {
-            entries {
-                theme {
-                    song {
-                        ...SongTitleSong
-                    }
+        fragment PlaylistTrackRemoveToastEntry on Entry {
+            theme {
+                song {
+                    ...SongTitleSong
                 }
             }
         }

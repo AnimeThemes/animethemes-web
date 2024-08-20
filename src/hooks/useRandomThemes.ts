@@ -17,15 +17,7 @@ export default function useRandomThemes() {
                 const entry = theme.entries[0];
                 const video = entry.videos[0];
 
-                return createWatchListItem({
-                    ...video,
-                    entries: [
-                        {
-                            ...entry,
-                            theme,
-                        },
-                    ],
-                });
+                return createWatchListItem(video, { ...entry, theme });
             });
         };
 
@@ -36,8 +28,7 @@ export default function useRandomThemes() {
         setWatchList(watchList, true);
         setCurrentWatchListItem(watchList[0]);
 
-        const video = watchList[0];
-        const entry = video.entries[0];
+        const { video, entry } = watchList[0];
         const theme = entry.theme;
         const anime = theme?.anime;
 

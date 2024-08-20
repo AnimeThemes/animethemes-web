@@ -21,7 +21,11 @@ import { Column } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
 import { AnnouncementCard } from "@/components/card/AnnouncementCard";
 import PlaylistSummaryCard from "@/components/card/PlaylistSummaryCard";
-import { VideoSummaryCard, VideoSummaryCardFragmentVideo } from "@/components/card/VideoSummaryCard";
+import {
+    VideoSummaryCard,
+    VideoSummaryCardFragmentEntry,
+    VideoSummaryCardFragmentVideo,
+} from "@/components/card/VideoSummaryCard";
 import { ShuffleDialog } from "@/components/dialog/ShuffleDialog";
 import { ExternalLink } from "@/components/external-link/ExternalLink";
 import { FeaturedTheme } from "@/components/featured-theme/FeaturedTheme";
@@ -88,10 +92,14 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
         async () => {
             const { data } = await fetchDataClient<HomePageRecentlyAddedQuery>(gql`
                 ${VideoSummaryCardFragmentVideo}
+                ${VideoSummaryCardFragmentEntry}
 
                 query HomePageRecentlyAdded {
                     videoAll(orderBy: "id", orderDesc: true, limit: 10) {
                         ...VideoSummaryCardVideo
+                        entries {
+                            ...VideoSummaryCardEntry
+                        }
                     }
                 }
             `);
@@ -106,10 +114,14 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
         async () => {
             const { data } = await fetchDataClient<HomePageMostViewedQuery>(gql`
                 ${VideoSummaryCardFragmentVideo}
+                ${VideoSummaryCardFragmentEntry}
 
                 query HomePageMostViewed {
                     videoAll(orderBy: "views_count", orderDesc: true, limit: 10) {
                         ...VideoSummaryCardVideo
+                        entries {
+                            ...VideoSummaryCardEntry
+                        }
                     }
                 }
             `);
@@ -222,7 +234,7 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
                     <Column style={{ "--gap": "16px" }}>
                         {recentlyAdded?.map((video, index) => (
                             <Skeleton key={index} variant="summary-card" delay={index * 100}>
-                                {video ? <VideoSummaryCard video={video} /> : null}
+                                {video ? <VideoSummaryCard video={video} entry={video.entries[0]} /> : null}
                             </Skeleton>
                         ))}
                     </Column>
@@ -232,7 +244,7 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
                     <Column style={{ "--gap": "16px" }}>
                         {mostViewed?.map((video, index) => (
                             <Skeleton key={index} variant="summary-card" delay={index * 100}>
-                                {video ? <VideoSummaryCard video={video} /> : null}
+                                {video ? <VideoSummaryCard video={video} entry={video.entries[0]} /> : null}
                             </Skeleton>
                         ))}
                     </Column>
