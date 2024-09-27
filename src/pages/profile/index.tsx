@@ -25,6 +25,7 @@ import { PlaylistAddDialog } from "@/components/dialog/PlaylistAddDialog";
 import { PlaylistRemoveDialog } from "@/components/dialog/PlaylistRemoveDialog";
 import { RegisterDialog } from "@/components/dialog/RegisterDialog";
 import { UserInformationDialog } from "@/components/dialog/UserInformationDialog";
+import ExternalProfileList from "@/components/external-profile/ExternalProfileList";
 import { Icon } from "@/components/icon/Icon";
 import { ProfileImage } from "@/components/image/ProfileImage";
 import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
@@ -65,6 +66,8 @@ const StyledHeader = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    min-height: 38px;
 `;
 
 const StyledHeaderTop = styled(StyledHeader)`
@@ -240,6 +243,12 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
             ) : null}
             <StyledProfileGrid>
                 <Column style={{ "--gap": "48px" }}>
+                    <Column style={{ "--gap": "24px" }}>
+                        <StyledHeader>
+                            <Text variant="h2">External Profiles</Text>
+                        </StyledHeader>
+                        <ExternalProfileList />
+                    </Column>
                     {me.playlistAll ? (
                         <Column style={{ "--gap": "24px" }}>
                             <StyledHeader>

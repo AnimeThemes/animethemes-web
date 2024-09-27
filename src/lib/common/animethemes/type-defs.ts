@@ -23,6 +23,8 @@ const typeDefs = gql`
         dumpAll: [Dump!]!
         playlist(id: String!): Playlist
         playlistAll(limit: Int, orderBy: String, orderDesc: Boolean, onlyNonEmpty: Boolean): [Playlist!]!
+        externalProfile(id: Int!): ExternalProfile
+        externalProfileAll(limit: Int, name: String, site: ExternalProfileSite): [ExternalProfile!]!
         announcementAll: [Announcement!]!
         me: UserScopedQuery!
     }
@@ -269,6 +271,34 @@ const typeDefs = gql`
         playlist: Playlist!
         previous: PlaylistTrack
         next: PlaylistTrack
+    }
+
+    type ExternalProfile {
+        id: Int!
+        name: String!
+        site: ExternalProfileSite!
+        visibility: ExternalProfileVisibility!
+        entries: [ExternalProfileEntry!]!
+        user: UserPublic
+    }
+
+    enum ExternalProfileSite {
+        AniList
+        MyAnimeList
+    }
+
+    enum ExternalProfileVisibility {
+        Public
+        Private
+    }
+
+    type ExternalProfileEntry {
+        id: Int!
+        score: Int!
+        is_favorite: Boolean!
+        watch_status: String!
+        profile: ExternalProfile!
+        anime: Anime!
     }
 
     interface User {

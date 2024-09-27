@@ -1,4 +1,4 @@
-import { Fragment, type MouseEvent } from "react";
+import { Fragment, type MouseEvent, type ReactNode } from "react";
 import styled from "styled-components";
 
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
@@ -60,7 +60,9 @@ const StyledThemeGroupContainer = styled.div`
     margin-top: 8px;
 `;
 
-type AnimeSummaryCardProps =
+type AnimeSummaryCardProps = {
+    children?: ReactNode;
+} & (
     | {
           anime: AnimeSummaryCardAnimeFragment;
           expandable?: false;
@@ -68,9 +70,10 @@ type AnimeSummaryCardProps =
     | {
           anime: AnimeSummaryCardAnimeFragment & AnimeSummaryCardAnimeExpandableFragment;
           expandable: true;
-      };
+      }
+);
 
-export function AnimeSummaryCard({ anime, expandable = false, ...props }: AnimeSummaryCardProps) {
+export function AnimeSummaryCard({ anime, expandable = false, children, ...props }: AnimeSummaryCardProps) {
     const [isExpanded, toggleExpanded] = useToggle();
     const { smallCover } = extractImages(anime);
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
@@ -135,6 +138,7 @@ export function AnimeSummaryCard({ anime, expandable = false, ...props }: AnimeS
                         )}
                     </StyledThemeContainerInline>
                 )}
+                {children}
             </SummaryCard>
             {expandable ? (
                 <Collapse collapse={!isExpanded}>

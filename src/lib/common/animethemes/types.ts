@@ -2,6 +2,8 @@
 // General Types
 // --------------------------------
 
+import type { ExternalProfileSite, ExternalProfileVisibility } from "@/generated/graphql-resolvers";
+
 export interface ApiIndex {
     links: ApiIndexLinks;
     meta: ApiIndexMeta;
@@ -141,6 +143,23 @@ export interface ApiPlaylistTrack {
     playlist: ApiPlaylist;
     animethemeentry?: ApiEntry;
     video?: ApiVideo;
+}
+
+export interface ApiExternalProfile {
+    id: number;
+    name: string;
+    site: ExternalProfileSite;
+    visibility: ExternalProfileVisibility;
+    externalentries?: Array<ApiExternalProfileEntry>;
+}
+
+export interface ApiExternalProfileEntry {
+    id: number;
+    score: number;
+    is_favorite: boolean;
+    watch_status: string;
+    externalprofile: ApiExternalProfile;
+    anime?: ApiAnime;
 }
 
 export interface ApiResource {
@@ -322,6 +341,22 @@ export interface ApiPlaylistTrackShow<Includes extends keyof ApiPlaylistTrack = 
 
 export interface ApiPlaylistTrackIndex extends ApiIndex {
     tracks: Array<ApiPlaylistTrack>;
+}
+
+export interface ApiExternalProfileShow<Includes extends keyof ApiExternalProfile = never> {
+    externalprofile: ApiExternalProfile & Required<Pick<ApiExternalProfile, Includes>>;
+}
+
+export interface ApiExternalProfileIndex extends ApiIndex {
+    externalprofiles: Array<ApiExternalProfile>;
+}
+
+export interface ApiExternalProfileEntryShow<Includes extends keyof ApiExternalProfileEntry = never> {
+    externalentry: ApiExternalProfileEntry & Required<Pick<ApiExternalProfileEntry, Includes>>;
+}
+
+export interface ApiExternalProfileEntryIndex extends ApiIndex {
+    externalentries: Array<ApiExternalProfileEntry>;
 }
 
 export interface ApiThemeShow<Includes extends keyof ApiTheme = never> {

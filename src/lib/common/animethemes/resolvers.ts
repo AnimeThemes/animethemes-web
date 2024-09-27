@@ -15,6 +15,9 @@ import type {
     ApiAudioShow,
     ApiDumpIndex,
     ApiEntryShow,
+    ApiExternalProfileEntryShow,
+    ApiExternalProfileIndex,
+    ApiExternalProfileShow,
     ApiFeaturedThemeShow,
     ApiImageIndex,
     ApiPageIndex,
@@ -122,6 +125,15 @@ const resolvers: Resolvers = {
             endpoint: (_, { orderBy, orderDesc, onlyNonEmpty }) =>
                 `/playlist?sort=${orderDesc ? "-" : ""}${orderBy}&fields[playlist]=id,name,description,visibility,tracks_count${onlyNonEmpty ? "&filter[playlist][tracks_count-gte]=1" : ""}`,
             extractFromResponse: (response) => response.playlists,
+        }),
+        externalProfile: createApiResolver<ApiExternalProfileShow>()({
+            endpoint: (_, { id }) => `/externalprofile/${id}`,
+            extractFromResponse: (response) => response.externalprofile,
+        }),
+        externalProfileAll: createApiResolverPaginated<ApiExternalProfileIndex>()({
+            endpoint: (_, { name, site }) =>
+                `/externalprofile?filter[externalprofile][name]=${name}&filter[externalprofile][site]=${site}`,
+            extractFromResponse: (response) => response.externalprofiles,
         }),
         me: () => ({}),
     },
@@ -449,6 +461,24 @@ const resolvers: Resolvers = {
             extractFromResponse: (response) => response.track.video,
             type: "PlaylistTrack",
             baseInclude: INCLUDES.PlaylistTrack.video,
+        }),
+    },
+    ExternalProfile: {
+        entries: createApiResolverNotNull<ApiExternalProfileShow<"externalentries">>()({
+            extractFromParent: (externalProfile) => externalProfile.externalentries,
+            endpoint: (externalProfile) => `/externalprofile/${externalProfile.id}`,
+            extractFromResponse: (response) => response.externalprofile.externalentries,
+            type: "ExternalProfile",
+            baseInclude: INCLUDES.ExternalProfile.entries,
+        }),
+    },
+    ExternalProfileEntry: {
+        anime: createApiResolverNotNull<ApiExternalProfileEntryShow<"anime">>()({
+            extractFromParent: (entry) => entry.anime,
+            endpoint: (entry) => `/externalprofile/${entry.externalprofile.id}/externalentry/${entry.id}`,
+            extractFromResponse: (response) => response.externalentry.anime,
+            type: "ExternalProfileEntry",
+            baseInclude: INCLUDES.ExternalProfileEntry.anime,
         }),
     },
     UserAuth: {

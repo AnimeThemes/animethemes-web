@@ -12,6 +12,8 @@ import type {
     ApiPerformance,
     ApiPlaylist,
     ApiPlaylistTrack,
+    ApiExternalProfile,
+    ApiExternalProfileEntry,
     ApiSeason,
     ApiSeries,
     ApiSong,
@@ -180,6 +182,36 @@ export type Entry = {
     videos: Array<Video>;
 };
 
+export type ExternalProfile = {
+    __typename?: "ExternalProfile";
+    entries: Array<ExternalProfileEntry>;
+    id: Scalars["Int"]["output"];
+    name: Scalars["String"]["output"];
+    site: ExternalProfileSite;
+    user?: Maybe<UserPublic>;
+    visibility: ExternalProfileVisibility;
+};
+
+export type ExternalProfileEntry = {
+    __typename?: "ExternalProfileEntry";
+    anime: Anime;
+    id: Scalars["Int"]["output"];
+    is_favorite: Scalars["Boolean"]["output"];
+    profile: ExternalProfile;
+    score: Scalars["Int"]["output"];
+    watch_status: Scalars["String"]["output"];
+};
+
+export enum ExternalProfileSite {
+    AniList = "AniList",
+    MyAnimeList = "MyAnimeList",
+}
+
+export enum ExternalProfileVisibility {
+    Private = "Private",
+    Public = "Public",
+}
+
 export type FeaturedTheme = {
     __typename?: "FeaturedTheme";
     end_at: Scalars["String"]["output"];
@@ -282,6 +314,8 @@ export type Query = {
     bracket?: Maybe<Bracket>;
     bracketAll: Array<Bracket>;
     dumpAll: Array<Dump>;
+    externalProfile?: Maybe<ExternalProfile>;
+    externalProfileAll: Array<ExternalProfile>;
     featuredTheme?: Maybe<FeaturedTheme>;
     imageAll: Array<Image>;
     me: UserScopedQuery;
@@ -330,6 +364,16 @@ export type QueryArtistAllArgs = {
 
 export type QueryBracketArgs = {
     slug: Scalars["String"]["input"];
+};
+
+export type QueryExternalProfileArgs = {
+    id: Scalars["Int"]["input"];
+};
+
+export type QueryExternalProfileAllArgs = {
+    limit?: InputMaybe<Scalars["Int"]["input"]>;
+    name?: InputMaybe<Scalars["String"]["input"]>;
+    site?: InputMaybe<ExternalProfileSite>;
 };
 
 export type QueryImageAllArgs = {
@@ -721,6 +765,10 @@ export type ResolversTypes = {
     Dump: ResolverTypeWrapper<ApiDump>;
     EntitySearchResult: ResolverTypeWrapper<ResolversInterfaceTypes<ResolversTypes>["EntitySearchResult"]>;
     Entry: ResolverTypeWrapper<ApiEntry>;
+    ExternalProfile: ResolverTypeWrapper<ApiExternalProfile>;
+    ExternalProfileEntry: ResolverTypeWrapper<ApiExternalProfileEntry>;
+    ExternalProfileSite: ExternalProfileSite;
+    ExternalProfileVisibility: ExternalProfileVisibility;
     FeaturedTheme: ResolverTypeWrapper<ApiFeaturedTheme>;
     Filter: Filter;
     GlobalSearchResult: ResolverTypeWrapper<
@@ -795,6 +843,8 @@ export type ResolversParentTypes = {
     Dump: ApiDump;
     EntitySearchResult: ResolversInterfaceTypes<ResolversParentTypes>["EntitySearchResult"];
     Entry: ApiEntry;
+    ExternalProfile: ApiExternalProfile;
+    ExternalProfileEntry: ApiExternalProfileEntry;
     FeaturedTheme: ApiFeaturedTheme;
     Filter: Filter;
     GlobalSearchResult: Omit<
@@ -1024,6 +1074,32 @@ export type EntryResolvers<
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ExternalProfileResolvers<
+    ContextType = any,
+    ParentType extends ResolversParentTypes["ExternalProfile"] = ResolversParentTypes["ExternalProfile"],
+> = {
+    entries?: Resolver<Array<ResolversTypes["ExternalProfileEntry"]>, ParentType, ContextType>;
+    id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
+    name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+    site?: Resolver<ResolversTypes["ExternalProfileSite"], ParentType, ContextType>;
+    user?: Resolver<Maybe<ResolversTypes["UserPublic"]>, ParentType, ContextType>;
+    visibility?: Resolver<ResolversTypes["ExternalProfileVisibility"], ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ExternalProfileEntryResolvers<
+    ContextType = any,
+    ParentType extends ResolversParentTypes["ExternalProfileEntry"] = ResolversParentTypes["ExternalProfileEntry"],
+> = {
+    anime?: Resolver<ResolversTypes["Anime"], ParentType, ContextType>;
+    id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
+    is_favorite?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
+    profile?: Resolver<ResolversTypes["ExternalProfile"], ParentType, ContextType>;
+    score?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
+    watch_status?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type FeaturedThemeResolvers<
     ContextType = any,
     ParentType extends ResolversParentTypes["FeaturedTheme"] = ResolversParentTypes["FeaturedTheme"],
@@ -1149,6 +1225,18 @@ export type QueryResolvers<
     >;
     bracketAll?: Resolver<Array<ResolversTypes["Bracket"]>, ParentType, ContextType>;
     dumpAll?: Resolver<Array<ResolversTypes["Dump"]>, ParentType, ContextType>;
+    externalProfile?: Resolver<
+        Maybe<ResolversTypes["ExternalProfile"]>,
+        ParentType,
+        ContextType,
+        RequireFields<QueryExternalProfileArgs, "id">
+    >;
+    externalProfileAll?: Resolver<
+        Array<ResolversTypes["ExternalProfile"]>,
+        ParentType,
+        ContextType,
+        Partial<QueryExternalProfileAllArgs>
+    >;
     featuredTheme?: Resolver<Maybe<ResolversTypes["FeaturedTheme"]>, ParentType, ContextType>;
     imageAll?: Resolver<Array<ResolversTypes["Image"]>, ParentType, ContextType, Partial<QueryImageAllArgs>>;
     me?: Resolver<ResolversTypes["UserScopedQuery"], ParentType, ContextType>;
@@ -1469,6 +1557,8 @@ export type Resolvers<ContextType = any> = {
     Dump?: DumpResolvers<ContextType>;
     EntitySearchResult?: EntitySearchResultResolvers<ContextType>;
     Entry?: EntryResolvers<ContextType>;
+    ExternalProfile?: ExternalProfileResolvers<ContextType>;
+    ExternalProfileEntry?: ExternalProfileEntryResolvers<ContextType>;
     FeaturedTheme?: FeaturedThemeResolvers<ContextType>;
     GlobalSearchResult?: GlobalSearchResultResolvers<ContextType>;
     Image?: ImageResolvers<ContextType>;

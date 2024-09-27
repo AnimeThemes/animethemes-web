@@ -42,6 +42,8 @@ const config: CodegenConfig = {
                     Performance: "@/lib/common/animethemes/types#ApiPerformance",
                     Playlist: "@/lib/common/animethemes/types#ApiPlaylist",
                     PlaylistTrack: "@/lib/common/animethemes/types#ApiPlaylistTrack",
+                    ExternalProfile: "@/lib/common/animethemes/types#ApiExternalProfile",
+                    ExternalProfileEntry: "@/lib/common/animethemes/types#ApiExternalProfileEntry",
                     Season: "@/lib/common/animethemes/types#ApiSeason",
                     Series: "@/lib/common/animethemes/types#ApiSeries",
                     Song: "@/lib/common/animethemes/types#ApiSong",
