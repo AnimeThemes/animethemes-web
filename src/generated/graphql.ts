@@ -52,6 +52,7 @@ export type Artist = ResourceWithImages & {
 };
 
 export type ArtistMembership = {
+    alias: Maybe<Scalars["String"]["output"]>;
     as: Maybe<Scalars["String"]["output"]>;
     group: Artist;
     member: Artist;
@@ -169,6 +170,7 @@ export type Page = {
 };
 
 export type Performance = {
+    alias: Maybe<Scalars["String"]["output"]>;
     artist: Artist;
     as: Maybe<Scalars["String"]["output"]>;
     song: Song;
@@ -530,7 +532,7 @@ export type BracketThemeSummaryCardConstestantFragment = {
         anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
         song: {
             title: string | null;
-            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+            performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
         } | null;
         entries: Array<{
             id: number;
@@ -624,7 +626,7 @@ export type ThemeDetailCardThemeFragment = {
     anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
     song: {
         title: string | null;
-        performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+        performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
     } | null;
     entries: Array<{
         version: number | null;
@@ -657,7 +659,7 @@ export type ThemeSummaryCardThemeFragment = {
     anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
     song: {
         title: string | null;
-        performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+        performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
     } | null;
     entries: Array<{
         id: number;
@@ -712,7 +714,7 @@ export type ThemeSummaryCardQuery = {
         group: { name: string; slug: string } | null;
         song: {
             title: string | null;
-            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+            performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
         } | null;
         entries: Array<{
             id: number;
@@ -735,7 +737,7 @@ export type VideoSummaryCardEntryFragment = {
         anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
         song: {
             title: string | null;
-            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+            performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
         } | null;
     };
 };
@@ -767,7 +769,7 @@ export type PlaylistTrackAddDialogEntryFragment = {
         anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
         song: {
             title: string | null;
-            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+            performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
         } | null;
     };
 };
@@ -803,7 +805,7 @@ export type PlaylistTrackRemoveDialogEntryFragment = {
         anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
         song: {
             title: string | null;
-            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+            performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
         } | null;
     };
 };
@@ -821,7 +823,7 @@ export type FeaturedThemeThemeFragment = {
     group: { name: string; slug: string } | null;
     song: {
         title: string | null;
-        performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+        performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
     } | null;
 };
 
@@ -833,7 +835,7 @@ export type AnimeThemeFilterThemeFragment = {
     anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
     song: {
         title: string | null;
-        performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+        performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
     } | null;
     entries: Array<{
         version: number | null;
@@ -904,7 +906,7 @@ export type ThemeMenuThemeFragment = {
     anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
     song: {
         title: string | null;
-        performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+        performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
     } | null;
     entries: Array<{
         id: number;
@@ -1012,7 +1014,11 @@ export type SearchGlobalQuery = {
             anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
             song: {
                 title: string | null;
-                performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                performances: Array<{
+                    alias: string | null;
+                    as: string | null;
+                    artist: { slug: string; name: string };
+                }>;
             } | null;
             entries: Array<{
                 id: number;
@@ -1104,7 +1110,11 @@ export type SearchThemeQuery = {
             anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
             song: {
                 title: string | null;
-                performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                performances: Array<{
+                    alias: string | null;
+                    as: string | null;
+                    artist: { slug: string; name: string };
+                }>;
             } | null;
             entries: Array<{
                 id: number;
@@ -1182,7 +1192,7 @@ export type PlaylistTrackRemoveToastPlaylistFragment = { id: string; name: strin
 export type PlaylistTrackRemoveToastEntryFragment = { theme: { song: { title: string | null } | null } };
 
 export type PerformancesSongFragment = {
-    performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+    performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
 };
 
 export type PerformancesArtistFragment = { slug: string };
@@ -1191,7 +1201,7 @@ export type SongTitleSongFragment = { title: string | null };
 
 export type SongTitleWithArtistsSongFragment = {
     title: string | null;
-    performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+    performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
 };
 
 export type SongTitleWithArtistsArtistFragment = { slug: string };
@@ -1246,7 +1256,11 @@ export type RandomThemeQuery = {
             anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
             song: {
                 title: string | null;
-                performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                performances: Array<{
+                    alias: string | null;
+                    as: string | null;
+                    artist: { slug: string; name: string };
+                }>;
             } | null;
         }>;
     };
@@ -1280,6 +1294,7 @@ export type VideoPageAnimeFragment = {
             title: string | null;
             performances: Array<{
                 as: string | null;
+                alias: string | null;
                 artist: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
             }>;
         } | null;
@@ -1310,7 +1325,11 @@ export type VideoPageAnimeFragment = {
                         anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
                         song: {
                             title: string | null;
-                            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                            performances: Array<{
+                                alias: string | null;
+                                as: string | null;
+                                artist: { slug: string; name: string };
+                            }>;
                         } | null;
                         entries: Array<{
                             id: number;
@@ -1359,6 +1378,7 @@ export type VideoPageQuery = {
                 title: string | null;
                 performances: Array<{
                     as: string | null;
+                    alias: string | null;
                     artist: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
                 }>;
             } | null;
@@ -1393,7 +1413,11 @@ export type VideoPageQuery = {
                             };
                             song: {
                                 title: string | null;
-                                performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                                performances: Array<{
+                                    alias: string | null;
+                                    as: string | null;
+                                    artist: { slug: string; name: string };
+                                }>;
                             } | null;
                             entries: Array<{
                                 id: number;
@@ -1446,6 +1470,7 @@ export type VideoPageAllQuery = {
                 title: string | null;
                 performances: Array<{
                     as: string | null;
+                    alias: string | null;
                     artist: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
                 }>;
             } | null;
@@ -1480,7 +1505,11 @@ export type VideoPageAllQuery = {
                             };
                             song: {
                                 title: string | null;
-                                performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                                performances: Array<{
+                                    alias: string | null;
+                                    as: string | null;
+                                    artist: { slug: string; name: string };
+                                }>;
                             } | null;
                             entries: Array<{
                                 id: number;
@@ -1535,7 +1564,7 @@ export type AnimeDetailPageAnimeFragment = {
         anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
         song: {
             title: string | null;
-            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+            performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
         } | null;
         entries: Array<{
             version: number | null;
@@ -1586,7 +1615,11 @@ export type AnimeDetailPageQuery = {
             anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
             song: {
                 title: string | null;
-                performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                performances: Array<{
+                    alias: string | null;
+                    as: string | null;
+                    artist: { slug: string; name: string };
+                }>;
             } | null;
             entries: Array<{
                 version: number | null;
@@ -1636,7 +1669,11 @@ export type AnimeDetailPageAllQuery = {
             anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
             song: {
                 title: string | null;
-                performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                performances: Array<{
+                    alias: string | null;
+                    as: string | null;
+                    artist: { slug: string; name: string };
+                }>;
             } | null;
             entries: Array<{
                 version: number | null;
@@ -1700,11 +1737,12 @@ export type ArtistDetailPageArtistFragment = {
     slug: string;
     name: string;
     performances: Array<{
+        alias: string | null;
         as: string | null;
         song: {
             id: number | null;
             title: string | null;
-            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+            performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
             themes: Array<{
                 id: number;
                 type: string;
@@ -1719,7 +1757,11 @@ export type ArtistDetailPageArtistFragment = {
                 };
                 song: {
                     title: string | null;
-                    performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                    performances: Array<{
+                        alias: string | null;
+                        as: string | null;
+                        artist: { slug: string; name: string };
+                    }>;
                 } | null;
                 entries: Array<{
                     id: number;
@@ -1744,18 +1786,24 @@ export type ArtistDetailPageArtistFragment = {
             }>;
         };
     }>;
-    members: Array<{ as: string | null; member: { slug: string; name: string } }>;
+    members: Array<{ alias: string | null; as: string | null; member: { slug: string; name: string } }>;
     groups: Array<{
+        alias: string | null;
         as: string | null;
         group: {
             slug: string;
             name: string;
             performances: Array<{
+                alias: string | null;
                 as: string | null;
                 song: {
                     id: number | null;
                     title: string | null;
-                    performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                    performances: Array<{
+                        alias: string | null;
+                        as: string | null;
+                        artist: { slug: string; name: string };
+                    }>;
                     themes: Array<{
                         id: number;
                         type: string;
@@ -1770,7 +1818,11 @@ export type ArtistDetailPageArtistFragment = {
                         };
                         song: {
                             title: string | null;
-                            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                            performances: Array<{
+                                alias: string | null;
+                                as: string | null;
+                                artist: { slug: string; name: string };
+                            }>;
                         } | null;
                         entries: Array<{
                             id: number;
@@ -1810,11 +1862,16 @@ export type ArtistDetailPageQuery = {
         slug: string;
         name: string;
         performances: Array<{
+            alias: string | null;
             as: string | null;
             song: {
                 id: number | null;
                 title: string | null;
-                performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                performances: Array<{
+                    alias: string | null;
+                    as: string | null;
+                    artist: { slug: string; name: string };
+                }>;
                 themes: Array<{
                     id: number;
                     type: string;
@@ -1829,7 +1886,11 @@ export type ArtistDetailPageQuery = {
                     };
                     song: {
                         title: string | null;
-                        performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                        performances: Array<{
+                            alias: string | null;
+                            as: string | null;
+                            artist: { slug: string; name: string };
+                        }>;
                     } | null;
                     entries: Array<{
                         id: number;
@@ -1854,18 +1915,24 @@ export type ArtistDetailPageQuery = {
                 }>;
             };
         }>;
-        members: Array<{ as: string | null; member: { slug: string; name: string } }>;
+        members: Array<{ alias: string | null; as: string | null; member: { slug: string; name: string } }>;
         groups: Array<{
+            alias: string | null;
             as: string | null;
             group: {
                 slug: string;
                 name: string;
                 performances: Array<{
+                    alias: string | null;
                     as: string | null;
                     song: {
                         id: number | null;
                         title: string | null;
-                        performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                        performances: Array<{
+                            alias: string | null;
+                            as: string | null;
+                            artist: { slug: string; name: string };
+                        }>;
                         themes: Array<{
                             id: number;
                             type: string;
@@ -1880,7 +1947,11 @@ export type ArtistDetailPageQuery = {
                             };
                             song: {
                                 title: string | null;
-                                performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                                performances: Array<{
+                                    alias: string | null;
+                                    as: string | null;
+                                    artist: { slug: string; name: string };
+                                }>;
                             } | null;
                             entries: Array<{
                                 id: number;
@@ -1919,11 +1990,16 @@ export type ArtistDetailPageAllQuery = {
         slug: string;
         name: string;
         performances: Array<{
+            alias: string | null;
             as: string | null;
             song: {
                 id: number | null;
                 title: string | null;
-                performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                performances: Array<{
+                    alias: string | null;
+                    as: string | null;
+                    artist: { slug: string; name: string };
+                }>;
                 themes: Array<{
                     id: number;
                     type: string;
@@ -1938,7 +2014,11 @@ export type ArtistDetailPageAllQuery = {
                     };
                     song: {
                         title: string | null;
-                        performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                        performances: Array<{
+                            alias: string | null;
+                            as: string | null;
+                            artist: { slug: string; name: string };
+                        }>;
                     } | null;
                     entries: Array<{
                         id: number;
@@ -1963,18 +2043,24 @@ export type ArtistDetailPageAllQuery = {
                 }>;
             };
         }>;
-        members: Array<{ as: string | null; member: { slug: string; name: string } }>;
+        members: Array<{ alias: string | null; as: string | null; member: { slug: string; name: string } }>;
         groups: Array<{
+            alias: string | null;
             as: string | null;
             group: {
                 slug: string;
                 name: string;
                 performances: Array<{
+                    alias: string | null;
                     as: string | null;
                     song: {
                         id: number | null;
                         title: string | null;
-                        performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                        performances: Array<{
+                            alias: string | null;
+                            as: string | null;
+                            artist: { slug: string; name: string };
+                        }>;
                         themes: Array<{
                             id: number;
                             type: string;
@@ -1989,7 +2075,11 @@ export type ArtistDetailPageAllQuery = {
                             };
                             song: {
                                 title: string | null;
-                                performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                                performances: Array<{
+                                    alias: string | null;
+                                    as: string | null;
+                                    artist: { slug: string; name: string };
+                                }>;
                             } | null;
                             entries: Array<{
                                 id: number;
@@ -2043,7 +2133,7 @@ export type CharacterFragmentFragment = {
         anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
         song: {
             title: string | null;
-            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+            performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
         } | null;
         entries: Array<{
             id: number;
@@ -2075,7 +2165,11 @@ export type RoundFragmentFragment = {
                 anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
                 song: {
                     title: string | null;
-                    performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                    performances: Array<{
+                        alias: string | null;
+                        as: string | null;
+                        artist: { slug: string; name: string };
+                    }>;
                 } | null;
                 entries: Array<{
                     id: number;
@@ -2098,7 +2192,11 @@ export type RoundFragmentFragment = {
                 anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
                 song: {
                     title: string | null;
-                    performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                    performances: Array<{
+                        alias: string | null;
+                        as: string | null;
+                        artist: { slug: string; name: string };
+                    }>;
                 } | null;
                 entries: Array<{
                     id: number;
@@ -2140,7 +2238,11 @@ export type BracketPageQuery = {
                         anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
                         song: {
                             title: string | null;
-                            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                            performances: Array<{
+                                alias: string | null;
+                                as: string | null;
+                                artist: { slug: string; name: string };
+                            }>;
                         } | null;
                         entries: Array<{
                             id: number;
@@ -2163,7 +2265,11 @@ export type BracketPageQuery = {
                         anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
                         song: {
                             title: string | null;
-                            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                            performances: Array<{
+                                alias: string | null;
+                                as: string | null;
+                                artist: { slug: string; name: string };
+                            }>;
                         } | null;
                         entries: Array<{
                             id: number;
@@ -2196,7 +2302,11 @@ export type BracketPageQuery = {
                         anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
                         song: {
                             title: string | null;
-                            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                            performances: Array<{
+                                alias: string | null;
+                                as: string | null;
+                                artist: { slug: string; name: string };
+                            }>;
                         } | null;
                         entries: Array<{
                             id: number;
@@ -2219,7 +2329,11 @@ export type BracketPageQuery = {
                         anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
                         song: {
                             title: string | null;
-                            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                            performances: Array<{
+                                alias: string | null;
+                                as: string | null;
+                                artist: { slug: string; name: string };
+                            }>;
                         } | null;
                         entries: Array<{
                             id: number;
@@ -2249,7 +2363,7 @@ export type AwardPageThemeQuery = {
         anime: { slug: string; name: string; images: Array<{ facet: string | null; link: string }> };
         song: {
             title: string | null;
-            performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+            performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
         } | null;
         entries: Array<{ version: number | null; videos: Array<{ basename: string; tags: string }> }>;
         group: { slug: string } | null;
@@ -2278,7 +2392,11 @@ export type HomePageRecentlyAddedQuery = {
                 anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
                 song: {
                     title: string | null;
-                    performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                    performances: Array<{
+                        alias: string | null;
+                        as: string | null;
+                        artist: { slug: string; name: string };
+                    }>;
                 } | null;
             };
         }>;
@@ -2304,7 +2422,11 @@ export type HomePageMostViewedQuery = {
                 anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
                 song: {
                     title: string | null;
-                    performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                    performances: Array<{
+                        alias: string | null;
+                        as: string | null;
+                        artist: { slug: string; name: string };
+                    }>;
                 } | null;
             };
         }>;
@@ -2342,7 +2464,11 @@ export type HomePageQuery = {
                 group: { name: string; slug: string } | null;
                 song: {
                     title: string | null;
-                    performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                    performances: Array<{
+                        alias: string | null;
+                        as: string | null;
+                        artist: { slug: string; name: string };
+                    }>;
                 } | null;
             };
         } | null;
@@ -2381,7 +2507,11 @@ export type PlaylistDetailPagePlaylistQuery = {
                     group: { name: string; slug: string } | null;
                     song: {
                         title: string | null;
-                        performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                        performances: Array<{
+                            alias: string | null;
+                            as: string | null;
+                            artist: { slug: string; name: string };
+                        }>;
                     } | null;
                 };
             };
@@ -2422,7 +2552,11 @@ export type PlaylistDetailPagePlaylistFragment = {
                 group: { name: string; slug: string } | null;
                 song: {
                     title: string | null;
-                    performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                    performances: Array<{
+                        alias: string | null;
+                        as: string | null;
+                        artist: { slug: string; name: string };
+                    }>;
                 } | null;
             };
         };
@@ -2471,7 +2605,11 @@ export type PlaylistDetailPageQuery = {
                     group: { name: string; slug: string } | null;
                     song: {
                         title: string | null;
-                        performances: Array<{ as: string | null; artist: { slug: string; name: string } }>;
+                        performances: Array<{
+                            alias: string | null;
+                            as: string | null;
+                            artist: { slug: string; name: string };
+                        }>;
                     } | null;
                 };
             };

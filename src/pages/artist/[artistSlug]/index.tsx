@@ -87,8 +87,10 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
     const aliasFilterOptions = useMemo(() => {
         const aliases = [
             ...new Set([
+                ...artist.performances.map((performance) => performance.alias),
                 ...artist.performances.map((performance) => performance.as),
                 ...artist.groups.map((group) => group.as),
+                ...artist.groups.map((group) => group.alias),
             ]),
         ].filter((alias) => alias);
 
@@ -148,14 +150,25 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                 <Column style={{ "--gap": "24px" }}>
                     <CoverImage resourceWithImages={artist} alt={`Picture of ${artist.name}`} />
                     <DescriptionList>
+                        {!!artist.performances.some(({ alias }) => alias) && (
+                            <DescriptionList.Item title="Aliases">
+                                <StyledList>
+                                    {artist.performances.map(({ alias }) => (
+                                        <Text as="a" key={alias}>
+                                            {alias}
+                                        </Text>
+                                    ))}
+                                </StyledList>
+                            </DescriptionList.Item>
+                        )}
                         {!!artist.members?.length && (
                             <DescriptionList.Item title="Members">
                                 <StyledList>
-                                    {artist.members.map(({ member, as }) => (
+                                    {artist.members.map(({ member, alias, as }) => (
                                         <Link key={member.slug} href={`/artist/${member.slug}`} passHref legacyBehavior>
                                             <Text as="a" link>
                                                 {member.name}
-                                                {as ? ` (as ${as})` : null}
+                                                {(alias || as) && ` (${[alias && `as ${alias}`, as && `as ${as}`].filter(Boolean).join(' ')})`}
                                             </Text>
                                         </Link>
                                     ))}
@@ -165,11 +178,11 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                         {!!artist.groups?.length && (
                             <DescriptionList.Item title="Member of">
                                 <StyledList>
-                                    {artist.groups.map(({ group, as }) => (
+                                    {artist.groups.map(({ group, alias, as }) => (
                                         <Link key={group.slug} href={`/artist/${group.slug}`} passHref legacyBehavior>
                                             <Text as="a" link>
                                                 {group.name}
-                                                {as ? ` (as ${as})` : null}
+                                                {(alias || as) && ` (${[alias && `as ${alias}`, as && `as ${as}`].filter(Boolean).join(' ')})`}
                                             </Text>
                                         </Link>
                                     ))}
@@ -196,7 +209,7 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                     <StyledHeader>
                         <Text variant="h2">
                             Song Performances
-                            <Text color="text-disabled"> ({themes.length})</Text>
+                            <Text color="text-disabled"> ({themes.filter(({ song }) => song?.performances.some(({ alias }) => !alias)).length})</Text>
                         </Text>
                         <FilterToggleButton onClick={toggleShowFilter} />
                     </StyledHeader>
@@ -253,13 +266,25 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                     <Column style={{ "--gap": "48px" }}>
                         {themes.length ? (
                             <Column style={{ "--gap": "16px" }}>
-                                <ArtistThemes themes={themes} artist={artist} />
+                                <ArtistThemes themes={themes.filter(({ song }) => song?.performances.some(({ alias }) => !alias))} artist={artist} />
                             </Column>
                         ) : null}
+                        {artist.performances.map((performance) => 
+                            performance?.alias?.length ? (
+                                <Column key={performance.alias} style={{ "--gap": "16px" }}>
+                                    <Text variant="h2">
+                                        {`As ${performance.alias} `}
+                                        <Text color="text-disabled"> ({performance.song.themes.length})</Text>
+                                    </Text>
+                                    <ArtistThemes themes={performance.song.themes} artist={artist} />
+                                </Column>
+                            ) : null,
+                        )}
                         {groups.map((group) =>
                             group.group.performances.length ? (
                                 <Column key={group.group.slug} style={{ "--gap": "16px" }}>
                                     <Text variant="h2">
+                                        {group.alias ? `As ${group.alias} ` : null}
                                         {group.as ? `As ${group.as} ` : null}
                                         In{" "}
                                         <Link href={`/artist/${group.group.slug}`}>
@@ -327,6 +352,7 @@ ArtistDetailPage.fragements = {
             slug
             name
             performances {
+                alias
                 as
                 song {
                     id
@@ -336,6 +362,7 @@ ArtistDetailPage.fragements = {
                             slug
                             name
                         }
+                        alias
                         as
                     }
                     themes {
@@ -359,6 +386,7 @@ ArtistDetailPage.fragements = {
                     slug
                     name
                 }
+                alias
                 as
             }
             groups {
@@ -366,6 +394,7 @@ ArtistDetailPage.fragements = {
                     slug
                     name
                     performances {
+                        alias
                         as
                         song {
                             id
@@ -375,6 +404,7 @@ ArtistDetailPage.fragements = {
                                     slug
                                     name
                                 }
+                                alias
                                 as
                             }
                             themes {
@@ -394,6 +424,7 @@ ArtistDetailPage.fragements = {
                         }
                     }
                 }
+                alias
                 as
             }
             resources {

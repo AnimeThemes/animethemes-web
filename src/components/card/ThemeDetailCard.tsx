@@ -112,6 +112,7 @@ ThemeDetailCard.fragments = {
             song {
                 title
                 performances {
+                    alias
                     as
                     artist {
                         slug
