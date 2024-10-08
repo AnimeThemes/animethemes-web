@@ -6,6 +6,7 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
 
 import gql from "graphql-tag";
+import { uniq } from "lodash-es";
 import type { ParsedUrlQuery } from "querystring";
 
 import { Column } from "@/components/box/Flex";
@@ -84,22 +85,31 @@ interface ArtistDetailPageParams extends ParsedUrlQuery {
 export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
     const { largeCover } = extractImages(artist);
 
-    const aliasFilterOptions = useMemo(() => {
-        const aliases = [
-            ...new Set([
-                ...artist.performances.map((performance) => performance.alias),
+    const characters = useMemo(
+        () =>
+            uniq([
                 ...artist.performances.map((performance) => performance.as),
                 ...artist.groups.map((group) => group.as),
+            ]).filter((alias) => alias) as Array<string>,
+        [artist.performances, artist.groups],
+    );
+    const aliases = useMemo(
+        () =>
+            uniq([
+                ...artist.performances.map((performance) => performance.alias),
                 ...artist.groups.map((group) => group.alias),
-            ]),
-        ].filter((alias) => alias);
+            ]).filter((alias) => alias) as Array<string>,
+        [artist.performances, artist.groups],
+    );
 
-        return [null, artist.name, ...aliases];
-    }, [artist]);
+    const performedAsFilterOptions = useMemo(
+        () => [null, artist.name, ...aliases, ...characters],
+        [aliases, artist.name, characters],
+    );
 
     const [showFilter, toggleShowFilter] = useToggle();
     const [filterPerformance, setFilterPerformance] = useState<string | null>(null);
-    const [filterAlias, setFilterAlias] = useState(aliasFilterOptions[0]);
+    const [filterPerformedAs, setFilterPerformedAs] = useState(performedAsFilterOptions[0]);
     const [sortBy, setSortBy] = useState<
         | typeof SONG_A_Z_ANIME
         | typeof SONG_Z_A_ANIME
@@ -110,24 +120,51 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
     >(SONG_A_Z_ANIME);
 
     const filterPerformances = useCallback(
-        (performances: ArtistDetailPageProps["artist"]["performances"], groupAs: string | null) =>
-            performances
-                .filter(
-                    (performance) =>
-                        filterAlias === null ||
-                        (filterAlias === artist.name && !performance.as && !groupAs) ||
-                        ((filterAlias === groupAs || filterAlias === performance.as) &&
-                            performance.song?.themes[0]?.entries[0]?.videos[0]),
-                )
-                .flatMap((performance) => performance.song.themes)
-                .sort(getComparator(sortBy)),
-        [artist.name, filterAlias, sortBy],
+        (
+            performances: ArtistDetailPageProps["artist"]["performances"],
+            groupAs: string | null,
+            groupAlias: string | null,
+        ) =>
+            performances.filter(
+                (performance) =>
+                    performance.song?.themes[0]?.entries[0]?.videos[0] &&
+                    (filterPerformedAs === null ||
+                        (filterPerformedAs === artist.name &&
+                            !performance.as &&
+                            !groupAs &&
+                            !performance.alias &&
+                            !groupAlias) ||
+                        filterPerformedAs === groupAs ||
+                        filterPerformedAs === performance.as ||
+                        filterPerformedAs === groupAlias ||
+                        filterPerformedAs === performance.alias),
+            ),
+        [artist.name, filterPerformedAs],
     );
 
-    const themes = useMemo(
-        () => filterPerformances(artist.performances.filter(getPerformanceFilter(filterPerformance)), null),
+    const toSortedThemes = useCallback(
+        (performances: ArtistDetailPageProps["artist"]["performances"]) =>
+            performances.flatMap((performance) => performance.song.themes).sort(getComparator(sortBy)),
+        [sortBy],
+    );
+
+    const performancesGroupedByAlias = useMemo(
+        () =>
+            filterPerformances(artist.performances.filter(getPerformanceFilter(filterPerformance)), null, null).reduce(
+                (prev, curr) => {
+                    const group = prev.get(curr.alias);
+                    if (!group) {
+                        prev.set(curr.alias, [curr]);
+                    } else {
+                        group.push(curr);
+                    }
+                    return prev;
+                },
+                new Map<string | null, ArtistDetailPageProps["artist"]["performances"]>(),
+            ),
         [artist.performances, filterPerformance, filterPerformances],
     );
+    const performancesAsSelf = useMemo(() => performancesGroupedByAlias.get(null) ?? [], [performancesGroupedByAlias]);
 
     const groups = useMemo(
         () =>
@@ -136,7 +173,9 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                 group: {
                     ...group.group,
                     performances:
-                        filterPerformance === "SOLO" ? [] : filterPerformances(group.group.performances, group.as),
+                        filterPerformance === "SOLO"
+                            ? []
+                            : filterPerformances(group.group.performances, group.as, group.alias),
                 },
             })),
         [artist.groups, filterPerformance, filterPerformances],
@@ -150,10 +189,10 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                 <Column style={{ "--gap": "24px" }}>
                     <CoverImage resourceWithImages={artist} alt={`Picture of ${artist.name}`} />
                     <DescriptionList>
-                        {!!artist.performances.some(({ alias }) => alias) && (
+                        {aliases.length > 0 && (
                             <DescriptionList.Item title="Aliases">
                                 <StyledList>
-                                    {artist.performances.map(({ alias }) => (
+                                    {aliases.map((alias) => (
                                         <Text as="a" key={alias}>
                                             {alias}
                                         </Text>
@@ -168,7 +207,8 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                                         <Link key={member.slug} href={`/artist/${member.slug}`} passHref legacyBehavior>
                                             <Text as="a" link>
                                                 {member.name}
-                                                {(alias || as) && ` (${[alias && `as ${alias}`, as && `as ${as}`].filter(Boolean).join(' ')})`}
+                                                {alias ? ` (as ${alias})` : null}
+                                                {as ? ` (as ${as})` : null}
                                             </Text>
                                         </Link>
                                     ))}
@@ -182,7 +222,8 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                                         <Link key={group.slug} href={`/artist/${group.slug}`} passHref legacyBehavior>
                                             <Text as="a" link>
                                                 {group.name}
-                                                {(alias || as) && ` (${[alias && `as ${alias}`, as && `as ${as}`].filter(Boolean).join(' ')})`}
+                                                {alias ? ` (as ${alias})` : null}
+                                                {as ? ` (as ${as})` : null}
                                             </Text>
                                         </Link>
                                     ))}
@@ -209,7 +250,7 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                     <StyledHeader>
                         <Text variant="h2">
                             Song Performances
-                            <Text color="text-disabled"> ({themes.filter(({ song }) => song?.performances.some(({ alias }) => !alias)).length})</Text>
+                            <Text color="text-disabled"> ({performancesAsSelf.length})</Text>
                         </Text>
                         <FilterToggleButton onClick={toggleShowFilter} />
                     </StyledHeader>
@@ -235,14 +276,14 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                             <SearchFilter>
                                 <Text variant="h2">Performed as</Text>
                                 <Listbox
-                                    value={filterAlias}
-                                    onValueChange={setFilterAlias}
+                                    value={filterPerformedAs}
+                                    onValueChange={setFilterPerformedAs}
                                     defaultValue={null}
                                     nullable
                                     resettable
                                     highlightNonDefault
                                 >
-                                    {aliasFilterOptions.map((option) => (
+                                    {performedAsFilterOptions.map((option) => (
                                         <ListboxOption key={option} value={option} hidden={!option}>
                                             {option ?? "Any"}
                                         </ListboxOption>
@@ -264,22 +305,22 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                         </SearchFilterGroup>
                     </Collapse>
                     <Column style={{ "--gap": "48px" }}>
-                        {themes.length ? (
+                        {performancesAsSelf.length ? (
                             <Column style={{ "--gap": "16px" }}>
-                                <ArtistThemes themes={themes.filter(({ song }) => song?.performances.some(({ alias }) => !alias))} artist={artist} />
+                                <ArtistThemes themes={toSortedThemes(performancesAsSelf)} artist={artist} />
                             </Column>
                         ) : null}
-                        {artist.performances.map((performance) => 
-                            performance?.alias?.length ? (
-                                <Column key={performance.alias} style={{ "--gap": "16px" }}>
+                        {[...performancesGroupedByAlias.entries()]
+                            .filter(([alias]) => alias !== null)
+                            .map(([alias, performances]) => (
+                                <Column key={alias} style={{ "--gap": "16px" }}>
                                     <Text variant="h2">
-                                        {`As ${performance.alias} `}
-                                        <Text color="text-disabled"> ({performance.song.themes.length})</Text>
+                                        {`As ${alias} `}
+                                        <Text color="text-disabled"> ({performances.length})</Text>
                                     </Text>
-                                    <ArtistThemes themes={performance.song.themes} artist={artist} />
+                                    <ArtistThemes themes={toSortedThemes(performances)} artist={artist} />
                                 </Column>
-                            ) : null,
-                        )}
+                            ))}
                         {groups.map((group) =>
                             group.group.performances.length ? (
                                 <Column key={group.group.slug} style={{ "--gap": "16px" }}>
@@ -292,7 +333,10 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                                         </Link>
                                         <Text color="text-disabled"> ({group.group.performances.length})</Text>
                                     </Text>
-                                    <ArtistThemes themes={group.group.performances} artist={group.group} />
+                                    <ArtistThemes
+                                        themes={toSortedThemes(group.group.performances)}
+                                        artist={group.group}
+                                    />
                                 </Column>
                             ) : null,
                         )}

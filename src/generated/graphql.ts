@@ -2363,7 +2363,7 @@ export type AwardPageThemeQuery = {
         anime: { slug: string; name: string; images: Array<{ facet: string | null; link: string }> };
         song: {
             title: string | null;
-            performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
+            performances: Array<{ as: string | null; alias: string | null; artist: { slug: string; name: string } }>;
         } | null;
         entries: Array<{ version: number | null; videos: Array<{ basename: string; tags: string }> }>;
         group: { slug: string } | null;
