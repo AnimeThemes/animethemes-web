@@ -92,6 +92,7 @@ export type Artist = ResourceWithImages & {
 
 export type ArtistMembership = {
     __typename?: "ArtistMembership";
+    alias?: Maybe<Scalars["String"]["output"]>;
     as?: Maybe<Scalars["String"]["output"]>;
     group: Artist;
     member: Artist;
@@ -222,6 +223,7 @@ export type Page = {
 
 export type Performance = {
     __typename?: "Performance";
+    alias?: Maybe<Scalars["String"]["output"]>;
     artist: Artist;
     as?: Maybe<Scalars["String"]["output"]>;
     song: Song;
@@ -893,6 +895,7 @@ export type ArtistMembershipResolvers<
     ContextType = any,
     ParentType extends ResolversParentTypes["ArtistMembership"] = ResolversParentTypes["ArtistMembership"],
 > = {
+    alias?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
     as?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
     group?: Resolver<ResolversTypes["Artist"], ParentType, ContextType>;
     member?: Resolver<ResolversTypes["Artist"], ParentType, ContextType>;
@@ -1070,6 +1073,7 @@ export type PerformanceResolvers<
     ContextType = any,
     ParentType extends ResolversParentTypes["Performance"] = ResolversParentTypes["Performance"],
 > = {
+    alias?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
     artist?: Resolver<ResolversTypes["Artist"], ParentType, ContextType>;
     as?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
     song?: Resolver<ResolversTypes["Song"], ParentType, ContextType>;

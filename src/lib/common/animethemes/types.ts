@@ -222,6 +222,7 @@ export interface ApiAnimeResource {
 }
 
 export interface ApiArtistMember {
+    alias: string | null;
     as: string | null;
 }
 
@@ -230,6 +231,7 @@ export interface ApiArtistResource {
 }
 
 export interface ApiArtistSong {
+    alias: string | null;
     as: string | null;
 }
 
