@@ -2,6 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
+import type { Maybe } from "@graphql-tools/utils";
 import gql from "graphql-tag";
 
 import { Text } from "@/components/text/Text";
@@ -28,6 +29,25 @@ export interface PerformancesProps {
     artist?: PerformancesArtistFragment;
     maxPerformances?: number | null;
     expandable?: boolean;
+}
+
+interface ArtistNameProps {
+    alias: Maybe<string>;
+    as: Maybe<string>;
+    artist: {
+        name: string;
+        slug: string;
+    };
+}
+
+export function getDisplayedArtistName({ alias, artist, as }: ArtistNameProps) {
+    const artistName = alias ?? artist.name;
+
+    if (as) {
+        return `${as} (CV: ${artistName})`;
+    }
+
+    return artistName;
 }
 
 export function Performances({ song, artist, maxPerformances = 3, expandable = false }: PerformancesProps) {
@@ -69,9 +89,7 @@ export function Performances({ song, artist, maxPerformances = 3, expandable = f
                                 <StyledArtist key={performance.artist.slug}>
                                     <Link href={`/artist/${performance.artist.slug}`} passHref legacyBehavior>
                                         <StyledArtistLink>
-                                            {performance.as
-                                                ? `${performance.as} (CV: ${performance.artist.name})`
-                                                : performance.artist.name}
+                                            {getDisplayedArtistName(performance)}
                                         </StyledArtistLink>
                                     </Link>
                                 </StyledArtist>
@@ -91,9 +109,7 @@ export function Performances({ song, artist, maxPerformances = 3, expandable = f
                     <StyledArtist key={performance.artist.slug}>
                         <Link href={`/artist/${performance.artist.slug}`} passHref legacyBehavior>
                             <Text as="a" link>
-                                {performance.as
-                                    ? `${performance.as} (CV: ${performance.artist.name})`
-                                    : performance.artist.name}
+                            {getDisplayedArtistName(performance)}
                             </Text>
                         </Link>
                     </StyledArtist>
@@ -114,6 +130,7 @@ Performances.fragments = {
     song: gql`
         fragment PerformancesSong on Song {
             performances {
+                alias
                 as
                 artist {
                     slug

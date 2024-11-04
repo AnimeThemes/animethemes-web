@@ -159,6 +159,7 @@ const typeDefs = gql`
     type Performance {
         song: Song!
         artist: Artist!
+        alias: String
         as: String
     }
 
@@ -176,6 +177,7 @@ const typeDefs = gql`
     type ArtistMembership {
         group: Artist!
         member: Artist!
+        alias: String
         as: String
     }
 

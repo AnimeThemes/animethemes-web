@@ -14,7 +14,7 @@ import { ThemeTable } from "@/components/table/ThemeTable";
 import { Text } from "@/components/text/Text";
 import { TextLink } from "@/components/text/TextLink";
 import { Collapse } from "@/components/utils/Collapse";
-import { Performances } from "@/components/utils/Performances";
+import { getDisplayedArtistName, Performances } from "@/components/utils/Performances";
 import { SongTitle } from "@/components/utils/SongTitle";
 import { SongTitleWithArtists } from "@/components/utils/SongTitleWithArtists";
 import type {
@@ -187,9 +187,7 @@ export function ThemeSummaryCard({
                                                 <TableRow as="a">
                                                     <TableCell>
                                                         <Text color="text-primary" weight="600">
-                                                            {performance.as
-                                                                ? `${performance.as} (CV: ${performance.artist.name})`
-                                                                : performance.artist.name}
+                                                        {getDisplayedArtistName(performance)}
                                                         </Text>
                                                     </TableCell>
                                                 </TableRow>

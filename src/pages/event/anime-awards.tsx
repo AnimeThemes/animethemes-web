@@ -379,6 +379,7 @@ async function fetchTheme(themeId: number, version?: number) {
                                 name
                             }
                             as
+                            alias
                         }
                     }
                     entries {
