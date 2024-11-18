@@ -75,6 +75,7 @@ import {
     UNSORTED,
 } from "@/utils/comparators";
 import createVideoSlug from "@/utils/createVideoSlug";
+import devLog from "@/utils/devLog";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 import type { Comparator, RequiredNonNullable } from "@/utils/types";
@@ -163,8 +164,13 @@ function sortLinkedList<T>(list: LinkedList<T>) {
     const sortedList = [];
 
     while (next) {
+        delete lookUp[next.id];
         sortedList.push(next);
         next = next.next ? lookUp[next.next.id] : undefined;
+    }
+
+    if (sortedList.length !== list.length) {
+        devLog.error("The sorted linked list has a different size as the original list. It probably has broken links!");
     }
 
     return sortedList;
