@@ -21,11 +21,9 @@ export default function AnimeIndexPage({ animeAll }: AnimeIndexPageProps) {
             <Text variant="h1">Anime Index</Text>
             <AlphabeticalIndex items={animeAll}>
                 {(anime) => (
-                    <Link key={anime.slug} href={`/anime/${anime.slug}`} passHref legacyBehavior prefetch={false}>
-                        <Text as="a" block link>
-                            {anime.name}
-                        </Text>
-                    </Link>
+                    <Text key={anime.slug} as={Link} href={`/anime/${anime.slug}`} prefetch={false} block link>
+                        {anime.name}
+                    </Text>
                 )}
             </AlphabeticalIndex>
         </>

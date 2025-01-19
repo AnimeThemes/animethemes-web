@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ReactComponentElement, ReactElement, ReactNode } from "react";
+import type { ComponentPropsWithoutRef, HTMLAttributes, ReactElement, ReactNode } from "react";
 import styled, { css } from "styled-components";
 
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
@@ -19,11 +19,13 @@ const StyledTag = styled.span`
     }
 `;
 
-const StyledText = styled(Text)`
+const StyledText = styled(Text)<{
+    $hideTextOnMobile: boolean;
+}>`
     letter-spacing: 0.05rem;
 
     ${(props) =>
-        props.hideTextOnMobile &&
+        props.$hideTextOnMobile &&
         css`
             @media (max-width: ${theme.breakpoints.mobileMax}) {
                 display: none;
@@ -31,8 +33,10 @@ const StyledText = styled(Text)`
         `}
 `;
 
+type IconElement = ReactElement<ComponentPropsWithoutRef<typeof Icon>, typeof Icon>;
+
 interface TagProps extends HTMLAttributes<HTMLSpanElement> {
-    icon?: ReactComponentElement<typeof Icon> | IconDefinition;
+    icon?: IconElement | IconDefinition;
     children?: ReactNode;
     hideTextOnMobile?: boolean;
     textColor?: keyof Colors;
@@ -43,7 +47,7 @@ export function Tag({ icon, children, hideTextOnMobile = false, textColor, ...pr
         <StyledTag {...props}>
             {!!icon && (isIcon(icon) ? icon : <Icon icon={icon} color="text-disabled" />)}
             {!!children && (
-                <StyledText variant="small" hideTextOnMobile={hideTextOnMobile} color={textColor}>
+                <StyledText variant="small" $hideTextOnMobile={hideTextOnMobile} color={textColor}>
                     {children}
                 </StyledText>
             )}
@@ -51,8 +55,6 @@ export function Tag({ icon, children, hideTextOnMobile = false, textColor, ...pr
     );
 }
 
-function isIcon(
-    value: ReactComponentElement<typeof Icon> | IconDefinition,
-): value is ReactComponentElement<typeof Icon> {
+function isIcon(value: IconElement | IconDefinition): value is IconElement {
     return typeof value === "object" && "type" in value && (value as ReactElement).type === Icon;
 }

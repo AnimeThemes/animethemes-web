@@ -1,0 +1,26 @@
+diff --git a/node_modules/graphql-parse-resolve-info/build-turbo/index.js b/node_modules/graphql-parse-resolve-info/build-turbo/index.js
+index b10297b..6a56538 100644
+--- a/node_modules/graphql-parse-resolve-info/build-turbo/index.js
++++ b/node_modules/graphql-parse-resolve-info/build-turbo/index.js
+@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.getAlias = exports.simplify = exports.parse = exports.simplifyParsedResolveInfoFragmentWithType = exports.parseResolveInfo = exports.getAliasFromResolveInfo = void 0;
+ const assert = require("assert");
+ const graphql_1 = require("graphql");
+-const values_1 = require("graphql/execution/values");
++const values_1 = require("graphql");
+ const debugFactory = require("debug");
+ const debug = debugFactory("graphql-parse-resolve-info");
+ const DEBUG_ENABLED = debug.enabled;
+diff --git a/node_modules/graphql-parse-resolve-info/node8plus/index.js b/node_modules/graphql-parse-resolve-info/node8plus/index.js
+index 4c3d55d..0e2feb3 100644
+--- a/node_modules/graphql-parse-resolve-info/node8plus/index.js
++++ b/node_modules/graphql-parse-resolve-info/node8plus/index.js
+@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.getAlias = exports.simplify = exports.parse = exports.simplifyParsedResolveInfoFragmentWithType = exports.parseResolveInfo = exports.getAliasFromResolveInfo = void 0;
+ const assert = require("assert");
+ const graphql_1 = require("graphql");
+-const values_1 = require("graphql/execution/values");
++const values_1 = require("graphql");
+ const debugFactory = require("debug");
+ const debug = debugFactory("graphql-parse-resolve-info");
+ const DEBUG_ENABLED = debug.enabled;

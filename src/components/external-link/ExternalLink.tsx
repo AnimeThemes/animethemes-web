@@ -1,6 +1,6 @@
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 
-import { faChevronCircleRight } from "@fortawesome/pro-solid-svg-icons";
+import { faChevronCircleRight } from "@fortawesome/free-solid-svg-icons";
 
 import { Icon } from "@/components/icon/Icon";
 import { Text } from "@/components/text/Text";

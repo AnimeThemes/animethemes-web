@@ -133,7 +133,7 @@ export function MultiCoverImage({ resourcesWithImages, ...props }: MultiCoverIma
         .slice(0, 4);
 
     return (
-        <AspectRatio ratio={2 / 3}>
+        <AspectRatio $ratio={2 / 3}>
             <StyledCoverContainer>
                 {images.length ? (
                     images.map(({ largeCover, smallCover, resource }) => (

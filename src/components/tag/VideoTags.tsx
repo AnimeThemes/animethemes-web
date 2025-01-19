@@ -1,53 +1,39 @@
 import styled from "styled-components";
 
-import {
-    faAlignSlash,
-    faBringForward,
-    faCommentLines,
-    faCommentMusic,
-    faCompactDisc,
-    faEyes,
-} from "@fortawesome/pro-solid-svg-icons";
 import gql from "graphql-tag";
 
 import { Row } from "@/components/box/Flex";
+import { BorderTag } from "@/components/tag/BorderTag";
 import { Tag } from "@/components/tag/Tag";
 import type { VideoTagsVideoFragment } from "@/generated/graphql";
 
 const StyledVideoTags = styled(Row)`
-    align-items: baseline;
+    align-items: center;
     flex-wrap: wrap;
     gap: 8px;
 `;
 
 interface VideoTagsProps {
     video: VideoTagsVideoFragment;
-    hideTextOnMobile?: boolean;
 }
 
-export function VideoTags({ video, hideTextOnMobile = false }: VideoTagsProps) {
+export function VideoTags({ video }: VideoTagsProps) {
     return (
         <StyledVideoTags>
             <Tag title="Resolution">{video.resolution}p</Tag>
 
-            {video.nc && <Tag icon={faAlignSlash} title="No Credits" />}
+            {video.nc && <BorderTag title="No Credits">NC</BorderTag>}
 
-            {video.subbed && <Tag icon={faCommentLines} title="With Subtitles" />}
+            {video.subbed && <BorderTag title="With Subtitles">Subs</BorderTag>}
 
-            {video.lyrics && <Tag icon={faCommentMusic} title="With Lyrics" />}
+            {video.lyrics && <BorderTag title="With Lyrics">Lyrics</BorderTag>}
 
-            {video.uncen && <Tag icon={faEyes} title="Uncensored" />}
+            {video.uncen && <BorderTag title="Uncensored">Uncen</BorderTag>}
 
-            {!!video.source && (
-                <Tag icon={faCompactDisc} title="Source">
-                    {video.source.toUpperCase()}
-                </Tag>
-            )}
+            {!!video.source && <BorderTag title="Source">{video.source.toUpperCase()}</BorderTag>}
 
             {video.overlap !== "NONE" && (
-                <Tag icon={faBringForward} title="Overlap" hideTextOnMobile={hideTextOnMobile}>
-                    {video.overlap.toUpperCase().replace("TRANSITION", "TRANS")}
-                </Tag>
+                <BorderTag title="Overlap">{video.overlap.toUpperCase().replace("TRANSITION", "TRANS")}</BorderTag>
             )}
         </StyledVideoTags>
     );

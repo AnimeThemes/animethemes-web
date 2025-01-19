@@ -16,11 +16,9 @@ export function SongTitle({ song, href, ...props }: SongTitleProps) {
 
     if (href) {
         return (
-            <Link href={href} passHref legacyBehavior>
-                <Text as="a" link title={songTitle} italics={!song?.title} wrapAnywhere {...props}>
-                    {songTitle}
-                </Text>
-            </Link>
+            <Text as={Link} href={href} link title={songTitle} italics={!song?.title} wrapAnywhere {...props}>
+                {songTitle}
+            </Text>
         );
     }
 

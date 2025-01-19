@@ -1,7 +1,7 @@
 import type { GetStaticProps } from "next";
 import Link from "next/link";
 
-import { faDownload } from "@fortawesome/pro-solid-svg-icons";
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
 
 import { Column } from "@/components/box/Flex";
@@ -52,15 +52,10 @@ export default function DumpIndexPage({ dumpAll }: DumpIndexPageProps) {
                     title={dump.path}
                     description={`Created at: ${new Date(dump.created_at).toLocaleString()}`}
                 >
-                    <IconTextButton
-                        variant="solid"
-                        forwardedAs="a"
-                        href={dump.link}
-                        download
-                        icon={faDownload}
-                        collapsible
-                    >
-                        Download
+                    <IconTextButton asChild variant="solid" icon={faDownload} collapsible>
+                        <a href={dump.link} download>
+                            Download
+                        </a>
                     </IconTextButton>
                 </SummaryCard>
             ))}

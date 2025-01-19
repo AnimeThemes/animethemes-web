@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import styled from "styled-components";
 
-import { faPen } from "@fortawesome/pro-solid-svg-icons";
+import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { isAxiosError } from "axios";
 import gql from "graphql-tag";
 import { mutate } from "swr";

@@ -26,24 +26,24 @@ const StyledSummaryCard = styled(Card)`
 const StyledCover = styled.img.attrs({
     loading: "lazy",
 })<{
-    objectFit?: Property.ObjectFit;
-    backgroundColor?: Property.Background;
-    isLoading?: boolean;
-    isPlaceholder?: boolean;
+    $objectFit?: Property.ObjectFit;
+    $backgroundColor?: Property.Background;
+    $isLoading?: boolean;
+    $isPlaceholder?: boolean;
 }>`
     width: 48px;
     height: 64px;
-    object-fit: ${(props) => props.objectFit ?? "cover"};
-    background: ${(props) => props.backgroundColor};
+    object-fit: ${(props) => props.$objectFit ?? "cover"};
+    background: ${(props) => props.$backgroundColor};
 
     ${(props) =>
-        props.isPlaceholder
+        props.$isPlaceholder
             ? css`
                   padding: 0.5rem;
                   object-fit: contain;
                   background-color: white;
               `
-            : props.isLoading
+            : props.$isLoading
               ? loadingAnimation
               : null}
 `;
@@ -56,14 +56,14 @@ const StyledBody = styled(Column)`
     word-break: break-all;
 `;
 
-type SummaryCardProps = ComponentPropsWithoutRef<typeof StyledSummaryCard> & {
+interface SummaryCardProps extends Omit<ComponentPropsWithoutRef<typeof StyledSummaryCard>, "title"> {
     title: string | ReactNode;
     description?: string | ReactNode;
     image?: string;
     imageProps?: ComponentPropsWithoutRef<typeof StyledCover>;
     to?: string;
     children?: ReactNode;
-};
+}
 
 export function SummaryCard({ title, description, image, imageProps, to, children, ...props }: SummaryCardProps) {
     const [imageNotFound, setImageNotFound] = useState(false);
@@ -75,8 +75,8 @@ export function SummaryCard({ title, description, image, imageProps, to, childre
                 <StyledCover
                     alt="Cover"
                     src={(!imageNotFound && image) || withBasePath("/img/logo.svg")}
-                    isLoading={imageLoading}
-                    isPlaceholder={!image || imageNotFound}
+                    $isLoading={imageLoading}
+                    $isPlaceholder={!image || imageNotFound}
                     loading="lazy"
                     {...imageProps}
                     onLoad={(event) => {
@@ -85,11 +85,11 @@ export function SummaryCard({ title, description, image, imageProps, to, childre
                             imageProps.onLoad(event);
                         }
                     }}
-                    onError={() => {
+                    onError={(event) => {
                         setImageNotFound(true);
                         setImageLoading(false);
                         if (imageProps?.onError) {
-                            imageProps.onError();
+                            imageProps.onError(event);
                         }
                     }}
                 />

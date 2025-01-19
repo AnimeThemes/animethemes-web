@@ -2,7 +2,7 @@ import { Fragment, useContext } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
-import { faCheck, faCog, faCompress, faExpand, faPlus, faShare } from "@fortawesome/pro-solid-svg-icons";
+import { faCheck, faCompress, faExpand, faGear, faPlus, faShare } from "@fortawesome/free-solid-svg-icons";
 
 import { Row } from "@/components/box/Flex";
 import { IconTextButton } from "@/components/button/IconTextButton";
@@ -90,7 +90,7 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
                 />
                 <Menu modal={false}>
                     <MenuTrigger asChild>
-                        <StyledOverlayButton icon={faCog} isCircle title="Change media type" />
+                        <StyledOverlayButton icon={faGear} isCircle title="Change media type" />
                     </MenuTrigger>
                     <MenuContent collisionPadding={16}>
                         <MenuLabel>
@@ -153,7 +153,7 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
                                                             : "transparent"
                                                     }
                                                 />
-                                                <VideoTags video={otherVideo} hideTextOnMobile />
+                                                <VideoTags video={otherVideo} />
                                             </Link>
                                         </MenuItem>
                                     ))}

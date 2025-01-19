@@ -31,8 +31,8 @@ export function StudioSummaryCard({ studio }: StudioSummaryCardProps) {
             to={`/studio/${studio.slug}`}
             image={extractImages(studio).largeCover}
             imageProps={{
-                objectFit: "contain",
-                backgroundColor,
+                $objectFit: "contain",
+                $backgroundColor: backgroundColor,
                 onLoad: handleLoad,
             }}
         />

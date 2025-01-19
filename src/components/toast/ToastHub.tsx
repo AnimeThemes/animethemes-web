@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { AnimatePresence, m } from "framer-motion";
+import { AnimatePresence, m } from "motion/react";
 
 import { Container } from "@/components/container/Container";
 import { useToasts } from "@/context/toastContext";

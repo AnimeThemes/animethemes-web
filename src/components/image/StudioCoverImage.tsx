@@ -25,7 +25,7 @@ export function StudioCoverImage({ studio, ...props }: StudioCoverImageProps) {
     const [imageNotFound, setImageNotFound] = useState(!largeCover);
 
     return (
-        <AspectRatio ratio={2 / 3}>
+        <AspectRatio $ratio={2 / 3}>
             {!imageNotFound ? (
                 <StyledImage
                     key={largeCover}

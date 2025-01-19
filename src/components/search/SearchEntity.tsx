@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { faChevronDown, faSpinner } from "@fortawesome/pro-solid-svg-icons";
+import { faChevronDown, faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";

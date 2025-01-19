@@ -4,10 +4,10 @@ import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 
 import {
-    faArrowTurnDownRight,
-    faArrowTurnRight,
+    faArrowTurnDown,
+    faArrowTurnUp,
     faCheck,
-    faEllipsisV,
+    faEllipsisVertical,
     faGripVertical,
     faPen,
     faPlus,
@@ -15,11 +15,11 @@ import {
     faTrash,
     faTrophy,
     faXmark,
-} from "@fortawesome/pro-solid-svg-icons";
+} from "@fortawesome/free-solid-svg-icons";
 import { isAxiosError } from "axios";
-import { Reorder, useDragControls } from "framer-motion";
 import gql from "graphql-tag";
 import { shuffle } from "lodash-es";
+import { Reorder, useDragControls } from "motion/react";
 import type { ParsedUrlQuery } from "querystring";
 import useSWR, { mutate } from "swr";
 
@@ -519,9 +519,9 @@ function Description({ playlist, description, setDescription, isEditable, setEdi
                     </Text>
                 </div>
             ) : (
-                <Card hoverable onClick={() => setCollapsed(!isCollapsed)}>
+                <Card $hoverable onClick={() => setCollapsed(!isCollapsed)}>
                     <HeightTransition>
-                        <Text as="p" maxLines={isCollapsed ? 2 : null}>
+                        <Text as="p" maxLines={isCollapsed ? 2 : undefined}>
                             {description}
                         </Text>
                     </HeightTransition>
@@ -627,7 +627,7 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
                     <Menu modal={false}>
                         <MenuTrigger asChild>
                             <Button variant="silent" isCircle>
-                                <Icon icon={faEllipsisV} />
+                                <Icon icon={faEllipsisVertical} />
                             </Button>
                         </MenuTrigger>
                         <MenuContent>
@@ -645,11 +645,11 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
                                 <>
                                     <MenuSeparator />
                                     <MenuItem onSelect={() => addWatchListItem(track.video, track.entry)}>
-                                        <Icon icon={faArrowTurnDownRight} color="text-disabled" />
+                                        <Icon icon={faArrowTurnDown} color="text-disabled" />
                                         <Text>Add to Watch List</Text>
                                     </MenuItem>
                                     <MenuItem onSelect={() => addWatchListItemNext(track.video, track.entry)}>
-                                        <Icon icon={faArrowTurnRight} color="text-disabled" />
+                                        <Icon icon={faArrowTurnUp} color="text-disabled" />
                                         <Text>Play Next</Text>
                                     </MenuItem>
                                 </>

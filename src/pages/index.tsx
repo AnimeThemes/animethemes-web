@@ -6,43 +6,31 @@ import type { MDXRemoteSerializeResult } from "next-mdx-remote";
 import {
     faArrowRight,
     faAward,
-    faBookOpenCover,
-    faMegaphone,
-    faRandom,
-    faSearch,
+    faBookOpen,
+    faBullhorn,
+    faMagnifyingGlass,
+    faShuffle,
     faTv,
     faUser,
-} from "@fortawesome/pro-solid-svg-icons";
+} from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
-import { range } from "lodash-es";
-import useSWR from "swr";
 
 import { Column } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
 import { AnnouncementCard } from "@/components/card/AnnouncementCard";
-import PlaylistSummaryCard from "@/components/card/PlaylistSummaryCard";
-import {
-    VideoSummaryCard,
-    VideoSummaryCardFragmentEntry,
-    VideoSummaryCardFragmentVideo,
-} from "@/components/card/VideoSummaryCard";
 import { ShuffleDialog } from "@/components/dialog/ShuffleDialog";
 import { ExternalLink } from "@/components/external-link/ExternalLink";
 import { FeaturedTheme } from "@/components/featured-theme/FeaturedTheme";
+import { MostViewedVideos } from "@/components/home/MostViewedVideos";
+import { RecentlyAddedPlaylists } from "@/components/home/RecentlyAddedPlaylists";
+import { RecentlyAddedVideos } from "@/components/home/RecentlyAddedVideos";
 import { Icon } from "@/components/icon/Icon";
 import { ProfileImage } from "@/components/image/ProfileImage";
 import { SEO } from "@/components/seo/SEO";
-import { Skeleton } from "@/components/skeleton/Skeleton";
 import { Text } from "@/components/text/Text";
-import type {
-    HomePageMostViewedQuery,
-    HomePageQuery,
-    HomePageRecentlyAddedPlaylistsQuery,
-    HomePageRecentlyAddedQuery,
-} from "@/generated/graphql";
+import type { HomePageQuery } from "@/generated/graphql";
 import useAuth from "@/hooks/useAuth";
 import useCurrentSeason from "@/hooks/useCurrentSeason";
-import { fetchDataClient } from "@/lib/client";
 import { fetchData } from "@/lib/server";
 import theme from "@/theme";
 import getSharedPageProps from "@/utils/getSharedPageProps";
@@ -87,70 +75,6 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
     const { me } = useAuth();
     const { currentYear, currentSeason } = useCurrentSeason();
 
-    const { data: recentlyAdded } = useSWR<HomePageRecentlyAddedQuery["videoAll"] | null[]>(
-        ["HomePageRecentlyAdded"],
-        async () => {
-            const { data } = await fetchDataClient<HomePageRecentlyAddedQuery>(gql`
-                ${VideoSummaryCardFragmentVideo}
-                ${VideoSummaryCardFragmentEntry}
-
-                query HomePageRecentlyAdded {
-                    videoAll(orderBy: "id", orderDesc: true, limit: 10) {
-                        ...VideoSummaryCardVideo
-                        entries {
-                            ...VideoSummaryCardEntry
-                        }
-                    }
-                }
-            `);
-
-            return data.videoAll;
-        },
-        { fallbackData: range(10).map(() => null) },
-    );
-
-    const { data: mostViewed } = useSWR<HomePageMostViewedQuery["videoAll"] | null[]>(
-        ["HomePageTrending"],
-        async () => {
-            const { data } = await fetchDataClient<HomePageMostViewedQuery>(gql`
-                ${VideoSummaryCardFragmentVideo}
-                ${VideoSummaryCardFragmentEntry}
-
-                query HomePageMostViewed {
-                    videoAll(orderBy: "views_count", orderDesc: true, limit: 10) {
-                        ...VideoSummaryCardVideo
-                        entries {
-                            ...VideoSummaryCardEntry
-                        }
-                    }
-                }
-            `);
-
-            return data.videoAll;
-        },
-        { fallbackData: range(10).map(() => null) },
-    );
-
-    const { data: recentlyAddedPlaylists } = useSWR<HomePageRecentlyAddedPlaylistsQuery["playlistAll"] | null[]>(
-        ["HomePageRecentlyAddedPlaylists"],
-        async () => {
-            const { data } = await fetchDataClient<HomePageRecentlyAddedPlaylistsQuery>(gql`
-                ${PlaylistSummaryCard.fragments.playlist}
-                ${PlaylistSummaryCard.fragments.showOwner}
-
-                query HomePageRecentlyAddedPlaylists {
-                    playlistAll(orderBy: "created_at", orderDesc: true, limit: 10, onlyNonEmpty: true) {
-                        ...PlaylistSummaryCardPlaylist
-                        ...PlaylistSummaryCardShowOwner
-                    }
-                }
-            `);
-
-            return data.playlistAll;
-        },
-        { fallbackData: range(10).map(() => null) },
-    );
-
     return (
         <>
             <SEO />
@@ -168,96 +92,74 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
             <Text variant="h2">Explore The Database</Text>
 
             <Grid $columns={3}>
-                <Link href="/search" passHref legacyBehavior>
-                    <BigButton forwardedAs="a">
-                        <BigIcon icon={faSearch} className="fa-flip-horizontal" />
+                <BigButton asChild>
+                    <Link href="/search">
+                        <BigIcon icon={faMagnifyingGlass} className="fa-flip-horizontal" />
                         <Text>Search</Text>
                         <Icon icon={faArrowRight} color="text-primary" />
-                    </BigButton>
-                </Link>
+                    </Link>
+                </BigButton>
                 <ShuffleDialog
                     trigger={
                         <BigButton>
-                            <BigIcon icon={faRandom} />
+                            <BigIcon icon={faShuffle} />
                             <Text>Shuffle</Text>
                             <Icon icon={faArrowRight} color="text-primary" />
                         </BigButton>
                     }
                 />
-                <Link
-                    href={currentYear && currentSeason ? `/year/${currentYear}/${currentSeason}` : "/"}
-                    passHref
-                    legacyBehavior
-                >
-                    <BigButton forwardedAs="a">
+                <BigButton asChild>
+                    <Link href={currentYear && currentSeason ? `/year/${currentYear}/${currentSeason}` : "/"}>
                         <BigIcon icon={faTv} />
                         <Text>Current Season</Text>
                         <Icon icon={faArrowRight} color="text-primary" />
-                    </BigButton>
-                </Link>
+                    </Link>
+                </BigButton>
             </Grid>
 
             <Grid $columns={4}>
-                <Link href="/event" passHref legacyBehavior>
-                    <BigButton forwardedAs="a">
+                <BigButton asChild>
+                    <Link href="/event">
                         <BigIcon icon={faAward} />
                         <Text>Events</Text>
                         <Icon icon={faArrowRight} color="text-primary" />
-                    </BigButton>
-                </Link>
-                <Link href="/wiki" passHref legacyBehavior>
-                    <BigButton forwardedAs="a">
-                        <BigIcon icon={faBookOpenCover} />
+                    </Link>
+                </BigButton>
+                <BigButton asChild>
+                    <Link href="/wiki">
+                        <BigIcon icon={faBookOpen} />
                         <Text>Wiki</Text>
                         <Icon icon={faArrowRight} color="text-primary" />
-                    </BigButton>
-                </Link>
-                <Link href="/blog" passHref legacyBehavior>
-                    <BigButton forwardedAs="a">
-                        <BigIcon icon={faMegaphone} />
+                    </Link>
+                </BigButton>
+                <BigButton asChild>
+                    <Link href="/blog">
+                        <BigIcon icon={faBullhorn} />
                         <Text>Blog</Text>
                         <Icon icon={faArrowRight} color="text-primary" />
-                    </BigButton>
-                </Link>
-                <Link href="/profile" passHref legacyBehavior>
-                    <BigButton forwardedAs="a">
+                    </Link>
+                </BigButton>
+                <BigButton asChild>
+                    <Link href="/profile">
                         {me.user ? <BigProfileImage user={me.user} size={96} /> : <BigIcon icon={faUser} />}
                         <Text>My Profile</Text>
                         <Icon icon={faArrowRight} color="text-primary" />
-                    </BigButton>
-                </Link>
+                    </Link>
+                </BigButton>
             </Grid>
 
             <Grid $columns={3}>
                 <Column style={{ "--gap": "24px" }}>
                     <Text variant="h2">Recently Added</Text>
-                    <Column style={{ "--gap": "16px" }}>
-                        {recentlyAdded?.map((video, index) => (
-                            <Skeleton key={index} variant="summary-card" delay={index * 100}>
-                                {video ? <VideoSummaryCard video={video} entry={video.entries[0]} /> : null}
-                            </Skeleton>
-                        ))}
-                    </Column>
+                    <RecentlyAddedVideos />
                 </Column>
                 <Column style={{ "--gap": "24px" }}>
                     <Text variant="h2">Most Viewed</Text>
-                    <Column style={{ "--gap": "16px" }}>
-                        {mostViewed?.map((video, index) => (
-                            <Skeleton key={index} variant="summary-card" delay={index * 100}>
-                                {video ? <VideoSummaryCard video={video} entry={video.entries[0]} /> : null}
-                            </Skeleton>
-                        ))}
-                    </Column>
+                    <MostViewedVideos />
                 </Column>
                 <Column style={{ "--gap": "24px" }}>
                     <Text variant="h2">New Playlists</Text>
-                    <Column style={{ "--gap": "16px" }}>
-                        {recentlyAddedPlaylists?.map((playlist, index) => (
-                            <Skeleton key={index} variant="summary-card" delay={index * 100}>
-                                {playlist ? <PlaylistSummaryCard playlist={playlist} showOwner /> : null}
-                            </Skeleton>
-                        ))}
-                    </Column>
+                    <RecentlyAddedPlaylists />
                 </Column>
             </Grid>
 
@@ -285,36 +187,36 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
             <Text variant="h2">Dive Deeper</Text>
 
             <Grid $columns={5}>
-                <Link href="/anime" passHref legacyBehavior>
-                    <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
+                <BigButton asChild style={{ "--height": "48px" }}>
+                    <Link href="/anime">
                         <Text>Anime Index</Text>
                         <Icon icon={faArrowRight} color="text-primary" />
-                    </BigButton>
-                </Link>
-                <Link href="/artist" passHref legacyBehavior>
-                    <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
+                    </Link>
+                </BigButton>
+                <BigButton asChild style={{ "--height": "48px" }}>
+                    <Link href="/artist">
                         <Text>Artist Index</Text>
                         <Icon icon={faArrowRight} color="text-primary" />
-                    </BigButton>
-                </Link>
-                <Link href="/year" passHref legacyBehavior>
-                    <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
+                    </Link>
+                </BigButton>
+                <BigButton asChild style={{ "--height": "48px" }}>
+                    <Link href="/year">
                         <Text>Year Index</Text>
                         <Icon icon={faArrowRight} color="text-primary" />
-                    </BigButton>
-                </Link>
-                <Link href="/series" passHref legacyBehavior>
-                    <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
+                    </Link>
+                </BigButton>
+                <BigButton asChild style={{ "--height": "48px" }}>
+                    <Link href="/series">
                         <Text>Series Index</Text>
                         <Icon icon={faArrowRight} color="text-primary" />
-                    </BigButton>
-                </Link>
-                <Link href="/studio" passHref legacyBehavior>
-                    <BigButton forwardedAs="a" style={{ "--height": "48px" }}>
+                    </Link>
+                </BigButton>
+                <BigButton asChild style={{ "--height": "48px" }}>
+                    <Link href="/studio">
                         <Text>Studio Index</Text>
                         <Icon icon={faArrowRight} color="text-primary" />
-                    </BigButton>
-                </Link>
+                    </Link>
+                </BigButton>
             </Grid>
         </>
     );

@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "react-query";
+import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 
 import type { SearchArgs } from "@/generated/graphql";
 import type { SimpleSearchArgs } from "@/lib/client/search";
@@ -12,14 +12,17 @@ export default function useEntitySearch<T>(
     }>,
     searchArgs: SimpleSearchArgs,
 ) {
-    const fetchEntityPage = ({ pageParam = 1 }) =>
+    const fetchEntityPage = ({ pageParam }: { pageParam: number }) =>
         fetchResults({
             ...toSearchArgs(searchArgs),
             page: pageParam,
         });
 
-    return useInfiniteQuery(["searchEntity", entity, searchArgs], fetchEntityPage, {
+    return useInfiniteQuery({
+        queryKey: ["searchEntity", entity, searchArgs],
+        queryFn: fetchEntityPage,
+        initialPageParam: 1,
         getNextPageParam: (lastPage) => lastPage.nextPage,
-        keepPreviousData: true,
+        placeholderData: keepPreviousData,
     });
 }

@@ -4,9 +4,9 @@ import styled from "styled-components";
 import type { GetStaticProps } from "next";
 import Link from "next/link";
 
-import { faAward, faHashtag, faUsers } from "@fortawesome/pro-solid-svg-icons";
-import { m } from "framer-motion";
+import { faAward, faHashtag, faUsers } from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
+import { m } from "motion/react";
 
 import { SummaryCard } from "@/components/card/SummaryCard";
 import { CornerIcon } from "@/components/icon/CornerIcon";
@@ -267,11 +267,9 @@ function AwardThemeSummaryCard({ theme, rank, votes, ...props }: AwardThemeSumma
                 {theme.type + (theme.sequence || "")}
                 {entry.version && entry.version > 1 ? `v${entry.version}` : null}
             </span>
-            <Link href={`/anime/${theme.anime.slug}`} passHref legacyBehavior>
-                <Text as="a" link>
-                    {theme.anime.name}
-                </Text>
-            </Link>
+            <Text as={Link} href={`/anime/${theme.anime.slug}`} link>
+                {theme.anime.name}
+            </Text>
         </SummaryCard.Description>
     );
 

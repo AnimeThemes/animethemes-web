@@ -2,7 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import type { GetStaticPaths, GetStaticProps } from "next";
 
-import { faStopwatch } from "@fortawesome/pro-solid-svg-icons";
+import { faStopwatch } from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
 import type { ParsedUrlQuery } from "querystring";
 

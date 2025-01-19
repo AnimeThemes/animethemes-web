@@ -2,7 +2,7 @@ import { useContext } from "react";
 import type { ComponentPropsWithoutRef } from "react";
 import Link from "next/link";
 
-import { faCompactDisc, faPlay } from "@fortawesome/pro-solid-svg-icons";
+import { faCompactDisc, faPlay } from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
 
 import { Button } from "@/components/button/Button";
@@ -32,14 +32,16 @@ export function VideoButton({ anime, theme, entry, video, ...props }: VideoButto
         : false;
 
     return (
-        <Link href={`/anime/${anime.slug}/${videoSlug}`} passHref legacyBehavior>
-            <Button as="a" {...props}>
-                <Button as="span" variant="primary" isCircle>
-                    <Icon icon={isPlaying ? faCompactDisc : faPlay} className={isPlaying ? "fa-spin" : undefined} />
+        <Button asChild {...props}>
+            <Link href={`/anime/${anime.slug}/${videoSlug}`}>
+                <Button asChild variant="primary" isCircle>
+                    <span>
+                        <Icon icon={isPlaying ? faCompactDisc : faPlay} className={isPlaying ? "fa-spin" : undefined} />
+                    </span>
                 </Button>
-                <VideoTags video={video} hideTextOnMobile />
-            </Button>
-        </Link>
+                <VideoTags video={video} />
+            </Link>
+        </Button>
     );
 }
 

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { faExclamation } from "@fortawesome/pro-solid-svg-icons";
+import { faExclamation } from "@fortawesome/free-solid-svg-icons";
 
 import { Row } from "@/components/box/Flex";
 import { Card } from "@/components/card/Card";
@@ -26,7 +26,7 @@ interface ErrorCardProps {
 
 export function ErrorCard({ error }: ErrorCardProps) {
     return (
-        <StyledCard color="text-warning">
+        <StyledCard $color="text-warning">
             <Row style={{ "--gap": "1rem" }}>
                 <Text color="text-warning">
                     <Icon icon={faExclamation} />

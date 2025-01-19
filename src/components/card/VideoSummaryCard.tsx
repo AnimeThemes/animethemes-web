@@ -1,8 +1,8 @@
-import { type ForwardedRef, forwardRef, type ReactNode } from "react";
+import { type ReactNode, type Ref } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
-import { faPlay } from "@fortawesome/pro-solid-svg-icons";
+import { faPlay } from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
 
 import { SummaryCard } from "@/components/card/SummaryCard2";
@@ -54,6 +54,7 @@ const StyledCoverOverlay = styled.div`
 `;
 
 interface VideoSummaryCardProps {
+    ref?: Ref<HTMLDivElement>;
     video: VideoSummaryCardVideoFragment;
     entry: VideoSummaryCardEntryFragment;
     menu?: ReactNode;
@@ -62,10 +63,16 @@ interface VideoSummaryCardProps {
     isPlaying?: boolean;
 }
 
-export const VideoSummaryCard = forwardRef(function VideoSummaryCard(
-    { video, entry, menu, append, onPlay, isPlaying, ...props }: VideoSummaryCardProps,
-    ref: ForwardedRef<HTMLDivElement>,
-) {
+export function VideoSummaryCard({
+    ref,
+    video,
+    entry,
+    menu,
+    append,
+    onPlay,
+    isPlaying,
+    ...props
+}: VideoSummaryCardProps) {
     const theme = entry.theme;
     const anime = theme?.anime;
 
@@ -90,7 +97,7 @@ export const VideoSummaryCard = forwardRef(function VideoSummaryCard(
                 </StyledCoverLink>
                 <SummaryCard.Body>
                     <SummaryCard.Title>
-                        <SongTitle song={theme.song} as={Link} href={href} onClick={onPlay} />
+                        <SongTitle song={theme.song} href={href} onClick={onPlay} />
                         <Performances song={theme.song} />
                     </SummaryCard.Title>
                     <SummaryCard.Description>
@@ -108,7 +115,7 @@ export const VideoSummaryCard = forwardRef(function VideoSummaryCard(
             </SummaryCard>
         </StyledWrapper>
     );
-});
+}
 
 export const VideoSummaryCardFragmentVideo = gql`
     ${createVideoSlug.fragments.video}

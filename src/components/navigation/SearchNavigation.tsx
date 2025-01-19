@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { faSearch } from "@fortawesome/pro-solid-svg-icons";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { debounce } from "lodash-es";
 
 import { Input } from "@/components/form/Input";
@@ -60,7 +60,7 @@ export function SearchNavigation() {
         updateSearchQuery(router, newInputSearchQuery);
     };
 
-    const inputRef = useRef<HTMLInputElement>();
+    const inputRef = useRef<HTMLInputElement>(undefined);
 
     const onMountInput = useCallback((input: HTMLInputElement) => {
         // Only focus the input on desktop devices
@@ -111,58 +111,42 @@ export function SearchNavigation() {
                         placeholder: "Search",
                     }}
                     resettable
-                    icon={faSearch}
+                    icon={faMagnifyingGlass}
                 />
-                <HorizontalScroll fixShadows>
+                <HorizontalScroll $fixShadows>
                     <Switcher selectedItem={(entity as string) || null}>
-                        <SwitcherReset as={Link} prefetch={false} href={{ pathname: "/search", query }} />
-                        <SwitcherOption
-                            as={Link}
-                            prefetch={false}
-                            href={{ pathname: "/search/anime", query }}
-                            value="anime"
-                        >
-                            Anime
+                        <SwitcherReset asChild>
+                            <Link href={{ pathname: "/search", query }} prefetch={false} />
+                        </SwitcherReset>
+                        <SwitcherOption asChild value="anime">
+                            <Link href={{ pathname: "/search/anime", query }} prefetch={false}>
+                                Anime
+                            </Link>
                         </SwitcherOption>
-                        <SwitcherOption
-                            as={Link}
-                            prefetch={false}
-                            href={{ pathname: "/search/theme", query }}
-                            value="theme"
-                        >
-                            Theme
+                        <SwitcherOption asChild value="theme">
+                            <Link href={{ pathname: "/search/theme", query }} prefetch={false}>
+                                Theme
+                            </Link>
                         </SwitcherOption>
-                        <SwitcherOption
-                            as={Link}
-                            prefetch={false}
-                            href={{ pathname: "/search/artist", query }}
-                            value="artist"
-                        >
-                            Artist
+                        <SwitcherOption asChild value="artist">
+                            <Link href={{ pathname: "/search/artist", query }} prefetch={false}>
+                                Artist
+                            </Link>
                         </SwitcherOption>
-                        <SwitcherOption
-                            as={Link}
-                            prefetch={false}
-                            href={{ pathname: "/search/series", query }}
-                            value="series"
-                        >
-                            Series
+                        <SwitcherOption asChild value="series">
+                            <Link href={{ pathname: "/search/series", query }} prefetch={false}>
+                                Series
+                            </Link>
                         </SwitcherOption>
-                        <SwitcherOption
-                            as={Link}
-                            prefetch={false}
-                            href={{ pathname: "/search/studio", query }}
-                            value="studio"
-                        >
-                            Studio
+                        <SwitcherOption asChild value="studio">
+                            <Link href={{ pathname: "/search/studio", query }} prefetch={false}>
+                                Studio
+                            </Link>
                         </SwitcherOption>
-                        <SwitcherOption
-                            as={Link}
-                            prefetch={false}
-                            href={{ pathname: "/search/playlist", query }}
-                            value="playlist"
-                        >
-                            Playlist
+                        <SwitcherOption asChild value="playlist">
+                            <Link href={{ pathname: "/search/playlist", query }} prefetch={false}>
+                                Playlist
+                            </Link>
                         </SwitcherOption>
                     </Switcher>
                 </HorizontalScroll>

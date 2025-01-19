@@ -76,7 +76,7 @@ function getPerformanceFilter(key: string | null): (performance: Performance) =>
     }
 }
 
-interface ArtistDetailPageProps extends RequiredNonNullable<ArtistDetailPageQuery> {}
+type ArtistDetailPageProps = RequiredNonNullable<ArtistDetailPageQuery>;
 
 interface ArtistDetailPageParams extends ParsedUrlQuery {
     artistSlug: string;
@@ -204,13 +204,11 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                             <DescriptionList.Item title="Members">
                                 <StyledList>
                                     {artist.members.map(({ member, alias, as }) => (
-                                        <Link key={member.slug} href={`/artist/${member.slug}`} passHref legacyBehavior>
-                                            <Text as="a" link>
-                                                {member.name}
-                                                {alias ? ` (as ${alias})` : null}
-                                                {as ? ` (as ${as})` : null}
-                                            </Text>
-                                        </Link>
+                                        <Text key={member.slug} as={Link} href={`/artist/${member.slug}`} link>
+                                            {member.name}
+                                            {alias ? ` (as ${alias})` : null}
+                                            {as ? ` (as ${as})` : null}
+                                        </Text>
                                     ))}
                                 </StyledList>
                             </DescriptionList.Item>
@@ -219,13 +217,11 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                             <DescriptionList.Item title="Member of">
                                 <StyledList>
                                     {artist.groups.map(({ group, alias, as }) => (
-                                        <Link key={group.slug} href={`/artist/${group.slug}`} passHref legacyBehavior>
-                                            <Text as="a" link>
-                                                {group.name}
-                                                {alias ? ` (as ${alias})` : null}
-                                                {as ? ` (as ${as})` : null}
-                                            </Text>
-                                        </Link>
+                                        <Text key={group.slug} as={Link} href={`/artist/${group.slug}`} link>
+                                            {group.name}
+                                            {alias ? ` (as ${alias})` : null}
+                                            {as ? ` (as ${as})` : null}
+                                        </Text>
                                     ))}
                                 </StyledList>
                             </DescriptionList.Item>

@@ -89,7 +89,7 @@ export default function VideoScript({ video }: Props) {
                     ) : null}
                 </>
             ) : video.script ? (
-                <Text download variant="small" link color="text-disabled" onClick={downloadVideoScript}>
+                <Text variant="small" link color="text-disabled" onClick={downloadVideoScript}>
                     Click to download encoding script.
                 </Text>
             ) : (

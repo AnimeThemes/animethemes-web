@@ -47,11 +47,9 @@ export function AlphabeticalIndex<T extends AlphabeticalIndexItem>({ items, chil
         <>
             <StyledLetterList>
                 {itemsByFirstLetter.map(([firstLetter]) => (
-                    <Link key={firstLetter} href={`#${firstLetter}`} passHref legacyBehavior>
-                        <Text as="a" link>
-                            {firstLetter.toUpperCase()}{" "}
-                        </Text>
-                    </Link>
+                    <Text key={firstLetter} as={Link} href={`#${firstLetter}`} link>
+                        {firstLetter.toUpperCase()}{" "}
+                    </Text>
                 ))}
             </StyledLetterList>
             {itemsByFirstLetter.map(([firstLetter, itemsWithFirstLetter]) => (

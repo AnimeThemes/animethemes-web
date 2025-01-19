@@ -38,11 +38,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                             Discord
                         </Text>
                         <span>. For now, you may </span>
-                        <Link href="/" passHref legacyBehavior>
-                            <Text as="a" link>
-                                go back to the home page
-                            </Text>
-                        </Link>
+                        <Text as={Link} href="/" link>
+                            go back to the home page
+                        </Text>
                         <span>.</span>
                     </Text>
                 </Container>

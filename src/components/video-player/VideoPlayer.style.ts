@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { m } from "framer-motion";
+import { m } from "motion/react";
 
 import { Switcher } from "@/components/switcher/Switcher";
 import theme from "@/theme";

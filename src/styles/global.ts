@@ -118,7 +118,7 @@ export default createGlobalStyle`
         max-width: 100%;
     }
 
-    pre, ul {
+    pre, ul, figure {
         margin: 0;
     }
 

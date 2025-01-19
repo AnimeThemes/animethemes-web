@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import { m } from "framer-motion";
+import { m } from "motion/react";
 
 import { Text } from "@/components/text/Text";
 import theme from "@/theme";

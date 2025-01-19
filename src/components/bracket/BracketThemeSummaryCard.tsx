@@ -1,7 +1,7 @@
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import styled from "styled-components";
 
-import { faAward, faSeedling, faUsers } from "@fortawesome/pro-solid-svg-icons";
+import { faAward, faSeedling, faUsers } from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
 
 import { Column } from "@/components/box/Flex";

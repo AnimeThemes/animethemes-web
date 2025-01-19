@@ -1,6 +1,6 @@
 import type { ComponentPropsWithoutRef } from "react";
 
-import { faFilter } from "@fortawesome/pro-solid-svg-icons";
+import { faFilter } from "@fortawesome/free-solid-svg-icons";
 
 import { IconTextButton } from "@/components/button/IconTextButton";
 

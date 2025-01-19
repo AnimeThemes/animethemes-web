@@ -54,7 +54,7 @@ const StyledList = styled.div`
     text-align: center;
 `;
 
-interface StudioDetailPageProps extends RequiredNonNullable<StudioDetailPageQuery> {}
+type StudioDetailPageProps = RequiredNonNullable<StudioDetailPageQuery>;
 
 interface StudioDetailPageParams extends ParsedUrlQuery {
     studioSlug: string;

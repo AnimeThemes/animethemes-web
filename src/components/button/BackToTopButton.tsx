@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 
-import { faChevronUp } from "@fortawesome/pro-solid-svg-icons";
-import { AnimatePresence, m } from "framer-motion";
+import { faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { AnimatePresence, m } from "motion/react";
 
 import { Button } from "@/components/button/Button";
 import { Icon } from "@/components/icon/Icon";
@@ -55,7 +55,7 @@ export function BackToTopButton() {
                     variant="primary"
                     isCircle={true}
                     onClick={scrollUp}
-                    onMouseDown={(event: React.PointerEvent) => event.preventDefault()}
+                    onMouseDown={(event) => event.preventDefault()}
                     $bottomOffset={currentWatchListItem ? 76 : 0}
                 >
                     <Icon icon={faChevronUp} />

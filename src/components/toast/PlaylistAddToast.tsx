@@ -12,15 +12,13 @@ interface PlaylistAddToastProps {
 
 export function PlaylistAddToast({ theme }: PlaylistAddToastProps) {
     return (
-        <Link href="/profile/playlist" passHref legacyBehavior>
-            <Toast as="a" hoverable>
-                <Row $wrap style={{ "--justify-content": "space-between", "--gap": "8px" }}>
-                    <span>
-                        <SongTitle song={theme.song} /> was added to the playlist!
-                    </span>
-                    <Text color="text-disabled">(Click to view playlist.)</Text>
-                </Row>
-            </Toast>
-        </Link>
+        <Toast as={Link} href="/profile/playlist" $hoverable>
+            <Row $wrap style={{ "--justify-content": "space-between", "--gap": "8px" }}>
+                <span>
+                    <SongTitle song={theme.song} /> was added to the playlist!
+                </span>
+                <Text color="text-disabled">(Click to view playlist.)</Text>
+            </Row>
+        </Toast>
     );
 }

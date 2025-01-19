@@ -21,11 +21,9 @@ export default function StudioIndexPage({ studioAll }: StudioIndexPageProps) {
             <Text variant="h1">Studio Index</Text>
             <AlphabeticalIndex items={studioAll}>
                 {(studio) => (
-                    <Link key={studio.slug} href={`/studio/${studio.slug}`} passHref legacyBehavior prefetch={false}>
-                        <Text as="a" block link>
-                            {studio.name}
-                        </Text>
-                    </Link>
+                    <Text key={studio.slug} as={Link} href={`/studio/${studio.slug}`} prefetch={false} block link>
+                        {studio.name}
+                    </Text>
                 )}
             </AlphabeticalIndex>
         </>

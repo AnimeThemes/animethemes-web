@@ -36,7 +36,7 @@ const StyledDesktopOnly = styled.div`
     }
 `;
 
-interface SeriesDetailPageProps extends RequiredNonNullable<SeriesDetailPageQuery> {}
+type SeriesDetailPageProps = RequiredNonNullable<SeriesDetailPageQuery>;
 
 interface SeriesDetailPageParams extends ParsedUrlQuery {
     seriesSlug: string;
