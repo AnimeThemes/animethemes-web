@@ -15,17 +15,15 @@ interface PlaylistTrackAddToastProps {
 
 export function PlaylistTrackAddToast({ playlist, entry }: PlaylistTrackAddToastProps) {
     return (
-        <Link href={`/playlist/${playlist.id}`} passHref legacyBehavior>
-            <Toast as="a" hoverable>
-                <Row $wrap style={{ "--justify-content": "space-between", "--gap": "8px" }}>
-                    <span>
-                        <SongTitle song={entry.theme?.song ?? null} /> was added to{" "}
-                        <Text color="text-primary">{playlist.name}</Text>!
-                    </span>
-                    <Text color="text-disabled">(Click to view playlist.)</Text>
-                </Row>
-            </Toast>
-        </Link>
+        <Toast as={Link} href={`/playlist/${playlist.id}`} $hoverable>
+            <Row $wrap style={{ "--justify-content": "space-between", "--gap": "8px" }}>
+                <span>
+                    <SongTitle song={entry.theme?.song ?? null} /> was added to{" "}
+                    <Text color="text-primary">{playlist.name}</Text>!
+                </span>
+                <Text color="text-disabled">(Click to view playlist.)</Text>
+            </Row>
+        </Toast>
     );
 }
 

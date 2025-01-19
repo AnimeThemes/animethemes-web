@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { faRandom, faSearch, faTv, faUser } from "@fortawesome/pro-solid-svg-icons";
+import { faMagnifyingGlass, faShuffle, faTv, faUser } from "@fortawesome/free-solid-svg-icons";
 
 import { IconTextButton } from "@/components/button/IconTextButton";
 import { ShuffleDialog } from "@/components/dialog/ShuffleDialog";
@@ -49,64 +49,55 @@ export function Navigation() {
         <>
             <StyledNavigation $floating={isFloating}>
                 <StyledNavigationContainer onClick={(event) => event.stopPropagation()}>
-                    <Link href="/" passHref legacyBehavior>
-                        <StyledLogoContainer>
-                            <StyledLogo width="277" height="150" />
-                        </StyledLogoContainer>
-                    </Link>
+                    <StyledLogoContainer as={Link} href="/">
+                        <StyledLogo width="277" height="150" />
+                    </StyledLogoContainer>
                     <StyledNavigationLinks>
-                        <Link href="/search" passHref legacyBehavior>
-                            <IconTextButton
-                                forwardedAs="a"
-                                icon={faSearch}
-                                variant="silent"
-                                collapsible
-                                style={{ "--gap": "8px" }}
-                            >
-                                Search
-                            </IconTextButton>
-                        </Link>
+                        <IconTextButton
+                            asChild
+                            icon={faMagnifyingGlass}
+                            variant="silent"
+                            collapsible
+                            style={{ "--gap": "8px" }}
+                        >
+                            <Link href="/search">Search</Link>
+                        </IconTextButton>
                         <ShuffleDialog
                             trigger={
-                                <IconTextButton variant="silent" icon={faRandom} collapsible style={{ "--gap": "8px" }}>
+                                <IconTextButton
+                                    variant="silent"
+                                    icon={faShuffle}
+                                    collapsible
+                                    style={{ "--gap": "8px" }}
+                                >
                                     Shuffle
                                 </IconTextButton>
                             }
                         />
-                        <Link
-                            href={currentYear && currentSeason ? `/year/${currentYear}/${currentSeason}` : "/"}
-                            passHref
-                            legacyBehavior
-                        >
-                            <IconTextButton
-                                forwardedAs="a"
-                                variant="silent"
-                                icon={faTv}
-                                collapsible
-                                style={{ "--gap": "8px" }}
-                            >
+
+                        <IconTextButton asChild variant="silent" icon={faTv} collapsible style={{ "--gap": "8px" }}>
+                            <Link href={currentYear && currentSeason ? `/year/${currentYear}/${currentSeason}` : "/"}>
                                 Current Season
-                            </IconTextButton>
-                        </Link>
-                        <Link href="/profile" passHref legacyBehavior>
-                            <IconTextButton
-                                forwardedAs="a"
-                                variant="silent"
-                                icon={
-                                    me.user ? (
-                                        <StyledProfileImageIcon>
-                                            <StyledProfileImage user={me.user} />
-                                        </StyledProfileImageIcon>
-                                    ) : (
-                                        faUser
-                                    )
-                                }
-                                title="My Profile"
-                                collapsible
-                            >
-                                My Profile
-                            </IconTextButton>
-                        </Link>
+                            </Link>
+                        </IconTextButton>
+
+                        <IconTextButton
+                            asChild
+                            variant="silent"
+                            icon={
+                                me.user ? (
+                                    <StyledProfileImageIcon>
+                                        <StyledProfileImage user={me.user} />
+                                    </StyledProfileImageIcon>
+                                ) : (
+                                    faUser
+                                )
+                            }
+                            title="My Profile"
+                            collapsible
+                        >
+                            <Link href="/profile">My Profile</Link>
+                        </IconTextButton>
                     </StyledNavigationLinks>
                 </StyledNavigationContainer>
             </StyledNavigation>

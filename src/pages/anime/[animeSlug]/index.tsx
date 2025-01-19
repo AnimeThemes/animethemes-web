@@ -68,25 +68,21 @@ export default function AnimeDetailPage({ anime }: AnimeDetailPageProps) {
                             </DescriptionList.Item>
                         ) : null}
                         <DescriptionList.Item title="Premiere">
-                            <Link
+                            <Text
+                                as={Link}
                                 href={`/year/${anime.year}${anime.season ? `/${anime.season.toLowerCase()}` : ""}`}
-                                passHref
-                                legacyBehavior
+                                link
                             >
-                                <Text as="a" link>
-                                    {(anime.season ? anime.season + " " : "") + anime.year}
-                                </Text>
-                            </Link>
+                                {(anime.season ? anime.season + " " : "") + anime.year}
+                            </Text>
                         </DescriptionList.Item>
                         {anime.series?.length ? (
                             <DescriptionList.Item title="Series">
                                 <StyledList>
                                     {anime.series.sort(seriesNameComparator).map((series) => (
-                                        <Link key={series.slug} href={`/series/${series.slug}`} passHref legacyBehavior>
-                                            <Text as="a" link>
-                                                {series.name}
-                                            </Text>
-                                        </Link>
+                                        <Text key={series.slug} as={Link} href={`/series/${series.slug}`} link>
+                                            {series.name}
+                                        </Text>
                                     ))}
                                 </StyledList>
                             </DescriptionList.Item>
@@ -98,11 +94,9 @@ export default function AnimeDetailPage({ anime }: AnimeDetailPageProps) {
                             <DescriptionList.Item title="Studios">
                                 <StyledList>
                                     {anime.studios.sort(studioNameComparator).map((studio) => (
-                                        <Link key={studio.slug} href={`/studio/${studio.slug}`} passHref legacyBehavior>
-                                            <Text as="a" link>
-                                                {studio.name}
-                                            </Text>
-                                        </Link>
+                                        <Text key={studio.slug} as={Link} href={`/studio/${studio.slug}`} link>
+                                            {studio.name}
+                                        </Text>
                                     ))}
                                 </StyledList>
                             </DescriptionList.Item>
@@ -127,11 +121,11 @@ export default function AnimeDetailPage({ anime }: AnimeDetailPageProps) {
                     {!!anime.synopsis && (
                         <>
                             <Text variant="h2">Synopsis</Text>
-                            <Card hoverable onClick={() => setCollapseSynopsis(!collapseSynopsis)}>
+                            <Card $hoverable onClick={() => setCollapseSynopsis(!collapseSynopsis)}>
                                 <HeightTransition>
                                     <Text
                                         as="p"
-                                        maxLines={collapseSynopsis ? 2 : null}
+                                        maxLines={collapseSynopsis ? 2 : undefined}
                                         dangerouslySetInnerHTML={{ __html: anime.synopsis }}
                                     />
                                 </HeightTransition>

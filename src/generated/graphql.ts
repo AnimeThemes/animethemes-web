@@ -860,6 +860,78 @@ export type AnimeThemeFilterThemeFragment = {
     }>;
 };
 
+export type HomePageMostViewedQueryVariables = Exact<{ [key: string]: never }>;
+
+export type HomePageMostViewedQuery = {
+    videoAll: Array<{
+        id: number;
+        basename: string;
+        tags: string;
+        entries: Array<{
+            id: number;
+            version: number | null;
+            theme: {
+                id: number;
+                type: string;
+                sequence: number | null;
+                group: { name: string; slug: string } | null;
+                anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+                song: {
+                    title: string | null;
+                    performances: Array<{
+                        alias: string | null;
+                        as: string | null;
+                        artist: { slug: string; name: string };
+                    }>;
+                } | null;
+            };
+        }>;
+        audio: { basename: string };
+    }>;
+};
+
+export type HomePageRecentlyAddedPlaylistsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type HomePageRecentlyAddedPlaylistsQuery = {
+    playlistAll: Array<{
+        id: string;
+        name: string;
+        visibility: PlaylistVisibility;
+        tracks_count: number;
+        user: { name: string };
+    }>;
+};
+
+export type HomePageRecentlyAddedQueryVariables = Exact<{ [key: string]: never }>;
+
+export type HomePageRecentlyAddedQuery = {
+    videoAll: Array<{
+        id: number;
+        basename: string;
+        tags: string;
+        entries: Array<{
+            id: number;
+            version: number | null;
+            theme: {
+                id: number;
+                type: string;
+                sequence: number | null;
+                group: { name: string; slug: string } | null;
+                anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+                song: {
+                    title: string | null;
+                    performances: Array<{
+                        alias: string | null;
+                        as: string | null;
+                        artist: { slug: string; name: string };
+                    }>;
+                } | null;
+            };
+        }>;
+        audio: { basename: string };
+    }>;
+};
+
 type CoverImageResourceWithImages_Anime_Fragment = { images: Array<{ link: string; facet: string | null }> };
 
 type CoverImageResourceWithImages_Artist_Fragment = { images: Array<{ link: string; facet: string | null }> };
@@ -2373,78 +2445,6 @@ export type AwardPageThemeQuery = {
 export type EventPageQueryVariables = Exact<{ [key: string]: never }>;
 
 export type EventPageQuery = { bracketAll: Array<{ slug: string; name: string }> };
-
-export type HomePageRecentlyAddedQueryVariables = Exact<{ [key: string]: never }>;
-
-export type HomePageRecentlyAddedQuery = {
-    videoAll: Array<{
-        id: number;
-        basename: string;
-        tags: string;
-        entries: Array<{
-            id: number;
-            version: number | null;
-            theme: {
-                id: number;
-                type: string;
-                sequence: number | null;
-                group: { name: string; slug: string } | null;
-                anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
-                song: {
-                    title: string | null;
-                    performances: Array<{
-                        alias: string | null;
-                        as: string | null;
-                        artist: { slug: string; name: string };
-                    }>;
-                } | null;
-            };
-        }>;
-        audio: { basename: string };
-    }>;
-};
-
-export type HomePageMostViewedQueryVariables = Exact<{ [key: string]: never }>;
-
-export type HomePageMostViewedQuery = {
-    videoAll: Array<{
-        id: number;
-        basename: string;
-        tags: string;
-        entries: Array<{
-            id: number;
-            version: number | null;
-            theme: {
-                id: number;
-                type: string;
-                sequence: number | null;
-                group: { name: string; slug: string } | null;
-                anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
-                song: {
-                    title: string | null;
-                    performances: Array<{
-                        alias: string | null;
-                        as: string | null;
-                        artist: { slug: string; name: string };
-                    }>;
-                } | null;
-            };
-        }>;
-        audio: { basename: string };
-    }>;
-};
-
-export type HomePageRecentlyAddedPlaylistsQueryVariables = Exact<{ [key: string]: never }>;
-
-export type HomePageRecentlyAddedPlaylistsQuery = {
-    playlistAll: Array<{
-        id: string;
-        name: string;
-        visibility: PlaylistVisibility;
-        tracks_count: number;
-        user: { name: string };
-    }>;
-};
 
 export type HomePageQueryVariables = Exact<{ [key: string]: never }>;
 

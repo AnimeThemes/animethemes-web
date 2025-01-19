@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import type { RefObject } from "react";
 import styled from "styled-components";
 
 import * as RadixSlider from "@radix-ui/react-slider";
@@ -46,7 +46,11 @@ const StyledThumb = styled(RadixSlider.Thumb)`
     }
 `;
 
-export const Slider = forwardRef<HTMLSpanElement, RadixSlider.SliderProps>(function Slider(props, ref) {
+interface SliderProps extends RadixSlider.SliderProps {
+    ref?: RefObject<HTMLSpanElement>;
+}
+
+export function Slider({ ref, ...props }: SliderProps) {
     const value = (props.value || props.defaultValue) ?? [];
 
     return (
@@ -59,4 +63,4 @@ export const Slider = forwardRef<HTMLSpanElement, RadixSlider.SliderProps>(funct
             ))}
         </StyledSlider>
     );
-});
+}

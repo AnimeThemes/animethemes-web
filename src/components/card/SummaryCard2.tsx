@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import styled, { css } from "styled-components";
 
@@ -23,24 +23,24 @@ const StyledSummaryCard = styled(Card)`
 const StyledCover = styled.img.attrs({
     loading: "lazy",
 })<{
-    objectFit?: Property.ObjectFit;
-    backgroundColor?: Property.Background;
-    isLoading?: boolean;
-    isPlaceholder?: boolean;
+    $objectFit?: Property.ObjectFit;
+    $backgroundColor?: Property.Background;
+    $isLoading?: boolean;
+    $isPlaceholder?: boolean;
 }>`
     width: 48px;
     height: 64px;
-    object-fit: ${(props) => props.objectFit ?? "cover"};
-    background: ${(props) => props.backgroundColor};
+    object-fit: ${(props) => props.$objectFit ?? "cover"};
+    background: ${(props) => props.$backgroundColor};
 
     ${(props) =>
-        props.isPlaceholder
+        props.$isPlaceholder
             ? css`
                   padding: 0.5rem;
                   object-fit: contain;
                   background-color: white;
               `
-            : props.isLoading
+            : props.$isLoading
               ? loadingAnimation
               : null}
 `;
@@ -87,10 +87,10 @@ SummaryCard.Description = function SummaryCardDescription({ children }: SummaryC
                 : children
                       .filter((child) => child)
                       .map((child, index, { length }) => (
-                          <>
+                          <Fragment key={index}>
                               {child}
                               {index < length - 1 && <span> &bull; </span>}
-                          </>
+                          </Fragment>
                       ))}
         </Text>
     );
@@ -108,8 +108,8 @@ SummaryCard.Cover = function SummaryCardCover({ src, ...props }: SummaryCardCove
         <StyledCover
             alt="Cover"
             src={(!imageNotFound && src) || withBasePath("/img/logo.svg")}
-            isLoading={imageLoading}
-            isPlaceholder={!src || imageNotFound}
+            $isLoading={imageLoading}
+            $isPlaceholder={!src || imageNotFound}
             loading="lazy"
             {...props}
             onLoad={(event) => {
@@ -118,11 +118,11 @@ SummaryCard.Cover = function SummaryCardCover({ src, ...props }: SummaryCardCove
                     props.onLoad(event);
                 }
             }}
-            onError={() => {
+            onError={(event) => {
                 setImageNotFound(true);
                 setImageLoading(false);
                 if (props?.onError) {
-                    props.onError();
+                    props.onError(event);
                 }
             }}
         />

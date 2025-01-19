@@ -1,8 +1,8 @@
-import type { PropsWithChildren } from "react";
+import type { MouseEvent, PropsWithChildren } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
-import { faChevronDown } from "@fortawesome/pro-solid-svg-icons";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
 
 import { Button } from "@/components/button/Button";
@@ -130,7 +130,7 @@ export function ThemeSummaryCard({
                 </Link>
                 <SummaryCard.Body>
                     <SummaryCard.Title>
-                        <SongTitle song={theme.song} as={Link} href={href} onClick={() => onPlay?.()} />
+                        <SongTitle song={theme.song} href={href} onClick={() => onPlay?.()} />
                         <Performances song={theme.song} artist={artist} />
                     </SummaryCard.Title>
                     <SummaryCard.Description>
@@ -178,20 +178,17 @@ export function ThemeSummaryCard({
                                         ?.filter((performance) => performance.artist.slug !== artist?.slug)
                                         .sort((a, b) => a.artist.name.localeCompare(b.artist.name))
                                         .map((performance) => (
-                                            <Link
+                                            <TableRow
                                                 key={performance.artist.slug}
+                                                as={Link}
                                                 href={`/artist/${performance.artist.slug}`}
-                                                passHref
-                                                legacyBehavior
                                             >
-                                                <TableRow as="a">
-                                                    <TableCell>
-                                                        <Text color="text-primary" weight="600">
+                                                <TableCell>
+                                                    <Text color="text-primary" weight="600">
                                                         {getDisplayedArtistName(performance)}
-                                                        </Text>
-                                                    </TableCell>
-                                                </TableRow>
-                                            </Link>
+                                                    </Text>
+                                                </TableCell>
+                                            </TableRow>
                                         ))}
                                 </TableBody>
                             </Table>

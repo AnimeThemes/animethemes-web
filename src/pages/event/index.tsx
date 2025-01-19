@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Link from "next/link";
 
-import { faArrowRight, faAward, faTrophy } from "@fortawesome/pro-solid-svg-icons";
+import { faArrowRight, faAward, faTrophy } from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
 
 import { Column } from "@/components/box/Flex";
@@ -55,25 +55,25 @@ export default function EventPage({ awardAll, bracketAll }: EventPageProps) {
                 <Column style={{ "--gap": "16px" }}>
                     <Text variant="h2">Awards</Text>
                     {awardAll.map(({ name, slug }) => (
-                        <Link key={slug} href={`/event/${slug}`} passHref legacyBehavior>
-                            <BigButton forwardedAs="a">
+                        <BigButton key={slug} asChild>
+                            <Link href={`/event/${slug}`}>
                                 <BigIcon icon={faAward} />
                                 <StyledEventName>{name}</StyledEventName>
                                 <Icon icon={faArrowRight} color="text-primary" />
-                            </BigButton>
-                        </Link>
+                            </Link>
+                        </BigButton>
                     ))}
                 </Column>
                 <Column style={{ "--gap": "16px" }}>
                     <Text variant="h2">Brackets</Text>
                     {bracketAll.map(({ name, slug }) => (
-                        <Link key={slug} href={`/event/${slug}`} passHref legacyBehavior>
-                            <BigButton forwardedAs="a">
+                        <BigButton key={slug} asChild>
+                            <Link href={`/event/${slug}`}>
                                 <BigIcon icon={faTrophy} />
                                 <StyledEventName>{name}</StyledEventName>
                                 <Icon icon={faArrowRight} color="text-primary" />
-                            </BigButton>
-                        </Link>
+                            </Link>
+                        </BigButton>
                     ))}
                 </Column>
             </StyledEventList>

@@ -2,7 +2,12 @@ import { memo, useState } from "react";
 import styled, { css } from "styled-components";
 import type { GetServerSideProps } from "next";
 
-import { faEllipsisV, faExclamationCircle, faPersonToDoor, faTrash } from "@fortawesome/pro-solid-svg-icons";
+import {
+    faCircleExclamation,
+    faEllipsisVertical,
+    faRightFromBracket,
+    faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { isAxiosError } from "axios";
 import gql from "graphql-tag";
 import useSWR from "swr";
@@ -200,10 +205,10 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                         <LogoutButton />
                     </StyledHeaderTop>
                     {!me.user.email_verified_at ? (
-                        <Card color="text-warning">
+                        <Card $color="text-warning">
                             <Column style={{ "--gap": "8px" }}>
                                 <Text color="text-warning" weight="bold">
-                                    <Icon icon={faExclamationCircle} /> Your email address is not verified!
+                                    <Icon icon={faCircleExclamation} /> Your email address is not verified!
                                 </Text>
                                 <Text>
                                     You haven&apos;t verified your email address, yet. Please do so to unlock all
@@ -251,7 +256,7 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                                                 <Menu modal={false}>
                                                     <MenuTrigger asChild>
                                                         <Button variant="silent" isCircle>
-                                                            <Icon icon={faEllipsisV} />
+                                                            <Icon icon={faEllipsisVertical} />
                                                         </Button>
                                                     </MenuTrigger>
                                                     <MenuContent>
@@ -363,7 +368,7 @@ function LogoutButton() {
     }
 
     return (
-        <IconTextButton icon={faPersonToDoor} onClick={performLogout}>
+        <IconTextButton icon={faRightFromBracket} onClick={performLogout}>
             <Busy isBusy={isBusy}>Logout</Busy>
         </IconTextButton>
     );

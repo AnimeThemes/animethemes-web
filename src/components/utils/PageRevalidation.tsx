@@ -53,9 +53,13 @@ export function PageRevalidation({ lastBuildAt, apiRequests, ...props }: PageRev
     }
 
     const minutesSinceLastBuild = Math.round((Date.now() - lastBuildAt) / 60000);
-    const lastBuildDescription = minutesSinceLastBuild
-        ? `${minutesSinceLastBuild} minute${minutesSinceLastBuild === 1 ? "" : "s"}`
-        : "a few seconds";
+    const lastBuildDescription = (
+        <span suppressHydrationWarning>
+            {minutesSinceLastBuild
+                ? `${minutesSinceLastBuild} minute${minutesSinceLastBuild === 1 ? "" : "s"}`
+                : "a few seconds"}
+        </span>
+    );
 
     const apiRequestsDescription = apiRequests
         ? ` using ${apiRequests} API request${apiRequests === 1 ? "" : "s"}`

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import styled from "styled-components";
 
-import { faExclamationCircle } from "@fortawesome/pro-solid-svg-icons";
-import { Reorder } from "framer-motion";
+import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { Reorder } from "motion/react";
 
 import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
@@ -156,9 +156,9 @@ export default function PlaylistPage() {
                         )}
                         {refreshError !== null && <Text color="text-warning">{refreshError}</Text>}
                     </Row>
-                    <Card color="text-warning">
+                    <Card $color="text-warning">
                         <Text color="text-warning" weight="bold">
-                            <Icon icon={faExclamationCircle} /> Read this before using the local playlist:
+                            <Icon icon={faCircleExclamation} /> Read this before using the local playlist:
                         </Text>
                         <Text as="p">
                             The local playlist is only saved in your browser&apos;s storage. You can&apos;t share it

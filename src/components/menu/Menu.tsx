@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import type { RefObject } from "react";
 import styled from "styled-components";
 
 import type { DropdownMenuContentProps } from "@radix-ui/react-dropdown-menu";
@@ -26,10 +26,11 @@ const StyledMenuContent = styled(RadixMenu.Content)`
 export const Menu = RadixMenu.Root;
 export const MenuTrigger = RadixMenu.Trigger;
 
-export const MenuContent = forwardRef<HTMLDivElement, DropdownMenuContentProps>(function MenuContent(
-    { children, ...props },
-    forwardedRef,
-) {
+interface MenuContentProps extends DropdownMenuContentProps {
+    ref?: RefObject<HTMLDivElement>;
+}
+
+export function MenuContent({ ref, children, ...props }: MenuContentProps) {
     return (
         <RadixMenu.Portal>
             <StyledMenuContent
@@ -38,13 +39,13 @@ export const MenuContent = forwardRef<HTMLDivElement, DropdownMenuContentProps>(
                 collisionPadding={8}
                 collisionBoundary={typeof document !== "undefined" ? document.body : []}
                 {...props}
-                ref={forwardedRef}
+                ref={ref}
             >
                 {children}
             </StyledMenuContent>
         </RadixMenu.Portal>
     );
-});
+}
 
 export const MenuItem = styled(RadixMenu.Item)`
     display: flex;

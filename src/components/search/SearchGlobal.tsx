@@ -2,9 +2,9 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { faChevronDown } from "@fortawesome/pro-solid-svg-icons";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import gql from "graphql-tag";
-import { useQuery } from "react-query";
 
 import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
@@ -66,8 +66,10 @@ export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
             { args: { query: searchQuery ?? null } },
         );
 
-    const { data, error, isLoading, isError } = useQuery(["searchGlobal", searchQuery], fetchSearchResults, {
-        keepPreviousData: true,
+    const { data, error, isLoading, isError } = useQuery({
+        queryKey: ["searchGlobal", searchQuery],
+        queryFn: fetchSearchResults,
+        placeholderData: keepPreviousData,
     });
 
     if (isError) {
@@ -183,11 +185,11 @@ function GlobalSearchSection<T>({ entity, title, results, renderSummaryCard }: G
             <Column style={{ "--gap": "16px" }}>{resultsPreview.map(renderSummaryCard)}</Column>
             {hasMoreResults && (
                 <Row style={{ "--justify-content": "center" }}>
-                    <Link href={{ pathname: `/search/${entity}`, query: urlParams }} passHref legacyBehavior>
-                        <Button as="a" variant="silent" isCircle title="See all results">
+                    <Button asChild variant="silent" isCircle title="See all results">
+                        <Link href={{ pathname: `/search/${entity}`, query: urlParams }}>
                             <Icon icon={faChevronDown} />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
                 </Row>
             )}
         </>

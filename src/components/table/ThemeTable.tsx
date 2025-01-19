@@ -29,45 +29,43 @@ export function ThemeTable({ themes, onPlay }: ThemeTableProps) {
                     const anime = theme.anime as NonNullable<(typeof theme)["anime"]>;
                     const videoSlug = createVideoSlug(theme, entry, video);
                     return (
-                        <Link
+                        <TableRow
                             key={anime.slug + videoSlug}
+                            as={Link}
                             href={`/anime/${anime.slug}/${videoSlug}`}
-                            passHref
-                            legacyBehavior
+                            onClick={() => onPlay?.(theme.id, entryIndex, videoIndex)}
                         >
-                            <TableRow as="a" onClick={() => onPlay?.(theme.id, entryIndex, videoIndex)}>
-                                <TableCell style={{ "--span": entryIndex || videoIndex ? 2 : undefined }}>
-                                    {!videoIndex &&
-                                        ((entry.version ?? 1) > 1 ? (
-                                            <Text variant="small" color="text-muted">
-                                                {theme.type}
-                                                {theme.sequence || null} v{entry.version}
-                                            </Text>
-                                        ) : (
-                                            <Text variant="small">
-                                                {theme.type}
-                                                {theme.sequence || null}
-                                            </Text>
-                                        ))}
+                            <TableCell style={{ "--span": entryIndex || videoIndex ? 2 : undefined }}>
+                                {!videoIndex &&
+                                    ((entry.version ?? 1) > 1 ? (
+                                        <Text variant="small" color="text-muted">
+                                            {theme.type}
+                                            {theme.sequence || null} v{entry.version}
+                                        </Text>
+                                    ) : (
+                                        <Text variant="small">
+                                            {theme.type}
+                                            {theme.sequence || null}
+                                        </Text>
+                                    ))}
+                            </TableCell>
+                            {!entryIndex && !videoIndex && (
+                                <TableCell>
+                                    <SongTitle song={theme.song} />
                                 </TableCell>
-                                {!entryIndex && !videoIndex && (
-                                    <TableCell>
-                                        <SongTitle song={theme.song} />
-                                    </TableCell>
+                            )}
+                            <TableCell>{!videoIndex && <EpisodeTag entry={entry} />}</TableCell>
+                            <TableCell>
+                                {!videoIndex && (
+                                    <Row $wrap style={{ "--gap": "8px", "--align-items": "baseline" }}>
+                                        <ContentWarningTags entry={entry} />
+                                    </Row>
                                 )}
-                                <TableCell>{!videoIndex && <EpisodeTag entry={entry} />}</TableCell>
-                                <TableCell>
-                                    {!videoIndex && (
-                                        <Row $wrap style={{ "--gap": "8px", "--align-items": "baseline" }}>
-                                            <ContentWarningTags entry={entry} />
-                                        </Row>
-                                    )}
-                                </TableCell>
-                                <TableCell>
-                                    <VideoTags video={video} />
-                                </TableCell>
-                            </TableRow>
-                        </Link>
+                            </TableCell>
+                            <TableCell>
+                                <VideoTags video={video} />
+                            </TableCell>
+                        </TableRow>
                     );
                 }),
             ),

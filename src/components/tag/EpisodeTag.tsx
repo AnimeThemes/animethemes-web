@@ -1,4 +1,4 @@
-import { faFilm } from "@fortawesome/pro-solid-svg-icons";
+import { faFilm } from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
 
 import { Tag } from "@/components/tag/Tag";

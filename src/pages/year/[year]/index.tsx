@@ -1,7 +1,7 @@
 import type { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
 
-import { faChevronDown } from "@fortawesome/pro-solid-svg-icons";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
 import type { ParsedUrlQuery } from "querystring";
 
@@ -54,8 +54,10 @@ function SeasonPreview({ season, year, animeList }: SeasonPreviewProps) {
                 ))}
             </Column>
             <Row style={{ "--justify-content": "center" }}>
-                <Button href={`/year/${year}/${season.toLowerCase()}`} as={Link} variant="silent" isCircle>
-                    <Icon icon={faChevronDown} />
+                <Button asChild variant="silent" isCircle>
+                    <Link href={`/year/${year}/${season.toLowerCase()}`}>
+                        <Icon icon={faChevronDown} />
+                    </Link>
                 </Button>
             </Row>
         </>

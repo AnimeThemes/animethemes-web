@@ -30,7 +30,7 @@ interface VideoPlayerContextValue {
     background: boolean;
     videoPagePath: string;
     playerRef: RefObject<HTMLVideoElement | HTMLAudioElement | null>;
-    progressRef: RefObject<HTMLDivElement>;
+    progressRef: RefObject<HTMLDivElement | null>;
     previousVideoPath: string | null;
     playPreviousTrack(navigate: boolean): void;
     nextVideoPath: string | null;

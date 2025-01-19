@@ -1,12 +1,11 @@
-import type { ReactElement } from "react";
-import styled, { css } from "styled-components";
+import styled, { css, type ExecutionProps } from "styled-components";
 
 import type { Property } from "csstype";
 
 import theme from "@/theme";
 import type { Colors } from "@/theme/colors";
 
-interface TextProps {
+interface TextProps extends ExecutionProps {
     variant?: "h1" | "h2" | "h3" | "small" | "code";
     link?: boolean;
     maxLines?: number;
@@ -15,11 +14,15 @@ interface TextProps {
     italics?: boolean;
     weight?: Property.FontWeight;
     color?: keyof Colors;
-    as?: string | ReactElement;
     wrapAnywhere?: boolean;
 }
 
-export const Text = styled.span.attrs(getAttributes)<TextProps>`
+export const Text = styled.span.attrs<TextProps>(getAttributes).withConfig({
+    shouldForwardProp: (prop) =>
+        !["variant", "link", "maxLines", "noWrap", "block", "italics", "weight", "color", "wrapAnywhere"].includes(
+            prop,
+        ),
+})`
     // Reset margin for elements like <p>
     margin: 0;
     scroll-margin-top: 4rem;
@@ -115,12 +118,9 @@ export const Text = styled.span.attrs(getAttributes)<TextProps>`
 `;
 
 function getAttributes(props: TextProps) {
-    if (props.as) {
-        return props.as;
-    }
-
     return {
-        as: getAs(props.variant),
+        ...props,
+        as: props.as || getAs(props.variant),
     };
 }
 

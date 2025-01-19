@@ -1,24 +1,28 @@
-import { forwardRef } from "react";
-import type { ComponentPropsWithoutRef, ForwardedRef, ReactNode } from "react";
+import { type ComponentPropsWithRef } from "react";
 import styled from "styled-components";
 
 import { Solid } from "@/components/box/Solid";
+import { NestableSlot } from "@/components/utils/NestableSlot";
 import { withHover } from "@/styles/mixins";
 import theme from "@/theme";
 
-export const Button = forwardRef(ButtonWithRef);
-
-interface ButtonProps extends ComponentPropsWithoutRef<typeof BaseButton> {
-    children?: ReactNode;
+interface ButtonProps extends ComponentPropsWithRef<typeof BaseButton> {
+    asChild?: boolean;
     variant?: "solid" | "primary" | "warning" | "silent";
     isCircle?: boolean;
     disabled?: boolean;
 }
 
-function ButtonWithRef(
-    { variant = "solid", isCircle = false, disabled = false, title, ...props }: ButtonProps,
-    ref: ForwardedRef<HTMLButtonElement>,
-) {
+export function Button({
+    ref,
+    asChild,
+    children,
+    variant = "solid",
+    isCircle = false,
+    disabled = false,
+    title,
+    ...props
+}: ButtonProps) {
     let Component;
     if (variant === "solid") {
         Component = SolidButton;
@@ -32,10 +36,22 @@ function ButtonWithRef(
         throw new Error(`Unknown button variant "${variant}"!`);
     }
 
-    return <Component $isCircle={isCircle} disabled={disabled} title={title} aria-label={title} ref={ref} {...props} />;
+    return (
+        <Component
+            ref={ref}
+            as={asChild ? NestableSlot : "button"}
+            $isCircle={isCircle}
+            disabled={disabled}
+            title={title}
+            aria-label={title}
+            {...props}
+        >
+            {children}
+        </Component>
+    );
 }
 
-const BaseButton = styled.button<{ $isCircle: boolean }>`
+const BaseButton = styled.button<{ $isCircle?: boolean }>`
     --gap: 0;
     --focus-ring-color: ${theme.colors["text-primary"]};
 

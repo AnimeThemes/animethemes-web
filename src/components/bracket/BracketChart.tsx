@@ -2,8 +2,8 @@ import { memo, useCallback, useRef, useState } from "react";
 import type { RefObject } from "react";
 import styled from "styled-components";
 
-import { faDiagramProject } from "@fortawesome/pro-solid-svg-icons";
-import { m } from "framer-motion";
+import { faDiagramProject } from "@fortawesome/free-solid-svg-icons";
+import { m } from "motion/react";
 
 import { BracketThemeSummaryCard } from "@/components/bracket/BracketThemeSummaryCard";
 import { Button } from "@/components/button/Button";
@@ -66,11 +66,11 @@ const StyledBracketThemeSummaryCard = styled(BracketThemeSummaryCard)`
     width: 384px;
 `;
 
-interface BracketChartProps extends RequiredNonNullable<BracketPageQuery> {}
+type BracketChartProps = RequiredNonNullable<BracketPageQuery>;
 
 export function BracketChart({ bracket }: BracketChartProps) {
     const [showBracketChart, setShowBracketChart] = useState(false);
-    const bracketRef = useRef<HTMLDivElement>();
+    const bracketRef = useRef<HTMLDivElement>(undefined);
 
     const onBracketInit = useCallback((bracket: HTMLDivElement) => {
         bracketRef.current = bracket;
@@ -146,7 +146,7 @@ export function BracketChart({ bracket }: BracketChartProps) {
             </Button>
             {showBracketChart ? (
                 <StyledBracketContainer ref={onBracketInit}>
-                    <StyledBracket drag dragConstraints={bracketRef as RefObject<HTMLDivElement>}>
+                    <StyledBracket drag dragConstraints={bracketRef as RefObject<HTMLDivElement | null>}>
                         <StyledCanvas ref={onCanvasInit} />
                         {bracket.rounds
                             .sort((a, b) => a.tier - b.tier)

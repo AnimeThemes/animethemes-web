@@ -2,12 +2,14 @@ import { createContext, useContext, useMemo } from "react";
 import type { ComponentPropsWithoutRef, ComponentPropsWithRef, ReactNode } from "react";
 import styled from "styled-components";
 
-import { faTimes } from "@fortawesome/pro-solid-svg-icons";
-import { LayoutGroup, m } from "framer-motion";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { Slot, Slottable } from "@radix-ui/react-slot";
 import { uniqueId as createUniqueId } from "lodash-es";
+import { LayoutGroup, m } from "motion/react";
 
 import { Solid } from "@/components/box/Solid";
 import { Icon } from "@/components/icon/Icon";
+import { NestableSlot, NestableSlottable } from "@/components/utils/NestableSlot";
 import { withHover } from "@/styles/mixins";
 import theme from "@/theme";
 
@@ -63,7 +65,7 @@ const StyledButton = styled.button<StyledButtonProps>`
 
     transition: color 500ms;
 
-    ${withHover`
+    ${withHover<StyledButtonProps>`
         color: ${(props) => (props.$isSelected ? theme.colors["text-on-primary"] : theme.colors["text"])};;
         transition-duration: 250ms;
     `}
@@ -83,7 +85,7 @@ const StyledTop = styled.span`
     z-index: ${theme.zIndices.switcherText};
 `;
 
-type SwitcherProps<T extends string | null> = ComponentPropsWithoutRef<typeof StyledSwitcher> & {
+type SwitcherProps<T extends string | null> = Omit<ComponentPropsWithoutRef<typeof StyledSwitcher>, "onChange"> & {
     selectedItem: T;
     onChange?: (value: T) => void;
     children: ReactNode;
@@ -110,32 +112,46 @@ export function Switcher<T extends string | null>({ selectedItem, onChange, chil
 }
 
 interface SwitcherOptionProps extends ComponentPropsWithRef<typeof StyledButton> {
-    children: ReactNode;
     value: string;
+    asChild?: boolean;
 }
 
-export function SwitcherOption({ children, value, ...props }: SwitcherOptionProps) {
+export function SwitcherOption({ value, asChild, children, ...props }: SwitcherOptionProps) {
     const context = useContext(SwitcherContext);
     const isSelected = context.selectedItem === value;
 
     return (
-        <StyledButton type="button" $isSelected={isSelected} onClick={() => context.select?.(value)} {...props}>
-            {isSelected && (
-                <StyledButtonBackground
-                    layout
-                    layoutId="button-bg"
-                    layoutDependency={value}
-                    transition={{ duration: 0.25 }}
-                />
-            )}
-            <StyledTop>{children}</StyledTop>
+        <StyledButton
+            as={asChild ? NestableSlot : "button"}
+            type={asChild ? undefined : "button"}
+            $isSelected={isSelected}
+            onClick={() => context.select?.(value)}
+            {...props}
+        >
+            <NestableSlottable child={children}>
+                {(child) => (
+                    <>
+                        {isSelected && (
+                            <StyledButtonBackground
+                                layout
+                                layoutId="button-bg"
+                                layoutDependency={value}
+                                transition={{ duration: 0.25 }}
+                            />
+                        )}
+                        <StyledTop>{child}</StyledTop>
+                    </>
+                )}
+            </NestableSlottable>
         </StyledButton>
     );
 }
 
-interface SwitcherResetProps extends ComponentPropsWithRef<typeof StyledButton> {}
+interface SwitcherResetProps extends ComponentPropsWithRef<typeof StyledButton> {
+    asChild?: boolean;
+}
 
-export function SwitcherReset(props: SwitcherResetProps) {
+export function SwitcherReset({ asChild, children, ...props }: SwitcherResetProps) {
     const context = useContext(SwitcherContext);
 
     if (context.selectedItem === null) {
@@ -145,12 +161,14 @@ export function SwitcherReset(props: SwitcherResetProps) {
 
     return (
         <StyledButton
+            as={asChild ? Slot : "button"}
             style={{ "--color": theme.colors["text-disabled"] }}
             $isCircle
             onClick={() => context.select?.(null)}
             {...props}
         >
-            <Icon icon={faTimes} />
+            <Icon icon={faXmark} />
+            <Slottable>{children}</Slottable>
         </StyledButton>
     );
 }

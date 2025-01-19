@@ -49,7 +49,7 @@ export function AnnouncementToast() {
     }
 
     return (
-        <Toast hoverable color="text-warning" onClick={() => closeToast("announcement")}>
+        <Toast $hoverable $color="text-warning" onClick={() => closeToast("announcement")}>
             <StyledBody>
                 <StyledAnnouncements>
                     {announcements.map((announcement) => (

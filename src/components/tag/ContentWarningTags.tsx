@@ -1,4 +1,4 @@
-import { faExclamationCircle } from "@fortawesome/pro-solid-svg-icons";
+import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
 
 import { Icon } from "@/components/icon/Icon";
@@ -13,12 +13,12 @@ export function ContentWarningTags({ entry }: ContentWarningTagsProps) {
     return (
         <>
             {entry.spoiler && (
-                <Tag icon={<Icon icon={faExclamationCircle} color="text-warning" />} textColor="text-warning-muted">
+                <Tag icon={<Icon icon={faCircleExclamation} color="text-warning" />} textColor="text-warning-muted">
                     SPOILER
                 </Tag>
             )}
             {entry.nsfw && (
-                <Tag icon={<Icon icon={faExclamationCircle} color="text-warning" />} textColor="text-warning-muted">
+                <Tag icon={<Icon icon={faCircleExclamation} color="text-warning" />} textColor="text-warning-muted">
                     NSFW
                 </Tag>
             )}

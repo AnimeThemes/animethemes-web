@@ -1,8 +1,8 @@
-import type { ComponentPropsWithoutRef } from "react";
+import type { ComponentPropsWithoutRef, ComponentPropsWithRef } from "react";
 import styled from "styled-components";
 
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import { faTimes } from "@fortawesome/pro-solid-svg-icons";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 import { Button } from "@/components/button/Button";
 import { Icon } from "@/components/icon/Icon";
@@ -41,12 +41,12 @@ const StyledResetButton = styled(Button).attrs({ variant: "silent", isCircle: tr
     }
 `;
 
-interface InputProps extends ComponentPropsWithoutRef<typeof StyledSearchInput> {
+interface InputProps extends Omit<ComponentPropsWithoutRef<typeof StyledSearchInput>, "onChange"> {
     value: string;
     onChange: (value: string) => void;
     resettable?: boolean;
     icon?: IconDefinition;
-    inputProps?: ComponentPropsWithoutRef<typeof StyledInput>;
+    inputProps?: ComponentPropsWithRef<typeof StyledInput>;
 }
 
 export function Input({ value, onChange, resettable = false, icon, inputProps = {}, ...props }: InputProps) {
@@ -61,7 +61,7 @@ export function Input({ value, onChange, resettable = false, icon, inputProps = 
             />
             {resettable && !!value && (
                 <StyledResetButton>
-                    <Icon icon={faTimes} onClick={() => onChange && onChange("")} />
+                    <Icon icon={faXmark} onClick={() => onChange && onChange("")} />
                 </StyledResetButton>
             )}
         </StyledSearchInput>

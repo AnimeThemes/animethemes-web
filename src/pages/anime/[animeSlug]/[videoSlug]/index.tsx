@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import type { GetStaticPaths, GetStaticProps } from "next";
 
-import { faChevronDown, faChevronUp } from "@fortawesome/pro-solid-svg-icons";
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
 
 import { Column, Row } from "@/components/box/Flex";
@@ -112,14 +112,31 @@ export default function VideoPage({
     const videoHeight = video.resolution ?? 720;
     const videoWidth = Math.floor((videoHeight / 9) * 16);
 
-    const currentVideoCard = useRef<HTMLDivElement>(null);
+    const videoCardMap = useRef<Map<number, HTMLDivElement>>(null);
+
+    function getVideoCardMap() {
+        if (!videoCardMap.current) {
+            videoCardMap.current = new Map();
+        }
+        return videoCardMap.current;
+    }
+
     useEffect(() => {
+        if (currentWatchListItem === null) {
+            return;
+        }
+
         let isCancelled = false;
 
         setTimeout(() => {
-            if (!isCancelled) {
-                currentVideoCard.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+            if (isCancelled) {
+                return;
             }
+            const currentVideoCard = getVideoCardMap().get(currentWatchListItem.watchListId);
+            if (!currentVideoCard) {
+                return;
+            }
+            currentVideoCard.scrollIntoView({ block: "start", behavior: "smooth" });
         }, 200);
 
         return () => {
@@ -148,8 +165,12 @@ export default function VideoPage({
                 <meta name="twitter:player:width" content={String(videoWidth)} />
                 <meta name="twitter:player:height" content={String(videoHeight)} />
             </SEO>
-            <HorizontalScroll fixShadows>
-                <StyledSwitcher selectedItem={selectedTab} onChange={setSelectedTab}>
+            <HorizontalScroll $fixShadows>
+                <StyledSwitcher
+                    selectedItem={selectedTab}
+                    // Explicit type cast, because StyledSwitcher breaks the generic type of Switcher
+                    onChange={(tab) => setSelectedTab(tab as typeof selectedTab)}
+                >
                     <SwitcherOption value="watch-list">Next Up</SwitcherOption>
                     <SwitcherOption value="info">Info</SwitcherOption>
                     <SwitcherOption value="related">Related</SwitcherOption>
@@ -176,11 +197,14 @@ export default function VideoPage({
                             {watchList.map((watchListItem) => (
                                 <VideoSummaryCard
                                     key={watchListItem.watchListId}
-                                    ref={
-                                        watchListItem.watchListId === currentWatchListItem?.watchListId
-                                            ? currentVideoCard
-                                            : undefined
-                                    }
+                                    ref={(element: HTMLDivElement) => {
+                                        const videoCardMap = getVideoCardMap();
+                                        videoCardMap.set(watchListItem.watchListId, element);
+
+                                        return () => {
+                                            videoCardMap.delete(watchListItem.watchListId);
+                                        };
+                                    }}
                                     video={watchListItem.video}
                                     entry={watchListItem.entry}
                                     onPlay={() => setCurrentWatchListItem(watchListItem)}

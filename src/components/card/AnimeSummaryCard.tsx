@@ -1,7 +1,7 @@
-import { Fragment } from "react";
+import { Fragment, type MouseEvent } from "react";
 import styled from "styled-components";
 
-import { faChevronDown } from "@fortawesome/pro-solid-svg-icons";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
 import { uniqBy } from "lodash-es";
 

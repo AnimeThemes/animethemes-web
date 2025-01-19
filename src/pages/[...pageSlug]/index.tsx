@@ -3,7 +3,7 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
 import type { MDXRemoteSerializeResult } from "next-mdx-remote";
 
-import { faArrowLeft } from "@fortawesome/pro-solid-svg-icons";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
 import type { ParsedUrlQuery } from "querystring";
 
@@ -59,9 +59,11 @@ interface DocumentPageParams extends ParsedUrlQuery {
 }
 
 export default function DocumentPage({ page }: DocumentPageProps) {
+    const author = typeof page.source.frontmatter?.author === "string" ? page.source.frontmatter.author : undefined;
+
     return (
         <>
-            <PageHeader title={page.name} author={page.source.frontmatter?.author} createdAt={page.created_at} />
+            <PageHeader title={page.name} author={author} createdAt={page.created_at} />
             <StyledGrid>
                 <SEO title={page.name} />
                 <Markdown source={page.source} />

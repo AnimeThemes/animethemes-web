@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import type { RefObject } from "react";
 import styled, { keyframes } from "styled-components";
 
 import * as RadixDialog from "@radix-ui/react-dialog";
@@ -47,37 +47,31 @@ const StyledDialogCard = styled(Card)`
         display: none;
     }
 `;
-const StyledHeader = styled.div`
+const StyledHeader = styled(Text).attrs({ variant: "h2", as: RadixDialog.Title })`
     margin: -24px -24px 24px -24px;
     padding: 16px 24px;
     background-color: ${theme.colors["background"]};
 `;
 
 interface DialogContentProps extends RadixDialog.DialogContentProps {
+    ref?: RefObject<HTMLDivElement>;
     title?: string;
 }
 
-export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(function DialogContent(
-    { title, children, ...props },
-    ref,
-) {
+export function DialogContent({ ref, title, children, ...props }: DialogContentProps) {
     return (
         <RadixDialog.Portal>
             <StyledOverlay>
                 <RadixDialog.Content asChild {...props} ref={ref}>
                     <StyledDialogCard>
-                        {title ? (
-                            <StyledHeader>
-                                <Text variant="h2">{title}</Text>
-                            </StyledHeader>
-                        ) : null}
+                        {title ? <StyledHeader>{title}</StyledHeader> : null}
                         {children}
                     </StyledDialogCard>
                 </RadixDialog.Content>
             </StyledOverlay>
         </RadixDialog.Portal>
     );
-});
+}
 
 export const Dialog = RadixDialog.Root;
 

@@ -6,8 +6,8 @@ import theme from "@/theme";
 import type { Colors } from "@/theme/colors";
 
 export const Card = styled(Solid)<{
-    hoverable?: boolean;
-    color?: keyof Colors;
+    $hoverable?: boolean;
+    $color?: keyof Colors;
 }>`
     display: block;
     position: relative;
@@ -23,7 +23,7 @@ export const Card = styled(Solid)<{
     }
 
     ${(props) =>
-        props.hoverable &&
+        props.$hoverable &&
         css`
             cursor: pointer;
 
@@ -40,6 +40,6 @@ export const Card = styled(Solid)<{
         left: 0;
         width: 4px;
         height: 100%;
-        background-color: ${(props) => (props.color ? theme.colors[props.color] : theme.colors["text-primary"])};
+        background-color: ${(props) => (props.$color ? theme.colors[props.$color] : theme.colors["text-primary"])};
     }
 `;

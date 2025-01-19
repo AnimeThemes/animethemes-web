@@ -1,11 +1,11 @@
-import { forwardRef } from "react";
-import type { ComponentPropsWithoutRef, ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ReactNode, RefObject } from "react";
 import styled from "styled-components";
 
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 import { Button } from "@/components/button/Button";
 import { Icon } from "@/components/icon/Icon";
+import { NestableSlottable } from "@/components/utils/NestableSlot";
 import theme from "@/theme";
 
 const StyledButton = styled(Button)<{ $collapseBreakpoint: string }>`
@@ -27,16 +27,14 @@ const StyledText = styled.span<{ $collapseBreakpoint: string }>`
     }
 `;
 
-interface IconTextButtonProps extends ComponentPropsWithoutRef<typeof StyledButton> {
+interface IconTextButtonProps extends Omit<ComponentPropsWithoutRef<typeof StyledButton>, "$collapseBreakpoint"> {
+    ref?: RefObject<HTMLButtonElement>;
     icon: IconDefinition | ReactNode;
     children?: ReactNode;
     collapsible?: true | keyof typeof theme.breakpoints;
 }
 
-export const IconTextButton = forwardRef(function IconTextButton(
-    { icon, children, collapsible, ...props }: IconTextButtonProps,
-    ref,
-) {
+export function IconTextButton({ ref, icon, children, collapsible, ...props }: IconTextButtonProps) {
     let collapseBreakpoint = "0px";
 
     if (collapsible === true) {
@@ -47,13 +45,19 @@ export const IconTextButton = forwardRef(function IconTextButton(
 
     return (
         <StyledButton ref={ref} variant="silent" $collapseBreakpoint={collapseBreakpoint} {...props}>
-            {isIconDefinition(icon) ? <Icon icon={icon} color="text-disabled" /> : icon}
-            {children !== null && children !== undefined ? (
-                <StyledText $collapseBreakpoint={collapseBreakpoint}>{children}</StyledText>
-            ) : null}
+            <NestableSlottable child={children}>
+                {(child) => (
+                    <>
+                        {isIconDefinition(icon) ? <Icon icon={icon} color="text-disabled" /> : icon}
+                        {child !== null && child !== undefined ? (
+                            <StyledText $collapseBreakpoint={collapseBreakpoint}>{child}</StyledText>
+                        ) : null}
+                    </>
+                )}
+            </NestableSlottable>
         </StyledButton>
     );
-});
+}
 
 function isIconDefinition(icon: IconDefinition | ReactNode): icon is IconDefinition {
     return !!icon && typeof icon === "object" && "icon" in icon;

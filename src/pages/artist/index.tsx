@@ -21,11 +21,9 @@ export default function ArtistIndexPage({ artistAll }: ArtistIndexPageProps) {
             <Text variant="h1">Artist Index</Text>
             <AlphabeticalIndex items={artistAll}>
                 {(artist) => (
-                    <Link key={artist.slug} href={`/artist/${artist.slug}`} passHref legacyBehavior prefetch={false}>
-                        <Text as="a" block link>
-                            {artist.name}
-                        </Text>
-                    </Link>
+                    <Text key={artist.slug} as={Link} href={`/artist/${artist.slug}`} prefetch={false} block link>
+                        {artist.name}
+                    </Text>
                 )}
             </AlphabeticalIndex>
         </>

@@ -6,9 +6,9 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 import { config } from "@fortawesome/fontawesome-svg-core";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFullscreen } from "ahooks";
-import { LazyMotion } from "framer-motion";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { LazyMotion } from "motion/react";
 import useLocalStorageState from "use-local-storage-state";
 
 import { Column } from "@/components/box/Flex";
@@ -257,7 +257,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                             )}
                             {pageProps.isSearch && <SearchNavigation />}
                             {STAGING ? (
-                                <Card color="text-warning">
+                                <Card $color="text-warning">
                                     <Text as="p">
                                         <strong>WARNING</strong>: This version of the website is for testing purposes
                                         only. Some pages or functions might not work.

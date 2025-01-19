@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import styled from "styled-components";
 
-import { faPlus } from "@fortawesome/pro-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { isAxiosError } from "axios";
 import { mutate } from "swr";
 

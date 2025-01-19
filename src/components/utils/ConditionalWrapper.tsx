@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 interface ConditionalWrapperProps {
     condition: boolean;
     wrap: (children: JSX.Element) => JSX.Element;

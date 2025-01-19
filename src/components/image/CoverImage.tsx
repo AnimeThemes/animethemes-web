@@ -15,7 +15,7 @@ export function CoverImage({ resourceWithImages, ...props }: CoverImageProps) {
     const { smallCover, largeCover } = extractImages(resourceWithImages);
 
     return (
-        <AspectRatio ratio={2 / 3}>
+        <AspectRatio $ratio={2 / 3}>
             <FullWidthImage
                 key={largeCover}
                 src={largeCover}

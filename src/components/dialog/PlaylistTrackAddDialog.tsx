@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 
-import { faArrowDown, faMinus, faPlus } from "@fortawesome/pro-solid-svg-icons";
+import { faArrowDown, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
 import useSWR, { mutate } from "swr";
 

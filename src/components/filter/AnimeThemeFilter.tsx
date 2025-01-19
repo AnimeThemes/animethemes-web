@@ -54,7 +54,7 @@ function AnimeThemeFilterInternal({ themes }: AnimeThemeFilterProps) {
     return (
         <Column style={{ "--gap": "24px" }}>
             {(groups.length > 1 || hasMultipleTypes) && (
-                <HorizontalScroll fixShadows>
+                <HorizontalScroll $fixShadows>
                     <Row style={{ "--gap": "16px" }}>
                         {groups.length > 1 && (
                             <Listbox

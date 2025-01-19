@@ -1,7 +1,7 @@
-import { forwardRef } from "react";
+import type { RefObject } from "react";
 import styled from "styled-components";
 
-import { faCheck, faSort, faTimes } from "@fortawesome/pro-solid-svg-icons";
+import { faCheck, faSort, faXmark } from "@fortawesome/free-solid-svg-icons";
 import * as RadixSelect from "@radix-ui/react-select";
 
 import { Button } from "@/components/button/Button";
@@ -82,6 +82,7 @@ const StyledListboxOption = styled(RadixSelect.Item)`
 
 type ListboxProps = Omit<RadixSelect.SelectProps, "value" | "defaultValue" | "onValueChange"> &
     (PropsNullable | PropsNotNullable) & {
+        ref?: RefObject<HTMLButtonElement>;
         resettable?: boolean;
         highlightNonDefault?: boolean;
     };
@@ -100,10 +101,17 @@ interface PropsNotNullable {
     defaultValue?: string;
 }
 
-export const Listbox = forwardRef<HTMLButtonElement, ListboxProps>(function Listbox(
-    { value, onValueChange, defaultValue, nullable, resettable, highlightNonDefault, children, ...props },
+export function Listbox({
     ref,
-) {
+    value,
+    onValueChange,
+    defaultValue,
+    nullable,
+    resettable,
+    highlightNonDefault,
+    children,
+    ...props
+}: ListboxProps) {
     const radixValue = value === null ? NULL_VALUE : value;
     const radixOnValueChange = (newValue: string) => {
         if (nullable) {
@@ -130,7 +138,7 @@ export const Listbox = forwardRef<HTMLButtonElement, ListboxProps>(function List
                                 onClick={() => radixOnValueChange(radixDefaultValue)}
                                 onPointerDown={(event) => event.stopPropagation()}
                             >
-                                <Icon icon={faTimes} />
+                                <Icon icon={faXmark} />
                             </StyledListboxReset>
                         ) : (
                             <Icon icon={faSort} />
@@ -149,16 +157,14 @@ export const Listbox = forwardRef<HTMLButtonElement, ListboxProps>(function List
             </StyledListboxPopover>
         </RadixSelect.Root>
     );
-});
+}
 
 export interface ListboxOptionProps extends Omit<RadixSelect.SelectItemProps, "value"> {
+    ref?: RefObject<HTMLDivElement>;
     value: string | null;
 }
 
-export const ListboxOption = forwardRef<HTMLDivElement, ListboxOptionProps>(function ListboxOption(
-    { value, children, ...props },
-    ref,
-) {
+export const ListboxOption = function ListboxOption({ ref, value, children, ...props }: ListboxOptionProps) {
     const radixValue = value === null ? NULL_VALUE : value;
 
     return (
@@ -169,4 +175,4 @@ export const ListboxOption = forwardRef<HTMLDivElement, ListboxOptionProps>(func
             </RadixSelect.ItemIndicator>
         </StyledListboxOption>
     );
-});
+};

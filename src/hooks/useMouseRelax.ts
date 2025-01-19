@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 export default function useMouseRelax() {
     const [isRelaxed, setRelaxed] = useState(false);
 
-    const timeoutId = useRef<number>();
+    const timeoutId = useRef<number>(undefined);
 
     // Whenever the user moves or presses their pointer inside the element,
     // start a timer and cancel any previous timers. If the timer finishes without

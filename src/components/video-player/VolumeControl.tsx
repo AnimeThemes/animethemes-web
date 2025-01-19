@@ -1,7 +1,7 @@
 import type { ComponentPropsWithoutRef } from "react";
 import styled from "styled-components";
 
-import { faVolume, faVolumeHigh, faVolumeLow, faVolumeSlash } from "@fortawesome/pro-solid-svg-icons";
+import { faVolumeHigh, faVolumeLow, faVolumeXmark } from "@fortawesome/free-solid-svg-icons";
 
 import { Row } from "@/components/box/Flex";
 import { IconTextButton } from "@/components/button/IconTextButton";
@@ -30,14 +30,12 @@ export function VolumeControl(props: ComponentPropsWithoutRef<typeof StyledRow>)
     const [volume, setVolume] = useSetting(GlobalVolume);
 
     let icon;
-    if (volume > 0.66) {
+    if (volume > 0.5) {
         icon = faVolumeHigh;
-    } else if (volume > 0.33) {
-        icon = faVolume;
     } else if (volume > 0) {
         icon = faVolumeLow;
     } else {
-        icon = faVolumeSlash;
+        icon = faVolumeXmark;
     }
 
     return (

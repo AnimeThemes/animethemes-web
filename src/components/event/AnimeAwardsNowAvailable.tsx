@@ -1,7 +1,7 @@
 import styled, { keyframes } from "styled-components";
 import Link from "next/link";
 
-import { faArrowRight, faTrophy } from "@fortawesome/pro-solid-svg-icons";
+import { faArrowRight, faTrophy } from "@fortawesome/free-solid-svg-icons";
 
 import { Button } from "@/components/button/Button";
 import { Icon } from "@/components/icon/Icon";
@@ -74,15 +74,15 @@ export function AnimeAwardsNowAvailable({ year }: AnimeAwardsNowAvailableProps) 
     return (
         <EventButtonContainer>
             <GradientBorder />
-            <Link href="/event/anime-awards" passHref legacyBehavior>
-                <EventButton forwardedAs="a">
+            <EventButton asChild>
+                <Link href="/event/anime-awards">
                     <EventIcon icon={faTrophy} />
                     <Text>
                         <Text color="text-primary">/r/anime Awards {year}</Text>: Results are now available!
                     </Text>
                     <Icon icon={faArrowRight} color="text-primary" />
-                </EventButton>
-            </Link>
+                </Link>
+            </EventButton>
         </EventButtonContainer>
     );
 }

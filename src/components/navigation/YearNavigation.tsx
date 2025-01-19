@@ -30,25 +30,21 @@ export function YearNavigation({ year, yearAll }: YearDetailPageProps) {
         <Row style={{ "--align-items": "center" }}>
             <StyledYearPrevious>
                 {previousYear && (
-                    <Link href={`/year/${previousYear}`} passHref legacyBehavior>
-                        <Button as="a" variant="silent">
-                            {previousYear}
-                        </Button>
-                    </Link>
+                    <Button asChild variant="silent">
+                        <Link href={`/year/${previousYear}`}>{previousYear}</Link>
+                    </Button>
                 )}
             </StyledYearPrevious>
-            <Link href={`/year`} passHref legacyBehavior>
-                <Button as="a" variant="silent">
+            <Button asChild variant="silent">
+                <Link href={`/year`}>
                     <Text variant="h1">{year.value}</Text>
-                </Button>
-            </Link>
+                </Link>
+            </Button>
             <StyledYearNext>
                 {nextYear && (
-                    <Link href={`/year/${nextYear}`} passHref legacyBehavior>
-                        <Button as="a" variant="silent">
-                            {nextYear}
-                        </Button>
-                    </Link>
+                    <Button asChild variant="silent">
+                        <Link href={`/year/${nextYear}`}>{nextYear}</Link>
+                    </Button>
                 )}
             </StyledYearNext>
         </Row>

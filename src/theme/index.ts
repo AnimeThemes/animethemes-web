@@ -18,7 +18,7 @@ interface Theme {
 type VariableDefinition = Colors | Shadows;
 
 type ThemeDefinition<T extends VariableDefinition> = {
-    [Key in keyof T & string]?: `var(--${Key})`;
+    [Key in keyof T & string]: `var(--${Key})`;
 };
 
 type CssDefinition<T extends VariableDefinition> = {
@@ -63,9 +63,9 @@ export function createCssDefinition<T extends VariableDefinition>(definition: T)
 }
 
 export function createThemeDefinition<T extends VariableDefinition>(keyDefinition: T): ThemeDefinition<T> {
-    const theme: ThemeDefinition<T> = {};
+    const theme: Partial<ThemeDefinition<T>> = {};
     for (const name in keyDefinition) {
         theme[name] = `var(--${name})`;
     }
-    return theme;
+    return theme as ThemeDefinition<T>;
 }

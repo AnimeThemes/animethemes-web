@@ -21,11 +21,9 @@ export default function SeriesIndexPage({ seriesAll }: SeriesIndexPageProps) {
             <Text variant="h1">Series Index</Text>
             <AlphabeticalIndex items={seriesAll}>
                 {(series) => (
-                    <Link key={series.slug} href={`/series/${series.slug}`} passHref legacyBehavior prefetch={false}>
-                        <Text as="a" block link>
-                            {series.name}
-                        </Text>
-                    </Link>
+                    <Text key={series.slug} as={Link} href={`/series/${series.slug}`} prefetch={false} block link>
+                        {series.name}
+                    </Text>
                 )}
             </AlphabeticalIndex>
         </>

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { faShare } from "@fortawesome/pro-solid-svg-icons";
+import { faShare } from "@fortawesome/free-solid-svg-icons";
 
 import { IconTextButton } from "@/components/button/IconTextButton";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/menu/Menu";

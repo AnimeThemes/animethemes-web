@@ -20,7 +20,7 @@
         "jsx": "preserve",
         "verbatimModuleSyntax": true
     },
-    "include": ["next-env.d.ts", "**/*.mjs", "**/*.ts", "**/*.tsx", "src/generated/graphql.ts"],
+    "include": ["next-env.d.ts", "**/*.mjs", "**/*.ts", "**/*.tsx", "src/generated/graphql.ts", "css.d.ts"],
     "exclude": ["node_modules"],
     "ts-node": {
         "compilerOptions": {

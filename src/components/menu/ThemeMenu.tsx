@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import { faArrowTurnDownRight, faArrowTurnRight, faEllipsisV, faPlus } from "@fortawesome/pro-solid-svg-icons";
+import { faArrowTurnDown, faArrowTurnUp, faEllipsisVertical, faPlus } from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
 
 import { Button } from "@/components/button/Button";
@@ -38,7 +38,7 @@ export function ThemeMenu({ theme }: ThemeMenuProps) {
         <Menu modal={false}>
             <MenuTrigger asChild>
                 <Button variant="silent" isCircle>
-                    <Icon icon={faEllipsisV} />
+                    <Icon icon={faEllipsisVertical} />
                 </Button>
             </MenuTrigger>
             <MenuContent>
@@ -56,11 +56,11 @@ export function ThemeMenu({ theme }: ThemeMenuProps) {
                     <>
                         <MenuSeparator />
                         <MenuItem onSelect={() => addWatchListItem(video, entryFlipped)}>
-                            <Icon icon={faArrowTurnDownRight} color="text-disabled" />
+                            <Icon icon={faArrowTurnDown} color="text-disabled" />
                             <Text>Add to Watch List</Text>
                         </MenuItem>
                         <MenuItem onSelect={() => addWatchListItemNext(video, entryFlipped)}>
-                            <Icon icon={faArrowTurnRight} color="text-disabled" />
+                            <Icon icon={faArrowTurnUp} color="text-disabled" />
                             <Text>Play Next</Text>
                         </MenuItem>
                     </>

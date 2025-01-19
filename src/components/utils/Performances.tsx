@@ -75,9 +75,9 @@ export function Performances({ song, artist, maxPerformances = 3, expandable = f
                     <Text variant="small" color="text-muted">
                         <span> as </span>
                         <span>
-                            <Link href={`/artist/${performedAs.artist.slug}`} passHref legacyBehavior>
-                                <StyledArtistLink>{performedAs.as}</StyledArtistLink>
-                            </Link>
+                            <StyledArtistLink as={Link} href={`/artist/${performedAs.artist.slug}`}>
+                                {performedAs.as}
+                            </StyledArtistLink>
                         </span>
                     </Text>
                 ) : null}
@@ -87,11 +87,9 @@ export function Performances({ song, artist, maxPerformances = 3, expandable = f
                         <span>
                             {performedWith.map((performance) => (
                                 <StyledArtist key={performance.artist.slug}>
-                                    <Link href={`/artist/${performance.artist.slug}`} passHref legacyBehavior>
-                                        <StyledArtistLink>
-                                            {getDisplayedArtistName(performance)}
-                                        </StyledArtistLink>
-                                    </Link>
+                                    <StyledArtistLink as={Link} href={`/artist/${performance.artist.slug}`}>
+                                        {getDisplayedArtistName(performance)}
+                                    </StyledArtistLink>
                                 </StyledArtist>
                             ))}
                         </span>
@@ -107,11 +105,9 @@ export function Performances({ song, artist, maxPerformances = 3, expandable = f
             <Text>
                 {performancesShown.map((performance) => (
                     <StyledArtist key={performance.artist.slug}>
-                        <Link href={`/artist/${performance.artist.slug}`} passHref legacyBehavior>
-                            <Text as="a" link>
+                        <Text as={Link} href={`/artist/${performance.artist.slug}`} link>
                             {getDisplayedArtistName(performance)}
-                            </Text>
-                        </Link>
+                        </Text>
                     </StyledArtist>
                 ))}
                 {!!performancesHidden.length && (

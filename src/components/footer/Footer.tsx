@@ -1,4 +1,3 @@
-import type { ComponentPropsWithoutRef } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
@@ -48,6 +47,15 @@ const StyledSocialButton = styled(Button).attrs({ variant: "silent", isCircle: t
     font-size: 1.2rem;
 `;
 
+const FooterLink = styled(Text).attrs({ as: Link })``;
+
+const FooterTextLink = styled(FooterLink).attrs({
+    link: true,
+    block: true,
+    color: "text-muted",
+    noWrap: true,
+})``;
+
 export function Footer() {
     return (
         <StyledFooter>
@@ -92,12 +100,4 @@ export function Footer() {
             </StyledContainer>
         </StyledFooter>
     );
-}
-
-function FooterLink(props: ComponentPropsWithoutRef<typeof Text>) {
-    return <Text as={Link} {...props} />;
-}
-
-function FooterTextLink(props: ComponentPropsWithoutRef<typeof FooterLink>) {
-    return <FooterLink link block color="text-muted" noWrap {...props} />;
 }
