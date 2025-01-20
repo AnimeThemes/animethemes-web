@@ -12,13 +12,6 @@ export default createGlobalStyle`
     * {
         box-sizing: border-box;
     }
-
-    html, body, #__next {
-        // Every container in the page hierarchy needs to have the 
-        // maximum height of the viewport. Using 100vh on innermost container 
-        // would break certain layouts on mobile devices.
-        height: 100%;
-    }
     
     :root {
         ${defineColorTheme("light")`

@@ -50,7 +50,7 @@ const queryClient = new QueryClient();
 
 const StyledWrapper = styled(Column)`
     isolation: isolate;
-    min-height: 100%;
+    min-height: 100vh;
 `;
 
 const StyledContainer = styled(Container)`
