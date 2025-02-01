@@ -51,6 +51,7 @@ const queryClient = new QueryClient();
 const StyledWrapper = styled(Column)`
     isolation: isolate;
     min-height: 100vh;
+    min-height: 100dvh;
 `;
 
 const StyledContainer = styled(Container)`

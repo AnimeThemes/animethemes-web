@@ -35,6 +35,7 @@ const StyledSwitcher = styled.div`
 
     background-color: ${theme.colors["solid"]};
     box-shadow: ${theme.shadows.low};
+    isolation: isolate;
 
     ${Solid} & {
         background-color: ${theme.colors["solid-on-card"]};
