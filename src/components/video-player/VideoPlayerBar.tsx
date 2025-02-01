@@ -33,6 +33,10 @@ const StyledPlayerBar = styled(Solid)`
     transition: opacity 100ms;
 
     @media (max-width: ${theme.breakpoints.tabletMax}) {
+        position: sticky;
+        bottom: 0;
+        isolation: isolate;
+
         grid-template-columns: 1fr auto;
 
         padding: 8px 16px;

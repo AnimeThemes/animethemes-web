@@ -5,9 +5,7 @@ import NextBundleAnalyzer from "@next/bundle-analyzer";
 import { ANALYZE, BASE_PATH, STAGING, validateConfig } from "@/utils/config";
 import { error, info } from "@/utils/log";
 
-const withBundleAnalyzer = NextBundleAnalyzer({
-    enabled: ANALYZE,
-});
+const withBundleAnalyzer = NextBundleAnalyzer();
 
 if (!validateConfig()) {
     error("Shutting down because of invalid configuration...");
@@ -26,6 +24,7 @@ const nextConfig: NextConfig = {
     },
     staticPageGenerationTimeout: 3600,
     experimental: {
+        turbo: {},
         // We don't want to multi-thread page building
         // to make use of caching between page builds.
         workerThreads: false,
@@ -81,4 +80,4 @@ const nextConfig: NextConfig = {
     },
 };
 
-export default withBundleAnalyzer(nextConfig);
+export default ANALYZE ? withBundleAnalyzer(nextConfig) : nextConfig;

@@ -6,11 +6,13 @@ import { Switcher } from "@/components/switcher/Switcher";
 import theme from "@/theme";
 
 export const StyledPlayer = styled.div`
-    position: sticky;
-    bottom: 0;
-
     display: flex;
     flex-direction: column;
+
+    &[data-background] {
+        position: sticky;
+        bottom: 0;
+    }
 
     &:not([data-background]) {
         flex: 1;
@@ -161,8 +163,10 @@ export const StyledSwitcher = styled(Switcher)`
 `;
 
 export const StyledScrollArea = styled.div`
-    flex: 1 0 0;
-
     padding-bottom: 16px;
     overflow: auto;
+
+    @media (min-width: ${theme.breakpoints.desktopMin}) or (max-aspect-ratio: 1/1) {
+        flex: 1 0 0;
+    }
 `;

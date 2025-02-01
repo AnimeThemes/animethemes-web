@@ -24,6 +24,7 @@ import VideoScript from "@/components/video-script/VideoScript";
 import PlayerContext from "@/context/playerContext";
 import type { VideoPageAllQuery, VideoPageQuery, VideoPageQueryVariables } from "@/generated/graphql";
 import { fetchData } from "@/lib/server";
+import styleTheme from "@/theme";
 import { VIDEO_URL } from "@/utils/config";
 import createVideoSlug from "@/utils/createVideoSlug";
 import extractImages from "@/utils/extractImages";
@@ -129,7 +130,13 @@ export default function VideoPage({
         let isCancelled = false;
 
         setTimeout(() => {
-            if (isCancelled) {
+            // We don't want to scroll the watch list item into view
+            // if the video is not fixed to the viewport.
+            // This affects mobile devices in landscape mode.
+            const isMobileInLandscape = matchMedia(
+                `(max-width: ${styleTheme.breakpoints.tabletMax}) and (min-aspect-ratio: 1/1)`,
+            ).matches;
+            if (isCancelled || isMobileInLandscape) {
                 return;
             }
             const currentVideoCard = getVideoCardMap().get(currentWatchListItem.watchListId);
