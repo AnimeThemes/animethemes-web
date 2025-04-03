@@ -11,11 +11,12 @@ import type { ParsedUrlQuery } from "querystring";
 
 import { Column } from "@/components/box/Flex";
 import { FilterToggleButton } from "@/components/button/FilterToggleButton";
+import { Card } from "@/components/card/Card";
 import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
 import { SidebarContainer } from "@/components/container/SidebarContainer";
 import { DescriptionList } from "@/components/description-list/DescriptionList";
 import { ExternalLink } from "@/components/external-link/ExternalLink";
-import { CoverImage } from "@/components/image/CoverImage";
+import { MultiLargeCoverImage } from "@/components/image/MultiCoverImage";
 import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
 import { SearchFilter } from "@/components/search-filter/SearchFilter";
 import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
@@ -44,9 +45,9 @@ import {
     SONG_Z_A,
     SONG_Z_A_ANIME,
 } from "@/utils/comparators";
-import extractImages from "@/utils/extractImages";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import getSharedPageProps from "@/utils/getSharedPageProps";
+import { HeightTransition } from "@/components/utils/HeightTransition";
 import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledList = styled.div`
@@ -83,7 +84,8 @@ interface ArtistDetailPageParams extends ParsedUrlQuery {
 }
 
 export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
-    const { largeCover } = extractImages(artist);
+    const [collapseInformation, setCollapseInformation] = useState(true);
+   // const images = {name: artist.name, images: extractMultipleImages(artist)} as MultiCoverImageResourceWithImagesFragment;
 
     const characters = useMemo(
         () =>
@@ -183,11 +185,11 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
 
     return (
         <>
-            <SEO title={artist.name} image={largeCover} />
+            <SEO title={artist.name}/>
             <Text variant="h1">{artist.name}</Text>
             <SidebarContainer>
                 <Column style={{ "--gap": "24px" }}>
-                    <CoverImage resourceWithImages={artist} alt={`Picture of ${artist.name}`} />
+                    <MultiLargeCoverImage resourceWithImages={artist}/>
                     <DescriptionList>
                         {aliases.length > 0 && (
                             <DescriptionList.Item title="Aliases">
@@ -203,11 +205,11 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                         {!!artist.members?.length && (
                             <DescriptionList.Item title="Members">
                                 <StyledList>
-                                    {artist.members.map(({ member, alias, as }) => (
+                                    {artist.members.map(({ member, alias, as, notes }) => (
                                         <Text key={member.slug} as={Link} href={`/artist/${member.slug}`} link>
-                                            {member.name}
-                                            {alias ? ` (as ${alias})` : null}
+                                            {alias ? alias : member.name}
                                             {as ? ` (as ${as})` : null}
+                                            {notes ? ` (${notes})` : null}
                                         </Text>
                                     ))}
                                 </StyledList>
@@ -216,11 +218,11 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                         {!!artist.groups?.length && (
                             <DescriptionList.Item title="Member of">
                                 <StyledList>
-                                    {artist.groups.map(({ group, alias, as }) => (
+                                    {artist.groups.map(({ group, alias, as, notes }) => (
                                         <Text key={group.slug} as={Link} href={`/artist/${group.slug}`} link>
-                                            {group.name}
-                                            {alias ? ` (as ${alias})` : null}
+                                            {alias ? alias : group.name}
                                             {as ? ` (as ${as})` : null}
+                                            {notes ? ` (${notes})` : null}
                                         </Text>
                                     ))}
                                 </StyledList>
@@ -243,6 +245,20 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                     </DescriptionList>
                 </Column>
                 <Column style={{ "--gap": "24px" }}>
+                    {!!artist.information && (
+                        <>
+                            <Text variant="h2">Information</Text>
+                            <Card $hoverable onClick={() => setCollapseInformation(!collapseInformation)}>
+                                <HeightTransition>
+                                    <Text
+                                        as="p"
+                                        maxLines={collapseInformation ? 2 : undefined}
+                                        dangerouslySetInnerHTML={{ __html: artist.information }}
+                                    />
+                                </HeightTransition>
+                            </Card>
+                        </>
+                    )}
                     <StyledHeader>
                         <Text variant="h2">
                             Song Performances
@@ -390,6 +406,7 @@ ArtistDetailPage.fragements = {
         fragment ArtistDetailPageArtist on Artist {
             ...ThemeSummaryCardArtist
             slug
+            information
             name
             performances {
                 alias
@@ -428,6 +445,7 @@ ArtistDetailPage.fragements = {
                 }
                 alias
                 as
+                notes
             }
             groups {
                 group {
@@ -466,6 +484,7 @@ ArtistDetailPage.fragements = {
                 }
                 alias
                 as
+                notes
             }
             resources {
                 link
@@ -473,6 +492,7 @@ ArtistDetailPage.fragements = {
                 as
             }
             images {
+                depth
                 facet
                 link
             }

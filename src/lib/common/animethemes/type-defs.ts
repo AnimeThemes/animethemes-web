@@ -165,6 +165,7 @@ const typeDefs = gql`
 
     type Artist implements ResourceWithImages {
         id: Int!
+        information: String
         slug: String!
         name: String!
         performances: [Performance!]!
@@ -179,6 +180,7 @@ const typeDefs = gql`
         member: Artist!
         alias: String
         as: String
+        notes: String
     }
 
     type Series {
@@ -201,6 +203,7 @@ const typeDefs = gql`
         path: String!
         size: Int!
         mimetype: String!
+        depth: Int
         facet: String
         link: String!
     }

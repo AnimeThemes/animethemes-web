@@ -44,6 +44,7 @@ export type Artist = ResourceWithImages & {
     groups: Array<ArtistMembership>;
     id: Scalars["Int"]["output"];
     images: Array<Image>;
+    information: Maybe<Scalars["String"]["output"]>;
     members: Array<ArtistMembership>;
     name: Scalars["String"]["output"];
     performances: Array<Performance>;
@@ -56,6 +57,7 @@ export type ArtistMembership = {
     as: Maybe<Scalars["String"]["output"]>;
     group: Artist;
     member: Artist;
+    notes: Maybe<Scalars["String"]["output"]>;
 };
 
 export type ArtistSearchResult = EntitySearchResult & {
@@ -153,6 +155,7 @@ export type GlobalSearchResult = {
 };
 
 export type Image = {
+    depth: Maybe<Scalars["Int"]["output"]>;
     facet: Maybe<Scalars["String"]["output"]>;
     id: Scalars["Int"]["output"];
     link: Scalars["String"]["output"];
@@ -529,7 +532,11 @@ export type BracketThemeSummaryCardConstestantFragment = {
         sequence: number | null;
         id: number;
         group: { name: string; slug: string } | null;
-        anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+        anime: {
+            slug: string;
+            name: string;
+            images: Array<{ link: string; depth: number | null; facet: string | null }>;
+        };
         song: {
             title: string | null;
             performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
@@ -567,7 +574,7 @@ export type AnimeSummaryCardAnimeFragment = {
     season: string | null;
     media_format: string | null;
     themes: Array<{ group: { name: string; slug: string } | null }>;
-    images: Array<{ link: string; facet: string | null }>;
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
 };
 
 export type AnimeSummaryCardAnimeExpandableFragment = {
@@ -615,7 +622,7 @@ export type PlaylistSummaryCardShowOwnerFragment = { user: { name: string } };
 export type StudioSummaryCardStudioFragment = {
     slug: string;
     name: string;
-    images: Array<{ link: string; facet: string | null }>;
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
 };
 
 export type ThemeDetailCardThemeFragment = {
@@ -623,7 +630,7 @@ export type ThemeDetailCardThemeFragment = {
     sequence: number | null;
     id: number;
     group: { name: string; slug: string } | null;
-    anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+    anime: { slug: string; name: string; images: Array<{ link: string; depth: number | null; facet: string | null }> };
     song: {
         title: string | null;
         performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
@@ -656,7 +663,7 @@ export type ThemeSummaryCardThemeFragment = {
     sequence: number | null;
     id: number;
     group: { name: string; slug: string } | null;
-    anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+    anime: { slug: string; name: string; images: Array<{ link: string; depth: number | null; facet: string | null }> };
     song: {
         title: string | null;
         performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
@@ -709,7 +716,7 @@ export type ThemeSummaryCardQuery = {
             season: string | null;
             slug: string;
             name: string;
-            images: Array<{ link: string; facet: string | null }>;
+            images: Array<{ link: string; depth: number | null; facet: string | null }>;
         };
         group: { name: string; slug: string } | null;
         song: {
@@ -734,7 +741,11 @@ export type VideoSummaryCardEntryFragment = {
         type: string;
         sequence: number | null;
         group: { name: string; slug: string } | null;
-        anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+        anime: {
+            slug: string;
+            name: string;
+            images: Array<{ link: string; depth: number | null; facet: string | null }>;
+        };
         song: {
             title: string | null;
             performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
@@ -766,7 +777,11 @@ export type PlaylistTrackAddDialogEntryFragment = {
         type: string;
         sequence: number | null;
         group: { name: string; slug: string } | null;
-        anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+        anime: {
+            slug: string;
+            name: string;
+            images: Array<{ link: string; depth: number | null; facet: string | null }>;
+        };
         song: {
             title: string | null;
             performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
@@ -802,7 +817,11 @@ export type PlaylistTrackRemoveDialogEntryFragment = {
         type: string;
         sequence: number | null;
         group: { name: string; slug: string } | null;
-        anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+        anime: {
+            slug: string;
+            name: string;
+            images: Array<{ link: string; depth: number | null; facet: string | null }>;
+        };
         song: {
             title: string | null;
             performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
@@ -814,7 +833,7 @@ export type FeaturedThemeThemeFragment = {
     type: string;
     sequence: number | null;
     id: number;
-    anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+    anime: { slug: string; name: string; images: Array<{ link: string; depth: number | null; facet: string | null }> };
     entries: Array<{
         id: number;
         version: number | null;
@@ -832,7 +851,7 @@ export type AnimeThemeFilterThemeFragment = {
     sequence: number | null;
     id: number;
     group: { name: string; slug: string } | null;
-    anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+    anime: { slug: string; name: string; images: Array<{ link: string; depth: number | null; facet: string | null }> };
     song: {
         title: string | null;
         performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
@@ -875,7 +894,11 @@ export type HomePageMostViewedQuery = {
                 type: string;
                 sequence: number | null;
                 group: { name: string; slug: string } | null;
-                anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+                anime: {
+                    slug: string;
+                    name: string;
+                    images: Array<{ link: string; depth: number | null; facet: string | null }>;
+                };
                 song: {
                     title: string | null;
                     performances: Array<{
@@ -917,7 +940,11 @@ export type HomePageRecentlyAddedQuery = {
                 type: string;
                 sequence: number | null;
                 group: { name: string; slug: string } | null;
-                anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+                anime: {
+                    slug: string;
+                    name: string;
+                    images: Array<{ link: string; depth: number | null; facet: string | null }>;
+                };
                 song: {
                     title: string | null;
                     performances: Array<{
@@ -932,11 +959,17 @@ export type HomePageRecentlyAddedQuery = {
     }>;
 };
 
-type CoverImageResourceWithImages_Anime_Fragment = { images: Array<{ link: string; facet: string | null }> };
+type CoverImageResourceWithImages_Anime_Fragment = {
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
+};
 
-type CoverImageResourceWithImages_Artist_Fragment = { images: Array<{ link: string; facet: string | null }> };
+type CoverImageResourceWithImages_Artist_Fragment = {
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
+};
 
-type CoverImageResourceWithImages_Studio_Fragment = { images: Array<{ link: string; facet: string | null }> };
+type CoverImageResourceWithImages_Studio_Fragment = {
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
+};
 
 export type CoverImageResourceWithImagesFragment =
     | CoverImageResourceWithImages_Anime_Fragment
@@ -945,17 +978,17 @@ export type CoverImageResourceWithImagesFragment =
 
 type MultiCoverImageResourceWithImages_Anime_Fragment = {
     name: string;
-    images: Array<{ link: string; facet: string | null }>;
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
 };
 
 type MultiCoverImageResourceWithImages_Artist_Fragment = {
     name: string;
-    images: Array<{ link: string; facet: string | null }>;
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
 };
 
 type MultiCoverImageResourceWithImages_Studio_Fragment = {
     name: string;
-    images: Array<{ link: string; facet: string | null }>;
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
 };
 
 export type MultiCoverImageResourceWithImagesFragment =
@@ -975,7 +1008,7 @@ export type ThemeMenuThemeFragment = {
     type: string;
     sequence: number | null;
     group: { name: string; slug: string } | null;
-    anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+    anime: { slug: string; name: string; images: Array<{ link: string; depth: number | null; facet: string | null }> };
     song: {
         title: string | null;
         performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
@@ -1024,7 +1057,7 @@ export type SearchAnimeQuery = {
                 }>;
                 song: { title: string | null } | null;
             }>;
-            images: Array<{ link: string; facet: string | null }>;
+            images: Array<{ link: string; depth: number | null; facet: string | null }>;
         }>;
     };
 };
@@ -1076,14 +1109,18 @@ export type SearchGlobalQuery = {
                 }>;
                 song: { title: string | null } | null;
             }>;
-            images: Array<{ link: string; facet: string | null }>;
+            images: Array<{ link: string; depth: number | null; facet: string | null }>;
         }>;
         themes: Array<{
             type: string;
             sequence: number | null;
             id: number;
             group: { name: string; slug: string } | null;
-            anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+            anime: {
+                slug: string;
+                name: string;
+                images: Array<{ link: string; depth: number | null; facet: string | null }>;
+            };
             song: {
                 title: string | null;
                 performances: Array<{
@@ -1179,7 +1216,11 @@ export type SearchThemeQuery = {
             sequence: number | null;
             id: number;
             group: { name: string; slug: string } | null;
-            anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+            anime: {
+                slug: string;
+                name: string;
+                images: Array<{ link: string; depth: number | null; facet: string | null }>;
+            };
             song: {
                 title: string | null;
                 performances: Array<{
@@ -1325,7 +1366,11 @@ export type RandomThemeQuery = {
                 }>;
             }>;
             group: { name: string; slug: string } | null;
-            anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+            anime: {
+                slug: string;
+                name: string;
+                images: Array<{ link: string; depth: number | null; facet: string | null }>;
+            };
             song: {
                 title: string | null;
                 performances: Array<{
@@ -1394,7 +1439,11 @@ export type VideoPageAnimeFragment = {
                         sequence: number | null;
                         id: number;
                         group: { name: string; slug: string } | null;
-                        anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+                        anime: {
+                            slug: string;
+                            name: string;
+                            images: Array<{ link: string; depth: number | null; facet: string | null }>;
+                        };
                         song: {
                             title: string | null;
                             performances: Array<{
@@ -1424,11 +1473,19 @@ export type VideoPageAnimeFragment = {
             }>;
         }>;
         group: { name: string; slug: string } | null;
-        anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+        anime: {
+            slug: string;
+            name: string;
+            images: Array<{ link: string; depth: number | null; facet: string | null }>;
+        };
     }>;
-    images: Array<{ link: string; facet: string | null }>;
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
     series: Array<{ slug: string; name: string }>;
-    studios: Array<{ slug: string; name: string; images: Array<{ link: string; facet: string | null }> }>;
+    studios: Array<{
+        slug: string;
+        name: string;
+        images: Array<{ link: string; depth: number | null; facet: string | null }>;
+    }>;
 };
 
 export type VideoPageQueryVariables = Exact<{
@@ -1481,7 +1538,7 @@ export type VideoPageQuery = {
                             anime: {
                                 slug: string;
                                 name: string;
-                                images: Array<{ link: string; facet: string | null }>;
+                                images: Array<{ link: string; depth: number | null; facet: string | null }>;
                             };
                             song: {
                                 title: string | null;
@@ -1517,11 +1574,19 @@ export type VideoPageQuery = {
                 }>;
             }>;
             group: { name: string; slug: string } | null;
-            anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+            anime: {
+                slug: string;
+                name: string;
+                images: Array<{ link: string; depth: number | null; facet: string | null }>;
+            };
         }>;
-        images: Array<{ link: string; facet: string | null }>;
+        images: Array<{ link: string; depth: number | null; facet: string | null }>;
         series: Array<{ slug: string; name: string }>;
-        studios: Array<{ slug: string; name: string; images: Array<{ link: string; facet: string | null }> }>;
+        studios: Array<{
+            slug: string;
+            name: string;
+            images: Array<{ link: string; depth: number | null; facet: string | null }>;
+        }>;
     } | null;
 };
 
@@ -1573,7 +1638,7 @@ export type VideoPageAllQuery = {
                             anime: {
                                 slug: string;
                                 name: string;
-                                images: Array<{ link: string; facet: string | null }>;
+                                images: Array<{ link: string; depth: number | null; facet: string | null }>;
                             };
                             song: {
                                 title: string | null;
@@ -1609,11 +1674,19 @@ export type VideoPageAllQuery = {
                 }>;
             }>;
             group: { name: string; slug: string } | null;
-            anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+            anime: {
+                slug: string;
+                name: string;
+                images: Array<{ link: string; depth: number | null; facet: string | null }>;
+            };
         }>;
-        images: Array<{ link: string; facet: string | null }>;
+        images: Array<{ link: string; depth: number | null; facet: string | null }>;
         series: Array<{ slug: string; name: string }>;
-        studios: Array<{ slug: string; name: string; images: Array<{ link: string; facet: string | null }> }>;
+        studios: Array<{
+            slug: string;
+            name: string;
+            images: Array<{ link: string; depth: number | null; facet: string | null }>;
+        }>;
     }>;
 };
 
@@ -1633,7 +1706,11 @@ export type AnimeDetailPageAnimeFragment = {
         sequence: number | null;
         id: number;
         group: { name: string; slug: string } | null;
-        anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+        anime: {
+            slug: string;
+            name: string;
+            images: Array<{ link: string; depth: number | null; facet: string | null }>;
+        };
         song: {
             title: string | null;
             performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
@@ -1660,7 +1737,7 @@ export type AnimeDetailPageAnimeFragment = {
             }>;
         }>;
     }>;
-    images: Array<{ link: string; facet: string | null }>;
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
 };
 
 export type AnimeDetailPageQueryVariables = Exact<{
@@ -1684,7 +1761,11 @@ export type AnimeDetailPageQuery = {
             sequence: number | null;
             id: number;
             group: { name: string; slug: string } | null;
-            anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+            anime: {
+                slug: string;
+                name: string;
+                images: Array<{ link: string; depth: number | null; facet: string | null }>;
+            };
             song: {
                 title: string | null;
                 performances: Array<{
@@ -1715,7 +1796,7 @@ export type AnimeDetailPageQuery = {
                 }>;
             }>;
         }>;
-        images: Array<{ link: string; facet: string | null }>;
+        images: Array<{ link: string; depth: number | null; facet: string | null }>;
     } | null;
 };
 
@@ -1738,7 +1819,11 @@ export type AnimeDetailPageAllQuery = {
             sequence: number | null;
             id: number;
             group: { name: string; slug: string } | null;
-            anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+            anime: {
+                slug: string;
+                name: string;
+                images: Array<{ link: string; depth: number | null; facet: string | null }>;
+            };
             song: {
                 title: string | null;
                 performances: Array<{
@@ -1769,7 +1854,7 @@ export type AnimeDetailPageAllQuery = {
                 }>;
             }>;
         }>;
-        images: Array<{ link: string; facet: string | null }>;
+        images: Array<{ link: string; depth: number | null; facet: string | null }>;
     }>;
 };
 
@@ -1807,6 +1892,7 @@ export type RevalidateAnimeQuery = {
 
 export type ArtistDetailPageArtistFragment = {
     slug: string;
+    information: string | null;
     name: string;
     performances: Array<{
         alias: string | null;
@@ -1825,7 +1911,7 @@ export type ArtistDetailPageArtistFragment = {
                     season: string | null;
                     slug: string;
                     name: string;
-                    images: Array<{ link: string; facet: string | null }>;
+                    images: Array<{ link: string; depth: number | null; facet: string | null }>;
                 };
                 song: {
                     title: string | null;
@@ -1858,10 +1944,16 @@ export type ArtistDetailPageArtistFragment = {
             }>;
         };
     }>;
-    members: Array<{ alias: string | null; as: string | null; member: { slug: string; name: string } }>;
+    members: Array<{
+        alias: string | null;
+        as: string | null;
+        notes: string | null;
+        member: { slug: string; name: string };
+    }>;
     groups: Array<{
         alias: string | null;
         as: string | null;
+        notes: string | null;
         group: {
             slug: string;
             name: string;
@@ -1886,7 +1978,7 @@ export type ArtistDetailPageArtistFragment = {
                             season: string | null;
                             slug: string;
                             name: string;
-                            images: Array<{ link: string; facet: string | null }>;
+                            images: Array<{ link: string; depth: number | null; facet: string | null }>;
                         };
                         song: {
                             title: string | null;
@@ -1922,7 +2014,7 @@ export type ArtistDetailPageArtistFragment = {
         };
     }>;
     resources: Array<{ link: string | null; site: string | null; as: string | null }>;
-    images: Array<{ facet: string | null; link: string }>;
+    images: Array<{ depth: number | null; facet: string | null; link: string }>;
 };
 
 export type ArtistDetailPageQueryVariables = Exact<{
@@ -1932,6 +2024,7 @@ export type ArtistDetailPageQueryVariables = Exact<{
 export type ArtistDetailPageQuery = {
     artist: {
         slug: string;
+        information: string | null;
         name: string;
         performances: Array<{
             alias: string | null;
@@ -1954,7 +2047,7 @@ export type ArtistDetailPageQuery = {
                         season: string | null;
                         slug: string;
                         name: string;
-                        images: Array<{ link: string; facet: string | null }>;
+                        images: Array<{ link: string; depth: number | null; facet: string | null }>;
                     };
                     song: {
                         title: string | null;
@@ -1987,10 +2080,16 @@ export type ArtistDetailPageQuery = {
                 }>;
             };
         }>;
-        members: Array<{ alias: string | null; as: string | null; member: { slug: string; name: string } }>;
+        members: Array<{
+            alias: string | null;
+            as: string | null;
+            notes: string | null;
+            member: { slug: string; name: string };
+        }>;
         groups: Array<{
             alias: string | null;
             as: string | null;
+            notes: string | null;
             group: {
                 slug: string;
                 name: string;
@@ -2015,7 +2114,7 @@ export type ArtistDetailPageQuery = {
                                 season: string | null;
                                 slug: string;
                                 name: string;
-                                images: Array<{ link: string; facet: string | null }>;
+                                images: Array<{ link: string; depth: number | null; facet: string | null }>;
                             };
                             song: {
                                 title: string | null;
@@ -2051,7 +2150,7 @@ export type ArtistDetailPageQuery = {
             };
         }>;
         resources: Array<{ link: string | null; site: string | null; as: string | null }>;
-        images: Array<{ facet: string | null; link: string }>;
+        images: Array<{ depth: number | null; facet: string | null; link: string }>;
     } | null;
 };
 
@@ -2060,6 +2159,7 @@ export type ArtistDetailPageAllQueryVariables = Exact<{ [key: string]: never }>;
 export type ArtistDetailPageAllQuery = {
     artistAll: Array<{
         slug: string;
+        information: string | null;
         name: string;
         performances: Array<{
             alias: string | null;
@@ -2082,7 +2182,7 @@ export type ArtistDetailPageAllQuery = {
                         season: string | null;
                         slug: string;
                         name: string;
-                        images: Array<{ link: string; facet: string | null }>;
+                        images: Array<{ link: string; depth: number | null; facet: string | null }>;
                     };
                     song: {
                         title: string | null;
@@ -2115,10 +2215,16 @@ export type ArtistDetailPageAllQuery = {
                 }>;
             };
         }>;
-        members: Array<{ alias: string | null; as: string | null; member: { slug: string; name: string } }>;
+        members: Array<{
+            alias: string | null;
+            as: string | null;
+            notes: string | null;
+            member: { slug: string; name: string };
+        }>;
         groups: Array<{
             alias: string | null;
             as: string | null;
+            notes: string | null;
             group: {
                 slug: string;
                 name: string;
@@ -2143,7 +2249,7 @@ export type ArtistDetailPageAllQuery = {
                                 season: string | null;
                                 slug: string;
                                 name: string;
-                                images: Array<{ link: string; facet: string | null }>;
+                                images: Array<{ link: string; depth: number | null; facet: string | null }>;
                             };
                             song: {
                                 title: string | null;
@@ -2179,7 +2285,7 @@ export type ArtistDetailPageAllQuery = {
             };
         }>;
         resources: Array<{ link: string | null; site: string | null; as: string | null }>;
-        images: Array<{ facet: string | null; link: string }>;
+        images: Array<{ depth: number | null; facet: string | null; link: string }>;
     }>;
 };
 
@@ -2202,7 +2308,11 @@ export type CharacterFragmentFragment = {
         sequence: number | null;
         id: number;
         group: { name: string; slug: string } | null;
-        anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+        anime: {
+            slug: string;
+            name: string;
+            images: Array<{ link: string; depth: number | null; facet: string | null }>;
+        };
         song: {
             title: string | null;
             performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
@@ -2234,7 +2344,11 @@ export type RoundFragmentFragment = {
                 sequence: number | null;
                 id: number;
                 group: { name: string; slug: string } | null;
-                anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+                anime: {
+                    slug: string;
+                    name: string;
+                    images: Array<{ link: string; depth: number | null; facet: string | null }>;
+                };
                 song: {
                     title: string | null;
                     performances: Array<{
@@ -2261,7 +2375,11 @@ export type RoundFragmentFragment = {
                 sequence: number | null;
                 id: number;
                 group: { name: string; slug: string } | null;
-                anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+                anime: {
+                    slug: string;
+                    name: string;
+                    images: Array<{ link: string; depth: number | null; facet: string | null }>;
+                };
                 song: {
                     title: string | null;
                     performances: Array<{
@@ -2307,7 +2425,11 @@ export type BracketPageQuery = {
                         sequence: number | null;
                         id: number;
                         group: { name: string; slug: string } | null;
-                        anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+                        anime: {
+                            slug: string;
+                            name: string;
+                            images: Array<{ link: string; depth: number | null; facet: string | null }>;
+                        };
                         song: {
                             title: string | null;
                             performances: Array<{
@@ -2334,7 +2456,11 @@ export type BracketPageQuery = {
                         sequence: number | null;
                         id: number;
                         group: { name: string; slug: string } | null;
-                        anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+                        anime: {
+                            slug: string;
+                            name: string;
+                            images: Array<{ link: string; depth: number | null; facet: string | null }>;
+                        };
                         song: {
                             title: string | null;
                             performances: Array<{
@@ -2371,7 +2497,11 @@ export type BracketPageQuery = {
                         sequence: number | null;
                         id: number;
                         group: { name: string; slug: string } | null;
-                        anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+                        anime: {
+                            slug: string;
+                            name: string;
+                            images: Array<{ link: string; depth: number | null; facet: string | null }>;
+                        };
                         song: {
                             title: string | null;
                             performances: Array<{
@@ -2398,7 +2528,11 @@ export type BracketPageQuery = {
                         sequence: number | null;
                         id: number;
                         group: { name: string; slug: string } | null;
-                        anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+                        anime: {
+                            slug: string;
+                            name: string;
+                            images: Array<{ link: string; depth: number | null; facet: string | null }>;
+                        };
                         song: {
                             title: string | null;
                             performances: Array<{
@@ -2455,7 +2589,11 @@ export type HomePageQuery = {
                 type: string;
                 sequence: number | null;
                 id: number;
-                anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+                anime: {
+                    slug: string;
+                    name: string;
+                    images: Array<{ link: string; depth: number | null; facet: string | null }>;
+                };
                 entries: Array<{
                     id: number;
                     version: number | null;
@@ -2502,7 +2640,7 @@ export type PlaylistDetailPagePlaylistQuery = {
                         season: string | null;
                         slug: string;
                         name: string;
-                        images: Array<{ link: string; facet: string | null }>;
+                        images: Array<{ link: string; depth: number | null; facet: string | null }>;
                     };
                     group: { name: string; slug: string } | null;
                     song: {
@@ -2547,7 +2685,7 @@ export type PlaylistDetailPagePlaylistFragment = {
                     season: string | null;
                     slug: string;
                     name: string;
-                    images: Array<{ link: string; facet: string | null }>;
+                    images: Array<{ link: string; depth: number | null; facet: string | null }>;
                 };
                 group: { name: string; slug: string } | null;
                 song: {
@@ -2600,7 +2738,7 @@ export type PlaylistDetailPageQuery = {
                         season: string | null;
                         slug: string;
                         name: string;
-                        images: Array<{ link: string; facet: string | null }>;
+                        images: Array<{ link: string; depth: number | null; facet: string | null }>;
                     };
                     group: { name: string; slug: string } | null;
                     song: {
@@ -2703,7 +2841,7 @@ export type SeriesDetailPageSeriesFragment = {
             }>;
             song: { title: string | null } | null;
         }>;
-        images: Array<{ link: string; facet: string | null }>;
+        images: Array<{ link: string; depth: number | null; facet: string | null }>;
     }>;
 };
 
@@ -2745,7 +2883,7 @@ export type SeriesDetailPageQuery = {
                 }>;
                 song: { title: string | null } | null;
             }>;
-            images: Array<{ link: string; facet: string | null }>;
+            images: Array<{ link: string; depth: number | null; facet: string | null }>;
         }>;
     } | null;
 };
@@ -2786,7 +2924,7 @@ export type SeriesDetailPageAllQuery = {
                 }>;
                 song: { title: string | null } | null;
             }>;
-            images: Array<{ link: string; facet: string | null }>;
+            images: Array<{ link: string; depth: number | null; facet: string | null }>;
         }>;
     }>;
 };
@@ -2828,10 +2966,10 @@ export type StudioDetailPageStudioFragment = {
             }>;
             song: { title: string | null } | null;
         }>;
-        images: Array<{ link: string; facet: string | null }>;
+        images: Array<{ link: string; depth: number | null; facet: string | null }>;
     }>;
     resources: Array<{ link: string | null; site: string | null; as: string | null }>;
-    images: Array<{ link: string; facet: string | null }>;
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
 };
 
 export type StudioDetailPageQueryVariables = Exact<{
@@ -2872,10 +3010,10 @@ export type StudioDetailPageQuery = {
                 }>;
                 song: { title: string | null } | null;
             }>;
-            images: Array<{ link: string; facet: string | null }>;
+            images: Array<{ link: string; depth: number | null; facet: string | null }>;
         }>;
         resources: Array<{ link: string | null; site: string | null; as: string | null }>;
-        images: Array<{ link: string; facet: string | null }>;
+        images: Array<{ link: string; depth: number | null; facet: string | null }>;
     } | null;
 };
 
@@ -2915,10 +3053,10 @@ export type StudioDetailPageAllQuery = {
                 }>;
                 song: { title: string | null } | null;
             }>;
-            images: Array<{ link: string; facet: string | null }>;
+            images: Array<{ link: string; depth: number | null; facet: string | null }>;
         }>;
         resources: Array<{ link: string | null; site: string | null; as: string | null }>;
-        images: Array<{ link: string; facet: string | null }>;
+        images: Array<{ link: string; depth: number | null; facet: string | null }>;
     }>;
 };
 
@@ -2965,7 +3103,7 @@ export type SeasonDetailPageQuery = {
                 }>;
                 song: { title: string | null } | null;
             }>;
-            images: Array<{ link: string; facet: string | null }>;
+            images: Array<{ link: string; depth: number | null; facet: string | null }>;
         }>;
     } | null;
     yearAll: Array<{ value: number }>;
@@ -3014,7 +3152,7 @@ export type YearDetailPageQuery = {
                     }>;
                     song: { title: string | null } | null;
                 }>;
-                images: Array<{ link: string; facet: string | null }>;
+                images: Array<{ link: string; depth: number | null; facet: string | null }>;
             }>;
         }>;
     } | null;
@@ -3035,11 +3173,17 @@ export type CreateVideoSlugEntryFragment = { version: number | null };
 
 export type CreateVideoSlugVideoFragment = { tags: string };
 
-type ExtractImagesResourceWithImages_Anime_Fragment = { images: Array<{ link: string; facet: string | null }> };
+type ExtractImagesResourceWithImages_Anime_Fragment = {
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
+};
 
-type ExtractImagesResourceWithImages_Artist_Fragment = { images: Array<{ link: string; facet: string | null }> };
+type ExtractImagesResourceWithImages_Artist_Fragment = {
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
+};
 
-type ExtractImagesResourceWithImages_Studio_Fragment = { images: Array<{ link: string; facet: string | null }> };
+type ExtractImagesResourceWithImages_Studio_Fragment = {
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
+};
 
 export type ExtractImagesResourceWithImagesFragment =
     | ExtractImagesResourceWithImages_Anime_Fragment

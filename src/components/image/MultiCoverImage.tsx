@@ -6,7 +6,7 @@ import gql from "graphql-tag";
 import { LogoPlaceholder } from "@/components/image/LogoPlaceholder";
 import { AspectRatio } from "@/components/utils/AspectRatio";
 import type { MultiCoverImageResourceWithImagesFragment } from "@/generated/graphql";
-import extractImages from "@/utils/extractImages";
+import extractImages, { extractMultipleImages } from "@/utils/extractImages";
 
 function getTranslationX(item: number, itemCount: number) {
     switch (itemCount) {
@@ -144,6 +144,37 @@ export function MultiCoverImage({ resourcesWithImages, ...props }: MultiCoverIma
                                 alt={`Cover image of ${resource.name}`}
                                 title={resource.name}
                                 style={{ backgroundImage: `url(${smallCover})` }}
+                                {...props}
+                            />
+                        </StyledCoverItemContainer>
+                    ))
+                ) : (
+                    <LogoPlaceholder {...props} />
+                )}
+            </StyledCoverContainer>
+        </AspectRatio>
+    );
+}
+
+interface MultiLargeCoverImageProps extends ComponentPropsWithoutRef<typeof StyledCover> {
+    resourceWithImages: MultiCoverImageResourceWithImagesFragment;
+}
+
+export function MultiLargeCoverImage({ resourceWithImages, ...props }: MultiLargeCoverImageProps) {
+    const images = extractMultipleImages(resourceWithImages);
+
+    return (
+        <AspectRatio $ratio={2 / 3}>
+            <StyledCoverContainer>
+                {images.length ? (
+                    images.map(({ link }) => (
+                        <StyledCoverItemContainer key={link} $itemCount={images.length}>
+                            <StyledCover
+                                loading="lazy"
+                                src={link}
+                                alt={`Cover image of ${resourceWithImages.name}`}
+                                title={resourceWithImages.name}
+                                style={{ backgroundImage: `url(${link})` }}
                                 {...props}
                             />
                         </StyledCoverItemContainer>

@@ -251,13 +251,16 @@ const resolvers: Resolvers = {
             }),
             (resources) => resources.map(({ artistresource, ...resource }) => ({ ...artistresource, ...resource })),
         ),
-        images: createApiResolverNotNull<ApiArtistShow<"images">>()({
-            extractFromParent: (artist) => artist.images,
-            endpoint: (artist) => `/artist/${artist.slug}`,
-            extractFromResponse: (response) => response.artist.images,
-            type: "Artist",
-            baseInclude: INCLUDES.Artist.images,
-        }),
+        images: transformedResolver(
+            createApiResolverNotNull<ApiArtistShow<"images">>()({
+                extractFromParent: (artist) => artist.images,
+                endpoint: (artist) => `/artist/${artist.slug}`,
+                extractFromResponse: (response) => response.artist.images,
+                type: "Artist",
+                baseInclude: INCLUDES.Artist.images,
+            }),
+            (images) => images.map(({ artistimage, ...image }) => ({ ...artistimage, ...image })),
+        ),
         groups: transformedResolver(
             createApiResolverNotNull<ApiArtistShow<"groups">>()({
                 extractFromParent: (artist) => artist.groups,
