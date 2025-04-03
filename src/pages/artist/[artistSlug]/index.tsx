@@ -85,7 +85,6 @@ interface ArtistDetailPageParams extends ParsedUrlQuery {
 
 export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
     const [collapseInformation, setCollapseInformation] = useState(true);
-   // const images = {name: artist.name, images: extractMultipleImages(artist)} as MultiCoverImageResourceWithImagesFragment;
 
     const characters = useMemo(
         () =>
@@ -220,7 +219,8 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                                 <StyledList>
                                     {artist.groups.map(({ group, alias, as, notes }) => (
                                         <Text key={group.slug} as={Link} href={`/artist/${group.slug}`} link>
-                                            {alias ? alias : group.name}
+                                            {group.name}
+                                            {alias ? ` (as ${alias})` : null}
                                             {as ? ` (as ${as})` : null}
                                             {notes ? ` (${notes})` : null}
                                         </Text>
