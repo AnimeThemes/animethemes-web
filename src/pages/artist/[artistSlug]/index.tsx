@@ -4,6 +4,7 @@ import { useContext } from "react";
 import styled from "styled-components";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
+import type { MDXRemoteSerializeResult } from "next-mdx-remote";
 
 import gql from "graphql-tag";
 import { uniq } from "lodash-es";
@@ -11,6 +12,7 @@ import type { ParsedUrlQuery } from "querystring";
 
 import { Column } from "@/components/box/Flex";
 import { FilterToggleButton } from "@/components/button/FilterToggleButton";
+import { ArtistSummaryCard } from "@/components/card/ArtistSummaryCard";
 import { Card } from "@/components/card/Card";
 import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
 import { SidebarContainer } from "@/components/container/SidebarContainer";
@@ -18,12 +20,14 @@ import { DescriptionList } from "@/components/description-list/DescriptionList";
 import { ExternalLink } from "@/components/external-link/ExternalLink";
 import { MultiLargeCoverImage } from "@/components/image/MultiCoverImage";
 import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
+import { Markdown } from "@/components/markdown/Markdown";
 import { SearchFilter } from "@/components/search-filter/SearchFilter";
 import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
 import { Collapse } from "@/components/utils/Collapse";
+import { HeightTransition } from "@/components/utils/HeightTransition";
 import PlayerContext, { createWatchListItem } from "@/context/playerContext";
 import type {
     ArtistDetailPageAllQuery,
@@ -45,9 +49,10 @@ import {
     SONG_Z_A,
     SONG_Z_A_ANIME,
 } from "@/utils/comparators";
+import extractMultipleImages from "@/utils/extractMultipleImages";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import getSharedPageProps from "@/utils/getSharedPageProps";
-import { HeightTransition } from "@/components/utils/HeightTransition";
+import serializeMarkdown from "@/utils/serializeMarkdown";
 import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledList = styled.div`
@@ -77,13 +82,16 @@ function getPerformanceFilter(key: string | null): (performance: Performance) =>
     }
 }
 
-type ArtistDetailPageProps = RequiredNonNullable<ArtistDetailPageQuery>;
+type ArtistDetailPageProps = RequiredNonNullable<ArtistDetailPageQuery> & {
+    informationMarkdownSource: MDXRemoteSerializeResult | null;
+};
 
 interface ArtistDetailPageParams extends ParsedUrlQuery {
     artistSlug: string;
 }
 
-export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
+export default function ArtistDetailPage({ artist, informationMarkdownSource }: ArtistDetailPageProps) {
+    const images = extractMultipleImages(artist);
     const [collapseInformation, setCollapseInformation] = useState(true);
 
     const characters = useMemo(
@@ -184,11 +192,11 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
 
     return (
         <>
-            <SEO title={artist.name}/>
+            <SEO title={artist.name} image={images[0]?.link} />
             <Text variant="h1">{artist.name}</Text>
             <SidebarContainer>
                 <Column style={{ "--gap": "24px" }}>
-                    <MultiLargeCoverImage resourceWithImages={artist}/>
+                    <MultiLargeCoverImage resourceWithImages={artist} />
                     <DescriptionList>
                         {aliases.length > 0 && (
                             <DescriptionList.Item title="Aliases">
@@ -205,11 +213,18 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                             <DescriptionList.Item title="Members">
                                 <StyledList>
                                     {artist.members.map(({ member, alias, as, notes }) => (
-                                        <Text key={member.slug} as={Link} href={`/artist/${member.slug}`} link>
-                                            {alias ? alias : member.name}
-                                            {as ? ` (as ${as})` : null}
-                                            {notes ? ` (${notes})` : null}
-                                        </Text>
+                                        <Column key={member.slug}>
+                                            <Text as={Link} href={`/artist/${member.slug}`} link>
+                                                {alias ? alias : member.name}
+                                            </Text>
+                                            {as || notes ? (
+                                                <Text variant="small" color="text-muted">
+                                                    {[as ? `As ${as}` : null, notes || null]
+                                                        .filter(Boolean)
+                                                        .join(" • ")}
+                                                </Text>
+                                            ) : null}
+                                        </Column>
                                     ))}
                                 </StyledList>
                             </DescriptionList.Item>
@@ -218,12 +233,22 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                             <DescriptionList.Item title="Member of">
                                 <StyledList>
                                     {artist.groups.map(({ group, alias, as, notes }) => (
-                                        <Text key={group.slug} as={Link} href={`/artist/${group.slug}`} link>
-                                            {group.name}
-                                            {alias ? ` (as ${alias})` : null}
-                                            {as ? ` (as ${as})` : null}
-                                            {notes ? ` (${notes})` : null}
-                                        </Text>
+                                        <Column key={group.slug}>
+                                            <Text as={Link} href={`/artist/${group.slug}`} link>
+                                                {group.name}
+                                            </Text>
+                                            {alias || as || notes ? (
+                                                <Text variant="small" color="text-muted">
+                                                    {[
+                                                        alias ? `As ${alias}` : null,
+                                                        as ? `As ${as}` : null,
+                                                        notes || null,
+                                                    ]
+                                                        .filter(Boolean)
+                                                        .join(" • ")}
+                                                </Text>
+                                            ) : null}
+                                        </Column>
                                     ))}
                                 </StyledList>
                             </DescriptionList.Item>
@@ -245,16 +270,14 @@ export default function ArtistDetailPage({ artist }: ArtistDetailPageProps) {
                     </DescriptionList>
                 </Column>
                 <Column style={{ "--gap": "24px" }}>
-                    {!!artist.information && (
+                    {!!informationMarkdownSource && (
                         <>
                             <Text variant="h2">Information</Text>
                             <Card $hoverable onClick={() => setCollapseInformation(!collapseInformation)}>
                                 <HeightTransition>
-                                    <Text
-                                        as="p"
-                                        maxLines={collapseInformation ? 2 : undefined}
-                                        dangerouslySetInnerHTML={{ __html: artist.information }}
-                                    />
+                                    <Text as="div" maxLines={collapseInformation ? 2 : undefined}>
+                                        <Markdown source={informationMarkdownSource} />
+                                    </Text>
                                 </HeightTransition>
                             </Card>
                         </>
@@ -402,9 +425,12 @@ ArtistDetailPage.fragements = {
         ${ThemeSummaryCard.fragments.theme}
         ${ThemeSummaryCard.fragments.artist}
         ${ThemeSummaryCard.fragments.expandable}
+        ${ArtistSummaryCard.fragments.artist}
+        ${MultiLargeCoverImage.fragments.resourceWithImages}
 
         fragment ArtistDetailPageArtist on Artist {
             ...ThemeSummaryCardArtist
+            ...MultiLargeCoverImageResourceWithImages
             slug
             information
             name
@@ -440,6 +466,7 @@ ArtistDetailPage.fragements = {
             }
             members {
                 member {
+                    ...ArtistSummaryCardArtist
                     slug
                     name
                 }
@@ -491,11 +518,6 @@ ArtistDetailPage.fragements = {
                 site
                 as
             }
-            images {
-                depth
-                facet
-                link
-            }
         }
     `,
 };
@@ -531,6 +553,9 @@ export const getStaticProps: GetStaticProps<ArtistDetailPageProps, ArtistDetailP
         props: {
             ...getSharedPageProps(apiRequests),
             artist: data.artist,
+            informationMarkdownSource: data.artist.information
+                ? (await serializeMarkdown(data.artist.information)).source
+                : null,
         },
         // Revalidate after 1 hour (= 3600 seconds).
         revalidate: 3600,

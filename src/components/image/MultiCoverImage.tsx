@@ -5,8 +5,12 @@ import gql from "graphql-tag";
 
 import { LogoPlaceholder } from "@/components/image/LogoPlaceholder";
 import { AspectRatio } from "@/components/utils/AspectRatio";
-import type { MultiCoverImageResourceWithImagesFragment } from "@/generated/graphql";
-import extractImages, { extractMultipleImages } from "@/utils/extractImages";
+import type {
+    MultiCoverImageResourceWithImagesFragment,
+    MultiLargeCoverImageResourceWithImagesFragment,
+} from "@/generated/graphql";
+import extractImages from "@/utils/extractImages";
+import extractMultipleImages from "@/utils/extractMultipleImages";
 
 function getTranslationX(item: number, itemCount: number) {
     switch (itemCount) {
@@ -156,12 +160,31 @@ export function MultiCoverImage({ resourcesWithImages, ...props }: MultiCoverIma
     );
 }
 
+MultiCoverImage.fragments = {
+    resourceWithImages: gql`
+        ${extractImages.fragments.resourceWithImages}
+
+        fragment MultiCoverImageResourceWithImages on ResourceWithImages {
+            ... on Anime {
+                name
+            }
+            ... on Artist {
+                name
+            }
+            ... on Studio {
+                name
+            }
+            ...extractImagesResourceWithImages
+        }
+    `,
+};
+
 interface MultiLargeCoverImageProps extends ComponentPropsWithoutRef<typeof StyledCover> {
-    resourceWithImages: MultiCoverImageResourceWithImagesFragment;
+    resourceWithImages: MultiLargeCoverImageResourceWithImagesFragment;
 }
 
 export function MultiLargeCoverImage({ resourceWithImages, ...props }: MultiLargeCoverImageProps) {
-    const images = extractMultipleImages(resourceWithImages);
+    const images = extractMultipleImages(resourceWithImages).slice(0, 4);
 
     return (
         <AspectRatio $ratio={2 / 3}>
@@ -187,11 +210,11 @@ export function MultiLargeCoverImage({ resourceWithImages, ...props }: MultiLarg
     );
 }
 
-MultiCoverImage.fragments = {
+MultiLargeCoverImage.fragments = {
     resourceWithImages: gql`
-        ${extractImages.fragments.resourceWithImages}
+        ${extractMultipleImages.fragments.resourceWithImages}
 
-        fragment MultiCoverImageResourceWithImages on ResourceWithImages {
+        fragment MultiLargeCoverImageResourceWithImages on ResourceWithImages {
             ... on Anime {
                 name
             }
@@ -201,7 +224,7 @@ MultiCoverImage.fragments = {
             ... on Studio {
                 name
             }
-            ...extractImagesResourceWithImages
+            ...extractMultipleImagesResourceWithImages
         }
     `,
 };
