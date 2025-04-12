@@ -1,6 +1,4 @@
-import React, { useCallback } from "react";
-import { memo, useMemo, useState } from "react";
-import { useContext } from "react";
+import React, { memo, useCallback, useContext, useMemo, useState } from "react";
 import styled from "styled-components";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
@@ -52,7 +50,7 @@ import {
 import extractMultipleImages from "@/utils/extractMultipleImages";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import getSharedPageProps from "@/utils/getSharedPageProps";
-import serializeMarkdown from "@/utils/serializeMarkdown";
+import { serializeMarkdownSafe } from "@/utils/serializeMarkdown";
 import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledList = styled.div`
@@ -554,7 +552,7 @@ export const getStaticProps: GetStaticProps<ArtistDetailPageProps, ArtistDetailP
             ...getSharedPageProps(apiRequests),
             artist: data.artist,
             informationMarkdownSource: data.artist.information
-                ? (await serializeMarkdown(data.artist.information)).source
+                ? (await serializeMarkdownSafe(data.artist.information)).source
                 : null,
         },
         // Revalidate after 1 hour (= 3600 seconds).
