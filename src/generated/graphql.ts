@@ -44,6 +44,7 @@ export type Artist = ResourceWithImages & {
     groups: Array<ArtistMembership>;
     id: Scalars["Int"]["output"];
     images: Array<Image>;
+    information: Maybe<Scalars["String"]["output"]>;
     members: Array<ArtistMembership>;
     name: Scalars["String"]["output"];
     performances: Array<Performance>;
@@ -56,6 +57,7 @@ export type ArtistMembership = {
     as: Maybe<Scalars["String"]["output"]>;
     group: Artist;
     member: Artist;
+    notes: Maybe<Scalars["String"]["output"]>;
 };
 
 export type ArtistSearchResult = EntitySearchResult & {
@@ -153,6 +155,7 @@ export type GlobalSearchResult = {
 };
 
 export type Image = {
+    depth: Maybe<Scalars["Int"]["output"]>;
     facet: Maybe<Scalars["String"]["output"]>;
     id: Scalars["Int"]["output"];
     link: Scalars["String"]["output"];
@@ -962,6 +965,26 @@ export type MultiCoverImageResourceWithImagesFragment =
     | MultiCoverImageResourceWithImages_Anime_Fragment
     | MultiCoverImageResourceWithImages_Artist_Fragment
     | MultiCoverImageResourceWithImages_Studio_Fragment;
+
+type MultiLargeCoverImageResourceWithImages_Anime_Fragment = {
+    name: string;
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
+};
+
+type MultiLargeCoverImageResourceWithImages_Artist_Fragment = {
+    name: string;
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
+};
+
+type MultiLargeCoverImageResourceWithImages_Studio_Fragment = {
+    name: string;
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
+};
+
+export type MultiLargeCoverImageResourceWithImagesFragment =
+    | MultiLargeCoverImageResourceWithImages_Anime_Fragment
+    | MultiLargeCoverImageResourceWithImages_Artist_Fragment
+    | MultiLargeCoverImageResourceWithImages_Studio_Fragment;
 
 export type ProfileImageUserFragment = { name: string; email: string };
 
@@ -1807,6 +1830,7 @@ export type RevalidateAnimeQuery = {
 
 export type ArtistDetailPageArtistFragment = {
     slug: string;
+    information: string | null;
     name: string;
     performances: Array<{
         alias: string | null;
@@ -1858,10 +1882,16 @@ export type ArtistDetailPageArtistFragment = {
             }>;
         };
     }>;
-    members: Array<{ alias: string | null; as: string | null; member: { slug: string; name: string } }>;
+    members: Array<{
+        alias: string | null;
+        as: string | null;
+        notes: string | null;
+        member: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+    }>;
     groups: Array<{
         alias: string | null;
         as: string | null;
+        notes: string | null;
         group: {
             slug: string;
             name: string;
@@ -1922,7 +1952,7 @@ export type ArtistDetailPageArtistFragment = {
         };
     }>;
     resources: Array<{ link: string | null; site: string | null; as: string | null }>;
-    images: Array<{ facet: string | null; link: string }>;
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
 };
 
 export type ArtistDetailPageQueryVariables = Exact<{
@@ -1932,6 +1962,7 @@ export type ArtistDetailPageQueryVariables = Exact<{
 export type ArtistDetailPageQuery = {
     artist: {
         slug: string;
+        information: string | null;
         name: string;
         performances: Array<{
             alias: string | null;
@@ -1987,10 +2018,16 @@ export type ArtistDetailPageQuery = {
                 }>;
             };
         }>;
-        members: Array<{ alias: string | null; as: string | null; member: { slug: string; name: string } }>;
+        members: Array<{
+            alias: string | null;
+            as: string | null;
+            notes: string | null;
+            member: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+        }>;
         groups: Array<{
             alias: string | null;
             as: string | null;
+            notes: string | null;
             group: {
                 slug: string;
                 name: string;
@@ -2051,7 +2088,7 @@ export type ArtistDetailPageQuery = {
             };
         }>;
         resources: Array<{ link: string | null; site: string | null; as: string | null }>;
-        images: Array<{ facet: string | null; link: string }>;
+        images: Array<{ link: string; depth: number | null; facet: string | null }>;
     } | null;
 };
 
@@ -2060,6 +2097,7 @@ export type ArtistDetailPageAllQueryVariables = Exact<{ [key: string]: never }>;
 export type ArtistDetailPageAllQuery = {
     artistAll: Array<{
         slug: string;
+        information: string | null;
         name: string;
         performances: Array<{
             alias: string | null;
@@ -2115,10 +2153,16 @@ export type ArtistDetailPageAllQuery = {
                 }>;
             };
         }>;
-        members: Array<{ alias: string | null; as: string | null; member: { slug: string; name: string } }>;
+        members: Array<{
+            alias: string | null;
+            as: string | null;
+            notes: string | null;
+            member: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+        }>;
         groups: Array<{
             alias: string | null;
             as: string | null;
+            notes: string | null;
             group: {
                 slug: string;
                 name: string;
@@ -2179,7 +2223,7 @@ export type ArtistDetailPageAllQuery = {
             };
         }>;
         resources: Array<{ link: string | null; site: string | null; as: string | null }>;
-        images: Array<{ facet: string | null; link: string }>;
+        images: Array<{ link: string; depth: number | null; facet: string | null }>;
     }>;
 };
 
@@ -3045,3 +3089,20 @@ export type ExtractImagesResourceWithImagesFragment =
     | ExtractImagesResourceWithImages_Anime_Fragment
     | ExtractImagesResourceWithImages_Artist_Fragment
     | ExtractImagesResourceWithImages_Studio_Fragment;
+
+type ExtractMultipleImagesResourceWithImages_Anime_Fragment = {
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
+};
+
+type ExtractMultipleImagesResourceWithImages_Artist_Fragment = {
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
+};
+
+type ExtractMultipleImagesResourceWithImages_Studio_Fragment = {
+    images: Array<{ link: string; depth: number | null; facet: string | null }>;
+};
+
+export type ExtractMultipleImagesResourceWithImagesFragment =
+    | ExtractMultipleImagesResourceWithImages_Anime_Fragment
+    | ExtractMultipleImagesResourceWithImages_Artist_Fragment
+    | ExtractMultipleImagesResourceWithImages_Studio_Fragment;

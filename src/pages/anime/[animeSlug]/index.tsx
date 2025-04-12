@@ -1,7 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
+import type { MDXRemoteSerializeResult } from "next-mdx-remote";
 
 import gql from "graphql-tag";
 import type { ParsedUrlQuery } from "querystring";
@@ -14,6 +15,7 @@ import { DescriptionList } from "@/components/description-list/DescriptionList";
 import { ExternalLink } from "@/components/external-link/ExternalLink";
 import { AnimeThemeFilter } from "@/components/filter/AnimeThemeFilter";
 import { CoverImage } from "@/components/image/CoverImage";
+import { Markdown } from "@/components/markdown/Markdown";
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
 import { HeightTransition } from "@/components/utils/HeightTransition";
@@ -30,6 +32,7 @@ import extractImages from "@/utils/extractImages";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
+import { serializeMarkdownSafe } from "@/utils/serializeMarkdown";
 import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledList = styled.div`
@@ -40,13 +43,15 @@ const StyledList = styled.div`
     text-align: center;
 `;
 
-interface AnimeDetailPageProps extends SharedPageProps, RequiredNonNullable<AnimeDetailPageQuery> {}
+interface AnimeDetailPageProps extends SharedPageProps, RequiredNonNullable<AnimeDetailPageQuery> {
+    synopsisMarkdownSource: MDXRemoteSerializeResult | null;
+}
 
 interface AnimeDetailPageParams extends ParsedUrlQuery {
     animeSlug: string;
 }
 
-export default function AnimeDetailPage({ anime }: AnimeDetailPageProps) {
+export default function AnimeDetailPage({ anime, synopsisMarkdownSource }: AnimeDetailPageProps) {
     const [collapseSynopsis, setCollapseSynopsis] = useState(true);
     const { largeCover } = extractImages(anime);
 
@@ -118,16 +123,14 @@ export default function AnimeDetailPage({ anime }: AnimeDetailPageProps) {
                     </DescriptionList>
                 </Column>
                 <Column style={{ "--gap": "24px" }}>
-                    {!!anime.synopsis && (
+                    {!!synopsisMarkdownSource && (
                         <>
                             <Text variant="h2">Synopsis</Text>
                             <Card $hoverable onClick={() => setCollapseSynopsis(!collapseSynopsis)}>
                                 <HeightTransition>
-                                    <Text
-                                        as="p"
-                                        maxLines={collapseSynopsis ? 2 : undefined}
-                                        dangerouslySetInnerHTML={{ __html: anime.synopsis }}
-                                    />
+                                    <Text as="div" maxLines={collapseSynopsis ? 2 : undefined}>
+                                        <Markdown source={synopsisMarkdownSource} />
+                                    </Text>
                                 </HeightTransition>
                             </Card>
                         </>
@@ -214,6 +217,9 @@ export const getStaticProps: GetStaticProps<AnimeDetailPageProps, AnimeDetailPag
         props: {
             ...getSharedPageProps(apiRequests),
             anime: data.anime,
+            synopsisMarkdownSource: data.anime.synopsis
+                ? (await serializeMarkdownSafe(data.anime.synopsis)).source
+                : null,
         },
         // Revalidate after 1 hour (= 3600 seconds).
         revalidate: 3600,

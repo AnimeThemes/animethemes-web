@@ -5,8 +5,12 @@ import gql from "graphql-tag";
 
 import { LogoPlaceholder } from "@/components/image/LogoPlaceholder";
 import { AspectRatio } from "@/components/utils/AspectRatio";
-import type { MultiCoverImageResourceWithImagesFragment } from "@/generated/graphql";
+import type {
+    MultiCoverImageResourceWithImagesFragment,
+    MultiLargeCoverImageResourceWithImagesFragment,
+} from "@/generated/graphql";
 import extractImages from "@/utils/extractImages";
+import extractMultipleImages from "@/utils/extractMultipleImages";
 
 function getTranslationX(item: number, itemCount: number) {
     switch (itemCount) {
@@ -171,6 +175,56 @@ MultiCoverImage.fragments = {
                 name
             }
             ...extractImagesResourceWithImages
+        }
+    `,
+};
+
+interface MultiLargeCoverImageProps extends ComponentPropsWithoutRef<typeof StyledCover> {
+    resourceWithImages: MultiLargeCoverImageResourceWithImagesFragment;
+}
+
+export function MultiLargeCoverImage({ resourceWithImages, ...props }: MultiLargeCoverImageProps) {
+    const images = extractMultipleImages(resourceWithImages).slice(0, 4);
+
+    return (
+        <AspectRatio $ratio={2 / 3}>
+            <StyledCoverContainer>
+                {images.length ? (
+                    images.map(({ link }) => (
+                        <StyledCoverItemContainer key={link} $itemCount={images.length}>
+                            <StyledCover
+                                loading="lazy"
+                                src={link}
+                                alt={`Cover image of ${resourceWithImages.name}`}
+                                title={resourceWithImages.name}
+                                style={{ backgroundImage: `url(${link})` }}
+                                {...props}
+                            />
+                        </StyledCoverItemContainer>
+                    ))
+                ) : (
+                    <LogoPlaceholder {...props} />
+                )}
+            </StyledCoverContainer>
+        </AspectRatio>
+    );
+}
+
+MultiLargeCoverImage.fragments = {
+    resourceWithImages: gql`
+        ${extractMultipleImages.fragments.resourceWithImages}
+
+        fragment MultiLargeCoverImageResourceWithImages on ResourceWithImages {
+            ... on Anime {
+                name
+            }
+            ... on Artist {
+                name
+            }
+            ... on Studio {
+                name
+            }
+            ...extractMultipleImagesResourceWithImages
         }
     `,
 };

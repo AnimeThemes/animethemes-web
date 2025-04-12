@@ -54,6 +54,7 @@ export interface ApiAnnouncement {
 
 export interface ApiArtist {
     id: number;
+    information: string | null;
     name: string;
     slug: string;
     songs?: Array<
@@ -66,7 +67,11 @@ export interface ApiArtist {
             artistresource: ApiArtistResource;
         }
     >;
-    images?: Array<ApiImage>;
+    images?: Array<
+        ApiImage & {
+            artistimage: ApiArtistImage;
+        }
+    >;
     groups?: Array<
         ApiArtist & {
             artistmember: ApiArtistMember;
@@ -219,6 +224,10 @@ export interface ApiVideoScript {
 
 export interface ApiAnimeResource {
     as: string | null;
+}
+
+export interface ApiArtistImage {
+    depth: number | null;
 }
 
 export interface ApiArtistMember {

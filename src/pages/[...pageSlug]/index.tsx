@@ -19,7 +19,7 @@ import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 import type { Heading } from "@/utils/rehypeExtractHeadings";
-import serializeMarkdown from "@/utils/serializeMarkdown";
+import { serializeMarkdownSafe } from "@/utils/serializeMarkdown";
 import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledGrid = styled.div`
@@ -128,7 +128,7 @@ export const getStaticProps: GetStaticProps<DocumentPageProps, DocumentPageParam
             ...getSharedPageProps(apiRequests),
             page: {
                 ...data.page,
-                ...(await serializeMarkdown(data.page.body)),
+                ...(await serializeMarkdownSafe(data.page.body)),
             },
         },
         // Revalidate after 1 hour (= 3600 seconds).

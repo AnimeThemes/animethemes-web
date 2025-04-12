@@ -83,6 +83,7 @@ export type Artist = ResourceWithImages & {
     groups: Array<ArtistMembership>;
     id: Scalars["Int"]["output"];
     images: Array<Image>;
+    information?: Maybe<Scalars["String"]["output"]>;
     members: Array<ArtistMembership>;
     name: Scalars["String"]["output"];
     performances: Array<Performance>;
@@ -96,6 +97,7 @@ export type ArtistMembership = {
     as?: Maybe<Scalars["String"]["output"]>;
     group: Artist;
     member: Artist;
+    notes?: Maybe<Scalars["String"]["output"]>;
 };
 
 export type ArtistSearchResult = EntitySearchResult & {
@@ -204,6 +206,7 @@ export type GlobalSearchResult = {
 
 export type Image = {
     __typename?: "Image";
+    depth?: Maybe<Scalars["Int"]["output"]>;
     facet?: Maybe<Scalars["String"]["output"]>;
     id: Scalars["Int"]["output"];
     link: Scalars["String"]["output"];
@@ -883,6 +886,7 @@ export type ArtistResolvers<
     groups?: Resolver<Array<ResolversTypes["ArtistMembership"]>, ParentType, ContextType>;
     id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
     images?: Resolver<Array<ResolversTypes["Image"]>, ParentType, ContextType>;
+    information?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
     members?: Resolver<Array<ResolversTypes["ArtistMembership"]>, ParentType, ContextType>;
     name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
     performances?: Resolver<Array<ResolversTypes["Performance"]>, ParentType, ContextType>;
@@ -899,6 +903,7 @@ export type ArtistMembershipResolvers<
     as?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
     group?: Resolver<ResolversTypes["Artist"], ParentType, ContextType>;
     member?: Resolver<ResolversTypes["Artist"], ParentType, ContextType>;
+    notes?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1048,6 +1053,7 @@ export type ImageResolvers<
     ContextType = any,
     ParentType extends ResolversParentTypes["Image"] = ResolversParentTypes["Image"],
 > = {
+    depth?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>;
     facet?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
     id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
     link?: Resolver<ResolversTypes["String"], ParentType, ContextType>;

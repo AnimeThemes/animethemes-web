@@ -34,7 +34,7 @@ import useCurrentSeason from "@/hooks/useCurrentSeason";
 import { fetchData } from "@/lib/server";
 import theme from "@/theme";
 import getSharedPageProps from "@/utils/getSharedPageProps";
-import serializeMarkdown from "@/utils/serializeMarkdown";
+import { serializeMarkdownSafe } from "@/utils/serializeMarkdown";
 
 const BigButton = styled(Button)`
     justify-content: flex-end;
@@ -246,7 +246,7 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
             featuredTheme: data?.featuredTheme?.entry?.theme ?? null,
             announcementSources: await Promise.all(
                 data?.announcementAll.map(
-                    async (announcement) => (await serializeMarkdown(announcement.content)).source,
+                    async (announcement) => (await serializeMarkdownSafe(announcement.content)).source,
                 ),
             ),
         },
