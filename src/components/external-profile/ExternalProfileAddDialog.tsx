@@ -60,7 +60,10 @@ function ExternalProfileAddForm({ preselectedSite, onCancel }: ExternalProfileAd
             <SearchFilterGroup>
                 <SearchFilter>
                     <Text variant="h2">External Site</Text>
-                    <StyledSwitcher selectedItem={site} onChange={setSite}>
+                    <StyledSwitcher
+                        selectedItem={site}
+                        onChange={(newSite) => setSite(newSite as ExternalProfileSite | "")}
+                    >
                         <SwitcherOption value="AniList">AniList</SwitcherOption>
                         <SwitcherOption value="MyAnimeList">MyAnimeList</SwitcherOption>
                     </StyledSwitcher>

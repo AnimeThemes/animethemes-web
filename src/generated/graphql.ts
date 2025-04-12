@@ -132,6 +132,28 @@ export type Entry = {
     videos: Array<Video>;
 };
 
+export type ExternalProfile = {
+    entries: Array<ExternalProfileEntry>;
+    id: Scalars["Int"]["output"];
+    name: Scalars["String"]["output"];
+    site: ExternalProfileSite;
+    user: Maybe<UserPublic>;
+    visibility: ExternalProfileVisibility;
+};
+
+export type ExternalProfileEntry = {
+    anime: Anime;
+    id: Scalars["Int"]["output"];
+    is_favorite: Scalars["Boolean"]["output"];
+    profile: ExternalProfile;
+    score: Scalars["Int"]["output"];
+    watch_status: Scalars["String"]["output"];
+};
+
+export type ExternalProfileSite = "AniList" | "MyAnimeList";
+
+export type ExternalProfileVisibility = "Private" | "Public";
+
 export type FeaturedTheme = {
     end_at: Scalars["String"]["output"];
     entry: Maybe<Entry>;
@@ -220,6 +242,8 @@ export type Query = {
     bracket: Maybe<Bracket>;
     bracketAll: Array<Bracket>;
     dumpAll: Array<Dump>;
+    externalProfile: Maybe<ExternalProfile>;
+    externalProfileAll: Array<ExternalProfile>;
     featuredTheme: Maybe<FeaturedTheme>;
     imageAll: Array<Image>;
     me: UserScopedQuery;
@@ -268,6 +292,16 @@ export type QueryArtistAllArgs = {
 
 export type QueryBracketArgs = {
     slug: Scalars["String"]["input"];
+};
+
+export type QueryExternalProfileArgs = {
+    id: Scalars["Int"]["input"];
+};
+
+export type QueryExternalProfileAllArgs = {
+    limit: InputMaybe<Scalars["Int"]["input"]>;
+    name: InputMaybe<Scalars["String"]["input"]>;
+    site: InputMaybe<ExternalProfileSite>;
 };
 
 export type QueryImageAllArgs = {
@@ -2489,6 +2523,151 @@ export type AwardPageThemeQuery = {
 export type EventPageQueryVariables = Exact<{ [key: string]: never }>;
 
 export type EventPageQuery = { bracketAll: Array<{ slug: string; name: string }> };
+
+export type ExternalProfilePageExternalProfileQueryVariables = Exact<{
+    externalProfileId: Scalars["Int"]["input"];
+}>;
+
+export type ExternalProfilePageExternalProfileQuery = {
+    externalProfile: {
+        id: number;
+        name: string;
+        site: ExternalProfileSite;
+        visibility: ExternalProfileVisibility;
+        entries: Array<{
+            watch_status: string;
+            is_favorite: boolean;
+            score: number;
+            anime: {
+                slug: string;
+                name: string;
+                year: number | null;
+                season: string | null;
+                media_format: string | null;
+                themes: Array<{
+                    id: number;
+                    type: string;
+                    sequence: number | null;
+                    group: { name: string; slug: string } | null;
+                    anime: { slug: string };
+                    entries: Array<{
+                        version: number | null;
+                        episodes: string | null;
+                        spoiler: boolean;
+                        nsfw: boolean;
+                        videos: Array<{
+                            tags: string;
+                            resolution: number | null;
+                            nc: boolean;
+                            subbed: boolean;
+                            lyrics: boolean;
+                            uncen: boolean;
+                            source: VideoSource | null;
+                            overlap: VideoOverlap;
+                        }>;
+                    }>;
+                    song: { title: string | null } | null;
+                }>;
+                images: Array<{ link: string; facet: string | null }>;
+            };
+        }>;
+    } | null;
+};
+
+export type ExternalProfilePageExternalProfileFragment = {
+    id: number;
+    name: string;
+    site: ExternalProfileSite;
+    visibility: ExternalProfileVisibility;
+    entries: Array<{
+        watch_status: string;
+        is_favorite: boolean;
+        score: number;
+        anime: {
+            slug: string;
+            name: string;
+            year: number | null;
+            season: string | null;
+            media_format: string | null;
+            themes: Array<{
+                id: number;
+                type: string;
+                sequence: number | null;
+                group: { name: string; slug: string } | null;
+                anime: { slug: string };
+                entries: Array<{
+                    version: number | null;
+                    episodes: string | null;
+                    spoiler: boolean;
+                    nsfw: boolean;
+                    videos: Array<{
+                        tags: string;
+                        resolution: number | null;
+                        nc: boolean;
+                        subbed: boolean;
+                        lyrics: boolean;
+                        uncen: boolean;
+                        source: VideoSource | null;
+                        overlap: VideoOverlap;
+                    }>;
+                }>;
+                song: { title: string | null } | null;
+            }>;
+            images: Array<{ link: string; facet: string | null }>;
+        };
+    }>;
+};
+
+export type ExternalProfilePageQueryVariables = Exact<{
+    name: Scalars["String"]["input"];
+    site: ExternalProfileSite;
+}>;
+
+export type ExternalProfilePageQuery = {
+    externalProfileAll: Array<{
+        id: number;
+        name: string;
+        site: ExternalProfileSite;
+        visibility: ExternalProfileVisibility;
+        entries: Array<{
+            watch_status: string;
+            is_favorite: boolean;
+            score: number;
+            anime: {
+                slug: string;
+                name: string;
+                year: number | null;
+                season: string | null;
+                media_format: string | null;
+                themes: Array<{
+                    id: number;
+                    type: string;
+                    sequence: number | null;
+                    group: { name: string; slug: string } | null;
+                    anime: { slug: string };
+                    entries: Array<{
+                        version: number | null;
+                        episodes: string | null;
+                        spoiler: boolean;
+                        nsfw: boolean;
+                        videos: Array<{
+                            tags: string;
+                            resolution: number | null;
+                            nc: boolean;
+                            subbed: boolean;
+                            lyrics: boolean;
+                            uncen: boolean;
+                            source: VideoSource | null;
+                            overlap: VideoOverlap;
+                        }>;
+                    }>;
+                    song: { title: string | null } | null;
+                }>;
+                images: Array<{ link: string; facet: string | null }>;
+            };
+        }>;
+    }>;
+};
 
 export type HomePageQueryVariables = Exact<{ [key: string]: never }>;
 

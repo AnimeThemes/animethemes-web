@@ -2,7 +2,7 @@ import { memo, useMemo, useState } from "react";
 import styled from "styled-components";
 import type { GetServerSideProps } from "next";
 
-import { faStar } from "@fortawesome/pro-solid-svg-icons";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 import gql from "graphql-tag";
 import type { ParsedUrlQuery } from "querystring";
 import useSWR from "swr";
