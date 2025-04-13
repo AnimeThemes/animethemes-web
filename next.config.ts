@@ -24,7 +24,6 @@ const nextConfig: NextConfig = {
     },
     staticPageGenerationTimeout: 3600,
     experimental: {
-        turbo: {},
         // We don't want to multi-thread page building
         // to make use of caching between page builds.
         workerThreads: false,
