@@ -146,7 +146,7 @@ export type ExternalProfileEntry = {
     id: Scalars["Int"]["output"];
     is_favorite: Scalars["Boolean"]["output"];
     profile: ExternalProfile;
-    score: Scalars["Int"]["output"];
+    score: Scalars["Float"]["output"];
     watch_status: Scalars["String"]["output"];
 };
 

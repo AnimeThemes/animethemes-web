@@ -294,7 +294,7 @@ const typeDefs = gql`
 
     type ExternalProfileEntry {
         id: Int!
-        score: Int!
+        score: Float!
         is_favorite: Boolean!
         watch_status: String!
         profile: ExternalProfile!

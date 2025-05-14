@@ -198,7 +198,7 @@ export type ExternalProfileEntry = {
     id: Scalars["Int"]["output"];
     is_favorite: Scalars["Boolean"]["output"];
     profile: ExternalProfile;
-    score: Scalars["Int"]["output"];
+    score: Scalars["Float"]["output"];
     watch_status: Scalars["String"]["output"];
 };
 
@@ -771,6 +771,7 @@ export type ResolversTypes = {
     ExternalProfileVisibility: ExternalProfileVisibility;
     FeaturedTheme: ResolverTypeWrapper<ApiFeaturedTheme>;
     Filter: Filter;
+    Float: ResolverTypeWrapper<Scalars["Float"]["output"]>;
     GlobalSearchResult: ResolverTypeWrapper<
         Omit<GlobalSearchResult, "anime" | "artists" | "playlists" | "series" | "studios" | "themes"> & {
             anime: Array<ResolversTypes["Anime"]>;
@@ -847,6 +848,7 @@ export type ResolversParentTypes = {
     ExternalProfileEntry: ApiExternalProfileEntry;
     FeaturedTheme: ApiFeaturedTheme;
     Filter: Filter;
+    Float: Scalars["Float"]["output"];
     GlobalSearchResult: Omit<
         GlobalSearchResult,
         "anime" | "artists" | "playlists" | "series" | "studios" | "themes"
@@ -1095,7 +1097,7 @@ export type ExternalProfileEntryResolvers<
     id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
     is_favorite?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
     profile?: Resolver<ResolversTypes["ExternalProfile"], ParentType, ContextType>;
-    score?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
+    score?: Resolver<ResolversTypes["Float"], ParentType, ContextType>;
     watch_status?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
