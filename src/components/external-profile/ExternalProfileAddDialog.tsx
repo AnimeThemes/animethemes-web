@@ -55,8 +55,11 @@ interface ExternalProfileAddFormProps {
 function ExternalProfileAddForm({ preselectedSite, onCancel }: ExternalProfileAddFormProps) {
     const [site, setSite] = useState<ExternalProfileSite | "">(preselectedSite ?? "");
 
+    const authUrl = `${CLIENT_API_URL}/externaltoken/auth`;
+
     return (
-        <StyledForm action={site ? getAuthUrl(site) : undefined}>
+        <StyledForm action={authUrl}>
+            <input type="hidden" name="site" value={site} />
             <SearchFilterGroup>
                 <SearchFilter>
                     <Text variant="h2">External Site</Text>
@@ -93,13 +96,4 @@ function ExternalProfileAddForm({ preselectedSite, onCancel }: ExternalProfileAd
             </Row>
         </StyledForm>
     );
-}
-
-function getAuthUrl(site: ExternalProfileSite): string {
-    switch (site) {
-        case "AniList":
-            return `${CLIENT_API_URL}/externaltoken/auth?site=AniList`;
-        case "MyAnimeList":
-            return `${CLIENT_API_URL}/externaltoken/auth?site=MyAnimeList`;
-    }
 }
