@@ -30,10 +30,6 @@ This is a list of all available options:
 ; The URL to the AnimeThemes API which will be used on the server.
 ANIMETHEMES_API_URL=http://localhost
 
-; If specified, this API key will be used to make requests to the AnimeThemes API.
-; This is used to by-pass rate limiting.
-ANIMETHEMES_API_KEY=...
-
 ; Set to any truthy value to activate minimal build mode.
 ; In minimal build mode, only a small subset of pages get prerendered at build time.
 MINIMAL_BUILD=true

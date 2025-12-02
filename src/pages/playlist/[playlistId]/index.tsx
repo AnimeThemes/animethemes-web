@@ -369,14 +369,9 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                     ) : null}
                     {isRanking && topRankedTrack ? (
                         <FeaturedTheme
-                            theme={{
-                                ...tracks[0].entry.theme,
-                                entries: [
-                                    {
-                                        ...tracks[0].entry,
-                                        videos: [tracks[0].video],
-                                    },
-                                ],
+                            featuredTheme={{
+                                entry: tracks[0].entry,
+                                video: tracks[0].video,
                             }}
                             hasGrill={false}
                             card={
