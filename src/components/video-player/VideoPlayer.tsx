@@ -145,6 +145,82 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
         ],
     );
 
+    // Handle keyboard inputs
+    const onKeyDown = useCallback((event: KeyboardEvent) => {
+        if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+            return;
+        }
+
+        switch (event.key.toLocaleLowerCase()) {
+            case " ": // Play/Pause
+            case "k":
+                event.preventDefault();
+                togglePlay();
+                break;
+            case "arrowright": // Seek forward
+                event.preventDefault();
+                if (playerRef.current) {
+                    playerRef.current.currentTime += 5;
+                }
+                break;
+            case ".": // Seek forward large
+                event.preventDefault();
+                if (playerRef.current) {
+                    playerRef.current.currentTime += 10;
+                }
+                break;
+            case "arrowleft": // Seek backward
+                event.preventDefault();
+                if (playerRef.current) {
+                    playerRef.current.currentTime -= 5;
+                }
+                break;
+            case ",": // Seek backward large
+                event.preventDefault();
+                if (playerRef.current) {
+                    playerRef.current.currentTime -= 10;
+                }
+                break;
+            case "n": // Next track
+                event.preventDefault();
+                playNextTrack(true);
+                break;
+            case "b": // Previous track
+                event.preventDefault();
+                playPreviousTrack(true);
+                break;
+            case "m": // Mute
+                event.preventDefault();
+                if (playerRef.current) {
+                    playerRef.current.volume = playerRef.current.volume === 0 ? 1 : 0;
+                }
+                break;
+            case "arrowup": // Volume up
+                event.preventDefault();
+                if (playerRef.current) {
+                    playerRef.current.volume = Math.min(playerRef.current.volume + 0.1, 1);
+                }
+                break;
+            case "arrowdown": // Volume down
+                event.preventDefault();
+                if (playerRef.current) {
+                    playerRef.current.volume = Math.max(playerRef.current.volume - 0.1, 0);
+                }
+                break;
+            case "d": // Download
+                event.preventDefault();
+                if (audioMode === AudioMode.ENABLED) {
+                    const link = document.createElement("a");
+                    link.href = `${audioUrl}?download`;
+                    link.click();
+                } else {
+                    const link = document.createElement("a");
+                    link.href = `${videoUrl}?download`;
+                    link.click();
+                }
+        }
+    }, [togglePlay, playNextTrack, playPreviousTrack, audioMode, audioUrl, videoUrl]);
+
     const autoPlayNextTrack = useCallback(() => {
         if (
             (isWatchListUsingLocalAutoPlay && isLocalAutoPlay) ||
@@ -200,6 +276,12 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
             });
         }
     }, [anime, theme, smallCover, playNextTrack, playPreviousTrack]);
+
+    // Keyboard shortcuts
+    useEffect(() => {
+        window.addEventListener("keydown", onKeyDown);
+        return () => window.removeEventListener("keydown", onKeyDown);
+    }, [onKeyDown]);
 
     function onPlayerMount(player: HTMLVideoElement) {
         playerRef.current = player;
