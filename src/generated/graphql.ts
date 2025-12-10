@@ -813,22 +813,23 @@ export type PlaylistTrackRemoveDialogEntryFragment = {
     };
 };
 
-export type FeaturedThemeThemeFragment = {
-    type: string;
-    sequence: number | null;
+export type FeaturedThemeEntryFragment = {
     id: number;
-    anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
-    entries: Array<{
+    version: number | null;
+    theme: {
         id: number;
-        version: number | null;
-        videos: Array<{ id: number; basename: string; tags: string; audio: { basename: string } }>;
-    }>;
-    group: { name: string; slug: string } | null;
-    song: {
-        title: string | null;
-        performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
-    } | null;
+        type: string;
+        sequence: number | null;
+        group: { name: string; slug: string } | null;
+        anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+        song: {
+            title: string | null;
+            performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
+        } | null;
+    };
 };
+
+export type FeaturedThemeVideoFragment = { id: number; basename: string; tags: string; audio: { basename: string } };
 
 export type AnimeThemeFilterThemeFragment = {
     type: string;
@@ -2495,17 +2496,14 @@ export type HomePageQueryVariables = Exact<{ [key: string]: never }>;
 export type HomePageQuery = {
     featuredTheme: {
         entry: {
+            id: number;
+            version: number | null;
             theme: {
+                id: number;
                 type: string;
                 sequence: number | null;
-                id: number;
-                anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
-                entries: Array<{
-                    id: number;
-                    version: number | null;
-                    videos: Array<{ id: number; basename: string; tags: string; audio: { basename: string } }>;
-                }>;
                 group: { name: string; slug: string } | null;
+                anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
                 song: {
                     title: string | null;
                     performances: Array<{
@@ -2516,6 +2514,7 @@ export type HomePageQuery = {
                 } | null;
             };
         } | null;
+        video: { id: number; basename: string; tags: string; audio: { basename: string } } | null;
     } | null;
     announcementAll: Array<{ content: string }>;
 };

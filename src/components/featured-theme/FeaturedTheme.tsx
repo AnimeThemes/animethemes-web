@@ -5,8 +5,12 @@ import Link from "next/link";
 
 import gql from "graphql-tag";
 
-import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
-import type { FeaturedThemeThemeFragment } from "@/generated/graphql";
+import {
+    VideoSummaryCard,
+    VideoSummaryCardFragmentEntry,
+    VideoSummaryCardFragmentVideo,
+} from "@/components/card/VideoSummaryCard";
+import type { FeaturedThemeEntryFragment, FeaturedThemeVideoFragment } from "@/generated/graphql";
 import useCompatability from "@/hooks/useCompatability";
 import useSetting from "@/hooks/useSetting";
 import { fetchRandomGrill } from "@/lib/client/randomGrill";
@@ -120,13 +124,14 @@ const StyledGrill = styled.img`
 const Box = styled.div``;
 
 interface FeaturedThemeProps {
-    theme: FeaturedThemeThemeFragment;
+    entry: FeaturedThemeEntryFragment;
+    video: FeaturedThemeVideoFragment;
     hasGrill?: boolean;
     card?: ReactNode;
     onPlay?(): void;
 }
 
-export function FeaturedTheme({ theme, hasGrill = true, card, onPlay }: FeaturedThemeProps) {
+export function FeaturedTheme({ entry, video, hasGrill = true, card, onPlay }: FeaturedThemeProps) {
     const [grill, setGrill] = useState<string | null>(null);
     const [featuredThemePreview] = useSetting(FeaturedThemePreview);
 
@@ -140,14 +145,14 @@ export function FeaturedTheme({ theme, hasGrill = true, card, onPlay }: Featured
 
     const featuredThemeSummaryCard =
         featuredThemePreview !== FeaturedThemePreview.DISABLED ? (
-            <StyledCenter>{card ?? <ThemeSummaryCard theme={theme} />}</StyledCenter>
+            <StyledCenter>{card ?? <VideoSummaryCard entry={entry} video={video} />}</StyledCenter>
         ) : (
-            card ?? <ThemeSummaryCard theme={theme} />
+            (card ?? <VideoSummaryCard entry={entry} video={video} />)
         );
 
     return (
         <FeaturedThemeWrapper>
-            <FeaturedThemeBackground theme={theme} onPlay={onPlay} />
+            <FeaturedThemeBackground entry={entry} video={video} onPlay={onPlay} />
             {featuredThemePreview !== FeaturedThemePreview.DISABLED && grill && (
                 <StyledGrillContainer>
                     <StyledGrill src={grill} />
@@ -158,26 +163,15 @@ export function FeaturedTheme({ theme, hasGrill = true, card, onPlay }: Featured
     );
 }
 
-function FeaturedThemeBackground({ theme, onPlay }: FeaturedThemeProps) {
+function FeaturedThemeBackground({ entry, video, onPlay }: FeaturedThemeProps) {
     const [featuredThemePreview] = useSetting(FeaturedThemePreview);
     const { canPlayVideo } = useCompatability();
     const [fallbackToCover, setFallbackToCover] = useState(false);
-    const { smallCover: featuredCover } = extractImages(theme.anime);
+    const { smallCover: featuredCover } = extractImages(entry.theme.anime);
 
-    if (!theme.anime || !theme.entries.length) {
-        return null;
-    }
+    const videoSlug = createVideoSlug(entry.theme, entry, video);
 
-    const entry = theme.entries[0];
-
-    if (!entry.videos.length) {
-        return null;
-    }
-
-    const video = entry.videos[0];
-    const videoSlug = createVideoSlug(theme, entry, video);
-
-    const href = `/anime/${theme.anime.slug}/${videoSlug}`;
+    const href = `/anime/${entry.theme.anime.slug}/${videoSlug}`;
 
     if (featuredThemePreview === FeaturedThemePreview.VIDEO && canPlayVideo && !fallbackToCover) {
         return (
@@ -199,20 +193,24 @@ function FeaturedThemeBackground({ theme, onPlay }: FeaturedThemeProps) {
 }
 
 FeaturedTheme.fragments = {
-    theme: gql`
-        ${ThemeSummaryCard.fragments.theme}
+    entry: gql`
+        ${VideoSummaryCardFragmentEntry}
         ${extractImages.fragments.resourceWithImages}
 
-        fragment FeaturedThemeTheme on Theme {
-            ...ThemeSummaryCardTheme
-            anime {
-                ...extractImagesResourceWithImages
-            }
-            entries {
-                videos {
-                    basename
+        fragment FeaturedThemeEntry on Entry {
+            ...VideoSummaryCardEntry
+            theme {
+                anime {
+                    ...extractImagesResourceWithImages
                 }
             }
+        }
+    `,
+    video: gql`
+        ${VideoSummaryCardFragmentVideo}
+
+        fragment FeaturedThemeVideo on Video {
+            ...VideoSummaryCardVideo
         }
     `,
 };

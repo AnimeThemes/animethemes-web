@@ -7,7 +7,7 @@ import pLimit from "p-limit";
 
 import type { InputMaybe, ResolverFn } from "@/generated/graphql-resolvers";
 import type { ApiIndex } from "@/lib/common/animethemes/types";
-import { AUTH_REFERER, CLIENT_API_URL, PAGINATION_PAGE_SIZE, SERVER_API_KEY, SERVER_API_URL } from "@/utils/config";
+import { AUTH_REFERER, CLIENT_API_URL, PAGINATION_PAGE_SIZE, SERVER_API_URL } from "@/utils/config";
 import devLog from "@/utils/devLog";
 
 const limit = pLimit(5);
@@ -467,13 +467,6 @@ export async function fetchJson<T = Record<string, unknown>>(
     const url = path.startsWith(API_URL) ? path : `${API_URL}${path}`;
 
     config.credentials = "include";
-
-    if (SERVER_API_KEY && !("cookie" in (config.headers ?? {}))) {
-        config.headers = {
-            Authorization: `Bearer ${SERVER_API_KEY}`,
-            ...config.headers,
-        };
-    }
 
     const response = await fetch(url, config);
 

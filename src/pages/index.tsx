@@ -67,7 +67,7 @@ const Grid = styled.div<{ $columns: number }>`
 `;
 
 interface HomePageProps {
-    featuredTheme: NonNullable<NonNullable<HomePageQuery["featuredTheme"]>["entry"]>["theme"] | null;
+    featuredTheme: NonNullable<NonNullable<HomePageQuery["featuredTheme"]>> | null;
     announcementSources: MDXRemoteSerializeResult[];
 }
 
@@ -82,10 +82,10 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
 
             {announcementSources.length > 0 ? <AnnouncementCard announcementSource={announcementSources[0]} /> : null}
 
-            {featuredTheme ? (
+            {featuredTheme && featuredTheme.entry && featuredTheme.video ? (
                 <>
                     <Text variant="h2">Featured Theme</Text>
-                    <FeaturedTheme theme={featuredTheme} />
+                    <FeaturedTheme entry={featuredTheme.entry} video={featuredTheme.video} />
                 </>
             ) : null}
 
@@ -224,14 +224,16 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
 
 export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
     const { data, apiRequests } = await fetchData<HomePageQuery>(gql`
-        ${FeaturedTheme.fragments.theme}
+        ${FeaturedTheme.fragments.entry}
+        ${FeaturedTheme.fragments.video}
 
         query HomePage {
             featuredTheme {
                 entry {
-                    theme {
-                        ...FeaturedThemeTheme
-                    }
+                    ...FeaturedThemeEntry
+                }
+                video {
+                    ...FeaturedThemeVideo
                 }
             }
             announcementAll {
@@ -243,7 +245,7 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
     return {
         props: {
             ...getSharedPageProps(apiRequests),
-            featuredTheme: data?.featuredTheme?.entry?.theme ?? null,
+            featuredTheme: data?.featuredTheme,
             announcementSources: await Promise.all(
                 data?.announcementAll.map(
                     async (announcement) => (await serializeMarkdownSafe(announcement.content)).source,

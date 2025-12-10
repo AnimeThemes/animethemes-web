@@ -5,7 +5,6 @@ import { error, warn } from "@/utils/log";
 // Server-side
 
 const SERVER_API_URL = process.env.ANIMETHEMES_API_URL;
-const SERVER_API_KEY = process.env.ANIMETHEMES_API_KEY;
 
 const ANALYZE = !!process.env.ANALYZE;
 const MINIMAL_BUILD = !!process.env.MINIMAL_BUILD;
@@ -62,7 +61,6 @@ export {
     CLIENT_API_URL,
     MINIMAL_BUILD,
     PAGINATION_PAGE_SIZE,
-    SERVER_API_KEY,
     SERVER_API_URL,
     STAGING,
     validateConfig,
