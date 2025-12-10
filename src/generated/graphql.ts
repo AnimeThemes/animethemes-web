@@ -813,8 +813,6 @@ export type PlaylistTrackRemoveDialogEntryFragment = {
     };
 };
 
-export type FeaturedThemeVideoFragment = { id: number; basename: string; tags: string; audio: { basename: string } };
-
 export type FeaturedThemeEntryFragment = {
     id: number;
     version: number | null;
@@ -830,6 +828,8 @@ export type FeaturedThemeEntryFragment = {
         } | null;
     };
 };
+
+export type FeaturedThemeVideoFragment = { id: number; basename: string; tags: string; audio: { basename: string } };
 
 export type AnimeThemeFilterThemeFragment = {
     type: string;

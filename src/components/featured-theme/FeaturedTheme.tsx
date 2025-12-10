@@ -5,7 +5,12 @@ import Link from "next/link";
 
 import gql from "graphql-tag";
 
-import type { FeaturedThemeFragment } from "@/generated/graphql";
+import {
+    VideoSummaryCard,
+    VideoSummaryCardFragmentEntry,
+    VideoSummaryCardFragmentVideo,
+} from "@/components/card/VideoSummaryCard";
+import type { FeaturedThemeEntryFragment, FeaturedThemeVideoFragment } from "@/generated/graphql";
 import useCompatability from "@/hooks/useCompatability";
 import useSetting from "@/hooks/useSetting";
 import { fetchRandomGrill } from "@/lib/client/randomGrill";
@@ -14,7 +19,6 @@ import { VIDEO_URL } from "@/utils/config";
 import createVideoSlug from "@/utils/createVideoSlug";
 import extractImages from "@/utils/extractImages";
 import { FeaturedThemePreview } from "@/utils/settings";
-import { VideoSummaryCard, VideoSummaryCardFragmentEntry, VideoSummaryCardFragmentVideo } from "../card/VideoSummaryCard";
 
 const slowPan = keyframes`
     from {
@@ -120,22 +124,16 @@ const StyledGrill = styled.img`
 const Box = styled.div``;
 
 interface FeaturedThemeProps {
-    featuredTheme: FeaturedThemeFragment;
+    entry: FeaturedThemeEntryFragment;
+    video: FeaturedThemeVideoFragment;
     hasGrill?: boolean;
     card?: ReactNode;
     onPlay?(): void;
 }
 
-export function FeaturedTheme({ featuredTheme, hasGrill = true, card, onPlay }: FeaturedThemeProps) {
+export function FeaturedTheme({ entry, video, hasGrill = true, card, onPlay }: FeaturedThemeProps) {
     const [grill, setGrill] = useState<string | null>(null);
     const [featuredThemePreview] = useSetting(FeaturedThemePreview);
-
-    const entry = featuredTheme.entry;
-    const video = featuredTheme.video;
-
-    if (!entry || !video) {
-        return;
-    }
 
     useEffect(() => {
         if (hasGrill) {
@@ -149,12 +147,12 @@ export function FeaturedTheme({ featuredTheme, hasGrill = true, card, onPlay }: 
         featuredThemePreview !== FeaturedThemePreview.DISABLED ? (
             <StyledCenter>{card ?? <VideoSummaryCard entry={entry} video={video} />}</StyledCenter>
         ) : (
-            card ?? <VideoSummaryCard entry={entry} video={video} />
+            (card ?? <VideoSummaryCard entry={entry} video={video} />)
         );
 
     return (
         <FeaturedThemeWrapper>
-            <FeaturedThemeBackground featuredTheme={featuredTheme} onPlay={onPlay} />
+            <FeaturedThemeBackground entry={entry} video={video} onPlay={onPlay} />
             {featuredThemePreview !== FeaturedThemePreview.DISABLED && grill && (
                 <StyledGrillContainer>
                     <StyledGrill src={grill} />
@@ -165,14 +163,7 @@ export function FeaturedTheme({ featuredTheme, hasGrill = true, card, onPlay }: 
     );
 }
 
-function FeaturedThemeBackground({ featuredTheme, onPlay }: FeaturedThemeProps) {
-    const entry = featuredTheme.entry;
-    const video = featuredTheme.video;
-
-    if (!entry || !video) {
-        return;
-    }
-
+function FeaturedThemeBackground({ entry, video, onPlay }: FeaturedThemeProps) {
     const [featuredThemePreview] = useSetting(FeaturedThemePreview);
     const { canPlayVideo } = useCompatability();
     const [fallbackToCover, setFallbackToCover] = useState(false);
@@ -201,21 +192,25 @@ function FeaturedThemeBackground({ featuredTheme, onPlay }: FeaturedThemeProps) 
     return null;
 }
 
-FeaturedTheme.fragments = gql`
-    ${VideoSummaryCardFragmentEntry}
-    ${VideoSummaryCardFragmentVideo}
-    ${extractImages.fragments.resourceWithImages}
+FeaturedTheme.fragments = {
+    entry: gql`
+        ${VideoSummaryCardFragmentEntry}
+        ${extractImages.fragments.resourceWithImages}
 
-    fragment FeaturedThemeVideo on Video {
-        ...VideoSummaryCardVideo
-    }
-
-    fragment FeaturedThemeEntry on Entry {
-        ...VideoSummaryCardEntry
-        theme {
-            anime {
-                ...extractImagesResourceWithImages
+        fragment FeaturedThemeEntry on Entry {
+            ...VideoSummaryCardEntry
+            theme {
+                anime {
+                    ...extractImagesResourceWithImages
+                }
             }
         }
-    }
-`;
+    `,
+    video: gql`
+        ${VideoSummaryCardFragmentVideo}
+
+        fragment FeaturedThemeVideo on Video {
+            ...VideoSummaryCardVideo
+        }
+    `,
+};

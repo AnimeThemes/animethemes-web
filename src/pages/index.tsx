@@ -82,10 +82,10 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
 
             {announcementSources.length > 0 ? <AnnouncementCard announcementSource={announcementSources[0]} /> : null}
 
-            {featuredTheme ? (
+            {featuredTheme && featuredTheme.entry && featuredTheme.video ? (
                 <>
                     <Text variant="h2">Featured Theme</Text>
-                    <FeaturedTheme featuredTheme={featuredTheme} />
+                    <FeaturedTheme entry={featuredTheme.entry} video={featuredTheme.video} />
                 </>
             ) : null}
 
@@ -224,7 +224,8 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
 
 export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
     const { data, apiRequests } = await fetchData<HomePageQuery>(gql`
-        ${FeaturedTheme.fragments}
+        ${FeaturedTheme.fragments.entry}
+        ${FeaturedTheme.fragments.video}
 
         query HomePage {
             featuredTheme {

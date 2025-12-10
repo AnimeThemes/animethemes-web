@@ -369,10 +369,8 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                     ) : null}
                     {isRanking && topRankedTrack ? (
                         <FeaturedTheme
-                            featuredTheme={{
-                                entry: tracks[0].entry,
-                                video: tracks[0].video,
-                            }}
+                            entry={tracks[0].entry}
+                            video={tracks[0].video}
                             hasGrill={false}
                             card={
                                 <PlaylistTrack
@@ -708,6 +706,8 @@ PlaylistDetailPage.fragments = {
         ${VideoSummaryCardFragmentEntry}
         ${PlaylistEditDialog.fragments.playlist}
         ${PlaylistTrackRemoveDialog.fragments.playlist}
+        ${FeaturedTheme.fragments.entry}
+        ${FeaturedTheme.fragments.video}
 
         fragment PlaylistDetailPagePlaylist on Playlist {
             ...PlaylistEditDialogPlaylist
@@ -721,10 +721,12 @@ PlaylistDetailPage.fragments = {
                 id
                 video {
                     ...VideoSummaryCardVideo
+                    ...FeaturedThemeVideo
                     id
                 }
                 entry {
                     ...VideoSummaryCardEntry
+                    ...FeaturedThemeEntry
                     theme {
                         anime {
                             year
