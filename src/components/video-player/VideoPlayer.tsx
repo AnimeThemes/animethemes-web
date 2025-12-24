@@ -31,6 +31,7 @@ interface VideoPlayerContextValue {
     videoPagePath: string;
     playerRef: RefObject<HTMLVideoElement | HTMLAudioElement | null>;
     progressRef: RefObject<HTMLDivElement | null>;
+    bufferedRef: RefObject<HTMLDivElement | null>;
     previousVideoPath: string | null;
     playPreviousTrack(navigate: boolean): void;
     nextVideoPath: string | null;
@@ -68,6 +69,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     const containerRef = useRef<HTMLDivElement>(null);
     const playerRef = useRef<HTMLVideoElement | HTMLAudioElement | null>(null);
     const progressRef = useRef<HTMLDivElement>(null);
+    const bufferedRef = useRef<HTMLDivElement>(null);
     const currentTimeBeforeModeSwitch = useRef<number | null>(null);
 
     const {
@@ -313,10 +315,20 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     }
 
     function updateProgress(event: SyntheticEvent<HTMLVideoElement | HTMLAudioElement>) {
+        const duration = event.currentTarget.duration;
+
         if (progressRef.current) {
             // Update the progress bar using a ref to prevent re-rendering.
-            const progress = (event.currentTarget.currentTime / event.currentTarget.duration) * 100;
+            const progress = (event.currentTarget.currentTime / duration) * 100;
             progressRef.current.style.width = `${progress}%`;
+        }
+
+        if (bufferedRef.current) {
+            const buffered = event.currentTarget.buffered;
+            if (buffered.length > 0) {
+                const bufferedEnd = buffered.end(buffered.length - 1);
+                bufferedRef.current.style.width = `${(bufferedEnd / duration) * 100}%`;
+            }
         }
     }
 
@@ -364,6 +376,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
                 videoPagePath,
                 playerRef,
                 progressRef,
+                bufferedRef,
                 previousVideoPath,
                 playPreviousTrack,
                 nextVideoPath,
