@@ -265,6 +265,10 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
             progressRef.current.style.width = "0%";
         }
 
+        if (bufferedRef.current) {
+            bufferedRef.current.style.width = "0%";
+        }
+
         // We don't want to re-add the theme when the history changes, because it can cause
         // various issues when multiple tabs are open.
         // eslint-disable-next-line react-hooks/exhaustive-deps
