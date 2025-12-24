@@ -31,7 +31,7 @@ export function VolumeControl(props: ComponentPropsWithoutRef<typeof StyledRow>)
     const [muted, setMuted] = useSetting(Muted);
 
     let icon;
-    if (muted || volume === 0) {
+    if (muted) {
         icon = faVolumeXmark;
     } else if (volume > 0.5) {
         icon = faVolumeHigh;
@@ -44,7 +44,7 @@ export function VolumeControl(props: ComponentPropsWithoutRef<typeof StyledRow>)
             <IconTextButton icon={icon} isCircle onClick={() => setMuted(!muted)} />
             <StyledSlider
                 value={[volume]}
-                onValueChange={([volume]) => setVolume(volume)}
+                onValueChange={([volume]) => { setVolume(volume); setMuted(false); }}
                 min={0}
                 max={1}
                 step={0.01}
