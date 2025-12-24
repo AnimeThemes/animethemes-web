@@ -14,6 +14,7 @@ import {
     StyledVideoBackground,
 } from "@/components/video-player/VideoPlayer.style";
 import { VideoPlayerBar } from "@/components/video-player/VideoPlayerBar";
+import FullscreenContext from "@/context/fullscreenContext";
 import PlayerContext, { type WatchListItem } from "@/context/playerContext";
 import type { VideoSummaryCardEntryFragment, VideoSummaryCardVideoFragment } from "@/generated/graphql";
 import useMouseRelax from "@/hooks/useMouseRelax";
@@ -81,6 +82,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
         isWatchListUsingLocalAutoPlay,
         isRepeat,
     } = useContext(PlayerContext);
+    const { toggleFullscreen } = useContext(FullscreenContext);
     const router = useRouter();
     const [globalVolume, setGlobalVolume] = useSetting(GlobalVolume);
     const [muted, setMuted] = useSetting(Muted);
@@ -223,8 +225,13 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
                     link.href = `${videoUrl}?download`;
                     link.click();
                 }
+                break;
+            case "f": // Fullscreen
+                event.preventDefault();
+                toggleFullscreen();
+                break;
         }
-    }, [togglePlay, playNextTrack, playPreviousTrack, audioMode, audioUrl, videoUrl]);
+    }, [togglePlay, playNextTrack, playPreviousTrack, audioMode, audioUrl, videoUrl, toggleFullscreen]);
 
     const autoPlayNextTrack = useCallback(() => {
         if (
