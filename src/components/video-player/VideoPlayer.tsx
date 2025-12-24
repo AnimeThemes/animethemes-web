@@ -22,7 +22,7 @@ import useWatchHistory from "@/hooks/useWatchHistory";
 import { AUDIO_URL, VIDEO_URL } from "@/utils/config";
 import createVideoSlug from "@/utils/createVideoSlug";
 import extractImages from "@/utils/extractImages";
-import { AudioMode, GlobalVolume } from "@/utils/settings";
+import { AudioMode, GlobalVolume, Muted } from "@/utils/settings";
 
 interface VideoPlayerContextValue {
     video: VideoSummaryCardVideoFragment;
@@ -83,6 +83,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     } = useContext(PlayerContext);
     const router = useRouter();
     const [globalVolume, setGlobalVolume] = useSetting(GlobalVolume);
+    const [muted, setMuted] = useSetting(Muted);
     const { smallCover, largeCover } = extractImages(anime);
     const [audioMode, setAudioMode] = useSetting(AudioMode, { storageSync: false });
     const { addToHistory } = useWatchHistory();
@@ -194,19 +195,21 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
             case "m": // Mute
                 event.preventDefault();
                 if (playerRef.current) {
-                    playerRef.current.volume = playerRef.current.volume === 0 ? 1 : 0;
+                    setMuted(!muted);
                 }
                 break;
             case "arrowup": // Volume up
                 event.preventDefault();
                 if (playerRef.current) {
-                    playerRef.current.volume = Math.min(playerRef.current.volume + 0.1, 1);
+                    setGlobalVolume(Math.min(globalVolume + 0.1, 1));
+                    setMuted(false);
                 }
                 break;
             case "arrowdown": // Volume down
                 event.preventDefault();
                 if (playerRef.current) {
-                    playerRef.current.volume = Math.max(playerRef.current.volume - 0.1, 0);
+                    setGlobalVolume(Math.max(globalVolume - 0.1, 0));
+                    setMuted(false);
                 }
                 break;
             case "d": // Download
@@ -234,9 +237,10 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
 
     useEffect(() => {
         if (playerRef.current) {
+            playerRef.current.muted = muted;
             playerRef.current.volume = globalVolume;
         }
-    }, [globalVolume]);
+    }, [globalVolume, muted]);
 
     useEffect(() => {
         addToHistory({

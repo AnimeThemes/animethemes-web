@@ -7,7 +7,7 @@ import { Row } from "@/components/box/Flex";
 import { IconTextButton } from "@/components/button/IconTextButton";
 import { Slider } from "@/components/slider/Slider";
 import useSetting from "@/hooks/useSetting";
-import { GlobalVolume } from "@/utils/settings";
+import { GlobalVolume, Muted } from "@/utils/settings";
 
 const StyledRow = styled(Row)`
     align-self: stretch;
@@ -28,19 +28,20 @@ const StyledSlider = styled(Slider)`
 
 export function VolumeControl(props: ComponentPropsWithoutRef<typeof StyledRow>) {
     const [volume, setVolume] = useSetting(GlobalVolume);
+    const [muted, setMuted] = useSetting(Muted);
 
     let icon;
-    if (volume > 0.5) {
-        icon = faVolumeHigh;
-    } else if (volume > 0) {
-        icon = faVolumeLow;
-    } else {
+    if (muted || volume === 0) {
         icon = faVolumeXmark;
+    } else if (volume > 0.5) {
+        icon = faVolumeHigh;
+    } else {
+        icon = faVolumeLow;
     }
 
     return (
         <StyledRow style={{ "--gap": "8px" }} {...props}>
-            <IconTextButton icon={icon} isCircle onClick={() => setVolume(volume === 0 ? 1 : 0)} />
+            <IconTextButton icon={icon} isCircle onClick={() => setMuted(!muted)} />
             <StyledSlider
                 value={[volume]}
                 onValueChange={([volume]) => setVolume(volume)}
