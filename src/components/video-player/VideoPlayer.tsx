@@ -7,6 +7,7 @@ import {
     StyledAudio,
     StyledAudioBackground,
     StyledAudioCover,
+    StyledAudioCoverBlur,
     StyledPlaybackArea,
     StyledPlayer,
     StyledPlayerContent,
@@ -429,6 +430,15 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
                     >
                         {audioMode === AudioMode.ENABLED ? (
                             <StyledAudioBackground style={{ aspectRatio }}>
+                                <StyledAudioCoverBlur
+                                    src={largeCover}
+                                    onPointerDown={onPlayerClick}
+                                    onLoad={(event) => {
+                                        setAspectRatio(
+                                            event.currentTarget.naturalWidth / event.currentTarget.naturalHeight,
+                                        );
+                                    }}
+                                />
                                 <StyledAudioCover
                                     src={largeCover}
                                     onPointerDown={onPlayerClick}

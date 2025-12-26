@@ -117,8 +117,9 @@ export const StyledAudioBackground = styled.div`
     inset: 0;
     margin: auto;
 
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 `;
 
 export const StyledAudio = styled.audio`
@@ -126,15 +127,27 @@ export const StyledAudio = styled.audio`
 `;
 
 export const StyledAudioCover = styled.img`
+    position: absolute;
+    inset: 0;
+    margin: auto;
+
     width: 100%;
     height: 100%;
 
-    outline: none;
     object-fit: contain;
+    box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.5);
 
     [data-background] & {
         pointer-events: none;
     }
+`;
+
+export const StyledAudioCoverBlur = styled.img`
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    filter: blur(8px);
 `;
 
 export const StyledAside = styled.aside`
