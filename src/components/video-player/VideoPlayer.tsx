@@ -7,6 +7,7 @@ import {
     StyledAudio,
     StyledAudioBackground,
     StyledAudioCover,
+    StyledAudioCoverBackground,
     StyledPlaybackArea,
     StyledPlayer,
     StyledPlayerContent,
@@ -14,6 +15,7 @@ import {
     StyledVideoBackground,
 } from "@/components/video-player/VideoPlayer.style";
 import { VideoPlayerBar } from "@/components/video-player/VideoPlayerBar";
+import FullscreenContext from "@/context/fullscreenContext";
 import PlayerContext, { type WatchListItem } from "@/context/playerContext";
 import type { VideoSummaryCardEntryFragment, VideoSummaryCardVideoFragment } from "@/generated/graphql";
 import useMouseRelax from "@/hooks/useMouseRelax";
@@ -22,7 +24,7 @@ import useWatchHistory from "@/hooks/useWatchHistory";
 import { AUDIO_URL, VIDEO_URL } from "@/utils/config";
 import createVideoSlug from "@/utils/createVideoSlug";
 import extractImages from "@/utils/extractImages";
-import { AudioMode, GlobalVolume } from "@/utils/settings";
+import { AudioMode, GlobalVolume, Muted } from "@/utils/settings";
 
 interface VideoPlayerContextValue {
     video: VideoSummaryCardVideoFragment;
@@ -31,6 +33,7 @@ interface VideoPlayerContextValue {
     videoPagePath: string;
     playerRef: RefObject<HTMLVideoElement | HTMLAudioElement | null>;
     progressRef: RefObject<HTMLDivElement | null>;
+    bufferedRef: RefObject<HTMLDivElement | null>;
     previousVideoPath: string | null;
     playPreviousTrack(navigate: boolean): void;
     nextVideoPath: string | null;
@@ -68,6 +71,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     const containerRef = useRef<HTMLDivElement>(null);
     const playerRef = useRef<HTMLVideoElement | HTMLAudioElement | null>(null);
     const progressRef = useRef<HTMLDivElement>(null);
+    const bufferedRef = useRef<HTMLDivElement>(null);
     const currentTimeBeforeModeSwitch = useRef<number | null>(null);
 
     const {
@@ -79,8 +83,10 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
         isWatchListUsingLocalAutoPlay,
         isRepeat,
     } = useContext(PlayerContext);
+    const { toggleFullscreen } = useContext(FullscreenContext);
     const router = useRouter();
     const [globalVolume, setGlobalVolume] = useSetting(GlobalVolume);
+    const [muted, setMuted] = useSetting(Muted);
     const { smallCover, largeCover } = extractImages(anime);
     const [audioMode, setAudioMode] = useSetting(AudioMode, { storageSync: false });
     const { addToHistory } = useWatchHistory();
@@ -192,19 +198,21 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
             case "m": // Mute
                 event.preventDefault();
                 if (playerRef.current) {
-                    playerRef.current.volume = playerRef.current.volume === 0 ? 1 : 0;
+                    setMuted(!muted);
                 }
                 break;
             case "arrowup": // Volume up
                 event.preventDefault();
                 if (playerRef.current) {
-                    playerRef.current.volume = Math.min(playerRef.current.volume + 0.1, 1);
+                    setGlobalVolume(Math.min(globalVolume + 0.1, 1));
+                    setMuted(false);
                 }
                 break;
             case "arrowdown": // Volume down
                 event.preventDefault();
                 if (playerRef.current) {
-                    playerRef.current.volume = Math.max(playerRef.current.volume - 0.1, 0);
+                    setGlobalVolume(Math.max(globalVolume - 0.1, 0));
+                    setMuted(false);
                 }
                 break;
             case "d": // Download
@@ -218,8 +226,13 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
                     link.href = `${videoUrl}?download`;
                     link.click();
                 }
+                break;
+            case "f": // Fullscreen
+                event.preventDefault();
+                toggleFullscreen();
+                break;
         }
-    }, [togglePlay, playNextTrack, playPreviousTrack, audioMode, audioUrl, videoUrl]);
+    }, [togglePlay, playNextTrack, playPreviousTrack, audioMode, audioUrl, videoUrl, toggleFullscreen]);
 
     const autoPlayNextTrack = useCallback(() => {
         if (
@@ -232,9 +245,10 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
 
     useEffect(() => {
         if (playerRef.current) {
+            playerRef.current.muted = muted;
             playerRef.current.volume = globalVolume;
         }
-    }, [globalVolume]);
+    }, [globalVolume, muted]);
 
     useEffect(() => {
         addToHistory({
@@ -250,6 +264,10 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
         // Reset the progress bar (otherwise we'd have to wait for the player to load).
         if (progressRef.current) {
             progressRef.current.style.width = "0%";
+        }
+
+        if (bufferedRef.current) {
+            bufferedRef.current.style.width = "0%";
         }
 
         // We don't want to re-add the theme when the history changes, because it can cause
@@ -313,10 +331,20 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     }
 
     function updateProgress(event: SyntheticEvent<HTMLVideoElement | HTMLAudioElement>) {
+        const duration = event.currentTarget.duration;
+
         if (progressRef.current) {
             // Update the progress bar using a ref to prevent re-rendering.
-            const progress = (event.currentTarget.currentTime / event.currentTarget.duration) * 100;
+            const progress = (event.currentTarget.currentTime / duration) * 100;
             progressRef.current.style.width = `${progress}%`;
+        }
+
+        if (bufferedRef.current) {
+            const buffered = event.currentTarget.buffered;
+            if (buffered.length > 0) {
+                const bufferedEnd = buffered.end(buffered.length - 1);
+                bufferedRef.current.style.width = `${(bufferedEnd / duration) * 100}%`;
+            }
         }
     }
 
@@ -364,6 +392,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
                 videoPagePath,
                 playerRef,
                 progressRef,
+                bufferedRef,
                 previousVideoPath,
                 playPreviousTrack,
                 nextVideoPath,
@@ -401,6 +430,15 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
                     >
                         {audioMode === AudioMode.ENABLED ? (
                             <StyledAudioBackground style={{ aspectRatio }}>
+                                <StyledAudioCoverBackground
+                                    src={largeCover}
+                                    onPointerDown={onPlayerClick}
+                                    onLoad={(event) => {
+                                        setAspectRatio(
+                                            event.currentTarget.naturalWidth / event.currentTarget.naturalHeight,
+                                        );
+                                    }}
+                                />
                                 <StyledAudioCover
                                     src={largeCover}
                                     onPointerDown={onPlayerClick}

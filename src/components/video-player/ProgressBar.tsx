@@ -2,6 +2,8 @@ import { useContext, useEffect, useRef } from "react";
 import styled from "styled-components";
 
 import { VideoPlayerContext } from "@/components/video-player/VideoPlayer";
+import useColorTheme from "@/hooks/useColorTheme";
+import useMediaQuery from "@/hooks/useMediaQuery";
 import theme from "@/theme";
 
 const StyledPlayerProgress = styled.div`
@@ -17,6 +19,7 @@ const StyledPlayerProgress = styled.div`
 `;
 
 const StyledPlayerProgressBackground = styled.div`
+    position: relative;
     width: 100%;
     height: 2px;
 
@@ -28,7 +31,7 @@ const StyledPlayerProgressBackground = styled.div`
 `;
 
 const StyledPlayerProgressBar = styled.div`
-    position: relative;
+    position: absolute;
     height: 100%;
 
     background-color: ${theme.colors["text-primary"]};
@@ -71,14 +74,30 @@ const StyledPlayerProgressBarHover = styled.div`
     }
 `;
 
+const StyledPlayerProgressBuffered = styled.div<{ $colorTheme: string }>`
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    
+    background-color: ${(props) => props.$colorTheme === "dark" ? theme.colors["white"] : theme.colors["gray-500"]};
+    opacity: 0.2;
+
+    ${StyledPlayerProgress}:hover & {
+        height: 4px;
+    }
+`;
+
 export function ProgressBar() {
     const context = useContext(VideoPlayerContext);
-
+    const [colorTheme] = useColorTheme();
+    const prefersDark = useMediaQuery("(prefers-color-scheme: dark)");
+    const resolvedTheme = colorTheme === "system" ? (prefersDark ? "dark" : "light") : colorTheme;
+    
     if (!context) {
         throw new Error("ProgressBar needs to be inside VideoPlayer!");
     }
 
-    const { playerRef, progressRef } = context;
+    const { playerRef, progressRef, bufferedRef } = context;
 
     const progressHoverRef = useRef<HTMLDivElement>(null);
 
@@ -146,6 +165,7 @@ export function ProgressBar() {
             }}
         >
             <StyledPlayerProgressBackground>
+                <StyledPlayerProgressBuffered ref={bufferedRef} $colorTheme={resolvedTheme} />
                 <StyledPlayerProgressBar ref={progressRef} />
             </StyledPlayerProgressBackground>
             <StyledPlayerProgressBarHover ref={progressHoverRef} />
