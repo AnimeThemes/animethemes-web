@@ -135,14 +135,14 @@ export const StyledAudioCover = styled.img`
     height: 100%;
 
     object-fit: contain;
-    box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 0 60px ${theme.colors["solid-on-card"]};
 
     [data-background] & {
         pointer-events: none;
     }
 `;
 
-export const StyledAudioCoverBlur = styled.img`
+export const StyledAudioCoverBackground = styled.img`
     width: 100%;
     height: 100%;
 
