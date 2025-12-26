@@ -2,6 +2,8 @@ import { useContext, useEffect, useRef } from "react";
 import styled from "styled-components";
 
 import { VideoPlayerContext } from "@/components/video-player/VideoPlayer";
+import useColorTheme from "@/hooks/useColorTheme";
+import useMediaQuery from "@/hooks/useMediaQuery";
 import theme from "@/theme";
 
 const StyledPlayerProgress = styled.div`
@@ -72,12 +74,12 @@ const StyledPlayerProgressBarHover = styled.div`
     }
 `;
 
-const StyledPlayerProgressBuffered = styled.div`
+const StyledPlayerProgressBuffered = styled.div<{ $colorTheme: string }>`
     position: absolute;
     width: 100%;
     height: 2px;
     
-    background-color: ${theme.colors["white"]};
+    background-color: ${(props) => props.$colorTheme === "dark" ? theme.colors["white"] : theme.colors["gray-500"]};
     opacity: 0.2;
 
     ${StyledPlayerProgress}:hover & {
@@ -87,7 +89,10 @@ const StyledPlayerProgressBuffered = styled.div`
 
 export function ProgressBar() {
     const context = useContext(VideoPlayerContext);
-
+    const [colorTheme] = useColorTheme();
+    const prefersDark = useMediaQuery("(prefers-color-scheme: dark)");
+    const resolvedTheme = colorTheme === "system" ? (prefersDark ? "dark" : "light") : colorTheme;
+    
     if (!context) {
         throw new Error("ProgressBar needs to be inside VideoPlayer!");
     }
@@ -160,7 +165,7 @@ export function ProgressBar() {
             }}
         >
             <StyledPlayerProgressBackground>
-                <StyledPlayerProgressBuffered ref={bufferedRef} />
+                <StyledPlayerProgressBuffered ref={bufferedRef} $colorTheme={resolvedTheme} />
                 <StyledPlayerProgressBar ref={progressRef} />
             </StyledPlayerProgressBackground>
             <StyledPlayerProgressBarHover ref={progressHoverRef} />
