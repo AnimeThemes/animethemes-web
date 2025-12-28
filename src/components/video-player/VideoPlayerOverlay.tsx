@@ -50,6 +50,7 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
 
     const { watchList, setWatchList, currentWatchListItem } = useContext(PlayerContext);
     const { isFullscreen, toggleFullscreen } = useContext(FullscreenContext);
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
     const context = useContext(VideoPlayerContext);
     const [audioMode] = useSetting(AudioMode, { storageSync: false });
 
@@ -162,12 +163,14 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
                         )}
                     </MenuContent>
                 </Menu>
-                <StyledOverlayButton
-                    icon={isFullscreen ? faCompress : faExpand}
-                    isCircle
-                    onClick={toggleFullscreen}
-                    title="Toggle fullscreen"
-                />
+                {!(isIOS && audioMode === AudioMode.ENABLED) && ( // Hide fullscreen button on iOS when audio mode is enabled
+                    <StyledOverlayButton
+                        icon={isFullscreen ? faCompress : faExpand}
+                        isCircle
+                        onClick={toggleFullscreen}
+                        title="Toggle fullscreen"
+                    />
+                )}
             </Row>
         </StyledOverlay>
     );

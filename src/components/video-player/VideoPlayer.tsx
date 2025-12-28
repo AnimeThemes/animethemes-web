@@ -452,6 +452,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
                                     ref={onPlayerMount}
                                     src={audioUrl}
                                     autoPlay
+                                    playsInline
                                     onPlay={() => setPlaying(true)}
                                     onPause={() => setPlaying(false)}
                                     onEnded={() => {
@@ -471,6 +472,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
                                     ref={onPlayerMount}
                                     src={videoUrl}
                                     autoPlay
+                                    playsInline
                                     onPlay={() => setPlaying(true)}
                                     onPause={() => setPlaying(false)}
                                     onEnded={() => {
