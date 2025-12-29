@@ -43,6 +43,7 @@ interface VideoPlayerContextValue {
     videoUrl: string;
     audioUrl: string;
     updateAudioMode(audioMode: string): void;
+    togglePip(): void;
 }
 
 export const VideoPlayerContext = createContext<VideoPlayerContextValue | null>(null);
@@ -150,6 +151,18 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
             setCurrentWatchListItem,
         ],
     );
+    
+
+    const togglePip = () => {
+        const videoElement = document.querySelector("video");
+        if (videoElement) {
+            if (document.pictureInPictureElement) {
+                document.exitPictureInPicture();
+            } else {
+                videoElement.requestPictureInPicture();
+            }
+        }
+    };
 
     // Handle keyboard inputs
     const onKeyDown = useCallback((event: KeyboardEvent) => {
@@ -234,6 +247,10 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
             case "a": // Toggle audio mode
                 event.preventDefault();
                 updateAudioMode(audioMode === AudioMode.ENABLED ? AudioMode.DISABLED : AudioMode.ENABLED);
+                break;
+            case "p": // Toggle Picture-in-Picture
+                event.preventDefault();
+                togglePip();
                 break;
         }
     }, [togglePlay, playNextTrack, playPreviousTrack, audioMode, audioUrl, videoUrl, toggleFullscreen]);
@@ -406,6 +423,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
                 videoUrl,
                 audioUrl,
                 updateAudioMode,
+                togglePip,
             }}
         >
             <StyledPlayer

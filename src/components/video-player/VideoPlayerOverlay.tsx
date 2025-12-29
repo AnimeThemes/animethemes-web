@@ -2,7 +2,7 @@ import { Fragment, useContext } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
-import { faCheck, faCompress, faExpand, faGear, faKeyboard, faPlus, faShare } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faCompress, faExpand, faGear, faKeyboard, faPlus, faShare, faUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import { Dialog } from "@radix-ui/react-dialog";
 
 import { Row } from "@/components/box/Flex";
@@ -72,6 +72,7 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
     const { watchList, setWatchList, currentWatchListItem } = useContext(PlayerContext);
     const { isFullscreen, toggleFullscreen } = useContext(FullscreenContext);
     const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    const isPIPSupported = typeof document !== "undefined" && !!document.pictureInPictureEnabled;
     const context = useContext(VideoPlayerContext);
     const [audioMode] = useSetting(AudioMode, { storageSync: false });
 
@@ -124,6 +125,7 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
                                 <StyledKeyListItem><StyledKey>D</StyledKey> Download track</StyledKeyListItem>
                                 <StyledKeyListItem><StyledKey>F</StyledKey> Toggle fullscreen</StyledKeyListItem>
                                 <StyledKeyListItem><StyledKey>A</StyledKey> Toggle audio mode</StyledKeyListItem>
+                                <StyledKeyListItem><StyledKey>P</StyledKey> Toggle PIP</StyledKeyListItem>
                             </StyledKeyList>
                         </Text>
                     </DialogContent>
@@ -208,6 +210,14 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
                         )}
                     </MenuContent>
                 </Menu>
+                {isPIPSupported && audioMode === AudioMode.DISABLED && (
+                    <StyledOverlayButton
+                        icon={faUpRightFromSquare}
+                        isCircle
+                        onClick={context.togglePip}
+                        title="Toggle PIP"
+                    />
+                )}
                 {!(isIOS && audioMode === AudioMode.ENABLED) && ( // Hide fullscreen button on iOS when audio mode is enabled
                     <StyledOverlayButton
                         icon={isFullscreen ? faCompress : faExpand}
