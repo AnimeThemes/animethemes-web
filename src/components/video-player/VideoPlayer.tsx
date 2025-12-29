@@ -151,18 +151,6 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
             setCurrentWatchListItem,
         ],
     );
-    
-
-    const togglePip = () => {
-        const videoElement = document.querySelector("video");
-        if (videoElement) {
-            if (document.pictureInPictureElement) {
-                document.exitPictureInPicture();
-            } else {
-                videoElement.requestPictureInPicture();
-            }
-        }
-    };
 
     // Handle keyboard inputs
     const onKeyDown = useCallback((event: KeyboardEvent) => {
@@ -350,6 +338,17 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
             playerRef.current?.play();
         }
     }
+
+    function togglePip() {
+        const videoElement = document.querySelector("video");
+        if (videoElement) {
+            if (document.pictureInPictureElement) {
+                document.exitPictureInPicture();
+            } else {
+                videoElement.requestPictureInPicture();
+            }
+        }
+    };
 
     function updateProgress(event: SyntheticEvent<HTMLVideoElement | HTMLAudioElement>) {
         const duration = event.currentTarget.duration;
