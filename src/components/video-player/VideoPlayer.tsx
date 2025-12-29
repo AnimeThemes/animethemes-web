@@ -231,6 +231,10 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
                 event.preventDefault();
                 toggleFullscreen();
                 break;
+            case "a": // Toggle audio mode
+                event.preventDefault();
+                updateAudioMode(audioMode === AudioMode.ENABLED ? AudioMode.DISABLED : AudioMode.ENABLED);
+                break;
         }
     }, [togglePlay, playNextTrack, playPreviousTrack, audioMode, audioUrl, videoUrl, toggleFullscreen]);
 
