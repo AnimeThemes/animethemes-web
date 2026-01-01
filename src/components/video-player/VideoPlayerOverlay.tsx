@@ -114,9 +114,11 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
                             <StyledKeyList>
                                 <StyledKeyListItem><StyledKey>Space, K</StyledKey> Play/Pause</StyledKeyListItem>
                                 <StyledKeyListItem><StyledKey>Arrow Right</StyledKey> Seek forward 5 seconds</StyledKeyListItem>
-                                <StyledKeyListItem><StyledKey>Period</StyledKey> Seek forward 10 seconds</StyledKeyListItem>
+                                <StyledKeyListItem><StyledKey>L</StyledKey> Seek forward 10 seconds</StyledKeyListItem>
+                                <StyledKeyListItem><StyledKey>Period</StyledKey> Seek forward 1 frame</StyledKeyListItem>
                                 <StyledKeyListItem><StyledKey>Arrow Left</StyledKey> Seek backward 5 seconds</StyledKeyListItem>
-                                <StyledKeyListItem><StyledKey>Comma</StyledKey> Seek backward 10 seconds</StyledKeyListItem>
+                                <StyledKeyListItem><StyledKey>J</StyledKey> Seek backward 10 seconds</StyledKeyListItem>
+                                <StyledKeyListItem><StyledKey>Comma</StyledKey> Seek backward 1 frame</StyledKeyListItem>
                                 <StyledKeyListItem><StyledKey>N</StyledKey> Next track</StyledKeyListItem>
                                 <StyledKeyListItem><StyledKey>B</StyledKey> Previous track</StyledKeyListItem>
                                 <StyledKeyListItem><StyledKey>M</StyledKey> Mute/Unmute</StyledKeyListItem>
