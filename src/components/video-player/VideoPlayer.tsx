@@ -170,7 +170,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
                     playerRef.current.currentTime += 5;
                 }
                 break;
-            case ".": // Seek forward large
+            case "l": // Seek forward large
                 event.preventDefault();
                 if (playerRef.current) {
                     playerRef.current.currentTime += 10;
@@ -182,7 +182,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
                     playerRef.current.currentTime -= 5;
                 }
                 break;
-            case ",": // Seek backward large
+            case "j": // Seek backward large
                 event.preventDefault();
                 if (playerRef.current) {
                     playerRef.current.currentTime -= 10;
@@ -239,6 +239,18 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
             case "p": // Toggle Picture-in-Picture
                 event.preventDefault();
                 togglePip();
+                break;
+            case ",": // Frame back
+                event.preventDefault();
+                if (playerRef.current && playerRef.current.paused) {
+                    playerRef.current.currentTime -= 1/24; // Assumes fps is 24
+                }
+                break;
+            case ".": // Frame forward
+                event.preventDefault();
+                if (playerRef.current && playerRef.current.paused) {
+                    playerRef.current.currentTime += 1/24;
+                }
                 break;
         }
     }, [togglePlay, playNextTrack, playPreviousTrack, audioMode, audioUrl, videoUrl, toggleFullscreen]);
