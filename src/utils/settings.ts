@@ -24,6 +24,11 @@ export const GlobalVolume: Setting<number> = Object.freeze({
     __INITIAL_VALUE__: 1,
 });
 
+export const Muted: Setting<boolean> = Object.freeze({
+    __KEY__: "muted",
+    __INITIAL_VALUE__: false,
+});
+
 export const ColorTheme: Setting<string> = Object.freeze({
     __KEY__: "theme",
     __INITIAL_VALUE__: "system",
