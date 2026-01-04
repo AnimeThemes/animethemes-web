@@ -74,6 +74,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     const progressRef = useRef<HTMLDivElement>(null);
     const bufferedRef = useRef<HTMLDivElement>(null);
     const currentTimeBeforeModeSwitch = useRef<number | null>(null);
+    const fpsRef = useRef<number>(24);
 
     const {
         watchList,
@@ -243,13 +244,13 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
             case ",": // Frame back
                 event.preventDefault();
                 if (playerRef.current && playerRef.current.paused) {
-                    playerRef.current.currentTime -= 1/24; // Assumes fps is 24
+                    playerRef.current.currentTime -= 1/fpsRef.current;
                 }
                 break;
             case ".": // Frame forward
                 event.preventDefault();
                 if (playerRef.current && playerRef.current.paused) {
-                    playerRef.current.currentTime += 1/24;
+                    playerRef.current.currentTime += 1/fpsRef.current;
                 }
                 break;
         }
@@ -322,6 +323,34 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
         return () => window.removeEventListener("keydown", onKeyDown);
     }, [onKeyDown]);
 
+    // Calculate frame rate
+    // Source - https://stackoverflow.com/questions/72997777/how-do-i-get-the-frame-rate-of-an-html-video-with-javascript
+    useEffect(() => {
+        const videoElement = document.querySelector("video");
+        if (!videoElement) return;
+
+        let lastMediaTime = 0, lastFrameNum = 0, frameNotSeeked = true;
+        const fpsRounder: number[] = [];
+
+        const ticker: VideoFrameRequestCallback = (_, metadata) => {
+            const diff = Math.abs(metadata.mediaTime - lastMediaTime) / Math.abs(metadata.presentedFrames - lastFrameNum);
+            if (diff && diff < 1 && frameNotSeeked && fpsRounder.length < 50 && videoElement.playbackRate === 1 && document.hasFocus()) {
+                fpsRounder.push(diff);
+                fpsRef.current = Math.round(fpsRounder.length / fpsRounder.reduce((a, b) => a + b));
+            }
+            frameNotSeeked = true;
+            lastMediaTime = metadata.mediaTime;
+            lastFrameNum = metadata.presentedFrames;
+            videoElement.requestVideoFrameCallback(ticker);
+        };
+
+        const handleSeeked = () => { fpsRounder.pop(); frameNotSeeked = false; };
+
+        videoElement.requestVideoFrameCallback(ticker);
+        videoElement.addEventListener("seeked", handleSeeked);
+        return () => videoElement.removeEventListener("seeked", handleSeeked);
+    }, []);
+
     function onPlayerMount(player: HTMLVideoElement) {
         playerRef.current = player;
         if (playerRef.current) {
@@ -353,12 +382,11 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
 
     function togglePip() {
         const videoElement = document.querySelector("video");
-        if (videoElement) {
-            if (document.pictureInPictureElement) {
-                document.exitPictureInPicture();
-            } else {
-                videoElement.requestPictureInPicture();
-            }
+        if (!videoElement) return;
+        if (document.pictureInPictureElement) {
+            document.exitPictureInPicture();
+        } else {
+            videoElement.requestPictureInPicture();
         }
     };
 
