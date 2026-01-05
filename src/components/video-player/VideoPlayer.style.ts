@@ -131,11 +131,12 @@ export const StyledAudioCover = styled.img`
     inset: 0;
     margin: auto;
 
-    width: 100%;
-    height: 100%;
+    max-width: 80%;
+    height: 80%;
+    border-radius: 8px;
 
-    object-fit: contain;
-    box-shadow: inset 0 0 60px ${theme.colors["solid-on-card"]};
+    object-fit: cover;
+    box-shadow: ${theme.shadows.high};
 
     [data-background] & {
         pointer-events: none;
@@ -143,8 +144,10 @@ export const StyledAudioCover = styled.img`
 `;
 
 export const StyledAudioCoverBackground = styled.img`
-    width: 100%;
-    height: 100%;
+    width: calc(100% + 32px);
+    height: calc(100% + 32px);
+    max-width: none;
+    margin: -16px;
 
     object-fit: cover;
     filter: blur(8px);

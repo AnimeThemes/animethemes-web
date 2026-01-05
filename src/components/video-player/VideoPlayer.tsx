@@ -153,109 +153,6 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
         ],
     );
 
-    // Handle keyboard inputs
-    const onKeyDown = useCallback((event: KeyboardEvent) => {
-        if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
-            return;
-        }
-
-        switch (event.key.toLocaleLowerCase()) {
-            case " ": // Play/Pause
-            case "k":
-                event.preventDefault();
-                togglePlay();
-                break;
-            case "arrowright": // Seek forward
-                event.preventDefault();
-                if (playerRef.current) {
-                    playerRef.current.currentTime += 5;
-                }
-                break;
-            case "l": // Seek forward large
-                event.preventDefault();
-                if (playerRef.current) {
-                    playerRef.current.currentTime += 10;
-                }
-                break;
-            case "arrowleft": // Seek backward
-                event.preventDefault();
-                if (playerRef.current) {
-                    playerRef.current.currentTime -= 5;
-                }
-                break;
-            case "j": // Seek backward large
-                event.preventDefault();
-                if (playerRef.current) {
-                    playerRef.current.currentTime -= 10;
-                }
-                break;
-            case "n": // Next track
-                event.preventDefault();
-                playNextTrack(true);
-                break;
-            case "b": // Previous track
-                event.preventDefault();
-                playPreviousTrack(true);
-                break;
-            case "m": // Mute
-                event.preventDefault();
-                if (playerRef.current) {
-                    setMuted(!muted);
-                }
-                break;
-            case "arrowup": // Volume up
-                event.preventDefault();
-                if (playerRef.current) {
-                    setGlobalVolume(Math.min(globalVolume + 0.1, 1));
-                    setMuted(false);
-                }
-                break;
-            case "arrowdown": // Volume down
-                event.preventDefault();
-                if (playerRef.current) {
-                    setGlobalVolume(Math.max(globalVolume - 0.1, 0));
-                    setMuted(false);
-                }
-                break;
-            case "d": // Download
-                event.preventDefault();
-                if (audioMode === AudioMode.ENABLED) {
-                    const link = document.createElement("a");
-                    link.href = `${audioUrl}?download`;
-                    link.click();
-                } else {
-                    const link = document.createElement("a");
-                    link.href = `${videoUrl}?download`;
-                    link.click();
-                }
-                break;
-            case "f": // Fullscreen
-                event.preventDefault();
-                toggleFullscreen();
-                break;
-            case "a": // Toggle audio mode
-                event.preventDefault();
-                updateAudioMode(audioMode === AudioMode.ENABLED ? AudioMode.DISABLED : AudioMode.ENABLED);
-                break;
-            case "p": // Toggle Picture-in-Picture
-                event.preventDefault();
-                togglePip();
-                break;
-            case ",": // Frame back
-                event.preventDefault();
-                if (playerRef.current && playerRef.current.paused) {
-                    playerRef.current.currentTime -= 1/fpsRef.current;
-                }
-                break;
-            case ".": // Frame forward
-                event.preventDefault();
-                if (playerRef.current && playerRef.current.paused) {
-                    playerRef.current.currentTime += 1/fpsRef.current;
-                }
-                break;
-        }
-    }, [togglePlay, playNextTrack, playPreviousTrack, audioMode, audioUrl, videoUrl, toggleFullscreen]);
-
     const autoPlayNextTrack = useCallback(() => {
         if (
             (isWatchListUsingLocalAutoPlay && isLocalAutoPlay) ||
@@ -317,24 +214,28 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
         }
     }, [anime, theme, smallCover, playNextTrack, playPreviousTrack]);
 
-    // Keyboard shortcuts
-    useEffect(() => {
-        window.addEventListener("keydown", onKeyDown);
-        return () => window.removeEventListener("keydown", onKeyDown);
-    }, [onKeyDown]);
-
     // Calculate frame rate
     // Source - https://stackoverflow.com/questions/72997777/how-do-i-get-the-frame-rate-of-an-html-video-with-javascript
     useEffect(() => {
         const videoElement = document.querySelector("video");
         if (!videoElement) return;
 
-        let lastMediaTime = 0, lastFrameNum = 0, frameNotSeeked = true;
+        let lastMediaTime = 0,
+            lastFrameNum = 0,
+            frameNotSeeked = true;
         const fpsRounder: number[] = [];
 
         const ticker: VideoFrameRequestCallback = (_, metadata) => {
-            const diff = Math.abs(metadata.mediaTime - lastMediaTime) / Math.abs(metadata.presentedFrames - lastFrameNum);
-            if (diff && diff < 1 && frameNotSeeked && fpsRounder.length < 50 && videoElement.playbackRate === 1 && document.hasFocus()) {
+            const diff =
+                Math.abs(metadata.mediaTime - lastMediaTime) / Math.abs(metadata.presentedFrames - lastFrameNum);
+            if (
+                diff &&
+                diff < 1 &&
+                frameNotSeeked &&
+                fpsRounder.length < 50 &&
+                videoElement.playbackRate === 1 &&
+                document.hasFocus()
+            ) {
                 fpsRounder.push(diff);
                 fpsRef.current = Math.round(fpsRounder.length / fpsRounder.reduce((a, b) => a + b));
             }
@@ -344,7 +245,10 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
             videoElement.requestVideoFrameCallback(ticker);
         };
 
-        const handleSeeked = () => { fpsRounder.pop(); frameNotSeeked = false; };
+        const handleSeeked = () => {
+            fpsRounder.pop();
+            frameNotSeeked = false;
+        };
 
         videoElement.requestVideoFrameCallback(ticker);
         videoElement.addEventListener("seeked", handleSeeked);
@@ -372,23 +276,23 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
         }
     }
 
-    function togglePlay() {
+    const togglePlay = useCallback(() => {
         if (isPlaying) {
             playerRef.current?.pause();
         } else {
             playerRef.current?.play();
         }
-    }
+    }, [isPlaying]);
 
     function togglePip() {
         const videoElement = document.querySelector("video");
         if (!videoElement) return;
         if (document.pictureInPictureElement) {
-            document.exitPictureInPicture();
+            void document.exitPictureInPicture();
         } else {
-            videoElement.requestPictureInPicture();
+            void videoElement.requestPictureInPicture();
         }
-    };
+    }
 
     function updateProgress(event: SyntheticEvent<HTMLVideoElement | HTMLAudioElement>) {
         const duration = event.currentTarget.duration;
@@ -408,10 +312,138 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
         }
     }
 
-    function updateAudioMode(audioMode: string) {
-        currentTimeBeforeModeSwitch.current = playerRef.current?.currentTime ?? null;
-        setAudioMode(audioMode);
-    }
+    const updateAudioMode = useCallback(
+        (audioMode: string) => {
+            currentTimeBeforeModeSwitch.current = playerRef.current?.currentTime ?? null;
+            setAudioMode(audioMode);
+        },
+        [setAudioMode],
+    );
+
+    // Handle keyboard inputs
+    const onKeyDown = useCallback(
+        (event: KeyboardEvent) => {
+            if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+                return;
+            }
+
+            switch (event.key.toLocaleLowerCase()) {
+                case " ": // Play/Pause
+                case "k":
+                    event.preventDefault();
+                    togglePlay();
+                    break;
+                case "arrowright": // Seek forward
+                    event.preventDefault();
+                    if (playerRef.current) {
+                        playerRef.current.currentTime += 5;
+                    }
+                    break;
+                case "l": // Seek forward large
+                    event.preventDefault();
+                    if (playerRef.current) {
+                        playerRef.current.currentTime += 10;
+                    }
+                    break;
+                case "arrowleft": // Seek backward
+                    event.preventDefault();
+                    if (playerRef.current) {
+                        playerRef.current.currentTime -= 5;
+                    }
+                    break;
+                case "j": // Seek backward large
+                    event.preventDefault();
+                    if (playerRef.current) {
+                        playerRef.current.currentTime -= 10;
+                    }
+                    break;
+                case "n": // Next track
+                    event.preventDefault();
+                    playNextTrack(true);
+                    break;
+                case "b": // Previous track
+                    event.preventDefault();
+                    playPreviousTrack(true);
+                    break;
+                case "m": // Mute
+                    event.preventDefault();
+                    if (playerRef.current) {
+                        setMuted(!muted);
+                    }
+                    break;
+                case "arrowup": // Volume up
+                    event.preventDefault();
+                    if (playerRef.current) {
+                        setGlobalVolume(Math.min(globalVolume + 0.1, 1));
+                        setMuted(false);
+                    }
+                    break;
+                case "arrowdown": // Volume down
+                    event.preventDefault();
+                    if (playerRef.current) {
+                        setGlobalVolume(Math.max(globalVolume - 0.1, 0));
+                        setMuted(false);
+                    }
+                    break;
+                case "d": // Download
+                    event.preventDefault();
+                    if (audioMode === AudioMode.ENABLED) {
+                        const link = document.createElement("a");
+                        link.href = `${audioUrl}?download`;
+                        link.click();
+                    } else {
+                        const link = document.createElement("a");
+                        link.href = `${videoUrl}?download`;
+                        link.click();
+                    }
+                    break;
+                case "f": // Fullscreen
+                    event.preventDefault();
+                    toggleFullscreen();
+                    break;
+                case "a": // Toggle audio mode
+                    event.preventDefault();
+                    updateAudioMode(audioMode === AudioMode.ENABLED ? AudioMode.DISABLED : AudioMode.ENABLED);
+                    break;
+                case "p": // Toggle Picture-in-Picture
+                    event.preventDefault();
+                    togglePip();
+                    break;
+                case ",": // Frame back
+                    event.preventDefault();
+                    if (playerRef.current && playerRef.current.paused) {
+                        playerRef.current.currentTime -= 1 / fpsRef.current;
+                    }
+                    break;
+                case ".": // Frame forward
+                    event.preventDefault();
+                    if (playerRef.current && playerRef.current.paused) {
+                        playerRef.current.currentTime += 1 / fpsRef.current;
+                    }
+                    break;
+            }
+        },
+        [
+            togglePlay,
+            playNextTrack,
+            playPreviousTrack,
+            audioMode,
+            toggleFullscreen,
+            updateAudioMode,
+            setMuted,
+            muted,
+            setGlobalVolume,
+            globalVolume,
+            audioUrl,
+            videoUrl,
+        ],
+    );
+
+    // Keyboard shortcuts
+    useEffect(() => {
+        window.addEventListener("keydown", onKeyDown);
+        return () => window.removeEventListener("keydown", onKeyDown);
+    }, [onKeyDown]);
 
     function getRelativeWatchListItem(offset: 1 | -1) {
         if (!currentWatchListItem) {
