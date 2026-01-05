@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { ComponentType, ReactNode } from "react";
 import styled, { ThemeProvider } from "styled-components";
 import type { AppProps } from "next/app";
@@ -103,7 +103,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     const currentVideoSlug = getVideoSlugByProps(pageProps);
     const [previousVideoSlug, setPreviousVideoSlug] = useState<string | null>(() => getVideoSlugByProps(pageProps));
 
-    const [isFullscreen, { toggleFullscreen }] = useFullscreen(() => document.documentElement, {
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+
+    const [isFullscreen, { toggleFullscreen : nativeToggleFullscreen }] = useFullscreen(() => document.documentElement, {
         onEnter() {
             document.documentElement.dataset.fullscreen = "true";
         },
@@ -111,6 +113,18 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             delete document.documentElement.dataset.fullscreen;
         },
     });
+
+    const toggleFullscreen = useCallback(() => {
+        if (isIOS) {
+            // iOS does not support the Fullscreen API, so it's handled differently
+            const videoElement = document.querySelector("video");
+            if (videoElement && "webkitEnterFullscreen" in videoElement) {
+                (videoElement as HTMLVideoElement & { webkitEnterFullscreen: () => void }).webkitEnterFullscreen();
+            }
+        } else {
+            nativeToggleFullscreen();
+        }
+    }, [isIOS, nativeToggleFullscreen]);
 
     useEffect(() => {
         if (!isVideoPage && isFullscreen) {

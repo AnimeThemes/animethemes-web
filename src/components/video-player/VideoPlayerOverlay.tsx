@@ -2,10 +2,21 @@ import { Fragment, useContext } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
-import { faCheck, faCompress, faExpand, faGear, faPlus, faShare } from "@fortawesome/free-solid-svg-icons";
+import {
+    faCheck,
+    faCompress,
+    faExpand,
+    faGear,
+    faKeyboard,
+    faPlus,
+    faShare,
+    faUpRightFromSquare,
+} from "@fortawesome/free-solid-svg-icons";
+import { Dialog } from "@radix-ui/react-dialog";
 
 import { Row } from "@/components/box/Flex";
 import { IconTextButton } from "@/components/button/IconTextButton";
+import { DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
 import { PlaylistTrackAddDialog } from "@/components/dialog/PlaylistTrackAddDialog";
 import { Icon } from "@/components/icon/Icon";
 import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from "@/components/menu/Menu";
@@ -19,6 +30,7 @@ import FullscreenContext from "@/context/fullscreenContext";
 import PlayerContext from "@/context/playerContext";
 import useSetting from "@/hooks/useSetting";
 import type { VideoPageProps } from "@/pages/anime/[animeSlug]/[videoSlug]";
+import theme from "@/theme";
 import createVideoSlug from "@/utils/createVideoSlug";
 import { AudioMode } from "@/utils/settings";
 
@@ -43,6 +55,38 @@ const StyledOverlayButton = styled(IconTextButton)`
     backdrop-filter: blur(5px);
 `;
 
+const StyledKeyList = styled.dl`
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 16px;
+    align-items: baseline;
+    margin: 0;
+`;
+const StyledKey = styled.dt`
+    text-align: right;
+    color: ${theme.colors["text-muted"]};
+`;
+const StyledKeyDescription = styled.dd`
+    margin: 0;
+    color: ${theme.colors["text-disabled"]};
+`;
+const StyledKeyHint = styled.kbd`
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 32px;
+    height: 32px;
+    border: 1px solid ${theme.colors["text-disabled"]};
+    border-radius: 4px;
+
+    font-size: 1.25rem;
+    background-color: ${theme.colors["background"]};
+`;
+const StyledKeyHintSpace = styled(StyledKeyHint)`
+    width: 96px;
+`;
+
 export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }: VideoPageProps) {
     const theme = anime.themes[themeIndex];
     const entry = theme.entries[entryIndex];
@@ -50,6 +94,8 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
 
     const { watchList, setWatchList, currentWatchListItem } = useContext(PlayerContext);
     const { isFullscreen, toggleFullscreen } = useContext(FullscreenContext);
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    const isPIPSupported = typeof document !== "undefined" && document.pictureInPictureEnabled;
     const context = useContext(VideoPlayerContext);
     const [audioMode] = useSetting(AudioMode, { storageSync: false });
 
@@ -82,6 +128,80 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
                     entry={{ ...entry, theme }}
                     trigger={<StyledOverlayButton icon={faPlus} isCircle title="Add to playlist" />}
                 />
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <StyledOverlayButton icon={faKeyboard} isCircle title="Keyboard shortcuts" />
+                    </DialogTrigger>
+                    <DialogContent title="Keyboard Shortcuts">
+                        <StyledKeyList>
+                            <StyledKey>
+                                <StyledKeyHintSpace title="Space">_</StyledKeyHintSpace> or{" "}
+                                <StyledKeyHint>K</StyledKeyHint>
+                            </StyledKey>
+                            <StyledKeyDescription>Play / Pause</StyledKeyDescription>
+                            <StyledKey>
+                                <StyledKeyHint>→</StyledKeyHint>
+                            </StyledKey>
+                            <StyledKeyDescription>Seek forward 5 seconds</StyledKeyDescription>
+                            <StyledKey>
+                                <StyledKeyHint>←</StyledKeyHint>
+                            </StyledKey>
+                            <StyledKeyDescription>Seek backward 5 seconds</StyledKeyDescription>
+                            <StyledKey>
+                                <StyledKeyHint>L</StyledKeyHint>
+                            </StyledKey>
+                            <StyledKeyDescription>Seek forward 10 seconds</StyledKeyDescription>
+                            <StyledKey>
+                                <StyledKeyHint>J</StyledKeyHint>
+                            </StyledKey>
+                            <StyledKeyDescription>Seek backward 10 seconds</StyledKeyDescription>
+                            <StyledKey>
+                                <StyledKeyHint>.</StyledKeyHint>
+                            </StyledKey>
+                            <StyledKeyDescription>Seek forward 1 frame</StyledKeyDescription>
+                            <StyledKey>
+                                <StyledKeyHint>,</StyledKeyHint>
+                            </StyledKey>
+                            <StyledKeyDescription>Seek backward 1 frame</StyledKeyDescription>
+                            <StyledKey>
+                                <StyledKeyHint>N</StyledKeyHint>
+                            </StyledKey>
+                            <StyledKeyDescription>Next track</StyledKeyDescription>
+                            <StyledKey>
+                                <StyledKeyHint>B</StyledKeyHint>
+                            </StyledKey>
+                            <StyledKeyDescription>Previous track</StyledKeyDescription>
+                            <StyledKey>
+                                <StyledKeyHint>M</StyledKeyHint>
+                            </StyledKey>
+                            <StyledKeyDescription>Mute / Unmute</StyledKeyDescription>
+                            <StyledKey>
+                                <StyledKeyHint>↑</StyledKeyHint>
+                            </StyledKey>
+                            <StyledKeyDescription>Volume up</StyledKeyDescription>
+                            <StyledKey>
+                                <StyledKeyHint>↓</StyledKeyHint>
+                            </StyledKey>
+                            <StyledKeyDescription>Volume down</StyledKeyDescription>
+                            <StyledKey>
+                                <StyledKeyHint>D</StyledKeyHint>
+                            </StyledKey>
+                            <StyledKeyDescription>Download track</StyledKeyDescription>
+                            <StyledKey>
+                                <StyledKeyHint>F</StyledKeyHint>
+                            </StyledKey>
+                            <StyledKeyDescription>Toggle fullscreen</StyledKeyDescription>
+                            <StyledKey>
+                                <StyledKeyHint>A</StyledKeyHint>
+                            </StyledKey>
+                            <StyledKeyDescription>Toggle audio mode</StyledKeyDescription>
+                            <StyledKey>
+                                <StyledKeyHint>P</StyledKeyHint>
+                            </StyledKey>
+                            <StyledKeyDescription>Toggle picture-in-picture</StyledKeyDescription>
+                        </StyledKeyList>
+                    </DialogContent>
+                </Dialog>
                 <ShareMenu
                     pagePath={context.videoPagePath}
                     videoUrl={context.videoUrl}
@@ -162,12 +282,22 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
                         )}
                     </MenuContent>
                 </Menu>
-                <StyledOverlayButton
-                    icon={isFullscreen ? faCompress : faExpand}
-                    isCircle
-                    onClick={toggleFullscreen}
-                    title="Toggle fullscreen"
-                />
+                {isPIPSupported && audioMode === AudioMode.DISABLED && (
+                    <StyledOverlayButton
+                        icon={faUpRightFromSquare}
+                        isCircle
+                        onClick={context.togglePip}
+                        title="Toggle picture-in-picture"
+                    />
+                )}
+                {!(isIOS && audioMode === AudioMode.ENABLED) && ( // Hide fullscreen button on iOS when audio mode is enabled
+                    <StyledOverlayButton
+                        icon={isFullscreen ? faCompress : faExpand}
+                        isCircle
+                        onClick={toggleFullscreen}
+                        title="Toggle fullscreen"
+                    />
+                )}
             </Row>
         </StyledOverlay>
     );
