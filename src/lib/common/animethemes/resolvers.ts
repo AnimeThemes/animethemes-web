@@ -14,6 +14,7 @@ import type {
     ApiArtistShow,
     ApiAudioShow,
     ApiDumpIndex,
+    ApiEntryIndex,
     ApiEntryShow,
     ApiFeaturedThemeShow,
     ApiImageIndex,
@@ -63,6 +64,10 @@ const resolvers: Resolvers = {
         artistAll: createApiResolverPaginated<ApiArtistIndex>()({
             endpoint: () => `/artist`,
             extractFromResponse: (response) => response.artists,
+        }),
+        entryAll: createApiResolverPaginated<ApiEntryIndex>()({
+            endpoint: (_, { orderBy, orderDesc }) => `/animethemeentry?sort=${orderDesc ? "-" : ""}${orderBy}`,
+            extractFromResponse: (response) => response.animethemeentries,
         }),
         series: createApiResolver<ApiSeriesShow>()({
             endpoint: (_, { slug }) => `/series/${slug}`,

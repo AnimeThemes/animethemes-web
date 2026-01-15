@@ -9,37 +9,37 @@ import {
     VideoSummaryCardFragmentVideo,
 } from "@/components/card/VideoSummaryCard";
 import { Skeleton } from "@/components/skeleton/Skeleton";
-import type { HomePageMostViewedQuery } from "@/generated/graphql";
+import type { HomePageMostPopularQuery } from "@/generated/graphql";
 import { fetchDataClient } from "@/lib/client/index";
 
-export function MostViewedVideos() {
-    const { data: mostViewed } = useQuery<HomePageMostViewedQuery["videoAll"] | Array<null>>({
+export function MostPopularEntries() {
+    const { data: mostPopular } = useQuery<HomePageMostPopularQuery["entryAll"] | Array<null>>({
         queryKey: ["HomePageTrending"],
         queryFn: async () => {
-            const { data } = await fetchDataClient<HomePageMostViewedQuery>(gql`
-                ${VideoSummaryCardFragmentVideo}
+            const { data } = await fetchDataClient<HomePageMostPopularQuery>(gql`
                 ${VideoSummaryCardFragmentEntry}
+                ${VideoSummaryCardFragmentVideo}
 
-                query HomePageMostViewed {
-                    videoAll(orderBy: "views_count", orderDesc: true, limit: 10) {
-                        ...VideoSummaryCardVideo
-                        entries {
-                            ...VideoSummaryCardEntry
+                query HomePageMostPopular {
+                    entryAll(orderBy: "tracks_count", orderDesc: true, limit: 10) {
+                        ...VideoSummaryCardEntry
+                        videos {
+                            ...VideoSummaryCardVideo
                         }
                     }
                 }
             `);
 
-            return data.videoAll;
+            return data.entryAll;
         },
         placeholderData: range(10).map(() => null),
     });
 
     return (
         <Column style={{ "--gap": "16px" }}>
-            {mostViewed?.map((video, index) => (
+            {mostPopular?.map((entry, index) => (
                 <Skeleton key={index} variant="summary-card" delay={index * 100}>
-                    {video ? <VideoSummaryCard video={video} entry={video.entries[0]} /> : null}
+                    {entry ? <VideoSummaryCard video={entry.videos[0]} entry={entry} /> : null}
                 </Skeleton>
             ))}
         </Column>

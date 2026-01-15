@@ -220,6 +220,7 @@ export type Query = {
     bracket: Maybe<Bracket>;
     bracketAll: Array<Bracket>;
     dumpAll: Array<Dump>;
+    entryAll: Array<Entry>;
     featuredTheme: Maybe<FeaturedTheme>;
     imageAll: Array<Image>;
     me: UserScopedQuery;
@@ -268,6 +269,12 @@ export type QueryArtistAllArgs = {
 
 export type QueryBracketArgs = {
     slug: Scalars["String"]["input"];
+};
+
+export type QueryEntryAllArgs = {
+    limit: InputMaybe<Scalars["Int"]["input"]>;
+    orderBy: InputMaybe<Scalars["String"]["input"]>;
+    orderDesc: InputMaybe<Scalars["Boolean"]["input"]>;
 };
 
 export type QueryImageAllArgs = {
@@ -864,33 +871,28 @@ export type AnimeThemeFilterThemeFragment = {
     }>;
 };
 
-export type HomePageMostViewedQueryVariables = Exact<{ [key: string]: never }>;
+export type HomePageMostPopularQueryVariables = Exact<{ [key: string]: never }>;
 
-export type HomePageMostViewedQuery = {
-    videoAll: Array<{
+export type HomePageMostPopularQuery = {
+    entryAll: Array<{
         id: number;
-        basename: string;
-        tags: string;
-        entries: Array<{
+        version: number | null;
+        videos: Array<{ id: number; basename: string; tags: string; audio: { basename: string } }>;
+        theme: {
             id: number;
-            version: number | null;
-            theme: {
-                id: number;
-                type: string;
-                sequence: number | null;
-                group: { name: string; slug: string } | null;
-                anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
-                song: {
-                    title: string | null;
-                    performances: Array<{
-                        alias: string | null;
-                        as: string | null;
-                        artist: { slug: string; name: string };
-                    }>;
-                } | null;
-            };
-        }>;
-        audio: { basename: string };
+            type: string;
+            sequence: number | null;
+            group: { name: string; slug: string } | null;
+            anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+            song: {
+                title: string | null;
+                performances: Array<{
+                    alias: string | null;
+                    as: string | null;
+                    artist: { slug: string; name: string };
+                }>;
+            } | null;
+        };
     }>;
 };
 

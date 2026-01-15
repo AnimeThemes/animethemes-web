@@ -6,6 +6,7 @@ const typeDefs = gql`
         animeAll(limit: Int, year: Int, season: String): [Anime!]!
         theme(id: Int): Theme
         themeAll(limit: Int, orderBy: String, orderDesc: Boolean, has: String): [Theme!]!
+        entryAll(limit: Int, orderBy: String, orderDesc: Boolean): [Entry!]!
         artist(id: Int, slug: String): Artist
         artistAll(limit: Int): [Artist!]!
         series(id: Int, slug: String): Series
