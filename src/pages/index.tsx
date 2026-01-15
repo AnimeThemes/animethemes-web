@@ -21,6 +21,7 @@ import { AnnouncementCard } from "@/components/card/AnnouncementCard";
 import { ShuffleDialog } from "@/components/dialog/ShuffleDialog";
 import { ExternalLink } from "@/components/external-link/ExternalLink";
 import { FeaturedTheme } from "@/components/featured-theme/FeaturedTheme";
+import { MostPopularEntries } from "@/components/home/MostPopularEntries";
 import { RecentlyAddedPlaylists } from "@/components/home/RecentlyAddedPlaylists";
 import { RecentlyAddedVideos } from "@/components/home/RecentlyAddedVideos";
 import { Icon } from "@/components/icon/Icon";
@@ -34,7 +35,6 @@ import { fetchData } from "@/lib/server";
 import theme from "@/theme";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 import { serializeMarkdownSafe } from "@/utils/serializeMarkdown";
-import { MostPopularEntries } from "@/components/home/MostPopularEntries";
 
 const BigButton = styled(Button)`
     justify-content: flex-end;
