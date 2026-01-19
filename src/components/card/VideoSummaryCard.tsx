@@ -120,11 +120,13 @@ export function VideoSummaryCard({
 
 export const VideoSummaryCardFragmentVideo = gql`
     ${createVideoSlug.fragments.video}
+    ${VideoMenu.fragments.video}
 
     fragment VideoSummaryCardVideo on Video {
         id
         basename
         ...createVideoSlugVideo
+        ...VideoMenuVideo
         audio {
             basename
         }
@@ -136,9 +138,11 @@ export const VideoSummaryCardFragmentEntry = gql`
     ${extractImages.fragments.resourceWithImages}
     ${createVideoSlug.fragments.theme}
     ${createVideoSlug.fragments.entry}
+    ${VideoMenu.fragments.entry}
 
     fragment VideoSummaryCardEntry on Entry {
         ...createVideoSlugEntry
+        ...VideoMenuEntry
         id
         theme {
             ...createVideoSlugTheme
