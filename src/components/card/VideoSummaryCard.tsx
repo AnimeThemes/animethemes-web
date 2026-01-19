@@ -7,6 +7,7 @@ import gql from "graphql-tag";
 
 import { SummaryCard } from "@/components/card/SummaryCard2";
 import { Icon } from "@/components/icon/Icon";
+import { VideoMenu } from "@/components/menu/VideoMenu";
 import { TextLink } from "@/components/text/TextLink";
 import { Performances } from "@/components/utils/Performances";
 import { SongTitle } from "@/components/utils/SongTitle";
@@ -110,7 +111,7 @@ export function VideoSummaryCard({
                 </SummaryCard.Body>
                 {menu ? (
                     <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>{menu}</StyledOverlayButtons>
-                ) : null}
+                ) : <VideoMenu entry={entry} video={video} />}
                 {append}
             </SummaryCard>
         </StyledWrapper>

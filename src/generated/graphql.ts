@@ -1011,6 +1011,24 @@ export type ThemeMenuThemeFragment = {
     }>;
 };
 
+export type VideoMenuEntryFragment = {
+    id: number;
+    version: number | null;
+    theme: {
+        id: number;
+        type: string;
+        sequence: number | null;
+        group: { name: string; slug: string } | null;
+        anime: { slug: string; name: string; images: Array<{ link: string; facet: string | null }> };
+        song: {
+            title: string | null;
+            performances: Array<{ alias: string | null; as: string | null; artist: { slug: string; name: string } }>;
+        } | null;
+    };
+};
+
+export type VideoMenuVideoFragment = { id: number; basename: string; tags: string; audio: { basename: string } };
+
 export type SearchAnimeQueryVariables = Exact<{
     args: SearchArgs;
 }>;
