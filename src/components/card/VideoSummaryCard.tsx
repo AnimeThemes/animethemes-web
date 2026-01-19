@@ -109,9 +109,9 @@ export function VideoSummaryCard({
                         <TextLink href={`/anime/${anime.slug}`}>{anime.name}</TextLink>
                     </SummaryCard.Description>
                 </SummaryCard.Body>
-                {menu ? (
-                    <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>{menu}</StyledOverlayButtons>
-                ) : <VideoMenu entry={entry} video={video} />}
+                <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>
+                    {menu ?? <VideoMenu entry={entry} video={video} />}
+                </StyledOverlayButtons>
                 {append}
             </SummaryCard>
         </StyledWrapper>
