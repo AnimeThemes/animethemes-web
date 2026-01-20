@@ -3,10 +3,9 @@ import styled from "styled-components";
 import Link from "next/link";
 
 import type { Maybe } from "@graphql-tools/utils";
-import gql from "graphql-tag";
 
 import { Text } from "@/components/text/Text";
-import type { PerformancesArtistFragment, PerformancesSongFragment } from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
 const StyledArtist = styled(Text)`
     &:not(:first-of-type)::before {
@@ -24,9 +23,38 @@ const StyledArtistLink = styled(Text).attrs({ as: "a", link: true })`
     font-size: 1rem;
 `;
 
+const fragments = {
+    song: graphql(`
+        fragment PerformancesSong on Song {
+            performances {
+                alias
+                as
+                artist {
+                    __typename
+                    ... on Artist {
+                        slug
+                        name
+                    }
+                    ... on Membership {
+                        group {
+                            slug
+                            name
+                        }
+                    }
+                }
+            }
+        }
+    `),
+    artist: graphql(`
+        fragment PerformancesArtist on Artist {
+            slug
+        }
+    `),
+};
+
 export interface PerformancesProps {
-    song: PerformancesSongFragment | null;
-    artist?: PerformancesArtistFragment;
+    song: FragmentType<typeof fragments.song> | null;
+    artist?: FragmentType<typeof fragments.artist>;
     maxPerformances?: number | null;
     expandable?: boolean;
 }
@@ -50,10 +78,17 @@ export function getDisplayedArtistName({ alias, artist, as }: ArtistNameProps) {
     return artistName;
 }
 
-export function Performances({ song, artist, maxPerformances = 3, expandable = false }: PerformancesProps) {
+export function Performances({
+    song: songFragment,
+    artist: artistFragment,
+    maxPerformances = 3,
+    expandable = false,
+}: PerformancesProps) {
+    const song = getFragmentData(fragments.song, songFragment);
+    const artist = getFragmentData(fragments.artist, artistFragment);
     const [expandPerformances, setExpandPerformances] = useState(false);
 
-    if (!song?.performances?.length) {
+    if (!song?.performances.length) {
         return null;
     }
 
@@ -61,7 +96,12 @@ export function Performances({ song, artist, maxPerformances = 3, expandable = f
         maxPerformances = song.performances.length;
     }
 
-    const performances = [...song.performances].sort((a, b) => a.artist.name.localeCompare(b.artist.name));
+    const performances = [...song.performances]
+        .map((performance) => ({
+            ...performance,
+            artist: performance.artist.__typename === "Artist" ? performance.artist : performance.artist.group,
+        }))
+        .sort((a, b) => a.artist.name.localeCompare(b.artist.name));
     const performancesShown = performances.slice(0, maxPerformances);
     const performancesHidden = performances.slice(maxPerformances);
 
@@ -121,23 +161,3 @@ export function Performances({ song, artist, maxPerformances = 3, expandable = f
         </Text>
     );
 }
-
-Performances.fragments = {
-    song: gql`
-        fragment PerformancesSong on Song {
-            performances {
-                alias
-                as
-                artist {
-                    slug
-                    name
-                }
-            }
-        }
-    `,
-    artist: gql`
-        fragment PerformancesArtist on Artist {
-            slug
-        }
-    `,
-};

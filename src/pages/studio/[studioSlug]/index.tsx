@@ -2,7 +2,7 @@ import { memo, useMemo, useState } from "react";
 import styled from "styled-components";
 import type { GetStaticPaths, GetStaticProps } from "next";
 
-import gql from "graphql-tag";
+import type { ResultOf } from "@graphql-typed-document-node/core";
 import type { ParsedUrlQuery } from "querystring";
 
 import { Column, Row } from "@/components/box/Flex";
@@ -17,28 +17,14 @@ import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortB
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
 import { Collapse } from "@/components/utils/Collapse";
-import type {
-    StudioDetailPageAllQuery,
-    StudioDetailPageQuery,
-    StudioDetailPageQueryVariables,
-} from "@/generated/graphql";
+import createApolloClient from "@/graphql/createApolloClient";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useToggle from "@/hooks/useToggle";
-import { fetchData } from "@/lib/server";
 import theme from "@/theme";
-import {
-    ANIME_A_Z,
-    ANIME_NEW_OLD,
-    ANIME_OLD_NEW,
-    ANIME_Z_A,
-    either,
-    getComparator,
-    resourceAsComparator,
-    resourceSiteComparator,
-} from "@/utils/comparators";
+import { ANIME_A_Z, ANIME_NEW_OLD, ANIME_OLD_NEW, ANIME_Z_A, compare, getComparator } from "@/utils/comparators";
 import extractImages from "@/utils/extractImages";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import getSharedPageProps from "@/utils/getSharedPageProps";
-import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledDesktopOnly = styled.div`
     @media (max-width: ${theme.breakpoints.mobileMax}) {
@@ -54,15 +40,90 @@ const StyledList = styled.div`
     text-align: center;
 `;
 
-type StudioDetailPageProps = RequiredNonNullable<StudioDetailPageQuery>;
+const fragments = {
+    studio: graphql(`
+        fragment StudioDetailPageStudio on Studio {
+            ...StudioCoverImageStudio
+            slug
+            name
+            anime {
+                nodes {
+                    ...AnimeSummaryCardAnime
+                    ...AnimeSummaryCardAnimeExpandable
+                    name
+                    slug
+                    year
+                    season
+                    animethemes {
+                        type
+                        sequence
+                        animethemeentries {
+                            version
+                            videos {
+                                nodes {
+                                    tags
+                                }
+                            }
+                        }
+                    }
+                    images {
+                        nodes {
+                            facet
+                            link
+                        }
+                    }
+                }
+            }
+            resources {
+                edges {
+                    as
+                    node {
+                        link
+                        site
+                        siteLocalized
+                    }
+                }
+            }
+            images {
+                nodes {
+                    ...extractImagesImage
+                }
+            }
+        }
+    `),
+};
+
+const propsQuery = graphql(`
+    query StudioDetailPage($studioSlug: String!) {
+        studio(slug: $studioSlug) {
+            ...StudioDetailPageStudio
+        }
+    }
+`);
+
+const pathsQuery = graphql(`
+    query StudioDetailPageAll {
+        studioPagination {
+            data {
+                ...StudioDetailPageStudio
+                slug
+            }
+        }
+    }
+`);
+
+interface StudioDetailPageProps {
+    studio: FragmentType<typeof fragments.studio>;
+}
 
 interface StudioDetailPageParams extends ParsedUrlQuery {
     studioSlug: string;
 }
 
-export default function StudioDetailPage({ studio }: StudioDetailPageProps) {
-    const anime = studio.anime;
-    const { largeCover } = extractImages(studio);
+export default function StudioDetailPage({ studio: studioFragment }: StudioDetailPageProps) {
+    const studio = getFragmentData(fragments.studio, studioFragment);
+    const anime = studio.anime.nodes;
+    const { largeCover } = extractImages(studio.images.nodes);
 
     const [showFilter, toggleShowFilter] = useToggle();
     const [sortBy, setSortBy] = useState<
@@ -81,14 +142,14 @@ export default function StudioDetailPage({ studio }: StudioDetailPageProps) {
                         <StudioCoverImage studio={studio} alt={`Logo of ${studio.name}`} />
                     </StyledDesktopOnly>
                     <DescriptionList>
-                        {!!studio.resources && !!studio.resources.length && (
+                        {!!studio.resources.edges.length && (
                             <DescriptionList.Item title="Links">
                                 <StyledList>
-                                    {studio.resources
-                                        .sort(either(resourceSiteComparator).or(resourceAsComparator).chain())
+                                    {[...studio.resources.edges]
+                                        .sort((a, b) => compare(a.node.site, b.node.site) || compare(a.as, b.as))
                                         .map((resource) => (
-                                            <ExternalLink key={resource.link} href={resource.link}>
-                                                {resource.site}
+                                            <ExternalLink key={resource.node.link} href={resource.node.link}>
+                                                {resource.node.siteLocalized}
                                                 {!!resource.as && ` (${resource.as})`}
                                             </ExternalLink>
                                         ))}
@@ -125,80 +186,32 @@ export default function StudioDetailPage({ studio }: StudioDetailPageProps) {
 }
 
 interface StudioAnimeProps {
-    anime: StudioDetailPageProps["studio"]["anime"];
+    anime: ResultOf<typeof fragments.studio>["anime"]["nodes"];
 }
 
 const StudioAnime = memo(function StudioAnime({ anime }: StudioAnimeProps) {
-    const animeCards = anime.map((anime) => <AnimeSummaryCard key={anime.slug} anime={anime} expandable />);
+    const animeCards = anime.map((anime) => <AnimeSummaryCard key={anime.slug} anime={anime} expandable={anime} />);
 
     return <>{animeCards}</>;
 });
 
-StudioDetailPage.fragments = {
-    studio: gql`
-        ${AnimeSummaryCard.fragments.anime}
-        ${AnimeSummaryCard.fragments.expandable}
-        ${StudioCoverImage.fragments.studio}
-        ${extractImages.fragments.resourceWithImages}
-
-        fragment StudioDetailPageStudio on Studio {
-            ...StudioCoverImageStudio
-            ...extractImagesResourceWithImages
-            slug
-            name
-            anime {
-                ...AnimeSummaryCardAnime
-                ...AnimeSummaryCardAnimeExpandable
-                name
-                slug
-                year
-                season
-                themes {
-                    type
-                    sequence
-                    entries {
-                        version
-                        videos {
-                            tags
-                        }
-                    }
-                }
-                images {
-                    facet
-                    link
-                }
-            }
-            resources {
-                link
-                site
-                as
-            }
-        }
-    `,
-};
-
-const buildTimeCache: Map<string, StudioDetailPageQuery> = new Map();
+const buildTimeCache: Map<string, FragmentType<typeof fragments.studio>> = new Map();
 
 export const getStaticProps: GetStaticProps<StudioDetailPageProps, StudioDetailPageParams> = async ({ params }) => {
-    let data = params ? buildTimeCache.get(params.studioSlug) : null;
-    let apiRequests = 0;
+    const client = createApolloClient();
 
-    if (!data) {
-        ({ data, apiRequests } = await fetchData<StudioDetailPageQuery, StudioDetailPageQueryVariables>(
-            gql`
-                ${StudioDetailPage.fragments.studio}
+    let studio = params ? buildTimeCache.get(params.studioSlug) : null;
 
-                query StudioDetailPage($studioSlug: String!) {
-                    studio(slug: $studioSlug) {
-                        ...StudioDetailPageStudio
-                    }
-                }
-            `,
-            params,
-        ));
+    if (!studio) {
+        studio = (
+            await client.query({
+                query: propsQuery,
+                variables: params,
+            })
+        ).data.studio;
     }
 
-    if (!data.studio) {
+    if (!studio) {
         return {
             notFound: true,
         };
@@ -206,8 +219,8 @@ export const getStaticProps: GetStaticProps<StudioDetailPageProps, StudioDetailP
 
     return {
         props: {
-            ...getSharedPageProps(apiRequests),
-            studio: data.studio,
+            ...getSharedPageProps(),
+            studio: studio,
         },
         // Revalidate after 1 hour (= 3600 seconds).
         revalidate: 3600,
@@ -216,19 +229,17 @@ export const getStaticProps: GetStaticProps<StudioDetailPageProps, StudioDetailP
 
 export const getStaticPaths: GetStaticPaths<StudioDetailPageParams> = async () => {
     return fetchStaticPaths(async () => {
-        const { data } = await fetchData<StudioDetailPageAllQuery>(gql`
-            ${StudioDetailPage.fragments.studio}
+        const client = createApolloClient();
 
-            query StudioDetailPageAll {
-                studioAll {
-                    ...StudioDetailPageStudio
-                }
-            }
-        `);
+        const { data } = await client.query({
+            query: pathsQuery,
+        });
 
-        data.studioAll.forEach((studio) => buildTimeCache.set(studio.slug, { studio }));
+        for (const studio of data.studioPagination.data) {
+            buildTimeCache.set(studio.slug, studio);
+        }
 
-        return data.studioAll.map((studio) => ({
+        return data.studioPagination.data.map((studio) => ({
             params: {
                 studioSlug: studio.slug,
             },

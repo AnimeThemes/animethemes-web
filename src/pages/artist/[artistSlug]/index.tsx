@@ -4,19 +4,18 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
 import type { MDXRemoteSerializeResult } from "next-mdx-remote";
 
-import gql from "graphql-tag";
-import { uniq } from "lodash-es";
+import type { ResultOf } from "@graphql-typed-document-node/core";
+import { uniq, uniqBy } from "lodash-es";
 import type { ParsedUrlQuery } from "querystring";
 
 import { Column } from "@/components/box/Flex";
 import { FilterToggleButton } from "@/components/button/FilterToggleButton";
-import { ArtistSummaryCard } from "@/components/card/ArtistSummaryCard";
 import { Card } from "@/components/card/Card";
 import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
 import { SidebarContainer } from "@/components/container/SidebarContainer";
 import { DescriptionList } from "@/components/description-list/DescriptionList";
 import { ExternalLink } from "@/components/external-link/ExternalLink";
-import { MultiLargeCoverImage } from "@/components/image/MultiCoverImage";
+import { MultiCoverImage } from "@/components/image/MultiCoverImage";
 import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
 import { Markdown } from "@/components/markdown/Markdown";
 import { SearchFilter } from "@/components/search-filter/SearchFilter";
@@ -27,19 +26,13 @@ import { Text } from "@/components/text/Text";
 import { Collapse } from "@/components/utils/Collapse";
 import { HeightTransition } from "@/components/utils/HeightTransition";
 import PlayerContext, { createWatchListItem } from "@/context/playerContext";
-import type {
-    ArtistDetailPageAllQuery,
-    ArtistDetailPageQuery,
-    ArtistDetailPageQueryVariables,
-    ThemeSummaryCardArtistFragment,
-} from "@/generated/graphql";
+import type { ThemeSummaryCardArtistFragment } from "@/generated/graphql";
+import createApolloClient from "@/graphql/createApolloClient";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useToggle from "@/hooks/useToggle";
-import { fetchData } from "@/lib/server";
 import {
-    either,
+    compare,
     getComparator,
-    resourceAsComparator,
-    resourceSiteComparator,
     SONG_A_Z,
     SONG_A_Z_ANIME,
     SONG_NEW_OLD,
@@ -51,7 +44,6 @@ import extractMultipleImages from "@/utils/extractMultipleImages";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 import { serializeMarkdownSafe } from "@/utils/serializeMarkdown";
-import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledList = styled.div`
     display: flex;
@@ -67,7 +59,216 @@ const StyledHeader = styled.div`
     align-items: center;
 `;
 
-type Performance = ArtistDetailPageProps["artist"]["performances"][number];
+const fragments = {
+    artist: graphql(`
+        fragment ArtistDetailPageArtist on Artist {
+            ...ThemeSummaryCardArtist
+            slug
+            name
+            performances {
+                alias
+                as
+                song {
+                    id
+                    title
+                    performances {
+                        artist {
+                            __typename
+                            ... on Artist {
+                                slug
+                                name
+                            }
+                            ... on Membership {
+                                group {
+                                    slug
+                                    name
+                                }
+                            }
+                        }
+                        alias
+                        as
+                    }
+                    animethemes {
+                        ...ThemeSummaryCardTheme
+                        ...ThemeSummaryCardThemeExpandable
+                        id
+                        animethemeentries {
+                            videos {
+                                nodes {
+                                    id
+                                }
+                            }
+                        }
+                        group {
+                            name
+                            slug
+                        }
+                        anime {
+                            slug
+                            year
+                            season
+                        }
+                    }
+                }
+            }
+            memberships {
+                alias
+                as
+                group {
+                    slug
+                    name
+                }
+                performances {
+                    alias
+                    as
+                    song {
+                        id
+                        title
+                        performances {
+                            artist {
+                                __typename
+                                ... on Artist {
+                                    slug
+                                    name
+                                }
+                                ... on Membership {
+                                    group {
+                                        slug
+                                        name
+                                    }
+                                }
+                            }
+                            alias
+                            as
+                        }
+                        animethemes {
+                            ...ThemeSummaryCardTheme
+                            ...ThemeSummaryCardThemeExpandable
+                            id
+                            group {
+                                name
+                                slug
+                            }
+                            anime {
+                                slug
+                                year
+                                season
+                            }
+                        }
+                    }
+                }
+            }
+            groupships {
+                alias
+                as
+                member {
+                    slug
+                    name
+                }
+                performances {
+                    alias
+                    as
+                    song {
+                        id
+                        title
+                        performances {
+                            artist {
+                                __typename
+                                ... on Artist {
+                                    slug
+                                    name
+                                }
+                                ... on Membership {
+                                    group {
+                                        slug
+                                        name
+                                    }
+                                }
+                            }
+                            alias
+                            as
+                        }
+                        animethemes {
+                            ...ThemeSummaryCardTheme
+                            ...ThemeSummaryCardThemeExpandable
+                            id
+                            group {
+                                name
+                                slug
+                            }
+                            anime {
+                                slug
+                                year
+                                season
+                            }
+                        }
+                    }
+                }
+            }
+            members {
+                edges {
+                    alias
+                    as
+                    notes
+                    node {
+                        ...ArtistSummaryCardArtist
+                        slug
+                        name
+                    }
+                }
+            }
+            groups {
+                edges {
+                    alias
+                    as
+                    notes
+                    node {
+                        slug
+                        name
+                    }
+                }
+            }
+            images {
+                edges {
+                    ...extractMultipleImagesImageArtistEdge
+                }
+            }
+            resources {
+                edges {
+                    node {
+                        link
+                        site
+                        siteLocalized
+                    }
+                    as
+                }
+            }
+        }
+    `),
+};
+
+const propsQuery = graphql(`
+    query ArtistDetailPage($artistSlug: String!) {
+        artist(slug: $artistSlug) {
+            ...ArtistDetailPageArtist
+            information
+        }
+    }
+`);
+
+const pathsQuery = graphql(`
+    query ArtistDetailPageAll {
+        artistPagination {
+            data {
+                ...ArtistDetailPageArtist
+                slug
+                information
+            }
+        }
+    }
+`);
+
+type Performance = ResultOf<typeof fragments.artist>["performances"][number];
 
 function getPerformanceFilter(key: string | null): (performance: Performance) => boolean {
     switch (key) {
@@ -80,33 +281,45 @@ function getPerformanceFilter(key: string | null): (performance: Performance) =>
     }
 }
 
-type ArtistDetailPageProps = RequiredNonNullable<ArtistDetailPageQuery> & {
+interface ArtistDetailPageProps {
+    artist: FragmentType<typeof fragments.artist>;
     informationMarkdownSource: MDXRemoteSerializeResult | null;
-};
+}
 
 interface ArtistDetailPageParams extends ParsedUrlQuery {
     artistSlug: string;
 }
 
-export default function ArtistDetailPage({ artist, informationMarkdownSource }: ArtistDetailPageProps) {
-    const images = extractMultipleImages(artist);
+export default function ArtistDetailPage({ artist: artistFragment, informationMarkdownSource }: ArtistDetailPageProps) {
+    const artist = getFragmentData(fragments.artist, artistFragment);
+    console.log(artist);
+    const images = extractMultipleImages(artist.images.edges);
     const [collapseInformation, setCollapseInformation] = useState(true);
+
+    const performances = useMemo(
+        () =>
+            uniqBy(
+                [...artist.performances, ...artist.groupships.flatMap((groupship) => groupship.performances)],
+                (performance) => performance.song.id,
+            ),
+        [artist.performances, artist.groupships],
+    );
 
     const characters = useMemo(
         () =>
             uniq([
-                ...artist.performances.map((performance) => performance.as),
-                ...artist.groups.map((group) => group.as),
+                ...performances.map((performance) => performance.as),
+                ...artist.groups.edges.map((group) => group.as),
             ]).filter((alias) => alias) as Array<string>,
-        [artist.performances, artist.groups],
+        [performances, artist.groups],
     );
     const aliases = useMemo(
         () =>
             uniq([
-                ...artist.performances.map((performance) => performance.alias),
-                ...artist.groups.map((group) => group.alias),
+                ...performances.map((performance) => performance.alias),
+                ...artist.groups.edges.map((group) => group.alias),
             ]).filter((alias) => alias) as Array<string>,
-        [artist.performances, artist.groups],
+        [performances, artist.groups],
     );
 
     const performedAsFilterOptions = useMemo(
@@ -127,14 +340,10 @@ export default function ArtistDetailPage({ artist, informationMarkdownSource }: 
     >(SONG_A_Z_ANIME);
 
     const filterPerformances = useCallback(
-        (
-            performances: ArtistDetailPageProps["artist"]["performances"],
-            groupAs: string | null,
-            groupAlias: string | null,
-        ) =>
+        (performances: Array<Performance>, groupAs: string | null, groupAlias: string | null) =>
             performances.filter(
                 (performance) =>
-                    performance.song?.themes[0]?.entries[0]?.videos[0] &&
+                    performance.song?.animethemes[0]?.animethemeentries[0]?.videos.nodes[0] &&
                     (filterPerformedAs === null ||
                         (filterPerformedAs === artist.name &&
                             !performance.as &&
@@ -150,14 +359,14 @@ export default function ArtistDetailPage({ artist, informationMarkdownSource }: 
     );
 
     const toSortedThemes = useCallback(
-        (performances: ArtistDetailPageProps["artist"]["performances"]) =>
-            performances.flatMap((performance) => performance.song.themes).sort(getComparator(sortBy)),
+        (performances: Array<Performance>) =>
+            performances.flatMap((performance) => performance.song.animethemes).sort(getComparator(sortBy)),
         [sortBy],
     );
 
     const performancesGroupedByAlias = useMemo(
         () =>
-            filterPerformances(artist.performances.filter(getPerformanceFilter(filterPerformance)), null, null).reduce(
+            filterPerformances(performances.filter(getPerformanceFilter(filterPerformance)), null, null).reduce(
                 (prev, curr) => {
                     const group = prev.get(curr.alias);
                     if (!group) {
@@ -167,25 +376,25 @@ export default function ArtistDetailPage({ artist, informationMarkdownSource }: 
                     }
                     return prev;
                 },
-                new Map<string | null, ArtistDetailPageProps["artist"]["performances"]>(),
+                new Map<string | null, Array<Performance>>(),
             ),
-        [artist.performances, filterPerformance, filterPerformances],
+        [performances, filterPerformance, filterPerformances],
     );
     const performancesAsSelf = useMemo(() => performancesGroupedByAlias.get(null) ?? [], [performancesGroupedByAlias]);
 
-    const groups = useMemo(
+    const memberships = useMemo(
         () =>
-            artist.groups.map((group) => ({
-                ...group,
+            artist.memberships.map((membership) => ({
+                ...membership,
                 group: {
-                    ...group.group,
+                    ...membership.group,
                     performances:
                         filterPerformance === "SOLO"
                             ? []
-                            : filterPerformances(group.group.performances, group.as, group.alias),
+                            : filterPerformances(membership.performances, membership.as, membership.alias),
                 },
             })),
-        [artist.groups, filterPerformance, filterPerformances],
+        [artist.memberships, filterPerformance, filterPerformances],
     );
 
     return (
@@ -194,7 +403,7 @@ export default function ArtistDetailPage({ artist, informationMarkdownSource }: 
             <Text variant="h1">{artist.name}</Text>
             <SidebarContainer>
                 <Column style={{ "--gap": "24px" }}>
-                    <MultiLargeCoverImage resourceWithImages={artist} />
+                    <MultiCoverImage items={images.map((image) => ({ largeCover: image.link, name: artist.name }))} />
                     <DescriptionList>
                         {aliases.length > 0 && (
                             <DescriptionList.Item title="Aliases">
@@ -207,13 +416,13 @@ export default function ArtistDetailPage({ artist, informationMarkdownSource }: 
                                 </StyledList>
                             </DescriptionList.Item>
                         )}
-                        {!!artist.members?.length && (
+                        {!!artist.members.edges.length && (
                             <DescriptionList.Item title="Members">
                                 <StyledList>
-                                    {artist.members.map(({ member, alias, as, notes }) => (
-                                        <Column key={member.slug}>
-                                            <Text as={Link} href={`/artist/${member.slug}`} link>
-                                                {alias ? alias : member.name}
+                                    {artist.members.edges.map(({ node, alias, as, notes }) => (
+                                        <Column key={node.slug}>
+                                            <Text as={Link} href={`/artist/${node.slug}`} link>
+                                                {alias ? alias : node.name}
                                             </Text>
                                             {as || notes ? (
                                                 <Text variant="small" color="text-muted">
@@ -227,13 +436,13 @@ export default function ArtistDetailPage({ artist, informationMarkdownSource }: 
                                 </StyledList>
                             </DescriptionList.Item>
                         )}
-                        {!!artist.groups?.length && (
+                        {!!artist.groups.edges.length && (
                             <DescriptionList.Item title="Member of">
                                 <StyledList>
-                                    {artist.groups.map(({ group, alias, as, notes }) => (
-                                        <Column key={group.slug}>
-                                            <Text as={Link} href={`/artist/${group.slug}`} link>
-                                                {group.name}
+                                    {artist.groups.edges.map(({ node, alias, as, notes }) => (
+                                        <Column key={node.slug}>
+                                            <Text as={Link} href={`/artist/${node.slug}`} link>
+                                                {node.name}
                                             </Text>
                                             {alias || as || notes ? (
                                                 <Text variant="small" color="text-muted">
@@ -251,14 +460,14 @@ export default function ArtistDetailPage({ artist, informationMarkdownSource }: 
                                 </StyledList>
                             </DescriptionList.Item>
                         )}
-                        {!!artist.resources && !!artist.resources.length && (
+                        {!!artist.resources.edges.length && (
                             <DescriptionList.Item title="Links">
                                 <StyledList>
-                                    {artist.resources
-                                        .sort(either(resourceSiteComparator).or(resourceAsComparator).chain())
+                                    {[...artist.resources.edges]
+                                        .sort((a, b) => compare(a.node.site, b.node.site) || compare(a.as, b.as))
                                         .map((resource) => (
-                                            <ExternalLink key={resource.link} href={resource.link}>
-                                                {resource.site}
+                                            <ExternalLink key={resource.node.link} href={resource.node.link}>
+                                                {resource.node.siteLocalized}
                                                 {!!resource.as && ` (${resource.as})`}
                                             </ExternalLink>
                                         ))}
@@ -354,21 +563,21 @@ export default function ArtistDetailPage({ artist, informationMarkdownSource }: 
                                     <ArtistThemes themes={toSortedThemes(performances)} artist={artist} />
                                 </Column>
                             ))}
-                        {groups.map((group) =>
-                            group.group.performances.length ? (
-                                <Column key={group.group.slug} style={{ "--gap": "16px" }}>
+                        {memberships.map((membership) =>
+                            membership.performances.length ? (
+                                <Column key={membership.group.slug} style={{ "--gap": "16px" }}>
                                     <Text variant="h2">
-                                        {group.alias ? `As ${group.alias} ` : null}
-                                        {group.as ? `As ${group.as} ` : null}
+                                        {membership.alias ? `As ${membership.alias} ` : null}
+                                        {membership.as ? `As ${membership.as} ` : null}
                                         In{" "}
-                                        <Link href={`/artist/${group.group.slug}`}>
-                                            <Text link>{group.group.name}</Text>
+                                        <Link href={`/artist/${membership.group.slug}`}>
+                                            <Text link>{membership.group.name}</Text>
                                         </Link>
-                                        <Text color="text-disabled"> ({group.group.performances.length})</Text>
+                                        <Text color="text-disabled"> ({membership.performances.length})</Text>
                                     </Text>
                                     <ArtistThemes
-                                        themes={toSortedThemes(group.group.performances)}
-                                        artist={group.group}
+                                        themes={toSortedThemes(membership.performances)}
+                                        artist={membership.group}
                                     />
                                 </Column>
                             ) : null,
@@ -381,7 +590,7 @@ export default function ArtistDetailPage({ artist, informationMarkdownSource }: 
 }
 
 interface ArtistThemesProps {
-    themes: Performance["song"]["themes"];
+    themes: Performance["song"]["animethemes"];
     artist: ThemeSummaryCardArtistFragment;
 }
 
@@ -390,8 +599,9 @@ const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemes
 
     function playArtistThemes(initiatingThemeIndex: number, entryIndex = 0, videoIndex = 0) {
         const watchList = themes.flatMap((theme, index) => {
-            const entry = initiatingThemeIndex == index ? theme.entries[entryIndex] : theme.entries[0];
-            const video = initiatingThemeIndex == index ? entry?.videos[videoIndex] : entry?.videos[0];
+            const entry =
+                initiatingThemeIndex == index ? theme.animethemeentries[entryIndex] : theme.animethemeentries[0];
+            const video = initiatingThemeIndex == index ? entry?.videos.nodes[videoIndex] : entry?.videos.nodes[0];
 
             if (!entry || !video) {
                 return [];
@@ -418,130 +628,23 @@ const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemes
     return <>{themeCards}</>;
 });
 
-ArtistDetailPage.fragements = {
-    artist: gql`
-        ${ThemeSummaryCard.fragments.theme}
-        ${ThemeSummaryCard.fragments.artist}
-        ${ThemeSummaryCard.fragments.expandable}
-        ${ArtistSummaryCard.fragments.artist}
-        ${MultiLargeCoverImage.fragments.resourceWithImages}
-
-        fragment ArtistDetailPageArtist on Artist {
-            ...ThemeSummaryCardArtist
-            ...MultiLargeCoverImageResourceWithImages
-            slug
-            information
-            name
-            performances {
-                alias
-                as
-                song {
-                    id
-                    title
-                    performances {
-                        artist {
-                            slug
-                            name
-                        }
-                        alias
-                        as
-                    }
-                    themes {
-                        ...ThemeSummaryCardTheme
-                        ...ThemeSummaryCardThemeExpandable
-                        id
-                        group {
-                            name
-                            slug
-                        }
-                        anime {
-                            slug
-                            year
-                            season
-                        }
-                    }
-                }
-            }
-            members {
-                member {
-                    ...ArtistSummaryCardArtist
-                    slug
-                    name
-                }
-                alias
-                as
-                notes
-            }
-            groups {
-                group {
-                    slug
-                    name
-                    performances {
-                        alias
-                        as
-                        song {
-                            id
-                            title
-                            performances {
-                                artist {
-                                    slug
-                                    name
-                                }
-                                alias
-                                as
-                            }
-                            themes {
-                                ...ThemeSummaryCardTheme
-                                ...ThemeSummaryCardThemeExpandable
-                                id
-                                group {
-                                    name
-                                    slug
-                                }
-                                anime {
-                                    slug
-                                    year
-                                    season
-                                }
-                            }
-                        }
-                    }
-                }
-                alias
-                as
-                notes
-            }
-            resources {
-                link
-                site
-                as
-            }
-        }
-    `,
-};
-
-const buildTimeCache: Map<string, ArtistDetailPageQuery> = new Map();
+const buildTimeCache: Map<string, FragmentType<typeof fragments.artist> & { information: string | null }> = new Map();
 
 export const getStaticProps: GetStaticProps<ArtistDetailPageProps, ArtistDetailPageParams> = async ({ params }) => {
-    let data = params ? buildTimeCache.get(params.artistSlug) : null;
-    let apiRequests = 0;
+    const client = createApolloClient();
 
-    if (!data) {
-        ({ data, apiRequests } = await fetchData<ArtistDetailPageQuery, ArtistDetailPageQueryVariables>(
-            gql`
-                ${ArtistDetailPage.fragements.artist}
+    let artist = params ? buildTimeCache.get(params.artistSlug) : null;
 
-                query ArtistDetailPage($artistSlug: String!) {
-                    artist(slug: $artistSlug) {
-                        ...ArtistDetailPageArtist
-                    }
-                }
-            `,
-            params,
-        ));
+    if (!artist) {
+        artist = (
+            await client.query({
+                query: propsQuery,
+                variables: params,
+            })
+        ).data.artist;
     }
 
-    if (!data.artist) {
+    if (!artist) {
         return {
             notFound: true,
         };
@@ -549,10 +652,10 @@ export const getStaticProps: GetStaticProps<ArtistDetailPageProps, ArtistDetailP
 
     return {
         props: {
-            ...getSharedPageProps(apiRequests),
-            artist: data.artist,
-            informationMarkdownSource: data.artist.information
-                ? (await serializeMarkdownSafe(data.artist.information)).source
+            ...getSharedPageProps(),
+            artist,
+            informationMarkdownSource: artist.information
+                ? (await serializeMarkdownSafe(artist.information)).source
                 : null,
         },
         // Revalidate after 1 hour (= 3600 seconds).
@@ -562,19 +665,17 @@ export const getStaticProps: GetStaticProps<ArtistDetailPageProps, ArtistDetailP
 
 export const getStaticPaths: GetStaticPaths<ArtistDetailPageParams> = async () => {
     return fetchStaticPaths(async () => {
-        const { data } = await fetchData<ArtistDetailPageAllQuery>(gql`
-            ${ArtistDetailPage.fragements.artist}
+        const client = createApolloClient();
 
-            query ArtistDetailPageAll {
-                artistAll {
-                    ...ArtistDetailPageArtist
-                }
-            }
-        `);
+        const { data } = await client.query({
+            query: pathsQuery,
+        });
 
-        data.artistAll.forEach((artist) => buildTimeCache.set(artist.slug, { artist }));
+        for (const artist of data.artistPagination.data) {
+            buildTimeCache.set(artist.slug, artist);
+        }
 
-        return data.artistAll.map((artist) => ({
+        return data.artistPagination.data.map((artist) => ({
             params: {
                 artistSlug: artist.slug,
             },

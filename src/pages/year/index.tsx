@@ -1,16 +1,17 @@
 import styled from "styled-components";
 import type { GetStaticProps } from "next";
 
-import gql from "graphql-tag";
+import type { ResultOf } from "@graphql-typed-document-node/core";
 
 import { BackToTopButton } from "@/components/button/BackToTopButton";
 import { Card } from "@/components/card/Card";
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
 import { TextLink } from "@/components/text/TextLink";
-import type { YearIndexPageQuery } from "@/generated/graphql";
-import { fetchData } from "@/lib/server";
+import createApolloClient from "@/graphql/createApolloClient";
+import { graphql } from "@/graphql/generated";
 import theme from "@/theme";
+import { seasonComparator, sortTransformed } from "@/utils/comparators";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 
@@ -36,22 +37,34 @@ const StyledSeasonList = styled.div`
     letter-spacing: 1px;
 `;
 
-interface YearIndexPageProps extends SharedPageProps, YearIndexPageQuery {}
+const propsQuery = graphql(`
+    query YearIndexPage {
+        animeyears {
+            year
+            seasons {
+                season
+                seasonLocalized
+            }
+        }
+    }
+`);
 
-export default function YearIndexPage({ yearAll }: YearIndexPageProps) {
+interface YearIndexPageProps extends SharedPageProps, ResultOf<typeof propsQuery> {}
+
+export default function YearIndexPage({ animeyears }: YearIndexPageProps) {
     return (
         <>
             <SEO title="Browse by Year" />
             <BackToTopButton />
             <Text variant="h1">Year Index</Text>
             <StyledYearGrid>
-                {yearAll.map((year) => (
-                    <Card key={year.value}>
-                        <StyledYear href={`/year/${year.value}`}>{year.value}</StyledYear>
+                {animeyears.map((year) => (
+                    <Card key={year.year}>
+                        <StyledYear href={`/year/${year.year}`}>{year.year}</StyledYear>
                         <StyledSeasonList>
                             {year.seasons?.map((season) => (
-                                <TextLink key={season.value} href={`/year/${year.value}/${season.value}`}>
-                                    {season.value}
+                                <TextLink key={season.season} href={`/year/${year.year}/${season.season}`}>
+                                    {season.seasonLocalized}
                                 </TextLink>
                             )) ?? null}
                         </StyledSeasonList>
@@ -63,21 +76,23 @@ export default function YearIndexPage({ yearAll }: YearIndexPageProps) {
 }
 
 export const getStaticProps: GetStaticProps<YearIndexPageProps> = async () => {
-    const { data, apiRequests } = await fetchData<YearIndexPageQuery>(gql`
-        query YearIndexPage {
-            yearAll {
-                value
-                seasons {
-                    value
-                }
-            }
-        }
-    `);
+    const client = createApolloClient();
+
+    const { data } = await client.query({
+        query: propsQuery,
+    });
 
     return {
         props: {
-            ...getSharedPageProps(apiRequests),
-            yearAll: data.yearAll.sort((a, b) => b.value - a.value),
+            ...getSharedPageProps(),
+            animeyears: [...data.animeyears]
+                .sort((a, b) => b.year - a.year)
+                .map((year) => ({
+                    ...year,
+                    seasons: [...(year.seasons ?? [])].sort(
+                        sortTransformed(seasonComparator, (season) => season.season),
+                    ),
+                })),
         },
     };
 };

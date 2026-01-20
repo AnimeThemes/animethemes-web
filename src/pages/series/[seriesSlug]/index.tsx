@@ -2,7 +2,7 @@ import { memo, useMemo, useState } from "react";
 import styled from "styled-components";
 import type { GetStaticPaths, GetStaticProps } from "next";
 
-import gql from "graphql-tag";
+import type { ResultOf } from "@graphql-typed-document-node/core";
 import type { ParsedUrlQuery } from "querystring";
 
 import { Column, Row } from "@/components/box/Flex";
@@ -15,18 +15,13 @@ import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortB
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
 import { Collapse } from "@/components/utils/Collapse";
-import type {
-    SeriesDetailPageAllQuery,
-    SeriesDetailPageQuery,
-    SeriesDetailPageQueryVariables,
-} from "@/generated/graphql";
+import createApolloClient from "@/graphql/createApolloClient";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useToggle from "@/hooks/useToggle";
-import { fetchData } from "@/lib/server";
 import theme from "@/theme";
 import { ANIME_A_Z, ANIME_NEW_OLD, ANIME_OLD_NEW, ANIME_Z_A, getComparator } from "@/utils/comparators";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import getSharedPageProps from "@/utils/getSharedPageProps";
-import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledDesktopOnly = styled.div`
     gap: 24px;
@@ -36,14 +31,72 @@ const StyledDesktopOnly = styled.div`
     }
 `;
 
-type SeriesDetailPageProps = RequiredNonNullable<SeriesDetailPageQuery>;
+const fragments = {
+    series: graphql(`
+        fragment SeriesDetailPageSeries on Series {
+            slug
+            name
+            anime {
+                nodes {
+                    ...AnimeSummaryCardAnime
+                    ...AnimeSummaryCardAnimeExpandable
+                    name
+                    slug
+                    year
+                    season
+                    animethemes {
+                        type
+                        sequence
+                        animethemeentries {
+                            version
+                            videos {
+                                nodes {
+                                    tags
+                                }
+                            }
+                        }
+                    }
+                    images {
+                        nodes {
+                            ...extractImagesImage
+                        }
+                    }
+                }
+            }
+        }
+    `),
+};
+
+const propsQuery = graphql(`
+    query SeriesDetailPage($seriesSlug: String!) {
+        series(slug: $seriesSlug) {
+            ...SeriesDetailPageSeries
+        }
+    }
+`);
+
+const pathsQuery = graphql(`
+    query SeriesDetailPageAll {
+        seriesPagination {
+            data {
+                ...SeriesDetailPageSeries
+                slug
+            }
+        }
+    }
+`);
+
+interface SeriesDetailPageProps {
+    series: FragmentType<typeof fragments.series>;
+}
 
 interface SeriesDetailPageParams extends ParsedUrlQuery {
     seriesSlug: string;
 }
 
-export default function SeriesDetailPage({ series }: SeriesDetailPageProps) {
-    const anime = series.anime;
+export default function SeriesDetailPage({ series: seriesFragment }: SeriesDetailPageProps) {
+    const series = getFragmentData(fragments.series, seriesFragment);
+    const anime = series.anime.nodes;
 
     const [showFilter, toggleShowFilter] = useToggle();
     const [sortBy, setSortBy] = useState<
@@ -58,7 +111,7 @@ export default function SeriesDetailPage({ series }: SeriesDetailPageProps) {
             <Text variant="h1">{series.name}</Text>
             <SidebarContainer>
                 <StyledDesktopOnly>
-                    <MultiCoverImage resourcesWithImages={anime} />
+                    <MultiCoverImage items={anime.map((anime) => ({ images: anime.images.nodes, name: anime.name }))} />
                 </StyledDesktopOnly>
                 <Column style={{ "--gap": "24px" }}>
                     <Row style={{ "--justify-content": "space-between", "--align-items": "center" }}>
@@ -88,71 +141,32 @@ export default function SeriesDetailPage({ series }: SeriesDetailPageProps) {
 }
 
 interface SeriesAnimeProps {
-    anime: SeriesDetailPageProps["series"]["anime"];
+    anime: ResultOf<typeof fragments.series>["anime"]["nodes"];
 }
 
 const SeriesAnime = memo(function SeriesAnime({ anime }: SeriesAnimeProps) {
-    const animeCards = anime.map((anime) => <AnimeSummaryCard key={anime.slug} anime={anime} expandable />);
+    const animeCards = anime.map((anime) => <AnimeSummaryCard key={anime.slug} anime={anime} expandable={anime} />);
 
     return <>{animeCards}</>;
 });
 
-SeriesDetailPage.fragments = {
-    series: gql`
-        ${AnimeSummaryCard.fragments.anime}
-        ${AnimeSummaryCard.fragments.expandable}
-
-        fragment SeriesDetailPageSeries on Series {
-            slug
-            name
-            anime {
-                ...AnimeSummaryCardAnime
-                ...AnimeSummaryCardAnimeExpandable
-                name
-                slug
-                year
-                season
-                themes {
-                    type
-                    sequence
-                    entries {
-                        version
-                        videos {
-                            tags
-                        }
-                    }
-                }
-                images {
-                    facet
-                    link
-                }
-            }
-        }
-    `,
-};
-
-const buildTimeCache: Map<string, SeriesDetailPageQuery> = new Map();
+const buildTimeCache: Map<string, FragmentType<typeof fragments.series>> = new Map();
 
 export const getStaticProps: GetStaticProps<SeriesDetailPageProps, SeriesDetailPageParams> = async ({ params }) => {
-    let data = params ? buildTimeCache.get(params.seriesSlug) : null;
-    let apiRequests = 0;
+    const client = createApolloClient();
 
-    if (!data) {
-        ({ data, apiRequests } = await fetchData<SeriesDetailPageQuery, SeriesDetailPageQueryVariables>(
-            gql`
-                ${SeriesDetailPage.fragments.series}
+    let series = params ? buildTimeCache.get(params.seriesSlug) : null;
 
-                query SeriesDetailPage($seriesSlug: String!) {
-                    series(slug: $seriesSlug) {
-                        ...SeriesDetailPageSeries
-                    }
-                }
-            `,
-            params,
-        ));
+    if (!series) {
+        series = (
+            await client.query({
+                query: propsQuery,
+                variables: params,
+            })
+        ).data.series;
     }
 
-    if (!data.series) {
+    if (!series) {
         return {
             notFound: true,
         };
@@ -160,8 +174,8 @@ export const getStaticProps: GetStaticProps<SeriesDetailPageProps, SeriesDetailP
 
     return {
         props: {
-            ...getSharedPageProps(apiRequests),
-            series: data.series,
+            ...getSharedPageProps(),
+            series,
         },
         // Revalidate after 1 hour (= 3600 seconds).
         revalidate: 3600,
@@ -170,19 +184,17 @@ export const getStaticProps: GetStaticProps<SeriesDetailPageProps, SeriesDetailP
 
 export const getStaticPaths: GetStaticPaths<SeriesDetailPageParams> = async () => {
     return fetchStaticPaths(async () => {
-        const { data } = await fetchData<SeriesDetailPageAllQuery>(gql`
-            ${SeriesDetailPage.fragments.series}
+        const client = createApolloClient();
 
-            query SeriesDetailPageAll {
-                seriesAll {
-                    ...SeriesDetailPageSeries
-                }
-            }
-        `);
+        const { data } = await client.query({
+            query: pathsQuery,
+        });
 
-        data.seriesAll.forEach((series) => buildTimeCache.set(series.slug, { series }));
+        for (const series of data.seriesPagination.data) {
+            buildTimeCache.set(series.slug, series);
+        }
 
-        return data.seriesAll.map((series) => ({
+        return data.seriesPagination.data.map((series) => ({
             params: {
                 seriesSlug: series.slug,
             },

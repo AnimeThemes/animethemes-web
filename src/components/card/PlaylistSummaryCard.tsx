@@ -1,12 +1,9 @@
-import type { PropsWithChildren } from "react";
-import type { ReactNode } from "react";
+import type { PropsWithChildren, ReactNode } from "react";
 import styled from "styled-components";
-
-import gql from "graphql-tag";
 
 import { SummaryCard } from "@/components/card/SummaryCard";
 import { Text } from "@/components/text/Text";
-import type { PlaylistSummaryCardPlaylistFragment, PlaylistSummaryCardShowOwnerFragment } from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import theme from "@/theme";
 
 const StyledWrapper = styled.div`
@@ -31,31 +28,46 @@ const StyledOverlayButtons = styled.div`
     }
 `;
 
-type PlaylistSummaryCardProps =
-    | {
-          playlist: PlaylistSummaryCardPlaylistFragment;
-          menu?: ReactNode;
-          showOwner?: false;
-      }
-    | {
-          playlist: PlaylistSummaryCardPlaylistFragment & PlaylistSummaryCardShowOwnerFragment;
-          menu?: ReactNode;
-          showOwner: true;
-      };
+const fragments = {
+    playlist: graphql(`
+        fragment PlaylistSummaryCardPlaylist on Playlist {
+            id
+            name
+            visibility
+            tracksCount
+        }
+    `),
+    playlistWithOwner: graphql(`
+        fragment PlaylistSummaryCardPlaylistWithOwner on Playlist {
+            user {
+                name
+            }
+        }
+    `),
+};
+
+interface PlaylistSummaryCardProps {
+    playlist: FragmentType<typeof fragments.playlist>;
+    playlistWithOwner?: FragmentType<typeof fragments.playlistWithOwner>;
+    menu?: ReactNode;
+}
 
 export default function PlaylistSummaryCard({
-    playlist,
+    playlist: playlistFragment,
+    playlistWithOwner: playlistWithOwnerFragment,
     children,
     menu,
-    showOwner,
     ...props
 }: PropsWithChildren<PlaylistSummaryCardProps>) {
+    const playlist = getFragmentData(fragments.playlist, playlistFragment);
+    const playlistWithOwner = getFragmentData(fragments.playlistWithOwner, playlistWithOwnerFragment);
+
     const description = (
         <SummaryCard.Description>
             <span>Playlist</span>
-            {showOwner ? <Text link>{playlist.user.name}</Text> : <span>{playlist.visibility}</span>}
+            {playlistWithOwner ? <Text link>{playlistWithOwner.user?.name}</Text> : <span>{playlist.visibility}</span>}
             <span>
-                {playlist.tracks_count} theme{playlist.tracks_count !== 1 ? "s" : null}
+                {playlist.tracksCount} theme{playlist.tracksCount !== 1 ? "s" : null}
             </span>
         </SummaryCard.Description>
     );
@@ -71,21 +83,3 @@ export default function PlaylistSummaryCard({
         </StyledWrapper>
     );
 }
-
-PlaylistSummaryCard.fragments = {
-    playlist: gql`
-        fragment PlaylistSummaryCardPlaylist on Playlist {
-            id
-            name
-            visibility
-            tracks_count
-        }
-    `,
-    showOwner: gql`
-        fragment PlaylistSummaryCardShowOwner on Playlist {
-            user {
-                name
-            }
-        }
-    `,
-};

@@ -1,11 +1,9 @@
 import styled from "styled-components";
 
-import gql from "graphql-tag";
-
 import { Row } from "@/components/box/Flex";
 import { BorderTag } from "@/components/tag/BorderTag";
 import { Tag } from "@/components/tag/Tag";
-import type { VideoTagsVideoFragment } from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
 const StyledVideoTags = styled(Row)`
     align-items: center;
@@ -13,11 +11,27 @@ const StyledVideoTags = styled(Row)`
     gap: 8px;
 `;
 
+const fragments = {
+    video: graphql(`
+        fragment VideoTagsVideo on Video {
+            resolution
+            nc
+            subbed
+            lyrics
+            uncen
+            source
+            overlap
+        }
+    `),
+};
+
 interface VideoTagsProps {
-    video: VideoTagsVideoFragment;
+    video: FragmentType<typeof fragments.video>;
 }
 
-export function VideoTags({ video }: VideoTagsProps) {
+export function VideoTags(props: VideoTagsProps) {
+    const video = getFragmentData(fragments.video, props.video);
+
     return (
         <StyledVideoTags>
             <Tag title="Resolution">{video.resolution}p</Tag>
@@ -32,23 +46,9 @@ export function VideoTags({ video }: VideoTagsProps) {
 
             {!!video.source && <BorderTag title="Source">{video.source.toUpperCase()}</BorderTag>}
 
-            {video.overlap !== "NONE" && (
+            {!!video.overlap && video.overlap !== "NONE" && (
                 <BorderTag title="Overlap">{video.overlap.toUpperCase().replace("TRANSITION", "TRANS")}</BorderTag>
             )}
         </StyledVideoTags>
     );
 }
-
-VideoTags.fragments = {
-    video: gql`
-        fragment VideoTagsVideo on Video {
-            resolution
-            nc
-            subbed
-            lyrics
-            uncen
-            source
-            overlap
-        }
-    `,
-};

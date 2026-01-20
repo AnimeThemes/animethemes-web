@@ -1,17 +1,24 @@
 import type { ComponentPropsWithoutRef } from "react";
 import Link from "next/link";
 
-import gql from "graphql-tag";
-
 import { Text } from "@/components/text/Text";
-import type { SongTitleSongFragment } from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
+
+const fragments = {
+    song: graphql(`
+        fragment SongTitleSong on Song {
+            title
+        }
+    `),
+};
 
 export interface SongTitleProps extends ComponentPropsWithoutRef<typeof Text> {
-    song: SongTitleSongFragment | null;
+    song: FragmentType<typeof fragments.song> | null;
     href?: ComponentPropsWithoutRef<typeof Link>["href"];
 }
 
-export function SongTitle({ song, href, ...props }: SongTitleProps) {
+export function SongTitle({ song: songFragment, href, ...props }: SongTitleProps) {
+    const song = getFragmentData(fragments.song, songFragment);
     const songTitle = song?.title || "T.B.A.";
 
     if (href) {
@@ -28,11 +35,3 @@ export function SongTitle({ song, href, ...props }: SongTitleProps) {
         </Text>
     );
 }
-
-SongTitle.fragments = {
-    song: gql`
-        fragment SongTitleSong on Song {
-            title
-        }
-    `,
-};

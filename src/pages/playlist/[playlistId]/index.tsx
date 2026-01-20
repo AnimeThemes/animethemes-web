@@ -12,12 +12,11 @@ import {
     faPen,
     faPlus,
     faShuffle,
-    faTrash,
     faTrophy,
     faXmark,
 } from "@fortawesome/free-solid-svg-icons";
+import type { ResultOf } from "@graphql-typed-document-node/core";
 import { isAxiosError } from "axios";
-import gql from "graphql-tag";
 import { shuffle } from "lodash-es";
 import { Reorder, useDragControls } from "motion/react";
 import type { ParsedUrlQuery } from "querystring";
@@ -28,11 +27,7 @@ import { Button } from "@/components/button/Button";
 import { FilterToggleButton } from "@/components/button/FilterToggleButton";
 import { IconTextButton } from "@/components/button/IconTextButton";
 import { Card } from "@/components/card/Card";
-import {
-    VideoSummaryCard,
-    VideoSummaryCardFragmentEntry,
-    VideoSummaryCardFragmentVideo,
-} from "@/components/card/VideoSummaryCard";
+import { VideoSummaryCard } from "@/components/card/VideoSummaryCard";
 import { SidebarContainer } from "@/components/container/SidebarContainer";
 import { DescriptionList } from "@/components/description-list/DescriptionList";
 import { PlaylistEditDialog } from "@/components/dialog/PlaylistEditDialog";
@@ -51,17 +46,11 @@ import { Busy } from "@/components/utils/Busy";
 import { Collapse } from "@/components/utils/Collapse";
 import { HeightTransition } from "@/components/utils/HeightTransition";
 import PlayerContext, { createWatchListItem } from "@/context/playerContext";
-import type {
-    PlaylistDetailPageMeQuery,
-    PlaylistDetailPagePlaylistQuery,
-    PlaylistDetailPagePlaylistQueryVariables,
-    PlaylistDetailPageQuery,
-    PlaylistDetailPageQueryVariables,
-} from "@/generated/graphql";
+import { client } from "@/graphql/client";
+import createApolloClient from "@/graphql/createApolloClient";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useToggle from "@/hooks/useToggle";
-import { fetchDataClient } from "@/lib/client";
 import axios from "@/lib/client/axios";
-import { fetchData } from "@/lib/server";
 import theme from "@/theme";
 import {
     ANIME_A_Z,
@@ -78,7 +67,7 @@ import createVideoSlug from "@/utils/createVideoSlug";
 import devLog from "@/utils/devLog";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
-import type { Comparator, RequiredNonNullable } from "@/utils/types";
+import type { Comparator } from "@/utils/types";
 
 const StyledDesktopOnly = styled.div`
     gap: 24px;
@@ -130,17 +119,17 @@ const RANK_DESC = "rank-desc";
 
 const comparators = {
     [UNSORTED]: () => 0,
-    [SONG_A_Z]: sortTransformed(getComparator(SONG_A_Z), (track) => track.entry.theme),
-    [SONG_Z_A]: sortTransformed(getComparator(SONG_Z_A), (track) => track.entry.theme),
-    [ANIME_A_Z]: sortTransformed(getComparator(ANIME_A_Z), (track) => track.entry.theme?.anime),
-    [ANIME_Z_A]: sortTransformed(getComparator(ANIME_Z_A), (track) => track.entry.theme?.anime),
-    [ANIME_OLD_NEW]: sortTransformed(getComparator(ANIME_OLD_NEW), (track) => track.entry.theme?.anime),
-    [ANIME_NEW_OLD]: sortTransformed(getComparator(ANIME_NEW_OLD), (track) => track.entry.theme?.anime),
+    [SONG_A_Z]: sortTransformed(getComparator(SONG_A_Z), (track) => track.animethemeentry.animetheme),
+    [SONG_Z_A]: sortTransformed(getComparator(SONG_Z_A), (track) => track.animethemeentry.animetheme),
+    [ANIME_A_Z]: sortTransformed(getComparator(ANIME_A_Z), (track) => track.animethemeentry.animetheme?.anime),
+    [ANIME_Z_A]: sortTransformed(getComparator(ANIME_Z_A), (track) => track.animethemeentry.animetheme?.anime),
+    [ANIME_OLD_NEW]: sortTransformed(getComparator(ANIME_OLD_NEW), (track) => track.animethemeentry.animetheme?.anime),
+    [ANIME_NEW_OLD]: sortTransformed(getComparator(ANIME_NEW_OLD), (track) => track.animethemeentry.animetheme?.anime),
     [RANK_ASC]: (a, b) => a.rank - b.rank,
     [RANK_DESC]: (a, b) => a.rank - b.rank,
 } satisfies Record<
     string,
-    Comparator<NonNullable<PlaylistDetailPageQuery["playlist"]>["tracks"][number] & { rank: number }>
+    Comparator<ResultOf<typeof fragments.playlist>["tracks"]["data"][number] & { rank: number }>
 >;
 
 type LinkedList<T> = Array<
@@ -176,62 +165,118 @@ function sortLinkedList<T>(list: LinkedList<T>) {
     return sortedList;
 }
 
-interface PlaylistDetailPageProps extends SharedPageProps, RequiredNonNullable<PlaylistDetailPageQuery> {}
+const fragments = {
+    playlist: graphql(`
+        fragment PlaylistDetailPagePlaylist on Playlist {
+            #            ...PlaylistEditDialogPlaylist
+            #            ...PlaylistTrackRemoveDialogPlaylist
+            id
+            name
+            description
+            visibility
+            tracksCount
+            tracks {
+                id
+                video {
+                    ...VideoSummaryCardVideo
+                    ...FeaturedThemeVideo
+                    id
+                }
+                animethemeentry {
+                    ...VideoSummaryCardEntry
+                    ...FeaturedThemeEntry
+                    animetheme {
+                        anime {
+                            name
+                            year
+                            season
+                        }
+                        song {
+                            title
+                        }
+                    }
+                }
+                previous {
+                    id
+                }
+                next {
+                    id
+                }
+            }
+            user {
+                name
+            }
+        }
+    `),
+    me: graphql(`
+        fragment PlaylistDetailPageMe on Me {
+            name
+        }
+    `),
+};
+
+interface PlaylistDetailPageProps extends SharedPageProps {
+    playlist: FragmentType<typeof fragments.playlist>;
+    me: FragmentType<typeof fragments.me>;
+}
 
 interface PlaylistDetailPageParams extends ParsedUrlQuery {
     playlistId: string;
 }
 
-export default function PlaylistDetailPage({ playlist: initialPlaylist, me: initialMe }: PlaylistDetailPageProps) {
+export default function PlaylistDetailPage({ playlist: playlistFragment, me: meFragment }: PlaylistDetailPageProps) {
+    const initialPlaylist = getFragmentData(fragments.playlist, playlistFragment);
+    const initialMe = getFragmentData(fragments.me, meFragment);
+
     const { setWatchList, setWatchListFactory, setCurrentWatchListItem } = useContext(PlayerContext);
     const router = useRouter();
 
     const { data: playlist, mutate } = useSWR(
         ["PlaylistDetailPagePlaylist", `/api/playlist/${initialPlaylist.id}`],
         async () => {
-            const { data } = await fetchDataClient<
-                PlaylistDetailPagePlaylistQuery,
-                PlaylistDetailPagePlaylistQueryVariables
-            >(
-                gql`
-                    ${PlaylistDetailPage.fragments.playlist}
-
+            const { data } = await client.query({
+                query: graphql(`
                     query PlaylistDetailPagePlaylist($playlistId: String!) {
                         playlist(id: $playlistId) {
                             ...PlaylistDetailPagePlaylist
                         }
                     }
-                `,
-                { playlistId: initialPlaylist.id },
-            );
+                `),
+                variables: { playlistId: initialPlaylist.id },
+            });
 
             if (!data.playlist) {
                 location.reload();
                 throw new Error("Playlist was removed or user lost auth.");
             }
 
-            data.playlist.tracks = sortLinkedList(data.playlist.tracks);
+            const playlist = getFragmentData(fragments.playlist, data.playlist);
 
-            return data.playlist;
+            playlist.tracks.data = sortLinkedList(playlist.tracks.data);
+
+            return playlist;
         },
         { fallbackData: initialPlaylist },
     );
     const { data: me } = useSWR(
         ["PlaylistDetailPageMe", "/api/me"],
         async () => {
-            const { data } = await fetchDataClient<PlaylistDetailPageMeQuery>(gql`
-                ${PlaylistDetailPage.fragments.user}
-
-                query PlaylistDetailPageMe {
-                    me {
-                        user {
-                            ...PlaylistDetailPageUser
+            const { data } = await client.query({
+                query: graphql(`
+                    query PlaylistDetailPageMe {
+                        me {
+                            ...PlaylistDetailPageMe
                         }
                     }
-                }
-            `);
+                `),
+            });
 
-            return data.me;
+            if (!data.me) {
+                location.reload();
+                throw new Error("User lost auth.");
+            }
+
+            return getFragmentData(fragments.me, data.me);
         },
         { fallbackData: initialMe },
     );
@@ -242,11 +287,11 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
     const [isDescriptionEditable, setDescriptionEditable] = useState(false);
     const [description, setDescription] = useState(playlist.description ?? "");
 
-    const isOwner = me.user?.name === playlist.user.name;
+    const isOwner = me.name === playlist.user.name;
     const isRanking = playlist.name.startsWith("[#] ");
 
     const tracks = useMemo(
-        () => [...playlist.tracks].map((track, index) => ({ ...track, rank: index + 1 })),
+        () => [...playlist.tracks.data].map((track, index) => ({ ...track, rank: index + 1 })),
         [playlist.tracks],
     );
     const tracksSorted = useMemo(() => [...tracks].sort(comparators[sortBy]), [sortBy, tracks]);
@@ -314,8 +359,8 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
 
     const coverImageResources = useMemo(
         () =>
-            playlist.tracks.flatMap((track) => {
-                const anime = track.entry.theme?.anime;
+            playlist.tracks.data.flatMap((track) => {
+                const anime = track.animethemeentry.animetheme?.anime;
 
                 return anime ? [anime] : [];
             }),
@@ -338,7 +383,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                     </StyledDesktopOnly>
                     {isOwner && (
                         <Column style={{ "--gap": "16px" }}>
-                            <PlaylistEditDialog playlist={playlist} />
+                            {/*<PlaylistEditDialog playlist={playlist} />*/}
                             {!isDescriptionEditable && !description && (
                                 <IconTextButton
                                     icon={faPlus}
@@ -387,7 +432,7 @@ export default function PlaylistDetailPage({ playlist: initialPlaylist, me: init
                     <StyledHeader>
                         <Text variant="h2">
                             Themes
-                            <Text color="text-disabled"> ({playlist.tracks_count})</Text>
+                            <Text color="text-disabled"> ({playlist.tracksCount})</Text>
                         </Text>
                         {tracksSorted.length > 0 && (
                             <IconTextButton icon={faShuffle} collapsible onClick={shuffleAll}>
@@ -624,16 +669,16 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
                             </Button>
                         </MenuTrigger>
                         <MenuContent>
-                            <PlaylistTrackAddDialog
-                                video={track.video}
-                                entry={track.entry}
-                                trigger={
-                                    <MenuItem onSelect={(event) => event.preventDefault()}>
-                                        <Icon icon={faPlus} color="text-disabled" />
-                                        <Text>Add to another Playlist</Text>
-                                    </MenuItem>
-                                }
-                            />
+                            {/*<PlaylistTrackAddDialog*/}
+                            {/*    video={track.video}*/}
+                            {/*    entry={track.entry}*/}
+                            {/*    trigger={*/}
+                            {/*        <MenuItem onSelect={(event) => event.preventDefault()}>*/}
+                            {/*            <Icon icon={faPlus} color="text-disabled" />*/}
+                            {/*            <Text>Add to another Playlist</Text>*/}
+                            {/*        </MenuItem>*/}
+                            {/*    }*/}
+                            {/*/>*/}
                             {watchList.length ? (
                                 <>
                                     <MenuSeparator />
@@ -650,18 +695,18 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
                             {isOwner ? (
                                 <>
                                     <MenuSeparator />
-                                    <PlaylistTrackRemoveDialog
-                                        playlist={playlist}
-                                        trackId={track.id}
-                                        video={track.video}
-                                        entry={track.entry}
-                                        trigger={
-                                            <MenuItem onSelect={(event) => event.preventDefault()}>
-                                                <Icon icon={faTrash} color="text-disabled" />
-                                                <Text>Remove from Playlist</Text>
-                                            </MenuItem>
-                                        }
-                                    />
+                                    {/*<PlaylistTrackRemoveDialog*/}
+                                    {/*    playlist={playlist}*/}
+                                    {/*    trackId={track.id}*/}
+                                    {/*    video={track.video}*/}
+                                    {/*    entry={track.entry}*/}
+                                    {/*    trigger={*/}
+                                    {/*        <MenuItem onSelect={(event) => event.preventDefault()}>*/}
+                                    {/*            <Icon icon={faTrash} color="text-disabled" />*/}
+                                    {/*            <Text>Remove from Playlist</Text>*/}
+                                    {/*        </MenuItem>*/}
+                                    {/*    }*/}
+                                    {/*/>*/}
                                 </>
                             ) : null}
                         </MenuContent>
@@ -700,59 +745,6 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
     return element;
 }
 
-PlaylistDetailPage.fragments = {
-    playlist: gql`
-        ${VideoSummaryCardFragmentVideo}
-        ${VideoSummaryCardFragmentEntry}
-        ${PlaylistEditDialog.fragments.playlist}
-        ${PlaylistTrackRemoveDialog.fragments.playlist}
-        ${FeaturedTheme.fragments.entry}
-        ${FeaturedTheme.fragments.video}
-
-        fragment PlaylistDetailPagePlaylist on Playlist {
-            ...PlaylistEditDialogPlaylist
-            ...PlaylistTrackRemoveDialogPlaylist
-            id
-            name
-            description
-            visibility
-            tracks_count
-            tracks {
-                id
-                video {
-                    ...VideoSummaryCardVideo
-                    ...FeaturedThemeVideo
-                    id
-                }
-                entry {
-                    ...VideoSummaryCardEntry
-                    ...FeaturedThemeEntry
-                    theme {
-                        anime {
-                            year
-                            season
-                        }
-                    }
-                }
-                previous {
-                    id
-                }
-                next {
-                    id
-                }
-            }
-            user {
-                name
-            }
-        }
-    `,
-    user: gql`
-        fragment PlaylistDetailPageUser on User {
-            name
-        }
-    `,
-};
-
 export const getServerSideProps: GetServerSideProps<PlaylistDetailPageProps, PlaylistDetailPageParams> = async ({
     params,
     req,
@@ -761,25 +753,23 @@ export const getServerSideProps: GetServerSideProps<PlaylistDetailPageProps, Pla
         return { notFound: true };
     }
 
-    const { data, apiRequests } = await fetchData<PlaylistDetailPageQuery, PlaylistDetailPageQueryVariables>(
-        gql`
-            ${PlaylistDetailPage.fragments.playlist}
-            ${PlaylistDetailPage.fragments.user}
+    const client = createApolloClient({
+        headers: req.headers,
+    });
 
+    const { data } = await client.query({
+        query: graphql(`
             query PlaylistDetailPage($playlistId: String!) {
                 playlist(id: $playlistId) {
                     ...PlaylistDetailPagePlaylist
                 }
                 me {
-                    user {
-                        ...PlaylistDetailPageUser
-                    }
+                    ...PlaylistDetailPageMe
                 }
             }
-        `,
-        { playlistId: params.playlistId },
-        { req },
-    );
+        `),
+        variables: { playlistId: params.playlistId },
+    });
 
     if (!data.playlist) {
         return {
@@ -791,7 +781,7 @@ export const getServerSideProps: GetServerSideProps<PlaylistDetailPageProps, Pla
 
     return {
         props: {
-            ...getSharedPageProps(apiRequests),
+            ...getSharedPageProps(),
             playlist: data.playlist,
             me: data.me,
         },

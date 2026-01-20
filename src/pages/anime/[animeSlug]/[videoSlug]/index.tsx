@@ -290,7 +290,7 @@ export default function VideoPage({
                             <>
                                 <Text variant="h2">Part of these Playlists</Text>
                                 {relatedPlaylists.slice(0, showMoreRelatedPlaylists ? undefined : 3).map((playlist) => (
-                                    <PlaylistSummaryCard key={playlist.id} playlist={playlist} showOwner />
+                                    <PlaylistSummaryCard key={playlist.id} playlist={playlist} playlistWithOwner />
                                 ))}
                                 {relatedPlaylists.length > 3 ? (
                                     <Row style={{ "--justify-content": "center" }}>
@@ -366,7 +366,7 @@ VideoPage.fragments = {
                         tracks {
                             playlist {
                                 ...PlaylistSummaryCardPlaylist
-                                ...PlaylistSummaryCardShowOwner
+                                ...PlaylistSummaryCardPlaylistWithOwner
                             }
                         }
                     }

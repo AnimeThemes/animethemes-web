@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import gql from "graphql-tag";
 
 import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
@@ -16,59 +15,61 @@ import { SummaryCard } from "@/components/card/SummaryCard";
 import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
 import { Icon } from "@/components/icon/Icon";
 import { Text } from "@/components/text/Text";
-import type { SearchGlobalQuery, SearchGlobalQueryVariables } from "@/generated/graphql";
-import { fetchDataClient } from "@/lib/client";
+import { client } from "@/graphql/client";
+import { graphql } from "@/graphql/generated";
+
+const query = graphql(`
+    query SearchGlobal($query: String!) {
+        search(search: $query, first: 4) {
+            anime {
+                ...AnimeSummaryCardAnime
+                ...AnimeSummaryCardAnimeExpandable
+                slug
+            }
+            animethemes {
+                ...ThemeSummaryCardTheme
+                ...ThemeSummaryCardThemeExpandable
+                id
+                anime {
+                    slug
+                }
+            }
+            artists {
+                ...ArtistSummaryCardArtist
+                slug
+            }
+            series {
+                slug
+                name
+            }
+            studios {
+                slug
+                name
+            }
+            playlists {
+                ...PlaylistSummaryCardPlaylist
+                ...PlaylistSummaryCardPlaylistWithOwner
+                id
+            }
+        }
+    }
+`);
 
 interface SearchGlobalProps {
-    searchQuery?: string;
+    searchQuery: string;
 }
 
 export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
-    const fetchSearchResults = () =>
-        fetchDataClient<SearchGlobalQuery, SearchGlobalQueryVariables>(
-            gql`
-                ${AnimeSummaryCard.fragments.anime}
-                ${AnimeSummaryCard.fragments.expandable}
-                ${ThemeSummaryCard.fragments.theme}
-                ${ThemeSummaryCard.fragments.expandable}
-                ${ArtistSummaryCard.fragments.artist}
-                ${PlaylistSummaryCard.fragments.playlist}
-                ${PlaylistSummaryCard.fragments.showOwner}
-
-                query SearchGlobal($args: SearchArgs!) {
-                    search(args: $args) {
-                        anime {
-                            ...AnimeSummaryCardAnime
-                            ...AnimeSummaryCardAnimeExpandable
-                        }
-                        themes {
-                            ...ThemeSummaryCardTheme
-                            ...ThemeSummaryCardThemeExpandable
-                        }
-                        artists {
-                            ...ArtistSummaryCardArtist
-                        }
-                        series {
-                            slug
-                            name
-                        }
-                        studios {
-                            slug
-                            name
-                        }
-                        playlists {
-                            ...PlaylistSummaryCardPlaylist
-                            ...PlaylistSummaryCardShowOwner
-                        }
-                    }
-                }
-            `,
-            { args: { query: searchQuery ?? null } },
-        );
-
     const { data, error, isLoading, isError } = useQuery({
         queryKey: ["searchGlobal", searchQuery],
-        queryFn: fetchSearchResults,
+        queryFn: async () => {
+            const { data } = await client.query({
+                query,
+                variables: { query: searchQuery },
+            });
+
+            return data;
+        },
         placeholderData: keepPreviousData,
     });
 
@@ -82,12 +83,12 @@ export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
 
     const {
         anime: animeResults = [],
-        themes: themeResults = [],
+        animethemes: themeResults = [],
         artists: artistResults = [],
         series: seriesResults = [],
         studios: studioResults = [],
         playlists: playlistResults = [],
-    } = data.data.search;
+    } = data.search;
 
     const totalResults =
         animeResults.length +
@@ -107,14 +108,14 @@ export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
                 entity="anime"
                 title="Anime"
                 results={animeResults}
-                renderSummaryCard={(anime) => <AnimeSummaryCard key={anime.slug} anime={anime} expandable />}
+                renderSummaryCard={(anime) => <AnimeSummaryCard key={anime.slug} anime={anime} expandable={anime} />}
             />
             <GlobalSearchSection
                 entity="theme"
                 title="Themes"
                 results={themeResults}
                 renderSummaryCard={(theme) => (
-                    <ThemeSummaryCard key={`${theme.anime?.slug}-${theme.id}`} theme={theme} expandable />
+                    <ThemeSummaryCard key={`${theme.anime?.slug}-${theme.id}`} theme={theme} expandable={theme} />
                 )}
             />
             <GlobalSearchSection
@@ -154,7 +155,7 @@ export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
                 title="Playlists"
                 results={playlistResults}
                 renderSummaryCard={(playlist) => (
-                    <PlaylistSummaryCard key={playlist.id} playlist={playlist} showOwner />
+                    <PlaylistSummaryCard key={playlist.id} playlist={playlist} playlistWithOwner={playlist} />
                 )}
             />
         </>

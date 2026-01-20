@@ -25,8 +25,6 @@ import { Text } from "@/components/text/Text";
 import { ToastHub } from "@/components/toast/ToastHub";
 import { ErrorBoundary } from "@/components/utils/ErrorBoundary";
 import { PageRevalidation } from "@/components/utils/PageRevalidation";
-import { VideoPlayer } from "@/components/video-player/VideoPlayer";
-import { VideoPlayerOverlay } from "@/components/video-player/VideoPlayerOverlay";
 import ColorThemeContext from "@/context/colorThemeContext";
 import FullscreenContext from "@/context/fullscreenContext";
 import type { WatchListItem } from "@/context/playerContext";
@@ -290,15 +288,15 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                         <Footer />
                     </>
                 ) : null}
-                {currentWatchListItem && !isWaitingForVideoPage && (
-                    <VideoPlayer
-                        watchListItem={currentWatchListItem}
-                        background={!isVideoPage}
-                        overlay={isVideoPage ? <VideoPlayerOverlay {...pageProps} /> : null}
-                    >
-                        {isVideoPage ? <Component {...pageProps} /> : null}
-                    </VideoPlayer>
-                )}
+                {/*{currentWatchListItem && !isWaitingForVideoPage && (*/}
+                {/*    <VideoPlayer*/}
+                {/*        watchListItem={currentWatchListItem}*/}
+                {/*        background={!isVideoPage}*/}
+                {/*        overlay={isVideoPage ? <VideoPlayerOverlay {...pageProps} /> : null}*/}
+                {/*    >*/}
+                {/*        {isVideoPage ? <Component {...pageProps} /> : null}*/}
+                {/*    </VideoPlayer>*/}
+                {/*)}*/}
             </StyledWrapper>
             <ToastHub />
         </MultiContextProvider>

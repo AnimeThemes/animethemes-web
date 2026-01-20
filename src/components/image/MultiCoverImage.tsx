@@ -1,16 +1,8 @@
 import type { ComponentPropsWithoutRef } from "react";
 import styled, { css } from "styled-components";
 
-import gql from "graphql-tag";
-
 import { LogoPlaceholder } from "@/components/image/LogoPlaceholder";
 import { AspectRatio } from "@/components/utils/AspectRatio";
-import type {
-    MultiCoverImageResourceWithImagesFragment,
-    MultiLargeCoverImageResourceWithImagesFragment,
-} from "@/generated/graphql";
-import extractImages from "@/utils/extractImages";
-import extractMultipleImages from "@/utils/extractMultipleImages";
 
 function getTranslationX(item: number, itemCount: number) {
     switch (itemCount) {
@@ -118,40 +110,33 @@ const StyledCover = styled.img`
 `;
 
 interface MultiCoverImageProps extends ComponentPropsWithoutRef<typeof StyledCover> {
-    resourcesWithImages: Array<MultiCoverImageResourceWithImagesFragment>;
+    items: Array<{
+        largeCover?: string;
+        smallCover?: string;
+        name: string;
+    }>;
 }
 
-export function MultiCoverImage({ resourcesWithImages, ...props }: MultiCoverImageProps) {
-    const images = resourcesWithImages
-        .filter((resource, index, list) => list.findIndex((r) => r.name === resource.name) === index)
-        .map((resource) => {
-            const { largeCover, smallCover } = extractImages(resource);
-
-            return {
-                largeCover,
-                smallCover,
-                resource,
-            };
-        })
-        .filter(({ largeCover }) => !!largeCover)
-        .slice(0, 4);
-
+export function MultiCoverImage({ items, ...props }: MultiCoverImageProps) {
     return (
         <AspectRatio $ratio={2 / 3}>
             <StyledCoverContainer>
-                {images.length ? (
-                    images.map(({ largeCover, smallCover, resource }) => (
-                        <StyledCoverItemContainer key={largeCover} $itemCount={images.length}>
-                            <StyledCover
-                                loading="lazy"
-                                src={largeCover}
-                                alt={`Cover image of ${resource.name}`}
-                                title={resource.name}
-                                style={{ backgroundImage: `url(${smallCover})` }}
-                                {...props}
-                            />
-                        </StyledCoverItemContainer>
-                    ))
+                {items.length ? (
+                    items
+                        .filter(({ largeCover }) => !!largeCover)
+                        .slice(0, 4)
+                        .map(({ largeCover, smallCover, name }) => (
+                            <StyledCoverItemContainer key={largeCover} $itemCount={items.length}>
+                                <StyledCover
+                                    loading="lazy"
+                                    src={largeCover}
+                                    alt={`Cover image of ${name}`}
+                                    title={name}
+                                    style={smallCover ? { backgroundImage: `url(${smallCover})` } : undefined}
+                                    {...props}
+                                />
+                            </StyledCoverItemContainer>
+                        ))
                 ) : (
                     <LogoPlaceholder {...props} />
                 )}
@@ -159,72 +144,3 @@ export function MultiCoverImage({ resourcesWithImages, ...props }: MultiCoverIma
         </AspectRatio>
     );
 }
-
-MultiCoverImage.fragments = {
-    resourceWithImages: gql`
-        ${extractImages.fragments.resourceWithImages}
-
-        fragment MultiCoverImageResourceWithImages on ResourceWithImages {
-            ... on Anime {
-                name
-            }
-            ... on Artist {
-                name
-            }
-            ... on Studio {
-                name
-            }
-            ...extractImagesResourceWithImages
-        }
-    `,
-};
-
-interface MultiLargeCoverImageProps extends ComponentPropsWithoutRef<typeof StyledCover> {
-    resourceWithImages: MultiLargeCoverImageResourceWithImagesFragment;
-}
-
-export function MultiLargeCoverImage({ resourceWithImages, ...props }: MultiLargeCoverImageProps) {
-    const images = extractMultipleImages(resourceWithImages).slice(0, 4);
-
-    return (
-        <AspectRatio $ratio={2 / 3}>
-            <StyledCoverContainer>
-                {images.length ? (
-                    images.map(({ link }) => (
-                        <StyledCoverItemContainer key={link} $itemCount={images.length}>
-                            <StyledCover
-                                loading="lazy"
-                                src={link}
-                                alt={`Cover image of ${resourceWithImages.name}`}
-                                title={resourceWithImages.name}
-                                style={{ backgroundImage: `url(${link})` }}
-                                {...props}
-                            />
-                        </StyledCoverItemContainer>
-                    ))
-                ) : (
-                    <LogoPlaceholder {...props} />
-                )}
-            </StyledCoverContainer>
-        </AspectRatio>
-    );
-}
-
-MultiLargeCoverImage.fragments = {
-    resourceWithImages: gql`
-        ${extractMultipleImages.fragments.resourceWithImages}
-
-        fragment MultiLargeCoverImageResourceWithImages on ResourceWithImages {
-            ... on Anime {
-                name
-            }
-            ... on Artist {
-                name
-            }
-            ... on Studio {
-                name
-            }
-            ...extractMultipleImagesResourceWithImages
-        }
-    `,
-};

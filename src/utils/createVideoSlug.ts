@@ -1,33 +1,43 @@
-import type { ASTNode } from "graphql";
-import gql from "graphql-tag";
-
 import type { WatchListItem } from "@/context/playerContext";
-import type {
-    CreateVideoSlugEntryFragment,
-    CreateVideoSlugThemeFragment,
-    CreateVideoSlugVideoFragment,
-} from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import type { VideoPageProps } from "@/pages/anime/[animeSlug]/[videoSlug]";
 
-interface CreateVideoSlug {
-    (
-        theme: CreateVideoSlugThemeFragment,
-        entry: CreateVideoSlugEntryFragment,
-        video: CreateVideoSlugVideoFragment,
-    ): string;
-    fragments: {
-        theme: ASTNode;
-        entry: ASTNode;
-        video: ASTNode;
-    };
-}
+const fragments = {
+    theme: graphql(`
+        fragment createVideoSlugTheme on AnimeTheme {
+            type
+            sequence
+            group {
+                slug
+            }
+        }
+    `),
+    entry: graphql(`
+        fragment createVideoSlugEntry on AnimeThemeEntry {
+            version
+        }
+    `),
+    video: graphql(`
+        fragment createVideoSlugVideo on Video {
+            tags
+        }
+    `),
+};
 
 /**
  * Slug format is:
  *
  * `<OP|ED><#>[v#][-<Group>][-<Tags>]`
  */
-const createVideoSlug: CreateVideoSlug = (theme, entry, video) => {
+const createVideoSlug = (
+    themeFragment: FragmentType<typeof fragments.theme>,
+    entryFragment: FragmentType<typeof fragments.entry>,
+    videoFragment: FragmentType<typeof fragments.video>,
+) => {
+    const theme = getFragmentData(fragments.theme, themeFragment);
+    const entry = getFragmentData(fragments.entry, entryFragment);
+    const video = getFragmentData(fragments.video, videoFragment);
+
     let slug = theme.type + (theme.sequence || 1);
 
     if (entry.version && entry.version !== 1) {
@@ -46,28 +56,6 @@ const createVideoSlug: CreateVideoSlug = (theme, entry, video) => {
 };
 
 export default createVideoSlug;
-
-createVideoSlug.fragments = {
-    theme: gql`
-        fragment createVideoSlugTheme on Theme {
-            type
-            sequence
-            group {
-                slug
-            }
-        }
-    `,
-    entry: gql`
-        fragment createVideoSlugEntry on Entry {
-            version
-        }
-    `,
-    video: gql`
-        fragment createVideoSlugVideo on Video {
-            tags
-        }
-    `,
-};
 
 export function getVideoSlugByProps(pageProps: object): string | null {
     if (isVideoPageProps(pageProps)) {
