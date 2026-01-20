@@ -1,18 +1,33 @@
 import { type SyntheticEvent, useState } from "react";
 
 import type { Property } from "csstype";
-import gql from "graphql-tag";
 
 import { SummaryCard } from "@/components/card/SummaryCard";
-import type { StudioSummaryCardStudioFragment } from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import extractBackgroundColor from "@/utils/extractBackgroundColor";
 import extractImages from "@/utils/extractImages";
 
+const fragments = {
+    studio: graphql(`
+        fragment StudioSummaryCardStudio on Studio {
+            slug
+            name
+            images {
+                nodes {
+                    ...extractImagesImage
+                }
+            }
+        }
+    `),
+};
+
 interface StudioSummaryCardProps {
-    studio: StudioSummaryCardStudioFragment;
+    studio: FragmentType<typeof fragments.studio>;
 }
 
-export function StudioSummaryCard({ studio }: StudioSummaryCardProps) {
+export function StudioSummaryCard({ studio: studioFragment }: StudioSummaryCardProps) {
+    const studio = getFragmentData(fragments.studio, studioFragment);
+
     const [backgroundColor, setBackgroundColor] = useState<Property.Background>();
 
     function handleLoad(event: SyntheticEvent<HTMLImageElement>) {
@@ -29,7 +44,7 @@ export function StudioSummaryCard({ studio }: StudioSummaryCardProps) {
             title={studio.name}
             description="Studio"
             to={`/studio/${studio.slug}`}
-            image={extractImages(studio).largeCover}
+            image={extractImages(studio.images.nodes).largeCover}
             imageProps={{
                 $objectFit: "contain",
                 $backgroundColor: backgroundColor,
@@ -38,15 +53,3 @@ export function StudioSummaryCard({ studio }: StudioSummaryCardProps) {
         />
     );
 }
-
-StudioSummaryCard.fragments = {
-    studio: gql`
-        ${extractImages.fragments.resourceWithImages}
-
-        fragment StudioSummaryCardStudio on Studio {
-            slug
-            name
-            ...extractImagesResourceWithImages
-        }
-    `,
-};

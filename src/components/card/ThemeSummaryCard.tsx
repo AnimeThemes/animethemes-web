@@ -3,7 +3,6 @@ import styled from "styled-components";
 import Link from "next/link";
 
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import gql from "graphql-tag";
 
 import { Button } from "@/components/button/Button";
 import { SummaryCard } from "@/components/card/SummaryCard2";
@@ -16,16 +15,9 @@ import { TextLink } from "@/components/text/TextLink";
 import { Collapse } from "@/components/utils/Collapse";
 import { getDisplayedArtistName, Performances } from "@/components/utils/Performances";
 import { SongTitle } from "@/components/utils/SongTitle";
-import { SongTitleWithArtists } from "@/components/utils/SongTitleWithArtists";
-import type {
-    ThemeSummaryCardArtistFragment,
-    ThemeSummaryCardQuery,
-    ThemeSummaryCardThemeExpandableFragment,
-    ThemeSummaryCardThemeFragment,
-} from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useMediaQuery from "@/hooks/useMediaQuery";
 import useToggle from "@/hooks/useToggle";
-import { fetchDataClient } from "@/lib/client";
 import theme from "@/theme";
 import createVideoSlug from "@/utils/createVideoSlug";
 import extractImages from "@/utils/extractImages";
@@ -65,43 +57,104 @@ const StyledPerformedWith = styled.div`
     margin-top: 8px;
 `;
 
+const fragments = {
+    theme: graphql(`
+        fragment ThemeSummaryCardTheme on AnimeTheme {
+            ...createVideoSlugTheme
+            ...ThemeMenuTheme
+            type
+            sequence
+            group {
+                name
+                slug
+            }
+            anime {
+                slug
+                name
+                images {
+                    nodes {
+                        ...extractImagesImage
+                    }
+                }
+            }
+            song {
+                ...SongTitleSong
+                ...PerformancesSong
+                performances {
+                    alias
+                    as
+                    artist {
+                        __typename
+                        ... on Artist {
+                            slug
+                            name
+                        }
+                        ... on Membership {
+                            group {
+                                slug
+                                name
+                            }
+                        }
+                    }
+                }
+            }
+            animethemeentries {
+                ...createVideoSlugEntry
+                videos {
+                    nodes {
+                        ...createVideoSlugVideo
+                    }
+                }
+            }
+        }
+    `),
+    artist: graphql(`
+        fragment ThemeSummaryCardArtist on Artist {
+            ...PerformancesArtist
+            slug
+        }
+    `),
+    expandable: graphql(`
+        fragment ThemeSummaryCardThemeExpandable on AnimeTheme {
+            ...ThemeTableTheme
+        }
+    `),
+};
+
 const useIsMobile = () => useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
 
-type ThemeSummaryCardProps =
-    | {
-          theme: ThemeSummaryCardThemeFragment;
-          artist?: ThemeSummaryCardArtistFragment;
-          expandable?: false;
-          onPlay?(entryIndex?: number, videoIndex?: number): void;
-      }
-    | {
-          theme: ThemeSummaryCardThemeFragment & ThemeSummaryCardThemeExpandableFragment;
-          artist?: ThemeSummaryCardArtistFragment;
-          expandable: true;
-          onPlay?(entryIndex?: number, videoIndex?: number): void;
-      };
+interface ThemeSummaryCardProps {
+    theme: FragmentType<typeof fragments.theme>;
+    artist?: FragmentType<typeof fragments.artist>;
+    expandable?: FragmentType<typeof fragments.expandable>;
+    onPlay?(entryIndex?: number, videoIndex?: number): void;
+}
 
 // Specify an artist if you want to display this in an artist context (e.g. artist page)
 export function ThemeSummaryCard({
-    theme,
-    artist,
+    theme: themeFragment,
+    artist: artistFragment,
     children,
-    expandable,
+    expandable: expandableFragment,
     onPlay,
     ...props
 }: PropsWithChildren<ThemeSummaryCardProps>) {
+    const theme = getFragmentData(fragments.theme, themeFragment);
+    const ownerArtist = artistFragment ? getFragmentData(fragments.artist, artistFragment) : undefined;
+    const expandable = expandableFragment ? getFragmentData(fragments.expandable, expandableFragment) : undefined;
+
     const [isExpanded, toggleExpanded] = useToggle();
     const isMobile = useIsMobile();
 
     const anime = theme.anime;
-    const entry = theme.entries[0];
-    const video = entry?.videos[0];
+    const entry = theme.animethemeentries[0];
+    const video = entry?.videos.nodes[0];
 
     if (!anime || !entry || !video) {
         return null;
     }
 
-    const { smallCover } = extractImages(anime);
+    const { smallCover } = extractImages(anime.images.nodes);
     const videoSlug = createVideoSlug(theme, entry, video);
     const href = `/anime/${anime.slug}/${videoSlug}`;
 
@@ -131,7 +184,7 @@ export function ThemeSummaryCard({
                 <SummaryCard.Body onClick={(event) => handleToggleExpand(event, true)}>
                     <SummaryCard.Title>
                         <SongTitle song={theme.song} href={href} onClick={() => onPlay?.()} />
-                        <Performances song={theme.song} artist={artist} />
+                        <Performances song={theme.song} artist={ownerArtist} />
                     </SummaryCard.Title>
                     <SummaryCard.Description>
                         <span>
@@ -165,27 +218,30 @@ export function ThemeSummaryCard({
                 <Collapse collapse={!isExpanded}>
                     <StyledPerformedWith>
                         <ThemeTable
-                            themes={[theme]}
+                            themes={[expandable]}
                             onPlay={(_, entryIndex, videoIndex) => onPlay?.(entryIndex, videoIndex)}
                         />
-                        {(theme.song?.performances.length ?? 0) > (artist ? 1 : 0) && (
+                        {(theme.song?.performances.length ?? 0) > (ownerArtist ? 1 : 0) && (
                             <Table style={{ "--columns": "1fr" }}>
                                 <TableHead>
-                                    <TableHeadCell>Performed {artist ? "With" : "By"}</TableHeadCell>
+                                    <TableHeadCell>Performed {ownerArtist ? "With" : "By"}</TableHeadCell>
                                 </TableHead>
                                 <TableBody>
                                     {theme.song?.performances
-                                        ?.filter((performance) => performance.artist.slug !== artist?.slug)
-                                        .sort((a, b) => a.artist.name.localeCompare(b.artist.name))
-                                        .map((performance) => (
-                                            <TableRow
-                                                key={performance.artist.slug}
-                                                as={Link}
-                                                href={`/artist/${performance.artist.slug}`}
-                                            >
+                                        ?.map((performance) => ({
+                                            artist:
+                                                performance.artist.__typename === "Artist"
+                                                    ? performance.artist
+                                                    : performance.artist.group,
+                                            performance,
+                                        }))
+                                        .filter(({ artist }) => artist.slug !== ownerArtist?.slug)
+                                        .sort(({ artist: a }, { artist: b }) => a.name.localeCompare(b.name))
+                                        .map(({ artist, performance }) => (
+                                            <TableRow key={artist.slug} as={Link} href={`/artist/${artist.slug}`}>
                                                 <TableCell>
                                                     <Text color="text-primary" weight="600">
-                                                        {getDisplayedArtistName(performance)}
+                                                        {getDisplayedArtistName({ ...performance, artist })}
                                                     </Text>
                                                 </TableCell>
                                             </TableRow>
@@ -199,74 +255,3 @@ export function ThemeSummaryCard({
         </StyledWrapper>
     );
 }
-
-ThemeSummaryCard.fragments = {
-    theme: gql`
-        ${SongTitleWithArtists.fragments.song}
-        ${extractImages.fragments.resourceWithImages}
-        ${createVideoSlug.fragments.theme}
-        ${createVideoSlug.fragments.entry}
-        ${createVideoSlug.fragments.video}
-        ${ThemeMenu.fragments.theme}
-
-        fragment ThemeSummaryCardTheme on Theme {
-            ...createVideoSlugTheme
-            ...ThemeMenuTheme
-            type
-            sequence
-            group {
-                name
-                slug
-            }
-            anime {
-                ...extractImagesResourceWithImages
-                slug
-                name
-            }
-            song {
-                ...SongTitleWithArtistsSong
-            }
-            entries {
-                ...createVideoSlugEntry
-                videos {
-                    ...createVideoSlugVideo
-                }
-            }
-        }
-    `,
-    artist: gql`
-        ${SongTitleWithArtists.fragments.artist}
-
-        fragment ThemeSummaryCardArtist on Artist {
-            ...SongTitleWithArtistsArtist
-        }
-    `,
-    expandable: gql`
-        ${ThemeTable.fragments.theme}
-
-        fragment ThemeSummaryCardThemeExpandable on Theme {
-            ...ThemeTableTheme
-        }
-    `,
-};
-
-export type FetchThemeSummaryCardData = ThemeSummaryCardQuery["theme"] | null;
-
-export const fetchThemeSummaryCardData = async function (id: number): Promise<FetchThemeSummaryCardData> {
-    return fetchDataClient<ThemeSummaryCardQuery, { themeId: number }>(
-        gql`
-            ${ThemeSummaryCard.fragments.theme}
-
-            query ThemeSummaryCard($themeId: Int!) {
-                theme(id: $themeId) {
-                    ...ThemeSummaryCardTheme
-                    anime {
-                        year
-                        season
-                    }
-                }
-            }
-        `,
-        { themeId: id },
-    ).then((result) => result.data?.theme ?? null);
-};

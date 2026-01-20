@@ -1,46 +1,101 @@
 import type { GetStaticPaths, GetStaticProps } from "next";
 
-import gql from "graphql-tag";
-import { capitalize } from "lodash-es";
+import type { ResultOf } from "@graphql-typed-document-node/core";
 import type { ParsedUrlQuery } from "querystring";
 
 import { Column } from "@/components/box/Flex";
 import { AnimeSummaryCard } from "@/components/card/AnimeSummaryCard";
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
-import type {
-    SeasonDetailPageAllQuery,
-    SeasonDetailPageQuery,
-    SeasonDetailPageQueryVariables,
-} from "@/generated/graphql";
-import { fetchData } from "@/lib/server";
+import createApolloClient from "@/graphql/createApolloClient";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
+import type { AnimeSeason } from "@/graphql/generated/graphql";
+import { seasonComparator, sortTransformed } from "@/utils/comparators";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
-import type { RequiredNonNullable } from "@/utils/types";
 
-const seasonOrder = ["winter", "spring", "summer", "fall"];
+const fragments = {
+    year: graphql(`
+        fragment SeasonDetailPageYear on AnimeYear {
+            ...SeasonNavigationYear
+            year
+        }
+    `),
+    season: graphql(`
+        fragment SeasonDetailPageSeason on AnimeYearSeason {
+            ...SeasonNavigationSeason
+            season
+            seasonLocalized
+            anime {
+                data {
+                    ...AnimeSummaryCardAnime
+                    ...AnimeSummaryCardAnimeExpandable
+                    slug
+                    name
+                }
+            }
+        }
+    `),
+};
 
-export interface SeasonDetailPageProps extends SharedPageProps, RequiredNonNullable<SeasonDetailPageQuery> {}
+const pathsQuery = graphql(`
+    query SeasonDetailPageAll {
+        animeyears {
+            year
+            seasons {
+                season
+            }
+        }
+    }
+`);
+
+const propsQuery = graphql(`
+    query SeasonDetailPage($year: Int!, $season: AnimeSeason!) {
+        animeyear: animeyears(year: [$year]) {
+            ...SeasonDetailPageYear
+            ...YearNavigationYear
+            season(season: $season) {
+                ...SeasonDetailPageSeason
+            }
+            seasons {
+                season
+                seasonLocalized
+            }
+        }
+        animeyears {
+            ...YearNavigationYears
+            year
+        }
+    }
+`);
+
+export interface SeasonDetailPageProps extends SharedPageProps {
+    year: FragmentType<typeof fragments.year>;
+    season: FragmentType<typeof fragments.season>;
+    years: ResultOf<typeof propsQuery>["animeyears"];
+}
 
 interface SeasonDetailPageParams extends ParsedUrlQuery {
     year: string;
-    season: string;
+    season: Lowercase<AnimeSeason>;
 }
 
-export default function SeasonDetailPage({ season, year }: SeasonDetailPageProps) {
-    const animeList = season.anime.filter((anime) => anime.name).sort((a, b) => a.name.localeCompare(b.name));
+export default function SeasonDetailPage({ year: yearFragment, season: seasonFragment }: SeasonDetailPageProps) {
+    const year = getFragmentData(fragments.year, yearFragment);
+    const season = getFragmentData(fragments.season, seasonFragment);
+    const animeList = season.anime.data.filter((anime) => anime.name).sort((a, b) => a.name.localeCompare(b.name));
 
     return (
         <>
-            <SEO title={`${capitalize(season.value)} ${year.value}`} />
+            <SEO title={`${season.seasonLocalized} ${year.year}`} />
             <Text variant="h2">
-                {`Anime from ${season.value} of ${year.value}`}
+                {`Anime from ${season.seasonLocalized} of ${year.year}`}
                 <Text color="text-disabled"> ({animeList.length})</Text>
             </Text>
             <Column style={{ "--gap": "16px" }}>
                 {animeList.map((anime) => (
-                    <AnimeSummaryCard key={anime.slug} anime={anime} expandable />
+                    <AnimeSummaryCard key={anime.slug} anime={anime} expandable={anime} />
                 ))}
             </Column>
         </>
@@ -48,54 +103,39 @@ export default function SeasonDetailPage({ season, year }: SeasonDetailPageProps
 }
 
 export const getStaticProps: GetStaticProps<SeasonDetailPageProps, SeasonDetailPageParams> = async ({ params }) => {
-    const { data, apiRequests } = await fetchData<SeasonDetailPageQuery, SeasonDetailPageQueryVariables>(
-        gql`
-            ${AnimeSummaryCard.fragments.anime}
-            ${AnimeSummaryCard.fragments.expandable}
+    const client = createApolloClient();
 
-            query SeasonDetailPage($year: Int = 0, $season: String!) {
-                year(value: $year) {
-                    value
-                    seasons {
-                        value
-                    }
-                }
-                season(year: $year, value: $season) {
-                    value
-                    anime {
-                        slug
-                        ...AnimeSummaryCardAnime
-                        ...AnimeSummaryCardAnimeExpandable
-                    }
-                }
-                yearAll {
-                    value
-                }
-            }
-        `,
-        params && {
-            year: +params.year,
-            season: params.season,
-        },
-    );
-
-    if (!data.year || !data.season) {
+    if (!params?.year || !params?.season) {
         return {
             notFound: true,
         };
     }
 
-    data.year.seasons.sort(
-        (a, b) => seasonOrder.indexOf(a.value.toLowerCase()) - seasonOrder.indexOf(b.value.toLowerCase()),
-    );
-    data.yearAll.sort((a, b) => a.value - b.value);
+    const { data } = await client.query({
+        query: propsQuery,
+        variables: {
+            year: +params.year,
+            season: params.season.toUpperCase() as AnimeSeason,
+        },
+    });
+
+    if (!data.animeyear[0] || !data.animeyear[0].season) {
+        return {
+            notFound: true,
+        };
+    }
 
     return {
         props: {
-            ...getSharedPageProps(apiRequests),
-            season: data.season,
-            year: data.year,
-            yearAll: data.yearAll,
+            ...getSharedPageProps(),
+            year: {
+                ...data.animeyear[0],
+                seasons: [...(data.animeyear[0].seasons ?? [])].sort(
+                    sortTransformed(seasonComparator, (season) => season.season),
+                ),
+            },
+            season: data.animeyear[0].season,
+            years: [...data.animeyears].sort((a, b) => a.year - b.year),
         },
         // Revalidate after 3 hours (= 10800 seconds).
         revalidate: 10800,
@@ -103,25 +143,21 @@ export const getStaticProps: GetStaticProps<SeasonDetailPageProps, SeasonDetailP
 };
 
 export const getStaticPaths: GetStaticPaths<SeasonDetailPageParams> = async () => {
-    return fetchStaticPaths(async () => {
-        const { data } = await fetchData<SeasonDetailPageAllQuery>(gql`
-            query SeasonDetailPageAll {
-                yearAll {
-                    value
-                    seasons {
-                        value
-                    }
-                }
-            }
-        `);
+    const client = createApolloClient();
 
-        return data.yearAll.flatMap((year) =>
-            year.seasons.map((season) => ({
-                params: {
-                    year: String(year.value),
-                    season: season.value,
-                },
-            })),
+    return fetchStaticPaths(async () => {
+        const { data } = await client.query({
+            query: pathsQuery,
+        });
+
+        return data.animeyears.flatMap(
+            (year) =>
+                year.seasons?.map((season) => ({
+                    params: {
+                        year: String(year.year),
+                        season: season.season.toLowerCase() as Lowercase<AnimeSeason>,
+                    },
+                })) ?? [],
         );
     });
 };

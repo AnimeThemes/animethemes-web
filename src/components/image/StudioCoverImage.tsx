@@ -2,12 +2,10 @@ import { useState } from "react";
 import type { ComponentPropsWithoutRef } from "react";
 import styled from "styled-components";
 
-import gql from "graphql-tag";
-
 import { FullWidthImage } from "@/components/image/FullWidthImage";
 import { MultiCoverImage } from "@/components/image/MultiCoverImage";
 import { AspectRatio } from "@/components/utils/AspectRatio";
-import type { StudioCoverImageStudioFragment } from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import extractImages from "@/utils/extractImages";
 
 const StyledImage = styled(FullWidthImage)`
@@ -15,12 +13,35 @@ const StyledImage = styled(FullWidthImage)`
     background-size: contain;
 `;
 
+const fragments = {
+    studio: graphql(`
+        fragment StudioCoverImageStudio on Studio {
+            images {
+                nodes {
+                    ...extractImagesImage
+                }
+            }
+            anime {
+                nodes {
+                    name
+                    images {
+                        nodes {
+                            ...extractImagesImage
+                        }
+                    }
+                }
+            }
+        }
+    `),
+};
+
 interface StudioCoverImageProps extends ComponentPropsWithoutRef<typeof FullWidthImage> {
-    studio: StudioCoverImageStudioFragment;
+    studio: FragmentType<typeof fragments.studio>;
 }
 
-export function StudioCoverImage({ studio, ...props }: StudioCoverImageProps) {
-    const { largeCover } = extractImages(studio);
+export function StudioCoverImage({ studio: studioFragment, ...props }: StudioCoverImageProps) {
+    const studio = getFragmentData(fragments.studio, studioFragment);
+    const { largeCover } = extractImages(studio.images.nodes);
 
     const [imageNotFound, setImageNotFound] = useState(!largeCover);
 
@@ -35,26 +56,14 @@ export function StudioCoverImage({ studio, ...props }: StudioCoverImageProps) {
                     {...props}
                 />
             ) : (
-                <MultiCoverImage resourcesWithImages={studio.anime} {...props} />
+                <MultiCoverImage
+                    items={studio.anime.nodes.map((anime) => ({
+                        ...extractImages(anime.images.nodes),
+                        name: anime.name,
+                    }))}
+                    {...props}
+                />
             )}
         </AspectRatio>
     );
 }
-
-StudioCoverImage.fragments = {
-    studio: gql`
-        fragment StudioCoverImageStudio on Studio {
-            images {
-                link
-                facet
-            }
-            anime {
-                name
-                images {
-                    link
-                    facet
-                }
-            }
-        }
-    `,
-};

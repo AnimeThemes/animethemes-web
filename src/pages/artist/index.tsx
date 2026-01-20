@@ -2,24 +2,35 @@ import React from "react";
 import type { GetStaticProps } from "next";
 import Link from "next/link";
 
-import gql from "graphql-tag";
+import type { ResultOf } from "@graphql-typed-document-node/core";
 
 import { BackToTopButton } from "@/components/button/BackToTopButton";
 import { AlphabeticalIndex } from "@/components/index/AlphabeticalIndex";
 import { Text } from "@/components/text/Text";
-import type { ArtistIndexPageQuery } from "@/generated/graphql";
-import { fetchData } from "@/lib/server";
+import createApolloClient from "@/graphql/createApolloClient";
+import { graphql } from "@/graphql/generated";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 
-interface ArtistIndexPageProps extends SharedPageProps, ArtistIndexPageQuery {}
+const propsQuery = graphql(`
+    query ArtistIndexPage($first: Int!) {
+        artistPagination(sort: NAME, first: $first) {
+            data {
+                slug
+                name
+            }
+        }
+    }
+`);
 
-export default function ArtistIndexPage({ artistAll }: ArtistIndexPageProps) {
+interface ArtistIndexPageProps extends SharedPageProps, ResultOf<typeof propsQuery> {}
+
+export default function ArtistIndexPage({ artistPagination }: ArtistIndexPageProps) {
     return (
         <>
             <BackToTopButton />
             <Text variant="h1">Artist Index</Text>
-            <AlphabeticalIndex items={artistAll}>
+            <AlphabeticalIndex items={artistPagination.data}>
                 {(artist) => (
                     <Text key={artist.slug} as={Link} href={`/artist/${artist.slug}`} prefetch={false} block link>
                         {artist.name}
@@ -31,18 +42,18 @@ export default function ArtistIndexPage({ artistAll }: ArtistIndexPageProps) {
 }
 
 export const getStaticProps: GetStaticProps<ArtistIndexPageProps> = async () => {
-    const { data, apiRequests } = await fetchData<ArtistIndexPageQuery>(gql`
-        query ArtistIndexPage {
-            artistAll {
-                slug
-                name
-            }
-        }
-    `);
+    const client = createApolloClient();
+
+    const { data } = await client.query({
+        query: propsQuery,
+        variables: {
+            first: Math.pow(2, 16) - 1,
+        },
+    });
 
     const props: ArtistIndexPageProps = {
-        ...getSharedPageProps(apiRequests),
-        artistAll: data.artistAll,
+        ...getSharedPageProps(),
+        ...data,
     };
 
     return {

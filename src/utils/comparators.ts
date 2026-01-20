@@ -1,6 +1,7 @@
+import type { AnimeSeason } from "@/graphql/generated/graphql";
 import type { Comparator } from "@/utils/types";
 
-const seasonOrder = ["winter", "spring", "summer", "fall"];
+const seasonOrder: Array<AnimeSeason> = ["WINTER", "SPRING", "SUMMER", "FALL"];
 const themeTypeOrder = ["op", "ed"];
 
 interface ComparatorChain<T> {
@@ -50,8 +51,8 @@ function nestedComparator<S, V>(
 
 export const animeNameComparator: Comparator<{ name: string }> = nestedComparator((anime) => anime.name);
 export const animeYearComparator: Comparator<{ year: number | null }> = nestedComparator((anime) => anime.year);
-export const animeSeasonComparator: Comparator<{ season: string | null }> = nestedComparator(
-    (anime) => anime.season?.toLowerCase(),
+export const animeSeasonComparator: Comparator<{ season: AnimeSeason | null }> = nestedComparator(
+    (anime) => anime.season ?? undefined,
     enumComparator(seasonOrder),
 );
 export const animePremiereComparator = either(animeYearComparator).or(animeSeasonComparator).chain();
@@ -77,6 +78,8 @@ export const resourceSiteComparator: Comparator<{ site: string | null }> = neste
     (resource) => resource.site,
 );
 export const resourceAsComparator: Comparator<{ as: string | null }> = nestedComparator((resource) => resource.as);
+
+export const seasonComparator: Comparator<AnimeSeason> = enumComparator(seasonOrder);
 
 export const UNSORTED = "unsorted";
 
@@ -127,3 +130,5 @@ export function getComparator<T extends keyof typeof comparators>(name: T): (typ
 export function sortTransformed<T, K>(comparator: Comparator<T>, transformator: (from: K) => T): Comparator<K> {
     return (a, b) => comparator(transformator(a), transformator(b));
 }
+
+export const compare = automaticComparator;

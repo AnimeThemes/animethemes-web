@@ -1,10 +1,11 @@
 import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
 import { SearchFilter } from "@/components/search-filter/SearchFilter";
 import { Text } from "@/components/text/Text";
+import type { AnimeSeason } from "@/graphql/generated/graphql";
 
 interface SearchFilterSeasonProps {
-    value: string | null;
-    setValue: (newValue: string | null) => void;
+    value: AnimeSeason | null;
+    setValue: (newValue: AnimeSeason | null) => void;
 }
 
 export function SearchFilterSeason({ value, setValue }: SearchFilterSeasonProps) {
@@ -15,10 +16,10 @@ export function SearchFilterSeason({ value, setValue }: SearchFilterSeasonProps)
                 <ListboxOption value={null} hidden>
                     Any
                 </ListboxOption>
-                <ListboxOption value="Winter">Winter</ListboxOption>
-                <ListboxOption value="Spring">Spring</ListboxOption>
-                <ListboxOption value="Summer">Summer</ListboxOption>
-                <ListboxOption value="Fall">Fall</ListboxOption>
+                <ListboxOption value="WINTER">Winter</ListboxOption>
+                <ListboxOption value="SPRING">Spring</ListboxOption>
+                <ListboxOption value="SUMMER">Summer</ListboxOption>
+                <ListboxOption value="FALL">Fall</ListboxOption>
             </Listbox>
         </SearchFilter>
     );

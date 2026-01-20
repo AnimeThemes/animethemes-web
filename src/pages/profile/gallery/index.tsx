@@ -2,13 +2,13 @@ import { useState } from "react";
 import styled from "styled-components";
 import type { GetStaticProps } from "next";
 
-import gql from "graphql-tag";
+import type { ResultOf } from "@graphql-typed-document-node/core";
 
 import { Button } from "@/components/button/Button";
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
-import type { GalleryPageQuery } from "@/generated/graphql";
-import { fetchData } from "@/lib/server";
+import createApolloClient from "@/graphql/createApolloClient";
+import { graphql } from "@/graphql/generated";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 
@@ -39,20 +39,35 @@ const StyledImageContainer = styled.div<{ $isPushed: boolean }>`
     transition: transform 250ms;
 `;
 
-interface GalleryPageProps extends SharedPageProps, GalleryPageQuery {}
+const propsQuery = graphql(`
+    query GalleryPage($first: Int!) {
+        grills: imagePagination(facet_in: [GRILL], first: $first) {
+            data {
+                id
+                link
+            }
+        }
+    }
+`);
+
+interface GalleryPageProps extends SharedPageProps, ResultOf<typeof propsQuery> {}
 
 export default function GalleryPage({ grills }: GalleryPageProps) {
     return (
         <>
             <SEO title="Grill Gallery" />
             <Text variant="h1">Grill Gallery</Text>
-            <StyledGrid>{grills?.map((grill) => <Grill key={grill.id} grill={grill} />)}</StyledGrid>
+            <StyledGrid>
+                {grills.data.map((grill) => (
+                    <Grill key={grill.id} grill={grill} />
+                ))}
+            </StyledGrid>
         </>
     );
 }
 
 interface GrillProps {
-    grill: GalleryPageProps["grills"][number];
+    grill: GalleryPageProps["grills"]["data"][number];
 }
 
 function Grill({ grill }: GrillProps) {
@@ -69,19 +84,19 @@ function Grill({ grill }: GrillProps) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-    const { data, apiRequests } = await fetchData<GalleryPageQuery>(gql`
-        query GalleryPage {
-            grills: imageAll(facet: "Grill") {
-                id
-                link
-            }
-        }
-    `);
+    const client = createApolloClient();
+
+    const { data } = await client.query({
+        query: propsQuery,
+        variables: {
+            first: Math.pow(2, 16) - 1,
+        },
+    });
 
     return {
         props: {
-            ...getSharedPageProps(apiRequests),
-            grills: data.grills,
+            ...getSharedPageProps(),
+            ...data,
         },
         // Revalidate after 3 hours (= 10800 seconds).
         revalidate: 10800,

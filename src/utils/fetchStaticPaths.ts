@@ -7,7 +7,7 @@ export default async function fetchStaticPaths<T extends ParsedUrlQuery = Parsed
     forceFullBuild = false,
 ): Promise<{ paths: Array<{ params: T }>; fallback: "blocking" }> {
     // In development all pages should be fetched on-demand. This speeds up page generation a lot.
-    // This can also be enabled via an enviroment variable.
+    // This can also be enabled via an environment variable.
     if (process.env.NODE_ENV === "development" || (MINIMAL_BUILD && !forceFullBuild)) {
         return {
             paths: [],

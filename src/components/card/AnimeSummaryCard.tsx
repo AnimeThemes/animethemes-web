@@ -2,7 +2,7 @@ import { Fragment, type MouseEvent } from "react";
 import styled from "styled-components";
 
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import gql from "graphql-tag";
+import type { ResultOf } from "@graphql-typed-document-node/core";
 import { uniqBy } from "lodash-es";
 
 import { Button } from "@/components/button/Button";
@@ -12,7 +12,7 @@ import { ThemeTable } from "@/components/table/ThemeTable";
 import { Text } from "@/components/text/Text";
 import { TextLink } from "@/components/text/TextLink";
 import { Collapse } from "@/components/utils/Collapse";
-import type { AnimeSummaryCardAnimeExpandableFragment, AnimeSummaryCardAnimeFragment } from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useMediaQuery from "@/hooks/useMediaQuery";
 import useToggle from "@/hooks/useToggle";
 import theme from "@/theme";
@@ -60,40 +60,66 @@ const StyledThemeGroupContainer = styled.div`
     margin-top: 8px;
 `;
 
-type AnimeSummaryCardProps =
-    | {
-          anime: AnimeSummaryCardAnimeFragment;
-          expandable?: false;
-      }
-    | {
-          anime: AnimeSummaryCardAnimeFragment & AnimeSummaryCardAnimeExpandableFragment;
-          expandable: true;
-      };
+const fragments = {
+    anime: graphql(`
+        fragment AnimeSummaryCardAnime on Anime {
+            slug
+            name
+            year
+            season
+            seasonLocalized
+            mediaFormatLocalized
+            animethemes {
+                group {
+                    name
+                    slug
+                }
+            }
+            images {
+                nodes {
+                    ...extractImagesImage
+                }
+            }
+        }
+    `),
+    expandable: graphql(`
+        fragment AnimeSummaryCardAnimeExpandable on Anime {
+            animethemes {
+                ...ThemeTableTheme
+                group {
+                    name
+                    slug
+                }
+            }
+        }
+    `),
+};
 
-export function AnimeSummaryCard({ anime, expandable = false, ...props }: AnimeSummaryCardProps) {
+interface AnimeSummaryCardProps {
+    anime: FragmentType<typeof fragments.anime>;
+    expandable?: FragmentType<typeof fragments.expandable>;
+}
+
+export function AnimeSummaryCard({ anime: animeFragment, expandable, ...props }: AnimeSummaryCardProps) {
+    const anime = getFragmentData(fragments.anime, animeFragment);
     const [isExpanded, toggleExpanded] = useToggle();
-    const { smallCover } = extractImages(anime);
+    const { smallCover } = extractImages(anime.images.nodes);
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
-
-    const groups = uniqBy(
-        anime.themes.map((theme) => theme.group),
-        (group) => group?.slug,
-    );
 
     const animeLink = `/anime/${anime.slug}`;
 
     let premiere = String(anime.year);
     let premiereLink = `/year/${anime.year}`;
-    if (anime.season) {
-        premiere = anime.season + " " + premiere;
+    if (anime.seasonLocalized && anime.season) {
+        premiere = anime.seasonLocalized + " " + premiere;
         premiereLink += `/${anime.season.toLowerCase()}`;
     }
 
     const description = (
         <SummaryCard.Description>
-            <span>{anime.media_format ?? "Anime"}</span>
+            <span>{anime.mediaFormatLocalized ?? "Anime"}</span>
             {!!anime.year && <TextLink href={premiereLink}>{premiere}</TextLink>}
-            <span>{anime.themes.length} themes</span>
+            <span>{anime.animethemes.length} themes</span>
         </SummaryCard.Description>
     );
 
@@ -137,55 +163,36 @@ export function AnimeSummaryCard({ anime, expandable = false, ...props }: AnimeS
                 )}
             </SummaryCard>
             {expandable ? (
-                <Collapse collapse={!isExpanded}>
-                    <StyledThemeGroupContainer>
-                        {groups.map((group) => (
-                            <Fragment key={group?.slug}>
-                                {!!group && <Text variant="h2">{group.name}</Text>}
-                                <ThemeTable
-                                    themes={(anime as AnimeSummaryCardAnimeExpandableFragment).themes.filter(
-                                        (theme) => theme.group?.slug === group?.slug,
-                                    )}
-                                />
-                            </Fragment>
-                        ))}
-                    </StyledThemeGroupContainer>
-                </Collapse>
+                <AnimeSummaryCardCollapse
+                    anime={getFragmentData(fragments.expandable, expandable)}
+                    isExpanded={isExpanded}
+                />
             ) : null}
         </StyledWrapper>
     );
 }
 
-AnimeSummaryCard.fragments = {
-    anime: gql`
-        ${extractImages.fragments.resourceWithImages}
+interface AnimeSummaryCardCollapseProps {
+    anime: ResultOf<typeof fragments.expandable>;
+    isExpanded: boolean;
+}
 
-        fragment AnimeSummaryCardAnime on Anime {
-            ...extractImagesResourceWithImages
-            slug
-            name
-            year
-            season
-            media_format
-            themes {
-                group {
-                    name
-                    slug
-                }
-            }
-        }
-    `,
-    expandable: gql`
-        ${ThemeTable.fragments.theme}
+function AnimeSummaryCardCollapse({ anime, isExpanded }: AnimeSummaryCardCollapseProps) {
+    const groups = uniqBy(
+        anime.animethemes.map((theme) => theme.group),
+        (group) => group?.slug,
+    );
 
-        fragment AnimeSummaryCardAnimeExpandable on Anime {
-            themes {
-                ...ThemeTableTheme
-                group {
-                    name
-                    slug
-                }
-            }
-        }
-    `,
-};
+    return (
+        <Collapse collapse={!isExpanded}>
+            <StyledThemeGroupContainer>
+                {groups.map((group) => (
+                    <Fragment key={group?.slug}>
+                        {!!group && <Text variant="h2">{group.name}</Text>}
+                        <ThemeTable themes={anime.animethemes.filter((theme) => theme.group?.slug === group?.slug)} />
+                    </Fragment>
+                ))}
+            </StyledThemeGroupContainer>
+        </Collapse>
+    );
+}

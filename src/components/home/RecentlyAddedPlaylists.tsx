@@ -19,7 +19,7 @@ export function RecentlyAddedPlaylists() {
                 query HomePageRecentlyAddedPlaylists {
                     playlistAll(orderBy: "created_at", orderDesc: true, limit: 10, onlyNonEmpty: true) {
                         ...PlaylistSummaryCardPlaylist
-                        ...PlaylistSummaryCardShowOwner
+                        ...PlaylistSummaryCardPlaylistWithOwner
                     }
                 }
             `);
@@ -33,7 +33,7 @@ export function RecentlyAddedPlaylists() {
         <Column style={{ "--gap": "16px" }}>
             {recentlyAddedPlaylists?.map((playlist, index) => (
                 <Skeleton key={index} variant="summary-card" delay={index * 100}>
-                    {playlist ? <PlaylistSummaryCard playlist={playlist} showOwner /> : null}
+                    {playlist ? <PlaylistSummaryCard playlist={playlist} playlistWithOwner /> : null}
                 </Skeleton>
             ))}
         </Column>
