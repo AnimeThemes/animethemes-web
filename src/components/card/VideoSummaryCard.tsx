@@ -7,6 +7,7 @@ import gql from "graphql-tag";
 
 import { SummaryCard } from "@/components/card/SummaryCard2";
 import { Icon } from "@/components/icon/Icon";
+import { VideoMenu } from "@/components/menu/VideoMenu";
 import { TextLink } from "@/components/text/TextLink";
 import { Performances } from "@/components/utils/Performances";
 import { SongTitle } from "@/components/utils/SongTitle";
@@ -108,9 +109,9 @@ export function VideoSummaryCard({
                         <TextLink href={`/anime/${anime.slug}`}>{anime.name}</TextLink>
                     </SummaryCard.Description>
                 </SummaryCard.Body>
-                {menu ? (
-                    <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>{menu}</StyledOverlayButtons>
-                ) : null}
+                <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>
+                    {menu ?? <VideoMenu entry={entry} video={video} />}
+                </StyledOverlayButtons>
                 {append}
             </SummaryCard>
         </StyledWrapper>
@@ -119,11 +120,13 @@ export function VideoSummaryCard({
 
 export const VideoSummaryCardFragmentVideo = gql`
     ${createVideoSlug.fragments.video}
+    ${VideoMenu.fragments.video}
 
     fragment VideoSummaryCardVideo on Video {
         id
         basename
         ...createVideoSlugVideo
+        ...VideoMenuVideo
         audio {
             basename
         }
@@ -135,9 +138,11 @@ export const VideoSummaryCardFragmentEntry = gql`
     ${extractImages.fragments.resourceWithImages}
     ${createVideoSlug.fragments.theme}
     ${createVideoSlug.fragments.entry}
+    ${VideoMenu.fragments.entry}
 
     fragment VideoSummaryCardEntry on Entry {
         ...createVideoSlugEntry
+        ...VideoMenuEntry
         id
         theme {
             ...createVideoSlugTheme
