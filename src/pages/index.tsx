@@ -21,7 +21,7 @@ import { AnnouncementCard } from "@/components/card/AnnouncementCard";
 import { ShuffleDialog } from "@/components/dialog/ShuffleDialog";
 import { ExternalLink } from "@/components/external-link/ExternalLink";
 import { FeaturedTheme } from "@/components/featured-theme/FeaturedTheme";
-import { MostViewedVideos } from "@/components/home/MostViewedVideos";
+import { MostPopularEntries } from "@/components/home/MostPopularEntries";
 import { RecentlyAddedPlaylists } from "@/components/home/RecentlyAddedPlaylists";
 import { RecentlyAddedVideos } from "@/components/home/RecentlyAddedVideos";
 import { Icon } from "@/components/icon/Icon";
@@ -154,8 +154,8 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
                     <RecentlyAddedVideos />
                 </Column>
                 <Column style={{ "--gap": "24px" }}>
-                    <Text variant="h2">Most Viewed</Text>
-                    <MostViewedVideos />
+                    <Text variant="h2">Most Popular</Text>
+                    <MostPopularEntries />
                 </Column>
                 <Column style={{ "--gap": "24px" }}>
                     <Text variant="h2">New Playlists</Text>

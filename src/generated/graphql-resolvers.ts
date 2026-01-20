@@ -282,6 +282,7 @@ export type Query = {
     bracket?: Maybe<Bracket>;
     bracketAll: Array<Bracket>;
     dumpAll: Array<Dump>;
+    entryAll: Array<Entry>;
     featuredTheme?: Maybe<FeaturedTheme>;
     imageAll: Array<Image>;
     me: UserScopedQuery;
@@ -330,6 +331,12 @@ export type QueryArtistAllArgs = {
 
 export type QueryBracketArgs = {
     slug: Scalars["String"]["input"];
+};
+
+export type QueryEntryAllArgs = {
+    limit?: InputMaybe<Scalars["Int"]["input"]>;
+    orderBy?: InputMaybe<Scalars["String"]["input"]>;
+    orderDesc?: InputMaybe<Scalars["Boolean"]["input"]>;
 };
 
 export type QueryImageAllArgs = {
@@ -1149,6 +1156,7 @@ export type QueryResolvers<
     >;
     bracketAll?: Resolver<Array<ResolversTypes["Bracket"]>, ParentType, ContextType>;
     dumpAll?: Resolver<Array<ResolversTypes["Dump"]>, ParentType, ContextType>;
+    entryAll?: Resolver<Array<ResolversTypes["Entry"]>, ParentType, ContextType, Partial<QueryEntryAllArgs>>;
     featuredTheme?: Resolver<Maybe<ResolversTypes["FeaturedTheme"]>, ParentType, ContextType>;
     imageAll?: Resolver<Array<ResolversTypes["Image"]>, ParentType, ContextType, Partial<QueryImageAllArgs>>;
     me?: Resolver<ResolversTypes["UserScopedQuery"], ParentType, ContextType>;
