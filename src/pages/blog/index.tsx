@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import type { GetStaticProps } from "next";
 import Link from "next/link";
 
-import gql from "graphql-tag";
+import type { ResultOf } from "@graphql-typed-document-node/core";
 import { groupBy } from "lodash-es";
 
 import { Column, Row } from "@/components/box/Flex";
@@ -11,17 +11,37 @@ import { Button } from "@/components/button/Button";
 import { Card } from "@/components/card/Card";
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
-import type { DocumentIndexPageQuery } from "@/generated/graphql";
-import { fetchData } from "@/lib/server";
+import createApolloClient from "@/graphql/createApolloClient";
+import { graphql } from "@/graphql/generated";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 
-interface DocumentIndexPageProps extends SharedPageProps, DocumentIndexPageQuery {}
+const propsQuery = graphql(`
+    query DocumentIndexPage {
+        pagePagination(
+            #            where: {
+            #                OR: [
+            #                    { column: SLUG, operator: LIKE, value: "blog/%" }
+            #                    { column: SLUG, operator: LIKE, value: "status/%" }
+            #                ]
+            #            }
+            sort: CREATED_AT_DESC
+        ) {
+            data {
+                slug
+                name
+                createdAt
+            }
+        }
+    }
+`);
 
-export default function DocumentIndexPage({ pageAll }: DocumentIndexPageProps) {
-    const pageGroups = Object.entries(groupBy(pageAll, (page) => new Date(page.created_at).getFullYear())).sort(
-        (a, b) => parseInt(b[0]) - parseInt(a[0]),
-    );
+interface DocumentIndexPageProps extends SharedPageProps, ResultOf<typeof propsQuery> {}
+
+export default function DocumentIndexPage({ pagePagination }: DocumentIndexPageProps) {
+    const pageGroups = Object.entries(
+        groupBy(pagePagination.data, (page) => (page.createdAt ? new Date(page.createdAt).getFullYear() : "Unknown")),
+    ).sort((a, b) => parseInt(b[0]) - parseInt(a[0]));
 
     return (
         <>
@@ -49,10 +69,14 @@ export default function DocumentIndexPage({ pageAll }: DocumentIndexPageProps) {
                                         <Text color="text-primary" link>
                                             {page.name}
                                         </Text>
-                                        <Text variant="small" color="text-muted">
-                                            Posted on:{" "}
-                                            {new Date(page.created_at).toLocaleDateString("en", { dateStyle: "long" })}
-                                        </Text>
+                                        {page.createdAt !== null && (
+                                            <Text variant="small" color="text-muted">
+                                                Posted on:{" "}
+                                                {new Date(page.createdAt).toLocaleDateString("en", {
+                                                    dateStyle: "long",
+                                                })}
+                                            </Text>
+                                        )}
                                     </Column>
                                     <Button variant="silent">Read more</Button>
                                 </Row>
@@ -66,22 +90,28 @@ export default function DocumentIndexPage({ pageAll }: DocumentIndexPageProps) {
 }
 
 export const getStaticProps: GetStaticProps<DocumentIndexPageProps> = async () => {
-    const { data, apiRequests } = await fetchData<DocumentIndexPageQuery>(gql`
-        query DocumentIndexPage {
-            pageAll {
-                slug
-                name
-                created_at
-            }
-        }
-    `);
+    const client = createApolloClient();
+
+    const { data } = await client.query({
+        query: propsQuery,
+    });
+
+    // We have to do the filtering manually because the `where` clause doesn't support LIKE.
+    // See the commented part of the query above.
+    const transformedData = {
+        ...data,
+        pagePagination: {
+            ...data.pagePagination,
+            data: data.pagePagination.data.filter(
+                (page) => page.slug.startsWith("blog/") || page.slug.startsWith("status/"),
+            ),
+        },
+    };
 
     return {
         props: {
-            ...getSharedPageProps(apiRequests),
-            pageAll: data.pageAll
-                .filter((page) => page.slug.startsWith("blog/") || page.slug.startsWith("status/"))
-                .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at)),
+            ...getSharedPageProps(),
+            ...transformedData,
         },
         // Revalidate after 3 hours (= 10800 seconds).
         revalidate: 10800,

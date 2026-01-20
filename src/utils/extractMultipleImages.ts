@@ -1,52 +1,46 @@
-import type { ASTNode } from "graphql/index";
-import gql from "graphql-tag";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
-import type { ExtractMultipleImagesResourceWithImagesFragment } from "@/generated/graphql";
+const fragments = {
+    imageEdge: graphql(`
+        fragment extractMultipleImagesImageArtistEdge on ArtistImageEdge {
+            depth
+            node {
+                link
+                facet
+            }
+        }
+    `),
+};
 
-interface ExtractMultiplesImagesResult {
+interface ExtractMultipleImagesResult {
     link: string;
     depth: number | null;
     facet: string | null;
 }
 
-interface ExtractMultipleImages {
-    (resourceWithImages?: ExtractMultipleImagesResourceWithImagesFragment | null): Array<ExtractMultiplesImagesResult>;
-    fragments: {
-        resourceWithImages: ASTNode;
-    };
-}
+export default function extractMultipleImages(
+    imageEdgeFragments: Array<FragmentType<typeof fragments.imageEdge>> | null,
+): Array<ExtractMultipleImagesResult> {
+    const imageEdges = imageEdgeFragments ? getFragmentData(fragments.imageEdge, imageEdgeFragments) : [];
 
-const extractMultipleImages: ExtractMultipleImages = (resourceWithImages) => {
-    if (resourceWithImages) {
-        const largeCovers = resourceWithImages.images.filter((image) => image.facet === "Large Cover");
+    if (imageEdges?.length > 0) {
+        const largeCovers = imageEdges.filter((edge) => edge.node.facet === "LARGE_COVER");
 
-        return largeCovers.sort((a, b) => {
-            if (a.depth && b.depth) {
-                return a.depth - b.depth;
-            }
-            if (a.depth) {
-                return -1;
-            }
-            if (b.depth) {
-                return 1;
-            }
-            return 0;
-        });
+        return largeCovers
+            .sort((a, b) => {
+                if (a.depth && b.depth) {
+                    return a.depth - b.depth;
+                }
+                if (a.depth) {
+                    return -1;
+                }
+                if (b.depth) {
+                    return 1;
+                }
+                return 0;
+            })
+            .map((edge) => ({ depth: edge.depth, facet: edge.node.facet, link: edge.node.link }));
     }
 
     return [];
-};
-
-export default extractMultipleImages;
-
-extractMultipleImages.fragments = {
-    resourceWithImages: gql`
-        fragment extractMultipleImagesResourceWithImages on ResourceWithImages {
-            images {
-                link
-                depth
-                facet
-            }
-        }
-    `,
-};
+}

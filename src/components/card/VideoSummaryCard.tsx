@@ -3,7 +3,6 @@ import styled from "styled-components";
 import Link from "next/link";
 
 import { faPlay } from "@fortawesome/free-solid-svg-icons";
-import gql from "graphql-tag";
 
 import { SummaryCard } from "@/components/card/SummaryCard2";
 import { Icon } from "@/components/icon/Icon";
@@ -11,8 +10,7 @@ import { VideoMenu } from "@/components/menu/VideoMenu";
 import { TextLink } from "@/components/text/TextLink";
 import { Performances } from "@/components/utils/Performances";
 import { SongTitle } from "@/components/utils/SongTitle";
-import { SongTitleWithArtists } from "@/components/utils/SongTitleWithArtists";
-import type { VideoSummaryCardEntryFragment, VideoSummaryCardVideoFragment } from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import theme from "@/theme";
 import createVideoSlug from "@/utils/createVideoSlug";
 import extractImages from "@/utils/extractImages";
@@ -54,10 +52,51 @@ const StyledCoverOverlay = styled.div`
     background-color: rgba(0, 0, 0, 0.5);
 `;
 
+const fragments = {
+    video: graphql(`
+        fragment VideoSummaryCardVideo on Video {
+            id
+            basename
+            ...createVideoSlugVideo
+            ...VideoMenuVideo
+        }
+    `),
+    entry: graphql(`
+        fragment VideoSummaryCardEntry on AnimeThemeEntry {
+            ...createVideoSlugEntry
+            ...VideoMenuEntry
+            id
+            animetheme {
+                ...createVideoSlugTheme
+                id
+                type
+                sequence
+                group {
+                    name
+                    slug
+                }
+                anime {
+                    slug
+                    name
+                    images {
+                        nodes {
+                            ...extractImagesImage
+                        }
+                    }
+                }
+                song {
+                    ...SongTitleSong
+                    ...PerformancesSong
+                }
+            }
+        }
+    `),
+};
+
 interface VideoSummaryCardProps {
     ref?: Ref<HTMLDivElement>;
-    video: VideoSummaryCardVideoFragment;
-    entry: VideoSummaryCardEntryFragment;
+    video: FragmentType<typeof fragments.video>;
+    entry: FragmentType<typeof fragments.entry>;
     menu?: ReactNode;
     append?: ReactNode;
     onPlay?(): void;
@@ -66,22 +105,24 @@ interface VideoSummaryCardProps {
 
 export function VideoSummaryCard({
     ref,
-    video,
-    entry,
+    video: videoFragment,
+    entry: entryFragment,
     menu,
     append,
     onPlay,
     isPlaying,
     ...props
 }: VideoSummaryCardProps) {
-    const theme = entry.theme;
+    const video = getFragmentData(fragments.video, videoFragment);
+    const entry = getFragmentData(fragments.entry, entryFragment);
+    const theme = entry.animetheme;
     const anime = theme?.anime;
 
     if (!entry || !theme || !anime) {
         return null;
     }
 
-    const { smallCover } = extractImages(anime);
+    const { smallCover } = extractImages(anime.images.nodes);
     const videoSlug = createVideoSlug(theme, entry, video);
     const href = `/anime/${anime.slug}/${videoSlug}`;
 
@@ -117,50 +158,3 @@ export function VideoSummaryCard({
         </StyledWrapper>
     );
 }
-
-export const VideoSummaryCardFragmentVideo = gql`
-    ${createVideoSlug.fragments.video}
-    ${VideoMenu.fragments.video}
-
-    fragment VideoSummaryCardVideo on Video {
-        id
-        basename
-        ...createVideoSlugVideo
-        ...VideoMenuVideo
-        audio {
-            basename
-        }
-    }
-`;
-
-export const VideoSummaryCardFragmentEntry = gql`
-    ${SongTitleWithArtists.fragments.song}
-    ${extractImages.fragments.resourceWithImages}
-    ${createVideoSlug.fragments.theme}
-    ${createVideoSlug.fragments.entry}
-    ${VideoMenu.fragments.entry}
-
-    fragment VideoSummaryCardEntry on Entry {
-        ...createVideoSlugEntry
-        ...VideoMenuEntry
-        id
-        theme {
-            ...createVideoSlugTheme
-            id
-            type
-            sequence
-            group {
-                name
-                slug
-            }
-            anime {
-                ...extractImagesResourceWithImages
-                slug
-                name
-            }
-            song {
-                ...SongTitleWithArtistsSong
-            }
-        }
-    }
-`;

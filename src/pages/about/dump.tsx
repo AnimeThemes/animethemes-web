@@ -2,25 +2,37 @@ import type { GetStaticProps } from "next";
 import Link from "next/link";
 
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
-import gql from "graphql-tag";
+import type { ResultOf } from "@graphql-typed-document-node/core";
 
 import { Column } from "@/components/box/Flex";
 import { IconTextButton } from "@/components/button/IconTextButton";
 import { SummaryCard } from "@/components/card/SummaryCard";
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
-import type { DumpIndexPageQuery } from "@/generated/graphql";
-import { fetchData } from "@/lib/server";
+import createApolloClient from "@/graphql/createApolloClient";
+import { graphql } from "@/graphql/generated";
+import { sortTransformed } from "@/utils/comparators";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 import type { Comparator } from "@/utils/types";
 
-interface DumpIndexPageProps extends SharedPageProps, DumpIndexPageQuery {}
+const propsQuery = graphql(`
+    query DumpIndexPage {
+        dumpPagination {
+            data {
+                path
+                link
+                createdAt
+            }
+        }
+    }
+`);
 
-const sortByDateDesc: Comparator<DumpIndexPageProps["dumpAll"][number]> = (a, b) =>
-    new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+interface DumpIndexPageProps extends SharedPageProps, ResultOf<typeof propsQuery> {}
 
-export default function DumpIndexPage({ dumpAll }: DumpIndexPageProps) {
+const sortByDateDesc: Comparator<Date> = (a, b) => b.getTime() - a.getTime();
+
+export default function DumpIndexPage({ dumpPagination }: DumpIndexPageProps) {
     return (
         <>
             <SEO title="Database Dumps" description="Download dumps of the AnimeThemes.moe database." />
@@ -46,37 +58,39 @@ export default function DumpIndexPage({ dumpAll }: DumpIndexPageProps) {
                 </ul>
             </Column>
             <Text variant="h2">Available dumps</Text>
-            {dumpAll.sort(sortByDateDesc).map((dump) => (
-                <SummaryCard
-                    key={dump.path}
-                    title={dump.path}
-                    description={`Created at: ${new Date(dump.created_at).toLocaleString()}`}
-                >
-                    <IconTextButton asChild variant="solid" icon={faDownload} collapsible>
-                        <a href={dump.link} download>
-                            Download
-                        </a>
-                    </IconTextButton>
-                </SummaryCard>
-            ))}
+            {dumpPagination.data
+                .sort(
+                    sortTransformed(sortByDateDesc, (dump) => (dump.createdAt ? new Date(dump.createdAt) : new Date())),
+                )
+                .map((dump) => (
+                    <SummaryCard
+                        key={dump.path}
+                        title={dump.path}
+                        description={
+                            dump.createdAt ? `Created at: ${new Date(dump.createdAt).toLocaleString("en")}` : undefined
+                        }
+                    >
+                        <IconTextButton asChild variant="solid" icon={faDownload} collapsible>
+                            <a href={dump.link} download>
+                                Download
+                            </a>
+                        </IconTextButton>
+                    </SummaryCard>
+                ))}
         </>
     );
 }
 
 export const getStaticProps: GetStaticProps<DumpIndexPageProps> = async () => {
-    const { data, apiRequests } = await fetchData<DumpIndexPageQuery>(gql`
-        query DumpIndexPage {
-            dumpAll {
-                path
-                link
-                created_at
-            }
-        }
-    `);
+    const client = createApolloClient();
+
+    const { data } = await client.query({
+        query: propsQuery,
+    });
 
     const props: DumpIndexPageProps = {
-        ...getSharedPageProps(apiRequests),
-        dumpAll: data.dumpAll,
+        ...getSharedPageProps(),
+        ...data,
     };
 
     return {

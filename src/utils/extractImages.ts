@@ -1,50 +1,37 @@
-import type { ASTNode } from "graphql";
-import gql from "graphql-tag";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
-import type { ExtractImagesResourceWithImagesFragment } from "@/generated/graphql";
-
-interface ExtractImages {
-    (resourcesWithImages?: ExtractImagesResourceWithImagesFragment | null): ExtractImagesResult;
-    fragments: {
-        resourceWithImages: ASTNode;
-    };
-}
+const fragments = {
+    image: graphql(`
+        fragment extractImagesImage on Image {
+            link
+            facet
+        }
+    `),
+};
 
 interface ExtractImagesResult {
     smallCover?: string;
     largeCover?: string;
 }
 
-const extractImages: ExtractImages = (resourceWithImages) => {
-    const images: ExtractImagesResult = {};
+export default function extractImages(
+    imageFragments: Array<FragmentType<typeof fragments.image>> | null,
+): ExtractImagesResult {
+    const images = imageFragments ? getFragmentData(fragments.image, imageFragments) : [];
+    const extractedImages: ExtractImagesResult = {};
 
-    if (resourceWithImages) {
-        for (const image of resourceWithImages.images) {
-            switch (image.facet) {
-                case "Small Cover":
-                    images.smallCover = image.link;
-                    break;
-                case "Large Cover":
-                    images.largeCover = image.link;
-                    break;
-                default:
-                // Ignore
-            }
+    for (const image of images) {
+        switch (image.facet) {
+            case "SMALL_COVER":
+                extractedImages.smallCover = image.link;
+                break;
+            case "LARGE_COVER":
+                extractedImages.largeCover = image.link;
+                break;
+            default:
+            // Ignore
         }
     }
 
-    return images;
-};
-
-export default extractImages;
-
-extractImages.fragments = {
-    resourceWithImages: gql`
-        fragment extractImagesResourceWithImages on ResourceWithImages {
-            images {
-                link
-                facet
-            }
-        }
-    `,
-};
+    return extractedImages;
+}

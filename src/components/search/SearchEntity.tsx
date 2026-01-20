@@ -6,76 +6,77 @@ import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
 import { ErrorCard } from "@/components/card/ErrorCard";
 import { Icon } from "@/components/icon/Icon";
-import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
 import { Text } from "@/components/text/Text";
-import type { SearchArgs } from "@/generated/graphql";
-import useEntitySearch from "@/hooks/useEntitySearch";
-import type { SimpleSearchArgs } from "@/lib/client/search";
 
-interface SearchEntityProps<T> {
-    entity: string;
-    fetchResults: (searchArgs: SearchArgs) => Promise<{
-        data: Array<T>;
-        nextPage: number | null;
-    }>;
-    searchArgs: SimpleSearchArgs;
-    filters: ReactNode;
-    renderResult: (result: T) => ReactNode;
+interface SearchEntityProps {
+    children: ReactNode;
+    error: unknown;
+    searchQuery?: string;
+    isError: boolean;
+    isLoading: boolean;
+    isFetching: boolean;
+    isFetchingNextPage: boolean;
+    isPlaceholderData: boolean;
+    hasResults: boolean;
+    hasNextPage: boolean;
+    onLoadMore: () => void;
 }
 
-export function SearchEntity<T>({ entity, fetchResults, searchArgs, filters, renderResult }: SearchEntityProps<T>) {
-    const { data, error, fetchNextPage, hasNextPage, isError, isFetchingNextPage, isLoading, isPlaceholderData } =
-        useEntitySearch<T>(entity, fetchResults, searchArgs);
+export function SearchEntity({
+    children,
+    error,
+    searchQuery,
+    isError,
+    isLoading,
+    isFetching,
+    isFetchingNextPage,
+    isPlaceholderData,
+    hasResults,
+    hasNextPage,
+    onLoadMore,
+}: SearchEntityProps) {
+    if (isError) {
+        return <ErrorCard error={error} />;
+    }
+
+    if (isLoading) {
+        return <Text block>Searching...</Text>;
+    }
+
+    if (!hasResults) {
+        if (searchQuery) {
+            return <Text block>No results found for query &quot;{searchQuery}&quot;. Did you spell it correctly?</Text>;
+        } else {
+            return <Text block>No results found for your current filter settings.</Text>;
+        }
+    }
+
+    const isLoadingMore = isFetchingNextPage || isPlaceholderData;
 
     return (
         <>
-            {!!filters && <SearchFilterGroup>{filters}</SearchFilterGroup>}
-            {(() => {
-                if (isError) {
-                    return <ErrorCard error={error} />;
-                }
-
-                if (isLoading) {
-                    return <Text block>Searching...</Text>;
-                }
-
-                const results = data?.pages.flatMap((page) => page.data) ?? [];
-
-                if (!results.length) {
-                    if (searchArgs.query) {
-                        return (
-                            <Text block>
-                                No results found for query &quot;{searchArgs.query}&quot;. Did you spell it correctly?
-                            </Text>
-                        );
-                    } else {
-                        return <Text block>No results found for your current filter settings.</Text>;
-                    }
-                }
-
-                const isLoadingMore = isFetchingNextPage || isPlaceholderData;
-
-                return (
-                    <>
-                        <Column style={{ "--gap": "16px" }}>{results.map(renderResult)}</Column>
-                        {(hasNextPage || isPlaceholderData) && (
-                            <Row style={{ "--justify-content": "center" }}>
-                                <Button
-                                    variant="silent"
-                                    isCircle
-                                    onClick={() => !isLoadingMore && fetchNextPage()}
-                                    title="Load more"
-                                >
-                                    <Icon
-                                        icon={isLoadingMore ? faSpinner : faChevronDown}
-                                        className={isLoadingMore ? "fa-spin" : undefined}
-                                    />
-                                </Button>
-                            </Row>
-                        )}
-                    </>
-                );
-            })()}
+            <Column style={{ "--gap": "16px", opacity: isFetching && !isFetchingNextPage ? 0.5 : 1 }}>
+                {children}
+            </Column>
+            {(hasNextPage || isPlaceholderData) && (
+                <Row style={{ "--justify-content": "center" }}>
+                    <Button
+                        variant="silent"
+                        isCircle
+                        onClick={() => {
+                            if (!isLoadingMore) {
+                                onLoadMore();
+                            }
+                        }}
+                        title="Load more"
+                    >
+                        <Icon
+                            icon={isLoadingMore ? faSpinner : faChevronDown}
+                            className={isLoadingMore ? "fa-spin" : undefined}
+                        />
+                    </Button>
+                </Row>
+            )}
         </>
     );
 }

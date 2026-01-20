@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { MDXRemoteSerializeResult } from "next-mdx-remote";
 
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import gql from "graphql-tag";
+import type { ResultOf } from "@graphql-typed-document-node/core";
 import type { ParsedUrlQuery } from "querystring";
 
 import { Icon } from "@/components/icon/Icon";
@@ -12,15 +12,14 @@ import { Markdown } from "@/components/markdown/Markdown";
 import { TableOfContents } from "@/components/markdown/TableOfContents";
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
-import type { DocumentPageAllQuery, DocumentPageQuery, DocumentPageQueryVariables } from "@/generated/graphql";
-import { fetchData } from "@/lib/server";
+import createApolloClient from "@/graphql/createApolloClient";
+import { graphql } from "@/graphql/generated";
 import theme from "@/theme";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 import type { Heading } from "@/utils/rehypeExtractHeadings";
 import { serializeMarkdownSafe } from "@/utils/serializeMarkdown";
-import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledGrid = styled.div`
     display: flex;
@@ -47,19 +46,38 @@ const ArrowLink = styled(Link)`
     gap: 8px;
 `;
 
+const propsQuery = graphql(`
+    query DocumentPage($pageSlug: String!) {
+        page(slug: $pageSlug) {
+            name
+            body
+            createdAt
+        }
+    }
+`);
+
+const pathsQuery = graphql(`
+    query DocumentPageAll {
+        pagePagination {
+            data {
+                slug
+            }
+        }
+    }
+`);
+
 export interface DocumentPageProps extends SharedPageProps {
-    page: Omit<RequiredNonNullable<DocumentPageQuery>["page"], "body"> & {
-        source: MDXRemoteSerializeResult;
-        headings: Heading[];
-    };
+    page: Omit<ResultOf<typeof propsQuery>, "body">;
+    source: MDXRemoteSerializeResult;
+    headings: Heading[];
 }
 
 interface DocumentPageParams extends ParsedUrlQuery {
     pageSlug: Array<string>;
 }
 
-export default function DocumentPage({ page }: DocumentPageProps) {
-    const author = typeof page.source.frontmatter?.author === "string" ? page.source.frontmatter.author : undefined;
+export default function DocumentPage({ page, source, headings }: DocumentPageProps) {
+    const author = typeof source.frontmatter?.author === "string" ? source.frontmatter.author : undefined;
 
     return (
         <>
@@ -67,7 +85,7 @@ export default function DocumentPage({ page }: DocumentPageProps) {
             <StyledGrid>
                 <SEO title={page.name} />
                 <Markdown source={page.source} />
-                <TableOfContents headings={page.headings} />
+                <TableOfContents headings={headings} />
             </StyledGrid>
             <ArrowLink href="/wiki">
                 <Icon icon={faArrowLeft} color="text-disabled" />
@@ -102,20 +120,14 @@ function PageHeader({ title, author, createdAt }: PageHeaderProps) {
 }
 
 export const getStaticProps: GetStaticProps<DocumentPageProps, DocumentPageParams> = async ({ params }) => {
-    const { data, apiRequests } = await fetchData<DocumentPageQuery, DocumentPageQueryVariables>(
-        gql`
-            query DocumentPage($pageSlug: String!) {
-                page(slug: $pageSlug) {
-                    name
-                    body
-                    created_at
-                }
-            }
-        `,
-        params && {
+    const client = createApolloClient();
+
+    const { data } = await client.query({
+        query: propsQuery,
+        params: params && {
             pageSlug: params.pageSlug.join("/"),
         },
-    );
+    });
 
     if (!data.page) {
         return {
@@ -125,7 +137,7 @@ export const getStaticProps: GetStaticProps<DocumentPageProps, DocumentPageParam
 
     return {
         props: {
-            ...getSharedPageProps(apiRequests),
+            ...getSharedPageProps(),
             page: {
                 ...data.page,
                 ...(await serializeMarkdownSafe(data.page.body)),
@@ -137,16 +149,14 @@ export const getStaticProps: GetStaticProps<DocumentPageProps, DocumentPageParam
 };
 
 export const getStaticPaths: GetStaticPaths<DocumentPageParams> = () => {
-    return fetchStaticPaths(async () => {
-        const { data } = await fetchData<DocumentPageAllQuery>(gql`
-            query DocumentPageAll {
-                pageAll {
-                    slug
-                }
-            }
-        `);
+    const client = createApolloClient();
 
-        return data.pageAll.map((page) => ({
+    return fetchStaticPaths(async () => {
+        const { data } = await client.query({
+            query: pathsQuery,
+        });
+
+        return data.pagePaginator.map((page) => ({
             params: {
                 pageSlug: page.slug.split("/"),
             },

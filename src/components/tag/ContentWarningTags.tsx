@@ -1,15 +1,25 @@
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
-import gql from "graphql-tag";
 
 import { Icon } from "@/components/icon/Icon";
 import { Tag } from "@/components/tag/Tag";
-import type { ContentWarningTagsEntryFragment } from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
+
+const fragments = {
+    entry: graphql(`
+        fragment ContentWarningTagsEntry on AnimeThemeEntry {
+            spoiler
+            nsfw
+        }
+    `),
+};
 
 interface ContentWarningTagsProps {
-    entry: ContentWarningTagsEntryFragment;
+    entry: FragmentType<typeof fragments.entry>;
 }
 
-export function ContentWarningTags({ entry }: ContentWarningTagsProps) {
+export function ContentWarningTags({ entry: entryFragment }: ContentWarningTagsProps) {
+    const entry = getFragmentData(fragments.entry, entryFragment);
+
     return (
         <>
             {entry.spoiler && (
@@ -25,12 +35,3 @@ export function ContentWarningTags({ entry }: ContentWarningTagsProps) {
         </>
     );
 }
-
-ContentWarningTags.fragments = {
-    entry: gql`
-        fragment ContentWarningTagsEntry on Entry {
-            spoiler
-            nsfw
-        }
-    `,
-};

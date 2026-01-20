@@ -1,31 +1,61 @@
 import Link from "next/link";
 
-import gql from "graphql-tag";
-
 import { Row } from "@/components/box/Flex";
-import { Table } from "@/components/table/Table";
-import { TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "@/components/table/Table";
+import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "@/components/table/Table";
 import { ContentWarningTags } from "@/components/tag/ContentWarningTags";
 import { EpisodeTag } from "@/components/tag/EpisodeTag";
 import { VideoTags } from "@/components/tag/VideoTags";
 import { Text } from "@/components/text/Text";
 import { SongTitle } from "@/components/utils/SongTitle";
-import type { ThemeTableThemeFragment } from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import { either, themeIndexComparator, themeTypeComparator } from "@/utils/comparators";
 import createVideoSlug from "@/utils/createVideoSlug";
 
+const fragments = {
+    theme: graphql(`
+        fragment ThemeTableTheme on AnimeTheme {
+            ...createVideoSlugTheme
+            id
+            type
+            sequence
+            anime {
+                slug
+            }
+            animethemeentries {
+                ...createVideoSlugEntry
+                ...EpisodeTagEntry
+                ...ContentWarningTagsEntry
+                version
+                videos {
+                    nodes {
+                        ...createVideoSlugVideo
+                        ...VideoTagsVideo
+                    }
+                }
+            }
+            song {
+                ...SongTitleSong
+            }
+        }
+    `),
+};
+
 export interface ThemeTableProps {
-    themes: Array<ThemeTableThemeFragment>;
+    themes: Array<FragmentType<typeof fragments.theme>>;
     onPlay?(initiatingThemeId: number, entryIndex?: number, videoIndex?: number): void;
 }
 
-export function ThemeTable({ themes, onPlay }: ThemeTableProps) {
+export function ThemeTable({ themes: themesFragment, onPlay }: ThemeTableProps) {
+    const themes = getFragmentData(fragments.theme, themesFragment);
+
     const rows = themes
-        .filter((theme) => theme.anime && theme.entries.length && theme.entries[0]?.videos.length)
+        .filter(
+            (theme) => theme.anime && theme.animethemeentries.length && theme.animethemeentries[0]?.videos.nodes.length,
+        )
         .sort(either(themeTypeComparator).or(themeIndexComparator).chain())
         .map((theme) =>
-            theme.entries.map((entry, entryIndex) =>
-                entry.videos.map((video, videoIndex) => {
+            theme.animethemeentries.map((entry, entryIndex) =>
+                entry.videos.nodes.map((video, videoIndex) => {
                     const anime = theme.anime as NonNullable<(typeof theme)["anime"]>;
                     const videoSlug = createVideoSlug(theme, entry, video);
                     return (
@@ -84,36 +114,3 @@ export function ThemeTable({ themes, onPlay }: ThemeTableProps) {
         </Table>
     );
 }
-
-ThemeTable.fragments = {
-    theme: gql`
-        ${createVideoSlug.fragments.theme}
-        ${createVideoSlug.fragments.entry}
-        ${createVideoSlug.fragments.video}
-        ${EpisodeTag.fragments.entry}
-        ${ContentWarningTags.fragments.entry}
-        ${VideoTags.fragments.video}
-
-        fragment ThemeTableTheme on Theme {
-            ...createVideoSlugTheme
-            id
-            type
-            sequence
-            anime {
-                slug
-            }
-            entries {
-                ...createVideoSlugEntry
-                ...EpisodeTagEntry
-                ...ContentWarningTagsEntry
-                videos {
-                    ...createVideoSlugVideo
-                    ...VideoTagsVideo
-                }
-            }
-            song {
-                title
-            }
-        }
-    `,
-};

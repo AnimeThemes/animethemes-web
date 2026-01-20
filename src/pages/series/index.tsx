@@ -2,24 +2,35 @@ import React from "react";
 import type { GetStaticProps } from "next";
 import Link from "next/link";
 
-import gql from "graphql-tag";
+import type { ResultOf } from "@graphql-typed-document-node/core";
 
 import { BackToTopButton } from "@/components/button/BackToTopButton";
 import { AlphabeticalIndex } from "@/components/index/AlphabeticalIndex";
 import { Text } from "@/components/text/Text";
-import type { SeriesIndexPageQuery } from "@/generated/graphql";
-import { fetchData } from "@/lib/server";
+import createApolloClient from "@/graphql/createApolloClient";
+import { graphql } from "@/graphql/generated";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 
-interface SeriesIndexPageProps extends SharedPageProps, SeriesIndexPageQuery {}
+const propsQuery = graphql(`
+    query SeriesIndexPage($first: Int!) {
+        seriesPagination(sort: NAME, first: $first) {
+            data {
+                slug
+                name
+            }
+        }
+    }
+`);
 
-export default function SeriesIndexPage({ seriesAll }: SeriesIndexPageProps) {
+interface SeriesIndexPageProps extends SharedPageProps, ResultOf<typeof propsQuery> {}
+
+export default function SeriesIndexPage({ seriesPagination }: SeriesIndexPageProps) {
     return (
         <>
             <BackToTopButton />
             <Text variant="h1">Series Index</Text>
-            <AlphabeticalIndex items={seriesAll}>
+            <AlphabeticalIndex items={seriesPagination.data}>
                 {(series) => (
                     <Text key={series.slug} as={Link} href={`/series/${series.slug}`} prefetch={false} block link>
                         {series.name}
@@ -31,18 +42,18 @@ export default function SeriesIndexPage({ seriesAll }: SeriesIndexPageProps) {
 }
 
 export const getStaticProps: GetStaticProps<SeriesIndexPageProps> = async () => {
-    const { data, apiRequests } = await fetchData<SeriesIndexPageQuery>(gql`
-        query SeriesIndexPage {
-            seriesAll {
-                slug
-                name
-            }
-        }
-    `);
+    const client = createApolloClient();
+
+    const { data } = await client.query({
+        query: propsQuery,
+        variables: {
+            first: Math.pow(2, 16) - 1,
+        },
+    });
 
     const props: SeriesIndexPageProps = {
-        ...getSharedPageProps(apiRequests),
-        seriesAll: data.seriesAll,
+        ...getSharedPageProps(),
+        ...data,
     };
 
     return {

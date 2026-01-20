@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 
 import { faArrowDown, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import type { ResultOf } from "@graphql-typed-document-node/core";
 import gql from "graphql-tag";
 import useSWR, { mutate } from "swr";
 
@@ -10,11 +11,7 @@ import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
 import { IconTextButton } from "@/components/button/IconTextButton";
 import PlaylistSummaryCard from "@/components/card/PlaylistSummaryCard";
-import {
-    VideoSummaryCard,
-    VideoSummaryCardFragmentEntry,
-    VideoSummaryCardFragmentVideo,
-} from "@/components/card/VideoSummaryCard";
+import { VideoSummaryCard } from "@/components/card/VideoSummaryCard";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
 import { PlaylistAddDialog } from "@/components/dialog/PlaylistAddDialog";
 import { Icon } from "@/components/icon/Icon";
@@ -30,16 +27,36 @@ import type {
     PlaylistTrackAddFormPlaylistQuery,
     PlaylistTrackAddFormPlaylistQueryVariables,
 } from "@/generated/graphql";
+import { client } from "@/graphql/client";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import { fetchDataClient } from "@/lib/client";
 import axios from "@/lib/client/axios";
 
+const fragments = {
+    video: graphql(`
+        fragment PlaylistTrackAddDialogVideo on Video {
+            ...VideoSummaryCardVideo
+            id
+        }
+    `),
+    entry: graphql(`
+        fragment PlaylistTrackAddDialogEntry on AnimeThemeEntry {
+            ...VideoSummaryCardEntry
+            ...PlaylistTrackRemoveToastEntry
+            id
+        }
+    `),
+};
+
 interface PlaylistTrackAddDialogProps {
-    video: PlaylistTrackAddDialogVideoFragment;
-    entry: PlaylistTrackAddDialogEntryFragment;
+    video: FragmentType<typeof fragments.video>;
+    entry: FragmentType<typeof fragments.entry>;
     trigger?: ReactNode;
 }
 
-export function PlaylistTrackAddDialog({ video, entry, trigger }: PlaylistTrackAddDialogProps) {
+export function PlaylistTrackAddDialog({ trigger, ...props }: PlaylistTrackAddDialogProps) {
+    const video = getFragmentData(fragments.video, props.video);
+    const entry = getFragmentData(fragments.entry, props.entry);
     const [open, setOpen] = useState(false);
 
     return (
@@ -63,59 +80,28 @@ export function PlaylistTrackAddDialog({ video, entry, trigger }: PlaylistTrackA
     );
 }
 
-PlaylistTrackAddDialog.fragments = {
-    video: gql`
-        ${VideoSummaryCardFragmentVideo}
-
-        fragment PlaylistTrackAddDialogVideo on Video {
-            ...VideoSummaryCardVideo
-            id
-        }
-    `,
-    entry: gql`
-        ${VideoSummaryCardFragmentEntry}
-        ${PlaylistTrackRemoveToast.fragments.entry}
-
-        fragment PlaylistTrackAddDialogEntry on Entry {
-            ...VideoSummaryCardEntry
-            ...PlaylistTrackRemoveToastEntry
-            id
-        }
-    `,
-};
-
 interface PlaylistTrackAddFormProps {
-    video: PlaylistTrackAddDialogVideoFragment;
-    entry: PlaylistTrackAddDialogEntryFragment;
+    video: ResultOf<typeof fragments.video>;
+    entry: ResultOf<typeof fragments.entry>;
     onCancel(): void;
 }
 
 function PlaylistTrackAddForm({ video, entry, onCancel }: PlaylistTrackAddFormProps) {
     const { data: playlists } = useSWR(["PlaylistTrackAddFormPlaylist", "/api/me/playlist", video.id], async () => {
-        const { data } = await fetchDataClient<
-            PlaylistTrackAddFormPlaylistQuery,
-            PlaylistTrackAddFormPlaylistQueryVariables
-        >(
-            gql`
-                ${PlaylistSummaryCard.fragments.playlist}
-
-                query PlaylistTrackAddFormPlaylist($filterVideoId: Int!) {
+        const { data } = await client.query(
+            graphql(`
+                query PlaylistTrackAddFormPlaylist {
                     me {
-                        playlistAll {
-                            ...PlaylistSummaryCardPlaylist
-                            id
-                            tracks_count
-                        }
-                        playlistAllFiltered: playlistAll(filterVideoId: $filterVideoId) {
-                            id
-                            tracks {
+                        playlists {
+                            data {
+                                ...PlaylistSummaryCardPlaylist
                                 id
+                                tracksCount
                             }
                         }
                     }
                 }
-            `,
-            { filterVideoId: video.id },
+            `),
         );
 
         const { playlistAll, playlistAllFiltered } = data.me;

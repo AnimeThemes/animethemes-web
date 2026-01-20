@@ -17,7 +17,6 @@ import { Button } from "@/components/button/Button";
 import { IconTextButton } from "@/components/button/IconTextButton";
 import { Card } from "@/components/card/Card";
 import PlaylistSummaryCard from "@/components/card/PlaylistSummaryCard";
-import { SummaryCard } from "@/components/card/SummaryCard";
 import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
 import { LoginDialog } from "@/components/dialog/LoginDialog";
 import { PasswordChangeDialog } from "@/components/dialog/PasswordChangeDialog";
@@ -35,8 +34,8 @@ import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
 import { Busy } from "@/components/utils/Busy";
 import type { ProfilePageMeQuery, ProfilePageQuery } from "@/generated/graphql";
+import { graphql } from "@/graphql/generated";
 import useAuth from "@/hooks/useAuth";
-import useLocalPlaylist from "@/hooks/useLocalPlaylist";
 import useSetting from "@/hooks/useSetting";
 import type { WatchHistory } from "@/hooks/useWatchHistory";
 import useWatchHistory from "@/hooks/useWatchHistory";
@@ -140,6 +139,29 @@ const StyledRoleBadge = styled.span<{ $color: string }>`
     letter-spacing: 1px;
 `;
 
+const fragments = {
+    playlist: graphql(`
+        fragment ProfilePagePlaylist on Playlist {
+            ...PlaylistSummaryCardPlaylist
+            id
+        }
+    `),
+    user: graphql(`
+        fragment ProfilePageUser on Me {
+            name
+            email
+            emailVerifiedAt
+            createdAt
+            roles {
+                name
+                color
+                priority
+                default
+            }
+        }
+    `),
+};
+
 type ProfilePageProps = SharedPageProps & RequiredNonNullable<ProfilePageQuery>;
 
 export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
@@ -167,7 +189,6 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
         { fallbackData: initialMe },
     );
 
-    const { localPlaylist } = useLocalPlaylist();
     const { history, clearHistory } = useWatchHistory();
 
     const [showAnnouncements, setShowAnnouncements] = useSetting(ShowAnnouncements);
@@ -317,14 +338,6 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                             </SearchFilter>
                         </SearchFilterGroup>
                     </Column>
-                    <Column style={{ "--gap": "24px" }}>
-                        <Text variant="h2">Legacy</Text>
-                        <SummaryCard
-                            title="Local Playlist"
-                            description={`${localPlaylist.length} themes`}
-                            to="/profile/playlist"
-                        />
-                    </Column>
                 </Column>
                 <Column style={{ "--gap": "24px" }}>
                     <StyledHeader>
@@ -414,31 +427,6 @@ function ResendVerificationEmailLink() {
         </Text>
     );
 }
-
-ProfilePage.fragments = {
-    playlist: gql`
-        ${PlaylistSummaryCard.fragments.playlist}
-
-        fragment ProfilePagePlaylist on Playlist {
-            ...PlaylistSummaryCardPlaylist
-            id
-        }
-    `,
-    user: gql`
-        fragment ProfilePageUser on UserAuth {
-            name
-            email
-            email_verified_at
-            created_at
-            roles {
-                name
-                color
-                priority
-                default
-            }
-        }
-    `,
-};
 
 export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async ({ req }) => {
     const { data, apiRequests } = await fetchData<ProfilePageQuery>(

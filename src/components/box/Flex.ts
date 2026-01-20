@@ -1,10 +1,11 @@
+import type { CSSProperties } from "react";
 import styled from "styled-components";
 
 import type { Property } from "csstype";
 
 const Flex = styled.div<{
     $wrap?: boolean;
-    style?: {
+    style?: CSSProperties & {
         "--justify-content"?: Property.JustifyContent;
         "--align-items"?: Property.AlignItems;
         "--gap"?: Property.Gap;

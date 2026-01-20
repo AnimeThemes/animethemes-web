@@ -1,10 +1,11 @@
 import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
 import { SearchFilter } from "@/components/search-filter/SearchFilter";
 import { Text } from "@/components/text/Text";
+import type { AnimeMediaFormat } from "@/graphql/generated/graphql";
 
 interface SearchFilterMediaFormatProps {
-    value: string | null;
-    setValue: (newValue: string | null) => void;
+    value: AnimeMediaFormat | null;
+    setValue: (newValue: AnimeMediaFormat | null) => void;
 }
 
 export function SearchFilterMediaFormat({ value, setValue }: SearchFilterMediaFormatProps) {
@@ -16,11 +17,11 @@ export function SearchFilterMediaFormat({ value, setValue }: SearchFilterMediaFo
                     Any
                 </ListboxOption>
                 <ListboxOption value="TV">TV</ListboxOption>
-                <ListboxOption value="TV Short">TV Short</ListboxOption>
-                <ListboxOption value="Movie">Movie</ListboxOption>
+                <ListboxOption value="TV_SHORT">TV Short</ListboxOption>
+                <ListboxOption value="MOVIE">Movie</ListboxOption>
                 <ListboxOption value="OVA">OVA</ListboxOption>
                 <ListboxOption value="ONA">ONA</ListboxOption>
-                <ListboxOption value="Special">Special</ListboxOption>
+                <ListboxOption value="SPECIAL">Special</ListboxOption>
             </Listbox>
         </SearchFilter>
     );

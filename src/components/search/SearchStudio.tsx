@@ -1,31 +1,86 @@
 import { useState } from "react";
 
-import gql from "graphql-tag";
+import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 
 import { StudioSummaryCard } from "@/components/card/StudioSummaryCard";
-import { StudioCoverImage } from "@/components/image/StudioCoverImage";
 import { SearchEntity } from "@/components/search/SearchEntity";
 import { SearchFilterFirstLetter } from "@/components/search-filter/SearchFilterFirstLetter";
+import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
-import type { SearchStudioQuery, SearchStudioQueryVariables } from "@/generated/graphql";
+import { client } from "@/graphql/client";
+import { graphql } from "@/graphql/generated";
+import type { StudioSortableColumns } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
-import { fetchDataClient } from "@/lib/client";
 
-const initialFilter = {
+interface Filter {
+    firstLetter: string | null;
+    sortBy: string | null;
+}
+
+const initialFilter: Filter = {
     firstLetter: null,
-    sortBy: "name",
+    sortBy: "NAME",
 };
+
+const query = graphql(`
+    query SearchStudio($query: String, $name_like: String, $sort: [StudioSortableColumns!], $page: Int!) {
+        studioPagination(search: $query, name_like: $name_like, sort: $sort, first: 15, page: $page) {
+            data {
+                ...StudioSummaryCardStudio
+                slug
+            }
+            paginationInfo {
+                hasMorePages
+            }
+        }
+    }
+`);
 
 interface SearchStudioProps {
     searchQuery?: string;
 }
 
 export function SearchStudio({ searchQuery }: SearchStudioProps) {
-    const { filter, updateFilter, bindUpdateFilter } = useFilterStorage("filter-studio", {
+    const { filter, updateFilter, bindUpdateFilter } = useFilterStorage("filter-studio-v2", {
         ...initialFilter,
         sortBy: searchQuery ? null : initialFilter.sortBy,
     });
     const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
+
+    const variables = {
+        ...(searchQuery ? { query: searchQuery } : {}),
+        ...(filter.firstLetter ? { name_like: `${filter.firstLetter}%` } : {}),
+        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<StudioSortableColumns> } : {}),
+    };
+
+    const {
+        data,
+        error,
+        isError,
+        isLoading,
+        isFetching,
+        isFetchingNextPage,
+        isPlaceholderData,
+        hasNextPage,
+        fetchNextPage,
+    } = useInfiniteQuery({
+        queryKey: ["searchEntity", "studio", variables],
+        queryFn: async ({ pageParam }) => {
+            const { data } = await client.query({
+                query,
+                variables: {
+                    ...variables,
+                    page: pageParam,
+                },
+            });
+
+            return data.studioPagination;
+        },
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, _, lastPageParam) =>
+            lastPage.paginationInfo.hasMorePages ? lastPageParam + 1 : null,
+        placeholderData: keepPreviousData,
+    });
 
     if (!searchQuery && filter.sortBy === null) {
         updateFilter("sortBy", initialFilter.sortBy);
@@ -43,50 +98,32 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
     }
 
     return (
-        <SearchEntity<SearchStudioQuery["searchStudio"]["data"][number]>
-            entity="studio"
-            searchArgs={{
-                query: searchQuery,
-                filters: {
-                    "name-like": filter.firstLetter ? `${filter.firstLetter}%` : null,
-                },
-                sortBy: filter.sortBy,
-            }}
-            fetchResults={async (searchArgs) => {
-                const { data } = await fetchDataClient<SearchStudioQuery, SearchStudioQueryVariables>(
-                    gql`
-                        ${StudioCoverImage.fragments.studio}
-
-                        query SearchStudio($args: SearchArgs!) {
-                            searchStudio(args: $args) {
-                                data {
-                                    ...StudioCoverImageStudio
-                                    slug
-                                    name
-                                }
-                                nextPage
-                            }
-                        }
-                    `,
-                    { args: searchArgs },
-                );
-
-                return data.searchStudio;
-            }}
-            renderResult={(studio) => <StudioSummaryCard key={studio.slug} studio={studio} />}
-            filters={
-                <>
-                    <SearchFilterFirstLetter value={filter.firstLetter} setValue={bindUpdateFilter("firstLetter")} />
-                    <SearchFilterSortBy value={filter.sortBy} setValue={bindUpdateFilter("sortBy")}>
-                        {searchQuery ? (
-                            <SearchFilterSortBy.Option value={null}>Relevance</SearchFilterSortBy.Option>
-                        ) : null}
-                        <SearchFilterSortBy.Option value="name">A ➜ Z</SearchFilterSortBy.Option>
-                        <SearchFilterSortBy.Option value="-name">Z ➜ A</SearchFilterSortBy.Option>
-                        <SearchFilterSortBy.Option value="-created_at">Last Added</SearchFilterSortBy.Option>
-                    </SearchFilterSortBy>
-                </>
-            }
-        />
+        <>
+            <SearchFilterGroup>
+                <SearchFilterFirstLetter value={filter.firstLetter} setValue={bindUpdateFilter("firstLetter")} />
+                <SearchFilterSortBy value={filter.sortBy} setValue={bindUpdateFilter("sortBy")}>
+                    {searchQuery ? <SearchFilterSortBy.Option value={null}>Relevance</SearchFilterSortBy.Option> : null}
+                    <SearchFilterSortBy.Option value="NAME">A ➜ Z</SearchFilterSortBy.Option>
+                    <SearchFilterSortBy.Option value="NAME_DESC">Z ➜ A</SearchFilterSortBy.Option>
+                    <SearchFilterSortBy.Option value="CREATED_AT_DESC">Last Added</SearchFilterSortBy.Option>
+                </SearchFilterSortBy>
+            </SearchFilterGroup>
+            <SearchEntity
+                error={error}
+                searchQuery={searchQuery}
+                isError={isError}
+                isLoading={isLoading}
+                isFetching={isFetching}
+                isFetchingNextPage={isFetchingNextPage}
+                isPlaceholderData={isPlaceholderData}
+                hasResults={!!data?.pages.length}
+                hasNextPage={hasNextPage}
+                onLoadMore={fetchNextPage}
+            >
+                {data?.pages
+                    .flatMap((page) => page.data)
+                    .map((studio) => <StudioSummaryCard key={studio.slug} studio={studio} />)}
+            </SearchEntity>
+        </>
     );
 }

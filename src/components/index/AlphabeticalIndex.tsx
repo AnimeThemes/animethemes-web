@@ -32,7 +32,7 @@ type AlphabeticalIndexProps<T extends AlphabeticalIndexItem> = {
 export function AlphabeticalIndex<T extends AlphabeticalIndexItem>({ items, children }: AlphabeticalIndexProps<T>) {
     const itemsByFirstLetter = Object.entries(
         groupBy(
-            items.sort((a, b) => a.name.localeCompare(b.name)),
+            [...items].sort((a, b) => a.name.localeCompare(b.name)),
             (item) => {
                 const firstLetter = item.name[0].toLowerCase();
                 if (firstLetter.match(/[a-z]/)) {
