@@ -3,14 +3,10 @@ import type { ReactNode } from "react";
 import styled, { keyframes } from "styled-components";
 import Link from "next/link";
 
-import gql from "graphql-tag";
+import type { ResultOf } from "@graphql-typed-document-node/core";
 
-import {
-    VideoSummaryCard,
-    VideoSummaryCardFragmentEntry,
-    VideoSummaryCardFragmentVideo,
-} from "@/components/card/VideoSummaryCard";
-import type { FeaturedThemeEntryFragment, FeaturedThemeVideoFragment } from "@/generated/graphql";
+import { VideoSummaryCard } from "@/components/card/VideoSummaryCard";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useCompatability from "@/hooks/useCompatability";
 import useSetting from "@/hooks/useSetting";
 import { fetchRandomGrill } from "@/lib/client/randomGrill";
@@ -123,15 +119,51 @@ const StyledGrill = styled.img`
 
 const Box = styled.div``;
 
+const fragments = {
+    entry: graphql(`
+        fragment FeaturedThemeEntry on AnimeThemeEntry {
+            ...VideoSummaryCardEntry
+            ...createVideoSlugEntry
+            animetheme {
+                ...createVideoSlugTheme
+                anime {
+                    slug
+                    images {
+                        nodes {
+                            ...extractImagesImage
+                        }
+                    }
+                }
+            }
+        }
+    `),
+    video: graphql(`
+        fragment FeaturedThemeVideo on Video {
+            ...VideoSummaryCardVideo
+            ...createVideoSlugVideo
+            basename
+        }
+    `),
+};
+
 interface FeaturedThemeProps {
-    entry: FeaturedThemeEntryFragment;
-    video: FeaturedThemeVideoFragment;
+    entry: FragmentType<typeof fragments.entry>;
+    video: FragmentType<typeof fragments.video>;
     hasGrill?: boolean;
     card?: ReactNode;
     onPlay?(): void;
 }
 
-export function FeaturedTheme({ entry, video, hasGrill = true, card, onPlay }: FeaturedThemeProps) {
+export function FeaturedTheme({
+    entry: entryFragment,
+    video: videoFragment,
+    hasGrill = true,
+    card,
+    onPlay,
+}: FeaturedThemeProps) {
+    const entry = getFragmentData(fragments.entry, entryFragment);
+    const video = getFragmentData(fragments.video, videoFragment);
+
     const [grill, setGrill] = useState<string | null>(null);
     const [featuredThemePreview] = useSetting(FeaturedThemePreview);
 
@@ -163,15 +195,21 @@ export function FeaturedTheme({ entry, video, hasGrill = true, card, onPlay }: F
     );
 }
 
-function FeaturedThemeBackground({ entry, video, onPlay }: FeaturedThemeProps) {
+interface FeaturedThemeBackgroundProps {
+    entry: ResultOf<typeof fragments.entry>;
+    video: ResultOf<typeof fragments.video>;
+    onPlay?(): void;
+}
+
+function FeaturedThemeBackground({ entry, video, onPlay }: FeaturedThemeBackgroundProps) {
     const [featuredThemePreview] = useSetting(FeaturedThemePreview);
     const { canPlayVideo } = useCompatability();
     const [fallbackToCover, setFallbackToCover] = useState(false);
-    const { smallCover: featuredCover } = extractImages(entry.theme.anime);
+    const { smallCover: featuredCover } = extractImages(entry.animetheme.anime.images.nodes);
 
-    const videoSlug = createVideoSlug(entry.theme, entry, video);
+    const videoSlug = createVideoSlug(entry.animetheme, entry, video);
 
-    const href = `/anime/${entry.theme.anime.slug}/${videoSlug}`;
+    const href = `/anime/${entry.animetheme.anime.slug}/${videoSlug}`;
 
     if (featuredThemePreview === FeaturedThemePreview.VIDEO && canPlayVideo && !fallbackToCover) {
         return (
@@ -191,26 +229,3 @@ function FeaturedThemeBackground({ entry, video, onPlay }: FeaturedThemeProps) {
 
     return null;
 }
-
-FeaturedTheme.fragments = {
-    entry: gql`
-        ${VideoSummaryCardFragmentEntry}
-        ${extractImages.fragments.resourceWithImages}
-
-        fragment FeaturedThemeEntry on Entry {
-            ...VideoSummaryCardEntry
-            theme {
-                anime {
-                    ...extractImagesResourceWithImages
-                }
-            }
-        }
-    `,
-    video: gql`
-        ${VideoSummaryCardFragmentVideo}
-
-        fragment FeaturedThemeVideo on Video {
-            ...VideoSummaryCardVideo
-        }
-    `,
-};

@@ -26,7 +26,6 @@ import { Text } from "@/components/text/Text";
 import { Collapse } from "@/components/utils/Collapse";
 import { HeightTransition } from "@/components/utils/HeightTransition";
 import PlayerContext, { createWatchListItem } from "@/context/playerContext";
-import type { ThemeSummaryCardArtistFragment } from "@/generated/graphql";
 import createApolloClient from "@/graphql/createApolloClient";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useToggle from "@/hooks/useToggle";
@@ -92,6 +91,8 @@ const fragments = {
                         ...ThemeSummaryCardTheme
                         ...ThemeSummaryCardThemeExpandable
                         id
+                        type
+                        sequence
                         animethemeentries {
                             videos {
                                 nodes {
@@ -105,8 +106,12 @@ const fragments = {
                         }
                         anime {
                             slug
+                            name
                             year
                             season
+                        }
+                        song {
+                            title
                         }
                     }
                 }
@@ -115,6 +120,7 @@ const fragments = {
                 alias
                 as
                 group {
+                    ...ThemeSummaryCardArtist
                     slug
                     name
                 }
@@ -145,14 +151,27 @@ const fragments = {
                             ...ThemeSummaryCardTheme
                             ...ThemeSummaryCardThemeExpandable
                             id
+                            type
+                            sequence
+                            animethemeentries {
+                                videos {
+                                    nodes {
+                                        id
+                                    }
+                                }
+                            }
                             group {
                                 name
                                 slug
                             }
                             anime {
                                 slug
+                                name
                                 year
                                 season
+                            }
+                            song {
+                                title
                             }
                         }
                     }
@@ -192,14 +211,27 @@ const fragments = {
                             ...ThemeSummaryCardTheme
                             ...ThemeSummaryCardThemeExpandable
                             id
+                            type
+                            sequence
+                            animethemeentries {
+                                videos {
+                                    nodes {
+                                        id
+                                    }
+                                }
+                            }
                             group {
                                 name
                                 slug
                             }
                             anime {
                                 slug
+                                name
                                 year
                                 season
+                            }
+                            song {
+                                title
                             }
                         }
                     }
@@ -268,7 +300,9 @@ const pathsQuery = graphql(`
     }
 `);
 
-type Performance = ResultOf<typeof fragments.artist>["performances"][number];
+type Performance =
+    | ResultOf<typeof fragments.artist>["performances"][number]
+    | ResultOf<typeof fragments.artist>["groupships"][number]["performances"][number];
 
 function getPerformanceFilter(key: string | null): (performance: Performance) => boolean {
     switch (key) {
@@ -292,7 +326,6 @@ interface ArtistDetailPageParams extends ParsedUrlQuery {
 
 export default function ArtistDetailPage({ artist: artistFragment, informationMarkdownSource }: ArtistDetailPageProps) {
     const artist = getFragmentData(fragments.artist, artistFragment);
-    console.log(artist);
     const images = extractMultipleImages(artist.images.edges);
     const [collapseInformation, setCollapseInformation] = useState(true);
 
@@ -591,7 +624,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
 
 interface ArtistThemesProps {
     themes: Performance["song"]["animethemes"];
-    artist: ThemeSummaryCardArtistFragment;
+    artist: ResultOf<typeof fragments.artist> | ResultOf<typeof fragments.artist>["memberships"][number]["group"];
 }
 
 const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemesProps) {
@@ -620,7 +653,7 @@ const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemes
             key={`${theme.anime?.slug}-${theme.id}`}
             theme={theme}
             artist={artist}
-            expandable
+            expandable={theme}
             onPlay={(entryIndex, videoIndex) => playArtistThemes(index, entryIndex, videoIndex)}
         />
     ));

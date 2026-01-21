@@ -175,6 +175,14 @@ export function ThemeSummaryCard({
         return isLink(element.parentElement);
     }
 
+    const performances = (theme.song?.performances ?? [])
+        .map((performance) => ({
+            artist: performance.artist.__typename === "Artist" ? performance.artist : performance.artist.group,
+            performance,
+        }))
+        .filter(({ artist }) => artist.slug !== ownerArtist?.slug)
+        .sort(({ artist: a }, { artist: b }) => a.name.localeCompare(b.name));
+
     return (
         <StyledWrapper>
             <SummaryCard {...props}>
@@ -221,31 +229,21 @@ export function ThemeSummaryCard({
                             themes={[expandable]}
                             onPlay={(_, entryIndex, videoIndex) => onPlay?.(entryIndex, videoIndex)}
                         />
-                        {(theme.song?.performances.length ?? 0) > (ownerArtist ? 1 : 0) && (
+                        {performances.length > 0 && (
                             <Table style={{ "--columns": "1fr" }}>
                                 <TableHead>
                                     <TableHeadCell>Performed {ownerArtist ? "With" : "By"}</TableHeadCell>
                                 </TableHead>
                                 <TableBody>
-                                    {theme.song?.performances
-                                        ?.map((performance) => ({
-                                            artist:
-                                                performance.artist.__typename === "Artist"
-                                                    ? performance.artist
-                                                    : performance.artist.group,
-                                            performance,
-                                        }))
-                                        .filter(({ artist }) => artist.slug !== ownerArtist?.slug)
-                                        .sort(({ artist: a }, { artist: b }) => a.name.localeCompare(b.name))
-                                        .map(({ artist, performance }) => (
-                                            <TableRow key={artist.slug} as={Link} href={`/artist/${artist.slug}`}>
-                                                <TableCell>
-                                                    <Text color="text-primary" weight="600">
-                                                        {getDisplayedArtistName({ ...performance, artist })}
-                                                    </Text>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
+                                    {performances.map(({ artist, performance }) => (
+                                        <TableRow key={artist.slug} as={Link} href={`/artist/${artist.slug}`}>
+                                            <TableCell>
+                                                <Text color="text-primary" weight="600">
+                                                    {getDisplayedArtistName({ ...performance, artist })}
+                                                </Text>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
                                 </TableBody>
                             </Table>
                         )}
