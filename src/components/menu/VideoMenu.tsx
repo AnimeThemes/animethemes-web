@@ -1,25 +1,64 @@
 import { useContext } from "react";
 
-import { faArrowTurnDown, faArrowTurnUp, faEllipsisVertical, faPlus } from "@fortawesome/free-solid-svg-icons";
-import gql from "graphql-tag";
+import { faArrowTurnDown, faArrowTurnUp, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 
 import { Button } from "@/components/button/Button";
-import { PlaylistTrackAddDialog } from "@/components/dialog/PlaylistTrackAddDialog";
 import { Icon } from "@/components/icon/Icon";
 import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@/components/menu/Menu";
 import { Text } from "@/components/text/Text";
-import { SongTitleWithArtists } from "@/components/utils/SongTitleWithArtists";
 import PlayerContext from "@/context/playerContext";
-import type { VideoMenuEntryFragment, VideoMenuVideoFragment } from "@/generated/graphql";
-import createVideoSlug from "@/utils/createVideoSlug";
-import extractImages from "@/utils/extractImages";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
+
+const fragments = {
+    entry: graphql(`
+        fragment VideoMenuEntry on AnimeThemeEntry {
+            ...createVideoSlugEntry
+            id
+            animetheme {
+                ...createVideoSlugTheme
+                id
+                type
+                sequence
+                group {
+                    name
+                    slug
+                }
+                anime {
+                    slug
+                    name
+                    images {
+                        nodes {
+                            ...extractImagesImage
+                        }
+                    }
+                }
+                song {
+                    ...SongTitleWithArtistsSong
+                }
+            }
+        }
+    `),
+    video: graphql(`
+        fragment VideoMenuVideo on Video {
+            ...createVideoSlugVideo
+            id
+            basename
+            audio {
+                basename
+            }
+        }
+    `),
+};
 
 interface VideoMenuProps {
-    entry: VideoMenuEntryFragment;
-    video: VideoMenuVideoFragment;
+    entry: FragmentType<typeof fragments.entry>;
+    video: FragmentType<typeof fragments.video>;
 }
 
-export function VideoMenu({ entry, video }: VideoMenuProps) {
+export function VideoMenu({ entry: entryFragment, video: videoFragment }: VideoMenuProps) {
+    const entry = getFragmentData(fragments.entry, entryFragment);
+    const video = getFragmentData(fragments.video, videoFragment);
+
     const { watchList, addWatchListItem, addWatchListItemNext } = useContext(PlayerContext);
 
     return (
@@ -30,16 +69,16 @@ export function VideoMenu({ entry, video }: VideoMenuProps) {
                 </Button>
             </MenuTrigger>
             <MenuContent>
-                <PlaylistTrackAddDialog
-                    video={video}
-                    entry={entry}
-                    trigger={
-                        <MenuItem onSelect={(event) => event.preventDefault()}>
-                            <Icon icon={faPlus} />
-                            <Text>Add to Playlist</Text>
-                        </MenuItem>
-                    }
-                />
+                {/*<PlaylistTrackAddDialog*/}
+                {/*    video={video}*/}
+                {/*    entry={entry}*/}
+                {/*    trigger={*/}
+                {/*        <MenuItem onSelect={(event) => event.preventDefault()}>*/}
+                {/*            <Icon icon={faPlus} />*/}
+                {/*            <Text>Add to Playlist</Text>*/}
+                {/*        </MenuItem>*/}
+                {/*    }*/}
+                {/*/>*/}
                 {watchList.length ? (
                     <>
                         <MenuSeparator />
@@ -57,47 +96,3 @@ export function VideoMenu({ entry, video }: VideoMenuProps) {
         </Menu>
     );
 }
-
-VideoMenu.fragments = {
-    entry: gql`
-        ${SongTitleWithArtists.fragments.song}
-        ${extractImages.fragments.resourceWithImages}
-        ${createVideoSlug.fragments.theme}
-        ${createVideoSlug.fragments.entry}
-
-        fragment VideoMenuEntry on Entry {
-            ...createVideoSlugEntry
-            id
-            theme {
-                ...createVideoSlugTheme
-                id
-                type
-                sequence
-                group {
-                    name
-                    slug
-                }
-                anime {
-                    ...extractImagesResourceWithImages
-                    slug
-                    name
-                }
-                song {
-                    ...SongTitleWithArtistsSong
-                }
-            }
-        }
-    `,
-    video: gql`
-        ${createVideoSlug.fragments.video}
-
-        fragment VideoMenuVideo on Video {
-            ...createVideoSlugVideo
-            id
-            basename
-            audio {
-                basename
-            }
-        }
-    `,
-};
