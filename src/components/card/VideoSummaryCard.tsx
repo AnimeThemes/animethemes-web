@@ -27,7 +27,7 @@ const StyledOverlayButtons = styled.div`
     opacity: 0;
     transition-property: opacity;
 
-    ${StyledWrapper}:hover & {
+    ${StyledWrapper}:hover &, &:has([data-state="open"]) {
         position: static;
         opacity: 1;
         transition-duration: 250ms;
@@ -109,9 +109,11 @@ export function VideoSummaryCard({
                         <TextLink href={`/anime/${anime.slug}`}>{anime.name}</TextLink>
                     </SummaryCard.Description>
                 </SummaryCard.Body>
-                <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>
-                    {menu ?? <VideoMenu entry={entry} video={video} />}
-                </StyledOverlayButtons>
+                {menu !== null ? (
+                    <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>
+                        {menu ?? <VideoMenu entry={entry} video={video} />}
+                    </StyledOverlayButtons>
+                ) : null}
                 {append}
             </SummaryCard>
         </StyledWrapper>

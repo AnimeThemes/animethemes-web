@@ -40,7 +40,7 @@ const StyledOverlayButtons = styled.div`
     opacity: 0;
     transition-property: opacity;
 
-    ${StyledWrapper}:hover & {
+    ${StyledWrapper}:hover &, &:has([data-state="open"]) {
         position: static;
         opacity: 1;
         transition-duration: 250ms;
