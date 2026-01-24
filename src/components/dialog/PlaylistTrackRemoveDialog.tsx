@@ -149,7 +149,7 @@ function PlaylistTrackRemoveForm({
                 </Text>
                 ?
             </Text>
-            <VideoSummaryCard video={video} entry={entry} />
+            <VideoSummaryCard video={video} entry={entry} menu={null} />
             <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
                 <Button variant="silent" onClick={onCancel}>
                     Close

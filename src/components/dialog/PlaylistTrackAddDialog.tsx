@@ -143,7 +143,7 @@ function PlaylistTrackAddForm({ video, entry, onCancel }: PlaylistTrackAddFormPr
 
     return (
         <Column style={{ "--gap": "24px" }}>
-            <VideoSummaryCard video={video} entry={entry} />
+            <VideoSummaryCard video={video} entry={entry} menu={null} />
             <Row style={{ "--justify-content": "center" }}>
                 <Icon icon={faArrowDown} color="text-disabled" />
             </Row>
