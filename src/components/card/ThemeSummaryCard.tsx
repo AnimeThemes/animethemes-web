@@ -105,9 +105,9 @@ export function ThemeSummaryCard({
     const videoSlug = createVideoSlug(theme, entry, video);
     const href = `/anime/${anime.slug}/${videoSlug}`;
 
-    function handleToggleExpand(event: MouseEvent) {
-        if (isLink(event.target)) {
-            event.stopPropagation();
+    function handleToggleExpand(event: MouseEvent, filterLinks = false) {
+        if (filterLinks && isLink(event.target)) {
+            return;
         } else if (expandable && !isMobile) {
             toggleExpanded();
         }
@@ -124,11 +124,11 @@ export function ThemeSummaryCard({
 
     return (
         <StyledWrapper>
-            <SummaryCard onClick={handleToggleExpand} {...props}>
+            <SummaryCard {...props}>
                 <Link href={href} onClick={() => onPlay?.()}>
                     <SummaryCard.Cover src={smallCover} />
                 </Link>
-                <SummaryCard.Body>
+                <SummaryCard.Body onClick={(event) => handleToggleExpand(event, true)}>
                     <SummaryCard.Title>
                         <SongTitle song={theme.song} href={href} onClick={() => onPlay?.()} />
                         <Performances song={theme.song} artist={artist} />
@@ -143,7 +143,7 @@ export function ThemeSummaryCard({
                     </SummaryCard.Description>
                 </SummaryCard.Body>
                 {children}
-                <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>
+                <StyledOverlayButtons>
                     <ThemeMenu theme={theme} />
                     {expandable && (
                         <StyledExpandButton

@@ -99,5 +99,5 @@ VideoMenu.fragments = {
                 basename
             }
         }
-    `
+    `,
 };
