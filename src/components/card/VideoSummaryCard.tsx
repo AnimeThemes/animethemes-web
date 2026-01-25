@@ -110,9 +110,7 @@ export function VideoSummaryCard({
                     </SummaryCard.Description>
                 </SummaryCard.Body>
                 {menu !== null ? (
-                    <StyledOverlayButtons onClick={(event) => event.stopPropagation()}>
-                        {menu ?? <VideoMenu entry={entry} video={video} />}
-                    </StyledOverlayButtons>
+                    <StyledOverlayButtons>{menu ?? <VideoMenu entry={entry} video={video} />}</StyledOverlayButtons>
                 ) : null}
                 {append}
             </SummaryCard>
