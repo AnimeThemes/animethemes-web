@@ -13,7 +13,6 @@ import {
     faTv,
     faUser,
 } from "@fortawesome/free-solid-svg-icons";
-import gql from "graphql-tag";
 
 import { Column } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
@@ -28,10 +27,10 @@ import { Icon } from "@/components/icon/Icon";
 import { ProfileImage } from "@/components/image/ProfileImage";
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
-import type { HomePageQuery } from "@/generated/graphql";
+import createApolloClient from "@/graphql/createApolloClient";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useAuth from "@/hooks/useAuth";
 import useCurrentSeason from "@/hooks/useCurrentSeason";
-import { fetchData } from "@/lib/server";
 import theme from "@/theme";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 import { serializeMarkdownSafe } from "@/utils/serializeMarkdown";
@@ -66,12 +65,32 @@ const Grid = styled.div<{ $columns: number }>`
     }
 `;
 
+const fragments = {
+    featuredTheme: graphql(`
+        fragment HomePageFeaturedTheme on FeaturedTheme {
+            animethemeentry {
+                ...FeaturedThemeEntry
+            }
+            video {
+                ...FeaturedThemeVideo
+            }
+        }
+    `),
+    announcement: graphql(`
+        fragment HomePageAnnouncement on Announcement {
+            content
+        }
+    `),
+};
+
 interface HomePageProps {
-    featuredTheme: NonNullable<NonNullable<HomePageQuery["featuredTheme"]>> | null;
+    featuredTheme: FragmentType<typeof fragments.featuredTheme> | null;
     announcementSources: MDXRemoteSerializeResult[];
 }
 
-export default function HomePage({ featuredTheme, announcementSources }: HomePageProps) {
+export default function HomePage({ featuredTheme: featuredThemeFragment, announcementSources }: HomePageProps) {
+    const featuredTheme = getFragmentData(fragments.featuredTheme, featuredThemeFragment);
+
     const { me } = useAuth();
     const { currentYear, currentSeason } = useCurrentSeason();
 
@@ -82,10 +101,10 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
 
             {announcementSources.length > 0 ? <AnnouncementCard announcementSource={announcementSources[0]} /> : null}
 
-            {featuredTheme && featuredTheme.entry && featuredTheme.video ? (
+            {featuredTheme && featuredTheme.animethemeentry && featuredTheme.video ? (
                 <>
                     <Text variant="h2">Featured Theme</Text>
-                    <FeaturedTheme entry={featuredTheme.entry} video={featuredTheme.video} />
+                    <FeaturedTheme entry={featuredTheme.animethemeentry} video={featuredTheme.video} />
                 </>
             ) : null}
 
@@ -223,33 +242,31 @@ export default function HomePage({ featuredTheme, announcementSources }: HomePag
 }
 
 export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
-    const { data, apiRequests } = await fetchData<HomePageQuery>(gql`
-        ${FeaturedTheme.fragments.entry}
-        ${FeaturedTheme.fragments.video}
+    const client = createApolloClient();
 
-        query HomePage {
-            featuredTheme {
-                entry {
-                    ...FeaturedThemeEntry
+    const { data } = await client.query({
+        query: graphql(`
+            query HomePage {
+                currentfeaturedtheme {
+                    ...HomePageFeaturedTheme
                 }
-                video {
-                    ...FeaturedThemeVideo
+                announcementPagination {
+                    data {
+                        ...HomePageAnnouncement
+                    }
                 }
             }
-            announcementAll {
-                content
-            }
-        }
-    `);
+        `),
+    });
+
+    const announcements = getFragmentData(fragments.announcement, data.announcementPagination.data);
 
     return {
         props: {
-            ...getSharedPageProps(apiRequests),
-            featuredTheme: data?.featuredTheme,
+            ...getSharedPageProps(),
+            featuredTheme: data.currentfeaturedtheme,
             announcementSources: await Promise.all(
-                data?.announcementAll.map(
-                    async (announcement) => (await serializeMarkdownSafe(announcement.content)).source,
-                ),
+                announcements.map(async (announcement) => (await serializeMarkdownSafe(announcement.content)).source),
             ),
         },
     };
