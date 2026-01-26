@@ -1,17 +1,14 @@
 import styled from "styled-components";
 
-import gql from "graphql-tag";
-
 import { Row } from "@/components/box/Flex";
 import { VideoButton } from "@/components/button/VideoButton";
 import { Card } from "@/components/card/Card";
 import { ThemeMenu } from "@/components/menu/ThemeMenu";
 import { ThemeEntryTags } from "@/components/tag/ThemeEntryTags";
-import { VideoTags } from "@/components/tag/VideoTags";
 import { Text } from "@/components/text/Text";
 import { Performances } from "@/components/utils/Performances";
 import { SongTitle } from "@/components/utils/SongTitle";
-import type { ThemeDetailCardThemeFragment } from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import theme from "@/theme";
 import { entryVersionComparator } from "@/utils/comparators";
 
@@ -45,11 +42,48 @@ const StyledVideoList = styled(Row)`
     }
 `;
 
+const fragments = {
+    theme: graphql(`
+        fragment ThemeDetailCardTheme on AnimeTheme {
+            ...ThemeMenuTheme
+            ...VideoButtonTheme
+            type
+            sequence
+            group {
+                name
+                slug
+            }
+            anime {
+                ...VideoButtonAnime
+                slug
+                name
+            }
+            song {
+                ...SongTitleSong
+                ...PerformancesSong
+            }
+            animethemeentries {
+                ...ThemeEntryTagsEntry
+                ...VideoButtonEntry
+                version
+                videos {
+                    nodes {
+                        ...VideoButtonVideo
+                        filename
+                        tags
+                    }
+                }
+            }
+        }
+    `),
+};
+
 interface ThemeDetailCardProps {
-    theme: ThemeDetailCardThemeFragment;
+    theme: FragmentType<typeof fragments.theme>;
 }
 
-export function ThemeDetailCard({ theme }: ThemeDetailCardProps) {
+export function ThemeDetailCard({ theme: themeFragment }: ThemeDetailCardProps) {
+    const theme = getFragmentData(fragments.theme, themeFragment);
     const { anime } = theme;
 
     if (!anime) {
@@ -69,10 +103,10 @@ export function ThemeDetailCard({ theme }: ThemeDetailCardProps) {
                 </Text>
                 <ThemeMenu theme={theme} />
             </StyledRow>
-            {theme.entries.sort(entryVersionComparator).map((entry) => (
-                <StyledRow key={entry.version || 0}>
+            {[...theme.animethemeentries].sort(entryVersionComparator).map((entry) => (
+                <StyledRow key={entry.version ?? 0}>
                     <Text variant="small" color="text-muted">
-                        {!!entry.version && `v${entry.version}`}
+                        v{entry.version ?? 1}
                     </Text>
                     <Text color="text-muted">
                         <ThemeEntryTags entry={entry} />
@@ -80,7 +114,7 @@ export function ThemeDetailCard({ theme }: ThemeDetailCardProps) {
                     <StyledVideoListContainer>
                         {!!entry.videos && (
                             <StyledVideoList>
-                                {entry.videos.map((video, index) => (
+                                {entry.videos.nodes.map((video, index) => (
                                     <VideoButton key={index} anime={anime} theme={theme} entry={entry} video={video} />
                                 ))}
                             </StyledVideoList>
@@ -91,46 +125,3 @@ export function ThemeDetailCard({ theme }: ThemeDetailCardProps) {
         </StyledThemeCard>
     );
 }
-
-ThemeDetailCard.fragments = {
-    theme: gql`
-        ${ThemeMenu.fragments.theme}
-        ${VideoTags.fragments.video}
-
-        fragment ThemeDetailCardTheme on Theme {
-            ...ThemeMenuTheme
-            type
-            sequence
-            group {
-                name
-                slug
-            }
-            anime {
-                slug
-                name
-            }
-            song {
-                title
-                performances {
-                    alias
-                    as
-                    artist {
-                        slug
-                        name
-                    }
-                }
-            }
-            entries {
-                version
-                episodes
-                spoiler
-                nsfw
-                videos {
-                    ...VideoTagsVideo
-                    filename
-                    tags
-                }
-            }
-        }
-    `,
-};

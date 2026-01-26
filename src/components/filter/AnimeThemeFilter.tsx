@@ -1,20 +1,35 @@
 import { memo, useMemo, useState } from "react";
 
-import gql from "graphql-tag";
-
 import { Column, Row } from "@/components/box/Flex";
 import { ThemeDetailCard } from "@/components/card/ThemeDetailCard";
 import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
 import { Text } from "@/components/text/Text";
 import { HorizontalScroll } from "@/components/utils/HorizontalScroll";
-import type { AnimeThemeFilterThemeFragment } from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import { either, themeGroupComparator, themeIndexComparator, themeTypeComparator } from "@/utils/comparators";
 
+const fragments = {
+    theme: graphql(`
+        fragment AnimeThemeFilterTheme on AnimeTheme {
+            ...ThemeDetailCardTheme
+            id
+            type
+            sequence
+            group {
+                name
+                slug
+            }
+        }
+    `),
+};
+
 interface AnimeThemeFilterProps {
-    themes: Array<AnimeThemeFilterThemeFragment>;
+    themes: Array<FragmentType<typeof fragments.theme>>;
 }
 
-function AnimeThemeFilterInternal({ themes }: AnimeThemeFilterProps) {
+function AnimeThemeFilterInternal({ themes: themesFragment }: AnimeThemeFilterProps) {
+    const themes = getFragmentData(fragments.theme, themesFragment);
+
     const hasMultipleTypes = themes.some((theme) => theme.type === "OP") && themes.some((theme) => theme.type === "ED");
     const [filterType, setFilterType] = useState<string | null>(null);
 
@@ -115,20 +130,5 @@ function AnimeThemeFilterInternal({ themes }: AnimeThemeFilterProps) {
         </Column>
     );
 }
-
-AnimeThemeFilterInternal.fragments = {
-    theme: gql`
-        ${ThemeDetailCard.fragments.theme}
-
-        fragment AnimeThemeFilterTheme on Theme {
-            ...ThemeDetailCardTheme
-            type
-            group {
-                name
-                slug
-            }
-        }
-    `,
-};
 
 export const AnimeThemeFilter = memo(AnimeThemeFilterInternal);
