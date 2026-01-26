@@ -4,7 +4,6 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
 import type { MDXRemoteSerializeResult } from "next-mdx-remote";
 
-import type { ResultOf } from "@graphql-typed-document-node/core";
 import type { ParsedUrlQuery } from "querystring";
 
 import { Column } from "@/components/box/Flex";
@@ -19,15 +18,8 @@ import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
 import { HeightTransition } from "@/components/utils/HeightTransition";
 import createApolloClient from "@/graphql/createApolloClient";
-import { getFragmentData, graphql } from "@/graphql/generated";
-import {
-    either,
-    resourceAsComparator,
-    resourceSiteComparator,
-    seriesNameComparator,
-    sortTransformed,
-    studioNameComparator,
-} from "@/utils/comparators";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
+import { compare, seriesNameComparator, studioNameComparator } from "@/utils/comparators";
 import extractImages from "@/utils/extractImages";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
@@ -42,52 +34,74 @@ const StyledList = styled.div`
     text-align: center;
 `;
 
-const propsQuery = graphql(`
-    fragment AnimeDetailPageAnime on Anime {
-        slug
-        name
-        season
-        year
-        synopsis
-        mediaFormatLocalized
-        animesynonyms {
-            text
-        }
-        series {
-            nodes {
-                slug
-                name
+const fragments = {
+    anime: graphql(`
+        fragment AnimeDetailPageAnime on Anime {
+            slug
+            name
+            season
+            seasonLocalized
+            year
+            synopsis
+            mediaFormatLocalized
+            animesynonyms {
+                text
             }
-        }
-        studios {
-            nodes {
-                slug
-                name
-            }
-        }
-        resources {
-            edges {
-                node {
-                    site
-                    siteLocalized
-                    link
+            series {
+                nodes {
+                    slug
+                    name
                 }
-                as
+            }
+            studios {
+                nodes {
+                    slug
+                    name
+                }
+            }
+            resources {
+                edges {
+                    node {
+                        site
+                        siteLocalized
+                        link
+                    }
+                    as
+                }
+            }
+            images {
+                nodes {
+                    ...extractImagesImage
+                }
+            }
+            animethemes {
+                ...AnimeThemeFilterTheme
             }
         }
-        images {
-            nodes {
-                ...extractImagesImage
-            }
+    `),
+};
+
+const propsQuery = graphql(`
+    query AnimeDetailPage($animeSlug: String!) {
+        anime(slug: $animeSlug) {
+            ...AnimeDetailPageAnime
         }
-        animethemes {
-            ...ThemeDetailCardTheme
+    }
+`);
+
+const pathsQuery = graphql(`
+    query AnimeDetailPageAll {
+        animePagination {
+            data {
+                ...AnimeDetailPageAnime
+                slug
+            }
         }
     }
 `);
 
 interface AnimeDetailPageProps extends SharedPageProps {
-    anime: ResultOf<typeof propsQuery>;
+    anime: FragmentType<typeof fragments.anime>;
     synopsisMarkdownSource: MDXRemoteSerializeResult | null;
 }
 
@@ -95,9 +109,11 @@ interface AnimeDetailPageParams extends ParsedUrlQuery {
     animeSlug: string;
 }
 
-export default function AnimeDetailPage({ anime, synopsisMarkdownSource }: AnimeDetailPageProps) {
+export default function AnimeDetailPage({ anime: animeFragment, synopsisMarkdownSource }: AnimeDetailPageProps) {
+    const anime = getFragmentData(fragments.anime, animeFragment);
+
     const [collapseSynopsis, setCollapseSynopsis] = useState(true);
-    const { largeCover } = extractImages(anime.images.nodes);
+    const { smallCover, largeCover } = extractImages(anime.images.nodes);
 
     return (
         <>
@@ -105,12 +121,12 @@ export default function AnimeDetailPage({ anime, synopsisMarkdownSource }: Anime
             <Text variant="h1">{anime.name}</Text>
             <SidebarContainer>
                 <Column style={{ "--gap": "24px" }}>
-                    <CoverImage resourceWithImages={anime} alt={`Cover image of ${anime.name}`} />
+                    <CoverImage smallCover={smallCover} largeCover={largeCover} alt={`Cover image of ${anime.name}`} />
                     <DescriptionList>
-                        {anime.animesynonyms.data.length ? (
+                        {anime.animesynonyms.length ? (
                             <DescriptionList.Item title="Alternative Titles">
                                 <StyledList>
-                                    {anime.animesynonyms.data.map((synonym) => (
+                                    {anime.animesynonyms.map((synonym) => (
                                         <Text key={synonym.text}>{synonym.text}</Text>
                                     ))}
                                 </StyledList>
@@ -122,7 +138,7 @@ export default function AnimeDetailPage({ anime, synopsisMarkdownSource }: Anime
                                 href={`/year/${anime.year}${anime.season ? `/${anime.season.toLowerCase()}` : ""}`}
                                 link
                             >
-                                {(anime.season ? anime.season + " " : "") + anime.year}
+                                {(anime.seasonLocalized ? anime.seasonLocalized + " " : "") + anime.year}
                             </Text>
                         </DescriptionList.Item>
                         {anime.series.nodes.length ? (
@@ -153,13 +169,8 @@ export default function AnimeDetailPage({ anime, synopsisMarkdownSource }: Anime
                         {anime.resources.edges.length ? (
                             <DescriptionList.Item title="Links">
                                 <StyledList>
-                                    {anime.resources.edges
-                                        .sort(
-                                            sortTransformed(
-                                                either(resourceSiteComparator).or(resourceAsComparator).chain(),
-                                                (resource) => ({ ...resource.node, ...resource }),
-                                            ),
-                                        )
+                                    {[...anime.resources.edges]
+                                        .sort((a, b) => compare(a.node.site, b.node.site) || compare(a.as, b.as))
                                         .map((resource) => (
                                             <ExternalLink key={resource.node.link} href={resource.node.link}>
                                                 {resource.node.siteLocalized}
@@ -186,10 +197,10 @@ export default function AnimeDetailPage({ anime, synopsisMarkdownSource }: Anime
                     )}
                     <Text variant="h2">
                         Themes
-                        <Text color="text-disabled"> ({anime.themes?.length || 0})</Text>
+                        <Text color="text-disabled"> ({anime.animethemes.length || 0})</Text>
                     </Text>
-                    {anime.themes?.length ? (
-                        <AnimeThemeFilter themes={anime.themes.map((theme) => ({ ...theme, anime }))} />
+                    {anime.animethemes.length ? (
+                        <AnimeThemeFilter themes={anime.animethemes} />
                     ) : (
                         <Text as="p">There are no themes for this anime, yet.</Text>
                     )}
@@ -199,44 +210,35 @@ export default function AnimeDetailPage({ anime, synopsisMarkdownSource }: Anime
     );
 }
 
-const buildTimeCache: Map<string, ResultOf<typeof propsQuery>> = new Map();
+const buildTimeCache: Map<string, FragmentType<typeof fragments.anime>> = new Map();
 
 export const getStaticProps: GetStaticProps<AnimeDetailPageProps, AnimeDetailPageParams> = async ({ params }) => {
     const client = createApolloClient();
 
-    let data = params ? buildTimeCache.get(params.animeSlug) : null;
+    let animeFragment = params ? buildTimeCache.get(params.animeSlug) : null;
 
-    if (!data) {
-        data =
-            (
-                await client.query({
-                    query: graphql(`
-                        query AnimeDetailPage($animeSlug: String!) {
-                            animePaginator(slug: $animeSlug) {
-                                data {
-                                    ...AnimeDetailPageAnime
-                                }
-                            }
-                        }
-                    `),
-                    variables: params,
-                })
-            ).data.animes.data?.[0] ?? null;
+    if (!animeFragment) {
+        animeFragment = (
+            await client.query({
+                query: propsQuery,
+                variables: params,
+            })
+        ).data.anime;
     }
 
-    if (!data) {
+    if (!animeFragment) {
         return {
             notFound: true,
         };
     }
 
+    const anime = getFragmentData(fragments.anime, animeFragment);
+
     return {
         props: {
-            ...getSharedPageProps(1),
-            anime: data.anime,
-            synopsisMarkdownSource: data.anime.synopsis
-                ? (await serializeMarkdownSafe(data.anime.synopsis)).source
-                : null,
+            ...getSharedPageProps(),
+            anime: animeFragment,
+            synopsisMarkdownSource: anime.synopsis ? (await serializeMarkdownSafe(anime.synopsis)).source : null,
         },
         // Revalidate after 1 hour (= 3600 seconds).
         revalidate: 3600,
@@ -248,21 +250,14 @@ export const getStaticPaths: GetStaticPaths<AnimeDetailPageParams> = () => {
         const client = createApolloClient();
 
         const { data } = await client.query({
-            query: graphql(`
-                query AnimeDetailPageAll {
-                    animePaginator {
-                        data {
-                            slug
-                            ...AnimeDetailPageAnime
-                        }
-                    }
-                }
-            `),
+            query: pathsQuery,
         });
 
-        data.animes.data.forEach((anime) => buildTimeCache.set(anime.slug, getFragmentData(propsQuery, anime)));
+        for (const anime of data.animePagination.data) {
+            buildTimeCache.set(anime.slug, anime);
+        }
 
-        return data.animes.data.map((anime) => ({
+        return data.animePagination.data.map((anime) => ({
             params: {
                 animeSlug: anime.slug,
             },
