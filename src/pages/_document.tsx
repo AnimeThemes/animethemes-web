@@ -2,8 +2,6 @@ import { ServerStyleSheet } from "styled-components";
 import type { DocumentContext } from "next/document";
 import Document, { Head, Html, Main, NextScript } from "next/document";
 
-import { API_URL } from "@/lib/common/animethemes/api";
-
 const ThemeInjection = () => {
     // language=JavaScript
     const injectTheme = `
@@ -25,9 +23,7 @@ export default class MyDocument extends Document {
     render() {
         return (
             <Html lang="en" data-theme="system">
-                <Head>
-                    <link rel="preload" href={`${API_URL}/me`} as="fetch" crossOrigin="use-credentials" />
-                </Head>
+                <Head />
                 <body>
                     <ThemeInjection />
                     <Main />

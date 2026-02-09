@@ -1,14 +1,24 @@
-import gql from "graphql-tag";
 import md5 from "md5";
 
-import type { ProfileImageUserFragment } from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
+
+const fragments = {
+    user: graphql(`
+        fragment ProfileImageUser on Me {
+            name
+            email
+        }
+    `),
+};
 
 interface ProfileImageProps {
-    user: ProfileImageUserFragment;
+    user: FragmentType<typeof fragments.user>;
     size?: number;
 }
 
-export function ProfileImage({ user, size = 80, ...props }: ProfileImageProps) {
+export function ProfileImage({ user: userFragment, size = 80, ...props }: ProfileImageProps) {
+    const user = getFragmentData(fragments.user, userFragment);
+
     const hash = md5(user.email.trim().toLowerCase());
 
     return (
@@ -21,12 +31,3 @@ export function ProfileImage({ user, size = 80, ...props }: ProfileImageProps) {
         />
     );
 }
-
-ProfileImage.fragments = {
-    user: gql`
-        fragment ProfileImageUser on UserAuth {
-            name
-            email
-        }
-    `,
-};

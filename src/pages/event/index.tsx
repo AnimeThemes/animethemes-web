@@ -2,7 +2,6 @@ import styled from "styled-components";
 import Link from "next/link";
 
 import { faArrowRight, faAward, faTrophy } from "@fortawesome/free-solid-svg-icons";
-import gql from "graphql-tag";
 
 import { Column } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
@@ -10,7 +9,7 @@ import { Icon } from "@/components/icon/Icon";
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
 import type { EventPageQuery } from "@/generated/graphql";
-import { fetchData } from "@/lib/server";
+import { getAvailableBrackets } from "@/lib/server/animebracket";
 import theme from "@/theme";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 
@@ -82,14 +81,7 @@ export default function EventPage({ awardAll, bracketAll }: EventPageProps) {
 }
 
 export async function getStaticProps() {
-    const { data, apiRequests } = await fetchData<EventPageQuery>(gql`
-        query EventPage {
-            bracketAll {
-                slug
-                name
-            }
-        }
-    `);
+    const bracketAll = getAvailableBrackets();
 
     const awardAll = [
         {
@@ -100,8 +92,8 @@ export async function getStaticProps() {
 
     return {
         props: {
-            ...getSharedPageProps(apiRequests),
-            bracketAll: data.bracketAll,
+            ...getSharedPageProps(),
+            bracketAll,
             awardAll,
         },
     };

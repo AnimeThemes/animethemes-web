@@ -3,8 +3,8 @@ import type { FormEvent, ReactNode } from "react";
 import styled from "styled-components";
 
 import { faPen } from "@fortawesome/free-solid-svg-icons";
+import type { ResultOf } from "@graphql-typed-document-node/core";
 import { isAxiosError } from "axios";
-import gql from "graphql-tag";
 import { mutate } from "swr";
 
 import { LoginGate } from "@/components/auth/LoginGate";
@@ -17,15 +17,28 @@ import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
 import { SearchFilter } from "@/components/search-filter/SearchFilter";
 import { Text } from "@/components/text/Text";
 import { Busy } from "@/components/utils/Busy";
-import type { PlaylistEditDialogPlaylistFragment } from "@/generated/graphql";
-import axios from "@/lib/client/axios";
+import { client } from "@/graphql/client";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
+import type { PlaylistVisibility } from "@/graphql/generated/graphql";
+
+const fragments = {
+    playlist: graphql(`
+        fragment PlaylistEditDialogPlaylist on Playlist {
+            id
+            name
+            visibility
+        }
+    `),
+};
 
 interface PlaylistEditDialogProps {
-    playlist: PlaylistEditDialogPlaylistFragment;
+    playlist: FragmentType<typeof fragments.playlist>;
     trigger?: ReactNode;
 }
 
-export function PlaylistEditDialog({ playlist, trigger }: PlaylistEditDialogProps) {
+export function PlaylistEditDialog({ playlist: playlistFragment, trigger }: PlaylistEditDialogProps) {
+    const playlist = getFragmentData(fragments.playlist, playlistFragment);
+
     const [open, setOpen] = useState(false);
 
     return (
@@ -53,29 +66,19 @@ export function PlaylistEditDialog({ playlist, trigger }: PlaylistEditDialogProp
     );
 }
 
-PlaylistEditDialog.fragments = {
-    playlist: gql`
-        fragment PlaylistEditDialogPlaylist on Playlist {
-            id
-            name
-            visibility
-        }
-    `,
-};
-
 const StyledForm = styled.form`
     position: relative;
 `;
 
 interface PlaylistEditFormProps {
-    playlist: PlaylistEditDialogPlaylistFragment;
+    playlist: ResultOf<typeof fragments.playlist>;
     onSuccess(): void;
     onCancel(): void;
 }
 
 function PlaylistEditForm({ playlist, onSuccess, onCancel }: PlaylistEditFormProps) {
     const [title, setTitle] = useState(playlist.name);
-    const [visibility, setVisibility] = useState<string>(playlist.visibility);
+    const [visibility, setVisibility] = useState<PlaylistVisibility>(playlist.visibility);
 
     const isValid = title !== "";
 
@@ -89,10 +92,21 @@ function PlaylistEditForm({ playlist, onSuccess, onCancel }: PlaylistEditFormPro
         setError("");
 
         try {
-            await axios.put(`/playlist/${playlist.id}`, {
-                name: title,
-                visibility,
+            await client.mutate({
+                mutation: graphql(`
+                    mutation PlaylistEdit($id: String!, $name: String, $visibility: PlaylistVisibility) {
+                        UpdatePlaylist(id: $id, name: $name, visibility: $visibility) {
+                            name
+                        }
+                    }
+                `),
+                variables: {
+                    id: playlist.id,
+                    name: title,
+                    visibility,
+                },
             });
+
             await mutate((key) =>
                 [key].flat().some((key) => key === `/api/playlist/${playlist.id}` || key === "/api/me/playlist"),
             );
@@ -118,10 +132,13 @@ function PlaylistEditForm({ playlist, onSuccess, onCancel }: PlaylistEditFormPro
                 </SearchFilter>
                 <SearchFilter>
                     <Text>Visibility</Text>
-                    <Listbox value={visibility} onValueChange={setVisibility}>
-                        <ListboxOption value="Public">Public</ListboxOption>
-                        <ListboxOption value="Unlisted">Unlisted</ListboxOption>
-                        <ListboxOption value="Private">Private</ListboxOption>
+                    <Listbox
+                        value={visibility}
+                        onValueChange={(newVisibility) => setVisibility(newVisibility as PlaylistVisibility)}
+                    >
+                        <ListboxOption value="PUBLIC">Public</ListboxOption>
+                        <ListboxOption value="UNLISTED">Unlisted</ListboxOption>
+                        <ListboxOption value="PRIVATE">Private</ListboxOption>
                     </Listbox>
                 </SearchFilter>
                 <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>

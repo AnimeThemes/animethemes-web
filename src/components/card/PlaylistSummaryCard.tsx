@@ -33,7 +33,7 @@ const fragments = {
         fragment PlaylistSummaryCardPlaylist on Playlist {
             id
             name
-            visibility
+            visibilityLocalized
             tracksCount
         }
     `),
@@ -65,7 +65,11 @@ export default function PlaylistSummaryCard({
     const description = (
         <SummaryCard.Description>
             <span>Playlist</span>
-            {playlistWithOwner ? <Text link>{playlistWithOwner.user?.name}</Text> : <span>{playlist.visibility}</span>}
+            {playlistWithOwner ? (
+                <Text link>{playlistWithOwner.user?.name}</Text>
+            ) : (
+                <span>{playlist.visibilityLocalized}</span>
+            )}
             <span>
                 {playlist.tracksCount} theme{playlist.tracksCount !== 1 ? "s" : null}
             </span>
