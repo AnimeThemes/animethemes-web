@@ -13,8 +13,8 @@ export function PageRevalidation({ lastBuildAt, apiRequests, ...props }: PageRev
     const router = useRouter();
     const { me } = useAuth();
     const canRevalidate = useMemo(() => {
-        const userPermissions = me.user?.permissions ?? [];
-        const rolePermissions = me.user?.roles.flatMap((role) => role.permissions) ?? [];
+        const userPermissions = me?.permissions.nodes ?? [];
+        const rolePermissions = me?.roles.nodes.flatMap((role) => role.permissions.nodes) ?? [];
         for (const permission of [...userPermissions, ...rolePermissions]) {
             if (permission.name === "revalidate pages") {
                 return true;

@@ -1,8 +1,7 @@
-import gql from "graphql-tag";
-import useSWR, { mutate as mutateGlobal } from "swr";
+import { useQuery } from "@apollo/client/react";
 
-import type { CheckAuthQuery } from "@/generated/graphql";
-import { fetchDataClient } from "@/lib/client";
+import { client } from "@/graphql/client";
+import { graphql } from "@/graphql/generated";
 import axios from "@/lib/client/axios";
 import { AUTH_PATH } from "@/utils/config";
 
@@ -43,34 +42,33 @@ interface ResetPasswordProps {
     token: string;
 }
 
-export default function useAuth() {
-    const { data: me } = useSWR(
-        "/api/me",
-        async () => {
-            const { data } = await fetchDataClient<CheckAuthQuery>(gql`
-                query CheckAuth {
-                    me {
-                        user {
-                            id
+const meQuery = graphql(`
+    query UseAuthMe {
+        me {
+            ...ProfileImageUser
+            id
+            name
+            email
+            permissions {
+                nodes {
+                    name
+                }
+            }
+            roles {
+                nodes {
+                    permissions {
+                        nodes {
                             name
-                            email
-                            permissions {
-                                name
-                            }
-                            roles {
-                                permissions {
-                                    name
-                                }
-                            }
                         }
                     }
                 }
-            `);
+            }
+        }
+    }
+`);
 
-            return data.me;
-        },
-        { fallbackData: { user: null }, dedupingInterval: 2000 },
-    );
+export default function useAuth() {
+    const { data } = useQuery(meQuery);
 
     const csrf = () => axios.get(`/sanctum/csrf-cookie`);
 
@@ -81,7 +79,11 @@ export default function useAuth() {
 
         axios
             .post(`${AUTH_PATH}/register`, props)
-            .then(() => mutateGlobal(() => true))
+            .then(() =>
+                client.refetchQueries({
+                    include: "active",
+                }),
+            )
             .catch((error) => {
                 if (error.response.status !== 422) {
                     throw error;
@@ -98,7 +100,11 @@ export default function useAuth() {
 
         await axios
             .post(`${AUTH_PATH}/login`, props)
-            .then(() => mutateGlobal(() => true))
+            .then(() =>
+                client.refetchQueries({
+                    include: "active",
+                }),
+            )
             .catch((error) => {
                 if (error.response.status !== 422) {
                     throw error;
@@ -125,11 +131,15 @@ export default function useAuth() {
     };
 
     const logout = async () => {
-        await axios.post(`${AUTH_PATH}/logout`).then(() => mutateGlobal(() => true));
+        await axios.post(`${AUTH_PATH}/logout`).then(() =>
+            client.refetchQueries({
+                include: "active",
+            }),
+        );
     };
 
     return {
-        me,
+        me: data?.me,
         register,
         login,
         forgotPassword,

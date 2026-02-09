@@ -3,24 +3,29 @@ import styled from "styled-components";
 import type { GetStaticPaths, GetStaticProps } from "next";
 
 import { faStopwatch } from "@fortawesome/free-solid-svg-icons";
-import gql from "graphql-tag";
 import type { ParsedUrlQuery } from "querystring";
 
 import { Column } from "@/components/box/Flex";
 import { Solid } from "@/components/box/Solid";
 import { BracketChart } from "@/components/bracket/BracketChart";
-import { BracketThemeSummaryCard } from "@/components/bracket/BracketThemeSummaryCard";
+import {
+    type BracketCharacterWithTheme,
+    type BracketPairingWithThemes,
+    type BracketRoundWithThemes,
+    BracketThemeSummaryCard,
+    type BracketWithThemes,
+} from "@/components/bracket/BracketThemeSummaryCard";
 import { CornerIcon } from "@/components/icon/CornerIcon";
 import { SEO } from "@/components/seo/SEO";
 import { Switcher, SwitcherOption } from "@/components/switcher/Switcher";
 import { Text } from "@/components/text/Text";
-import type { BracketPageAllQuery, BracketPageQuery, BracketPageQueryVariables } from "@/generated/graphql";
-import { fetchData } from "@/lib/server";
+import createApolloClient from "@/graphql/createApolloClient";
+import { graphql } from "@/graphql/generated";
+import { type BracketRound, fetchBracket, getAvailableBrackets } from "@/lib/server/animebracket";
 import theme from "@/theme";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
-import type { RequiredNonNullable } from "@/utils/types";
 
 const CurrentRound = styled(Solid)`
     position: relative;
@@ -47,7 +52,9 @@ const StyledBracketPairing = styled.div`
     }
 `;
 
-interface BracketPageProps extends SharedPageProps, RequiredNonNullable<BracketPageQuery> {}
+interface BracketPageProps extends SharedPageProps {
+    bracket: BracketWithThemes;
+}
 
 interface BracketPageParams extends ParsedUrlQuery {
     bracketSlug: string;
@@ -72,7 +79,7 @@ export default function BracketPage({ bracket }: BracketPageProps) {
 }
 
 interface BracketRoundProps {
-    round: BracketPageProps["bracket"]["rounds"][number];
+    round: BracketRoundWithThemes;
     isCurrent?: boolean;
     initialGroup?: number;
 }
@@ -141,7 +148,7 @@ function BracketRound({ round, isCurrent = false, initialGroup = 0 }: BracketRou
 }
 
 interface BracketPairingsProps {
-    pairings: BracketRoundProps["round"]["pairings"];
+    pairings: Array<BracketPairingWithThemes>;
 }
 
 function BracketPairings({ pairings }: BracketPairingsProps) {
@@ -171,8 +178,8 @@ function BracketPairings({ pairings }: BracketPairingsProps) {
 }
 
 interface ContestantCardProps {
-    contestant: BracketPairingsProps["pairings"][number]["characterA"];
-    opponent: BracketPairingsProps["pairings"][number]["characterB"];
+    contestant: BracketCharacterWithTheme;
+    opponent: BracketCharacterWithTheme;
     contestantVotes: number | null;
     opponentVotes: number | null;
 }
@@ -185,7 +192,7 @@ function ContestantCard({ contestant, opponent, contestantVotes, opponentVotes }
 
     return (
         <BracketThemeSummaryCard
-            contestant={contestant}
+            character={contestant}
             isVoted={isVoted}
             isWinner={isWinner}
             seed={contestant.seed}
@@ -194,78 +201,80 @@ function ContestantCard({ contestant, opponent, contestantVotes, opponentVotes }
     );
 }
 
-const themeCache = new Map();
-
 export const getStaticProps: GetStaticProps<BracketPageProps, BracketPageParams> = async ({ params }) => {
-    const { data, apiRequests } = await fetchData<BracketPageQuery, BracketPageQueryVariables>(
-        gql`
-            ${BracketThemeSummaryCard.fragments.contestant}
+    if (params === undefined) {
+        return { notFound: true };
+    }
 
-            fragment CharacterFragment on BracketCharacter {
-                id
-                seed
-                ...BracketThemeSummaryCardConstestant
-            }
+    const bracket = await fetchBracket(params.bracketSlug);
 
-            fragment RoundFragment on BracketRound {
-                tier
-                name
-                pairings {
-                    order
-                    group
-                    characterA {
-                        ...CharacterFragment
-                    }
-                    characterB {
-                        ...CharacterFragment
-                    }
-                    votesA
-                    votesB
-                }
-            }
+    if (bracket === null) {
+        return { notFound: true };
+    }
 
-            query BracketPage($bracketSlug: String!) {
-                bracket(slug: $bracketSlug) {
-                    name
-                    currentRound {
-                        ...RoundFragment
-                    }
-                    currentGroup
-                    rounds {
-                        ...RoundFragment
-                    }
-                }
-            }
-        `,
-        params,
-        { cache: themeCache },
+    const themeIds = new Set(
+        bracket.rounds
+            .flatMap((round) => round.pairings)
+            .flatMap((pairing) => [pairing.characterA.themeId, pairing.characterB.themeId])
+            .filter((themeId) => themeId !== null),
     );
 
-    if (!data.bracket) {
+    const client = createApolloClient();
+
+    const { data } = await client.query({
+        query: graphql(`
+            query BracketPage($themeIds: [Int!]!) {
+                animethemePagination(id_in: $themeIds) {
+                    data {
+                        id
+                        ...BracketThemeSummaryCardTheme
+                    }
+                }
+            }
+        `),
+        variables: {
+            themeIds: [...themeIds],
+        },
+    });
+
+    const themesById = new Map(data.animethemePagination.data.map((theme) => [theme.id, theme]));
+
+    function populateRound(round: BracketRound): BracketRoundWithThemes {
         return {
-            notFound: true,
+            ...round,
+            pairings: round.pairings.map((pairing) => ({
+                ...pairing,
+                characterA: {
+                    ...pairing.characterA,
+                    theme: (pairing.characterA.themeId && themesById.get(pairing.characterA.themeId)) || null,
+                },
+                characterB: {
+                    ...pairing.characterB,
+                    theme: (pairing.characterB.themeId && themesById.get(pairing.characterB.themeId)) || null,
+                },
+            })),
         };
     }
 
+    const bracketPopulated = {
+        ...bracket,
+        currentRound: bracket.currentRound && populateRound(bracket.currentRound),
+        rounds: bracket.rounds.map(populateRound),
+    };
+
     return {
         props: {
-            ...getSharedPageProps(apiRequests),
-            bracket: data.bracket,
+            ...getSharedPageProps(),
+            bracket: bracketPopulated,
         },
     };
 };
 
 export const getStaticPaths: GetStaticPaths<BracketPageParams> = async () => {
     return fetchStaticPaths(async () => {
-        const { data } = await fetchData<BracketPageAllQuery>(gql`
-            query BracketPageAll {
-                bracketAll {
-                    slug
-                }
-            }
-        `);
+        const brackets = getAvailableBrackets();
 
-        return data.bracketAll.map((bracket) => ({
+        return brackets.map((bracket) => ({
             params: {
                 bracketSlug: bracket.slug,
             },

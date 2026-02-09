@@ -2,17 +2,16 @@ import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import styled from "styled-components";
 
 import { faAward, faSeedling, faUsers } from "@fortawesome/free-solid-svg-icons";
-import gql from "graphql-tag";
 
 import { Column } from "@/components/box/Flex";
 import { SummaryCard } from "@/components/card/SummaryCard";
-import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
 import { CornerIcon } from "@/components/icon/CornerIcon";
 import { Icon } from "@/components/icon/Icon";
 import { Text } from "@/components/text/Text";
 import { TextLink } from "@/components/text/TextLink";
 import { SongTitleWithArtists } from "@/components/utils/SongTitleWithArtists";
-import type { BracketThemeSummaryCardConstestantFragment } from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
+import type { Bracket, BracketCharacter, BracketPairing, BracketRound } from "@/lib/server/animebracket";
 import createVideoSlug from "@/utils/createVideoSlug";
 import extractImages from "@/utils/extractImages";
 
@@ -33,8 +32,58 @@ const StyledRank = styled(Text)`
     letter-spacing: 1px;
 `;
 
+const fragments = {
+    theme: graphql(`
+        fragment BracketThemeSummaryCardTheme on AnimeTheme {
+            ...createVideoSlugTheme
+            ...ThemeMenuTheme
+            type
+            sequence
+            group {
+                name
+                slug
+            }
+            anime {
+                slug
+                name
+                images {
+                    nodes {
+                        ...extractImagesImage
+                    }
+                }
+            }
+            song {
+                ...SongTitleWithArtistsSong
+            }
+            animethemeentries {
+                ...createVideoSlugEntry
+                videos {
+                    nodes {
+                        ...createVideoSlugVideo
+                    }
+                }
+            }
+        }
+    `),
+};
+
+export interface BracketWithThemes extends Bracket {
+    currentRound: BracketRoundWithThemes | null;
+    rounds: Array<BracketRoundWithThemes>;
+}
+export interface BracketRoundWithThemes extends BracketRound {
+    pairings: Array<BracketPairingWithThemes>;
+}
+export interface BracketPairingWithThemes extends BracketPairing {
+    characterA: BracketCharacterWithTheme;
+    characterB: BracketCharacterWithTheme;
+}
+export interface BracketCharacterWithTheme extends BracketCharacter {
+    theme: FragmentType<typeof fragments.theme> | null;
+}
+
 interface BracketThemeSummaryCardProps extends ComponentPropsWithoutRef<typeof StyledSummaryCardWrapper> {
-    contestant: BracketThemeSummaryCardConstestantFragment;
+    character: BracketCharacterWithTheme;
     isVoted: boolean;
     isWinner: boolean;
     seed: number | null;
@@ -42,22 +91,22 @@ interface BracketThemeSummaryCardProps extends ComponentPropsWithoutRef<typeof S
 }
 
 export function BracketThemeSummaryCard({
-    contestant,
+    character,
     isVoted,
     isWinner,
     seed,
     votes,
     ...props
 }: BracketThemeSummaryCardProps) {
-    const theme = contestant.theme;
-    const { smallCover } = extractImages(theme?.anime);
+    const theme = getFragmentData(fragments.theme, character.theme);
+    const { smallCover } = extractImages(theme?.anime.images.nodes ?? []);
 
     let to;
-    let description: ReactNode = contestant.source;
+    let description: ReactNode = character.source;
 
     if (theme?.anime) {
-        const entry = theme.entries?.[0];
-        const video = entry?.videos?.[0];
+        const entry = theme.animethemeentries?.[0];
+        const video = entry?.videos.nodes[0];
         const videoSlug = createVideoSlug(theme, entry, video);
 
         to = `/anime/${theme.anime.slug}/${videoSlug}`;
@@ -73,9 +122,9 @@ export function BracketThemeSummaryCard({
     return (
         <StyledSummaryCardWrapper {...props}>
             <StyledSummaryCard
-                title={theme ? <SongTitleWithArtists song={theme.song} songTitleLinkTo={to} /> : contestant.name}
+                title={theme ? <SongTitleWithArtists song={theme.song} songTitleLinkTo={to} /> : character.name}
                 description={description}
-                image={smallCover ?? contestant.image}
+                image={smallCover ?? character.image}
                 to={to}
                 style={{ "--opacity": !isVoted || isWinner ? 1 : 0.5 }}
             >
@@ -96,18 +145,3 @@ export function BracketThemeSummaryCard({
         </StyledSummaryCardWrapper>
     );
 }
-
-BracketThemeSummaryCard.fragments = {
-    contestant: gql`
-        ${ThemeSummaryCard.fragments.theme}
-
-        fragment BracketThemeSummaryCardConstestant on BracketCharacter {
-            name
-            source
-            image
-            theme {
-                ...ThemeSummaryCardTheme
-            }
-        }
-    `,
-};

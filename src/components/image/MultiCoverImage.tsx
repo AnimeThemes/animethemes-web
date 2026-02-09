@@ -125,8 +125,8 @@ export function MultiCoverImage({ items, ...props }: MultiCoverImageProps) {
                     items
                         .filter(({ largeCover }) => !!largeCover)
                         .slice(0, 4)
-                        .map(({ largeCover, smallCover, name }) => (
-                            <StyledCoverItemContainer key={largeCover} $itemCount={items.length}>
+                        .map(({ largeCover, smallCover, name }, _, slicedItems) => (
+                            <StyledCoverItemContainer key={largeCover} $itemCount={slicedItems.length}>
                                 <StyledCover
                                     loading="lazy"
                                     src={largeCover}

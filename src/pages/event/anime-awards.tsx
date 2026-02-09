@@ -5,19 +5,17 @@ import type { GetStaticProps } from "next";
 import Link from "next/link";
 
 import { faAward, faHashtag, faUsers } from "@fortawesome/free-solid-svg-icons";
-import gql from "graphql-tag";
 import { m } from "motion/react";
 
 import { SummaryCard } from "@/components/card/SummaryCard";
 import { CornerIcon } from "@/components/icon/CornerIcon";
 import { Icon } from "@/components/icon/Icon";
 import { SEO } from "@/components/seo/SEO";
-import { Switcher } from "@/components/switcher/Switcher";
-import { SwitcherOption, SwitcherReset } from "@/components/switcher/Switcher";
+import { Switcher, SwitcherOption, SwitcherReset } from "@/components/switcher/Switcher";
 import { Text } from "@/components/text/Text";
 import { SongTitleWithArtists } from "@/components/utils/SongTitleWithArtists";
-import type { AwardPageThemeQuery } from "@/generated/graphql";
-import { fetchData } from "@/lib/server";
+import createApolloClient from "@/graphql/createApolloClient";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import event from "@/lib/server/animeawards/index.json";
 import theme from "@/theme";
 import createVideoSlug from "@/utils/createVideoSlug";
@@ -56,8 +54,55 @@ const StyledNomineeGrid = styled.div<{ style: { "--columns": number; "--rows": n
     }
 `;
 
-interface AnimeAwardsPage {
-    awards: Array<Award>;
+const fragments = {
+    theme: graphql(`
+        fragment AnimeAwardsPageTheme on AnimeTheme {
+            ...createVideoSlugTheme
+            id
+            type
+            sequence
+            anime {
+                slug
+                name
+                images {
+                    nodes {
+                        ...extractImagesImage
+                    }
+                }
+            }
+            song {
+                ...SongTitleWithArtistsSong
+            }
+        }
+    `),
+    entry: graphql(`
+        fragment AnimeAwardPageEntry on AnimeThemeEntry {
+            ...createVideoSlugEntry
+            version
+            videos {
+                nodes {
+                    ...createVideoSlugVideo
+                    basename
+                    tags
+                }
+            }
+        }
+    `),
+};
+
+interface Nominee {
+    id: number;
+    version?: number;
+}
+
+interface HasVotes {
+    votesPublic: number;
+    rankJury: number;
+}
+
+interface HasTheme {
+    theme: FragmentType<typeof fragments.theme>;
+    entry: FragmentType<typeof fragments.entry>;
 }
 
 type Award = AwardUnvoted | AwardVoted;
@@ -77,19 +122,29 @@ interface AwardUnvoted extends AwardBase {
 interface AwardVoted extends AwardBase {
     isFinished: true;
     nominees: {
-        openings: Array<NomineeVoted>;
-        endings: Array<NomineeVoted>;
+        openings: Array<Nominee & HasVotes>;
+        endings: Array<Nominee & HasVotes>;
     };
 }
 
-interface Nominee extends AwardPageThemeQuery {
-    id: number;
-    version?: number;
+type AwardPopulated = AwardUnvotedPopulated | AwardVotedPopulated;
+
+interface AwardUnvotedPopulated extends AwardUnvoted {
+    nominees: {
+        openings: Array<Nominee & HasTheme>;
+        endings: Array<Nominee & HasTheme>;
+    };
 }
 
-interface NomineeVoted extends Nominee {
-    votesPublic: number;
-    rankJury: number;
+interface AwardVotedPopulated extends AwardVoted {
+    nominees: {
+        openings: Array<Nominee & HasVotes & HasTheme>;
+        endings: Array<Nominee & HasVotes & HasTheme>;
+    };
+}
+
+interface AnimeAwardsPage {
+    awards: Array<AwardPopulated>;
 }
 
 export default function AnimeAwardsPage({ awards }: AnimeAwardsPage) {
@@ -109,15 +164,15 @@ export default function AnimeAwardsPage({ awards }: AnimeAwardsPage) {
 }
 
 interface AwardSectionUnvotedProps {
-    award: AwardUnvoted;
+    award: AwardUnvotedPopulated;
 }
 
 function AwardSectionUnvoted({ award }: AwardSectionUnvotedProps) {
     const [typeFilter, setTypeFilter] = useState<string | null>(null);
 
-    const sortFn: Comparator<Nominee> = (a, b) => {
-        const nameA = a.theme?.anime?.name;
-        const nameB = b.theme?.anime?.name;
+    const sortFn: Comparator<HasTheme> = (a, b) => {
+        const nameA = getFragmentData(fragments.theme, a.theme)?.anime?.name;
+        const nameB = getFragmentData(fragments.theme, b.theme)?.anime?.name;
 
         return (nameA && nameB && nameA.localeCompare(nameB)) || 0;
     };
@@ -138,18 +193,22 @@ function AwardSectionUnvoted({ award }: AwardSectionUnvotedProps) {
                 {(typeFilter === null || typeFilter === "op") &&
                     [...award.nominees.openings]
                         .sort(sortFn)
-                        .map((nominee) => <AwardThemeSummaryCard key={nominee.id} theme={nominee.theme} />)}
+                        .map((nominee) => (
+                            <AwardThemeSummaryCard key={nominee.id} theme={nominee.theme} entry={nominee.entry} />
+                        ))}
                 {(typeFilter === null || typeFilter === "ed") &&
                     [...award.nominees.endings]
                         .sort(sortFn)
-                        .map((nominee) => <AwardThemeSummaryCard key={nominee.id} theme={nominee.theme} />)}
+                        .map((nominee) => (
+                            <AwardThemeSummaryCard key={nominee.id} theme={nominee.theme} entry={nominee.entry} />
+                        ))}
             </StyledNomineeGrid>
         </>
     );
 }
 
 interface AwardSectionVotedProps {
-    award: AwardVoted;
+    award: AwardVotedPopulated;
 }
 
 function AwardSectionVoted({ award }: AwardSectionVotedProps) {
@@ -158,8 +217,8 @@ function AwardSectionVoted({ award }: AwardSectionVotedProps) {
 
     const sortFn =
         judgeFilter === "public"
-            ? (a: NomineeVoted, b: NomineeVoted) => b.votesPublic - a.votesPublic
-            : (a: NomineeVoted, b: NomineeVoted) => a.rankJury - b.rankJury;
+            ? (a: HasVotes, b: HasVotes) => b.votesPublic - a.votesPublic
+            : (a: HasVotes, b: HasVotes) => a.rankJury - b.rankJury;
 
     return (
         <>
@@ -188,6 +247,7 @@ function AwardSectionVoted({ award }: AwardSectionVotedProps) {
                         >
                             <AwardThemeSummaryCard
                                 theme={nominee.theme}
+                                entry={nominee.entry}
                                 rank={judgeFilter === "public" ? rank + 1 : nominee.rankJury}
                                 votes={judgeFilter === "public" ? nominee.votesPublic : null}
                             />
@@ -203,6 +263,7 @@ function AwardSectionVoted({ award }: AwardSectionVotedProps) {
                         >
                             <AwardThemeSummaryCard
                                 theme={nominee.theme}
+                                entry={nominee.entry}
                                 rank={judgeFilter === "public" ? rank + 1 : nominee.rankJury}
                                 votes={judgeFilter === "public" ? nominee.votesPublic : null}
                             />
@@ -233,31 +294,34 @@ const StyledRank = styled(Text)`
     letter-spacing: 1px;
 `;
 
-interface AwardThemeSummaryCardProps
-    extends AwardPageThemeQuery,
-        ComponentPropsWithoutRef<typeof StyledSummaryCardWrapper> {
+interface AwardThemeSummaryCardProps extends ComponentPropsWithoutRef<typeof StyledSummaryCardWrapper> {
+    theme: FragmentType<typeof fragments.theme>;
+    entry: FragmentType<typeof fragments.entry>;
     rank?: number;
     votes?: number | null;
 }
 
-function AwardThemeSummaryCard({ theme, rank, votes, ...props }: AwardThemeSummaryCardProps) {
+function AwardThemeSummaryCard({
+    theme: themeFragment,
+    entry: entryFragment,
+    rank,
+    votes,
+    ...props
+}: AwardThemeSummaryCardProps) {
+    const theme = getFragmentData(fragments.theme, themeFragment);
+    const entry = getFragmentData(fragments.entry, entryFragment);
+
     if (!theme?.anime) {
         return null;
     }
 
-    const { smallCover } = extractImages(theme.anime);
+    const { smallCover } = extractImages(theme.anime.images.nodes);
 
-    if (!theme.entries.length) {
+    if (!entry.videos.nodes.length) {
         return null;
     }
 
-    const entry = theme.entries[0];
-
-    if (!entry.videos.length) {
-        return null;
-    }
-
-    const video = entry.videos[0];
+    const video = entry.videos.nodes[0];
     const videoSlug = createVideoSlug(theme, entry, video);
     const to = `/anime/${theme.anime.slug}/${videoSlug}`;
 
@@ -304,104 +368,81 @@ function AwardThemeSummaryCard({ theme, rank, votes, ...props }: AwardThemeSumma
 }
 
 export const getStaticProps: GetStaticProps<AnimeAwardsPage> = async () => {
-    let totalApiRequests = 0;
+    const client = createApolloClient();
 
-    const awards = await Promise.all(
-        (event as Array<Award>).map<Promise<Award>>(async (award) => {
-            async function populateNominees<T extends Nominee>(nominees: Array<T>): Promise<Array<T>> {
-                return Promise.all(
-                    nominees.map(async (nominee) => {
-                        const { theme, apiRequests } = await fetchTheme(nominee.id, nominee.version);
-
-                        totalApiRequests += apiRequests;
-
-                        return { ...nominee, theme };
-                    }),
-                );
-            }
-
-            if (award.isFinished) {
-                return {
-                    ...award,
-                    isFinished: true,
-                    nominees: {
-                        openings: await populateNominees(award.nominees.openings),
-                        endings: await populateNominees(award.nominees.endings),
-                    },
-                };
-            }
-
-            return {
-                ...award,
-                isFinished: false,
-                nominees: {
-                    openings: await populateNominees(award.nominees.openings),
-                    endings: await populateNominees(award.nominees.endings),
-                },
-            };
-        }),
+    const themeIds = new Set(
+        event.flatMap((award) => [...award.nominees.openings, ...award.nominees.endings]).map((nominee) => nominee.id),
     );
 
-    return {
-        props: {
-            ...getSharedPageProps(totalApiRequests),
-            awards,
-        },
-    };
-};
-
-async function fetchTheme(themeId: number, version?: number) {
-    const { data, apiRequests } = await fetchData<AwardPageThemeQuery>(
-        gql`
-            ${createVideoSlug.fragments.theme}
-            ${createVideoSlug.fragments.entry}
-            ${createVideoSlug.fragments.video}
-
-            query AwardPageTheme($themeId: Int) {
-                theme(id: $themeId) {
-                    ...createVideoSlugTheme
-                    id
-                    anime {
-                        slug
-                        name
-                        images {
-                            facet
-                            link
-                        }
-                    }
-                    song {
-                        title
-                        performances {
-                            artist {
-                                slug
-                                name
-                            }
-                            as
-                            alias
-                        }
-                    }
-                    entries {
-                        ...createVideoSlugEntry
-                        version
-                        videos {
-                            ...createVideoSlugVideo
-                            basename
-                            tags
+    const { data } = await client.query({
+        query: graphql(`
+            query AnimeAwardPage($themeIds: [Int!]!) {
+                animethemePagination(id_in: $themeIds) {
+                    data {
+                        ...AnimeAwardsPageTheme
+                        id
+                        animethemeentries {
+                            ...AnimeAwardPageEntry
+                            version
                         }
                     }
                 }
             }
-        `,
-        { themeId },
-    );
+        `),
+        variables: {
+            themeIds: [...themeIds],
+        },
+    });
+
+    const themesById = new Map(data.animethemePagination.data.map((theme) => [theme.id, theme]));
+
+    const awards = (event as Array<Award>).map<AwardPopulated>((award) => {
+        function populateNominees<T extends Nominee>(nominees: Array<T>): Array<T & HasTheme> {
+            return nominees.flatMap((nominee) => {
+                const theme = themesById.get(nominee.id);
+
+                if (!theme) {
+                    return [];
+                }
+
+                return [
+                    {
+                        ...nominee,
+                        theme,
+                        entry:
+                            (nominee.version !== undefined
+                                ? theme?.animethemeentries.find((entry) => entry.version === nominee.version)
+                                : null) ?? theme?.animethemeentries[0],
+                    },
+                ];
+            });
+        }
+
+        if (award.isFinished) {
+            return {
+                ...award,
+                isFinished: true,
+                nominees: {
+                    openings: populateNominees(award.nominees.openings),
+                    endings: populateNominees(award.nominees.endings),
+                },
+            };
+        }
+
+        return {
+            ...award,
+            isFinished: false,
+            nominees: {
+                openings: populateNominees(award.nominees.openings),
+                endings: populateNominees(award.nominees.endings),
+            },
+        };
+    });
 
     return {
-        theme: {
-            ...data.theme,
-            entries: version
-                ? data.theme?.entries.filter((e) => e.version === version)
-                : data.theme?.entries.slice(0, 1),
+        props: {
+            ...getSharedPageProps(),
+            awards,
         },
-        apiRequests,
     };
-}
+};

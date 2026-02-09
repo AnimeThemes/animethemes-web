@@ -5,6 +5,7 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
+import { ApolloProvider } from "@apollo/client";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFullscreen } from "ahooks";
@@ -30,6 +31,7 @@ import FullscreenContext from "@/context/fullscreenContext";
 import type { WatchListItem } from "@/context/playerContext";
 import PlayerContext, { createWatchListItem } from "@/context/playerContext";
 import { ToastProvider } from "@/context/toastContext";
+import { client } from "@/graphql/client";
 import useColorTheme from "@/hooks/useColorTheme";
 import type { VideoPageProps } from "@/pages/anime/[animeSlug]/[videoSlug]";
 import GlobalStyle from "@/styles/global";
@@ -103,7 +105,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
     const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
 
-    const [isFullscreen, { toggleFullscreen : nativeToggleFullscreen }] = useFullscreen(() => document.documentElement, {
+    const [isFullscreen, { toggleFullscreen: nativeToggleFullscreen }] = useFullscreen(() => document.documentElement, {
         onEnter() {
             document.documentElement.dataset.fullscreen = "true";
         },
@@ -242,6 +244,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                     },
                 }),
                 stackContext(QueryClientProvider, { client: queryClient }),
+                stackContext(ApolloProvider, { client }),
                 stackContext(ToastProvider, {}),
                 stackContext(LazyMotion, { features: () => import("utils/motionFeatures").then((res) => res.default) }),
                 stackContext(ErrorBoundary, {}),
@@ -305,9 +308,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
 type StackContext = (children: ReactNode) => ReactNode;
 
-function stackContext<P>(Provider: ComponentType<P>, props: P): StackContext {
+function stackContext<P>(Provider: ComponentType<P>, props: Omit<P, "children">): StackContext {
     return function StackContext(children) {
-        return <Provider {...props}>{children}</Provider>;
+        return <Provider {...(props as P)}>{children}</Provider>;
     };
 }
 
