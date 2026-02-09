@@ -160,7 +160,7 @@ export default function HomePage({ featuredTheme: featuredThemeFragment, announc
                 </BigButton>
                 <BigButton asChild>
                     <Link href="/profile">
-                        {me.user ? <BigProfileImage user={me.user} size={96} /> : <BigIcon icon={faUser} />}
+                        {me ? <BigProfileImage user={me} size={96} /> : <BigIcon icon={faUser} />}
                         <Text>My Profile</Text>
                         <Icon icon={faArrowRight} color="text-primary" />
                     </Link>

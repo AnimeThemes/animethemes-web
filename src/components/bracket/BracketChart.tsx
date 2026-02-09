@@ -5,13 +5,17 @@ import styled from "styled-components";
 import { faDiagramProject } from "@fortawesome/free-solid-svg-icons";
 import { m } from "motion/react";
 
-import { BracketThemeSummaryCard } from "@/components/bracket/BracketThemeSummaryCard";
+import {
+    type BracketCharacterWithTheme,
+    type BracketPairingWithThemes,
+    type BracketRoundWithThemes,
+    BracketThemeSummaryCard,
+    type BracketWithThemes,
+} from "@/components/bracket/BracketThemeSummaryCard";
 import { Button } from "@/components/button/Button";
 import { Icon } from "@/components/icon/Icon";
 import { Text } from "@/components/text/Text";
-import type { BracketPageQuery } from "@/generated/graphql";
 import theme from "@/theme";
-import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledBracketContainer = styled.div`
     flex: 1 1 0;
@@ -66,7 +70,9 @@ const StyledBracketThemeSummaryCard = styled(BracketThemeSummaryCard)`
     width: 384px;
 `;
 
-type BracketChartProps = RequiredNonNullable<BracketPageQuery>;
+interface BracketChartProps {
+    bracket: BracketWithThemes;
+}
 
 export function BracketChart({ bracket }: BracketChartProps) {
     const [showBracketChart, setShowBracketChart] = useState(false);
@@ -161,7 +167,7 @@ export function BracketChart({ bracket }: BracketChartProps) {
 }
 
 interface BracketRoundProps {
-    round: BracketChartProps["bracket"]["rounds"][number];
+    round: BracketRoundWithThemes;
 }
 
 const BracketRound = memo(function BracketRound({ round }: BracketRoundProps) {
@@ -178,7 +184,7 @@ const BracketRound = memo(function BracketRound({ round }: BracketRoundProps) {
 });
 
 interface BracketPairingsProps {
-    pairings: BracketRoundProps["round"]["pairings"];
+    pairings: Array<BracketPairingWithThemes>;
 }
 
 function BracketPairings({ pairings }: BracketPairingsProps) {
@@ -208,12 +214,8 @@ function BracketPairings({ pairings }: BracketPairingsProps) {
 }
 
 interface ContestantCardProps {
-    contestant:
-        | BracketPairingsProps["pairings"][number]["characterA"]
-        | BracketPairingsProps["pairings"][number]["characterB"];
-    opponent:
-        | BracketPairingsProps["pairings"][number]["characterA"]
-        | BracketPairingsProps["pairings"][number]["characterB"];
+    contestant: BracketCharacterWithTheme;
+    opponent: BracketCharacterWithTheme;
     contestantVotes: number | null;
     opponentVotes: number | null;
 }
@@ -226,7 +228,7 @@ function ContestantCard({ contestant, opponent, contestantVotes, opponentVotes }
 
     return (
         <StyledBracketThemeSummaryCard
-            contestant={contestant}
+            character={contestant}
             isVoted={isVoted}
             isWinner={isWinner}
             seed={contestant.seed}

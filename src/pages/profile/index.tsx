@@ -2,6 +2,7 @@ import { memo, useState } from "react";
 import styled, { css } from "styled-components";
 import type { GetServerSideProps } from "next";
 
+import { useQuery } from "@apollo/client/react";
 import {
     faCircleExclamation,
     faEllipsisVertical,
@@ -9,8 +10,6 @@ import {
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { isAxiosError } from "axios";
-import gql from "graphql-tag";
-import useSWR from "swr";
 
 import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
@@ -21,32 +20,28 @@ import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
 import { LoginDialog } from "@/components/dialog/LoginDialog";
 import { PasswordChangeDialog } from "@/components/dialog/PasswordChangeDialog";
 import { PlaylistAddDialog } from "@/components/dialog/PlaylistAddDialog";
-import { PlaylistRemoveDialog } from "@/components/dialog/PlaylistRemoveDialog";
 import { RegisterDialog } from "@/components/dialog/RegisterDialog";
 import { UserInformationDialog } from "@/components/dialog/UserInformationDialog";
 import { Icon } from "@/components/icon/Icon";
 import { ProfileImage } from "@/components/image/ProfileImage";
 import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
-import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/menu/Menu";
+import { Menu, MenuContent, MenuTrigger } from "@/components/menu/Menu";
 import { SearchFilter } from "@/components/search-filter/SearchFilter";
 import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
 import { Busy } from "@/components/utils/Busy";
-import type { ProfilePageMeQuery, ProfilePageQuery } from "@/generated/graphql";
-import { graphql } from "@/graphql/generated";
+import createApolloClient from "@/graphql/createApolloClient";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useAuth from "@/hooks/useAuth";
 import useSetting from "@/hooks/useSetting";
 import type { WatchHistory } from "@/hooks/useWatchHistory";
 import useWatchHistory from "@/hooks/useWatchHistory";
-import { fetchDataClient } from "@/lib/client";
 import { handleAxiosError } from "@/lib/client/axios";
-import { fetchData } from "@/lib/server";
 import theme from "@/theme";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 import { ColorTheme, FeaturedThemePreview, ShowAnnouncements } from "@/utils/settings";
-import type { RequiredNonNullable } from "@/utils/types";
 
 const StyledProfileGrid = styled.div`
     --columns: 2;
@@ -140,54 +135,45 @@ const StyledRoleBadge = styled.span<{ $color: string }>`
 `;
 
 const fragments = {
-    playlist: graphql(`
-        fragment ProfilePagePlaylist on Playlist {
-            ...PlaylistSummaryCardPlaylist
-            id
-        }
-    `),
-    user: graphql(`
-        fragment ProfilePageUser on Me {
+    me: graphql(`
+        fragment ProfilePageMe on Me {
+            ...ProfileImageUser
             name
             email
             emailVerifiedAt
             createdAt
             roles {
-                name
-                color
-                priority
-                default
+                nodes {
+                    name
+                    color
+                    priority
+                    default
+                }
+            }
+            playlists {
+                ...PlaylistSummaryCardPlaylist
+                id
             }
         }
     `),
 };
 
-type ProfilePageProps = SharedPageProps & RequiredNonNullable<ProfilePageQuery>;
+const pageQuery = graphql(`
+    query ProfilePage {
+        me {
+            ...ProfilePageMe
+        }
+    }
+`);
 
-export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
-    const { data: me } = useSWR(
-        ["ProfilePageMe", "/api/me", "/api/me/playlist"],
-        async () => {
-            const { data } = await fetchDataClient<ProfilePageMeQuery>(gql`
-                ${ProfilePage.fragments.playlist}
-                ${ProfilePage.fragments.user}
+interface ProfilePageProps extends SharedPageProps {
+    me: FragmentType<typeof fragments.me> | null;
+}
 
-                query ProfilePageMe {
-                    me {
-                        user {
-                            ...ProfilePageUser
-                        }
-                        playlistAll {
-                            ...ProfilePagePlaylist
-                        }
-                    }
-                }
-            `);
+export default function ProfilePage({ me: meFragment }: ProfilePageProps) {
+    const { data } = useQuery(pageQuery);
 
-            return data.me;
-        },
-        { fallbackData: initialMe },
-    );
+    const me = getFragmentData(fragments.me, data?.me ?? meFragment);
 
     const { history, clearHistory } = useWatchHistory();
 
@@ -195,25 +181,25 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
     const [featuredThemePreview, setFeaturedThemePreview] = useSetting(FeaturedThemePreview);
     const [colorTheme, setColorTheme] = useSetting(ColorTheme);
 
-    const roles = (me.user?.roles ?? [])
+    const roles = (me?.roles.nodes ?? [])
         .filter((role) => !role.default)
         .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
     const highlightColor = roles[0]?.color ?? "";
 
-    const isNewUser = !!me.user && (Date.now() - Date.parse(me.user.created_at)) / (1000 * 60 * 60 * 24) < 1;
+    const isNewUser = !!me?.createdAt && (Date.now() - Date.parse(me.createdAt)) / (1000 * 60 * 60 * 24) < 1;
 
     return (
         <>
             <SEO title="My Profile" />
-            {me.user ? (
+            {me ? (
                 <>
-                    <StyledProfileImageBackground user={me.user} />
+                    <StyledProfileImageBackground user={me} />
                     <StyledHeaderTop>
-                        <StyledProfileImage user={me.user} size={128} $borderColor={highlightColor} />
+                        <StyledProfileImage user={me} size={128} $borderColor={highlightColor} />
                         <Column>
                             <Text variant="h1">
                                 Welcome {isNewUser ? "on AnimeThemes" : "back"},{" "}
-                                <StyledUsername $color={highlightColor}>{me.user.name}</StyledUsername>!
+                                <StyledUsername $color={highlightColor}>{me.name}</StyledUsername>!
                             </Text>
                             <StyledRoles>
                                 {roles.map((role) => (
@@ -225,7 +211,7 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                         </Column>
                         <LogoutButton />
                     </StyledHeaderTop>
-                    {!me.user.email_verified_at ? (
+                    {!me.emailVerifiedAt ? (
                         <Card $color="text-warning">
                             <Column style={{ "--gap": "8px" }}>
                                 <Text color="text-warning" weight="bold">
@@ -245,7 +231,7 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
             ) : (
                 <Text variant="h1">My Profile</Text>
             )}
-            {!me.user ? (
+            {!me ? (
                 <Card>
                     <Column style={{ "--gap": "16px" }}>
                         <Text>
@@ -261,15 +247,15 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
             ) : null}
             <StyledProfileGrid>
                 <Column style={{ "--gap": "48px" }}>
-                    {me.playlistAll ? (
+                    {me?.playlists ? (
                         <Column style={{ "--gap": "24px" }}>
                             <StyledHeader>
                                 <Text variant="h2">Playlists</Text>
                                 <PlaylistAddDialog />
                             </StyledHeader>
                             <Column style={{ "--gap": "16px" }}>
-                                {me.playlistAll.length ? (
-                                    me.playlistAll.map((playlist) => (
+                                {me.playlists.length ? (
+                                    me.playlists.map((playlist) => (
                                         <PlaylistSummaryCard
                                             key={playlist.id}
                                             playlist={playlist}
@@ -281,15 +267,15 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                                                         </Button>
                                                     </MenuTrigger>
                                                     <MenuContent>
-                                                        <PlaylistRemoveDialog
-                                                            playlist={playlist}
-                                                            trigger={
-                                                                <MenuItem onSelect={(event) => event.preventDefault()}>
-                                                                    <Icon icon={faTrash} />
-                                                                    <Text>Delete Playlist</Text>
-                                                                </MenuItem>
-                                                            }
-                                                        />
+                                                        {/*<PlaylistRemoveDialog*/}
+                                                        {/*    playlist={playlist}*/}
+                                                        {/*    trigger={*/}
+                                                        {/*        <MenuItem onSelect={(event) => event.preventDefault()}>*/}
+                                                        {/*            <Icon icon={faTrash} />*/}
+                                                        {/*            <Text>Delete Playlist</Text>*/}
+                                                        {/*        </MenuItem>*/}
+                                                        {/*    }*/}
+                                                        {/*/>*/}
                                                     </MenuContent>
                                                 </Menu>
                                             }
@@ -301,7 +287,7 @@ export default function ProfilePage({ me: initialMe }: ProfilePageProps) {
                             </Column>
                         </Column>
                     ) : null}
-                    {me.user ? (
+                    {me ? (
                         <Column style={{ "--gap": "24px" }}>
                             <Text variant="h2">Account Settings</Text>
                             <Column style={{ "--gap": "16px" }}>
@@ -429,30 +415,22 @@ function ResendVerificationEmailLink() {
 }
 
 export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async ({ req }) => {
-    const { data, apiRequests } = await fetchData<ProfilePageQuery>(
-        gql`
-            ${ProfilePage.fragments.playlist}
-            ${ProfilePage.fragments.user}
+    const client = createApolloClient(req);
 
-            query ProfilePage {
-                me {
-                    user {
-                        ...ProfilePageUser
-                    }
-                    playlistAll {
-                        ...ProfilePagePlaylist
-                    }
-                }
-            }
-        `,
-        undefined,
-        { req },
-    );
+    try {
+        const { data } = await client.query({
+            query: pageQuery,
+        });
 
-    return {
-        props: {
-            ...getSharedPageProps(apiRequests),
-            me: data.me,
-        },
-    };
+        return {
+            props: {
+                ...getSharedPageProps(),
+                me: data.me,
+            },
+        };
+    } catch (e) {
+        console.log(JSON.stringify(e, null, 2));
+
+        return { notFound: true };
+    }
 };

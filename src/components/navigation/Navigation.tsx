@@ -84,9 +84,9 @@ export function Navigation() {
                             asChild
                             variant="silent"
                             icon={
-                                me.user ? (
+                                me ? (
                                     <StyledProfileImageIcon>
-                                        <StyledProfileImage user={me.user} />
+                                        <StyledProfileImage user={me} />
                                     </StyledProfileImageIcon>
                                 ) : (
                                     faUser
