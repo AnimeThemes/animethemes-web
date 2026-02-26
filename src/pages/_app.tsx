@@ -26,6 +26,8 @@ import { Text } from "@/components/text/Text";
 import { ToastHub } from "@/components/toast/ToastHub";
 import { ErrorBoundary } from "@/components/utils/ErrorBoundary";
 import { PageRevalidation } from "@/components/utils/PageRevalidation";
+import { VideoPlayer } from "@/components/video-player/VideoPlayer";
+import { VideoPlayerOverlay } from "@/components/video-player/VideoPlayerOverlay";
 import ColorThemeContext from "@/context/colorThemeContext";
 import FullscreenContext from "@/context/fullscreenContext";
 import type { WatchListItem } from "@/context/playerContext";
@@ -33,12 +35,15 @@ import PlayerContext, { createWatchListItem } from "@/context/playerContext";
 import { ToastProvider } from "@/context/toastContext";
 import { client } from "@/graphql/client";
 import useColorTheme from "@/hooks/useColorTheme";
-import type { VideoPageProps } from "@/pages/anime/[animeSlug]/[videoSlug]";
+import { getAnimeFromVideoPageFragment, type VideoPageProps } from "@/pages/anime/[animeSlug]/[videoSlug]";
+import type { YearDetailPageProps } from "@/pages/year/[year]";
+import type { SeasonDetailPageProps } from "@/pages/year/[year]/[season]";
 import GlobalStyle from "@/styles/global";
 import theme from "@/theme";
 import { either, sortTransformed, themeIndexComparator, themeTypeComparator } from "@/utils/comparators";
 import { STAGING } from "@/utils/config";
 import { getVideoSlugByProps, getVideoSlugByWatchListItem } from "@/utils/createVideoSlug";
+import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import withBasePath from "@/utils/withBasePath";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
@@ -68,32 +73,35 @@ const StyledFullWidthContainer = styled(Container)`
     max-width: none;
 `;
 
-// TODO: Add proper type checking, also extract layout modes out of _app.tsx
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function MyApp({ Component, pageProps }: AppProps) {
+type PageProps = SharedPageProps & {
+    isFullWidthPage?: boolean;
+    isSearch?: boolean;
+} & ({ isVideoPage?: never } | VideoPageProps) &
+    ({ isYearOrSeasonPage?: never } | (YearDetailPageProps | SeasonDetailPageProps));
+
+export default function MyApp({ Component, pageProps }: AppProps<PageProps>) {
     const router = useRouter();
     const [colorTheme, setColorTheme] = useColorTheme();
 
-    const { lastBuildAt, apiRequests, isVideoPage = false, isFullWidthPage = false } = pageProps;
-
     const [watchList, setWatchList] = useState<WatchListItem[]>(() => {
-        if (isVideoPage) {
+        if (pageProps.isVideoPage) {
             return createDefaultWatchList(pageProps);
         }
         return [];
     });
     const [watchListFactory, setWatchListFactory] = useState<(() => Promise<WatchListItem[]>) | null>(null);
     const [currentWatchListItemId, setCurrentWatchListItemId] = useState<number | null>(() => {
-        if (watchList.length) {
-            const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
-            const video = anime.themes[themeIndex].entries[entryIndex].videos[videoIndex];
+        if (pageProps.isVideoPage && watchList.length) {
+            const { anime: animeFragment, themeIndex, entryIndex, videoIndex } = pageProps;
+            const anime = getAnimeFromVideoPageFragment(animeFragment);
+            const video = anime.animethemes[themeIndex].animethemeentries[entryIndex].videos.nodes[videoIndex];
             return watchList.find((item) => item.video.id === video.id)?.watchListId ?? null;
         }
         return null;
     });
     const currentWatchListItem = watchList.find((item) => item.watchListId === currentWatchListItemId) ?? null;
 
-    const [isWaitingForVideoPage, setWaitingForVideoPage] = useState(!isVideoPage);
+    const [isWaitingForVideoPage, setWaitingForVideoPage] = useState(!pageProps.isVideoPage);
 
     const [isGlobalAutoPlay, setGlobalAutoPlay] = useLocalStorageState("auto-play", { defaultValue: false });
     const [isLocalAutoPlay, setLocalAutoPlay] = useState(true);
@@ -127,10 +135,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     }, [isIOS, nativeToggleFullscreen]);
 
     useEffect(() => {
-        if (!isVideoPage && isFullscreen) {
+        if (!pageProps.isVideoPage && isFullscreen) {
             toggleFullscreen();
         }
-    }, [isFullscreen, isVideoPage, toggleFullscreen]);
+    }, [isFullscreen, pageProps.isVideoPage, toggleFullscreen]);
 
     useEffect(() => {
         const hotkeyListener = (event: KeyboardEvent) => {
@@ -153,7 +161,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     // Prevent the video player from opening in the background while the video page is still loading.
     // This should only happen if the video player is opening for the first time and not on
     // subsequent page transitions.
-    if (isVideoPage && currentWatchListItem && isWaitingForVideoPage) {
+    if (pageProps.isVideoPage && currentWatchListItem && isWaitingForVideoPage) {
         setWaitingForVideoPage(false);
 
         return null;
@@ -163,12 +171,13 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         return null;
     }
 
-    if (isVideoPage && currentVideoSlug !== previousVideoSlug) {
+    if (pageProps.isVideoPage && currentVideoSlug !== previousVideoSlug) {
         setPreviousVideoSlug(currentVideoSlug);
         const watchListVideoSlug = currentWatchListItem ? getVideoSlugByWatchListItem(currentWatchListItem) : null;
         if (currentVideoSlug !== watchListVideoSlug) {
-            const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
-            const video = anime.themes[themeIndex].entries[entryIndex].videos[videoIndex];
+            const { anime: animeFragment, themeIndex, entryIndex, videoIndex } = pageProps;
+            const anime = getAnimeFromVideoPageFragment(animeFragment);
+            const video = anime.animethemes[themeIndex].animethemeentries[entryIndex].videos.nodes[videoIndex];
 
             const watchList: WatchListItem[] = createDefaultWatchList(pageProps);
             setWatchList(watchList);
@@ -180,7 +189,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         return null;
     }
 
-    const Container = isFullWidthPage ? StyledFullWidthContainer : StyledContainer;
+    const Container = pageProps.isFullWidthPage ? StyledFullWidthContainer : StyledContainer;
 
     return (
         <MultiContextProvider
@@ -261,11 +270,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                 <meta name="theme-color" content="#1c1823" />
             </Head>
             <StyledWrapper>
-                {!isFullWidthPage ? <Navigation /> : null}
-                {!isVideoPage ? (
+                {!pageProps.isFullWidthPage ? <Navigation /> : null}
+                {!pageProps.isVideoPage ? (
                     <>
                         <Container>
-                            {!!pageProps.year && (
+                            {pageProps.isYearOrSeasonPage && (
                                 <Column style={{ "--gap": "16px" }}>
                                     <YearNavigation {...pageProps} />
                                     <SeasonNavigation {...pageProps} />
@@ -286,20 +295,20 @@ export default function MyApp({ Component, pageProps }: AppProps) {
                                 </Card>
                             ) : null}
                             <Component {...pageProps} />
-                            {lastBuildAt && <PageRevalidation lastBuildAt={lastBuildAt} apiRequests={apiRequests} />}
+                            {pageProps.lastBuildAt && <PageRevalidation lastBuildAt={pageProps.lastBuildAt} />}
                         </Container>
                         <Footer />
                     </>
                 ) : null}
-                {/*{currentWatchListItem && !isWaitingForVideoPage && (*/}
-                {/*    <VideoPlayer*/}
-                {/*        watchListItem={currentWatchListItem}*/}
-                {/*        background={!isVideoPage}*/}
-                {/*        overlay={isVideoPage ? <VideoPlayerOverlay {...pageProps} /> : null}*/}
-                {/*    >*/}
-                {/*        {isVideoPage ? <Component {...pageProps} /> : null}*/}
-                {/*    </VideoPlayer>*/}
-                {/*)}*/}
+                {currentWatchListItem && !isWaitingForVideoPage && (
+                    <VideoPlayer
+                        watchListItem={currentWatchListItem}
+                        background={!pageProps.isVideoPage}
+                        overlay={pageProps.isVideoPage ? <VideoPlayerOverlay {...pageProps} /> : null}
+                    >
+                        {pageProps.isVideoPage ? <Component {...pageProps} /> : null}
+                    </VideoPlayer>
+                )}
             </StyledWrapper>
             <ToastHub />
         </MultiContextProvider>
@@ -326,14 +335,15 @@ function MultiContextProvider({ providers = [], children }: MultiContextProvider
 }
 
 function createDefaultWatchList(pageProps: VideoPageProps): WatchListItem[] {
-    const { anime, themeIndex, entryIndex, videoIndex }: VideoPageProps = pageProps;
+    const { anime: animeFragment, themeIndex, entryIndex, videoIndex } = pageProps;
+    const anime = getAnimeFromVideoPageFragment(animeFragment);
 
-    return anime.themes
+    return anime.animethemes
         .flatMap((theme, index) => {
-            const entry = themeIndex == index ? theme.entries[entryIndex] : theme.entries[0];
-            const video = themeIndex == index ? entry?.videos[videoIndex] : entry?.videos[0];
+            const entry = themeIndex == index ? theme.animethemeentries[entryIndex] : theme.animethemeentries[0];
+            const video = themeIndex == index ? entry?.videos.nodes[videoIndex] : entry?.videos.nodes[0];
 
-            if (!entry || !video || theme.group?.slug !== anime.themes[themeIndex].group?.slug) {
+            if (!entry || !video || theme.group?.slug !== anime.animethemes[themeIndex].group?.slug) {
                 return [];
             }
 

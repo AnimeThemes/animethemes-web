@@ -11,6 +11,7 @@ import { SearchFilterMediaFormat } from "@/components/search-filter/SearchFilter
 import { Switcher, SwitcherOption } from "@/components/switcher/Switcher";
 import { Text } from "@/components/text/Text";
 import { Busy } from "@/components/utils/Busy";
+import type { AnimeMediaFormat, ThemeType } from "@/graphql/generated/graphql";
 import useRandomThemes from "@/hooks/useRandomThemes";
 
 interface ShuffleDialogProps {
@@ -46,8 +47,8 @@ interface ShuffleFormProps {
 
 function ShuffleForm({ onSuccess, onCancel }: ShuffleFormProps) {
     const [isBusy, setBusy] = useState(false);
-    const [filterThemeType, setFilterThemeType] = useState("");
-    const [filterMediaFormat, setFilterMediaFormat] = useState<string | null>(null);
+    const [filterThemeType, setFilterThemeType] = useState<ThemeType | null>(null);
+    const [filterMediaFormat, setFilterMediaFormat] = useState<AnimeMediaFormat | null>(null);
     const [filterAnimeYearMin, setFilterAnimeYearMin] = useState("");
     const [filterAnimeYearMax, setFilterAnimeYearMax] = useState("");
 
@@ -60,7 +61,7 @@ function ShuffleForm({ onSuccess, onCancel }: ShuffleFormProps) {
 
         try {
             await playRandomThemes({
-                themeType: filterThemeType,
+                themeType: filterThemeType ?? undefined,
                 mediaFormat: filterMediaFormat ?? undefined,
                 animeYearMin: parseInt(filterAnimeYearMin),
                 animeYearMax: parseInt(filterAnimeYearMax),

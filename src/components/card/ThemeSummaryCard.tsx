@@ -57,76 +57,76 @@ const StyledPerformedWith = styled.div`
     margin-top: 8px;
 `;
 
-const fragments = {
-    theme: graphql(`
-        fragment ThemeSummaryCardTheme on AnimeTheme {
-            ...createVideoSlugTheme
-            ...ThemeMenuTheme
-            type
-            sequence
-            group {
-                name
-                slug
-            }
-            anime {
-                slug
-                name
-                images {
-                    nodes {
-                        ...extractImagesImage
-                    }
+export const THEME_SUMMARY_CARD_THEME = graphql(`
+    fragment ThemeSummaryCardTheme on AnimeTheme {
+        ...createVideoSlugTheme
+        ...ThemeMenuTheme
+        type
+        sequence
+        group {
+            name
+            slug
+        }
+        anime {
+            slug
+            name
+            images {
+                nodes {
+                    ...extractImagesImage
                 }
             }
-            song {
-                ...SongTitleSong
-                ...PerformancesSong
-                performances {
-                    alias
-                    as
-                    artist {
-                        __typename
-                        ... on Artist {
+        }
+        song {
+            ...SongTitleSong
+            ...PerformancesSong
+            performances {
+                alias
+                as
+                artist {
+                    __typename
+                    ... on Artist {
+                        slug
+                        name
+                    }
+                    ... on Membership {
+                        group {
                             slug
                             name
                         }
-                        ... on Membership {
-                            group {
-                                slug
-                                name
-                            }
-                        }
-                    }
-                }
-            }
-            animethemeentries {
-                ...createVideoSlugEntry
-                videos {
-                    nodes {
-                        ...createVideoSlugVideo
                     }
                 }
             }
         }
-    `),
-    artist: graphql(`
-        fragment ThemeSummaryCardArtist on Artist {
-            ...PerformancesArtist
-            slug
+        animethemeentries {
+            ...createVideoSlugEntry
+            videos {
+                nodes {
+                    ...createVideoSlugVideo
+                }
+            }
         }
-    `),
-    expandable: graphql(`
-        fragment ThemeSummaryCardThemeExpandable on AnimeTheme {
-            ...ThemeTableTheme
-        }
-    `),
-};
+    }
+`);
+
+export const THEME_SUMMARY_CARD_ARTIST = graphql(`
+    fragment ThemeSummaryCardArtist on Artist {
+        ...PerformancesArtist
+        slug
+    }
+`);
+
+export const THEME_SUMMARY_CARD_THEME_EXPANDABLE = graphql(`
+    fragment ThemeSummaryCardThemeExpandable on AnimeTheme {
+        ...ThemeTableTheme
+    }
+`);
 
 const useIsMobile = () => useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
 
 interface ThemeSummaryCardProps {
-    theme: FragmentType<typeof fragments.theme>;
-    artist?: FragmentType<typeof fragments.artist>;
-    expandable?: FragmentType<typeof fragments.expandable>;
+    theme: FragmentType<typeof THEME_SUMMARY_CARD_THEME>;
+    artist?: FragmentType<typeof THEME_SUMMARY_CARD_ARTIST>;
+    expandable?: FragmentType<typeof THEME_SUMMARY_CARD_THEME_EXPANDABLE>;
     onPlay?(entryIndex?: number, videoIndex?: number): void;
 }
 
@@ -139,9 +139,11 @@ export function ThemeSummaryCard({
     onPlay,
     ...props
 }: PropsWithChildren<ThemeSummaryCardProps>) {
-    const theme = getFragmentData(fragments.theme, themeFragment);
-    const ownerArtist = artistFragment ? getFragmentData(fragments.artist, artistFragment) : undefined;
-    const expandable = expandableFragment ? getFragmentData(fragments.expandable, expandableFragment) : undefined;
+    const theme = getFragmentData(THEME_SUMMARY_CARD_THEME, themeFragment);
+    const ownerArtist = artistFragment ? getFragmentData(THEME_SUMMARY_CARD_ARTIST, artistFragment) : undefined;
+    const expandable = expandableFragment
+        ? getFragmentData(THEME_SUMMARY_CARD_THEME_EXPANDABLE, expandableFragment)
+        : undefined;
 
     const [isExpanded, toggleExpanded] = useToggle();
     const isMobile = useIsMobile();

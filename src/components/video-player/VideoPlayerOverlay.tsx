@@ -1,4 +1,4 @@
-import { Fragment, useContext } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
@@ -29,7 +29,7 @@ import { StyledPlaybackArea } from "@/components/video-player/VideoPlayer.style"
 import FullscreenContext from "@/context/fullscreenContext";
 import PlayerContext from "@/context/playerContext";
 import useSetting from "@/hooks/useSetting";
-import type { VideoPageProps } from "@/pages/anime/[animeSlug]/[videoSlug]";
+import { getAnimeFromVideoPageFragment, type VideoPageProps } from "@/pages/anime/[animeSlug]/[videoSlug]";
 import theme from "@/theme";
 import createVideoSlug from "@/utils/createVideoSlug";
 import { AudioMode } from "@/utils/settings";
@@ -87,15 +87,16 @@ const StyledKeyHintSpace = styled(StyledKeyHint)`
     width: 96px;
 `;
 
-export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }: VideoPageProps) {
-    const theme = anime.themes[themeIndex];
-    const entry = theme.entries[entryIndex];
-    const video = entry.videos[videoIndex];
+export function VideoPlayerOverlay({ anime: animeFragment, themeIndex, entryIndex, videoIndex }: VideoPageProps) {
+    const anime = getAnimeFromVideoPageFragment(animeFragment);
+    const theme = anime.animethemes[themeIndex];
+    const entry = theme.animethemeentries[entryIndex];
+    const video = entry.videos.nodes[videoIndex];
 
     const { watchList, setWatchList, currentWatchListItem } = useContext(PlayerContext);
     const { isFullscreen, toggleFullscreen } = useContext(FullscreenContext);
-    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-    const isPIPSupported = typeof document !== "undefined" && document.pictureInPictureEnabled;
+    const [isIOS, setIOS] = useState(false);
+    const [isPIPSupported, setPIPSupported] = useState(false);
     const context = useContext(VideoPlayerContext);
     const [audioMode] = useSetting(AudioMode, { storageSync: false });
 
@@ -105,9 +106,9 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
 
     const { updateAudioMode } = context;
 
-    const otherEntries = theme.entries
+    const otherEntries = theme.animethemeentries
         .map((otherEntry) => {
-            const videos = otherEntry.videos;
+            const videos = otherEntry.videos.nodes;
 
             if (!videos.length) {
                 return null;
@@ -120,14 +121,19 @@ export function VideoPlayerOverlay({ anime, themeIndex, entryIndex, videoIndex }
         })
         .filter((otherEntry) => !!otherEntry);
 
+    useEffect(() => {
+        setIOS(/iPhone|iPad|iPod/.test(navigator.userAgent));
+        setPIPSupported(typeof document !== "undefined" && document.pictureInPictureEnabled);
+    }, []);
+
     return (
         <StyledOverlay>
             <Row style={{ "--gap": "16px" }}>
-                <PlaylistTrackAddDialog
-                    video={video}
-                    entry={{ ...entry, theme }}
-                    trigger={<StyledOverlayButton icon={faPlus} isCircle title="Add to playlist" />}
-                />
+                {/*<PlaylistTrackAddDialog*/}
+                {/*    video={video}*/}
+                {/*    entry={{ ...entry, theme }}*/}
+                {/*    trigger={<StyledOverlayButton icon={faPlus} isCircle title="Add to playlist" />}*/}
+                {/*/>*/}
                 <Dialog>
                     <DialogTrigger asChild>
                         <StyledOverlayButton icon={faKeyboard} isCircle title="Keyboard shortcuts" />

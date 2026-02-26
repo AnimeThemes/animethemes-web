@@ -1,26 +1,26 @@
-import gql from "graphql-tag";
-
 import { Text } from "@/components/text/Text";
 import { Toast } from "@/components/toast/Toast";
-import type { PlaylistTrackRemoveToastPlaylistFragment } from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
+
+const fragments = {
+    playlist: graphql(`
+        fragment PlaylistRemoveToastPlaylist on Playlist {
+            id
+            name
+        }
+    `),
+};
 
 interface PlaylistRemoveToastProps {
-    playlist: PlaylistTrackRemoveToastPlaylistFragment;
+    playlist: FragmentType<typeof fragments.playlist>;
 }
 
-export function PlaylistRemoveToast({ playlist }: PlaylistRemoveToastProps) {
+export function PlaylistRemoveToast({ playlist: playlistFragment }: PlaylistRemoveToastProps) {
+    const playlist = getFragmentData(fragments.playlist, playlistFragment);
+
     return (
         <Toast>
             <Text color="text-primary">{playlist.name}</Text> was deleted!
         </Toast>
     );
 }
-
-PlaylistRemoveToast.fragments = {
-    playlist: gql`
-        fragment PlaylistRemoveToastPlaylist on Playlist {
-            id
-            name
-        }
-    `,
-};

@@ -2,10 +2,9 @@ import { useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import styled from "styled-components";
 
+import { useMutation } from "@apollo/client";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import type { ResultOf } from "@graphql-typed-document-node/core";
-import { isAxiosError } from "axios";
-import { mutate } from "swr";
 
 import { LoginGate } from "@/components/auth/LoginGate";
 import { Column, Row } from "@/components/box/Flex";
@@ -17,9 +16,10 @@ import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
 import { SearchFilter } from "@/components/search-filter/SearchFilter";
 import { Text } from "@/components/text/Text";
 import { Busy } from "@/components/utils/Busy";
-import { client } from "@/graphql/client";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import type { PlaylistVisibility } from "@/graphql/generated/graphql";
+import { PLAYLIST_DETAIL_PAGE_PLAYLIST } from "@/pages/playlist/[playlistId]";
+import { PROFILE_PAGE } from "@/pages/profile";
 
 const fragments = {
     playlist: graphql(`
@@ -82,45 +82,35 @@ function PlaylistEditForm({ playlist, onSuccess, onCancel }: PlaylistEditFormPro
 
     const isValid = title !== "";
 
-    const [isBusy, setBusy] = useState(false);
-    const [error, setError] = useState("");
+    const [mutate, { loading, error }] = useMutation(
+        graphql(`
+            mutation PlaylistEdit($id: String!, $name: String, $visibility: PlaylistVisibility) {
+                UpdatePlaylist(id: $id, name: $name, visibility: $visibility) {
+                    name
+                }
+            }
+        `),
+        {
+            onCompleted: () => onSuccess(),
+            refetchQueries: [
+                // Update the profile page because it includes a list of the user's playlists
+                PROFILE_PAGE,
+                // Update the playlist page in case the user is editing from there
+                PLAYLIST_DETAIL_PAGE_PLAYLIST,
+            ],
+        },
+    );
 
     async function submit(event: FormEvent) {
         event.preventDefault();
 
-        setBusy(true);
-        setError("");
-
-        try {
-            await client.mutate({
-                mutation: graphql(`
-                    mutation PlaylistEdit($id: String!, $name: String, $visibility: PlaylistVisibility) {
-                        UpdatePlaylist(id: $id, name: $name, visibility: $visibility) {
-                            name
-                        }
-                    }
-                `),
-                variables: {
-                    id: playlist.id,
-                    name: title,
-                    visibility,
-                },
-            });
-
-            await mutate((key) =>
-                [key].flat().some((key) => key === `/api/playlist/${playlist.id}` || key === "/api/me/playlist"),
-            );
-        } catch (error: unknown) {
-            if (isAxiosError(error) && error.response) {
-                setError(error.response.data.message ?? "An unknown error occured!");
-            }
-
-            return;
-        } finally {
-            setBusy(false);
-        }
-
-        onSuccess();
+        await mutate({
+            variables: {
+                id: playlist.id,
+                name: title,
+                visibility,
+            },
+        });
     }
 
     return (
@@ -145,14 +135,14 @@ function PlaylistEditForm({ playlist, onSuccess, onCancel }: PlaylistEditFormPro
                     <Button type="button" variant="silent" onClick={onCancel}>
                         Cancel
                     </Button>
-                    <Button type="submit" variant="primary" disabled={!isValid || isBusy}>
-                        <Busy isBusy={isBusy}>Update Playlist</Busy>
+                    <Button type="submit" variant="primary" disabled={!isValid || loading}>
+                        <Busy isBusy={loading}>Update Playlist</Busy>
                     </Button>
                 </Row>
                 {error ? (
                     <Text color="text-warning">
                         <strong>The playlist could not be updated: </strong>
-                        {error}
+                        {error.message}
                     </Text>
                 ) : null}
             </Column>

@@ -1,8 +1,20 @@
-import { CLIENT_API_URL } from "@/utils/config";
+import { client } from "@/graphql/client";
+import { graphql } from "@/graphql/generated";
+
+const RANDOM_GRILL = graphql(`
+    query RandomGrill {
+        imagePagination(facet: GRILL, sort: [RANDOM], first: 1) {
+            data {
+                link
+            }
+        }
+    }
+`);
 
 export async function fetchRandomGrill(): Promise<string> {
-    const res = await fetch(`${CLIENT_API_URL}/image?filter[facet]=Grill&sort=random&page[size]=1`);
-    const json = await res.json();
+    const { data } = await client.query({
+        query: RANDOM_GRILL,
+    });
 
-    return json.images[0].link as string;
+    return data.imagePagination.data[0].link;
 }

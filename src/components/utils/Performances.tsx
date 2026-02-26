@@ -2,8 +2,6 @@ import { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
-import type { Maybe } from "@graphql-tools/utils";
-
 import { Text } from "@/components/text/Text";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
@@ -60,8 +58,8 @@ export interface PerformancesProps {
 }
 
 interface ArtistNameProps {
-    alias: Maybe<string>;
-    as: Maybe<string>;
+    alias: string | null;
+    as: string | null;
     artist: {
         name: string;
         slug: string;
