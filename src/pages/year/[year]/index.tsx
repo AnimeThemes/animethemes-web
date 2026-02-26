@@ -50,6 +50,7 @@ const propsQuery = graphql(`
 `);
 
 export interface YearDetailPageProps extends SharedPageProps {
+    isYearOrSeasonPage: true;
     year: ResultOf<typeof propsQuery>["animeyear"][number];
     years: ResultOf<typeof propsQuery>["animeyears"];
 }
@@ -132,6 +133,7 @@ export const getStaticProps: GetStaticProps<YearDetailPageProps, YearDetailPageP
     return {
         props: {
             ...getSharedPageProps(),
+            isYearOrSeasonPage: true,
             year: {
                 ...data.animeyear[0],
                 seasons: [...(data.animeyear[0].seasons ?? [])].sort(

@@ -1,46 +1,63 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 
+import { useMutation } from "@apollo/client";
 import { faMinus } from "@fortawesome/free-solid-svg-icons";
-import gql from "graphql-tag";
-import { mutate } from "swr";
+import type { ResultOf } from "@graphql-typed-document-node/core";
 
 import { LoginGate } from "@/components/auth/LoginGate";
 import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
 import { IconTextButton } from "@/components/button/IconTextButton";
-import {
-    VideoSummaryCard,
-    VideoSummaryCardFragmentEntry,
-    VideoSummaryCardFragmentVideo,
-} from "@/components/card/VideoSummaryCard";
+import { VideoSummaryCard } from "@/components/card/VideoSummaryCard";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
 import { Text } from "@/components/text/Text";
 import { PlaylistTrackRemoveToast } from "@/components/toast/PlaylistTrackRemoveToast";
 import { Busy } from "@/components/utils/Busy";
 import { useToasts } from "@/context/toastContext";
-import type {
-    PlaylistTrackRemoveDialogEntryFragment,
-    PlaylistTrackRemoveDialogPlaylistFragment,
-    PlaylistTrackRemoveDialogVideoFragment,
-} from "@/generated/graphql";
-import axios from "@/lib/client/axios";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
+import { PLAYLIST_DETAIL_PAGE_PLAYLIST } from "@/pages/playlist/[playlistId]";
+
+const fragments = {
+    playlist: graphql(`
+        fragment PlaylistTrackRemoveDialogPlaylist on Playlist {
+            ...PlaylistTrackRemoveToastPlaylist
+            id
+            name
+        }
+    `),
+    video: graphql(`
+        fragment PlaylistTrackRemoveDialogVideo on Video {
+            ...VideoSummaryCardVideo
+        }
+    `),
+    entry: graphql(`
+        fragment PlaylistTrackRemoveDialogEntry on AnimeThemeEntry {
+            ...VideoSummaryCardEntry
+            ...PlaylistTrackRemoveToastEntry
+        }
+    `),
+};
 
 interface PlaylistTrackRemoveDialogProps {
-    playlist: PlaylistTrackRemoveDialogPlaylistFragment;
+    playlist: FragmentType<typeof fragments.playlist>;
     trackId: string;
-    video: PlaylistTrackRemoveDialogVideoFragment;
-    entry: PlaylistTrackRemoveDialogEntryFragment;
+    video: FragmentType<typeof fragments.video>;
+    entry: FragmentType<typeof fragments.entry>;
     trigger?: ReactNode;
 }
 
 export function PlaylistTrackRemoveDialog({
-    playlist,
+    playlist: playlistFragment,
     trackId,
-    video,
-    entry,
+    video: videoFragment,
+    entry: entryFragment,
     trigger,
 }: PlaylistTrackRemoveDialogProps) {
+    const playlist = getFragmentData(fragments.playlist, playlistFragment);
+    const video = getFragmentData(fragments.video, videoFragment);
+    const entry = getFragmentData(fragments.entry, entryFragment);
+
     const [open, setOpen] = useState(false);
 
     return (
@@ -71,39 +88,11 @@ export function PlaylistTrackRemoveDialog({
     );
 }
 
-PlaylistTrackRemoveDialog.fragments = {
-    playlist: gql`
-        ${PlaylistTrackRemoveToast.fragments.playlist}
-
-        fragment PlaylistTrackRemoveDialogPlaylist on Playlist {
-            ...PlaylistTrackRemoveToastPlaylist
-            id
-            name
-        }
-    `,
-    video: gql`
-        ${VideoSummaryCardFragmentVideo}
-
-        fragment PlaylistTrackRemoveDialogVideo on Video {
-            ...VideoSummaryCardVideo
-        }
-    `,
-    entry: gql`
-        ${VideoSummaryCardFragmentEntry}
-        ${PlaylistTrackRemoveToast.fragments.entry}
-
-        fragment PlaylistTrackRemoveDialogEntry on Entry {
-            ...VideoSummaryCardEntry
-            ...PlaylistTrackRemoveToastEntry
-        }
-    `,
-};
-
 interface PlaylistTrackRemoveFormProps {
-    playlist: PlaylistTrackRemoveDialogPlaylistFragment;
+    playlist: ResultOf<typeof fragments.playlist>;
     trackId: string;
-    video: PlaylistTrackRemoveDialogVideoFragment;
-    entry: PlaylistTrackRemoveDialogEntryFragment;
+    video: ResultOf<typeof fragments.video>;
+    entry: ResultOf<typeof fragments.entry>;
     onSuccess(): void;
     onCancel(): void;
 }
@@ -118,26 +107,37 @@ function PlaylistTrackRemoveForm({
 }: PlaylistTrackRemoveFormProps) {
     const { dispatchToast } = useToasts();
 
-    const [isBusy, setBusy] = useState(false);
+    const [mutate, { loading, error }] = useMutation(
+        graphql(`
+            mutation PlaylistTrackRemove($id: String!, $playlistId: String!) {
+                DeletePlaylistTrack(id: $id, playlist: $playlistId) {
+                    message
+                }
+            }
+        `),
+        {
+            onCompleted: () => {
+                dispatchToast(
+                    `playlist-remove-track-${playlist.id}-${trackId}`,
+                    <PlaylistTrackRemoveToast playlist={playlist} entry={entry} />,
+                );
+
+                onSuccess();
+            },
+            refetchQueries: [
+                // Update the playlist page in case the user is editing from there
+                PLAYLIST_DETAIL_PAGE_PLAYLIST,
+            ],
+        },
+    );
 
     async function removeTrackFromPlaylist() {
-        setBusy(true);
-
-        try {
-            await axios.delete(`/playlist/${playlist.id}/track/${trackId}`);
-            await mutate((key) =>
-                [key].flat().some((key) => key === `/api/playlist/${playlist.id}` || key === "/api/me/playlist"),
-            );
-        } finally {
-            setBusy(false);
-        }
-
-        dispatchToast(
-            `playlist-remove-track-${playlist.id}-${trackId}`,
-            <PlaylistTrackRemoveToast playlist={playlist} entry={entry} />,
-        );
-
-        onSuccess();
+        await mutate({
+            variables: {
+                id: trackId,
+                playlistId: playlist.id,
+            },
+        });
     }
 
     return (
@@ -154,10 +154,16 @@ function PlaylistTrackRemoveForm({
                 <Button variant="silent" onClick={onCancel}>
                     Close
                 </Button>
-                <Button variant="warning" disabled={isBusy} onClick={removeTrackFromPlaylist}>
-                    <Busy isBusy={isBusy}>Remove from playlist</Busy>
+                <Button variant="warning" disabled={loading} onClick={removeTrackFromPlaylist}>
+                    <Busy isBusy={loading}>Remove from playlist</Busy>
                 </Button>
             </Row>
+            {error ? (
+                <Text color="text-warning">
+                    <strong>The theme could not be removed from the playlist: </strong>
+                    {error.message}
+                </Text>
+            ) : null}
         </Column>
     );
 }

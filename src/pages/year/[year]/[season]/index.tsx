@@ -71,6 +71,7 @@ const propsQuery = graphql(`
 `);
 
 export interface SeasonDetailPageProps extends SharedPageProps {
+    isYearOrSeasonPage: true;
     year: FragmentType<typeof fragments.year>;
     season: FragmentType<typeof fragments.season>;
     years: ResultOf<typeof propsQuery>["animeyears"];
@@ -128,6 +129,7 @@ export const getStaticProps: GetStaticProps<SeasonDetailPageProps, SeasonDetailP
     return {
         props: {
             ...getSharedPageProps(),
+            isYearOrSeasonPage: true,
             year: {
                 ...data.animeyear[0],
                 seasons: [...(data.animeyear[0].seasons ?? [])].sort(

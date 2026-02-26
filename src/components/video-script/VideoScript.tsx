@@ -1,11 +1,9 @@
 import { useState } from "react";
 import styled from "styled-components";
 
-import gql from "graphql-tag";
-
 import { Column } from "@/components/box/Flex";
 import { Text } from "@/components/text/Text";
-import type { VideoScriptVideoFragment } from "@/generated/graphql";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
 const StyledCodeBlock = styled.pre`
     overflow-x: auto;
@@ -18,11 +16,23 @@ const StyledCodeBlock = styled.pre`
     }
 `;
 
+const fragments = {
+    video: graphql(`
+        fragment VideoScriptVideo on Video {
+            videoscript {
+                link
+            }
+        }
+    `),
+};
+
 interface Props {
-    video: VideoScriptVideoFragment;
+    video: FragmentType<typeof fragments.video>;
 }
 
-export default function VideoScript({ video }: Props) {
+export default function VideoScript({ video: videoFragment }: Props) {
+    const video = getFragmentData(fragments.video, videoFragment);
+
     const [isLoading, setLoading] = useState(false);
     const [videoScript, setVideoScript] = useState<string>();
 
@@ -31,7 +41,7 @@ export default function VideoScript({ video }: Props) {
     const filter = [videoFilter, audioFilter].filter((f) => f).join(" ");
 
     async function downloadVideoScript() {
-        const url = video.script?.link;
+        const url = video.videoscript?.link;
 
         if (!url) {
             return;
@@ -88,7 +98,7 @@ export default function VideoScript({ video }: Props) {
                         </Column>
                     ) : null}
                 </>
-            ) : video.script ? (
+            ) : video.videoscript ? (
                 <Text variant="small" link color="text-disabled" onClick={downloadVideoScript}>
                     Click to download encoding script.
                 </Text>
@@ -100,13 +110,3 @@ export default function VideoScript({ video }: Props) {
         </>
     );
 }
-
-VideoScript.fragments = {
-    video: gql`
-        fragment VideoScriptVideo on Video {
-            script {
-                link
-            }
-        }
-    `,
-};

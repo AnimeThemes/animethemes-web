@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import type { GetStaticProps } from "next";
 import Link from "next/link";
 
 import { faArrowRight, faAward, faTrophy } from "@fortawesome/free-solid-svg-icons";
@@ -8,7 +9,6 @@ import { Button } from "@/components/button/Button";
 import { Icon } from "@/components/icon/Icon";
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
-import type { EventPageQuery } from "@/generated/graphql";
 import { getAvailableBrackets } from "@/lib/server/animebracket";
 import theme from "@/theme";
 import getSharedPageProps from "@/utils/getSharedPageProps";
@@ -38,14 +38,18 @@ const StyledEventName = styled(Text)`
     margin-right: auto;
 `;
 
-interface EventPageProps extends EventPageQuery {
-    awardAll: Array<{
+interface EventPageProps {
+    awards: Array<{
+        slug: string;
+        name: string;
+    }>;
+    brackets: Array<{
         slug: string;
         name: string;
     }>;
 }
 
-export default function EventPage({ awardAll, bracketAll }: EventPageProps) {
+export default function EventPage({ awards, brackets }: EventPageProps) {
     return (
         <>
             <SEO title="Events" description="Watch themes featured in awards and brackets." />
@@ -53,7 +57,7 @@ export default function EventPage({ awardAll, bracketAll }: EventPageProps) {
             <StyledEventList>
                 <Column style={{ "--gap": "16px" }}>
                     <Text variant="h2">Awards</Text>
-                    {awardAll.map(({ name, slug }) => (
+                    {awards.map(({ name, slug }) => (
                         <BigButton key={slug} asChild>
                             <Link href={`/event/${slug}`}>
                                 <BigIcon icon={faAward} />
@@ -65,7 +69,7 @@ export default function EventPage({ awardAll, bracketAll }: EventPageProps) {
                 </Column>
                 <Column style={{ "--gap": "16px" }}>
                     <Text variant="h2">Brackets</Text>
-                    {bracketAll.map(({ name, slug }) => (
+                    {brackets.map(({ name, slug }) => (
                         <BigButton key={slug} asChild>
                             <Link href={`/event/${slug}`}>
                                 <BigIcon icon={faTrophy} />
@@ -80,10 +84,10 @@ export default function EventPage({ awardAll, bracketAll }: EventPageProps) {
     );
 }
 
-export async function getStaticProps() {
-    const bracketAll = getAvailableBrackets();
+export const getStaticProps: GetStaticProps<EventPageProps> = async () => {
+    const brackets = getAvailableBrackets();
 
-    const awardAll = [
+    const awards = [
         {
             slug: "anime-awards",
             name: "/r/anime Awards",
@@ -93,8 +97,8 @@ export async function getStaticProps() {
     return {
         props: {
             ...getSharedPageProps(),
-            bracketAll,
-            awardAll,
+            brackets,
+            awards,
         },
     };
-}
+};

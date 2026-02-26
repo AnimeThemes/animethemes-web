@@ -1,10 +1,10 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 
+import { useMutation } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { faArrowDown, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import type { ResultOf } from "@graphql-typed-document-node/core";
-import gql from "graphql-tag";
-import useSWR, { mutate } from "swr";
 
 import { LoginGate } from "@/components/auth/LoginGate";
 import { Column, Row } from "@/components/box/Flex";
@@ -21,16 +21,9 @@ import { PlaylistTrackAddToast } from "@/components/toast/PlaylistTrackAddToast"
 import { PlaylistTrackRemoveToast } from "@/components/toast/PlaylistTrackRemoveToast";
 import { Busy } from "@/components/utils/Busy";
 import { useToasts } from "@/context/toastContext";
-import type {
-    PlaylistTrackAddDialogEntryFragment,
-    PlaylistTrackAddDialogVideoFragment,
-    PlaylistTrackAddFormPlaylistQuery,
-    PlaylistTrackAddFormPlaylistQueryVariables,
-} from "@/generated/graphql";
-import { client } from "@/graphql/client";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
-import { fetchDataClient } from "@/lib/client";
-import axios from "@/lib/client/axios";
+import { PLAYLIST_DETAIL_PAGE_PLAYLIST } from "@/pages/playlist/[playlistId]";
+import { PROFILE_PAGE } from "@/pages/profile";
 
 const fragments = {
     video: graphql(`
@@ -42,6 +35,7 @@ const fragments = {
     entry: graphql(`
         fragment PlaylistTrackAddDialogEntry on AnimeThemeEntry {
             ...VideoSummaryCardEntry
+            ...PlaylistTrackAddToastEntry
             ...PlaylistTrackRemoveToastEntry
             id
         }
@@ -54,9 +48,13 @@ interface PlaylistTrackAddDialogProps {
     trigger?: ReactNode;
 }
 
-export function PlaylistTrackAddDialog({ trigger, ...props }: PlaylistTrackAddDialogProps) {
-    const video = getFragmentData(fragments.video, props.video);
-    const entry = getFragmentData(fragments.entry, props.entry);
+export function PlaylistTrackAddDialog({
+    video: videoFragment,
+    entry: entryFragment,
+    trigger,
+}: PlaylistTrackAddDialogProps) {
+    const video = getFragmentData(fragments.video, videoFragment);
+    const entry = getFragmentData(fragments.entry, entryFragment);
     const [open, setOpen] = useState(false);
 
     return (
@@ -80,6 +78,20 @@ export function PlaylistTrackAddDialog({ trigger, ...props }: PlaylistTrackAddDi
     );
 }
 
+const PLAYLIST_TRACK_ADD_FORM_PLAYLIST = graphql(`
+    query PlaylistTrackAddFormPlaylist($entryId: Mixed!, $videoId: Mixed!) {
+        me {
+            playlists {
+                ...PlaylistTrackAddCardPlaylist
+                id
+                tracks(where: [{ field: ENTRY_ID, value: $entryId }, { field: VIDEO_ID, value: $videoId }]) {
+                    ...PlaylistTrackAddCardTrack
+                }
+            }
+        }
+    }
+`);
+
 interface PlaylistTrackAddFormProps {
     video: ResultOf<typeof fragments.video>;
     entry: ResultOf<typeof fragments.entry>;
@@ -87,36 +99,14 @@ interface PlaylistTrackAddFormProps {
 }
 
 function PlaylistTrackAddForm({ video, entry, onCancel }: PlaylistTrackAddFormProps) {
-    const { data: playlists } = useSWR(["PlaylistTrackAddFormPlaylist", "/api/me/playlist", video.id], async () => {
-        const { data } = await client.query(
-            graphql(`
-                query PlaylistTrackAddFormPlaylist {
-                    me {
-                        playlists {
-                            data {
-                                ...PlaylistSummaryCardPlaylist
-                                id
-                                tracksCount
-                            }
-                        }
-                    }
-                }
-            `),
-        );
-
-        const { playlistAll, playlistAllFiltered } = data.me;
-
-        return (
-            playlistAll?.map((playlist) => {
-                return {
-                    ...playlist,
-                    ...playlistAllFiltered?.find((p) => p.id === playlist.id),
-                };
-            }) ?? []
-        );
+    const { data } = useQuery(PLAYLIST_TRACK_ADD_FORM_PLAYLIST, {
+        variables: {
+            entryId: entry.id,
+            videoId: video.id,
+        },
     });
 
-    if (!playlists) {
+    if (!data) {
         return (
             <Column style={{ "--gap": "24px" }}>
                 <Skeleton variant="summary-card" />
@@ -127,6 +117,8 @@ function PlaylistTrackAddForm({ video, entry, onCancel }: PlaylistTrackAddFormPr
         );
     }
 
+    const playlists = data.me?.playlists ?? [];
+
     return (
         <Column style={{ "--gap": "24px" }}>
             <VideoSummaryCard video={video} entry={entry} menu={null} />
@@ -136,7 +128,13 @@ function PlaylistTrackAddForm({ video, entry, onCancel }: PlaylistTrackAddFormPr
             <Column style={{ "--gap": "16px" }}>
                 {playlists?.length ? (
                     playlists.map((playlist) => (
-                        <PlaylistTrackAddCard key={playlist.id} playlist={playlist} video={video} entry={entry} />
+                        <PlaylistTrackAddCard
+                            key={playlist.id}
+                            playlist={playlist}
+                            track={playlist.tracks[0] ?? null}
+                            video={video}
+                            entry={entry}
+                        />
                     ))
                 ) : (
                     <Text>You have not created a playlist, yet.</Text>
@@ -159,71 +157,143 @@ function PlaylistTrackAddForm({ video, entry, onCancel }: PlaylistTrackAddFormPr
     );
 }
 
+const PLAYLIST_TRACK_ADD_CARD_PLAYLIST = graphql(`
+    fragment PlaylistTrackAddCardPlaylist on Playlist {
+        ...PlaylistSummaryCardPlaylist
+        ...PlaylistTrackAddToastPlaylist
+        ...PlaylistTrackRemoveToastPlaylist
+        id
+    }
+`);
+
+const PLAYLIST_TRACK_ADD_CARD_TRACK = graphql(`
+    fragment PlaylistTrackAddCardTrack on PlaylistTrack {
+        id
+    }
+`);
+
 interface PlaylistTrackAddCardProps {
-    playlist: NonNullable<PlaylistTrackAddFormPlaylistQuery["me"]["playlistAll"]>[number] &
-        Partial<NonNullable<PlaylistTrackAddFormPlaylistQuery["me"]["playlistAllFiltered"]>[number]>;
-    video: PlaylistTrackAddDialogVideoFragment;
-    entry: PlaylistTrackAddDialogEntryFragment;
+    playlist: FragmentType<typeof PLAYLIST_TRACK_ADD_CARD_PLAYLIST>;
+    track: FragmentType<typeof PLAYLIST_TRACK_ADD_CARD_TRACK> | null;
+    video: ResultOf<typeof fragments.video>;
+    entry: ResultOf<typeof fragments.entry>;
 }
 
-function PlaylistTrackAddCard({ playlist, video, entry }: PlaylistTrackAddCardProps) {
+function PlaylistTrackAddCard({
+    playlist: playlistFragment,
+    track: trackFragment,
+    video,
+    entry,
+}: PlaylistTrackAddCardProps) {
+    const playlist = getFragmentData(PLAYLIST_TRACK_ADD_CARD_PLAYLIST, playlistFragment);
+    const track = getFragmentData(PLAYLIST_TRACK_ADD_CARD_TRACK, trackFragment);
+
     const { dispatchToast } = useToasts();
 
-    const [isBusy, setBusy] = useState(false);
+    const [mutateAddTrack, { loading: loadingAddTrack, error: errorAddTrack }] = useMutation(
+        graphql(`
+            mutation PlaylistTrackAdd($playlistId: String!, $entryId: Int!, $videoId: Int!) {
+                CreatePlaylistTrack(playlist: $playlistId, entryId: $entryId, videoId: $videoId) {
+                    id
+                }
+            }
+        `),
+        {
+            onCompleted: () => {
+                dispatchToast(
+                    `playlist-add-track-${playlist.id}-${video.id}`,
+                    <PlaylistTrackAddToast playlist={playlist} entry={entry} />,
+                );
+            },
+            refetchQueries: [
+                // Update the profile page because it includes a list of the user's playlists
+                PROFILE_PAGE,
+                // Update the list in the dialog above
+                PLAYLIST_TRACK_ADD_FORM_PLAYLIST,
+            ],
+        },
+    );
+
+    const [mutateRemoveTrack, { loading: loadingRemoveTrack, error: errorRemoveTrack }] = useMutation(
+        graphql(`
+            mutation PlaylistTrackRemove($id: String!, $playlistId: String!) {
+                DeletePlaylistTrack(id: $id, playlist: $playlistId) {
+                    message
+                }
+            }
+        `),
+        {
+            onCompleted: () => {
+                if (track === null) {
+                    return;
+                }
+
+                dispatchToast(
+                    `playlist-remove-track-${playlist.id}-${track.id}`,
+                    <PlaylistTrackRemoveToast playlist={playlist} entry={entry} />,
+                );
+            },
+            refetchQueries: [
+                // Update the profile page because it includes a list of the user's playlists
+                PROFILE_PAGE,
+                // Update the list in the dialog above
+                PLAYLIST_TRACK_ADD_FORM_PLAYLIST,
+                // Update the playlist page in case the user is editing from there
+                PLAYLIST_DETAIL_PAGE_PLAYLIST,
+            ],
+        },
+    );
+
+    const loading = loadingAddTrack || loadingRemoveTrack;
 
     async function addTrackToPlaylist() {
-        setBusy(true);
-
-        try {
-            await axios.post(`/playlist/${playlist.id}/track`, { video_id: video.id, entry_id: entry.id });
-            await mutate((key) =>
-                [key].flat().some((key) => key === `/api/playlist/${playlist.id}` || key === "/api/me/playlist"),
-            );
-        } finally {
-            setBusy(false);
-        }
-
-        dispatchToast(
-            `playlist-add-track-${playlist.id}-${video.id}`,
-            <PlaylistTrackAddToast playlist={playlist} entry={entry} />,
-        );
+        await mutateAddTrack({
+            variables: {
+                playlistId: playlist.id,
+                videoId: video.id,
+                entryId: entry.id,
+            },
+        });
     }
 
     async function removeTrackFromPlaylist() {
-        const track = playlist.tracks?.[0];
-
         if (!track) {
             return;
         }
 
-        setBusy(true);
-
-        try {
-            await axios.delete(`/playlist/${playlist.id}/track/${track.id}`);
-            await mutate((key) =>
-                [key].flat().some((key) => key === `/api/playlist/${playlist.id}` || key === "/api/me/playlist"),
-            );
-        } finally {
-            setBusy(false);
-        }
-
-        dispatchToast(
-            `playlist-remove-track-${playlist.id}-${track.id}`,
-            <PlaylistTrackRemoveToast playlist={playlist} entry={entry} />,
-        );
+        await mutateRemoveTrack({
+            variables: {
+                id: track.id,
+                playlistId: playlist.id,
+            },
+        });
     }
 
     return (
-        <PlaylistSummaryCard key={playlist.id} playlist={playlist}>
-            {!playlist.tracks?.length ? (
-                <IconTextButton icon={faPlus} disabled={isBusy} onClick={addTrackToPlaylist}>
-                    <Busy isBusy={isBusy}>Add</Busy>
-                </IconTextButton>
-            ) : (
-                <IconTextButton icon={faMinus} disabled={isBusy} onClick={removeTrackFromPlaylist}>
-                    <Busy isBusy={isBusy}>Remove</Busy>
-                </IconTextButton>
-            )}
-        </PlaylistSummaryCard>
+        <>
+            <PlaylistSummaryCard key={playlist.id} playlist={playlist}>
+                {track === null ? (
+                    <IconTextButton icon={faPlus} disabled={loading} onClick={addTrackToPlaylist}>
+                        <Busy isBusy={loading}>Add</Busy>
+                    </IconTextButton>
+                ) : (
+                    <IconTextButton icon={faMinus} disabled={loading} onClick={removeTrackFromPlaylist}>
+                        <Busy isBusy={loading}>Remove</Busy>
+                    </IconTextButton>
+                )}
+            </PlaylistSummaryCard>
+            {errorAddTrack ? (
+                <Text color="text-warning">
+                    <strong>The theme could not be added to the playlist: </strong>
+                    {errorAddTrack.message}
+                </Text>
+            ) : null}
+            {errorRemoveTrack ? (
+                <Text color="text-warning">
+                    <strong>The theme could not be removed from the playlist: </strong>
+                    {errorRemoveTrack.message}
+                </Text>
+            ) : null}
+        </>
     );
 }

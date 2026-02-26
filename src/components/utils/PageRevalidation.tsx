@@ -6,10 +6,9 @@ import useAuth from "@/hooks/useAuth";
 
 interface PageRevalidationProps {
     lastBuildAt: number;
-    apiRequests: number;
 }
 
-export function PageRevalidation({ lastBuildAt, apiRequests, ...props }: PageRevalidationProps) {
+export function PageRevalidation({ lastBuildAt, ...props }: PageRevalidationProps) {
     const router = useRouter();
     const { me } = useAuth();
     const canRevalidate = useMemo(() => {
@@ -61,10 +60,6 @@ export function PageRevalidation({ lastBuildAt, apiRequests, ...props }: PageRev
         </span>
     );
 
-    const apiRequestsDescription = apiRequests
-        ? ` using ${apiRequests} API request${apiRequests === 1 ? "" : "s"}`
-        : "";
-
     const rebuildDescription = isRevalidating
         ? "Rebuild in progress... The page will automatically reload after it's finished."
         : "Click to start a rebuild.";
@@ -72,7 +67,7 @@ export function PageRevalidation({ lastBuildAt, apiRequests, ...props }: PageRev
     if (canRevalidate) {
         return (
             <Text variant="small" color="text-disabled" link={!isRevalidating} onClick={revalidate} {...props}>
-                Page was last updated {lastBuildDescription} ago{apiRequestsDescription}. {rebuildDescription}
+                Page was last updated {lastBuildDescription} ago. {rebuildDescription}
             </Text>
         );
     }
