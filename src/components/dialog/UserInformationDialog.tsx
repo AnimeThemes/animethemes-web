@@ -2,9 +2,6 @@ import { useState } from "react";
 import type { SyntheticEvent } from "react";
 import styled from "styled-components";
 
-import { isAxiosError } from "axios";
-import { mutate } from "swr";
-
 import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
@@ -15,8 +12,6 @@ import { Toast } from "@/components/toast/Toast";
 import { Busy } from "@/components/utils/Busy";
 import { useToasts } from "@/context/toastContext";
 import useAuth from "@/hooks/useAuth";
-import axios from "@/lib/client/axios";
-import { AUTH_PATH } from "@/utils/config";
 
 export function UserInformationDialog() {
     const [open, setOpen] = useState(false);
@@ -46,11 +41,11 @@ interface UserInformationFormProps {
 }
 
 function UserInformationForm({ onSuccess, onCancel }: UserInformationFormProps) {
-    const { me } = useAuth();
+    const { me, updateUserInformation } = useAuth();
     const { dispatchToast } = useToasts();
 
-    const [username, setUsername] = useState(me.user?.name ?? "");
-    const [email, setEmail] = useState(me.user?.email ?? "");
+    const [username, setUsername] = useState(me?.name ?? "");
+    const [email, setEmail] = useState(me?.email ?? "");
 
     const isValid = username && email;
 
@@ -67,21 +62,11 @@ function UserInformationForm({ onSuccess, onCancel }: UserInformationFormProps) 
         setErrors({});
 
         try {
-            await axios.put(`${AUTH_PATH}/user/profile-information`, {
-                name: username,
-                email: email,
-            });
-            await mutate((key) => [key].flat().some((key) => key === "/api/me"));
+            await updateUserInformation({ setErrors, name: username, email });
 
             dispatchToast("email-change", <Toast>User information changed successfully.</Toast>);
 
             onSuccess();
-        } catch (error) {
-            if (!isAxiosError(error) || !error.response || error.response.status !== 422) {
-                throw error;
-            }
-
-            setErrors(error.response.data.errors);
         } finally {
             setBusy(false);
         }

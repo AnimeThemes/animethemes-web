@@ -1,10 +1,11 @@
 import { useCallback } from "react";
 
+import type { ResultOf } from "@graphql-typed-document-node/core";
 import useLocalStorageState from "use-local-storage-state";
 
-import type { ThemeSummaryCardThemeFragment } from "@/generated/graphql";
+import type { THEME_SUMMARY_CARD_THEME } from "@/components/card/ThemeSummaryCard";
 
-interface WatchHistoryTheme extends ThemeSummaryCardThemeFragment {
+interface WatchHistoryTheme extends ResultOf<typeof THEME_SUMMARY_CARD_THEME> {
     id: number;
 }
 

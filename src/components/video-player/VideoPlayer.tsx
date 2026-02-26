@@ -2,6 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import type { PointerEvent, ReactNode, RefObject, SyntheticEvent } from "react";
 import { useRouter } from "next/router";
 
+import type { ResultOf } from "@graphql-typed-document-node/core";
+
 import {
     StyledAside,
     StyledAudio,
@@ -17,7 +19,7 @@ import {
 import { VideoPlayerBar } from "@/components/video-player/VideoPlayerBar";
 import FullscreenContext from "@/context/fullscreenContext";
 import PlayerContext, { type WatchListItem } from "@/context/playerContext";
-import type { VideoSummaryCardEntryFragment, VideoSummaryCardVideoFragment } from "@/generated/graphql";
+import { getFragmentData, graphql } from "@/graphql/generated";
 import useMouseRelax from "@/hooks/useMouseRelax";
 import useSetting from "@/hooks/useSetting";
 import useWatchHistory from "@/hooks/useWatchHistory";
@@ -26,9 +28,39 @@ import createVideoSlug from "@/utils/createVideoSlug";
 import extractImages from "@/utils/extractImages";
 import { AudioMode, GlobalVolume, Muted } from "@/utils/settings";
 
+const fragments = {
+    video: graphql(`
+        fragment VideoPlayerVideo on Video {
+            ...VideoPlayerBarVideo
+            ...createVideoSlugVideo
+            basename
+            audio {
+                basename
+            }
+        }
+    `),
+    entry: graphql(`
+        fragment VideoPlayerEntry on AnimeThemeEntry {
+            ...VideoPlayerBarEntry
+            ...createVideoSlugEntry
+            animetheme {
+                ...createVideoSlugTheme
+                anime {
+                    slug
+                    images {
+                        nodes {
+                            ...extractImagesImage
+                        }
+                    }
+                }
+            }
+        }
+    `),
+};
+
 interface VideoPlayerContextValue {
-    video: VideoSummaryCardVideoFragment;
-    entry: VideoSummaryCardEntryFragment;
+    video: ResultOf<typeof fragments.video>;
+    entry: ResultOf<typeof fragments.entry>;
     background: boolean;
     videoPagePath: string;
     playerRef: RefObject<HTMLVideoElement | HTMLAudioElement | null>;
@@ -56,14 +88,16 @@ type VideoPlayerProps = {
 };
 
 export function VideoPlayer({ watchListItem, background, children, overlay, ...props }: VideoPlayerProps) {
-    const { video, entry } = watchListItem;
-    const theme = entry.theme;
+    const { video: videoFragment, entry: entryFragment } = watchListItem;
+    const video = getFragmentData(fragments.video, videoFragment);
+    const entry = getFragmentData(fragments.entry, entryFragment);
+    const theme = entry.animetheme;
     const anime = theme.anime;
 
     const videoPagePath = `/anime/${anime.slug}/${createVideoSlug(theme, entry, video)}`;
 
     const videoUrl = `${VIDEO_URL}/${video.basename}`;
-    const audioUrl = `${AUDIO_URL}/${video.audio.basename}`;
+    const audioUrl = video.audio ? `${AUDIO_URL}/${video.audio.basename}` : null;
 
     const [isPlaying, setPlaying] = useState(false);
     const [aspectRatio, setAspectRatio] = useState(16 / 9);
@@ -89,7 +123,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     const router = useRouter();
     const [globalVolume, setGlobalVolume] = useSetting(GlobalVolume);
     const [muted, setMuted] = useSetting(Muted);
-    const { smallCover, largeCover } = extractImages(anime);
+    const { smallCover, largeCover } = extractImages(anime.images.nodes);
     const [audioMode, setAudioMode] = useSetting(AudioMode, { storageSync: false });
     const { addToHistory } = useWatchHistory();
 
@@ -97,9 +131,9 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     const playbackAreaMouseRelaxProps = useMouseRelax();
 
     const previousWatchListItem = getRelativeWatchListItem(-1);
-    const previousVideo = previousWatchListItem?.video;
-    const previousEntry = previousWatchListItem?.entry;
-    const previousTheme = previousEntry?.theme;
+    const previousVideo = getFragmentData(fragments.video, previousWatchListItem?.video);
+    const previousEntry = getFragmentData(fragments.entry, previousWatchListItem?.entry);
+    const previousTheme = previousEntry?.animetheme;
     const previousAnime = previousTheme?.anime;
 
     const previousVideoPath =
@@ -120,9 +154,9 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     );
 
     const nextWatchListItem = getRelativeWatchListItem(1);
-    const nextVideo = nextWatchListItem?.video;
-    const nextEntry = nextWatchListItem?.entry;
-    const nextTheme = nextEntry?.theme;
+    const nextVideo = getFragmentData(fragments.video, nextWatchListItem?.video);
+    const nextEntry = getFragmentData(fragments.entry, nextWatchListItem?.entry);
+    const nextTheme = nextEntry?.animetheme;
     const nextAnime = nextTheme?.anime;
 
     const nextVideoPath =

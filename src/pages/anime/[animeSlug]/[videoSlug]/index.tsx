@@ -2,7 +2,6 @@ import { useContext, useEffect, useRef, useState } from "react";
 import type { GetStaticPaths, GetStaticProps } from "next";
 
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
-import gql from "graphql-tag";
 
 import { Column, Row } from "@/components/box/Flex";
 import { IconTextButton } from "@/components/button/IconTextButton";
@@ -22,8 +21,8 @@ import { PageRevalidation } from "@/components/utils/PageRevalidation";
 import { StyledScrollArea, StyledSwitcher } from "@/components/video-player/VideoPlayer.style";
 import VideoScript from "@/components/video-script/VideoScript";
 import PlayerContext from "@/context/playerContext";
-import type { VideoPageAllQuery, VideoPageQuery, VideoPageQueryVariables } from "@/generated/graphql";
-import { fetchData } from "@/lib/server";
+import createApolloClient from "@/graphql/createApolloClient";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import styleTheme from "@/theme";
 import { VIDEO_URL } from "@/utils/config";
 import createVideoSlug from "@/utils/createVideoSlug";
@@ -31,9 +30,135 @@ import extractImages from "@/utils/extractImages";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
-import type { RequiredNonNullable } from "@/utils/types";
 
-export interface VideoPageProps extends SharedPageProps, RequiredNonNullable<VideoPageQuery> {
+const fragments = {
+    anime: graphql(`
+        fragment VideoPageAnime on Anime {
+            ...AnimeSummaryCardAnime
+            name
+            slug
+            year
+            season
+            animethemes {
+                ...ThemeSummaryCardTheme
+                ...createVideoSlugTheme
+                id
+                type
+                sequence
+                song {
+                    title
+                    performances {
+                        artist {
+                            ...ArtistSummaryCardArtist
+                        }
+                        as
+                    }
+                }
+                group {
+                    slug
+                }
+                animethemeentries {
+                    ...VideoPlayerEntry
+                    ...createVideoSlugEntry
+                    id
+                    episodes
+                    nsfw
+                    spoiler
+                    version
+                    videos {
+                        nodes {
+                            ...VideoPlayerVideo
+                            ...VideoScriptVideo
+                            ...createVideoSlugVideo
+                            id
+                            basename
+                            filename
+                            lyrics
+                            nc
+                            overlap
+                            resolution
+                            source
+                            subbed
+                            uncen
+                            tags
+                            animethemeentries {
+                                nodes {
+                                    animetheme {
+                                        ...ThemeSummaryCardTheme
+                                        anime {
+                                            slug
+                                        }
+                                    }
+                                }
+                            }
+                            tracks {
+                                playlist {
+                                    ...PlaylistSummaryCardPlaylist
+                                    ...PlaylistSummaryCardPlaylistWithOwner
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            images {
+                nodes {
+                    ...extractImagesImage
+                }
+            }
+            series {
+                nodes {
+                    slug
+                    name
+                }
+            }
+            studios {
+                nodes {
+                    ...StudioSummaryCardStudio
+                    slug
+                }
+            }
+        }
+    `),
+};
+
+const propsQuery = graphql(`
+    query VideoPage($animeSlug: String!) {
+        anime(slug: $animeSlug) {
+            ...VideoPageAnime
+        }
+    }
+`);
+
+const pathsQuery = graphql(`
+    query VideoPageAll {
+        animePagination {
+            data {
+                ...VideoPageAnime
+                slug
+                animethemes {
+                    ...createVideoSlugTheme
+                    animethemeentries {
+                        ...createVideoSlugEntry
+                        videos {
+                            nodes {
+                                ...createVideoSlugVideo
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+`);
+
+export function getAnimeFromVideoPageFragment(fragment: FragmentType<typeof fragments.anime>) {
+    return getFragmentData(fragments.anime, fragment);
+}
+
+export interface VideoPageProps extends SharedPageProps {
+    anime: FragmentType<typeof fragments.anime>;
     themeIndex: number;
     entryIndex: number;
     videoIndex: number;
@@ -46,20 +171,20 @@ type VideoPageParams = {
 };
 
 export default function VideoPage({
-    anime,
+    anime: animeFragment,
     themeIndex,
     entryIndex,
     videoIndex,
     lastBuildAt,
-    apiRequests,
 }: VideoPageProps) {
-    const theme = anime.themes[themeIndex];
-    const entry = theme.entries[entryIndex];
-    const video = entry.videos[videoIndex];
+    const anime = getAnimeFromVideoPageFragment(animeFragment);
+    const theme = anime.animethemes[themeIndex];
+    const entry = theme.animethemeentries[entryIndex];
+    const video = entry.videos.nodes[videoIndex];
 
     const songTitle = theme.song?.title || "T.B.A.";
 
-    const { largeCover } = extractImages(anime);
+    const { largeCover } = extractImages(anime.images.nodes);
     const {
         watchList,
         currentWatchListItem,
@@ -78,13 +203,13 @@ export default function VideoPage({
     const [showMoreRelatedThemes, setShowMoreRelatedThemes] = useState(false);
     const [showMoreRelatedPlaylists, setShowMoreRelatedPlaylists] = useState(false);
 
-    const relatedThemes = anime.themes
+    const relatedThemes = anime.animethemes
         .filter((relatedTheme) => relatedTheme.id !== theme.id)
         .slice(0, showMoreRelatedThemes ? undefined : 3);
     const relatedPlaylists = video.tracks.map((track) => track.playlist);
 
-    const usedAlsoAs = video.entries
-        .map((entry) => entry.theme)
+    const usedAlsoAs = video.animethemeentries.nodes
+        .map((entry) => entry.animetheme)
         .filter((otherTheme) => otherTheme?.anime && otherTheme.anime.slug !== anime.slug);
 
     const pageTitle = entry.version
@@ -227,7 +352,7 @@ export default function VideoPage({
                     <Column style={{ "--gap": "16px" }}>
                         <Text variant="h2">Origin</Text>
                         <AnimeSummaryCard anime={anime} />
-                        {anime.series.map((series) => (
+                        {anime.series.nodes.map((series) => (
                             <SummaryCard
                                 key={series.slug}
                                 title={series.name}
@@ -235,7 +360,7 @@ export default function VideoPage({
                                 to={`/series/${series.slug}`}
                             />
                         ))}
-                        {anime.studios.map((studio) => (
+                        {anime.studios.nodes.map((studio) => (
                             <StudioSummaryCard key={studio.slug} studio={studio} />
                         ))}
                         {!!theme.song?.performances?.length && (
@@ -252,7 +377,7 @@ export default function VideoPage({
                                     ))}
                             </>
                         )}
-                        {lastBuildAt && <PageRevalidation lastBuildAt={lastBuildAt} apiRequests={apiRequests} />}
+                        {lastBuildAt && <PageRevalidation lastBuildAt={lastBuildAt} />}
                         <VideoScript key={video.id} video={video} />
                     </Column>
                 </StyledScrollArea>
@@ -266,7 +391,7 @@ export default function VideoPage({
                                 {relatedThemes.map((theme) => (
                                     <ThemeSummaryCard key={theme.id} theme={{ ...theme, anime }} />
                                 ))}
-                                {anime.themes.length > 4 ? (
+                                {anime.animethemes.length > 4 ? (
                                     <Row style={{ "--justify-content": "center" }}>
                                         <IconTextButton
                                             icon={showMoreRelatedThemes ? faChevronUp : faChevronDown}
@@ -290,7 +415,11 @@ export default function VideoPage({
                             <>
                                 <Text variant="h2">Part of these Playlists</Text>
                                 {relatedPlaylists.slice(0, showMoreRelatedPlaylists ? undefined : 3).map((playlist) => (
-                                    <PlaylistSummaryCard key={playlist.id} playlist={playlist} playlistWithOwner />
+                                    <PlaylistSummaryCard
+                                        key={playlist.id}
+                                        playlist={playlist}
+                                        playlistWithOwner={playlist}
+                                    />
                                 ))}
                                 {relatedPlaylists.length > 3 ? (
                                     <Row style={{ "--justify-content": "center" }}>
@@ -311,114 +440,39 @@ export default function VideoPage({
     );
 }
 
-VideoPage.fragments = {
-    anime: gql`
-        ${AnimeSummaryCard.fragments.anime}
-        ${ThemeSummaryCard.fragments.theme}
-        ${ArtistSummaryCard.fragments.artist}
-        ${VideoScript.fragments.video}
-        ${PlaylistSummaryCard.fragments.playlist}
-        ${PlaylistSummaryCard.fragments.showOwner}
-        ${StudioSummaryCard.fragments.studio}
-
-        fragment VideoPageAnime on Anime {
-            ...AnimeSummaryCardAnime
-            name
-            slug
-            year
-            season
-            themes {
-                ...ThemeSummaryCardTheme
-                id
-                song {
-                    title
-                    performances {
-                        artist {
-                            ...ArtistSummaryCardArtist
-                        }
-                        as
-                    }
-                }
-                entries {
-                    id
-                    episodes
-                    nsfw
-                    spoiler
-                    version
-                    videos {
-                        ...VideoScriptVideo
-                        id
-                        basename
-                        filename
-                        lyrics
-                        nc
-                        overlap
-                        resolution
-                        source
-                        subbed
-                        uncen
-                        tags
-                        entries {
-                            theme {
-                                ...ThemeSummaryCardTheme
-                            }
-                        }
-                        tracks {
-                            playlist {
-                                ...PlaylistSummaryCardPlaylist
-                                ...PlaylistSummaryCardPlaylistWithOwner
-                            }
-                        }
-                    }
-                }
-            }
-            images {
-                facet
-                link
-            }
-            series {
-                slug
-                name
-            }
-            studios {
-                ...StudioSummaryCardStudio
-            }
-        }
-    `,
-};
-
-const buildTimeCache: Map<string, VideoPageQuery> = new Map();
+const buildTimeCache: Map<string, FragmentType<typeof fragments.anime>> = new Map();
 
 export const getStaticProps: GetStaticProps<VideoPageProps, VideoPageParams> = async ({ params }) => {
-    let data = params ? buildTimeCache.get(params.animeSlug) : null;
-    let apiRequests = 0;
+    const client = createApolloClient();
 
-    if (!data) {
-        ({ data, apiRequests } = await fetchData<VideoPageQuery, VideoPageQueryVariables>(
-            gql`
-                ${VideoPage.fragments.anime}
+    let animeFragment = params ? buildTimeCache.get(params.animeSlug) : null;
 
-                query VideoPage($animeSlug: String!) {
-                    anime(slug: $animeSlug) {
-                        ...VideoPageAnime
-                    }
-                }
-            `,
-            params && { animeSlug: params.animeSlug },
-        ));
+    if (!animeFragment) {
+        animeFragment = (
+            await client.query({
+                query: propsQuery,
+                variables: params,
+            })
+        ).data.anime;
     }
 
-    const anime = data.anime;
+    if (!animeFragment) {
+        return {
+            notFound: true,
+        };
+    }
+
+    const anime = getFragmentData(fragments.anime, animeFragment);
 
     if (anime) {
-        for (const [themeIndex, theme] of anime.themes.entries()) {
-            for (const [entryIndex, entry] of theme.entries.entries()) {
-                for (const [videoIndex, video] of entry.videos.entries()) {
+        for (const [themeIndex, theme] of anime.animethemes.entries()) {
+            for (const [entryIndex, entry] of theme.animethemeentries.entries()) {
+                for (const [videoIndex, video] of entry.videos.nodes.entries()) {
                     if (createVideoSlug(theme, entry, video) === params?.videoSlug) {
                         return {
                             props: {
-                                ...getSharedPageProps(apiRequests),
-                                anime,
+                                ...getSharedPageProps(),
+                                anime: animeFragment,
                                 themeIndex,
                                 entryIndex,
                                 videoIndex,
@@ -440,22 +494,24 @@ export const getStaticProps: GetStaticProps<VideoPageProps, VideoPageParams> = a
 
 export const getStaticPaths: GetStaticPaths<VideoPageParams> = () => {
     return fetchStaticPaths(async () => {
-        const { data } = await fetchData<VideoPageAllQuery>(gql`
-            ${VideoPage.fragments.anime}
+        const client = createApolloClient();
 
-            query VideoPageAll {
-                animeAll {
-                    ...VideoPageAnime
-                }
-            }
-        `);
+        const { data } = await client.query({
+            query: pathsQuery,
+        });
 
-        data.animeAll.forEach((anime) => buildTimeCache.set(anime.slug, { anime }));
+        for (const anime of data.animePagination.data) {
+            buildTimeCache.set(anime.slug, anime);
+        }
 
-        return data.animeAll.flatMap((anime) =>
-            anime.themes.flatMap((theme) =>
-                theme.entries.flatMap((entry) =>
-                    entry.videos.flatMap((video) => ({
+        for (const anime of data.animePagination.data) {
+            buildTimeCache.set(anime.slug, anime);
+        }
+
+        return data.animePagination.data.flatMap((anime) =>
+            anime.animethemes.flatMap((theme) =>
+                theme.animethemeentries.flatMap((entry) =>
+                    entry.videos.nodes.flatMap((video) => ({
                         params: {
                             animeSlug: anime.slug,
                             videoSlug: createVideoSlug(theme, entry, video),

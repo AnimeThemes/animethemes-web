@@ -1,8 +1,9 @@
 import { useContext } from "react";
 
-import { faArrowTurnDown, faArrowTurnUp, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
+import { faArrowTurnDown, faArrowTurnUp, faEllipsisVertical, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import { Button } from "@/components/button/Button";
+import { PlaylistTrackAddDialog } from "@/components/dialog/PlaylistTrackAddDialog";
 import { Icon } from "@/components/icon/Icon";
 import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@/components/menu/Menu";
 import { Text } from "@/components/text/Text";
@@ -13,6 +14,7 @@ const fragments = {
     entry: graphql(`
         fragment VideoMenuEntry on AnimeThemeEntry {
             ...createVideoSlugEntry
+            ...PlaylistTrackAddDialogEntry
             id
             animetheme {
                 ...createVideoSlugTheme
@@ -41,6 +43,7 @@ const fragments = {
     video: graphql(`
         fragment VideoMenuVideo on Video {
             ...createVideoSlugVideo
+            ...PlaylistTrackAddDialogVideo
             id
             basename
             audio {
@@ -69,16 +72,16 @@ export function VideoMenu({ entry: entryFragment, video: videoFragment }: VideoM
                 </Button>
             </MenuTrigger>
             <MenuContent>
-                {/*<PlaylistTrackAddDialog*/}
-                {/*    video={video}*/}
-                {/*    entry={entry}*/}
-                {/*    trigger={*/}
-                {/*        <MenuItem onSelect={(event) => event.preventDefault()}>*/}
-                {/*            <Icon icon={faPlus} />*/}
-                {/*            <Text>Add to Playlist</Text>*/}
-                {/*        </MenuItem>*/}
-                {/*    }*/}
-                {/*/>*/}
+                <PlaylistTrackAddDialog
+                    video={video}
+                    entry={entry}
+                    trigger={
+                        <MenuItem onSelect={(event) => event.preventDefault()}>
+                            <Icon icon={faPlus} />
+                            <Text>Add to Playlist</Text>
+                        </MenuItem>
+                    }
+                />
                 {watchList.length ? (
                     <>
                         <MenuSeparator />

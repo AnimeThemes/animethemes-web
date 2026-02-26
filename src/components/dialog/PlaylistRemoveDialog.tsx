@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 
+import { useMutation } from "@apollo/client";
 import { faMinus } from "@fortawesome/free-solid-svg-icons";
-import gql from "graphql-tag";
-import { mutate } from "swr";
+import type { ResultOf } from "@graphql-typed-document-node/core";
 
 import { LoginGate } from "@/components/auth/LoginGate";
 import { Column, Row } from "@/components/box/Flex";
@@ -15,15 +15,28 @@ import { Text } from "@/components/text/Text";
 import { PlaylistRemoveToast } from "@/components/toast/PlaylistRemoveToast";
 import { Busy } from "@/components/utils/Busy";
 import { useToasts } from "@/context/toastContext";
-import type { PlaylistRemoveDialogPlaylistFragment } from "@/generated/graphql";
-import axios from "@/lib/client/axios";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
+import { PROFILE_PAGE } from "@/pages/profile";
+
+const fragments = {
+    playlist: graphql(`
+        fragment PlaylistRemoveDialogPlaylist on Playlist {
+            ...PlaylistSummaryCardPlaylist
+            ...PlaylistRemoveToastPlaylist
+            id
+            name
+        }
+    `),
+};
 
 interface PlaylistRemoveDialogProps {
-    playlist: PlaylistRemoveDialogPlaylistFragment;
+    playlist: FragmentType<typeof fragments.playlist>;
     trigger?: ReactNode;
 }
 
-export function PlaylistRemoveDialog({ playlist, trigger }: PlaylistRemoveDialogProps) {
+export function PlaylistRemoveDialog({ playlist: playlistFragment, trigger }: PlaylistRemoveDialogProps) {
+    const playlist = getFragmentData(fragments.playlist, playlistFragment);
+
     const [open, setOpen] = useState(false);
 
     return (
@@ -51,22 +64,8 @@ export function PlaylistRemoveDialog({ playlist, trigger }: PlaylistRemoveDialog
     );
 }
 
-PlaylistRemoveDialog.fragments = {
-    playlist: gql`
-        ${PlaylistSummaryCard.fragments.playlist}
-        ${PlaylistRemoveToast.fragments.playlist}
-
-        fragment PlaylistRemoveDialogPlaylist on Playlist {
-            ...PlaylistSummaryCardPlaylist
-            ...PlaylistRemoveToastPlaylist
-            id
-            name
-        }
-    `,
-};
-
 interface PlaylistRemoveFormProps {
-    playlist: PlaylistRemoveDialogPlaylistFragment;
+    playlist: ResultOf<typeof fragments.playlist>;
     onSuccess(): void;
     onCancel(): void;
 }
@@ -74,21 +73,33 @@ interface PlaylistRemoveFormProps {
 function PlaylistRemoveForm({ playlist, onSuccess, onCancel }: PlaylistRemoveFormProps) {
     const { dispatchToast } = useToasts();
 
-    const [isBusy, setBusy] = useState(false);
+    const [mutate, { loading, error }] = useMutation(
+        graphql(`
+            mutation PlaylistRemove($id: String!) {
+                DeletePlaylist(id: $id) {
+                    message
+                }
+            }
+        `),
+        {
+            onCompleted: () => {
+                dispatchToast(`playlist-remove-${playlist.id}`, <PlaylistRemoveToast playlist={playlist} />);
+
+                onSuccess();
+            },
+            refetchQueries: [
+                // Update the profile page because it includes a list of the user's playlists
+                PROFILE_PAGE,
+            ],
+        },
+    );
 
     async function removePlaylist() {
-        setBusy(true);
-
-        try {
-            await axios.delete(`/playlist/${playlist.id}`);
-            await mutate((key) => [key].flat().includes("/api/me/playlist"));
-        } finally {
-            setBusy(false);
-        }
-
-        dispatchToast(`playlist-remove-${playlist.id}`, <PlaylistRemoveToast playlist={playlist} />);
-
-        onSuccess();
+        await mutate({
+            variables: {
+                id: playlist.id,
+            },
+        });
     }
 
     return (
@@ -105,10 +116,16 @@ function PlaylistRemoveForm({ playlist, onSuccess, onCancel }: PlaylistRemoveFor
                 <Button variant="silent" onClick={onCancel}>
                     Close
                 </Button>
-                <Button variant="warning" disabled={isBusy} onClick={removePlaylist}>
-                    <Busy isBusy={isBusy}>Delete playlist</Busy>
+                <Button variant="warning" disabled={loading} onClick={removePlaylist}>
+                    <Busy isBusy={loading}>Delete playlist</Busy>
                 </Button>
             </Row>
+            {error ? (
+                <Text color="text-warning">
+                    <strong>The playlist could not be removed: </strong>
+                    {error.message}
+                </Text>
+            ) : null}
         </Column>
     );
 }

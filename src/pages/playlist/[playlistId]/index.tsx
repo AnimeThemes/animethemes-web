@@ -3,6 +3,7 @@ import styled from "styled-components";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 
+import { useQuery } from "@apollo/client/react";
 import {
     faArrowTurnDown,
     faArrowTurnUp,
@@ -12,6 +13,7 @@ import {
     faPen,
     faPlus,
     faShuffle,
+    faTrash,
     faTrophy,
     faXmark,
 } from "@fortawesome/free-solid-svg-icons";
@@ -20,7 +22,6 @@ import { isAxiosError } from "axios";
 import { shuffle } from "lodash-es";
 import { Reorder, useDragControls } from "motion/react";
 import type { ParsedUrlQuery } from "querystring";
-import useSWR, { mutate } from "swr";
 
 import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
@@ -31,6 +32,8 @@ import { VideoSummaryCard } from "@/components/card/VideoSummaryCard";
 import { SidebarContainer } from "@/components/container/SidebarContainer";
 import { DescriptionList } from "@/components/description-list/DescriptionList";
 import { PlaylistEditDialog } from "@/components/dialog/PlaylistEditDialog";
+import { PlaylistTrackAddDialog } from "@/components/dialog/PlaylistTrackAddDialog";
+import { PlaylistTrackRemoveDialog } from "@/components/dialog/PlaylistTrackRemoveDialog";
 import { FeaturedTheme } from "@/components/featured-theme/FeaturedTheme";
 import { TextArea } from "@/components/form/TextArea";
 import { Icon } from "@/components/icon/Icon";
@@ -44,7 +47,6 @@ import { Busy } from "@/components/utils/Busy";
 import { Collapse } from "@/components/utils/Collapse";
 import { HeightTransition } from "@/components/utils/HeightTransition";
 import PlayerContext, { createWatchListItem } from "@/context/playerContext";
-import { client } from "@/graphql/client";
 import createApolloClient from "@/graphql/createApolloClient";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useToggle from "@/hooks/useToggle";
@@ -165,7 +167,7 @@ const fragments = {
     playlist: graphql(`
         fragment PlaylistDetailPagePlaylist on Playlist {
             ...PlaylistEditDialogPlaylist
-            #            ...PlaylistTrackRemoveDialogPlaylist
+            ...PlaylistTrackRemoveDialogPlaylist
             id
             name
             description
@@ -182,11 +184,15 @@ const fragments = {
             video {
                 ...VideoSummaryCardVideo
                 ...FeaturedThemeVideo
+                ...PlaylistTrackAddDialogVideo
+                ...PlaylistTrackRemoveDialogVideo
                 id
             }
             animethemeentry {
                 ...VideoSummaryCardEntry
                 ...FeaturedThemeEntry
+                ...PlaylistTrackAddDialogEntry
+                ...PlaylistTrackRemoveDialogEntry
                 animetheme {
                     anime {
                         name
@@ -212,6 +218,31 @@ const fragments = {
     `),
 };
 
+export const PLAYLIST_DETAIL_PAGE_PLAYLIST = graphql(`
+    query PlaylistDetailPagePlaylist($playlistId: String!) {
+        playlist(id: $playlistId) {
+            ...PlaylistDetailPagePlaylist
+            tracks {
+                ...PlaylistDetailPageTrack
+                id
+                previous {
+                    id
+                }
+                next {
+                    id
+                }
+            }
+        }
+    }
+`);
+const meQuery = graphql(`
+    query PlaylistDetailPageMe {
+        me {
+            ...PlaylistDetailPageMe
+        }
+    }
+`);
+
 interface PlaylistDetailPageProps extends SharedPageProps {
     playlist: FragmentType<typeof fragments.playlist>;
     tracks: Array<FragmentType<typeof fragments.track>>;
@@ -228,67 +259,23 @@ export default function PlaylistDetailPage({
     me: meFragment,
 }: PlaylistDetailPageProps) {
     const initialPlaylist = getFragmentData(fragments.playlist, playlistFragment);
-    const initialTracks = getFragmentData(fragments.track, tracksFragment);
-    const initialMe = getFragmentData(fragments.me, meFragment);
 
     const { setWatchList, setWatchListFactory, setCurrentWatchListItem } = useContext(PlayerContext);
     const router = useRouter();
 
-    const { data, mutate } = useSWR(
-        ["PlaylistDetailPagePlaylist", `/api/playlist/${initialPlaylist.id}`],
-        async () => {
-            const { data } = await client.query({
-                query: graphql(`
-                    query PlaylistDetailPagePlaylist($playlistId: String!) {
-                        playlist(id: $playlistId) {
-                            ...PlaylistDetailPagePlaylist
-                            tracks {
-                                ...PlaylistDetailPageTrack
-                                id
-                                previous {
-                                    id
-                                }
-                                next {
-                                    id
-                                }
-                            }
-                        }
-                    }
-                `),
-                variables: { playlistId: initialPlaylist.id },
-            });
+    const { data: playlistData, refetch } = useQuery(PLAYLIST_DETAIL_PAGE_PLAYLIST, {
+        variables: { playlistId: initialPlaylist.id },
+    });
+    const { data: meData } = useQuery(meQuery);
 
-            if (!data.playlist) {
-                location.reload();
-                throw new Error("Playlist was removed or user lost auth.");
-            }
+    const playlist = getFragmentData(fragments.playlist, playlistData?.playlist ?? playlistFragment);
+    const tracks = sortLinkedList(getFragmentData(fragments.track, playlistData?.playlist.tracks ?? tracksFragment));
+    const me = getFragmentData(fragments.me, meData?.me ?? meFragment);
 
-            const playlist = getFragmentData(fragments.playlist, data.playlist);
-            const tracks = getFragmentData(fragments.track, sortLinkedList(data.playlist.tracks));
-
-            return [playlist, tracks] as const;
-        },
-        { fallbackData: [initialPlaylist, initialTracks] as const },
-    );
-    const { data: me } = useSWR(
-        ["PlaylistDetailPageMe", "/api/me"],
-        async () => {
-            const { data } = await client.query({
-                query: graphql(`
-                    query PlaylistDetailPageMe {
-                        me {
-                            ...PlaylistDetailPageMe
-                        }
-                    }
-                `),
-            });
-
-            return getFragmentData(fragments.me, data.me);
-        },
-        { fallbackData: initialMe },
-    );
-
-    const [playlist, tracks] = data;
+    if (!playlist) {
+        location.reload();
+        throw new Error("Playlist was removed or user lost auth.");
+    }
 
     const [showFilter, toggleShowFilter] = useToggle();
     const [sortBy, setSortBy] = useState<keyof typeof comparators>(UNSORTED);
@@ -333,7 +320,7 @@ export default function PlaylistDetailPage({
 
     const updateTrackOrder = useCallback(
         async (newTracks: typeof tracks) => {
-            await mutate(
+            await refetch(
                 {
                     ...playlist,
                     tracks: newTracks,
@@ -341,7 +328,7 @@ export default function PlaylistDetailPage({
                 { revalidate: false },
             );
         },
-        [mutate, playlist],
+        [refetch, playlist],
     );
 
     const updateTrackOrderRemote = useCallback(
@@ -357,10 +344,10 @@ export default function PlaylistDetailPage({
                     previous: nextId ? undefined : previousId,
                 });
 
-                await mutate();
+                await refetch();
             }
         },
-        [mutate, playlist.id, tracks],
+        [refetch, playlist.id, tracks],
     );
 
     const coverImageItems = useMemo(
@@ -500,9 +487,9 @@ function Description({ playlist, description, setDescription, isEditable, setEdi
             await axios.put(`/playlist/${playlist.id}`, {
                 description,
             });
-            await mutate((key) =>
-                [key].flat().some((key) => key === `/api/playlist/${playlist.id}` || key === "/api/me/playlist"),
-            );
+            // await mutate((key) =>
+            //     [key].flat().some((key) => key === `/api/playlist/${playlist.id}` || key === "/api/me/playlist"),
+            // );
         } catch (error: unknown) {
             if (isAxiosError(error) && error.response) {
                 setError(error.response.data.message ?? "An unknown error occured!");
@@ -672,24 +659,24 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
                             </Button>
                         </MenuTrigger>
                         <MenuContent>
-                            {/*<PlaylistTrackAddDialog*/}
-                            {/*    video={track.video}*/}
-                            {/*    entry={track.entry}*/}
-                            {/*    trigger={*/}
-                            {/*        <MenuItem onSelect={(event) => event.preventDefault()}>*/}
-                            {/*            <Icon icon={faPlus} color="text-disabled" />*/}
-                            {/*            <Text>Add to another Playlist</Text>*/}
-                            {/*        </MenuItem>*/}
-                            {/*    }*/}
-                            {/*/>*/}
+                            <PlaylistTrackAddDialog
+                                video={track.video}
+                                entry={track.animethemeentry}
+                                trigger={
+                                    <MenuItem onSelect={(event) => event.preventDefault()}>
+                                        <Icon icon={faPlus} color="text-disabled" />
+                                        <Text>Add to another Playlist</Text>
+                                    </MenuItem>
+                                }
+                            />
                             {watchList.length ? (
                                 <>
                                     <MenuSeparator />
-                                    <MenuItem onSelect={() => addWatchListItem(track.video, track.entry)}>
+                                    <MenuItem onSelect={() => addWatchListItem(track.video, track.animethemeentry)}>
                                         <Icon icon={faArrowTurnDown} color="text-disabled" />
                                         <Text>Add to Watch List</Text>
                                     </MenuItem>
-                                    <MenuItem onSelect={() => addWatchListItemNext(track.video, track.entry)}>
+                                    <MenuItem onSelect={() => addWatchListItemNext(track.video, track.animethemeentry)}>
                                         <Icon icon={faArrowTurnUp} color="text-disabled" />
                                         <Text>Play Next</Text>
                                     </MenuItem>
@@ -698,18 +685,18 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
                             {isOwner ? (
                                 <>
                                     <MenuSeparator />
-                                    {/*<PlaylistTrackRemoveDialog*/}
-                                    {/*    playlist={playlist}*/}
-                                    {/*    trackId={track.id}*/}
-                                    {/*    video={track.video}*/}
-                                    {/*    entry={track.entry}*/}
-                                    {/*    trigger={*/}
-                                    {/*        <MenuItem onSelect={(event) => event.preventDefault()}>*/}
-                                    {/*            <Icon icon={faTrash} color="text-disabled" />*/}
-                                    {/*            <Text>Remove from Playlist</Text>*/}
-                                    {/*        </MenuItem>*/}
-                                    {/*    }*/}
-                                    {/*/>*/}
+                                    <PlaylistTrackRemoveDialog
+                                        playlist={playlist}
+                                        trackId={track.id}
+                                        video={track.video}
+                                        entry={track.animethemeentry}
+                                        trigger={
+                                            <MenuItem onSelect={(event) => event.preventDefault()}>
+                                                <Icon icon={faTrash} color="text-disabled" />
+                                                <Text>Remove from Playlist</Text>
+                                            </MenuItem>
+                                        }
+                                    />
                                 </>
                             ) : null}
                         </MenuContent>

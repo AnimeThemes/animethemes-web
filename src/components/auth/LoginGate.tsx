@@ -13,7 +13,7 @@ interface LoginGateProps {
 export function LoginGate({ children }: LoginGateProps) {
     const { me } = useAuth();
 
-    if (me.user) {
+    if (me) {
         // User is already logged in, so we can safely show the content.
         return <>{children}</>;
     }

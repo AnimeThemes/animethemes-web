@@ -1,11 +1,13 @@
 import { createContext } from "react";
 
-import type { VideoSummaryCardEntryFragment, VideoSummaryCardVideoFragment } from "@/generated/graphql";
+import type { ResultOf } from "@graphql-typed-document-node/core";
+
+import { type VIDEO_SUMMARY_CARD_ENTRY, type VIDEO_SUMMARY_CARD_VIDEO } from "@/components/card/VideoSummaryCard";
 
 export interface WatchListItem {
     watchListId: number;
-    video: VideoSummaryCardVideoFragment;
-    entry: VideoSummaryCardEntryFragment;
+    video: ResultOf<typeof VIDEO_SUMMARY_CARD_VIDEO>;
+    entry: ResultOf<typeof VIDEO_SUMMARY_CARD_ENTRY>;
 }
 
 interface PlayerContextInterface {
@@ -15,8 +17,14 @@ interface PlayerContextInterface {
     setWatchListFactory: (factory: (() => Promise<WatchListItem[]>) | null) => void;
     currentWatchListItem: WatchListItem | null;
     setCurrentWatchListItem: (watchListItem: WatchListItem | null) => void;
-    addWatchListItem: (video: VideoSummaryCardVideoFragment, entry: VideoSummaryCardEntryFragment) => void;
-    addWatchListItemNext: (video: VideoSummaryCardVideoFragment, entry: VideoSummaryCardEntryFragment) => void;
+    addWatchListItem: (
+        video: ResultOf<typeof VIDEO_SUMMARY_CARD_VIDEO>,
+        entry: ResultOf<typeof VIDEO_SUMMARY_CARD_ENTRY>,
+    ) => void;
+    addWatchListItemNext: (
+        video: ResultOf<typeof VIDEO_SUMMARY_CARD_VIDEO>,
+        entry: ResultOf<typeof VIDEO_SUMMARY_CARD_ENTRY>,
+    ) => void;
     clearWatchList: () => void;
     isGlobalAutoPlay: boolean;
     setGlobalAutoPlay: (autoPlay: boolean) => void;
@@ -69,8 +77,8 @@ export default PlayerContext;
 let nextWatchListId = 1;
 
 export function createWatchListItem(
-    video: VideoSummaryCardVideoFragment,
-    entry: VideoSummaryCardEntryFragment,
+    video: ResultOf<typeof VIDEO_SUMMARY_CARD_VIDEO>,
+    entry: ResultOf<typeof VIDEO_SUMMARY_CARD_ENTRY>,
 ): WatchListItem {
     return {
         watchListId: nextWatchListId++,

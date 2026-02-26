@@ -31,6 +31,12 @@ interface LoginProps {
     remember: boolean;
 }
 
+interface UpdateUserInformationProps {
+    setErrors: (errors: LoginErrors) => void;
+    name: string;
+    email: string;
+}
+
 interface ForgotPasswordProps {
     email: string;
 }
@@ -114,6 +120,25 @@ export default function useAuth() {
             });
     };
 
+    const updateUserInformation = async ({ setErrors, ...props }: UpdateUserInformationProps) => {
+        await csrf();
+
+        await axios
+            .put(`${AUTH_PATH}/user/profile-information`, props)
+            .then(() =>
+                client.refetchQueries({
+                    include: "active",
+                }),
+            )
+            .catch((error) => {
+                if (error.response.status !== 422) {
+                    throw error;
+                }
+
+                setErrors(error.response.data.errors);
+            });
+    };
+
     const forgotPassword = async (props: ForgotPasswordProps) => {
         await csrf();
 
@@ -142,6 +167,7 @@ export default function useAuth() {
         me: data?.me,
         register,
         login,
+        updateUserInformation,
         forgotPassword,
         resetPassword,
         resendEmailVerification,

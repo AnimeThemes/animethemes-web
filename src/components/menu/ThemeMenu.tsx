@@ -81,16 +81,16 @@ export function ThemeMenu({ theme: themeFragment }: ThemeMenuProps) {
                 </Button>
             </MenuTrigger>
             <MenuContent>
-                {/*<PlaylistTrackAddDialog*/}
-                {/*    video={video}*/}
-                {/*    entry={entryFlipped}*/}
-                {/*    trigger={*/}
-                {/*        <MenuItem onSelect={(event) => event.preventDefault()}>*/}
-                {/*            <Icon icon={faPlus} />*/}
-                {/*            <Text>Add to Playlist</Text>*/}
-                {/*        </MenuItem>*/}
-                {/*    }*/}
-                {/*/>*/}
+                <PlaylistTrackAddDialog
+                    video={video}
+                    entry={entryFlipped}
+                    trigger={
+                        <MenuItem onSelect={(event) => event.preventDefault()}>
+                            <Icon icon={faPlus} />
+                            <Text>Add to Playlist</Text>
+                        </MenuItem>
+                    }
+                />
                 {/*{watchList.length ? (*/}
                 {/*    <>*/}
                 {/*        <MenuSeparator />*/}

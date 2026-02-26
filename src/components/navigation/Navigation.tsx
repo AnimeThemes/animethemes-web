@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { faMagnifyingGlass, faTv, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass, faShuffle, faTv, faUser } from "@fortawesome/free-solid-svg-icons";
 
 import { IconTextButton } from "@/components/button/IconTextButton";
+import { ShuffleDialog } from "@/components/dialog/ShuffleDialog";
 import {
     StyledLogo,
     StyledLogoContainer,
@@ -61,18 +62,18 @@ export function Navigation() {
                         >
                             <Link href="/search">Search</Link>
                         </IconTextButton>
-                        {/*<ShuffleDialog*/}
-                        {/*    trigger={*/}
-                        {/*        <IconTextButton*/}
-                        {/*            variant="silent"*/}
-                        {/*            icon={faShuffle}*/}
-                        {/*            collapsible*/}
-                        {/*            style={{ "--gap": "8px" }}*/}
-                        {/*        >*/}
-                        {/*            Shuffle*/}
-                        {/*        </IconTextButton>*/}
-                        {/*    }*/}
-                        {/*/>*/}
+                        <ShuffleDialog
+                            trigger={
+                                <IconTextButton
+                                    variant="silent"
+                                    icon={faShuffle}
+                                    collapsible
+                                    style={{ "--gap": "8px" }}
+                                >
+                                    Shuffle
+                                </IconTextButton>
+                            }
+                        />
 
                         <IconTextButton asChild variant="silent" icon={faTv} collapsible style={{ "--gap": "8px" }}>
                             <Link href={currentYear && currentSeason ? `/year/${currentYear}/${currentSeason}` : "/"}>

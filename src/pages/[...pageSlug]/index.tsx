@@ -4,7 +4,6 @@ import Link from "next/link";
 import type { MDXRemoteSerializeResult } from "next-mdx-remote";
 
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import type { ResultOf } from "@graphql-typed-document-node/core";
 import type { ParsedUrlQuery } from "querystring";
 
 import { Icon } from "@/components/icon/Icon";
@@ -13,7 +12,7 @@ import { TableOfContents } from "@/components/markdown/TableOfContents";
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
 import createApolloClient from "@/graphql/createApolloClient";
-import { graphql } from "@/graphql/generated";
+import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import theme from "@/theme";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
@@ -46,12 +45,20 @@ const ArrowLink = styled(Link)`
     gap: 8px;
 `;
 
+const fragments = {
+    page: graphql(`
+        fragment DocumentPagePage on Page {
+            name
+            createdAt
+        }
+    `),
+};
+
 const propsQuery = graphql(`
     query DocumentPage($pageSlug: String!) {
         page(slug: $pageSlug) {
-            name
+            ...DocumentPagePage
             body
-            createdAt
         }
     }
 `);
@@ -67,7 +74,7 @@ const pathsQuery = graphql(`
 `);
 
 export interface DocumentPageProps extends SharedPageProps {
-    page: Omit<ResultOf<typeof propsQuery>, "body">;
+    page: FragmentType<typeof fragments.page>;
     source: MDXRemoteSerializeResult;
     headings: Heading[];
 }
@@ -76,15 +83,16 @@ interface DocumentPageParams extends ParsedUrlQuery {
     pageSlug: Array<string>;
 }
 
-export default function DocumentPage({ page, source, headings }: DocumentPageProps) {
+export default function DocumentPage({ page: pageFragment, source, headings }: DocumentPageProps) {
+    const page = getFragmentData(fragments.page, pageFragment);
     const author = typeof source.frontmatter?.author === "string" ? source.frontmatter.author : undefined;
 
     return (
         <>
-            <PageHeader title={page.name} author={author} createdAt={page.created_at} />
+            <PageHeader title={page.name} author={author} createdAt={page.createdAt} />
             <StyledGrid>
                 <SEO title={page.name} />
-                <Markdown source={page.source} />
+                <Markdown source={source} />
                 <TableOfContents headings={headings} />
             </StyledGrid>
             <ArrowLink href="/wiki">
@@ -124,7 +132,7 @@ export const getStaticProps: GetStaticProps<DocumentPageProps, DocumentPageParam
 
     const { data } = await client.query({
         query: propsQuery,
-        params: params && {
+        variables: params && {
             pageSlug: params.pageSlug.join("/"),
         },
     });
@@ -138,10 +146,8 @@ export const getStaticProps: GetStaticProps<DocumentPageProps, DocumentPageParam
     return {
         props: {
             ...getSharedPageProps(),
-            page: {
-                ...data.page,
-                ...(await serializeMarkdownSafe(data.page.body)),
-            },
+            page: data.page,
+            ...(await serializeMarkdownSafe(data.page.body)),
         },
         // Revalidate after 1 hour (= 3600 seconds).
         revalidate: 3600,
@@ -156,7 +162,7 @@ export const getStaticPaths: GetStaticPaths<DocumentPageParams> = () => {
             query: pathsQuery,
         });
 
-        return data.pagePaginator.map((page) => ({
+        return data.pagePagination.data.map((page) => ({
             params: {
                 pageSlug: page.slug.split("/"),
             },

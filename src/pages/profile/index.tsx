@@ -20,12 +20,13 @@ import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
 import { LoginDialog } from "@/components/dialog/LoginDialog";
 import { PasswordChangeDialog } from "@/components/dialog/PasswordChangeDialog";
 import { PlaylistAddDialog } from "@/components/dialog/PlaylistAddDialog";
+import { PlaylistRemoveDialog } from "@/components/dialog/PlaylistRemoveDialog";
 import { RegisterDialog } from "@/components/dialog/RegisterDialog";
 import { UserInformationDialog } from "@/components/dialog/UserInformationDialog";
 import { Icon } from "@/components/icon/Icon";
 import { ProfileImage } from "@/components/image/ProfileImage";
 import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
-import { Menu, MenuContent, MenuTrigger } from "@/components/menu/Menu";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/menu/Menu";
 import { SearchFilter } from "@/components/search-filter/SearchFilter";
 import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
 import { SEO } from "@/components/seo/SEO";
@@ -150,15 +151,16 @@ const fragments = {
                     default
                 }
             }
-            playlists {
+            playlists(sort: [CREATED_AT_DESC]) {
                 ...PlaylistSummaryCardPlaylist
+                ...PlaylistRemoveDialogPlaylist
                 id
             }
         }
     `),
 };
 
-const pageQuery = graphql(`
+export const PROFILE_PAGE = graphql(`
     query ProfilePage {
         me {
             ...ProfilePageMe
@@ -171,7 +173,7 @@ interface ProfilePageProps extends SharedPageProps {
 }
 
 export default function ProfilePage({ me: meFragment }: ProfilePageProps) {
-    const { data } = useQuery(pageQuery);
+    const { data } = useQuery(PROFILE_PAGE);
 
     const me = getFragmentData(fragments.me, data?.me ?? meFragment);
 
@@ -267,15 +269,15 @@ export default function ProfilePage({ me: meFragment }: ProfilePageProps) {
                                                         </Button>
                                                     </MenuTrigger>
                                                     <MenuContent>
-                                                        {/*<PlaylistRemoveDialog*/}
-                                                        {/*    playlist={playlist}*/}
-                                                        {/*    trigger={*/}
-                                                        {/*        <MenuItem onSelect={(event) => event.preventDefault()}>*/}
-                                                        {/*            <Icon icon={faTrash} />*/}
-                                                        {/*            <Text>Delete Playlist</Text>*/}
-                                                        {/*        </MenuItem>*/}
-                                                        {/*    }*/}
-                                                        {/*/>*/}
+                                                        <PlaylistRemoveDialog
+                                                            playlist={playlist}
+                                                            trigger={
+                                                                <MenuItem onSelect={(event) => event.preventDefault()}>
+                                                                    <Icon icon={faTrash} />
+                                                                    <Text>Delete Playlist</Text>
+                                                                </MenuItem>
+                                                            }
+                                                        />
                                                     </MenuContent>
                                                 </Menu>
                                             }
@@ -419,7 +421,7 @@ export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async ({
 
     try {
         const { data } = await client.query({
-            query: pageQuery,
+            query: PROFILE_PAGE,
         });
 
         return {

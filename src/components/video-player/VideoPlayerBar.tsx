@@ -2,12 +2,11 @@ import { useContext } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
-import { faBackwardStep, faForwardStep, faPause, faPlay, faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faBackwardStep, faForwardStep, faPause, faPlay, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 import { Column } from "@/components/box/Flex";
 import { Solid } from "@/components/box/Solid";
 import { IconTextButton } from "@/components/button/IconTextButton";
-import { PlaylistTrackAddDialog } from "@/components/dialog/PlaylistTrackAddDialog";
 import { Icon } from "@/components/icon/Icon";
 import { ShareMenu } from "@/components/menu/ShareMenu";
 import { Text } from "@/components/text/Text";
@@ -18,6 +17,7 @@ import { ProgressBar } from "@/components/video-player/ProgressBar";
 import { VideoPlayerContext } from "@/components/video-player/VideoPlayer";
 import { VolumeControl } from "@/components/video-player/VolumeControl";
 import PlayerContext from "@/context/playerContext";
+import { getFragmentData, graphql } from "@/graphql/generated";
 import theme from "@/theme";
 
 const StyledPlayerBar = styled(Solid)`
@@ -86,6 +86,38 @@ const StyledVolumeControl = styled(VolumeControl)`
     margin-right: auto;
 `;
 
+const fragments = {
+    video: graphql(`
+        fragment VideoPlayerBarVideo on Video {
+            __typename
+            #            ...PlaylistTrackAddDialogVideo
+        }
+    `),
+    entry: graphql(`
+        fragment VideoPlayerBarEntry on AnimeThemeEntry {
+            #            ...PlaylistTrackAddDialogEntry
+            animetheme {
+                type
+                sequence
+                song {
+                    ...SongTitleSong
+                    ...PerformancesSong
+                    performances {
+                        __typename
+                    }
+                }
+                group {
+                    name
+                }
+                anime {
+                    slug
+                    name
+                }
+            }
+        }
+    `),
+};
+
 export function VideoPlayerBar() {
     const context = useContext(VideoPlayerContext);
 
@@ -94,8 +126,8 @@ export function VideoPlayerBar() {
     }
 
     const {
-        video,
-        entry,
+        video: videoFragment,
+        entry: entryFragment,
         background,
         videoPagePath,
         previousVideoPath,
@@ -108,7 +140,9 @@ export function VideoPlayerBar() {
         audioUrl,
     } = context;
 
-    const theme = entry.theme;
+    const video = getFragmentData(fragments.video, videoFragment);
+    const entry = getFragmentData(fragments.entry, entryFragment);
+    const theme = entry.animetheme;
     const anime = theme.anime;
 
     const { clearWatchList } = useContext(PlayerContext);
@@ -179,15 +213,15 @@ export function VideoPlayerBar() {
             </StyledPlayerBarControls>
             <StyledPlayerBarActions>
                 <StyledVolumeControl />
-                <PlaylistTrackAddDialog
-                    video={video}
-                    entry={entry}
-                    trigger={
-                        <IconTextButton icon={faPlus} variant="solid" collapsible="socialListMax">
-                            Add to Playlist
-                        </IconTextButton>
-                    }
-                />
+                {/*<PlaylistTrackAddDialog*/}
+                {/*    video={video}*/}
+                {/*    entry={entry}*/}
+                {/*    trigger={*/}
+                {/*        <IconTextButton icon={faPlus} variant="solid" collapsible="socialListMax">*/}
+                {/*            Add to Playlist*/}
+                {/*        </IconTextButton>*/}
+                {/*    }*/}
+                {/*/>*/}
                 <ShareMenu pagePath={videoPagePath} videoUrl={videoUrl} audioUrl={audioUrl} />
                 <IconTextButton icon={faXmark} isCircle disabled={!background} onClick={() => clearWatchList()} />
             </StyledPlayerBarActions>

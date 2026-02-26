@@ -1,69 +1,60 @@
-import gql from "graphql-tag";
+import type { VariablesOf } from "@graphql-typed-document-node/core";
 
-import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
-import type { RandomThemeQuery, RandomThemeQueryVariables } from "@/generated/graphql";
-import { fetchDataClient } from "@/lib/client/index";
+import { client } from "@/graphql/client";
+import { graphql } from "@/graphql/generated";
+import type { AnimeMediaFormat, ThemeType } from "@/graphql/generated/graphql";
+
+const RANDOM_THEME = graphql(`
+    query RandomTheme($type: [ThemeType!], $mediaFormat: [AnimeMediaFormat!], $animeYearMin: Int, $animeYearMax: Int) {
+        animethemeShuffle(
+            type: $type
+            mediaFormat: $mediaFormat
+            year_gte: $animeYearMin
+            year_lte: $animeYearMax
+            spoiler: false
+            first: 10
+        ) {
+            ...ThemeSummaryCardTheme
+            ...ThemeSummaryCardThemeExpandable
+            animethemeentries {
+                ...VideoSummaryCardEntry
+                videos {
+                    nodes {
+                        ...VideoSummaryCardVideo
+                    }
+                }
+            }
+        }
+    }
+`);
 
 export interface RandomThemesOptions {
-    themeType?: string;
-    mediaFormat?: string;
+    themeType?: ThemeType;
+    mediaFormat?: AnimeMediaFormat;
     animeYearMin?: number;
     animeYearMax?: number;
 }
 
 export async function fetchRandomThemes(options?: RandomThemesOptions) {
-    const args = {
-        sortBy: "random",
-        filters: [
-            { key: "has", value: "anime,animethemeentries" },
-            { key: "spoiler", value: "false" },
-        ],
-    } satisfies RandomThemeQueryVariables["args"];
+    const args: VariablesOf<typeof RANDOM_THEME> = {};
 
     if (options?.themeType) {
-        args.filters.push({ key: "type", value: options.themeType });
+        args.type = options.themeType;
     }
     if (options?.mediaFormat) {
-        args.filters.push({ key: "anime][media_format", value: options.mediaFormat });
+        args.mediaFormat = options.mediaFormat;
     }
     if (options?.animeYearMin) {
-        args.filters.push({ key: "anime][year-gte", value: String(options.animeYearMin) });
+        args.animeYearMin = options.animeYearMin;
     }
     if (options?.animeYearMax) {
-        args.filters.push({ key: "anime][year-lte", value: String(options.animeYearMax) });
+        args.animeYearMax = options.animeYearMax;
     }
 
-    const { data } = await fetchDataClient<RandomThemeQuery, RandomThemeQueryVariables>(
-        gql`
-            ${ThemeSummaryCard.fragments.theme}
-            ${ThemeSummaryCard.fragments.expandable}
-
-            query RandomTheme($args: SearchArgs!) {
-                searchTheme(args: $args) {
-                    data {
-                        ...ThemeSummaryCardTheme
-                        ...ThemeSummaryCardThemeExpandable
-                        entries {
-                            videos {
-                                basename
-                                audio {
-                                    basename
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        `,
-        { args },
-    );
-
-    return data.searchTheme.data.map((theme) => {
-        // Remove all entries which have spoilers (the filter parameter guarantees at least one spoiler-free entry)
-        while (theme.entries[0].spoiler) {
-            theme.entries.shift();
-        }
-
-        return theme;
+    const { data } = await client.query({
+        query: RANDOM_THEME,
+        variables: args,
     });
+
+    return data.animethemeShuffle;
 }

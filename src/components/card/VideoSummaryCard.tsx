@@ -6,7 +6,6 @@ import { faPlay } from "@fortawesome/free-solid-svg-icons";
 
 import { SummaryCard } from "@/components/card/SummaryCard2";
 import { Icon } from "@/components/icon/Icon";
-import { VideoMenu } from "@/components/menu/VideoMenu";
 import { TextLink } from "@/components/text/TextLink";
 import { Performances } from "@/components/utils/Performances";
 import { SongTitle } from "@/components/utils/SongTitle";
@@ -52,51 +51,48 @@ const StyledCoverOverlay = styled.div`
     background-color: rgba(0, 0, 0, 0.5);
 `;
 
-const fragments = {
-    video: graphql(`
-        fragment VideoSummaryCardVideo on Video {
+export const VIDEO_SUMMARY_CARD_VIDEO = graphql(`
+    fragment VideoSummaryCardVideo on Video {
+        id
+        basename
+        ...createVideoSlugVideo
+    }
+`);
+
+export const VIDEO_SUMMARY_CARD_ENTRY = graphql(`
+    fragment VideoSummaryCardEntry on AnimeThemeEntry {
+        ...createVideoSlugEntry
+        id
+        animetheme {
+            ...createVideoSlugTheme
             id
-            basename
-            ...createVideoSlugVideo
-            ...VideoMenuVideo
-        }
-    `),
-    entry: graphql(`
-        fragment VideoSummaryCardEntry on AnimeThemeEntry {
-            ...createVideoSlugEntry
-            ...VideoMenuEntry
-            id
-            animetheme {
-                ...createVideoSlugTheme
-                id
-                type
-                sequence
-                group {
-                    name
-                    slug
-                }
-                anime {
-                    slug
-                    name
-                    images {
-                        nodes {
-                            ...extractImagesImage
-                        }
+            type
+            sequence
+            group {
+                name
+                slug
+            }
+            anime {
+                slug
+                name
+                images {
+                    nodes {
+                        ...extractImagesImage
                     }
                 }
-                song {
-                    ...SongTitleSong
-                    ...PerformancesSong
-                }
+            }
+            song {
+                ...SongTitleSong
+                ...PerformancesSong
             }
         }
-    `),
-};
+    }
+`);
 
 interface VideoSummaryCardProps {
     ref?: Ref<HTMLDivElement>;
-    video: FragmentType<typeof fragments.video>;
-    entry: FragmentType<typeof fragments.entry>;
+    video: FragmentType<typeof VIDEO_SUMMARY_CARD_VIDEO>;
+    entry: FragmentType<typeof VIDEO_SUMMARY_CARD_ENTRY>;
     menu?: ReactNode;
     append?: ReactNode;
     onPlay?(): void;
@@ -113,8 +109,8 @@ export function VideoSummaryCard({
     isPlaying,
     ...props
 }: VideoSummaryCardProps) {
-    const video = getFragmentData(fragments.video, videoFragment);
-    const entry = getFragmentData(fragments.entry, entryFragment);
+    const video = getFragmentData(VIDEO_SUMMARY_CARD_VIDEO, videoFragment);
+    const entry = getFragmentData(VIDEO_SUMMARY_CARD_ENTRY, entryFragment);
     const theme = entry.animetheme;
     const anime = theme?.anime;
 
@@ -150,9 +146,7 @@ export function VideoSummaryCard({
                         <TextLink href={`/anime/${anime.slug}`}>{anime.name}</TextLink>
                     </SummaryCard.Description>
                 </SummaryCard.Body>
-                {menu !== null ? (
-                    <StyledOverlayButtons>{menu ?? <VideoMenu entry={entry} video={video} />}</StyledOverlayButtons>
-                ) : null}
+                {menu !== null ? <StyledOverlayButtons>{menu}</StyledOverlayButtons> : null}
                 {append}
             </SummaryCard>
         </StyledWrapper>
