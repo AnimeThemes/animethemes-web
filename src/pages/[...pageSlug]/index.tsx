@@ -45,14 +45,12 @@ const ArrowLink = styled(Link)`
     gap: 8px;
 `;
 
-const fragments = {
-    page: graphql(`
-        fragment DocumentPagePage on Page {
-            name
-            createdAt
-        }
-    `),
-};
+export const DOCUMENT_PAGE_PAGE = graphql(`
+    fragment DocumentPagePage on Page {
+        name
+        createdAt
+    }
+`);
 
 const propsQuery = graphql(`
     query DocumentPage($pageSlug: String!) {
@@ -74,7 +72,7 @@ const pathsQuery = graphql(`
 `);
 
 export interface DocumentPageProps extends SharedPageProps {
-    page: FragmentType<typeof fragments.page>;
+    page: FragmentType<typeof DOCUMENT_PAGE_PAGE>;
     source: MDXRemoteSerializeResult;
     headings: Heading[];
 }
@@ -84,7 +82,7 @@ interface DocumentPageParams extends ParsedUrlQuery {
 }
 
 export default function DocumentPage({ page: pageFragment, source, headings }: DocumentPageProps) {
-    const page = getFragmentData(fragments.page, pageFragment);
+    const page = getFragmentData(DOCUMENT_PAGE_PAGE, pageFragment);
     const author = typeof source.frontmatter?.author === "string" ? source.frontmatter.author : undefined;
 
     return (

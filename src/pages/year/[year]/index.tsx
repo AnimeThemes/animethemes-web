@@ -70,24 +70,22 @@ export default function YearDetailPage({ year }: YearDetailPageProps) {
     );
 }
 
-const fragments = {
-    anime: graphql(`
-        fragment SeasonPreviewAnime on Anime {
-            ...AnimeSummaryCardAnime
-            ...AnimeSummaryCardAnimeExpandable
-            slug
-        }
-    `),
-};
+export const SEASON_PREVIEW_ANIME = graphql(`
+    fragment SeasonPreviewAnime on Anime {
+        ...AnimeSummaryCardAnime
+        ...AnimeSummaryCardAnimeExpandable
+        slug
+    }
+`);
 
 interface SeasonPreviewProps {
     season: string;
     year: number;
-    animes: Array<FragmentType<typeof fragments.anime>>;
+    animes: Array<FragmentType<typeof SEASON_PREVIEW_ANIME>>;
 }
 
 function SeasonPreview({ season, year, animes: animesFragment }: SeasonPreviewProps) {
-    const animes = getFragmentData(fragments.anime, animesFragment);
+    const animes = getFragmentData(SEASON_PREVIEW_ANIME, animesFragment);
 
     return (
         <>

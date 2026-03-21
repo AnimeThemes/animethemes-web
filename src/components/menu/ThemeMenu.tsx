@@ -10,53 +10,51 @@ import { Text } from "@/components/text/Text";
 import PlayerContext from "@/context/playerContext";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
-const fragments = {
-    theme: graphql(`
-        fragment ThemeMenuTheme on AnimeTheme {
-            ...createVideoSlugTheme
-            id
-            type
-            sequence
-            group {
-                name
-                slug
-            }
-            anime {
-                slug
-                name
-                images {
-                    nodes {
-                        ...extractImagesImage
-                    }
+export const THEME_MENU_THEME = graphql(`
+    fragment ThemeMenuTheme on AnimeTheme {
+        ...createVideoSlugTheme
+        id
+        type
+        sequence
+        group {
+            name
+            slug
+        }
+        anime {
+            slug
+            name
+            images {
+                nodes {
+                    ...extractImagesImage
                 }
             }
-            song {
-                ...SongTitleWithArtistsSong
-            }
-            animethemeentries {
-                ...createVideoSlugEntry
-                id
-                videos {
-                    nodes {
-                        ...createVideoSlugVideo
-                        id
+        }
+        song {
+            ...SongTitleWithArtistsSong
+        }
+        animethemeentries {
+            ...createVideoSlugEntry
+            id
+            videos {
+                nodes {
+                    ...createVideoSlugVideo
+                    id
+                    basename
+                    audio {
                         basename
-                        audio {
-                            basename
-                        }
                     }
                 }
             }
         }
-    `),
-};
+    }
+`);
 
 interface ThemeMenuProps {
-    theme: FragmentType<typeof fragments.theme>;
+    theme: FragmentType<typeof THEME_MENU_THEME>;
 }
 
 export function ThemeMenu({ theme: themeFragment }: ThemeMenuProps) {
-    const theme = getFragmentData(fragments.theme, themeFragment);
+    const theme = getFragmentData(THEME_MENU_THEME, themeFragment);
 
     const { watchList, addWatchListItem, addWatchListItemNext } = useContext(PlayerContext);
 

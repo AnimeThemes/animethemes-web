@@ -1,16 +1,14 @@
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
-const fragments = {
-    imageEdge: graphql(`
-        fragment extractMultipleImagesImageArtistEdge on ArtistImageEdge {
-            depth
-            node {
-                link
-                facet
-            }
+export const EXTRACT_MULTIPLE_IMAGES_IMAGE_ARTIST_EDGE = graphql(`
+    fragment extractMultipleImagesImageArtistEdge on ArtistImageEdge {
+        depth
+        node {
+            link
+            facet
         }
-    `),
-};
+    }
+`);
 
 interface ExtractMultipleImagesResult {
     link: string;
@@ -19,9 +17,11 @@ interface ExtractMultipleImagesResult {
 }
 
 export default function extractMultipleImages(
-    imageEdgeFragments: Array<FragmentType<typeof fragments.imageEdge>> | null,
+    imageEdgeFragments: Array<FragmentType<typeof EXTRACT_MULTIPLE_IMAGES_IMAGE_ARTIST_EDGE>> | null,
 ): Array<ExtractMultipleImagesResult> {
-    const imageEdges = imageEdgeFragments ? getFragmentData(fragments.imageEdge, imageEdgeFragments) : [];
+    const imageEdges = imageEdgeFragments
+        ? getFragmentData(EXTRACT_MULTIPLE_IMAGES_IMAGE_ARTIST_EDGE, imageEdgeFragments)
+        : [];
 
     if (imageEdges?.length > 0) {
         const largeCovers = imageEdges.filter((edge) => edge.node.facet === "LARGE_COVER");

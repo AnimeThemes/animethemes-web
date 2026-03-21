@@ -54,41 +54,40 @@ const StyledNomineeGrid = styled.div<{ style: { "--columns": number; "--rows": n
     }
 `;
 
-const fragments = {
-    theme: graphql(`
-        fragment AnimeAwardsPageTheme on AnimeTheme {
-            ...createVideoSlugTheme
-            id
-            type
-            sequence
-            anime {
-                slug
-                name
-                images {
-                    nodes {
-                        ...extractImagesImage
-                    }
-                }
-            }
-            song {
-                ...SongTitleWithArtistsSong
-            }
-        }
-    `),
-    entry: graphql(`
-        fragment AnimeAwardPageEntry on AnimeThemeEntry {
-            ...createVideoSlugEntry
-            version
-            videos {
+export const ANIME_AWARDS_PAGE_THEME = graphql(`
+    fragment AnimeAwardsPageTheme on AnimeTheme {
+        ...createVideoSlugTheme
+        id
+        type
+        sequence
+        anime {
+            slug
+            name
+            images {
                 nodes {
-                    ...createVideoSlugVideo
-                    basename
-                    tags
+                    ...extractImagesImage
                 }
             }
         }
-    `),
-};
+        song {
+            ...SongTitleWithArtistsSong
+        }
+    }
+`);
+
+export const ANIME_AWARD_PAGE_ENTRY = graphql(`
+    fragment AnimeAwardPageEntry on AnimeThemeEntry {
+        ...createVideoSlugEntry
+        version
+        videos {
+            nodes {
+                ...createVideoSlugVideo
+                basename
+                tags
+            }
+        }
+    }
+`);
 
 interface Nominee {
     id: number;
@@ -101,8 +100,8 @@ interface HasVotes {
 }
 
 interface HasTheme {
-    theme: FragmentType<typeof fragments.theme>;
-    entry: FragmentType<typeof fragments.entry>;
+    theme: FragmentType<typeof ANIME_AWARDS_PAGE_THEME>;
+    entry: FragmentType<typeof ANIME_AWARD_PAGE_ENTRY>;
 }
 
 type Award = AwardUnvoted | AwardVoted;
@@ -171,8 +170,8 @@ function AwardSectionUnvoted({ award }: AwardSectionUnvotedProps) {
     const [typeFilter, setTypeFilter] = useState<string | null>(null);
 
     const sortFn: Comparator<HasTheme> = (a, b) => {
-        const nameA = getFragmentData(fragments.theme, a.theme)?.anime?.name;
-        const nameB = getFragmentData(fragments.theme, b.theme)?.anime?.name;
+        const nameA = getFragmentData(ANIME_AWARDS_PAGE_THEME, a.theme)?.anime?.name;
+        const nameB = getFragmentData(ANIME_AWARDS_PAGE_THEME, b.theme)?.anime?.name;
 
         return (nameA && nameB && nameA.localeCompare(nameB)) || 0;
     };
@@ -295,8 +294,8 @@ const StyledRank = styled(Text)`
 `;
 
 interface AwardThemeSummaryCardProps extends ComponentPropsWithoutRef<typeof StyledSummaryCardWrapper> {
-    theme: FragmentType<typeof fragments.theme>;
-    entry: FragmentType<typeof fragments.entry>;
+    theme: FragmentType<typeof ANIME_AWARDS_PAGE_THEME>;
+    entry: FragmentType<typeof ANIME_AWARD_PAGE_ENTRY>;
     rank?: number;
     votes?: number | null;
 }
@@ -308,8 +307,8 @@ function AwardThemeSummaryCard({
     votes,
     ...props
 }: AwardThemeSummaryCardProps) {
-    const theme = getFragmentData(fragments.theme, themeFragment);
-    const entry = getFragmentData(fragments.entry, entryFragment);
+    const theme = getFragmentData(ANIME_AWARDS_PAGE_THEME, themeFragment);
+    const entry = getFragmentData(ANIME_AWARD_PAGE_ENTRY, entryFragment);
 
     if (!theme?.anime) {
         return null;

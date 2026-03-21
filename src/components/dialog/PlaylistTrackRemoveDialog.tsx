@@ -18,32 +18,32 @@ import { useToasts } from "@/context/toastContext";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import { PLAYLIST_DETAIL_PAGE_PLAYLIST } from "@/pages/playlist/[playlistId]";
 
-const fragments = {
-    playlist: graphql(`
-        fragment PlaylistTrackRemoveDialogPlaylist on Playlist {
-            ...PlaylistTrackRemoveToastPlaylist
-            id
-            name
-        }
-    `),
-    video: graphql(`
-        fragment PlaylistTrackRemoveDialogVideo on Video {
-            ...VideoSummaryCardVideo
-        }
-    `),
-    entry: graphql(`
-        fragment PlaylistTrackRemoveDialogEntry on AnimeThemeEntry {
-            ...VideoSummaryCardEntry
-            ...PlaylistTrackRemoveToastEntry
-        }
-    `),
-};
+export const PLAYLIST_TRACK_REMOVE_DIALOG_PLAYLIST = graphql(`
+    fragment PlaylistTrackRemoveDialogPlaylist on Playlist {
+        ...PlaylistTrackRemoveToastPlaylist
+        id
+        name
+    }
+`);
+
+export const PLAYLIST_TRACK_REMOVE_DIALOG_VIDEO = graphql(`
+    fragment PlaylistTrackRemoveDialogVideo on Video {
+        ...VideoSummaryCardVideo
+    }
+`);
+
+export const PLAYLIST_TRACK_REMOVE_DIALOG_ENTRY = graphql(`
+    fragment PlaylistTrackRemoveDialogEntry on AnimeThemeEntry {
+        ...VideoSummaryCardEntry
+        ...PlaylistTrackRemoveToastEntry
+    }
+`);
 
 interface PlaylistTrackRemoveDialogProps {
-    playlist: FragmentType<typeof fragments.playlist>;
+    playlist: FragmentType<typeof PLAYLIST_TRACK_REMOVE_DIALOG_PLAYLIST>;
     trackId: string;
-    video: FragmentType<typeof fragments.video>;
-    entry: FragmentType<typeof fragments.entry>;
+    video: FragmentType<typeof PLAYLIST_TRACK_REMOVE_DIALOG_VIDEO>;
+    entry: FragmentType<typeof PLAYLIST_TRACK_REMOVE_DIALOG_ENTRY>;
     trigger?: ReactNode;
 }
 
@@ -54,9 +54,9 @@ export function PlaylistTrackRemoveDialog({
     entry: entryFragment,
     trigger,
 }: PlaylistTrackRemoveDialogProps) {
-    const playlist = getFragmentData(fragments.playlist, playlistFragment);
-    const video = getFragmentData(fragments.video, videoFragment);
-    const entry = getFragmentData(fragments.entry, entryFragment);
+    const playlist = getFragmentData(PLAYLIST_TRACK_REMOVE_DIALOG_PLAYLIST, playlistFragment);
+    const video = getFragmentData(PLAYLIST_TRACK_REMOVE_DIALOG_VIDEO, videoFragment);
+    const entry = getFragmentData(PLAYLIST_TRACK_REMOVE_DIALOG_ENTRY, entryFragment);
 
     const [open, setOpen] = useState(false);
 
@@ -89,10 +89,10 @@ export function PlaylistTrackRemoveDialog({
 }
 
 interface PlaylistTrackRemoveFormProps {
-    playlist: ResultOf<typeof fragments.playlist>;
+    playlist: ResultOf<typeof PLAYLIST_TRACK_REMOVE_DIALOG_PLAYLIST>;
     trackId: string;
-    video: ResultOf<typeof fragments.video>;
-    entry: ResultOf<typeof fragments.entry>;
+    video: ResultOf<typeof PLAYLIST_TRACK_REMOVE_DIALOG_VIDEO>;
+    entry: ResultOf<typeof PLAYLIST_TRACK_REMOVE_DIALOG_ENTRY>;
     onSuccess(): void;
     onCancel(): void;
 }

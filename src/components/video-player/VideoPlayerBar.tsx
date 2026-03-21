@@ -86,37 +86,36 @@ const StyledVolumeControl = styled(VolumeControl)`
     margin-right: auto;
 `;
 
-const fragments = {
-    video: graphql(`
-        fragment VideoPlayerBarVideo on Video {
-            __typename
-            #            ...PlaylistTrackAddDialogVideo
-        }
-    `),
-    entry: graphql(`
-        fragment VideoPlayerBarEntry on AnimeThemeEntry {
-            #            ...PlaylistTrackAddDialogEntry
-            animetheme {
-                type
-                sequence
-                song {
-                    ...SongTitleSong
-                    ...PerformancesSong
-                    performances {
-                        __typename
-                    }
-                }
-                group {
-                    name
-                }
-                anime {
-                    slug
-                    name
+export const VIDEO_PLAYER_BAR_VIDEO = graphql(`
+    fragment VideoPlayerBarVideo on Video {
+        __typename
+        #            ...PlaylistTrackAddDialogVideo
+    }
+`);
+
+export const VIDEO_PLAYER_BAR_ENTRY = graphql(`
+    fragment VideoPlayerBarEntry on AnimeThemeEntry {
+        #            ...PlaylistTrackAddDialogEntry
+        animetheme {
+            type
+            sequence
+            song {
+                ...SongTitleSong
+                ...PerformancesSong
+                performances {
+                    __typename
                 }
             }
+            group {
+                name
+            }
+            anime {
+                slug
+                name
+            }
         }
-    `),
-};
+    }
+`);
 
 export function VideoPlayerBar() {
     const context = useContext(VideoPlayerContext);
@@ -140,8 +139,8 @@ export function VideoPlayerBar() {
         audioUrl,
     } = context;
 
-    const video = getFragmentData(fragments.video, videoFragment);
-    const entry = getFragmentData(fragments.entry, entryFragment);
+    const video = getFragmentData(VIDEO_PLAYER_BAR_VIDEO, videoFragment);
+    const entry = getFragmentData(VIDEO_PLAYER_BAR_ENTRY, entryFragment);
     const theme = entry.animetheme;
     const anime = theme.anime;
 

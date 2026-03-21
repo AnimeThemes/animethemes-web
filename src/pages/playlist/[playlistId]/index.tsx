@@ -128,7 +128,7 @@ const comparators = {
     [ANIME_NEW_OLD]: sortTransformed(getComparator(ANIME_NEW_OLD), (track) => track.animethemeentry.animetheme?.anime),
     [RANK_ASC]: (a, b) => a.rank - b.rank,
     [RANK_DESC]: (a, b) => a.rank - b.rank,
-} satisfies Record<string, Comparator<ResultOf<typeof fragments.track> & { rank: number }>>;
+} satisfies Record<string, Comparator<ResultOf<typeof PLAYLIST_DETAIL_PAGE_TRACK> & { rank: number }>>;
 
 type LinkedList<T> = Array<
     {
@@ -163,60 +163,60 @@ function sortLinkedList<T>(list: LinkedList<T>) {
     return sortedList;
 }
 
-const fragments = {
-    playlist: graphql(`
-        fragment PlaylistDetailPagePlaylist on Playlist {
-            ...PlaylistEditDialogPlaylist
-            ...PlaylistTrackRemoveDialogPlaylist
-            id
+export const PLAYLIST_DETAIL_PAGE_PLAYLIST = graphql(`
+    fragment PlaylistDetailPagePlaylist on Playlist {
+        ...PlaylistEditDialogPlaylist
+        ...PlaylistTrackRemoveDialogPlaylist
+        id
+        name
+        description
+        visibility
+        tracksCount
+        user {
             name
-            description
-            visibility
-            tracksCount
-            user {
-                name
-            }
         }
-    `),
-    track: graphql(`
-        fragment PlaylistDetailPageTrack on PlaylistTrack {
+    }
+`);
+
+export const PLAYLIST_DETAIL_PAGE_TRACK = graphql(`
+    fragment PlaylistDetailPageTrack on PlaylistTrack {
+        id
+        video {
+            ...VideoSummaryCardVideo
+            ...FeaturedThemeVideo
+            ...PlaylistTrackAddDialogVideo
+            ...PlaylistTrackRemoveDialogVideo
             id
-            video {
-                ...VideoSummaryCardVideo
-                ...FeaturedThemeVideo
-                ...PlaylistTrackAddDialogVideo
-                ...PlaylistTrackRemoveDialogVideo
-                id
-            }
-            animethemeentry {
-                ...VideoSummaryCardEntry
-                ...FeaturedThemeEntry
-                ...PlaylistTrackAddDialogEntry
-                ...PlaylistTrackRemoveDialogEntry
-                animetheme {
-                    anime {
-                        name
-                        year
-                        season
-                        images {
-                            nodes {
-                                ...extractImagesImage
-                            }
+        }
+        animethemeentry {
+            ...VideoSummaryCardEntry
+            ...FeaturedThemeEntry
+            ...PlaylistTrackAddDialogEntry
+            ...PlaylistTrackRemoveDialogEntry
+            animetheme {
+                anime {
+                    name
+                    year
+                    season
+                    images {
+                        nodes {
+                            ...extractImagesImage
                         }
                     }
-                    song {
-                        title
-                    }
+                }
+                song {
+                    title
                 }
             }
         }
-    `),
-    me: graphql(`
-        fragment PlaylistDetailPageMe on Me {
-            name
-        }
-    `),
-};
+    }
+`);
+
+export const PLAYLIST_DETAIL_PAGE_ME = graphql(`
+    fragment PlaylistDetailPageMe on Me {
+        name
+    }
+`);
 
 export const PLAYLIST_DETAIL_PAGE_PLAYLIST = graphql(`
     query PlaylistDetailPagePlaylist($playlistId: String!) {
@@ -244,9 +244,9 @@ const meQuery = graphql(`
 `);
 
 interface PlaylistDetailPageProps extends SharedPageProps {
-    playlist: FragmentType<typeof fragments.playlist>;
-    tracks: Array<FragmentType<typeof fragments.track>>;
-    me: FragmentType<typeof fragments.me> | null;
+    playlist: FragmentType<typeof PLAYLIST_DETAIL_PAGE_PLAYLIST>;
+    tracks: Array<FragmentType<typeof PLAYLIST_DETAIL_PAGE_TRACK>>;
+    me: FragmentType<typeof PLAYLIST_DETAIL_PAGE_ME> | null;
 }
 
 interface PlaylistDetailPageParams extends ParsedUrlQuery {
@@ -258,7 +258,7 @@ export default function PlaylistDetailPage({
     tracks: tracksFragment,
     me: meFragment,
 }: PlaylistDetailPageProps) {
-    const initialPlaylist = getFragmentData(fragments.playlist, playlistFragment);
+    const initialPlaylist = getFragmentData(PLAYLIST_DETAIL_PAGE_PLAYLIST, playlistFragment);
 
     const { setWatchList, setWatchListFactory, setCurrentWatchListItem } = useContext(PlayerContext);
     const router = useRouter();
@@ -268,9 +268,11 @@ export default function PlaylistDetailPage({
     });
     const { data: meData } = useQuery(meQuery);
 
-    const playlist = getFragmentData(fragments.playlist, playlistData?.playlist ?? playlistFragment);
-    const tracks = sortLinkedList(getFragmentData(fragments.track, playlistData?.playlist.tracks ?? tracksFragment));
-    const me = getFragmentData(fragments.me, meData?.me ?? meFragment);
+    const playlist = getFragmentData(PLAYLIST_DETAIL_PAGE_PLAYLIST, playlistData?.playlist ?? playlistFragment);
+    const tracks = sortLinkedList(
+        getFragmentData(PLAYLIST_DETAIL_PAGE_TRACK, playlistData?.playlist.tracks ?? tracksFragment),
+    );
+    const me = getFragmentData(PLAYLIST_DETAIL_PAGE_ME, meData?.me ?? meFragment);
 
     if (!playlist) {
         location.reload();
@@ -465,7 +467,7 @@ export default function PlaylistDetailPage({
 }
 
 interface DescriptionProps {
-    playlist: ResultOf<typeof fragments.playlist>;
+    playlist: ResultOf<typeof PLAYLIST_DETAIL_PAGE_PLAYLIST>;
     description: string;
     setDescription: (newValue: string) => void;
     isEditable: boolean;
@@ -566,14 +568,14 @@ function Description({ playlist, description, setDescription, isEditable, setEdi
 }
 
 interface PlaylistTrackListProps {
-    playlist: ResultOf<typeof fragments.playlist>;
-    tracks: Array<ResultOf<typeof fragments.track> & { rank: number }>;
+    playlist: ResultOf<typeof PLAYLIST_DETAIL_PAGE_PLAYLIST>;
+    tracks: Array<ResultOf<typeof PLAYLIST_DETAIL_PAGE_TRACK> & { rank: number }>;
     isReorderable: boolean;
     isOwner: boolean;
     isRanking: boolean;
     playAll: (index: number) => void;
     updateTrackOrderRemote: (trackId: string) => void;
-    updateTrackOrder: (tracks: Array<ResultOf<typeof fragments.track> & { rank: number }>) => void;
+    updateTrackOrder: (tracks: Array<ResultOf<typeof PLAYLIST_DETAIL_PAGE_TRACK> & { rank: number }>) => void;
 }
 
 const PlaylistTrackList = memo(function PlaylistTrackList({
@@ -632,8 +634,8 @@ const StyledDragHandle = styled(Icon)`
 `;
 
 interface PlaylistTrackProps {
-    playlist: ResultOf<typeof fragments.playlist>;
-    track: ResultOf<typeof fragments.track> & { rank: number };
+    playlist: ResultOf<typeof PLAYLIST_DETAIL_PAGE_PLAYLIST>;
+    track: ResultOf<typeof PLAYLIST_DETAIL_PAGE_TRACK> & { rank: number };
     isOwner: boolean;
     isRanking: boolean;
     isDraggable?: boolean;

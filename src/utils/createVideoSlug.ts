@@ -2,27 +2,27 @@ import type { WatchListItem } from "@/context/playerContext";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import { getAnimeFromVideoPageFragment, type VideoPageProps } from "@/pages/anime/[animeSlug]/[videoSlug]";
 
-const fragments = {
-    theme: graphql(`
-        fragment createVideoSlugTheme on AnimeTheme {
-            type
-            sequence
-            group {
-                slug
-            }
+export const CREATE_VIDEO_SLUG_THEME = graphql(`
+    fragment createVideoSlugTheme on AnimeTheme {
+        type
+        sequence
+        group {
+            slug
         }
-    `),
-    entry: graphql(`
-        fragment createVideoSlugEntry on AnimeThemeEntry {
-            version
-        }
-    `),
-    video: graphql(`
-        fragment createVideoSlugVideo on Video {
-            tags
-        }
-    `),
-};
+    }
+`);
+
+export const CREATE_VIDEO_SLUG_ENTRY = graphql(`
+    fragment createVideoSlugEntry on AnimeThemeEntry {
+        version
+    }
+`);
+
+export const CREATE_VIDEO_SLUG_VIDEO = graphql(`
+    fragment createVideoSlugVideo on Video {
+        tags
+    }
+`);
 
 /**
  * Slug format is:
@@ -30,13 +30,13 @@ const fragments = {
  * `<OP|ED><#>[v#][-<Group>][-<Tags>]`
  */
 const createVideoSlug = (
-    themeFragment: FragmentType<typeof fragments.theme>,
-    entryFragment: FragmentType<typeof fragments.entry>,
-    videoFragment: FragmentType<typeof fragments.video>,
+    themeFragment: FragmentType<typeof CREATE_VIDEO_SLUG_THEME>,
+    entryFragment: FragmentType<typeof CREATE_VIDEO_SLUG_ENTRY>,
+    videoFragment: FragmentType<typeof CREATE_VIDEO_SLUG_VIDEO>,
 ) => {
-    const theme = getFragmentData(fragments.theme, themeFragment);
-    const entry = getFragmentData(fragments.entry, entryFragment);
-    const video = getFragmentData(fragments.video, videoFragment);
+    const theme = getFragmentData(CREATE_VIDEO_SLUG_THEME, themeFragment);
+    const entry = getFragmentData(CREATE_VIDEO_SLUG_ENTRY, entryFragment);
+    const video = getFragmentData(CREATE_VIDEO_SLUG_VIDEO, videoFragment);
 
     let slug = theme.type + (theme.sequence || 1);
 

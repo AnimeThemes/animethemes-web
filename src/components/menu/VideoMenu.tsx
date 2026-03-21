@@ -10,57 +10,56 @@ import { Text } from "@/components/text/Text";
 import PlayerContext from "@/context/playerContext";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
-const fragments = {
-    entry: graphql(`
-        fragment VideoMenuEntry on AnimeThemeEntry {
-            ...createVideoSlugEntry
-            ...PlaylistTrackAddDialogEntry
+export const VIDEO_MENU_ENTRY = graphql(`
+    fragment VideoMenuEntry on AnimeThemeEntry {
+        ...createVideoSlugEntry
+        ...PlaylistTrackAddDialogEntry
+        id
+        animetheme {
+            ...createVideoSlugTheme
             id
-            animetheme {
-                ...createVideoSlugTheme
-                id
-                type
-                sequence
-                group {
-                    name
-                    slug
-                }
-                anime {
-                    slug
-                    name
-                    images {
-                        nodes {
-                            ...extractImagesImage
-                        }
+            type
+            sequence
+            group {
+                name
+                slug
+            }
+            anime {
+                slug
+                name
+                images {
+                    nodes {
+                        ...extractImagesImage
                     }
                 }
-                song {
-                    ...SongTitleWithArtistsSong
-                }
+            }
+            song {
+                ...SongTitleWithArtistsSong
             }
         }
-    `),
-    video: graphql(`
-        fragment VideoMenuVideo on Video {
-            ...createVideoSlugVideo
-            ...PlaylistTrackAddDialogVideo
-            id
+    }
+`);
+
+export const VIDEO_MENU_VIDEO = graphql(`
+    fragment VideoMenuVideo on Video {
+        ...createVideoSlugVideo
+        ...PlaylistTrackAddDialogVideo
+        id
+        basename
+        audio {
             basename
-            audio {
-                basename
-            }
         }
-    `),
-};
+    }
+`);
 
 interface VideoMenuProps {
-    entry: FragmentType<typeof fragments.entry>;
-    video: FragmentType<typeof fragments.video>;
+    entry: FragmentType<typeof VIDEO_MENU_ENTRY>;
+    video: FragmentType<typeof VIDEO_MENU_VIDEO>;
 }
 
 export function VideoMenu({ entry: entryFragment, video: videoFragment }: VideoMenuProps) {
-    const entry = getFragmentData(fragments.entry, entryFragment);
-    const video = getFragmentData(fragments.video, videoFragment);
+    const entry = getFragmentData(VIDEO_MENU_ENTRY, entryFragment);
+    const video = getFragmentData(VIDEO_MENU_VIDEO, videoFragment);
 
     const { watchList, addWatchListItem, addWatchListItemNext } = useContext(PlayerContext);
 

@@ -3,21 +3,19 @@ import { ContentWarningTags } from "@/components/tag/ContentWarningTags";
 import { EpisodeTag } from "@/components/tag/EpisodeTag";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
-const fragments = {
-    entry: graphql(`
-        fragment ThemeEntryTagsEntry on AnimeThemeEntry {
-            ...EpisodeTagEntry
-            ...ContentWarningTagsEntry
-        }
-    `),
-};
+export const THEME_ENTRY_TAGS_ENTRY = graphql(`
+    fragment ThemeEntryTagsEntry on AnimeThemeEntry {
+        ...EpisodeTagEntry
+        ...ContentWarningTagsEntry
+    }
+`);
 
 interface ThemeEntryTagsProps {
-    entry: FragmentType<typeof fragments.entry>;
+    entry: FragmentType<typeof THEME_ENTRY_TAGS_ENTRY>;
 }
 
 export function ThemeEntryTags({ entry: entryFragment }: ThemeEntryTagsProps) {
-    const entry = getFragmentData(fragments.entry, entryFragment);
+    const entry = getFragmentData(THEME_ENTRY_TAGS_ENTRY, entryFragment);
 
     return (
         <Row style={{ "--gap": "8px", "--align-items": "baseline" }}>

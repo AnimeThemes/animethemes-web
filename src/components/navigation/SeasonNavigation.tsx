@@ -5,31 +5,30 @@ import { Switcher, SwitcherOption } from "@/components/switcher/Switcher";
 import { HorizontalScroll } from "@/components/utils/HorizontalScroll";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
-const fragments = {
-    year: graphql(`
-        fragment SeasonNavigationYear on AnimeYear {
-            year
-            seasons {
-                season
-                seasonLocalized
-            }
-        }
-    `),
-    season: graphql(`
-        fragment SeasonNavigationSeason on AnimeYearSeason {
+export const SEASON_NAVIGATION_YEAR = graphql(`
+    fragment SeasonNavigationYear on AnimeYear {
+        year
+        seasons {
             season
+            seasonLocalized
         }
-    `),
-};
+    }
+`);
+
+export const SEASON_NAVIGATION_SEASON = graphql(`
+    fragment SeasonNavigationSeason on AnimeYearSeason {
+        season
+    }
+`);
 
 interface SeasonNavigationProps {
-    year: FragmentType<typeof fragments.year>;
-    season?: FragmentType<typeof fragments.season>;
+    year: FragmentType<typeof SEASON_NAVIGATION_YEAR>;
+    season?: FragmentType<typeof SEASON_NAVIGATION_SEASON>;
 }
 
 export function SeasonNavigation({ year: yearFragment, season: seasonFragment }: SeasonNavigationProps) {
-    const year = getFragmentData(fragments.year, yearFragment);
-    const season = seasonFragment ? getFragmentData(fragments.season, seasonFragment) : undefined;
+    const year = getFragmentData(SEASON_NAVIGATION_YEAR, yearFragment);
+    const season = seasonFragment ? getFragmentData(SEASON_NAVIGATION_SEASON, seasonFragment) : undefined;
 
     return (
         <Row style={{ "--justify-content": "center" }}>
