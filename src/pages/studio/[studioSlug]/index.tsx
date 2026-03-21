@@ -40,58 +40,56 @@ const StyledList = styled.div`
     text-align: center;
 `;
 
-const fragments = {
-    studio: graphql(`
-        fragment StudioDetailPageStudio on Studio {
-            ...StudioCoverImageStudio
-            slug
-            name
-            anime {
-                nodes {
-                    ...AnimeSummaryCardAnime
-                    ...AnimeSummaryCardAnimeExpandable
-                    name
-                    slug
-                    year
-                    season
-                    animethemes {
-                        type
-                        sequence
-                        animethemeentries {
-                            version
-                            videos {
-                                nodes {
-                                    tags
-                                }
+export const STUDIO_DETAIL_PAGE_STUDIO = graphql(`
+    fragment StudioDetailPageStudio on Studio {
+        ...StudioCoverImageStudio
+        slug
+        name
+        anime {
+            nodes {
+                ...AnimeSummaryCardAnime
+                ...AnimeSummaryCardAnimeExpandable
+                name
+                slug
+                year
+                season
+                animethemes {
+                    type
+                    sequence
+                    animethemeentries {
+                        version
+                        videos {
+                            nodes {
+                                tags
                             }
                         }
                     }
-                    images {
-                        nodes {
-                            facet
-                            link
-                        }
-                    }
                 }
-            }
-            resources {
-                edges {
-                    as
-                    node {
+                images {
+                    nodes {
+                        facet
                         link
-                        site
-                        siteLocalized
                     }
-                }
-            }
-            images {
-                nodes {
-                    ...extractImagesImage
                 }
             }
         }
-    `),
-};
+        resources {
+            edges {
+                as
+                node {
+                    link
+                    site
+                    siteLocalized
+                }
+            }
+        }
+        images {
+            nodes {
+                ...extractImagesImage
+            }
+        }
+    }
+`);
 
 const propsQuery = graphql(`
     query StudioDetailPage($studioSlug: String!) {
@@ -113,7 +111,7 @@ const pathsQuery = graphql(`
 `);
 
 interface StudioDetailPageProps {
-    studio: FragmentType<typeof fragments.studio>;
+    studio: FragmentType<typeof STUDIO_DETAIL_PAGE_STUDIO>;
 }
 
 interface StudioDetailPageParams extends ParsedUrlQuery {
@@ -121,7 +119,7 @@ interface StudioDetailPageParams extends ParsedUrlQuery {
 }
 
 export default function StudioDetailPage({ studio: studioFragment }: StudioDetailPageProps) {
-    const studio = getFragmentData(fragments.studio, studioFragment);
+    const studio = getFragmentData(STUDIO_DETAIL_PAGE_STUDIO, studioFragment);
     const anime = studio.anime.nodes;
     const { largeCover } = extractImages(studio.images.nodes);
 
@@ -186,7 +184,7 @@ export default function StudioDetailPage({ studio: studioFragment }: StudioDetai
 }
 
 interface StudioAnimeProps {
-    anime: ResultOf<typeof fragments.studio>["anime"]["nodes"];
+    anime: ResultOf<typeof STUDIO_DETAIL_PAGE_STUDIO>["anime"]["nodes"];
 }
 
 const StudioAnime = memo(function StudioAnime({ anime }: StudioAnimeProps) {
@@ -195,7 +193,7 @@ const StudioAnime = memo(function StudioAnime({ anime }: StudioAnimeProps) {
     return <>{animeCards}</>;
 });
 
-const buildTimeCache: Map<string, FragmentType<typeof fragments.studio>> = new Map();
+const buildTimeCache: Map<string, FragmentType<typeof STUDIO_DETAIL_PAGE_STUDIO>> = new Map();
 
 export const getStaticProps: GetStaticProps<StudioDetailPageProps, StudioDetailPageParams> = async ({ params }) => {
     const client = createApolloClient();

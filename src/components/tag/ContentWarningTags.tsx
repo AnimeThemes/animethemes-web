@@ -4,21 +4,19 @@ import { Icon } from "@/components/icon/Icon";
 import { Tag } from "@/components/tag/Tag";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
-const fragments = {
-    entry: graphql(`
-        fragment ContentWarningTagsEntry on AnimeThemeEntry {
-            spoiler
-            nsfw
-        }
-    `),
-};
+export const CONTENT_WARNING_TAGS_ENTRY = graphql(`
+    fragment ContentWarningTagsEntry on AnimeThemeEntry {
+        spoiler
+        nsfw
+    }
+`);
 
 interface ContentWarningTagsProps {
-    entry: FragmentType<typeof fragments.entry>;
+    entry: FragmentType<typeof CONTENT_WARNING_TAGS_ENTRY>;
 }
 
 export function ContentWarningTags({ entry: entryFragment }: ContentWarningTagsProps) {
-    const entry = getFragmentData(fragments.entry, entryFragment);
+    const entry = getFragmentData(CONTENT_WARNING_TAGS_ENTRY, entryFragment);
 
     return (
         <>

@@ -58,12 +58,71 @@ const StyledHeader = styled.div`
     align-items: center;
 `;
 
-const fragments = {
-    artist: graphql(`
-        fragment ArtistDetailPageArtist on Artist {
-            ...ThemeSummaryCardArtist
-            slug
-            name
+export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
+    fragment ArtistDetailPageArtist on Artist {
+        ...ThemeSummaryCardArtist
+        slug
+        name
+        performances {
+            alias
+            as
+            song {
+                id
+                title
+                performances {
+                    artist {
+                        __typename
+                        ... on Artist {
+                            slug
+                            name
+                        }
+                        ... on Membership {
+                            group {
+                                slug
+                                name
+                            }
+                        }
+                    }
+                    alias
+                    as
+                }
+                animethemes {
+                    ...ThemeSummaryCardTheme
+                    ...ThemeSummaryCardThemeExpandable
+                    id
+                    type
+                    sequence
+                    animethemeentries {
+                        videos {
+                            nodes {
+                                id
+                            }
+                        }
+                    }
+                    group {
+                        name
+                        slug
+                    }
+                    anime {
+                        slug
+                        name
+                        year
+                        season
+                    }
+                    song {
+                        title
+                    }
+                }
+            }
+        }
+        memberships {
+            alias
+            as
+            group {
+                ...ThemeSummaryCardArtist
+                slug
+                name
+            }
             performances {
                 alias
                 as
@@ -116,168 +175,107 @@ const fragments = {
                     }
                 }
             }
-            memberships {
+        }
+        groupships {
+            alias
+            as
+            member {
+                slug
+                name
+            }
+            performances {
                 alias
                 as
-                group {
-                    ...ThemeSummaryCardArtist
-                    slug
-                    name
-                }
-                performances {
-                    alias
-                    as
-                    song {
-                        id
-                        title
-                        performances {
-                            artist {
-                                __typename
-                                ... on Artist {
+                song {
+                    id
+                    title
+                    performances {
+                        artist {
+                            __typename
+                            ... on Artist {
+                                slug
+                                name
+                            }
+                            ... on Membership {
+                                group {
                                     slug
                                     name
                                 }
-                                ... on Membership {
-                                    group {
-                                        slug
-                                        name
-                                    }
-                                }
-                            }
-                            alias
-                            as
-                        }
-                        animethemes {
-                            ...ThemeSummaryCardTheme
-                            ...ThemeSummaryCardThemeExpandable
-                            id
-                            type
-                            sequence
-                            animethemeentries {
-                                videos {
-                                    nodes {
-                                        id
-                                    }
-                                }
-                            }
-                            group {
-                                name
-                                slug
-                            }
-                            anime {
-                                slug
-                                name
-                                year
-                                season
-                            }
-                            song {
-                                title
                             }
                         }
+                        alias
+                        as
                     }
-                }
-            }
-            groupships {
-                alias
-                as
-                member {
-                    slug
-                    name
-                }
-                performances {
-                    alias
-                    as
-                    song {
+                    animethemes {
+                        ...ThemeSummaryCardTheme
+                        ...ThemeSummaryCardThemeExpandable
                         id
-                        title
-                        performances {
-                            artist {
-                                __typename
-                                ... on Artist {
-                                    slug
-                                    name
+                        type
+                        sequence
+                        animethemeentries {
+                            videos {
+                                nodes {
+                                    id
                                 }
-                                ... on Membership {
-                                    group {
-                                        slug
-                                        name
-                                    }
-                                }
-                            }
-                            alias
-                            as
-                        }
-                        animethemes {
-                            ...ThemeSummaryCardTheme
-                            ...ThemeSummaryCardThemeExpandable
-                            id
-                            type
-                            sequence
-                            animethemeentries {
-                                videos {
-                                    nodes {
-                                        id
-                                    }
-                                }
-                            }
-                            group {
-                                name
-                                slug
-                            }
-                            anime {
-                                slug
-                                name
-                                year
-                                season
-                            }
-                            song {
-                                title
                             }
                         }
+                        group {
+                            name
+                            slug
+                        }
+                        anime {
+                            slug
+                            name
+                            year
+                            season
+                        }
+                        song {
+                            title
+                        }
                     }
-                }
-            }
-            members {
-                edges {
-                    alias
-                    as
-                    notes
-                    node {
-                        ...ArtistSummaryCardArtist
-                        slug
-                        name
-                    }
-                }
-            }
-            groups {
-                edges {
-                    alias
-                    as
-                    notes
-                    node {
-                        slug
-                        name
-                    }
-                }
-            }
-            images {
-                edges {
-                    ...extractMultipleImagesImageArtistEdge
-                }
-            }
-            resources {
-                edges {
-                    node {
-                        link
-                        site
-                        siteLocalized
-                    }
-                    as
                 }
             }
         }
-    `),
-};
+        members {
+            edges {
+                alias
+                as
+                notes
+                node {
+                    ...ArtistSummaryCardArtist
+                    slug
+                    name
+                }
+            }
+        }
+        groups {
+            edges {
+                alias
+                as
+                notes
+                node {
+                    slug
+                    name
+                }
+            }
+        }
+        images {
+            edges {
+                ...extractMultipleImagesImageArtistEdge
+            }
+        }
+        resources {
+            edges {
+                node {
+                    link
+                    site
+                    siteLocalized
+                }
+                as
+            }
+        }
+    }
+`);
 
 const propsQuery = graphql(`
     query ArtistDetailPage($artistSlug: String!) {
@@ -301,8 +299,8 @@ const pathsQuery = graphql(`
 `);
 
 type Performance =
-    | ResultOf<typeof fragments.artist>["performances"][number]
-    | ResultOf<typeof fragments.artist>["groupships"][number]["performances"][number];
+    | ResultOf<typeof ARTIST_DETAIL_PAGE_ARTIST>["performances"][number]
+    | ResultOf<typeof ARTIST_DETAIL_PAGE_ARTIST>["groupships"][number]["performances"][number];
 
 function getPerformanceFilter(key: string | null): (performance: Performance) => boolean {
     switch (key) {
@@ -316,7 +314,7 @@ function getPerformanceFilter(key: string | null): (performance: Performance) =>
 }
 
 interface ArtistDetailPageProps {
-    artist: FragmentType<typeof fragments.artist>;
+    artist: FragmentType<typeof ARTIST_DETAIL_PAGE_ARTIST>;
     informationMarkdownSource: MDXRemoteSerializeResult | null;
 }
 
@@ -325,7 +323,7 @@ interface ArtistDetailPageParams extends ParsedUrlQuery {
 }
 
 export default function ArtistDetailPage({ artist: artistFragment, informationMarkdownSource }: ArtistDetailPageProps) {
-    const artist = getFragmentData(fragments.artist, artistFragment);
+    const artist = getFragmentData(ARTIST_DETAIL_PAGE_ARTIST, artistFragment);
     const images = extractMultipleImages(artist.images.edges);
     const [collapseInformation, setCollapseInformation] = useState(true);
 
@@ -624,7 +622,9 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
 
 interface ArtistThemesProps {
     themes: Performance["song"]["animethemes"];
-    artist: ResultOf<typeof fragments.artist> | ResultOf<typeof fragments.artist>["memberships"][number]["group"];
+    artist:
+        | ResultOf<typeof ARTIST_DETAIL_PAGE_ARTIST>
+        | ResultOf<typeof ARTIST_DETAIL_PAGE_ARTIST>["memberships"][number]["group"];
 }
 
 const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemesProps) {
@@ -661,7 +661,8 @@ const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemes
     return <>{themeCards}</>;
 });
 
-const buildTimeCache: Map<string, FragmentType<typeof fragments.artist> & { information: string | null }> = new Map();
+const buildTimeCache: Map<string, FragmentType<typeof ARTIST_DETAIL_PAGE_ARTIST> & { information: string | null }> =
+    new Map();
 
 export const getStaticProps: GetStaticProps<ArtistDetailPageProps, ArtistDetailPageParams> = async ({ params }) => {
     const client = createApolloClient();

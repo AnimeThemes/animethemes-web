@@ -135,30 +135,28 @@ const StyledRoleBadge = styled.span<{ $color: string }>`
     letter-spacing: 1px;
 `;
 
-const fragments = {
-    me: graphql(`
-        fragment ProfilePageMe on Me {
-            ...ProfileImageUser
-            name
-            email
-            emailVerifiedAt
-            createdAt
-            roles {
-                nodes {
-                    name
-                    color
-                    priority
-                    default
-                }
-            }
-            playlists(sort: [CREATED_AT_DESC]) {
-                ...PlaylistSummaryCardPlaylist
-                ...PlaylistRemoveDialogPlaylist
-                id
+export const PROFILE_PAGE_ME = graphql(`
+    fragment ProfilePageMe on Me {
+        ...ProfileImageUser
+        name
+        email
+        emailVerifiedAt
+        createdAt
+        roles {
+            nodes {
+                name
+                color
+                priority
+                default
             }
         }
-    `),
-};
+        playlists(sort: [CREATED_AT_DESC]) {
+            ...PlaylistSummaryCardPlaylist
+            ...PlaylistRemoveDialogPlaylist
+            id
+        }
+    }
+`);
 
 export const PROFILE_PAGE = graphql(`
     query ProfilePage {
@@ -169,13 +167,13 @@ export const PROFILE_PAGE = graphql(`
 `);
 
 interface ProfilePageProps extends SharedPageProps {
-    me: FragmentType<typeof fragments.me> | null;
+    me: FragmentType<typeof PROFILE_PAGE_ME> | null;
 }
 
 export default function ProfilePage({ me: meFragment }: ProfilePageProps) {
     const { data } = useQuery(PROFILE_PAGE);
 
-    const me = getFragmentData(fragments.me, data?.me ?? meFragment);
+    const me = getFragmentData(PROFILE_PAGE_ME, data?.me ?? meFragment);
 
     const { history, clearHistory } = useWatchHistory();
 

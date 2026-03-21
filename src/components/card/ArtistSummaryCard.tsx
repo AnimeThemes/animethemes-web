@@ -2,27 +2,25 @@ import { SummaryCard } from "@/components/card/SummaryCard";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import extractImages from "@/utils/extractImages";
 
-const fragments = {
-    artist: graphql(`
-        fragment ArtistSummaryCardArtist on Artist {
-            slug
-            name
-            images {
-                nodes {
-                    ...extractImagesImage
-                }
+export const ARTIST_SUMMARY_CARD_ARTIST = graphql(`
+    fragment ArtistSummaryCardArtist on Artist {
+        slug
+        name
+        images {
+            nodes {
+                ...extractImagesImage
             }
         }
-    `),
-};
+    }
+`);
 
 type ArtistSummaryCardProps = {
-    artist: FragmentType<typeof fragments.artist>;
+    artist: FragmentType<typeof ARTIST_SUMMARY_CARD_ARTIST>;
     as?: string | null;
 };
 
 export function ArtistSummaryCard({ artist: artistFragment, as }: ArtistSummaryCardProps) {
-    const artist = getFragmentData(fragments.artist, artistFragment);
+    const artist = getFragmentData(ARTIST_SUMMARY_CARD_ARTIST, artistFragment);
 
     const { smallCover } = extractImages(artist.images.nodes);
 

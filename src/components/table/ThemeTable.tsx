@@ -11,42 +11,40 @@ import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated
 import { either, themeIndexComparator, themeTypeComparator } from "@/utils/comparators";
 import createVideoSlug from "@/utils/createVideoSlug";
 
-const fragments = {
-    theme: graphql(`
-        fragment ThemeTableTheme on AnimeTheme {
-            ...createVideoSlugTheme
-            id
-            type
-            sequence
-            anime {
-                slug
-            }
-            animethemeentries {
-                ...createVideoSlugEntry
-                ...EpisodeTagEntry
-                ...ContentWarningTagsEntry
-                version
-                videos {
-                    nodes {
-                        ...createVideoSlugVideo
-                        ...VideoTagsVideo
-                    }
+export const THEME_TABLE_THEME = graphql(`
+    fragment ThemeTableTheme on AnimeTheme {
+        ...createVideoSlugTheme
+        id
+        type
+        sequence
+        anime {
+            slug
+        }
+        animethemeentries {
+            ...createVideoSlugEntry
+            ...EpisodeTagEntry
+            ...ContentWarningTagsEntry
+            version
+            videos {
+                nodes {
+                    ...createVideoSlugVideo
+                    ...VideoTagsVideo
                 }
             }
-            song {
-                ...SongTitleSong
-            }
         }
-    `),
-};
+        song {
+            ...SongTitleSong
+        }
+    }
+`);
 
 export interface ThemeTableProps {
-    themes: Array<FragmentType<typeof fragments.theme>>;
+    themes: Array<FragmentType<typeof THEME_TABLE_THEME>>;
     onPlay?(initiatingThemeId: number, entryIndex?: number, videoIndex?: number): void;
 }
 
 export function ThemeTable({ themes: themesFragment, onPlay }: ThemeTableProps) {
-    const themes = getFragmentData(fragments.theme, themesFragment);
+    const themes = getFragmentData(THEME_TABLE_THEME, themesFragment);
 
     const rows = themes
         .filter(

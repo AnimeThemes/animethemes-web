@@ -31,41 +31,39 @@ const StyledDesktopOnly = styled.div`
     }
 `;
 
-const fragments = {
-    series: graphql(`
-        fragment SeriesDetailPageSeries on Series {
-            slug
-            name
-            anime {
-                nodes {
-                    ...AnimeSummaryCardAnime
-                    ...AnimeSummaryCardAnimeExpandable
-                    name
-                    slug
-                    year
-                    season
-                    animethemes {
-                        type
-                        sequence
-                        animethemeentries {
-                            version
-                            videos {
-                                nodes {
-                                    tags
-                                }
+export const SERIES_DETAIL_PAGE_SERIES = graphql(`
+    fragment SeriesDetailPageSeries on Series {
+        slug
+        name
+        anime {
+            nodes {
+                ...AnimeSummaryCardAnime
+                ...AnimeSummaryCardAnimeExpandable
+                name
+                slug
+                year
+                season
+                animethemes {
+                    type
+                    sequence
+                    animethemeentries {
+                        version
+                        videos {
+                            nodes {
+                                tags
                             }
                         }
                     }
-                    images {
-                        nodes {
-                            ...extractImagesImage
-                        }
+                }
+                images {
+                    nodes {
+                        ...extractImagesImage
                     }
                 }
             }
         }
-    `),
-};
+    }
+`);
 
 const propsQuery = graphql(`
     query SeriesDetailPage($seriesSlug: String!) {
@@ -87,7 +85,7 @@ const pathsQuery = graphql(`
 `);
 
 interface SeriesDetailPageProps {
-    series: FragmentType<typeof fragments.series>;
+    series: FragmentType<typeof SERIES_DETAIL_PAGE_SERIES>;
 }
 
 interface SeriesDetailPageParams extends ParsedUrlQuery {
@@ -95,7 +93,7 @@ interface SeriesDetailPageParams extends ParsedUrlQuery {
 }
 
 export default function SeriesDetailPage({ series: seriesFragment }: SeriesDetailPageProps) {
-    const series = getFragmentData(fragments.series, seriesFragment);
+    const series = getFragmentData(SERIES_DETAIL_PAGE_SERIES, seriesFragment);
     const anime = series.anime.nodes;
 
     const [showFilter, toggleShowFilter] = useToggle();
@@ -141,7 +139,7 @@ export default function SeriesDetailPage({ series: seriesFragment }: SeriesDetai
 }
 
 interface SeriesAnimeProps {
-    anime: ResultOf<typeof fragments.series>["anime"]["nodes"];
+    anime: ResultOf<typeof SERIES_DETAIL_PAGE_SERIES>["anime"]["nodes"];
 }
 
 const SeriesAnime = memo(function SeriesAnime({ anime }: SeriesAnimeProps) {
@@ -150,7 +148,7 @@ const SeriesAnime = memo(function SeriesAnime({ anime }: SeriesAnimeProps) {
     return <>{animeCards}</>;
 });
 
-const buildTimeCache: Map<string, FragmentType<typeof fragments.series>> = new Map();
+const buildTimeCache: Map<string, FragmentType<typeof SERIES_DETAIL_PAGE_SERIES>> = new Map();
 
 export const getStaticProps: GetStaticProps<SeriesDetailPageProps, SeriesDetailPageParams> = async ({ params }) => {
     const client = createApolloClient();

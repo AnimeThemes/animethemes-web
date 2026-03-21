@@ -8,27 +8,25 @@ import { HorizontalScroll } from "@/components/utils/HorizontalScroll";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import { either, themeGroupComparator, themeIndexComparator, themeTypeComparator } from "@/utils/comparators";
 
-const fragments = {
-    theme: graphql(`
-        fragment AnimeThemeFilterTheme on AnimeTheme {
-            ...ThemeDetailCardTheme
-            id
-            type
-            sequence
-            group {
-                name
-                slug
-            }
+export const ANIME_THEME_FILTER_THEME = graphql(`
+    fragment AnimeThemeFilterTheme on AnimeTheme {
+        ...ThemeDetailCardTheme
+        id
+        type
+        sequence
+        group {
+            name
+            slug
         }
-    `),
-};
+    }
+`);
 
 interface AnimeThemeFilterProps {
-    themes: Array<FragmentType<typeof fragments.theme>>;
+    themes: Array<FragmentType<typeof ANIME_THEME_FILTER_THEME>>;
 }
 
 function AnimeThemeFilterInternal({ themes: themesFragment }: AnimeThemeFilterProps) {
-    const themes = getFragmentData(fragments.theme, themesFragment);
+    const themes = getFragmentData(ANIME_THEME_FILTER_THEME, themesFragment);
 
     const hasMultipleTypes = themes.some((theme) => theme.type === "OP") && themes.some((theme) => theme.type === "ED");
     const [filterType, setFilterType] = useState<string | null>(null);

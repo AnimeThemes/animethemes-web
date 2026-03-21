@@ -25,26 +25,25 @@ import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated
 import { PLAYLIST_DETAIL_PAGE_PLAYLIST } from "@/pages/playlist/[playlistId]";
 import { PROFILE_PAGE } from "@/pages/profile";
 
-const fragments = {
-    video: graphql(`
-        fragment PlaylistTrackAddDialogVideo on Video {
-            ...VideoSummaryCardVideo
-            id
-        }
-    `),
-    entry: graphql(`
-        fragment PlaylistTrackAddDialogEntry on AnimeThemeEntry {
-            ...VideoSummaryCardEntry
-            ...PlaylistTrackAddToastEntry
-            ...PlaylistTrackRemoveToastEntry
-            id
-        }
-    `),
-};
+export const PLAYLIST_TRACK_ADD_DIALOG_VIDEO = graphql(`
+    fragment PlaylistTrackAddDialogVideo on Video {
+        ...VideoSummaryCardVideo
+        id
+    }
+`);
+
+export const PLAYLIST_TRACK_ADD_DIALOG_ENTRY = graphql(`
+    fragment PlaylistTrackAddDialogEntry on AnimeThemeEntry {
+        ...VideoSummaryCardEntry
+        ...PlaylistTrackAddToastEntry
+        ...PlaylistTrackRemoveToastEntry
+        id
+    }
+`);
 
 interface PlaylistTrackAddDialogProps {
-    video: FragmentType<typeof fragments.video>;
-    entry: FragmentType<typeof fragments.entry>;
+    video: FragmentType<typeof PLAYLIST_TRACK_ADD_DIALOG_VIDEO>;
+    entry: FragmentType<typeof PLAYLIST_TRACK_ADD_DIALOG_ENTRY>;
     trigger?: ReactNode;
 }
 
@@ -53,8 +52,8 @@ export function PlaylistTrackAddDialog({
     entry: entryFragment,
     trigger,
 }: PlaylistTrackAddDialogProps) {
-    const video = getFragmentData(fragments.video, videoFragment);
-    const entry = getFragmentData(fragments.entry, entryFragment);
+    const video = getFragmentData(PLAYLIST_TRACK_ADD_DIALOG_VIDEO, videoFragment);
+    const entry = getFragmentData(PLAYLIST_TRACK_ADD_DIALOG_ENTRY, entryFragment);
     const [open, setOpen] = useState(false);
 
     return (
@@ -93,8 +92,8 @@ const PLAYLIST_TRACK_ADD_FORM_PLAYLIST = graphql(`
 `);
 
 interface PlaylistTrackAddFormProps {
-    video: ResultOf<typeof fragments.video>;
-    entry: ResultOf<typeof fragments.entry>;
+    video: ResultOf<typeof PLAYLIST_TRACK_ADD_DIALOG_VIDEO>;
+    entry: ResultOf<typeof PLAYLIST_TRACK_ADD_DIALOG_ENTRY>;
     onCancel(): void;
 }
 
@@ -175,8 +174,8 @@ const PLAYLIST_TRACK_ADD_CARD_TRACK = graphql(`
 interface PlaylistTrackAddCardProps {
     playlist: FragmentType<typeof PLAYLIST_TRACK_ADD_CARD_PLAYLIST>;
     track: FragmentType<typeof PLAYLIST_TRACK_ADD_CARD_TRACK> | null;
-    video: ResultOf<typeof fragments.video>;
-    entry: ResultOf<typeof fragments.entry>;
+    video: ResultOf<typeof PLAYLIST_TRACK_ADD_DIALOG_VIDEO>;
+    entry: ResultOf<typeof PLAYLIST_TRACK_ADD_DIALOG_ENTRY>;
 }
 
 function PlaylistTrackAddCard({

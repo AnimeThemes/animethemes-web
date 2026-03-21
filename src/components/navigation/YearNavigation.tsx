@@ -22,31 +22,30 @@ const StyledYearNext = styled(StyledYear)`
     justify-content: flex-start;
 `;
 
-const fragments = {
-    year: graphql(`
-        fragment YearNavigationYear on AnimeYear {
-            year
-            seasons {
-                season
-                seasonLocalized
-            }
+export const YEAR_NAVIGATION_YEAR = graphql(`
+    fragment YearNavigationYear on AnimeYear {
+        year
+        seasons {
+            season
+            seasonLocalized
         }
-    `),
-    years: graphql(`
-        fragment YearNavigationYears on AnimeYear {
-            year
-        }
-    `),
-};
+    }
+`);
+
+export const YEAR_NAVIGATION_YEARS = graphql(`
+    fragment YearNavigationYears on AnimeYear {
+        year
+    }
+`);
 
 interface YearNavigationProps {
-    year: FragmentType<typeof fragments.year>;
-    years: Array<FragmentType<typeof fragments.years>>;
+    year: FragmentType<typeof YEAR_NAVIGATION_YEAR>;
+    years: Array<FragmentType<typeof YEAR_NAVIGATION_YEARS>>;
 }
 
 export function YearNavigation({ year: yearFragment, years: yearsFragment }: YearNavigationProps) {
-    const year = getFragmentData(fragments.year, yearFragment);
-    const years = getFragmentData(fragments.years, yearsFragment);
+    const year = getFragmentData(YEAR_NAVIGATION_YEAR, yearFragment);
+    const years = getFragmentData(YEAR_NAVIGATION_YEARs, yearsFragment);
 
     const previousYear = years.find((y) => y.year === year.year - 1)?.year ?? null;
     const nextYear = years.find((y) => y.year === year.year + 1)?.year ?? null;

@@ -2,21 +2,19 @@ import { Text } from "@/components/text/Text";
 import { Toast } from "@/components/toast/Toast";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
-const fragments = {
-    playlist: graphql(`
-        fragment PlaylistRemoveToastPlaylist on Playlist {
-            id
-            name
-        }
-    `),
-};
+export const PLAYLIST_REMOVE_TOAST_PLAYLIST = graphql(`
+    fragment PlaylistRemoveToastPlaylist on Playlist {
+        id
+        name
+    }
+`);
 
 interface PlaylistRemoveToastProps {
-    playlist: FragmentType<typeof fragments.playlist>;
+    playlist: FragmentType<typeof PLAYLIST_REMOVE_TOAST_PLAYLIST>;
 }
 
 export function PlaylistRemoveToast({ playlist: playlistFragment }: PlaylistRemoveToastProps) {
-    const playlist = getFragmentData(fragments.playlist, playlistFragment);
+    const playlist = getFragmentData(PLAYLIST_REMOVE_TOAST_PLAYLIST, playlistFragment);
 
     return (
         <Toast>

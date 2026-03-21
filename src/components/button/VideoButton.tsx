@@ -11,36 +11,37 @@ import PlayerContext from "@/context/playerContext";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import createVideoSlug, { getVideoSlugByWatchListItem } from "@/utils/createVideoSlug";
 
-const fragments = {
-    anime: graphql(`
-        fragment VideoButtonAnime on Anime {
-            slug
-        }
-    `),
-    theme: graphql(`
-        fragment VideoButtonTheme on AnimeTheme {
-            ...createVideoSlugTheme
-        }
-    `),
-    entry: graphql(`
-        fragment VideoButtonEntry on AnimeThemeEntry {
-            ...createVideoSlugEntry
-        }
-    `),
-    video: graphql(`
-        fragment VideoButtonVideo on Video {
-            ...createVideoSlugVideo
-            ...VideoTagsVideo
-            id
-        }
-    `),
-};
+export const VIDEO_BUTTON_ANIME = graphql(`
+    fragment VideoButtonAnime on Anime {
+        slug
+    }
+`);
+
+export const VIDEO_BUTTON_THEME = graphql(`
+    fragment VideoButtonTheme on AnimeTheme {
+        ...createVideoSlugTheme
+    }
+`);
+
+export const VIDEO_BUTTON_ENTRY = graphql(`
+    fragment VideoButtonEntry on AnimeThemeEntry {
+        ...createVideoSlugEntry
+    }
+`);
+
+export const VIDEO_BUTTON_VIDEO = graphql(`
+    fragment VideoButtonVideo on Video {
+        ...createVideoSlugVideo
+        ...VideoTagsVideo
+        id
+    }
+`);
 
 interface VideoButtonProps extends ComponentPropsWithoutRef<typeof Button> {
-    anime: FragmentType<typeof fragments.anime>;
-    theme: FragmentType<typeof fragments.theme>;
-    entry: FragmentType<typeof fragments.entry>;
-    video: FragmentType<typeof fragments.video>;
+    anime: FragmentType<typeof VIDEO_BUTTON_ANIME>;
+    theme: FragmentType<typeof VIDEO_BUTTON_THEME>;
+    entry: FragmentType<typeof VIDEO_BUTTON_ENTRY>;
+    video: FragmentType<typeof VIDEO_BUTTON_VIDEO>;
 }
 
 export function VideoButton({
@@ -50,10 +51,10 @@ export function VideoButton({
     video: videoFragment,
     ...props
 }: VideoButtonProps) {
-    const anime = getFragmentData(fragments.anime, animeFragment);
-    const theme = getFragmentData(fragments.theme, themeFragment);
-    const entry = getFragmentData(fragments.entry, entryFragment);
-    const video = getFragmentData(fragments.video, videoFragment);
+    const anime = getFragmentData(VIDEO_BUTTON_ANIME, animeFragment);
+    const theme = getFragmentData(VIDEO_BUTTON_THEME, themeFragment);
+    const entry = getFragmentData(VIDEO_BUTTON_ENTRY, entryFragment);
+    const video = getFragmentData(VIDEO_BUTTON_VIDEO, videoFragment);
 
     const { currentWatchListItem } = useContext(PlayerContext);
     const videoSlug = createVideoSlug(theme, entry, video);

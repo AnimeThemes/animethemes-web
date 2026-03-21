@@ -34,52 +34,50 @@ const StyledList = styled.div`
     text-align: center;
 `;
 
-const fragments = {
-    anime: graphql(`
-        fragment AnimeDetailPageAnime on Anime {
-            slug
-            name
-            season
-            seasonLocalized
-            year
-            synopsis
-            mediaFormatLocalized
-            animesynonyms {
-                text
-            }
-            series {
-                nodes {
-                    slug
-                    name
-                }
-            }
-            studios {
-                nodes {
-                    slug
-                    name
-                }
-            }
-            resources {
-                edges {
-                    node {
-                        site
-                        siteLocalized
-                        link
-                    }
-                    as
-                }
-            }
-            images {
-                nodes {
-                    ...extractImagesImage
-                }
-            }
-            animethemes {
-                ...AnimeThemeFilterTheme
+export const ANIME_DETAIL_PAGE_ANIME = graphql(`
+    fragment AnimeDetailPageAnime on Anime {
+        slug
+        name
+        season
+        seasonLocalized
+        year
+        synopsis
+        mediaFormatLocalized
+        animesynonyms {
+            text
+        }
+        series {
+            nodes {
+                slug
+                name
             }
         }
-    `),
-};
+        studios {
+            nodes {
+                slug
+                name
+            }
+        }
+        resources {
+            edges {
+                node {
+                    site
+                    siteLocalized
+                    link
+                }
+                as
+            }
+        }
+        images {
+            nodes {
+                ...extractImagesImage
+            }
+        }
+        animethemes {
+            ...AnimeThemeFilterTheme
+        }
+    }
+`);
 
 const propsQuery = graphql(`
     query AnimeDetailPage($animeSlug: String!) {
@@ -101,7 +99,7 @@ const pathsQuery = graphql(`
 `);
 
 interface AnimeDetailPageProps extends SharedPageProps {
-    anime: FragmentType<typeof fragments.anime>;
+    anime: FragmentType<typeof ANIME_DETAIL_PAGE_ANIME>;
     synopsisMarkdownSource: MDXRemoteSerializeResult | null;
 }
 
@@ -110,7 +108,7 @@ interface AnimeDetailPageParams extends ParsedUrlQuery {
 }
 
 export default function AnimeDetailPage({ anime: animeFragment, synopsisMarkdownSource }: AnimeDetailPageProps) {
-    const anime = getFragmentData(fragments.anime, animeFragment);
+    const anime = getFragmentData(ANIME_DETAIL_PAGE_ANIME, animeFragment);
 
     const [collapseSynopsis, setCollapseSynopsis] = useState(true);
     const { smallCover, largeCover } = extractImages(anime.images.nodes);
@@ -210,7 +208,7 @@ export default function AnimeDetailPage({ anime: animeFragment, synopsisMarkdown
     );
 }
 
-const buildTimeCache: Map<string, FragmentType<typeof fragments.anime>> = new Map();
+const buildTimeCache: Map<string, FragmentType<typeof ANIME_DETAIL_PAGE_ANIME>> = new Map();
 
 export const getStaticProps: GetStaticProps<AnimeDetailPageProps, AnimeDetailPageParams> = async ({ params }) => {
     const client = createApolloClient();
@@ -232,7 +230,7 @@ export const getStaticProps: GetStaticProps<AnimeDetailPageProps, AnimeDetailPag
         };
     }
 
-    const anime = getFragmentData(fragments.anime, animeFragment);
+    const anime = getFragmentData(ANIME_DETAIL_PAGE_ANIME, animeFragment);
 
     return {
         props: {

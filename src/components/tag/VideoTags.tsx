@@ -11,26 +11,24 @@ const StyledVideoTags = styled(Row)`
     gap: 8px;
 `;
 
-const fragments = {
-    video: graphql(`
-        fragment VideoTagsVideo on Video {
-            resolution
-            nc
-            subbed
-            lyrics
-            uncen
-            source
-            overlap
-        }
-    `),
-};
+export const VIDEO_TAGS_VIDEO = graphql(`
+    fragment VideoTagsVideo on Video {
+        resolution
+        nc
+        subbed
+        lyrics
+        uncen
+        source
+        overlap
+    }
+`);
 
 interface VideoTagsProps {
-    video: FragmentType<typeof fragments.video>;
+    video: FragmentType<typeof VIDEO_TAGS_VIDEO>;
 }
 
 export function VideoTags(props: VideoTagsProps) {
-    const video = getFragmentData(fragments.video, props.video);
+    const video = getFragmentData(VIDEO_TAGS_VIDEO, props.video);
 
     return (
         <StyledVideoTags>

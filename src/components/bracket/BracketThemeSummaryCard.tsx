@@ -32,40 +32,38 @@ const StyledRank = styled(Text)`
     letter-spacing: 1px;
 `;
 
-const fragments = {
-    theme: graphql(`
-        fragment BracketThemeSummaryCardTheme on AnimeTheme {
-            ...createVideoSlugTheme
-            ...ThemeMenuTheme
-            type
-            sequence
-            group {
-                name
-                slug
-            }
-            anime {
-                slug
-                name
-                images {
-                    nodes {
-                        ...extractImagesImage
-                    }
-                }
-            }
-            song {
-                ...SongTitleWithArtistsSong
-            }
-            animethemeentries {
-                ...createVideoSlugEntry
-                videos {
-                    nodes {
-                        ...createVideoSlugVideo
-                    }
+export const BRACKET_THEME_SUMMARY_CARD_THEME = graphql(`
+    fragment BracketThemeSummaryCardTheme on AnimeTheme {
+        ...createVideoSlugTheme
+        ...ThemeMenuTheme
+        type
+        sequence
+        group {
+            name
+            slug
+        }
+        anime {
+            slug
+            name
+            images {
+                nodes {
+                    ...extractImagesImage
                 }
             }
         }
-    `),
-};
+        song {
+            ...SongTitleWithArtistsSong
+        }
+        animethemeentries {
+            ...createVideoSlugEntry
+            videos {
+                nodes {
+                    ...createVideoSlugVideo
+                }
+            }
+        }
+    }
+`);
 
 export interface BracketWithThemes extends Bracket {
     currentRound: BracketRoundWithThemes | null;
@@ -79,7 +77,7 @@ export interface BracketPairingWithThemes extends BracketPairing {
     characterB: BracketCharacterWithTheme;
 }
 export interface BracketCharacterWithTheme extends BracketCharacter {
-    theme: FragmentType<typeof fragments.theme> | null;
+    theme: FragmentType<typeof BRACKET_THEME_SUMMARY_CARD_THEME> | null;
 }
 
 interface BracketThemeSummaryCardProps extends ComponentPropsWithoutRef<typeof StyledSummaryCardWrapper> {
@@ -98,7 +96,7 @@ export function BracketThemeSummaryCard({
     votes,
     ...props
 }: BracketThemeSummaryCardProps) {
-    const theme = getFragmentData(fragments.theme, character.theme);
+    const theme = getFragmentData(BRACKET_THEME_SUMMARY_CARD_THEME, character.theme);
     const { smallCover } = extractImages(theme?.anime.images.nodes ?? []);
 
     let to;

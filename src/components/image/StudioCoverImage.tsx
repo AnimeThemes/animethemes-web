@@ -13,34 +13,32 @@ const StyledImage = styled(FullWidthImage)`
     background-size: contain;
 `;
 
-const fragments = {
-    studio: graphql(`
-        fragment StudioCoverImageStudio on Studio {
-            images {
-                nodes {
-                    ...extractImagesImage
-                }
+export const STUDIO_COVER_IMAGE_STUDIO = graphql(`
+    fragment StudioCoverImageStudio on Studio {
+        images {
+            nodes {
+                ...extractImagesImage
             }
-            anime {
-                nodes {
-                    name
-                    images {
-                        nodes {
-                            ...extractImagesImage
-                        }
+        }
+        anime {
+            nodes {
+                name
+                images {
+                    nodes {
+                        ...extractImagesImage
                     }
                 }
             }
         }
-    `),
-};
+    }
+`);
 
 interface StudioCoverImageProps extends ComponentPropsWithoutRef<typeof FullWidthImage> {
-    studio: FragmentType<typeof fragments.studio>;
+    studio: FragmentType<typeof STUDIO_COVER_IMAGE_STUDIO>;
 }
 
 export function StudioCoverImage({ studio: studioFragment, ...props }: StudioCoverImageProps) {
-    const studio = getFragmentData(fragments.studio, studioFragment);
+    const studio = getFragmentData(STUDIO_COVER_IMAGE_STUDIO, studioFragment);
     const { largeCover } = extractImages(studio.images.nodes);
 
     const [imageNotFound, setImageNotFound] = useState(!largeCover);

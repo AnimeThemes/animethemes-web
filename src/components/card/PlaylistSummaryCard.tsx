@@ -28,27 +28,26 @@ const StyledOverlayButtons = styled.div`
     }
 `;
 
-const fragments = {
-    playlist: graphql(`
-        fragment PlaylistSummaryCardPlaylist on Playlist {
-            id
+export const PLAYLIST_SUMMARY_CARD_PLAYLIST = graphql(`
+    fragment PlaylistSummaryCardPlaylist on Playlist {
+        id
+        name
+        visibilityLocalized
+        tracksCount
+    }
+`);
+
+export const PLAYLIST_SUMMARY_CARD_PLAYLIST_WITH_OWNER = graphql(`
+    fragment PlaylistSummaryCardPlaylistWithOwner on Playlist {
+        user {
             name
-            visibilityLocalized
-            tracksCount
         }
-    `),
-    playlistWithOwner: graphql(`
-        fragment PlaylistSummaryCardPlaylistWithOwner on Playlist {
-            user {
-                name
-            }
-        }
-    `),
-};
+    }
+`);
 
 interface PlaylistSummaryCardProps {
-    playlist: FragmentType<typeof fragments.playlist>;
-    playlistWithOwner?: FragmentType<typeof fragments.playlistWithOwner>;
+    playlist: FragmentType<typeof PLAYLIST_SUMMARY_CARD_PLAYLIST>;
+    playlistWithOwner?: FragmentType<typeof PLAYLIST_SUMMARY_CARD_PLAYLIST_WITH_OWNER>;
     menu?: ReactNode;
 }
 
@@ -59,8 +58,8 @@ export default function PlaylistSummaryCard({
     menu,
     ...props
 }: PropsWithChildren<PlaylistSummaryCardProps>) {
-    const playlist = getFragmentData(fragments.playlist, playlistFragment);
-    const playlistWithOwner = getFragmentData(fragments.playlistWithOwner, playlistWithOwnerFragment);
+    const playlist = getFragmentData(PLAYLIST_SUMMARY_CARD_PLAYLIST, playlistFragment);
+    const playlistWithOwner = getFragmentData(PLAYLIST_SUMMARY_CARD_PLAYLIST_WITH_OWNER, playlistWithOwnerFragment);
 
     const description = (
         <SummaryCard.Description>

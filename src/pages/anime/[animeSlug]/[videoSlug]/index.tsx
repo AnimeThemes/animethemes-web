@@ -31,97 +31,95 @@ import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 
-const fragments = {
-    anime: graphql(`
-        fragment VideoPageAnime on Anime {
-            ...AnimeSummaryCardAnime
-            name
-            slug
-            year
-            season
-            animethemes {
-                ...ThemeSummaryCardTheme
-                ...createVideoSlugTheme
-                id
-                type
-                sequence
-                song {
-                    title
-                    performances {
-                        artist {
-                            ...ArtistSummaryCardArtist
-                        }
-                        as
+export const VIDEO_PAGE_ANIME = graphql(`
+    fragment VideoPageAnime on Anime {
+        ...AnimeSummaryCardAnime
+        name
+        slug
+        year
+        season
+        animethemes {
+            ...ThemeSummaryCardTheme
+            ...createVideoSlugTheme
+            id
+            type
+            sequence
+            song {
+                title
+                performances {
+                    artist {
+                        ...ArtistSummaryCardArtist
                     }
+                    as
                 }
-                group {
-                    slug
-                }
-                animethemeentries {
-                    ...VideoPlayerEntry
-                    ...createVideoSlugEntry
-                    id
-                    episodes
-                    nsfw
-                    spoiler
-                    version
-                    videos {
-                        nodes {
-                            ...VideoPlayerVideo
-                            ...VideoScriptVideo
-                            ...createVideoSlugVideo
-                            id
-                            basename
-                            filename
-                            lyrics
-                            nc
-                            overlap
-                            resolution
-                            source
-                            subbed
-                            uncen
-                            tags
-                            animethemeentries {
-                                nodes {
-                                    animetheme {
-                                        ...ThemeSummaryCardTheme
-                                        anime {
-                                            slug
-                                        }
+            }
+            group {
+                slug
+            }
+            animethemeentries {
+                ...VideoPlayerEntry
+                ...createVideoSlugEntry
+                id
+                episodes
+                nsfw
+                spoiler
+                version
+                videos {
+                    nodes {
+                        ...VideoPlayerVideo
+                        ...VideoScriptVideo
+                        ...createVideoSlugVideo
+                        id
+                        basename
+                        filename
+                        lyrics
+                        nc
+                        overlap
+                        resolution
+                        source
+                        subbed
+                        uncen
+                        tags
+                        animethemeentries {
+                            nodes {
+                                animetheme {
+                                    ...ThemeSummaryCardTheme
+                                    anime {
+                                        slug
                                     }
                                 }
                             }
-                            tracks {
-                                playlist {
-                                    ...PlaylistSummaryCardPlaylist
-                                    ...PlaylistSummaryCardPlaylistWithOwner
-                                    id
-                                }
+                        }
+                        tracks {
+                            playlist {
+                                ...PlaylistSummaryCardPlaylist
+                                ...PlaylistSummaryCardPlaylistWithOwner
+                                id
                             }
                         }
                     }
                 }
             }
-            images {
-                nodes {
-                    ...extractImagesImage
-                }
-            }
-            series {
-                nodes {
-                    slug
-                    name
-                }
-            }
-            studios {
-                nodes {
-                    ...StudioSummaryCardStudio
-                    slug
-                }
+        }
+        images {
+            nodes {
+                ...extractImagesImage
             }
         }
-    `),
-};
+        series {
+            nodes {
+                slug
+                name
+            }
+        }
+        studios {
+            nodes {
+                ...StudioSummaryCardStudio
+                slug
+            }
+        }
+    }
+`);
 
 const propsQuery = graphql(`
     query VideoPage($animeSlug: String!) {
@@ -153,12 +151,12 @@ const pathsQuery = graphql(`
     }
 `);
 
-export function getAnimeFromVideoPageFragment(fragment: FragmentType<typeof fragments.anime>) {
-    return getFragmentData(fragments.anime, fragment);
+export function getAnimeFromVideoPageFragment(fragment: FragmentType<typeof VIDEO_PAGE_ANIME>) {
+    return getFragmentData(VIDEO_PAGE_ANIME, fragment);
 }
 
 export interface VideoPageProps extends SharedPageProps {
-    anime: FragmentType<typeof fragments.anime>;
+    anime: FragmentType<typeof VIDEO_PAGE_ANIME>;
     themeIndex: number;
     entryIndex: number;
     videoIndex: number;
@@ -440,7 +438,7 @@ export default function VideoPage({
     );
 }
 
-const buildTimeCache: Map<string, FragmentType<typeof fragments.anime>> = new Map();
+const buildTimeCache: Map<string, FragmentType<typeof VIDEO_PAGE_ANIME>> = new Map();
 
 export const getStaticProps: GetStaticProps<VideoPageProps, VideoPageParams> = async ({ params }) => {
     const client = createApolloClient();
@@ -462,7 +460,7 @@ export const getStaticProps: GetStaticProps<VideoPageProps, VideoPageParams> = a
         };
     }
 
-    const anime = getFragmentData(fragments.anime, animeFragment);
+    const anime = getFragmentData(VIDEO_PAGE_ANIME, animeFragment);
 
     if (anime) {
         for (const [themeIndex, theme] of anime.animethemes.entries()) {

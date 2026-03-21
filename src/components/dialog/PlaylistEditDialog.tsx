@@ -21,23 +21,21 @@ import type { PlaylistVisibility } from "@/graphql/generated/graphql";
 import { PLAYLIST_DETAIL_PAGE_PLAYLIST } from "@/pages/playlist/[playlistId]";
 import { PROFILE_PAGE } from "@/pages/profile";
 
-const fragments = {
-    playlist: graphql(`
-        fragment PlaylistEditDialogPlaylist on Playlist {
-            id
-            name
-            visibility
-        }
-    `),
-};
+export const PLAYLIST_EDIT_DIALOG_PLAYLIST = graphql(`
+    fragment PlaylistEditDialogPlaylist on Playlist {
+        id
+        name
+        visibility
+    }
+`);
 
 interface PlaylistEditDialogProps {
-    playlist: FragmentType<typeof fragments.playlist>;
+    playlist: FragmentType<typeof PLAYLIST_EDIT_DIALOG_PLAYLIST>;
     trigger?: ReactNode;
 }
 
 export function PlaylistEditDialog({ playlist: playlistFragment, trigger }: PlaylistEditDialogProps) {
-    const playlist = getFragmentData(fragments.playlist, playlistFragment);
+    const playlist = getFragmentData(PLAYLIST_EDIT_DIALOG_PLAYLIST, playlistFragment);
 
     const [open, setOpen] = useState(false);
 
@@ -71,7 +69,7 @@ const StyledForm = styled.form`
 `;
 
 interface PlaylistEditFormProps {
-    playlist: ResultOf<typeof fragments.playlist>;
+    playlist: ResultOf<typeof PLAYLIST_EDIT_DIALOG_PLAYLIST>;
     onSuccess(): void;
     onCancel(): void;
 }

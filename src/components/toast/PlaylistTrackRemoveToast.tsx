@@ -6,35 +6,34 @@ import { Toast } from "@/components/toast/Toast";
 import { SongTitle } from "@/components/utils/SongTitle";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
-const fragments = {
-    playlist: graphql(`
-        fragment PlaylistTrackRemoveToastPlaylist on Playlist {
-            id
-            name
-        }
-    `),
-    entry: graphql(`
-        fragment PlaylistTrackRemoveToastEntry on AnimeThemeEntry {
-            animetheme {
-                song {
-                    ...SongTitleSong
-                }
+export const PLAYLIST_TRACK_REMOVE_TOAST_PLAYLIST = graphql(`
+    fragment PlaylistTrackRemoveToastPlaylist on Playlist {
+        id
+        name
+    }
+`);
+
+export const PLAYLIST_TRACK_REMOVE_TOAST_ENTRY = graphql(`
+    fragment PlaylistTrackRemoveToastEntry on AnimeThemeEntry {
+        animetheme {
+            song {
+                ...SongTitleSong
             }
         }
-    `),
-};
+    }
+`);
 
 interface PlaylistTrackRemoveToastProps {
-    playlist: FragmentType<typeof fragments.playlist>;
-    entry: FragmentType<typeof fragments.entry>;
+    playlist: FragmentType<typeof PLAYLIST_TRACK_REMOVE_TOAST_PLAYLIST>;
+    entry: FragmentType<typeof PLAYLIST_TRACK_REMOVE_TOAST_ENTRY>;
 }
 
 export function PlaylistTrackRemoveToast({
     playlist: playlistFragment,
     entry: entryFragment,
 }: PlaylistTrackRemoveToastProps) {
-    const playlist = getFragmentData(fragments.playlist, playlistFragment);
-    const entry = getFragmentData(fragments.entry, entryFragment);
+    const playlist = getFragmentData(PLAYLIST_TRACK_REMOVE_TOAST_PLAYLIST, playlistFragment);
+    const entry = getFragmentData(PLAYLIST_TRACK_REMOVE_TOAST_ENTRY, entryFragment);
 
     return (
         <Toast as={Link} href={`/playlist/${playlist.id}`} $hoverable>
