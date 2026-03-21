@@ -60,48 +60,47 @@ const StyledThemeGroupContainer = styled.div`
     margin-top: 8px;
 `;
 
-const fragments = {
-    anime: graphql(`
-        fragment AnimeSummaryCardAnime on Anime {
-            slug
-            name
-            year
-            season
-            seasonLocalized
-            mediaFormatLocalized
-            animethemes {
-                group {
-                    name
-                    slug
-                }
-            }
-            images {
-                nodes {
-                    ...extractImagesImage
-                }
+export const ANIME_SUMMARY_CARD_ANIME = graphql(`
+    fragment AnimeSummaryCardAnime on Anime {
+        slug
+        name
+        year
+        season
+        seasonLocalized
+        mediaFormatLocalized
+        animethemes {
+            group {
+                name
+                slug
             }
         }
-    `),
-    expandable: graphql(`
-        fragment AnimeSummaryCardAnimeExpandable on Anime {
-            animethemes {
-                ...ThemeTableTheme
-                group {
-                    name
-                    slug
-                }
+        images {
+            nodes {
+                ...extractImagesImage
             }
         }
-    `),
-};
+    }
+`);
+
+export const ANIME_SUMMARY_CARD_ANIME_EXPANDABLE = graphql(`
+    fragment AnimeSummaryCardAnimeExpandable on Anime {
+        animethemes {
+            ...ThemeTableTheme
+            group {
+                name
+                slug
+            }
+        }
+    }
+`);
 
 interface AnimeSummaryCardProps {
-    anime: FragmentType<typeof fragments.anime>;
-    expandable?: FragmentType<typeof fragments.expandable>;
+    anime: FragmentType<typeof ANIME_SUMMARY_CARD_ANIME>;
+    expandable?: FragmentType<typeof ANIME_SUMMARY_CARD_ANIME_EXPANDABLE>;
 }
 
 export function AnimeSummaryCard({ anime: animeFragment, expandable, ...props }: AnimeSummaryCardProps) {
-    const anime = getFragmentData(fragments.anime, animeFragment);
+    const anime = getFragmentData(ANIME_SUMMARY_CARD_ANIME, animeFragment);
     const [isExpanded, toggleExpanded] = useToggle();
     const { smallCover } = extractImages(anime.images.nodes);
     const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
@@ -164,7 +163,7 @@ export function AnimeSummaryCard({ anime: animeFragment, expandable, ...props }:
             </SummaryCard>
             {expandable ? (
                 <AnimeSummaryCardCollapse
-                    anime={getFragmentData(fragments.expandable, expandable)}
+                    anime={getFragmentData(ANIME_SUMMARY_CARD_ANIME_EXPANDABLE, expandable)}
                     isExpanded={isExpanded}
                 />
             ) : null}
@@ -173,7 +172,7 @@ export function AnimeSummaryCard({ anime: animeFragment, expandable, ...props }:
 }
 
 interface AnimeSummaryCardCollapseProps {
-    anime: ResultOf<typeof fragments.expandable>;
+    anime: ResultOf<typeof ANIME_SUMMARY_CARD_ANIME_EXPANDABLE>;
     isExpanded: boolean;
 }
 

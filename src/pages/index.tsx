@@ -65,31 +65,30 @@ const Grid = styled.div<{ $columns: number }>`
     }
 `;
 
-const fragments = {
-    featuredTheme: graphql(`
-        fragment HomePageFeaturedTheme on FeaturedTheme {
-            animethemeentry {
-                ...FeaturedThemeEntry
-            }
-            video {
-                ...FeaturedThemeVideo
-            }
+export const HOME_PAGE_FEATURED_THEME = graphql(`
+    fragment HomePageFeaturedTheme on FeaturedTheme {
+        animethemeentry {
+            ...FeaturedThemeEntry
         }
-    `),
-    announcement: graphql(`
-        fragment HomePageAnnouncement on Announcement {
-            content
+        video {
+            ...FeaturedThemeVideo
         }
-    `),
-};
+    }
+`);
+
+export const HOME_PAGE_ANNOUNCEMENT = graphql(`
+    fragment HomePageAnnouncement on Announcement {
+        content
+    }
+`);
 
 interface HomePageProps {
-    featuredTheme: FragmentType<typeof fragments.featuredTheme> | null;
+    featuredTheme: FragmentType<typeof HOME_PAGE_FEATURED_THEME> | null;
     announcementSources: MDXRemoteSerializeResult[];
 }
 
 export default function HomePage({ featuredTheme: featuredThemeFragment, announcementSources }: HomePageProps) {
-    const featuredTheme = getFragmentData(fragments.featuredTheme, featuredThemeFragment);
+    const featuredTheme = getFragmentData(HOME_PAGE_FEATURED_THEME, featuredThemeFragment);
 
     const { me } = useAuth();
     const { currentYear, currentSeason } = useCurrentSeason();
@@ -259,7 +258,7 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
         `),
     });
 
-    const announcements = getFragmentData(fragments.announcement, data.announcementPagination.data);
+    const announcements = getFragmentData(HOME_PAGE_ANNOUNCEMENT, data.announcementPagination.data);
 
     return {
         props: {

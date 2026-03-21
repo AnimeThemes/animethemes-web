@@ -15,29 +15,28 @@ import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 
-const fragments = {
-    year: graphql(`
-        fragment SeasonDetailPageYear on AnimeYear {
-            ...SeasonNavigationYear
-            year
-        }
-    `),
-    season: graphql(`
-        fragment SeasonDetailPageSeason on AnimeYearSeason {
-            ...SeasonNavigationSeason
-            season
-            seasonLocalized
-            anime {
-                data {
-                    ...AnimeSummaryCardAnime
-                    ...AnimeSummaryCardAnimeExpandable
-                    slug
-                    name
-                }
+export const SEASON_DETAIL_PAGE_YEAR = graphql(`
+    fragment SeasonDetailPageYear on AnimeYear {
+        ...SeasonNavigationYear
+        year
+    }
+`);
+
+export const SEASON_DETAIL_PAGE_SEASON = graphql(`
+    fragment SeasonDetailPageSeason on AnimeYearSeason {
+        ...SeasonNavigationSeason
+        season
+        seasonLocalized
+        anime {
+            data {
+                ...AnimeSummaryCardAnime
+                ...AnimeSummaryCardAnimeExpandable
+                slug
+                name
             }
         }
-    `),
-};
+    }
+`);
 
 const pathsQuery = graphql(`
     query SeasonDetailPageAll {
@@ -72,8 +71,8 @@ const propsQuery = graphql(`
 
 export interface SeasonDetailPageProps extends SharedPageProps {
     isYearOrSeasonPage: true;
-    year: FragmentType<typeof fragments.year>;
-    season: FragmentType<typeof fragments.season>;
+    year: FragmentType<typeof SEASON_DETAIL_PAGE_YEAR>;
+    season: FragmentType<typeof SEASON_DETAIL_PAGE_SEASON>;
     years: ResultOf<typeof propsQuery>["animeyears"];
 }
 
@@ -83,8 +82,8 @@ interface SeasonDetailPageParams extends ParsedUrlQuery {
 }
 
 export default function SeasonDetailPage({ year: yearFragment, season: seasonFragment }: SeasonDetailPageProps) {
-    const year = getFragmentData(fragments.year, yearFragment);
-    const season = getFragmentData(fragments.season, seasonFragment);
+    const year = getFragmentData(SEASON_DETAIL_PAGE_YEAR, yearFragment);
+    const season = getFragmentData(SEASON_DETAIL_PAGE_SEASON, seasonFragment);
     const animeList = season.anime.data.filter((anime) => anime.name).sort((a, b) => a.name.localeCompare(b.name));
 
     return (

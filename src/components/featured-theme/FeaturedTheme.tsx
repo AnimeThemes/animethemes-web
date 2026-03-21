@@ -119,36 +119,35 @@ const StyledGrill = styled.img`
 
 const Box = styled.div``;
 
-const fragments = {
-    entry: graphql(`
-        fragment FeaturedThemeEntry on AnimeThemeEntry {
-            ...VideoSummaryCardEntry
-            ...createVideoSlugEntry
-            animetheme {
-                ...createVideoSlugTheme
-                anime {
-                    slug
-                    images {
-                        nodes {
-                            ...extractImagesImage
-                        }
+export const FEATURED_THEME_ENTRY = graphql(`
+    fragment FeaturedThemeEntry on AnimeThemeEntry {
+        ...VideoSummaryCardEntry
+        ...createVideoSlugEntry
+        animetheme {
+            ...createVideoSlugTheme
+            anime {
+                slug
+                images {
+                    nodes {
+                        ...extractImagesImage
                     }
                 }
             }
         }
-    `),
-    video: graphql(`
-        fragment FeaturedThemeVideo on Video {
-            ...VideoSummaryCardVideo
-            ...createVideoSlugVideo
-            basename
-        }
-    `),
-};
+    }
+`);
+
+export const FEATURED_THEME_VIDEO = graphql(`
+    fragment FeaturedThemeVideo on Video {
+        ...VideoSummaryCardVideo
+        ...createVideoSlugVideo
+        basename
+    }
+`);
 
 interface FeaturedThemeProps {
-    entry: FragmentType<typeof fragments.entry>;
-    video: FragmentType<typeof fragments.video>;
+    entry: FragmentType<typeof FEATURED_THEME_ENTRY>;
+    video: FragmentType<typeof FEATURED_THEME_VIDEO>;
     hasGrill?: boolean;
     card?: ReactNode;
     onPlay?(): void;
@@ -161,8 +160,8 @@ export function FeaturedTheme({
     card,
     onPlay,
 }: FeaturedThemeProps) {
-    const entry = getFragmentData(fragments.entry, entryFragment);
-    const video = getFragmentData(fragments.video, videoFragment);
+    const entry = getFragmentData(FEATURED_THEME_ENTRY, entryFragment);
+    const video = getFragmentData(FEATURED_THEME_VIDEO, videoFragment);
 
     const [grill, setGrill] = useState<string | null>(null);
     const [featuredThemePreview] = useSetting(FeaturedThemePreview);
@@ -196,8 +195,8 @@ export function FeaturedTheme({
 }
 
 interface FeaturedThemeBackgroundProps {
-    entry: ResultOf<typeof fragments.entry>;
-    video: ResultOf<typeof fragments.video>;
+    entry: ResultOf<typeof FEATURED_THEME_ENTRY>;
+    video: ResultOf<typeof FEATURED_THEME_VIDEO>;
     onPlay?(): void;
 }
 

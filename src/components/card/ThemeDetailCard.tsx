@@ -42,48 +42,46 @@ const StyledVideoList = styled(Row)`
     }
 `;
 
-const fragments = {
-    theme: graphql(`
-        fragment ThemeDetailCardTheme on AnimeTheme {
-            ...ThemeMenuTheme
-            ...VideoButtonTheme
-            type
-            sequence
-            group {
-                name
-                slug
-            }
-            anime {
-                ...VideoButtonAnime
-                slug
-                name
-            }
-            song {
-                ...SongTitleSong
-                ...PerformancesSong
-            }
-            animethemeentries {
-                ...ThemeEntryTagsEntry
-                ...VideoButtonEntry
-                version
-                videos {
-                    nodes {
-                        ...VideoButtonVideo
-                        filename
-                        tags
-                    }
+export const THEME_DETAIL_CARD_THEME = graphql(`
+    fragment ThemeDetailCardTheme on AnimeTheme {
+        ...ThemeMenuTheme
+        ...VideoButtonTheme
+        type
+        sequence
+        group {
+            name
+            slug
+        }
+        anime {
+            ...VideoButtonAnime
+            slug
+            name
+        }
+        song {
+            ...SongTitleSong
+            ...PerformancesSong
+        }
+        animethemeentries {
+            ...ThemeEntryTagsEntry
+            ...VideoButtonEntry
+            version
+            videos {
+                nodes {
+                    ...VideoButtonVideo
+                    filename
+                    tags
                 }
             }
         }
-    `),
-};
+    }
+`);
 
 interface ThemeDetailCardProps {
-    theme: FragmentType<typeof fragments.theme>;
+    theme: FragmentType<typeof THEME_DETAIL_CARD_THEME>;
 }
 
 export function ThemeDetailCard({ theme: themeFragment }: ThemeDetailCardProps) {
-    const theme = getFragmentData(fragments.theme, themeFragment);
+    const theme = getFragmentData(THEME_DETAIL_CARD_THEME, themeFragment);
     const { anime } = theme;
 
     if (!anime) {

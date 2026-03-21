@@ -16,22 +16,20 @@ const StyledCodeBlock = styled.pre`
     }
 `;
 
-const fragments = {
-    video: graphql(`
-        fragment VideoScriptVideo on Video {
-            videoscript {
-                link
-            }
+export const VIDEO_SCRIPT_VIDEO = graphql(`
+    fragment VideoScriptVideo on Video {
+        videoscript {
+            link
         }
-    `),
-};
+    }
+`);
 
 interface Props {
-    video: FragmentType<typeof fragments.video>;
+    video: FragmentType<typeof VIDEO_SCRIPT_VIDEO>;
 }
 
 export default function VideoScript({ video: videoFragment }: Props) {
-    const video = getFragmentData(fragments.video, videoFragment);
+    const video = getFragmentData(VIDEO_SCRIPT_VIDEO, videoFragment);
 
     const [isLoading, setLoading] = useState(false);
     const [videoScript, setVideoScript] = useState<string>();

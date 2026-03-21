@@ -21,38 +21,37 @@ const StyledArtistLink = styled(Text).attrs({ as: "a", link: true })`
     font-size: 1rem;
 `;
 
-const fragments = {
-    song: graphql(`
-        fragment PerformancesSong on Song {
-            performances {
-                alias
-                as
-                artist {
-                    __typename
-                    ... on Artist {
+export const PERFORMANCES_SONG = graphql(`
+    fragment PerformancesSong on Song {
+        performances {
+            alias
+            as
+            artist {
+                __typename
+                ... on Artist {
+                    slug
+                    name
+                }
+                ... on Membership {
+                    group {
                         slug
                         name
-                    }
-                    ... on Membership {
-                        group {
-                            slug
-                            name
-                        }
                     }
                 }
             }
         }
-    `),
-    artist: graphql(`
-        fragment PerformancesArtist on Artist {
-            slug
-        }
-    `),
-};
+    }
+`);
+
+export const PERFORMANCES_ARTIST = graphql(`
+    fragment PerformancesArtist on Artist {
+        slug
+    }
+`);
 
 export interface PerformancesProps {
-    song: FragmentType<typeof fragments.song> | null;
-    artist?: FragmentType<typeof fragments.artist>;
+    song: FragmentType<typeof PERFORMANCES_SONG> | null;
+    artist?: FragmentType<typeof PERFORMANCES_ARTIST>;
     maxPerformances?: number | null;
     expandable?: boolean;
 }
@@ -82,8 +81,8 @@ export function Performances({
     maxPerformances = 3,
     expandable = false,
 }: PerformancesProps) {
-    const song = getFragmentData(fragments.song, songFragment);
-    const artist = getFragmentData(fragments.artist, artistFragment);
+    const song = getFragmentData(PERFORMANCES_SONG, songFragment);
+    const artist = getFragmentData(PERFORMANCES_ARTIST, artistFragment);
     const [expandPerformances, setExpandPerformances] = useState(false);
 
     if (!song?.performances.length) {

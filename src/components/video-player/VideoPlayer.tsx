@@ -28,39 +28,38 @@ import createVideoSlug from "@/utils/createVideoSlug";
 import extractImages from "@/utils/extractImages";
 import { AudioMode, GlobalVolume, Muted } from "@/utils/settings";
 
-const fragments = {
-    video: graphql(`
-        fragment VideoPlayerVideo on Video {
-            ...VideoPlayerBarVideo
-            ...createVideoSlugVideo
+export const VIDEO_PLAYER_VIDEO = graphql(`
+    fragment VideoPlayerVideo on Video {
+        ...VideoPlayerBarVideo
+        ...createVideoSlugVideo
+        basename
+        audio {
             basename
-            audio {
-                basename
-            }
         }
-    `),
-    entry: graphql(`
-        fragment VideoPlayerEntry on AnimeThemeEntry {
-            ...VideoPlayerBarEntry
-            ...createVideoSlugEntry
-            animetheme {
-                ...createVideoSlugTheme
-                anime {
-                    slug
-                    images {
-                        nodes {
-                            ...extractImagesImage
-                        }
+    }
+`);
+
+export const VIDEO_PLAYER_ENTRY = graphql(`
+    fragment VideoPlayerEntry on AnimeThemeEntry {
+        ...VideoPlayerBarEntry
+        ...createVideoSlugEntry
+        animetheme {
+            ...createVideoSlugTheme
+            anime {
+                slug
+                images {
+                    nodes {
+                        ...extractImagesImage
                     }
                 }
             }
         }
-    `),
-};
+    }
+`);
 
 interface VideoPlayerContextValue {
-    video: ResultOf<typeof fragments.video>;
-    entry: ResultOf<typeof fragments.entry>;
+    video: ResultOf<typeof VIDEO_PLAYER_VIDEO>;
+    entry: ResultOf<typeof VIDEO_PLAYER_ENTRY>;
     background: boolean;
     videoPagePath: string;
     playerRef: RefObject<HTMLVideoElement | HTMLAudioElement | null>;
@@ -89,8 +88,8 @@ type VideoPlayerProps = {
 
 export function VideoPlayer({ watchListItem, background, children, overlay, ...props }: VideoPlayerProps) {
     const { video: videoFragment, entry: entryFragment } = watchListItem;
-    const video = getFragmentData(fragments.video, videoFragment);
-    const entry = getFragmentData(fragments.entry, entryFragment);
+    const video = getFragmentData(VIDEO_PLAYER_VIDEO, videoFragment);
+    const entry = getFragmentData(VIDEO_PLAYER_ENTRY, entryFragment);
     const theme = entry.animetheme;
     const anime = theme.anime;
 
@@ -131,8 +130,8 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     const playbackAreaMouseRelaxProps = useMouseRelax();
 
     const previousWatchListItem = getRelativeWatchListItem(-1);
-    const previousVideo = getFragmentData(fragments.video, previousWatchListItem?.video);
-    const previousEntry = getFragmentData(fragments.entry, previousWatchListItem?.entry);
+    const previousVideo = getFragmentData(VIDEO_PLAYER_VIDEO, previousWatchListItem?.video);
+    const previousEntry = getFragmentData(VIDEO_PLAYER_ENTRY, previousWatchListItem?.entry);
     const previousTheme = previousEntry?.animetheme;
     const previousAnime = previousTheme?.anime;
 
@@ -154,8 +153,8 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     );
 
     const nextWatchListItem = getRelativeWatchListItem(1);
-    const nextVideo = getFragmentData(fragments.video, nextWatchListItem?.video);
-    const nextEntry = getFragmentData(fragments.entry, nextWatchListItem?.entry);
+    const nextVideo = getFragmentData(VIDEO_PLAYER_VIDEO, nextWatchListItem?.video);
+    const nextEntry = getFragmentData(VIDEO_PLAYER_ENTRY, nextWatchListItem?.entry);
     const nextTheme = nextEntry?.animetheme;
     const nextAnime = nextTheme?.anime;
 

@@ -18,24 +18,22 @@ import { useToasts } from "@/context/toastContext";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import { PROFILE_PAGE } from "@/pages/profile";
 
-const fragments = {
-    playlist: graphql(`
-        fragment PlaylistRemoveDialogPlaylist on Playlist {
-            ...PlaylistSummaryCardPlaylist
-            ...PlaylistRemoveToastPlaylist
-            id
-            name
-        }
-    `),
-};
+export const PLAYLIST_REMOVE_DIALOG_PLAYLIST = graphql(`
+    fragment PlaylistRemoveDialogPlaylist on Playlist {
+        ...PlaylistSummaryCardPlaylist
+        ...PlaylistRemoveToastPlaylist
+        id
+        name
+    }
+`);
 
 interface PlaylistRemoveDialogProps {
-    playlist: FragmentType<typeof fragments.playlist>;
+    playlist: FragmentType<typeof PLAYLIST_REMOVE_DIALOG_PLAYLIST>;
     trigger?: ReactNode;
 }
 
 export function PlaylistRemoveDialog({ playlist: playlistFragment, trigger }: PlaylistRemoveDialogProps) {
-    const playlist = getFragmentData(fragments.playlist, playlistFragment);
+    const playlist = getFragmentData(PLAYLIST_REMOVE_DIALOG_PLAYLIST, playlistFragment);
 
     const [open, setOpen] = useState(false);
 
@@ -65,7 +63,7 @@ export function PlaylistRemoveDialog({ playlist: playlistFragment, trigger }: Pl
 }
 
 interface PlaylistRemoveFormProps {
-    playlist: ResultOf<typeof fragments.playlist>;
+    playlist: ResultOf<typeof PLAYLIST_REMOVE_DIALOG_PLAYLIST>;
     onSuccess(): void;
     onCancel(): void;
 }

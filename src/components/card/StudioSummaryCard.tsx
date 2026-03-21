@@ -7,26 +7,24 @@ import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated
 import extractBackgroundColor from "@/utils/extractBackgroundColor";
 import extractImages from "@/utils/extractImages";
 
-const fragments = {
-    studio: graphql(`
-        fragment StudioSummaryCardStudio on Studio {
-            slug
-            name
-            images {
-                nodes {
-                    ...extractImagesImage
-                }
+export const STUDIO_SUMMARY_CARD_STUDIO = graphql(`
+    fragment StudioSummaryCardStudio on Studio {
+        slug
+        name
+        images {
+            nodes {
+                ...extractImagesImage
             }
         }
-    `),
-};
+    }
+`);
 
 interface StudioSummaryCardProps {
-    studio: FragmentType<typeof fragments.studio>;
+    studio: FragmentType<typeof STUDIO_SUMMARY_CARD_STUDIO>;
 }
 
 export function StudioSummaryCard({ studio: studioFragment }: StudioSummaryCardProps) {
-    const studio = getFragmentData(fragments.studio, studioFragment);
+    const studio = getFragmentData(STUDIO_SUMMARY_CARD_STUDIO, studioFragment);
 
     const [backgroundColor, setBackgroundColor] = useState<Property.Background>();
 
