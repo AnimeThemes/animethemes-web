@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Link from "next/link";
 
-import { faDiscord, faGithub, faReddit, faTwitter } from "@fortawesome/free-brands-svg-icons";
+import { faDiscord, faGithub, faReddit, faXTwitter } from "@fortawesome/free-brands-svg-icons";
 
 import { Column, Row } from "@/components/box/Flex";
 import { Solid } from "@/components/box/Solid";
@@ -61,14 +61,15 @@ export function Footer() {
         <StyledFooter>
             <StyledContainer>
                 <StyledLinkList>
+                    <FooterTextLink href="/about/guidelines">Guidelines</FooterTextLink>
                     <FooterTextLink href="/about/faq">FAQ</FooterTextLink>
                     <FooterTextLink href="/about/donate">Donate</FooterTextLink>
-                    <FooterTextLink href="/about/transparency">Transparency</FooterTextLink>
                     <FooterTextLink as="a" href="https://api-docs.animethemes.moe" target="_blank">
                         API Documentation
                     </FooterTextLink>
                 </StyledLinkList>
                 <StyledLinkList>
+                    <FooterTextLink href="/about/transparency">Transparency</FooterTextLink>
                     <FooterTextLink href="/about/terms-of-service">Terms of Service</FooterTextLink>
                     <FooterTextLink href="/about/privacy-policy">Privacy Policy</FooterTextLink>
                     <FooterTextLink as="a" href="mailto:admin@animethemes.moe">
@@ -86,9 +87,9 @@ export function Footer() {
                             <Icon icon={faDiscord} />
                         </StyledSocialButton>
                     </FooterLink>
-                    <FooterLink href="https://twitter.com/AnimeThemesMoe">
-                        <StyledSocialButton title="Twitter">
-                            <Icon icon={faTwitter} />
+                    <FooterLink href="https://x.com/AnimeThemesMoe">
+                        <StyledSocialButton title="X">
+                            <Icon icon={faXTwitter} />
                         </StyledSocialButton>
                     </FooterLink>
                     <FooterLink href="https://github.com/AnimeThemes">
