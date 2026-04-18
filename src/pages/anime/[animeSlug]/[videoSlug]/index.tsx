@@ -48,9 +48,11 @@ export const VIDEO_PAGE_ANIME = graphql(`
                 title
                 performances {
                     artist {
+                        id
                         ...ArtistSummaryCardArtist
                     }
                     as
+                    relevance
                 }
             }
             group {
@@ -364,15 +366,19 @@ export default function VideoPage({
                         {!!theme.song?.performances?.length && (
                             <>
                                 <Text variant="h2">Artists</Text>
-                                {theme.song.performances
-                                    .sort((a, b) => a.artist.name.localeCompare(b.artist.name))
-                                    .map((performance) => (
-                                        <ArtistSummaryCard
-                                            key={performance.artist.name}
-                                            artist={performance.artist}
-                                            as={performance.as}
-                                        />
-                                    ))}
+                                {Array.from(
+                                    new Map(
+                                        theme.song.performances
+                                            .sort((a, b) => a.relevance - b.relevance)
+                                            .map((p) => [p.artist.id, p])
+                                    ).values()
+                                ).map((performance) => (
+                                    <ArtistSummaryCard
+                                        key={performance.artist.id}
+                                        artist={performance.artist}
+                                        as={performance.as}
+                                    />
+                                ))}
                             </>
                         )}
                         {lastBuildAt && <PageRevalidation lastBuildAt={lastBuildAt} />}

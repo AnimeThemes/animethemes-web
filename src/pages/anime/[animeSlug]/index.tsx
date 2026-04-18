@@ -42,8 +42,8 @@ export const ANIME_DETAIL_PAGE_ANIME = graphql(`
         seasonLocalized
         year
         synopsis
-        mediaFormatLocalized
-        animesynonyms {
+        formatLocalized
+        synonyms {
             text
         }
         series {
@@ -121,10 +121,10 @@ export default function AnimeDetailPage({ anime: animeFragment, synopsisMarkdown
                 <Column style={{ "--gap": "24px" }}>
                     <CoverImage smallCover={smallCover} largeCover={largeCover} alt={`Cover image of ${anime.name}`} />
                     <DescriptionList>
-                        {anime.animesynonyms.length ? (
+                        {anime.synonyms.length ? (
                             <DescriptionList.Item title="Alternative Titles">
                                 <StyledList>
-                                    {anime.animesynonyms.map((synonym) => (
+                                    {anime.synonyms.map((synonym) => (
                                         <Text key={synonym.text}>{synonym.text}</Text>
                                     ))}
                                 </StyledList>
@@ -150,8 +150,8 @@ export default function AnimeDetailPage({ anime: animeFragment, synopsisMarkdown
                                 </StyledList>
                             </DescriptionList.Item>
                         ) : null}
-                        {anime.mediaFormatLocalized ? (
-                            <DescriptionList.Item title="Format">{anime.mediaFormatLocalized}</DescriptionList.Item>
+                        {anime.formatLocalized ? (
+                            <DescriptionList.Item title="Format">{anime.formatLocalized}</DescriptionList.Item>
                         ) : null}
                         {anime.studios.nodes.length ? (
                             <DescriptionList.Item title="Studios">

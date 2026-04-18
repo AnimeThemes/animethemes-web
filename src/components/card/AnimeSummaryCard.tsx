@@ -67,7 +67,7 @@ export const ANIME_SUMMARY_CARD_ANIME = graphql(`
         year
         season
         seasonLocalized
-        mediaFormatLocalized
+        formatLocalized
         animethemes {
             group {
                 name
@@ -116,7 +116,7 @@ export function AnimeSummaryCard({ anime: animeFragment, expandable, ...props }:
 
     const description = (
         <SummaryCard.Description>
-            <span>{anime.mediaFormatLocalized ?? "Anime"}</span>
+            <span>{anime.formatLocalized ?? "Anime"}</span>
             {!!anime.year && <TextLink href={premiereLink}>{premiere}</TextLink>}
             <span>{anime.animethemes.length} themes</span>
         </SummaryCard.Description>

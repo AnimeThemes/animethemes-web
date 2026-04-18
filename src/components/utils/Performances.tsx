@@ -2,6 +2,8 @@ import { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
+import { uniqBy } from "lodash-es";
+
 import { Text } from "@/components/text/Text";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
@@ -26,18 +28,15 @@ export const PERFORMANCES_SONG = graphql(`
         performances {
             alias
             as
+            relevance
             artist {
-                __typename
-                ... on Artist {
-                    slug
-                    name
-                }
-                ... on Membership {
-                    group {
-                        slug
-                        name
-                    }
-                }
+                id
+                slug
+                name
+            }
+            member {
+                slug
+                name
             }
         }
     }
@@ -45,7 +44,7 @@ export const PERFORMANCES_SONG = graphql(`
 
 export const PERFORMANCES_ARTIST = graphql(`
     fragment PerformancesArtist on Artist {
-        slug
+        id
     }
 `);
 
@@ -93,18 +92,17 @@ export function Performances({
         maxPerformances = song.performances.length;
     }
 
-    const performances = [...song.performances]
-        .map((performance) => ({
-            ...performance,
-            artist: performance.artist.__typename === "Artist" ? performance.artist : performance.artist.group,
-        }))
-        .sort((a, b) => a.artist.name.localeCompare(b.artist.name));
+    const performances = uniqBy(
+        song.performances,
+        (performance) => performance.artist.id
+    ).sort((a, b) => a.relevance - b.relevance);
+
     const performancesShown = performances.slice(0, maxPerformances);
     const performancesHidden = performances.slice(maxPerformances);
 
     if (artist) {
-        const performedAs = performances.find((performance) => performance.artist.slug === artist.slug);
-        const performedWith = performances.filter((performance) => performance.artist.slug !== artist.slug);
+        const performedAs = performances.find((performance) => performance.artist.id === artist.id);
+        const performedWith = performances.filter((performance) => performance.artist.id !== artist.id);
 
         return (
             <>

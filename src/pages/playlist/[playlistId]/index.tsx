@@ -218,7 +218,7 @@ export const PLAYLIST_DETAIL_PAGE_ME = graphql(`
     }
 `);
 
-export const PLAYLIST_DETAIL_PAGE_PLAYLIST = graphql(`
+const PLAYLIST_DETAIL_PAGE_QUERY = graphql(`
     query PlaylistDetailPagePlaylist($playlistId: String!) {
         playlist(id: $playlistId) {
             ...PlaylistDetailPagePlaylist
@@ -263,7 +263,7 @@ export default function PlaylistDetailPage({
     const { setWatchList, setWatchListFactory, setCurrentWatchListItem } = useContext(PlayerContext);
     const router = useRouter();
 
-    const { data: playlistData, refetch } = useQuery(PLAYLIST_DETAIL_PAGE_PLAYLIST, {
+    const { data: playlistData, refetch } = useQuery(PLAYLIST_DETAIL_PAGE_QUERY, {
         variables: { playlistId: initialPlaylist.id },
     });
     const { data: meData } = useQuery(meQuery);

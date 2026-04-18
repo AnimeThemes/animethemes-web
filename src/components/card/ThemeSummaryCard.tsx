@@ -83,17 +83,8 @@ export const THEME_SUMMARY_CARD_THEME = graphql(`
                 alias
                 as
                 artist {
-                    __typename
-                    ... on Artist {
-                        slug
-                        name
-                    }
-                    ... on Membership {
-                        group {
-                            slug
-                            name
-                        }
-                    }
+                    slug
+                    name
                 }
             }
         }
@@ -178,10 +169,6 @@ export function ThemeSummaryCard({
     }
 
     const performances = (theme.song?.performances ?? [])
-        .map((performance) => ({
-            artist: performance.artist.__typename === "Artist" ? performance.artist : performance.artist.group,
-            performance,
-        }))
         .filter(({ artist }) => artist.slug !== ownerArtist?.slug)
         .sort(({ artist: a }, { artist: b }) => a.name.localeCompare(b.name));
 

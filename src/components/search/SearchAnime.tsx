@@ -5,21 +5,21 @@ import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { AnimeSummaryCard } from "@/components/card/AnimeSummaryCard";
 import { SearchEntity } from "@/components/search/SearchEntity";
 import { SearchFilterFirstLetter } from "@/components/search-filter/SearchFilterFirstLetter";
+import { SearchFilterFormat } from "@/components/search-filter/SearchFilterFormat";
 import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
-import { SearchFilterMediaFormat } from "@/components/search-filter/SearchFilterMediaFormat";
 import { SearchFilterSeason } from "@/components/search-filter/SearchFilterSeason";
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
 import { SearchFilterYear } from "@/components/search-filter/SearchFilterYear";
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
-import type { AnimeMediaFormat, AnimeSeason, AnimeSortableColumns } from "@/graphql/generated/graphql";
+import type { AnimeFormat, AnimeSeason, AnimeSortableColumns } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
 
 interface Filter {
     firstLetter: string | null;
     season: AnimeSeason | null;
     year: string | null;
-    mediaFormat: AnimeMediaFormat | null;
+    format: AnimeFormat | null;
     sortBy: string | null;
 }
 
@@ -27,7 +27,7 @@ const initialFilter: Filter = {
     firstLetter: null,
     season: null,
     year: null,
-    mediaFormat: null,
+    format: null,
     sortBy: "NAME",
 };
 
@@ -37,7 +37,7 @@ const query = graphql(`
         $name_like: String
         $season: AnimeSeason
         $year: Int
-        $media_format: AnimeMediaFormat
+        $format: AnimeFormat
         $sort: [AnimeSortableColumns!]
         $page: Int!
     ) {
@@ -46,7 +46,7 @@ const query = graphql(`
             name_like: $name_like
             season: $season
             year: $year
-            mediaFormat: $media_format
+            format: $format
             sort: $sort
             first: 15
             page: $page
@@ -79,7 +79,7 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
         ...(filter.firstLetter ? { name_like: `${filter.firstLetter}%` } : {}),
         ...(filter.season ? { season: filter.season } : {}),
         ...(filter.year ? { year: parseInt(filter.year) } : {}),
-        ...(filter.mediaFormat ? { media_format: filter.mediaFormat } : {}),
+        ...(filter.format ? { media_format: filter.format } : {}),
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<AnimeSortableColumns> } : {}),
     };
 
@@ -133,7 +133,7 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
                 <SearchFilterFirstLetter value={filter.firstLetter} setValue={bindUpdateFilter("firstLetter")} />
                 <SearchFilterSeason value={filter.season} setValue={bindUpdateFilter("season")} />
                 <SearchFilterYear value={filter.year} setValue={bindUpdateFilter("year")} />
-                <SearchFilterMediaFormat value={filter.mediaFormat} setValue={bindUpdateFilter("mediaFormat")} />
+                <SearchFilterFormat value={filter.format} setValue={bindUpdateFilter("format")} />
                 <SearchFilterSortBy value={filter.sortBy} setValue={bindUpdateFilter("sortBy")}>
                     {searchQuery ? <SearchFilterSortBy.Option value={null}>Relevance</SearchFilterSortBy.Option> : null}
                     <SearchFilterSortBy.Option value="NAME">A ➜ Z</SearchFilterSortBy.Option>
