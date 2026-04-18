@@ -168,6 +168,7 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                 alias
                 as
                 notes
+                relevance
                 node {
                     ...ArtistSummaryCardArtist
                     slug
@@ -397,7 +398,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                         {!!artist.members.edges.length && (
                             <DescriptionList.Item title="Members">
                                 <StyledList>
-                                    {artist.members.edges.map(({ node, alias, as, notes }) => (
+                                    {artist.members.edges.sort((a, b) => a.relevance - b.relevance).map(({ node, alias, as, notes }) => (
                                         <Column key={node.slug}>
                                             <Text as={Link} href={`/artist/${node.slug}`} link>
                                                 {alias ? alias : node.name}
