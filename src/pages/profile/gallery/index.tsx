@@ -41,7 +41,7 @@ const StyledImageContainer = styled.div<{ $isPushed: boolean }>`
 
 const propsQuery = graphql(`
     query GalleryPage($first: Int!) {
-        grills: imagePagination(facet_in: [GRILL], first: $first) {
+        grills: imagePagination(facet: GRILL, first: $first) {
             data {
                 id
                 link
