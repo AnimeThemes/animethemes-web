@@ -82,10 +82,8 @@ export type Anime = {
  * For example, Bakemonogatari is an anime production with five opening sequences and one ending sequence.
  */
 export type AnimeAnimesynonymsArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -95,14 +93,12 @@ export type AnimeAnimesynonymsArgs = {
   id_lesser?: InputMaybe<Scalars['Int']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  sort?: InputMaybe<Array<AnimeSynonymSortableColumns>>;
   text?: InputMaybe<Scalars['String']['input']>;
   text_like?: InputMaybe<Scalars['String']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
   type?: InputMaybe<AnimeSynonymType>;
   type_in?: InputMaybe<Array<AnimeSynonymType>>;
   type_not_in?: InputMaybe<Array<AnimeSynonymType>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<AnimeSynonymWhereConditionsInput>>;
@@ -115,10 +111,8 @@ export type AnimeAnimesynonymsArgs = {
  * For example, Bakemonogatari is an anime production with five opening sequences and one ending sequence.
  */
 export type AnimeAnimethemesArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -135,12 +129,11 @@ export type AnimeAnimethemesArgs = {
   sequence_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<AnimeThemeSortableColumns>>;
+  sort?: InputMaybe<Array<AnimeThemeSort>>;
   trashed?: InputMaybe<TrashedFilter>;
   type?: InputMaybe<ThemeType>;
   type_in?: InputMaybe<Array<ThemeType>>;
   type_not_in?: InputMaybe<Array<ThemeType>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<AnimeThemeWhereConditionsInput>>;
@@ -173,10 +166,8 @@ export type AnimeDeletedAtArgs = {
  * For example, Bakemonogatari is an anime production with five opening sequences and one ending sequence.
  */
 export type AnimeImagesArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   facet?: InputMaybe<ImageFacet>;
@@ -191,9 +182,8 @@ export type AnimeImagesArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   path?: InputMaybe<Scalars['String']['input']>;
   path_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<ImageImageableSortableColumns>>;
+  sort?: InputMaybe<Array<ImageableSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ImageWhereConditionsInput>>;
@@ -206,10 +196,8 @@ export type AnimeImagesArgs = {
  * For example, Bakemonogatari is an anime production with five opening sequences and one ending sequence.
  */
 export type AnimeResourcesArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   externalId?: InputMaybe<Scalars['Int']['input']>;
@@ -229,9 +217,7 @@ export type AnimeResourcesArgs = {
   site?: InputMaybe<ResourceSite>;
   site_in?: InputMaybe<Array<ResourceSite>>;
   site_not_in?: InputMaybe<Array<ResourceSite>>;
-  sort?: InputMaybe<Array<ExternalResourceResourceableSortableColumns>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ExternalResourceWhereConditionsInput>>;
@@ -244,10 +230,8 @@ export type AnimeResourcesArgs = {
  * For example, Bakemonogatari is an anime production with five opening sequences and one ending sequence.
  */
 export type AnimeSeriesArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -261,9 +245,8 @@ export type AnimeSeriesArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<SeriesAnimeSeriesSortableColumns>>;
+  sort?: InputMaybe<Array<SeriesSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<SeriesWhereConditionsInput>>;
@@ -276,10 +259,8 @@ export type AnimeSeriesArgs = {
  * For example, Bakemonogatari is an anime production with five opening sequences and one ending sequence.
  */
 export type AnimeStudiosArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -293,9 +274,8 @@ export type AnimeStudiosArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<StudioAnimeStudioSortableColumns>>;
+  sort?: InputMaybe<Array<StudioSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<StudioWhereConditionsInput>>;
@@ -308,10 +288,8 @@ export type AnimeStudiosArgs = {
  * For example, Bakemonogatari is an anime production with five opening sequences and one ending sequence.
  */
 export type AnimeSynonymsArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -321,14 +299,13 @@ export type AnimeSynonymsArgs = {
   id_lesser?: InputMaybe<Scalars['Int']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  sort?: InputMaybe<Array<SynonymSortableColumns>>;
+  sort?: InputMaybe<Array<SynonymSort>>;
   text?: InputMaybe<Scalars['String']['input']>;
   text_like?: InputMaybe<Scalars['String']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
   type?: InputMaybe<SynonymType>;
   type_in?: InputMaybe<Array<SynonymType>>;
   type_not_in?: InputMaybe<Array<SynonymType>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<SynonymWhereConditionsInput>>;
@@ -343,64 +320,6 @@ export type AnimeSynonymsArgs = {
 export type AnimeUpdatedAtArgs = {
   format?: Scalars['String']['input'];
 };
-
-export type AnimeAnimeSeriesSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'FORMAT'
-  | 'FORMAT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'MEDIA_FORMAT'
-  | 'MEDIA_FORMAT_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'PIVOT_CREATED_AT'
-  | 'PIVOT_CREATED_AT_DESC'
-  | 'PIVOT_UPDATED_AT'
-  | 'PIVOT_UPDATED_AT_DESC'
-  | 'RANDOM'
-  | 'SEASON'
-  | 'SEASON_DESC'
-  | 'SLUG'
-  | 'SLUG_DESC'
-  | 'SYNOPSIS'
-  | 'SYNOPSIS_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC'
-  | 'YEAR'
-  | 'YEAR_DESC';
-
-export type AnimeAnimeStudioSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'FORMAT'
-  | 'FORMAT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'MEDIA_FORMAT'
-  | 'MEDIA_FORMAT_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'PIVOT_CREATED_AT'
-  | 'PIVOT_CREATED_AT_DESC'
-  | 'PIVOT_UPDATED_AT'
-  | 'PIVOT_UPDATED_AT_DESC'
-  | 'RANDOM'
-  | 'SEASON'
-  | 'SEASON_DESC'
-  | 'SLUG'
-  | 'SLUG_DESC'
-  | 'SYNOPSIS'
-  | 'SYNOPSIS_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC'
-  | 'YEAR'
-  | 'YEAR_DESC';
 
 export type AnimeExternalResourceConnection = {
   /** A list of ExternalResource edges. */
@@ -481,37 +400,6 @@ export type AnimeImageEdgeUpdatedAtArgs = {
   format?: Scalars['String']['input'];
 };
 
-export type AnimeImageableSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'FORMAT'
-  | 'FORMAT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'MEDIA_FORMAT'
-  | 'MEDIA_FORMAT_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'PIVOT_CREATED_AT'
-  | 'PIVOT_CREATED_AT_DESC'
-  | 'PIVOT_DEPTH'
-  | 'PIVOT_DEPTH_DESC'
-  | 'PIVOT_UPDATED_AT'
-  | 'PIVOT_UPDATED_AT_DESC'
-  | 'RANDOM'
-  | 'SEASON'
-  | 'SEASON_DESC'
-  | 'SLUG'
-  | 'SLUG_DESC'
-  | 'SYNOPSIS'
-  | 'SYNOPSIS_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC'
-  | 'YEAR'
-  | 'YEAR_DESC';
-
 export type AnimeMediaFormat =
   | 'MOVIE'
   | 'ONA'
@@ -527,64 +415,11 @@ export type AnimePagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type AnimeResourceableSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'FORMAT'
-  | 'FORMAT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'MEDIA_FORMAT'
-  | 'MEDIA_FORMAT_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'PIVOT_AS'
-  | 'PIVOT_AS_DESC'
-  | 'PIVOT_CREATED_AT'
-  | 'PIVOT_CREATED_AT_DESC'
-  | 'PIVOT_UPDATED_AT'
-  | 'PIVOT_UPDATED_AT_DESC'
-  | 'RANDOM'
-  | 'SEASON'
-  | 'SEASON_DESC'
-  | 'SLUG'
-  | 'SLUG_DESC'
-  | 'SYNOPSIS'
-  | 'SYNOPSIS_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC'
-  | 'YEAR'
-  | 'YEAR_DESC';
-
 export type AnimeSeason =
   | 'FALL'
   | 'SPRING'
   | 'SUMMER'
   | 'WINTER';
-
-/** Represents the association between an anime and a series. */
-export type AnimeSeries = {
-  anime: Anime;
-  /** The date that the resource was created */
-  createdAt: Maybe<Scalars['String']['output']>;
-  series: Series;
-  /** The date that the resource was updated */
-  updatedAt: Maybe<Scalars['String']['output']>;
-};
-
-
-/** Represents the association between an anime and a series. */
-export type AnimeSeriesCreatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-
-/** Represents the association between an anime and a series. */
-export type AnimeSeriesUpdatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
 
 export type AnimeSeriesConnection = {
   /** A list of Series edges. */
@@ -613,52 +448,18 @@ export type AnimeSeriesEdgeUpdatedAtArgs = {
   format?: Scalars['String']['input'];
 };
 
-export type AnimeSortableColumns =
+export type AnimeSort =
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'FORMAT'
-  | 'FORMAT_DESC'
   | 'ID'
   | 'ID_DESC'
-  | 'MEDIA_FORMAT'
-  | 'MEDIA_FORMAT_DESC'
   | 'NAME'
   | 'NAME_DESC'
   | 'RANDOM'
-  | 'SEASON'
-  | 'SEASON_DESC'
-  | 'SLUG'
-  | 'SLUG_DESC'
-  | 'SYNOPSIS'
-  | 'SYNOPSIS_DESC'
   | 'UPDATED_AT'
   | 'UPDATED_AT_DESC'
   | 'YEAR'
   | 'YEAR_DESC';
-
-/** Represents the association between an anime and a studio. */
-export type AnimeStudio = {
-  anime: Anime;
-  /** The date that the resource was created */
-  createdAt: Maybe<Scalars['String']['output']>;
-  studio: Studio;
-  /** The date that the resource was updated */
-  updatedAt: Maybe<Scalars['String']['output']>;
-};
-
-
-/** Represents the association between an anime and a studio. */
-export type AnimeStudioCreatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-
-/** Represents the association between an anime and a studio. */
-export type AnimeStudioUpdatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
 
 export type AnimeStudioConnection = {
   /** A list of Studio edges. */
@@ -758,43 +559,6 @@ export type AnimeSynonymPagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type AnimeSynonymSortableColumns =
-  | 'ANIME_CREATED_AT'
-  | 'ANIME_CREATED_AT_DESC'
-  | 'ANIME_DELETED_AT'
-  | 'ANIME_DELETED_AT_DESC'
-  | 'ANIME_FORMAT'
-  | 'ANIME_FORMAT_DESC'
-  | 'ANIME_ID'
-  | 'ANIME_ID_DESC'
-  | 'ANIME_MEDIA_FORMAT'
-  | 'ANIME_MEDIA_FORMAT_DESC'
-  | 'ANIME_NAME'
-  | 'ANIME_NAME_DESC'
-  | 'ANIME_SEASON'
-  | 'ANIME_SEASON_DESC'
-  | 'ANIME_SLUG'
-  | 'ANIME_SLUG_DESC'
-  | 'ANIME_SYNOPSIS'
-  | 'ANIME_SYNOPSIS_DESC'
-  | 'ANIME_UPDATED_AT'
-  | 'ANIME_UPDATED_AT_DESC'
-  | 'ANIME_YEAR'
-  | 'ANIME_YEAR_DESC'
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'RANDOM'
-  | 'TEXT'
-  | 'TEXT_DESC'
-  | 'TYPE'
-  | 'TYPE_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
-
 /** @deprecated Use SynonymType instead. */
 export type AnimeSynonymType =
   | 'ENGLISH'
@@ -848,10 +612,8 @@ export type AnimeTheme = {
  * For example, the anime Bakemonogatari has five OP anime themes and one ED anime theme.
  */
 export type AnimeThemeAnimethemeentriesArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   episodes?: InputMaybe<Scalars['String']['input']>;
@@ -866,10 +628,9 @@ export type AnimeThemeAnimethemeentriesArgs = {
   notes_like?: InputMaybe<Scalars['String']['input']>;
   nsfw?: InputMaybe<Scalars['Boolean']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  sort?: InputMaybe<Array<AnimeThemeEntrySortableColumns>>;
+  sort?: InputMaybe<Array<AnimeThemeEntrySort>>;
   spoiler?: InputMaybe<Scalars['Boolean']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   version?: InputMaybe<Scalars['Int']['input']>;
@@ -973,10 +734,8 @@ export type AnimeThemeEntryDeletedAtArgs = {
  * For example, the ED theme of the Bakemonogatari anime has three anime theme entries to represent three versions.
  */
 export type AnimeThemeEntryResourcesArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   externalId?: InputMaybe<Scalars['Int']['input']>;
@@ -996,9 +755,7 @@ export type AnimeThemeEntryResourcesArgs = {
   site?: InputMaybe<ResourceSite>;
   site_in?: InputMaybe<Array<ResourceSite>>;
   site_not_in?: InputMaybe<Array<ResourceSite>>;
-  sort?: InputMaybe<Array<ExternalResourceResourceableSortableColumns>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ExternalResourceWhereConditionsInput>>;
@@ -1023,10 +780,8 @@ export type AnimeThemeEntryUpdatedAtArgs = {
 export type AnimeThemeEntryVideosArgs = {
   basename?: InputMaybe<Scalars['String']['input']>;
   basename_like?: InputMaybe<Scalars['String']['input']>;
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   filename?: InputMaybe<Scalars['String']['input']>;
@@ -1057,7 +812,7 @@ export type AnimeThemeEntryVideosArgs = {
   size_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   size_lesser?: InputMaybe<Scalars['Int']['input']>;
   size_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  sort?: InputMaybe<Array<VideoAnimeThemeEntryVideoSortableColumns>>;
+  sort?: InputMaybe<Array<VideoSort>>;
   source?: InputMaybe<VideoSource>;
   source_in?: InputMaybe<Array<VideoSource>>;
   source_not_in?: InputMaybe<Array<VideoSource>>;
@@ -1066,54 +821,10 @@ export type AnimeThemeEntryVideosArgs = {
   tags_like?: InputMaybe<Scalars['String']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
   uncen?: InputMaybe<Scalars['Boolean']['input']>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<VideoWhereConditionsInput>>;
 };
-
-export type AnimeThemeEntryAnimeThemeEntryVideoSortableColumns =
-  | 'ANIMETHEME_CREATED_AT'
-  | 'ANIMETHEME_CREATED_AT_DESC'
-  | 'ANIMETHEME_DELETED_AT'
-  | 'ANIMETHEME_DELETED_AT_DESC'
-  | 'ANIMETHEME_ID'
-  | 'ANIMETHEME_ID_DESC'
-  | 'ANIMETHEME_SEQUENCE'
-  | 'ANIMETHEME_SEQUENCE_DESC'
-  | 'ANIMETHEME_SLUG'
-  | 'ANIMETHEME_SLUG_DESC'
-  | 'ANIMETHEME_TYPE'
-  | 'ANIMETHEME_TYPE_DESC'
-  | 'ANIMETHEME_UPDATED_AT'
-  | 'ANIMETHEME_UPDATED_AT_DESC'
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'EPISODES'
-  | 'EPISODES_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'LIKES_COUNT'
-  | 'LIKES_COUNT_DESC'
-  | 'NOTES'
-  | 'NOTES_DESC'
-  | 'NSFW'
-  | 'NSFW_DESC'
-  | 'PIVOT_CREATED_AT'
-  | 'PIVOT_CREATED_AT_DESC'
-  | 'PIVOT_UPDATED_AT'
-  | 'PIVOT_UPDATED_AT_DESC'
-  | 'RANDOM'
-  | 'SPOILER'
-  | 'SPOILER_DESC'
-  | 'TRACKS_COUNT'
-  | 'TRACKS_COUNT_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC'
-  | 'VERSION'
-  | 'VERSION_DESC';
 
 export type AnimeThemeEntryExternalResourceConnection = {
   /** A list of ExternalResource edges. */
@@ -1164,66 +875,22 @@ export type AnimeThemeEntryPagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type AnimeThemeEntrySortableColumns =
-  | 'ANIMETHEME_CREATED_AT'
-  | 'ANIMETHEME_CREATED_AT_DESC'
-  | 'ANIMETHEME_DELETED_AT'
-  | 'ANIMETHEME_DELETED_AT_DESC'
-  | 'ANIMETHEME_ID'
-  | 'ANIMETHEME_ID_DESC'
-  | 'ANIMETHEME_SEQUENCE'
-  | 'ANIMETHEME_SEQUENCE_DESC'
-  | 'ANIMETHEME_SLUG'
-  | 'ANIMETHEME_SLUG_DESC'
-  | 'ANIMETHEME_TYPE'
-  | 'ANIMETHEME_TYPE_DESC'
-  | 'ANIMETHEME_UPDATED_AT'
-  | 'ANIMETHEME_UPDATED_AT_DESC'
+export type AnimeThemeEntrySort =
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
   | 'EPISODES'
   | 'EPISODES_DESC'
   | 'ID'
   | 'ID_DESC'
   | 'LIKES_COUNT'
   | 'LIKES_COUNT_DESC'
-  | 'NOTES'
-  | 'NOTES_DESC'
-  | 'NSFW'
-  | 'NSFW_DESC'
   | 'RANDOM'
-  | 'SPOILER'
-  | 'SPOILER_DESC'
   | 'TRACKS_COUNT'
   | 'TRACKS_COUNT_DESC'
   | 'UPDATED_AT'
   | 'UPDATED_AT_DESC'
   | 'VERSION'
   | 'VERSION_DESC';
-
-/** Represents the association between an anime theme entry and a video. */
-export type AnimeThemeEntryVideo = {
-  animethemeentry: AnimeThemeEntry;
-  /** The date that the resource was created */
-  createdAt: Maybe<Scalars['String']['output']>;
-  /** The date that the resource was updated */
-  updatedAt: Maybe<Scalars['String']['output']>;
-  video: Video;
-};
-
-
-/** Represents the association between an anime theme entry and a video. */
-export type AnimeThemeEntryVideoCreatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-
-/** Represents the association between an anime theme entry and a video. */
-export type AnimeThemeEntryVideoUpdatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
 
 export type AnimeThemeEntryVideoConnection = {
   /** A list of Video edges. */
@@ -1276,66 +943,18 @@ export type AnimeThemePagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type AnimeThemeSortableColumns =
-  | 'ANIME_CREATED_AT'
-  | 'ANIME_CREATED_AT_DESC'
-  | 'ANIME_DELETED_AT'
-  | 'ANIME_DELETED_AT_DESC'
-  | 'ANIME_FORMAT'
-  | 'ANIME_FORMAT_DESC'
-  | 'ANIME_ID'
-  | 'ANIME_ID_DESC'
-  | 'ANIME_MEDIA_FORMAT'
-  | 'ANIME_MEDIA_FORMAT_DESC'
-  | 'ANIME_NAME'
-  | 'ANIME_NAME_DESC'
-  | 'ANIME_SEASON'
-  | 'ANIME_SEASON_DESC'
-  | 'ANIME_SLUG'
-  | 'ANIME_SLUG_DESC'
-  | 'ANIME_SYNOPSIS'
-  | 'ANIME_SYNOPSIS_DESC'
-  | 'ANIME_UPDATED_AT'
-  | 'ANIME_UPDATED_AT_DESC'
-  | 'ANIME_YEAR'
-  | 'ANIME_YEAR_DESC'
+export type AnimeThemeSort =
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'GROUP_CREATED_AT'
-  | 'GROUP_CREATED_AT_DESC'
-  | 'GROUP_DELETED_AT'
-  | 'GROUP_DELETED_AT_DESC'
-  | 'GROUP_ID'
-  | 'GROUP_ID_DESC'
-  | 'GROUP_NAME'
-  | 'GROUP_NAME_DESC'
-  | 'GROUP_SLUG'
-  | 'GROUP_SLUG_DESC'
-  | 'GROUP_UPDATED_AT'
-  | 'GROUP_UPDATED_AT_DESC'
   | 'ID'
   | 'ID_DESC'
   | 'RANDOM'
   | 'SEQUENCE'
   | 'SEQUENCE_DESC'
-  | 'SLUG'
-  | 'SLUG_DESC'
-  | 'SONG_CREATED_AT'
-  | 'SONG_CREATED_AT_DESC'
-  | 'SONG_DELETED_AT'
-  | 'SONG_DELETED_AT_DESC'
-  | 'SONG_ID'
-  | 'SONG_ID_DESC'
   | 'SONG_TITLE'
   | 'SONG_TITLE_DESC'
   | 'SONG_TITLE_NATIVE'
   | 'SONG_TITLE_NATIVE_DESC'
-  | 'SONG_UPDATED_AT'
-  | 'SONG_UPDATED_AT_DESC'
-  | 'TYPE'
-  | 'TYPE_DESC'
   | 'UPDATED_AT'
   | 'UPDATED_AT_DESC';
 
@@ -1384,10 +1003,8 @@ export type AnimeYearSeason = {
 
 /** The anime year season type. */
 export type AnimeYearSeasonAnimeArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -1411,11 +1028,10 @@ export type AnimeYearSeasonAnimeArgs = {
   season_not_in?: InputMaybe<Array<AnimeSeason>>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<AnimeSortableColumns>>;
+  sort?: InputMaybe<Array<AnimeSort>>;
   synopsis?: InputMaybe<Scalars['String']['input']>;
   synopsis_like?: InputMaybe<Scalars['String']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<AnimeWhereConditionsInput>>;
@@ -1439,10 +1055,8 @@ export type AnimeYearSeasons = {
 
 /** The anime year season type. */
 export type AnimeYearSeasonsAnimeArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -1466,11 +1080,10 @@ export type AnimeYearSeasonsAnimeArgs = {
   season_not_in?: InputMaybe<Array<AnimeSeason>>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<AnimeSortableColumns>>;
+  sort?: InputMaybe<Array<AnimeSort>>;
   synopsis?: InputMaybe<Scalars['String']['input']>;
   synopsis_like?: InputMaybe<Scalars['String']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<AnimeWhereConditionsInput>>;
@@ -1518,9 +1131,7 @@ export type AnnouncementPagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type AnnouncementSortableColumns =
-  | 'CONTENT'
-  | 'CONTENT_DESC'
+export type AnnouncementSort =
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
   | 'ID'
@@ -1596,10 +1207,8 @@ export type ArtistDeletedAtArgs = {
  * For example, Chiwa Saitou is the musical performer of the Bakemonogatari OP1 theme, among many others.
  */
 export type ArtistGroupsArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -1615,9 +1224,8 @@ export type ArtistGroupsArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<ArtistArtistMemberSortableColumns>>;
+  sort?: InputMaybe<Array<ArtistSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ArtistWhereConditionsInput>>;
@@ -1630,10 +1238,8 @@ export type ArtistGroupsArgs = {
  * For example, Chiwa Saitou is the musical performer of the Bakemonogatari OP1 theme, among many others.
  */
 export type ArtistImagesArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   facet?: InputMaybe<ImageFacet>;
@@ -1648,9 +1254,8 @@ export type ArtistImagesArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   path?: InputMaybe<Scalars['String']['input']>;
   path_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<ImageImageableSortableColumns>>;
+  sort?: InputMaybe<Array<ImageableSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ImageWhereConditionsInput>>;
@@ -1667,10 +1272,8 @@ export type ArtistMemberPerformancesArgs = {
   alias_like?: InputMaybe<Scalars['String']['input']>;
   as?: InputMaybe<Scalars['String']['input']>;
   as_like?: InputMaybe<Scalars['String']['input']>;
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -1689,9 +1292,8 @@ export type ArtistMemberPerformancesArgs = {
   relevance_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   relevance_lesser?: InputMaybe<Scalars['Int']['input']>;
   relevance_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  sort?: InputMaybe<Array<PerformanceSortableColumns>>;
+  sort?: InputMaybe<Array<PerformanceSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<PerformanceWhereConditionsInput>>;
@@ -1704,10 +1306,8 @@ export type ArtistMemberPerformancesArgs = {
  * For example, Chiwa Saitou is the musical performer of the Bakemonogatari OP1 theme, among many others.
  */
 export type ArtistMembersArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -1723,9 +1323,8 @@ export type ArtistMembersArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<ArtistArtistMemberSortableColumns>>;
+  sort?: InputMaybe<Array<ArtistMemberSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ArtistWhereConditionsInput>>;
@@ -1742,10 +1341,8 @@ export type ArtistPerformancesArgs = {
   alias_like?: InputMaybe<Scalars['String']['input']>;
   as?: InputMaybe<Scalars['String']['input']>;
   as_like?: InputMaybe<Scalars['String']['input']>;
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -1764,9 +1361,8 @@ export type ArtistPerformancesArgs = {
   relevance_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   relevance_lesser?: InputMaybe<Scalars['Int']['input']>;
   relevance_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  sort?: InputMaybe<Array<PerformanceSortableColumns>>;
+  sort?: InputMaybe<Array<PerformanceSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<PerformanceWhereConditionsInput>>;
@@ -1779,10 +1375,8 @@ export type ArtistPerformancesArgs = {
  * For example, Chiwa Saitou is the musical performer of the Bakemonogatari OP1 theme, among many others.
  */
 export type ArtistResourcesArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   externalId?: InputMaybe<Scalars['Int']['input']>;
@@ -1802,9 +1396,7 @@ export type ArtistResourcesArgs = {
   site?: InputMaybe<ResourceSite>;
   site_in?: InputMaybe<Array<ResourceSite>>;
   site_not_in?: InputMaybe<Array<ResourceSite>>;
-  sort?: InputMaybe<Array<ExternalResourceResourceableSortableColumns>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ExternalResourceWhereConditionsInput>>;
@@ -1817,10 +1409,8 @@ export type ArtistResourcesArgs = {
  * For example, Chiwa Saitou is the musical performer of the Bakemonogatari OP1 theme, among many others.
  */
 export type ArtistSynonymsArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -1830,14 +1420,13 @@ export type ArtistSynonymsArgs = {
   id_lesser?: InputMaybe<Scalars['Int']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  sort?: InputMaybe<Array<SynonymSortableColumns>>;
+  sort?: InputMaybe<Array<SynonymSort>>;
   text?: InputMaybe<Scalars['String']['input']>;
   text_like?: InputMaybe<Scalars['String']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
   type?: InputMaybe<SynonymType>;
   type_in?: InputMaybe<Array<SynonymType>>;
   type_not_in?: InputMaybe<Array<SynonymType>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<SynonymWhereConditionsInput>>;
@@ -1887,35 +1476,6 @@ export type ArtistArtistEdgeCreatedAtArgs = {
 export type ArtistArtistEdgeUpdatedAtArgs = {
   format?: Scalars['String']['input'];
 };
-
-export type ArtistArtistMemberSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'INFORMATION'
-  | 'INFORMATION_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'PIVOT_ALIAS'
-  | 'PIVOT_ALIAS_DESC'
-  | 'PIVOT_AS'
-  | 'PIVOT_AS_DESC'
-  | 'PIVOT_CREATED_AT'
-  | 'PIVOT_CREATED_AT_DESC'
-  | 'PIVOT_NOTES'
-  | 'PIVOT_NOTES_DESC'
-  | 'PIVOT_RELEVANCE'
-  | 'PIVOT_RELEVANCE_DESC'
-  | 'PIVOT_UPDATED_AT'
-  | 'PIVOT_UPDATED_AT_DESC'
-  | 'RANDOM'
-  | 'SLUG'
-  | 'SLUG_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
 
 export type ArtistExternalResourceConnection = {
   /** A list of ExternalResource edges. */
@@ -1984,58 +1544,22 @@ export type ArtistImageEdgeUpdatedAtArgs = {
   format?: Scalars['String']['input'];
 };
 
-export type ArtistImageableSortableColumns =
+export type ArtistMemberSort =
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
   | 'ID'
   | 'ID_DESC'
-  | 'INFORMATION'
-  | 'INFORMATION_DESC'
+  | 'MEMBER_ALIAS'
+  | 'MEMBER_ALIAS_DESC'
+  | 'MEMBER_AS'
+  | 'MEMBER_AS_DESC'
+  | 'MEMBER_RELEVANCE'
+  | 'MEMBER_RELEVANCE_DESC'
   | 'NAME'
   | 'NAME_DESC'
-  | 'PIVOT_CREATED_AT'
-  | 'PIVOT_CREATED_AT_DESC'
-  | 'PIVOT_DEPTH'
-  | 'PIVOT_DEPTH_DESC'
-  | 'PIVOT_UPDATED_AT'
-  | 'PIVOT_UPDATED_AT_DESC'
   | 'RANDOM'
-  | 'SLUG'
-  | 'SLUG_DESC'
   | 'UPDATED_AT'
   | 'UPDATED_AT_DESC';
-
-/** Represents the association of an artist and a group/unit. */
-export type ArtistMember = {
-  /** Used to distinguish member by alias */
-  alias: Maybe<Scalars['String']['output']>;
-  artist: Artist;
-  /** Used to distinguish member by character */
-  as: Maybe<Scalars['String']['output']>;
-  /** The date that the resource was created */
-  createdAt: Maybe<Scalars['String']['output']>;
-  member: Artist;
-  /** Used to extra annotation, like member role */
-  notes: Maybe<Scalars['String']['output']>;
-  /** Used to determine the relevance order of members in group */
-  relevance: Scalars['Int']['output'];
-  /** The date that the resource was updated */
-  updatedAt: Maybe<Scalars['String']['output']>;
-};
-
-
-/** Represents the association of an artist and a group/unit. */
-export type ArtistMemberCreatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-
-/** Represents the association of an artist and a group/unit. */
-export type ArtistMemberUpdatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
 
 export type ArtistPagination = {
   /** List of items on the current page */
@@ -2044,43 +1568,14 @@ export type ArtistPagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type ArtistResourceableSortableColumns =
+export type ArtistSort =
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
   | 'ID'
   | 'ID_DESC'
-  | 'INFORMATION'
-  | 'INFORMATION_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'PIVOT_AS'
-  | 'PIVOT_AS_DESC'
-  | 'PIVOT_CREATED_AT'
-  | 'PIVOT_CREATED_AT_DESC'
-  | 'PIVOT_UPDATED_AT'
-  | 'PIVOT_UPDATED_AT_DESC'
-  | 'RANDOM'
-  | 'SLUG'
-  | 'SLUG_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
-
-export type ArtistSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'INFORMATION'
-  | 'INFORMATION_DESC'
   | 'NAME'
   | 'NAME_DESC'
   | 'RANDOM'
-  | 'SLUG'
-  | 'SLUG_DESC'
   | 'UPDATED_AT'
   | 'UPDATED_AT_DESC';
 
@@ -2163,10 +1658,8 @@ export type AudioUpdatedAtArgs = {
 export type AudioVideosArgs = {
   basename?: InputMaybe<Scalars['String']['input']>;
   basename_like?: InputMaybe<Scalars['String']['input']>;
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   filename?: InputMaybe<Scalars['String']['input']>;
@@ -2197,7 +1690,7 @@ export type AudioVideosArgs = {
   size_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   size_lesser?: InputMaybe<Scalars['Int']['input']>;
   size_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  sort?: InputMaybe<Array<VideoSortableColumns>>;
+  sort?: InputMaybe<Array<VideoSort>>;
   source?: InputMaybe<VideoSource>;
   source_in?: InputMaybe<Array<VideoSource>>;
   source_not_in?: InputMaybe<Array<VideoSource>>;
@@ -2206,7 +1699,6 @@ export type AudioVideosArgs = {
   tags_like?: InputMaybe<Scalars['String']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
   uncen?: InputMaybe<Scalars['Boolean']['input']>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<VideoWhereConditionsInput>>;
@@ -2230,21 +1722,15 @@ export type AudioPagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type AudioSortableColumns =
+export type AudioSort =
   | 'BASENAME'
   | 'BASENAME_DESC'
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
   | 'FILENAME'
   | 'FILENAME_DESC'
   | 'ID'
   | 'ID_DESC'
-  | 'MIMETYPE'
-  | 'MIMETYPE_DESC'
-  | 'PATH'
-  | 'PATH_DESC'
   | 'RANDOM'
   | 'SIZE'
   | 'SIZE_DESC'
@@ -2320,13 +1806,11 @@ export type DumpPagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type DumpSortableColumns =
+export type DumpSort =
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
   | 'ID'
   | 'ID_DESC'
-  | 'PATH'
-  | 'PATH_DESC'
   | 'RANDOM'
   | 'UPDATED_AT'
   | 'UPDATED_AT_DESC';
@@ -2391,55 +1875,6 @@ export type ExternalEntryFilterableColumns =
   | 'STATUS'
   | 'UPDATED_AT';
 
-export type ExternalEntrySortableColumns =
-  | 'ANIME_CREATED_AT'
-  | 'ANIME_CREATED_AT_DESC'
-  | 'ANIME_DELETED_AT'
-  | 'ANIME_DELETED_AT_DESC'
-  | 'ANIME_FORMAT'
-  | 'ANIME_FORMAT_DESC'
-  | 'ANIME_ID'
-  | 'ANIME_ID_DESC'
-  | 'ANIME_MEDIA_FORMAT'
-  | 'ANIME_MEDIA_FORMAT_DESC'
-  | 'ANIME_NAME'
-  | 'ANIME_NAME_DESC'
-  | 'ANIME_SEASON'
-  | 'ANIME_SEASON_DESC'
-  | 'ANIME_SLUG'
-  | 'ANIME_SLUG_DESC'
-  | 'ANIME_SYNOPSIS'
-  | 'ANIME_SYNOPSIS_DESC'
-  | 'ANIME_UPDATED_AT'
-  | 'ANIME_UPDATED_AT_DESC'
-  | 'ANIME_YEAR'
-  | 'ANIME_YEAR_DESC'
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'EXTERNALPROFILE_CREATED_AT'
-  | 'EXTERNALPROFILE_CREATED_AT_DESC'
-  | 'EXTERNALPROFILE_ID'
-  | 'EXTERNALPROFILE_ID_DESC'
-  | 'EXTERNALPROFILE_NAME'
-  | 'EXTERNALPROFILE_NAME_DESC'
-  | 'EXTERNALPROFILE_SITE'
-  | 'EXTERNALPROFILE_SITE_DESC'
-  | 'EXTERNALPROFILE_UPDATED_AT'
-  | 'EXTERNALPROFILE_UPDATED_AT_DESC'
-  | 'EXTERNALPROFILE_VISIBILITY'
-  | 'EXTERNALPROFILE_VISIBILITY_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'IS_FAVORITE'
-  | 'IS_FAVORITE_DESC'
-  | 'RANDOM'
-  | 'SCORE'
-  | 'SCORE_DESC'
-  | 'STATUS'
-  | 'STATUS_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
-
 export type ExternalEntryStatus =
   | 'COMPLETED'
   | 'DROPPED'
@@ -2487,7 +1922,6 @@ export type ExternalProfileCreatedAtArgs = {
 
 /** Represents a user profile on the external site like MAL. */
 export type ExternalProfileExternalentriesArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -2500,14 +1934,10 @@ export type ExternalProfileExternalentriesArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   score?: InputMaybe<Scalars['Float']['input']>;
   score_greater?: InputMaybe<Scalars['Float']['input']>;
-  score_in?: InputMaybe<Array<Scalars['Float']['input']>>;
   score_lesser?: InputMaybe<Scalars['Float']['input']>;
-  score_not_in?: InputMaybe<Array<Scalars['Float']['input']>>;
-  sort?: InputMaybe<Array<ExternalEntrySortableColumns>>;
   status?: InputMaybe<ExternalEntryStatus>;
   status_in?: InputMaybe<Array<ExternalEntryStatus>>;
   status_not_in?: InputMaybe<Array<ExternalEntryStatus>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ExternalEntryWhereConditionsInput>>;
@@ -2538,29 +1968,6 @@ export type ExternalProfileSite =
   | 'ANILIST'
   | 'KITSU'
   | 'MAL';
-
-export type ExternalProfileSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'RANDOM'
-  | 'SITE'
-  | 'SITE_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC'
-  | 'USER_CREATED_AT'
-  | 'USER_CREATED_AT_DESC'
-  | 'USER_ID'
-  | 'USER_ID_DESC'
-  | 'USER_NAME'
-  | 'USER_NAME_DESC'
-  | 'USER_UPDATED_AT'
-  | 'USER_UPDATED_AT_DESC'
-  | 'VISIBILITY'
-  | 'VISIBILITY_DESC';
 
 /** Represents a notification that is sent to the user when a profile is synced. */
 export type ExternalProfileSyncedNotification = {
@@ -2645,10 +2052,8 @@ export type ExternalResource = {
  * For example, the Bakemonogatari anime has MyAnimeList, AniList and AniDB resources.
  */
 export type ExternalResourceAnimeArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -2671,11 +2076,10 @@ export type ExternalResourceAnimeArgs = {
   season_not_in?: InputMaybe<Array<AnimeSeason>>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<AnimeResourceableSortableColumns>>;
+  sort?: InputMaybe<Array<AnimeSort>>;
   synopsis?: InputMaybe<Scalars['String']['input']>;
   synopsis_like?: InputMaybe<Scalars['String']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<AnimeWhereConditionsInput>>;
@@ -2693,10 +2097,8 @@ export type ExternalResourceAnimeArgs = {
  * For example, the Bakemonogatari anime has MyAnimeList, AniList and AniDB resources.
  */
 export type ExternalResourceArtistsArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -2712,9 +2114,8 @@ export type ExternalResourceArtistsArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<ArtistResourceableSortableColumns>>;
+  sort?: InputMaybe<Array<ArtistSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ArtistWhereConditionsInput>>;
@@ -2747,10 +2148,8 @@ export type ExternalResourceDeletedAtArgs = {
  * For example, the Bakemonogatari anime has MyAnimeList, AniList and AniDB resources.
  */
 export type ExternalResourceSongsArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -2760,13 +2159,12 @@ export type ExternalResourceSongsArgs = {
   id_lesser?: InputMaybe<Scalars['Int']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  sort?: InputMaybe<Array<SongResourceableSortableColumns>>;
+  sort?: InputMaybe<Array<SongSort>>;
   title?: InputMaybe<Scalars['String']['input']>;
   titleNative?: InputMaybe<Scalars['String']['input']>;
   titleNative_like?: InputMaybe<Scalars['String']['input']>;
   title_like?: InputMaybe<Scalars['String']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<SongWhereConditionsInput>>;
@@ -2779,10 +2177,8 @@ export type ExternalResourceSongsArgs = {
  * For example, the Bakemonogatari anime has MyAnimeList, AniList and AniDB resources.
  */
 export type ExternalResourceStudiosArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -2796,9 +2192,8 @@ export type ExternalResourceStudiosArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<StudioResourceableSortableColumns>>;
+  sort?: InputMaybe<Array<StudioSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<StudioWhereConditionsInput>>;
@@ -2888,29 +2283,6 @@ export type ExternalResourcePagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type ExternalResourceResourceableSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'EXTERNAL_ID'
-  | 'EXTERNAL_ID_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'LINK'
-  | 'LINK_DESC'
-  | 'PIVOT_AS'
-  | 'PIVOT_AS_DESC'
-  | 'PIVOT_CREATED_AT'
-  | 'PIVOT_CREATED_AT_DESC'
-  | 'PIVOT_UPDATED_AT'
-  | 'PIVOT_UPDATED_AT_DESC'
-  | 'RANDOM'
-  | 'SITE'
-  | 'SITE_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
-
 export type ExternalResourceSongConnection = {
   /** A list of Song edges. */
   edges: Array<ExternalResourceSongEdge>;
@@ -2939,23 +2311,6 @@ export type ExternalResourceSongEdgeCreatedAtArgs = {
 export type ExternalResourceSongEdgeUpdatedAtArgs = {
   format?: Scalars['String']['input'];
 };
-
-export type ExternalResourceSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'EXTERNAL_ID'
-  | 'EXTERNAL_ID_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'LINK'
-  | 'LINK_DESC'
-  | 'RANDOM'
-  | 'SITE'
-  | 'SITE_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
 
 export type ExternalResourceStudioConnection = {
   /** A list of Studio edges. */
@@ -3052,19 +2407,6 @@ export type FeaturePagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type FeatureSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'RANDOM'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC'
-  | 'VALUE'
-  | 'VALUE_DESC';
-
 export type FeatureWhereConditionsInput = {
   AND?: InputMaybe<Array<FeatureWhereConditionsInput>>;
   OR?: InputMaybe<Array<FeatureWhereConditionsInput>>;
@@ -3128,83 +2470,6 @@ export type FeaturedThemePagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type FeaturedThemeSortableColumns =
-  | 'ANIMETHEMEENTRY_CREATED_AT'
-  | 'ANIMETHEMEENTRY_CREATED_AT_DESC'
-  | 'ANIMETHEMEENTRY_DELETED_AT'
-  | 'ANIMETHEMEENTRY_DELETED_AT_DESC'
-  | 'ANIMETHEMEENTRY_EPISODES'
-  | 'ANIMETHEMEENTRY_EPISODES_DESC'
-  | 'ANIMETHEMEENTRY_ID'
-  | 'ANIMETHEMEENTRY_ID_DESC'
-  | 'ANIMETHEMEENTRY_LIKES_COUNT'
-  | 'ANIMETHEMEENTRY_LIKES_COUNT_DESC'
-  | 'ANIMETHEMEENTRY_NOTES'
-  | 'ANIMETHEMEENTRY_NOTES_DESC'
-  | 'ANIMETHEMEENTRY_NSFW'
-  | 'ANIMETHEMEENTRY_NSFW_DESC'
-  | 'ANIMETHEMEENTRY_SPOILER'
-  | 'ANIMETHEMEENTRY_SPOILER_DESC'
-  | 'ANIMETHEMEENTRY_TRACKS_COUNT'
-  | 'ANIMETHEMEENTRY_TRACKS_COUNT_DESC'
-  | 'ANIMETHEMEENTRY_UPDATED_AT'
-  | 'ANIMETHEMEENTRY_UPDATED_AT_DESC'
-  | 'ANIMETHEMEENTRY_VERSION'
-  | 'ANIMETHEMEENTRY_VERSION_DESC'
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'END_AT'
-  | 'END_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'RANDOM'
-  | 'START_AT'
-  | 'START_AT_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC'
-  | 'USER_CREATED_AT'
-  | 'USER_CREATED_AT_DESC'
-  | 'USER_ID'
-  | 'USER_ID_DESC'
-  | 'USER_NAME'
-  | 'USER_NAME_DESC'
-  | 'USER_UPDATED_AT'
-  | 'USER_UPDATED_AT_DESC'
-  | 'VIDEO_BASENAME'
-  | 'VIDEO_BASENAME_DESC'
-  | 'VIDEO_CREATED_AT'
-  | 'VIDEO_CREATED_AT_DESC'
-  | 'VIDEO_DELETED_AT'
-  | 'VIDEO_DELETED_AT_DESC'
-  | 'VIDEO_FILENAME'
-  | 'VIDEO_FILENAME_DESC'
-  | 'VIDEO_ID'
-  | 'VIDEO_ID_DESC'
-  | 'VIDEO_LYRICS'
-  | 'VIDEO_LYRICS_DESC'
-  | 'VIDEO_MIMETYPE'
-  | 'VIDEO_MIMETYPE_DESC'
-  | 'VIDEO_NC'
-  | 'VIDEO_NC_DESC'
-  | 'VIDEO_OVERLAP'
-  | 'VIDEO_OVERLAP_DESC'
-  | 'VIDEO_PATH'
-  | 'VIDEO_PATH_DESC'
-  | 'VIDEO_RESOLUTION'
-  | 'VIDEO_RESOLUTION_DESC'
-  | 'VIDEO_SIZE'
-  | 'VIDEO_SIZE_DESC'
-  | 'VIDEO_SOURCE'
-  | 'VIDEO_SOURCE_DESC'
-  | 'VIDEO_SUBBED'
-  | 'VIDEO_SUBBED_DESC'
-  | 'VIDEO_TAGS'
-  | 'VIDEO_TAGS_DESC'
-  | 'VIDEO_UNCEN'
-  | 'VIDEO_UNCEN_DESC'
-  | 'VIDEO_UPDATED_AT'
-  | 'VIDEO_UPDATED_AT_DESC';
-
 export type FeaturedThemeWhereConditionsInput = {
   AND?: InputMaybe<Array<FeaturedThemeWhereConditionsInput>>;
   OR?: InputMaybe<Array<FeaturedThemeWhereConditionsInput>>;
@@ -3250,10 +2515,8 @@ export type Image = {
  * For example, the Bakemonogatari anime has two images to represent small and large cover images.
  */
 export type ImageAnimeArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -3276,11 +2539,10 @@ export type ImageAnimeArgs = {
   season_not_in?: InputMaybe<Array<AnimeSeason>>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<AnimeImageableSortableColumns>>;
+  sort?: InputMaybe<Array<AnimeSort>>;
   synopsis?: InputMaybe<Scalars['String']['input']>;
   synopsis_like?: InputMaybe<Scalars['String']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<AnimeWhereConditionsInput>>;
@@ -3298,10 +2560,8 @@ export type ImageAnimeArgs = {
  * For example, the Bakemonogatari anime has two images to represent small and large cover images.
  */
 export type ImageArtistsArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -3317,9 +2577,8 @@ export type ImageArtistsArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<ArtistImageableSortableColumns>>;
+  sort?: InputMaybe<Array<ArtistSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ArtistWhereConditionsInput>>;
@@ -3352,10 +2611,8 @@ export type ImageDeletedAtArgs = {
  * For example, the Bakemonogatari anime has two images to represent small and large cover images.
  */
 export type ImageStudiosArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -3369,9 +2626,8 @@ export type ImageStudiosArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<StudioImageableSortableColumns>>;
+  sort?: InputMaybe<Array<StudioSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<StudioWhereConditionsInput>>;
@@ -3461,27 +2717,6 @@ export type ImageFilterableColumns =
   | 'PATH'
   | 'UPDATED_AT';
 
-export type ImageImageableSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'FACET'
-  | 'FACET_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'PATH'
-  | 'PATH_DESC'
-  | 'PIVOT_CREATED_AT'
-  | 'PIVOT_CREATED_AT_DESC'
-  | 'PIVOT_DEPTH'
-  | 'PIVOT_DEPTH_DESC'
-  | 'PIVOT_UPDATED_AT'
-  | 'PIVOT_UPDATED_AT_DESC'
-  | 'RANDOM'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
-
 export type ImagePagination = {
   /** List of items on the current page */
   data: Array<Image>;
@@ -3489,17 +2724,11 @@ export type ImagePagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type ImageSortableColumns =
+export type ImageSort =
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'FACET'
-  | 'FACET_DESC'
   | 'ID'
   | 'ID_DESC'
-  | 'PATH'
-  | 'PATH_DESC'
   | 'RANDOM'
   | 'UPDATED_AT'
   | 'UPDATED_AT_DESC';
@@ -3541,28 +2770,16 @@ export type ImageWhereConditionsInput = {
   value?: InputMaybe<Scalars['Mixed']['input']>;
 };
 
-/** Represents the association between a imageable object and an image. */
-export type Imageable = {
-  /** The date that the resource was created */
-  createdAt: Maybe<Scalars['String']['output']>;
-  /** Used to sort the images */
-  depth: Scalars['Int']['output'];
-  image: Image;
-  /** The date that the resource was updated */
-  updatedAt: Maybe<Scalars['String']['output']>;
-};
-
-
-/** Represents the association between a imageable object and an image. */
-export type ImageableCreatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-
-/** Represents the association between a imageable object and an image. */
-export type ImageableUpdatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
+export type ImageableSort =
+  | 'CREATED_AT'
+  | 'CREATED_AT_DESC'
+  | 'DEPTH'
+  | 'DEPTH_DESC'
+  | 'ID'
+  | 'ID_DESC'
+  | 'RANDOM'
+  | 'UPDATED_AT'
+  | 'UPDATED_AT_DESC';
 
 /** Represents a like of a user. */
 export type Like = {
@@ -3626,7 +2843,6 @@ export type MeNotificationsArgs = {
 
 /** Represents the currently authenticated user. */
 export type MePermissionsArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -3638,8 +2854,6 @@ export type MePermissionsArgs = {
   name?: InputMaybe<Scalars['String']['input']>;
   name_like?: InputMaybe<Scalars['String']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  sort?: InputMaybe<Array<PermissionSortableColumns>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<PermissionWhereConditionsInput>>;
@@ -3648,7 +2862,6 @@ export type MePermissionsArgs = {
 
 /** Represents the currently authenticated user. */
 export type MePlaylistsArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -3659,8 +2872,7 @@ export type MePlaylistsArgs = {
   name?: InputMaybe<Scalars['String']['input']>;
   name_like?: InputMaybe<Scalars['String']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  sort?: InputMaybe<Array<PlaylistSortableColumns>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<PlaylistSort>>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   visibility?: InputMaybe<PlaylistVisibility>;
@@ -3674,7 +2886,6 @@ export type MePlaylistsArgs = {
 export type MeRolesArgs = {
   color?: InputMaybe<Scalars['String']['input']>;
   color_like?: InputMaybe<Scalars['String']['input']>;
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
   default?: InputMaybe<Scalars['String']['input']>;
@@ -3693,8 +2904,6 @@ export type MeRolesArgs = {
   priority_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   priority_lesser?: InputMaybe<Scalars['Int']['input']>;
   priority_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  sort?: InputMaybe<Array<RoleSortableColumns>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<RoleWhereConditionsInput>>;
@@ -3872,45 +3081,13 @@ export type PagePagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type PageSortableColumns =
-  | 'BODY'
-  | 'BODY_DESC'
+export type PageSort =
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
   | 'ID'
   | 'ID_DESC'
   | 'NAME'
   | 'NAME_DESC'
-  | 'NEXT_BODY'
-  | 'NEXT_BODY_DESC'
-  | 'NEXT_CREATED_AT'
-  | 'NEXT_CREATED_AT_DESC'
-  | 'NEXT_DELETED_AT'
-  | 'NEXT_DELETED_AT_DESC'
-  | 'NEXT_ID'
-  | 'NEXT_ID_DESC'
-  | 'NEXT_NAME'
-  | 'NEXT_NAME_DESC'
-  | 'NEXT_SLUG'
-  | 'NEXT_SLUG_DESC'
-  | 'NEXT_UPDATED_AT'
-  | 'NEXT_UPDATED_AT_DESC'
-  | 'PREVIOUS_BODY'
-  | 'PREVIOUS_BODY_DESC'
-  | 'PREVIOUS_CREATED_AT'
-  | 'PREVIOUS_CREATED_AT_DESC'
-  | 'PREVIOUS_DELETED_AT'
-  | 'PREVIOUS_DELETED_AT_DESC'
-  | 'PREVIOUS_ID'
-  | 'PREVIOUS_ID_DESC'
-  | 'PREVIOUS_NAME'
-  | 'PREVIOUS_NAME_DESC'
-  | 'PREVIOUS_SLUG'
-  | 'PREVIOUS_SLUG_DESC'
-  | 'PREVIOUS_UPDATED_AT'
-  | 'PREVIOUS_UPDATED_AT_DESC'
   | 'RANDOM'
   | 'SLUG'
   | 'SLUG_DESC'
@@ -4008,64 +3185,22 @@ export type PerformancePagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type PerformanceSortableColumns =
+export type PerformanceSort =
   | 'ALIAS'
   | 'ALIAS_DESC'
-  | 'ARTIST_CREATED_AT'
-  | 'ARTIST_CREATED_AT_DESC'
-  | 'ARTIST_DELETED_AT'
-  | 'ARTIST_DELETED_AT_DESC'
-  | 'ARTIST_ID'
-  | 'ARTIST_ID_DESC'
-  | 'ARTIST_INFORMATION'
-  | 'ARTIST_INFORMATION_DESC'
-  | 'ARTIST_NAME'
-  | 'ARTIST_NAME_DESC'
-  | 'ARTIST_SLUG'
-  | 'ARTIST_SLUG_DESC'
-  | 'ARTIST_UPDATED_AT'
-  | 'ARTIST_UPDATED_AT_DESC'
   | 'AS'
   | 'AS_DESC'
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
   | 'ID'
   | 'ID_DESC'
   | 'MEMBER_ALIAS'
   | 'MEMBER_ALIAS_DESC'
   | 'MEMBER_AS'
   | 'MEMBER_AS_DESC'
-  | 'MEMBER_CREATED_AT'
-  | 'MEMBER_CREATED_AT_DESC'
-  | 'MEMBER_DELETED_AT'
-  | 'MEMBER_DELETED_AT_DESC'
-  | 'MEMBER_ID'
-  | 'MEMBER_ID_DESC'
-  | 'MEMBER_INFORMATION'
-  | 'MEMBER_INFORMATION_DESC'
-  | 'MEMBER_NAME'
-  | 'MEMBER_NAME_DESC'
-  | 'MEMBER_SLUG'
-  | 'MEMBER_SLUG_DESC'
-  | 'MEMBER_UPDATED_AT'
-  | 'MEMBER_UPDATED_AT_DESC'
   | 'RANDOM'
   | 'RELEVANCE'
   | 'RELEVANCE_DESC'
-  | 'SONG_CREATED_AT'
-  | 'SONG_CREATED_AT_DESC'
-  | 'SONG_DELETED_AT'
-  | 'SONG_DELETED_AT_DESC'
-  | 'SONG_ID'
-  | 'SONG_ID_DESC'
-  | 'SONG_TITLE'
-  | 'SONG_TITLE_DESC'
-  | 'SONG_TITLE_NATIVE'
-  | 'SONG_TITLE_NATIVE_DESC'
-  | 'SONG_UPDATED_AT'
-  | 'SONG_UPDATED_AT_DESC'
   | 'UPDATED_AT'
   | 'UPDATED_AT_DESC';
 
@@ -4119,17 +3254,6 @@ export type PermissionFilterableColumns =
   | 'ID'
   | 'NAME'
   | 'UPDATED_AT';
-
-export type PermissionSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'RANDOM'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
 
 export type PermissionWhereConditionsInput = {
   AND?: InputMaybe<Array<PermissionWhereConditionsInput>>;
@@ -4189,10 +3313,8 @@ export type PlaylistCreatedAtArgs = {
  * For example, a "/r/anime's Best OPs and EDs of 2022" playlist may contain a collection of tracks allowing the continuous playback of Best OP and ED nominations for the /r/anime Awards.
  */
 export type PlaylistImagesArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   facet?: InputMaybe<ImageFacet>;
@@ -4207,9 +3329,8 @@ export type PlaylistImagesArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   path?: InputMaybe<Scalars['String']['input']>;
   path_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<ImageImageableSortableColumns>>;
+  sort?: InputMaybe<Array<ImageableSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ImageWhereConditionsInput>>;
@@ -4222,7 +3343,6 @@ export type PlaylistImagesArgs = {
  * For example, a "/r/anime's Best OPs and EDs of 2022" playlist may contain a collection of tracks allowing the continuous playback of Best OP and ED nominations for the /r/anime Awards.
  */
 export type PlaylistTracksArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -4234,8 +3354,7 @@ export type PlaylistTracksArgs = {
   position_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   position_lesser?: InputMaybe<Scalars['Int']['input']>;
   position_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  sort?: InputMaybe<Array<PlaylistTrackSortableColumns>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<PlaylistTrackSort>>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<PlaylistTrackWhereConditionsInput>>;
@@ -4298,29 +3417,11 @@ export type PlaylistPagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type PlaylistSortableColumns =
+export type PlaylistSort =
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
-  | 'DESCRIPTION'
-  | 'DESCRIPTION_DESC'
-  | 'FIRST_CREATED_AT'
-  | 'FIRST_CREATED_AT_DESC'
-  | 'FIRST_ID'
-  | 'FIRST_ID_DESC'
-  | 'FIRST_POSITION'
-  | 'FIRST_POSITION_DESC'
-  | 'FIRST_UPDATED_AT'
-  | 'FIRST_UPDATED_AT_DESC'
   | 'ID'
   | 'ID_DESC'
-  | 'LAST_CREATED_AT'
-  | 'LAST_CREATED_AT_DESC'
-  | 'LAST_ID'
-  | 'LAST_ID_DESC'
-  | 'LAST_POSITION'
-  | 'LAST_POSITION_DESC'
-  | 'LAST_UPDATED_AT'
-  | 'LAST_UPDATED_AT_DESC'
   | 'LIKES_COUNT'
   | 'LIKES_COUNT_DESC'
   | 'NAME'
@@ -4328,20 +3429,8 @@ export type PlaylistSortableColumns =
   | 'RANDOM'
   | 'TRACKS_COUNT'
   | 'TRACKS_COUNT_DESC'
-  | 'TRACKS_EXISTS'
-  | 'TRACKS_EXISTS_DESC'
   | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC'
-  | 'USER_CREATED_AT'
-  | 'USER_CREATED_AT_DESC'
-  | 'USER_ID'
-  | 'USER_ID_DESC'
-  | 'USER_NAME'
-  | 'USER_NAME_DESC'
-  | 'USER_UPDATED_AT'
-  | 'USER_UPDATED_AT_DESC'
-  | 'VISIBILITY'
-  | 'VISIBILITY_DESC';
+  | 'UPDATED_AT_DESC';
 
 /**
  * Represents an entry in a playlist.
@@ -4401,106 +3490,16 @@ export type PlaylistTrackPagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type PlaylistTrackSortableColumns =
-  | 'ANIMETHEMEENTRY_CREATED_AT'
-  | 'ANIMETHEMEENTRY_CREATED_AT_DESC'
-  | 'ANIMETHEMEENTRY_DELETED_AT'
-  | 'ANIMETHEMEENTRY_DELETED_AT_DESC'
-  | 'ANIMETHEMEENTRY_EPISODES'
-  | 'ANIMETHEMEENTRY_EPISODES_DESC'
-  | 'ANIMETHEMEENTRY_ID'
-  | 'ANIMETHEMEENTRY_ID_DESC'
-  | 'ANIMETHEMEENTRY_LIKES_COUNT'
-  | 'ANIMETHEMEENTRY_LIKES_COUNT_DESC'
-  | 'ANIMETHEMEENTRY_NOTES'
-  | 'ANIMETHEMEENTRY_NOTES_DESC'
-  | 'ANIMETHEMEENTRY_NSFW'
-  | 'ANIMETHEMEENTRY_NSFW_DESC'
-  | 'ANIMETHEMEENTRY_SPOILER'
-  | 'ANIMETHEMEENTRY_SPOILER_DESC'
-  | 'ANIMETHEMEENTRY_TRACKS_COUNT'
-  | 'ANIMETHEMEENTRY_TRACKS_COUNT_DESC'
-  | 'ANIMETHEMEENTRY_UPDATED_AT'
-  | 'ANIMETHEMEENTRY_UPDATED_AT_DESC'
-  | 'ANIMETHEMEENTRY_VERSION'
-  | 'ANIMETHEMEENTRY_VERSION_DESC'
+export type PlaylistTrackSort =
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
   | 'ID'
   | 'ID_DESC'
-  | 'NEXT_CREATED_AT'
-  | 'NEXT_CREATED_AT_DESC'
-  | 'NEXT_ID'
-  | 'NEXT_ID_DESC'
-  | 'NEXT_POSITION'
-  | 'NEXT_POSITION_DESC'
-  | 'NEXT_UPDATED_AT'
-  | 'NEXT_UPDATED_AT_DESC'
-  | 'PLAYLIST_CREATED_AT'
-  | 'PLAYLIST_CREATED_AT_DESC'
-  | 'PLAYLIST_DESCRIPTION'
-  | 'PLAYLIST_DESCRIPTION_DESC'
-  | 'PLAYLIST_ID'
-  | 'PLAYLIST_ID_DESC'
-  | 'PLAYLIST_LIKES_COUNT'
-  | 'PLAYLIST_LIKES_COUNT_DESC'
-  | 'PLAYLIST_NAME'
-  | 'PLAYLIST_NAME_DESC'
-  | 'PLAYLIST_TRACKS_COUNT'
-  | 'PLAYLIST_TRACKS_COUNT_DESC'
-  | 'PLAYLIST_TRACKS_EXISTS'
-  | 'PLAYLIST_TRACKS_EXISTS_DESC'
-  | 'PLAYLIST_UPDATED_AT'
-  | 'PLAYLIST_UPDATED_AT_DESC'
-  | 'PLAYLIST_VISIBILITY'
-  | 'PLAYLIST_VISIBILITY_DESC'
   | 'POSITION'
   | 'POSITION_DESC'
-  | 'PREVIOUS_CREATED_AT'
-  | 'PREVIOUS_CREATED_AT_DESC'
-  | 'PREVIOUS_ID'
-  | 'PREVIOUS_ID_DESC'
-  | 'PREVIOUS_POSITION'
-  | 'PREVIOUS_POSITION_DESC'
-  | 'PREVIOUS_UPDATED_AT'
-  | 'PREVIOUS_UPDATED_AT_DESC'
   | 'RANDOM'
   | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC'
-  | 'VIDEO_BASENAME'
-  | 'VIDEO_BASENAME_DESC'
-  | 'VIDEO_CREATED_AT'
-  | 'VIDEO_CREATED_AT_DESC'
-  | 'VIDEO_DELETED_AT'
-  | 'VIDEO_DELETED_AT_DESC'
-  | 'VIDEO_FILENAME'
-  | 'VIDEO_FILENAME_DESC'
-  | 'VIDEO_ID'
-  | 'VIDEO_ID_DESC'
-  | 'VIDEO_LYRICS'
-  | 'VIDEO_LYRICS_DESC'
-  | 'VIDEO_MIMETYPE'
-  | 'VIDEO_MIMETYPE_DESC'
-  | 'VIDEO_NC'
-  | 'VIDEO_NC_DESC'
-  | 'VIDEO_OVERLAP'
-  | 'VIDEO_OVERLAP_DESC'
-  | 'VIDEO_PATH'
-  | 'VIDEO_PATH_DESC'
-  | 'VIDEO_RESOLUTION'
-  | 'VIDEO_RESOLUTION_DESC'
-  | 'VIDEO_SIZE'
-  | 'VIDEO_SIZE_DESC'
-  | 'VIDEO_SOURCE'
-  | 'VIDEO_SOURCE_DESC'
-  | 'VIDEO_SUBBED'
-  | 'VIDEO_SUBBED_DESC'
-  | 'VIDEO_TAGS'
-  | 'VIDEO_TAGS_DESC'
-  | 'VIDEO_UNCEN'
-  | 'VIDEO_UNCEN_DESC'
-  | 'VIDEO_UPDATED_AT'
-  | 'VIDEO_UPDATED_AT_DESC';
+  | 'UPDATED_AT_DESC';
 
 export type PlaylistTrackWhereConditionsInput = {
   AND?: InputMaybe<Array<PlaylistTrackWhereConditionsInput>>;
@@ -4633,10 +3632,8 @@ export type QueryAnimeArgs = {
 
 
 export type QueryAnimePaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -4660,11 +3657,10 @@ export type QueryAnimePaginationArgs = {
   season_not_in?: InputMaybe<Array<AnimeSeason>>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<AnimeSortableColumns>>;
+  sort?: InputMaybe<Array<AnimeSort>>;
   synopsis?: InputMaybe<Scalars['String']['input']>;
   synopsis_like?: InputMaybe<Scalars['String']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<AnimeWhereConditionsInput>>;
@@ -4677,10 +3673,8 @@ export type QueryAnimePaginationArgs = {
 
 
 export type QueryAnimesynonymPaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -4690,14 +3684,12 @@ export type QueryAnimesynonymPaginationArgs = {
   id_lesser?: InputMaybe<Scalars['Int']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  sort?: InputMaybe<Array<AnimeSynonymSortableColumns>>;
   text?: InputMaybe<Scalars['String']['input']>;
   text_like?: InputMaybe<Scalars['String']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
   type?: InputMaybe<AnimeSynonymType>;
   type_in?: InputMaybe<Array<AnimeSynonymType>>;
   type_not_in?: InputMaybe<Array<AnimeSynonymType>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<AnimeSynonymWhereConditionsInput>>;
@@ -4705,10 +3697,8 @@ export type QueryAnimesynonymPaginationArgs = {
 
 
 export type QueryAnimethemePaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -4726,12 +3716,11 @@ export type QueryAnimethemePaginationArgs = {
   sequence_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<AnimeThemeSortableColumns>>;
+  sort?: InputMaybe<Array<AnimeThemeSort>>;
   trashed?: InputMaybe<TrashedFilter>;
   type?: InputMaybe<ThemeType>;
   type_in?: InputMaybe<Array<ThemeType>>;
   type_not_in?: InputMaybe<Array<ThemeType>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<AnimeThemeWhereConditionsInput>>;
@@ -4749,10 +3738,8 @@ export type QueryAnimethemeShuffleArgs = {
 
 
 export type QueryAnimethemeentryPaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   episodes?: InputMaybe<Scalars['String']['input']>;
@@ -4767,10 +3754,9 @@ export type QueryAnimethemeentryPaginationArgs = {
   notes_like?: InputMaybe<Scalars['String']['input']>;
   nsfw?: InputMaybe<Scalars['Boolean']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  sort?: InputMaybe<Array<AnimeThemeEntrySortableColumns>>;
+  sort?: InputMaybe<Array<AnimeThemeEntrySort>>;
   spoiler?: InputMaybe<Scalars['Boolean']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   version?: InputMaybe<Scalars['Int']['input']>;
@@ -4790,7 +3776,6 @@ export type QueryAnimeyearsArgs = {
 export type QueryAnnouncementPaginationArgs = {
   content?: InputMaybe<Scalars['String']['input']>;
   content_like?: InputMaybe<Scalars['String']['input']>;
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -4800,8 +3785,7 @@ export type QueryAnnouncementPaginationArgs = {
   id_lesser?: InputMaybe<Scalars['Int']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  sort?: InputMaybe<Array<AnnouncementSortableColumns>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<AnnouncementSort>>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<AnnouncementWhereConditionsInput>>;
@@ -4814,10 +3798,8 @@ export type QueryArtistArgs = {
 
 
 export type QueryArtistPaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -4834,9 +3816,8 @@ export type QueryArtistPaginationArgs = {
   search?: InputMaybe<Scalars['String']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<ArtistSortableColumns>>;
+  sort?: InputMaybe<Array<ArtistSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ArtistWhereConditionsInput>>;
@@ -4846,10 +3827,8 @@ export type QueryArtistPaginationArgs = {
 export type QueryAudioPaginationArgs = {
   basename?: InputMaybe<Scalars['String']['input']>;
   basename_like?: InputMaybe<Scalars['String']['input']>;
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   filename?: InputMaybe<Scalars['String']['input']>;
@@ -4870,9 +3849,8 @@ export type QueryAudioPaginationArgs = {
   size_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   size_lesser?: InputMaybe<Scalars['Int']['input']>;
   size_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  sort?: InputMaybe<Array<AudioSortableColumns>>;
+  sort?: InputMaybe<Array<AudioSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<AudioWhereConditionsInput>>;
@@ -4880,7 +3858,6 @@ export type QueryAudioPaginationArgs = {
 
 
 export type QueryDumpPaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -4892,8 +3869,7 @@ export type QueryDumpPaginationArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   path?: InputMaybe<Scalars['String']['input']>;
   path_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<DumpSortableColumns>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<DumpSort>>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<DumpWhereConditionsInput>>;
@@ -4901,7 +3877,6 @@ export type QueryDumpPaginationArgs = {
 
 
 export type QueryExternalprofilePaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -4916,8 +3891,6 @@ export type QueryExternalprofilePaginationArgs = {
   site?: InputMaybe<ExternalProfileSite>;
   site_in?: InputMaybe<Array<ExternalProfileSite>>;
   site_not_in?: InputMaybe<Array<ExternalProfileSite>>;
-  sort?: InputMaybe<Array<ExternalProfileSortableColumns>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   visibility?: InputMaybe<ExternalProfileVisibility>;
@@ -4928,10 +3901,8 @@ export type QueryExternalprofilePaginationArgs = {
 
 
 export type QueryExternalresourcePaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   externalId?: InputMaybe<Scalars['Int']['input']>;
@@ -4951,9 +3922,7 @@ export type QueryExternalresourcePaginationArgs = {
   site?: InputMaybe<ResourceSite>;
   site_in?: InputMaybe<Array<ResourceSite>>;
   site_not_in?: InputMaybe<Array<ResourceSite>>;
-  sort?: InputMaybe<Array<ExternalResourceSortableColumns>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ExternalResourceWhereConditionsInput>>;
@@ -4961,7 +3930,6 @@ export type QueryExternalresourcePaginationArgs = {
 
 
 export type QueryFeaturePaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -4973,8 +3941,6 @@ export type QueryFeaturePaginationArgs = {
   name?: InputMaybe<Scalars['String']['input']>;
   name_like?: InputMaybe<Scalars['String']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  sort?: InputMaybe<Array<FeatureSortableColumns>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   value?: InputMaybe<Scalars['String']['input']>;
@@ -4984,10 +3950,8 @@ export type QueryFeaturePaginationArgs = {
 
 
 export type QueryFeaturedthemePaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  endAt?: InputMaybe<Scalars['String']['input']>;
   endAt_greater?: InputMaybe<Scalars['String']['input']>;
   endAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -4997,11 +3961,8 @@ export type QueryFeaturedthemePaginationArgs = {
   id_lesser?: InputMaybe<Scalars['Int']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  sort?: InputMaybe<Array<FeaturedThemeSortableColumns>>;
-  startAt?: InputMaybe<Scalars['String']['input']>;
   startAt_greater?: InputMaybe<Scalars['String']['input']>;
   startAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<FeaturedThemeWhereConditionsInput>>;
@@ -5016,10 +3977,8 @@ export type QueryFindAnimeByExternalSiteArgs = {
 
 
 export type QueryImagePaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   facet?: InputMaybe<ImageFacet>;
@@ -5034,9 +3993,8 @@ export type QueryImagePaginationArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   path?: InputMaybe<Scalars['String']['input']>;
   path_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<ImageSortableColumns>>;
+  sort?: InputMaybe<Array<ImageSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ImageWhereConditionsInput>>;
@@ -5051,10 +4009,8 @@ export type QueryPageArgs = {
 export type QueryPagePaginationArgs = {
   body?: InputMaybe<Scalars['String']['input']>;
   body_like?: InputMaybe<Scalars['String']['input']>;
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -5068,9 +4024,8 @@ export type QueryPagePaginationArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<PageSortableColumns>>;
+  sort?: InputMaybe<Array<PageSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<PageWhereConditionsInput>>;
@@ -5082,10 +4037,8 @@ export type QueryPerformancePaginationArgs = {
   alias_like?: InputMaybe<Scalars['String']['input']>;
   as?: InputMaybe<Scalars['String']['input']>;
   as_like?: InputMaybe<Scalars['String']['input']>;
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -5104,9 +4057,8 @@ export type QueryPerformancePaginationArgs = {
   relevance_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   relevance_lesser?: InputMaybe<Scalars['Int']['input']>;
   relevance_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  sort?: InputMaybe<Array<PerformanceSortableColumns>>;
+  sort?: InputMaybe<Array<PerformanceSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<PerformanceWhereConditionsInput>>;
@@ -5119,7 +4071,6 @@ export type QueryPlaylistArgs = {
 
 
 export type QueryPlaylistPaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -5131,8 +4082,7 @@ export type QueryPlaylistPaginationArgs = {
   name_like?: InputMaybe<Scalars['String']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
   search?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<PlaylistSortableColumns>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<PlaylistSort>>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   visibility?: InputMaybe<PlaylistVisibility>;
@@ -5149,7 +4099,6 @@ export type QueryPlaylisttrackArgs = {
 
 
 export type QueryPlaylisttrackPaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -5162,8 +4111,7 @@ export type QueryPlaylisttrackPaginationArgs = {
   position_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   position_lesser?: InputMaybe<Scalars['Int']['input']>;
   position_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  sort?: InputMaybe<Array<PlaylistTrackSortableColumns>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<PlaylistTrackSort>>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<PlaylistTrackWhereConditionsInput>>;
@@ -5183,10 +4131,8 @@ export type QuerySeriesArgs = {
 
 
 export type QuerySeriesPaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -5201,9 +4147,8 @@ export type QuerySeriesPaginationArgs = {
   search?: InputMaybe<Scalars['String']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<SeriesSortableColumns>>;
+  sort?: InputMaybe<Array<SeriesSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<SeriesWhereConditionsInput>>;
@@ -5211,10 +4156,8 @@ export type QuerySeriesPaginationArgs = {
 
 
 export type QuerySongPaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -5224,13 +4167,12 @@ export type QuerySongPaginationArgs = {
   id_lesser?: InputMaybe<Scalars['Int']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  sort?: InputMaybe<Array<SongSortableColumns>>;
+  sort?: InputMaybe<Array<SongSort>>;
   title?: InputMaybe<Scalars['String']['input']>;
   titleNative?: InputMaybe<Scalars['String']['input']>;
   titleNative_like?: InputMaybe<Scalars['String']['input']>;
   title_like?: InputMaybe<Scalars['String']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<SongWhereConditionsInput>>;
@@ -5243,10 +4185,8 @@ export type QueryStudioArgs = {
 
 
 export type QueryStudioPaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -5261,9 +4201,8 @@ export type QueryStudioPaginationArgs = {
   search?: InputMaybe<Scalars['String']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<StudioSortableColumns>>;
+  sort?: InputMaybe<Array<StudioSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<StudioWhereConditionsInput>>;
@@ -5271,10 +4210,8 @@ export type QueryStudioPaginationArgs = {
 
 
 export type QuerySynonymPaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -5284,14 +4221,13 @@ export type QuerySynonymPaginationArgs = {
   id_lesser?: InputMaybe<Scalars['Int']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  sort?: InputMaybe<Array<SynonymSortableColumns>>;
+  sort?: InputMaybe<Array<SynonymSort>>;
   text?: InputMaybe<Scalars['String']['input']>;
   text_like?: InputMaybe<Scalars['String']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
   type?: InputMaybe<SynonymType>;
   type_in?: InputMaybe<Array<SynonymType>>;
   type_not_in?: InputMaybe<Array<SynonymType>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<SynonymWhereConditionsInput>>;
@@ -5299,10 +4235,8 @@ export type QuerySynonymPaginationArgs = {
 
 
 export type QueryThemegroupPaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -5316,9 +4250,7 @@ export type QueryThemegroupPaginationArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<ThemeGroupSortableColumns>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ThemeGroupWhereConditionsInput>>;
@@ -5333,10 +4265,8 @@ export type QueryVideoArgs = {
 export type QueryVideoPaginationArgs = {
   basename?: InputMaybe<Scalars['String']['input']>;
   basename_like?: InputMaybe<Scalars['String']['input']>;
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   filename?: InputMaybe<Scalars['String']['input']>;
@@ -5367,7 +4297,7 @@ export type QueryVideoPaginationArgs = {
   size_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   size_lesser?: InputMaybe<Scalars['Int']['input']>;
   size_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  sort?: InputMaybe<Array<VideoSortableColumns>>;
+  sort?: InputMaybe<Array<VideoSort>>;
   source?: InputMaybe<VideoSource>;
   source_in?: InputMaybe<Array<VideoSource>>;
   source_not_in?: InputMaybe<Array<VideoSource>>;
@@ -5376,7 +4306,6 @@ export type QueryVideoPaginationArgs = {
   tags_like?: InputMaybe<Scalars['String']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
   uncen?: InputMaybe<Scalars['Boolean']['input']>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<VideoWhereConditionsInput>>;
@@ -5384,10 +4313,8 @@ export type QueryVideoPaginationArgs = {
 
 
 export type QueryVideoscriptPaginationArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -5401,9 +4328,7 @@ export type QueryVideoscriptPaginationArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   path?: InputMaybe<Scalars['String']['input']>;
   path_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<VideoScriptSortableColumns>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<VideoScriptWhereConditionsInput>>;
@@ -5431,29 +4356,6 @@ export type ResourceSite =
   | 'X'
   | 'YOUTUBE'
   | 'YOUTUBE_MUSIC';
-
-/** Represents the association between a resourceable object and an external resource. */
-export type Resourceable = {
-  /** Used to distinguish resources that map to the same resourceable */
-  as: Maybe<Scalars['String']['output']>;
-  /** The date that the resource was created */
-  createdAt: Maybe<Scalars['String']['output']>;
-  resource: ExternalResource;
-  /** The date that the resource was updated */
-  updatedAt: Maybe<Scalars['String']['output']>;
-};
-
-
-/** Represents the association between a resourceable object and an external resource. */
-export type ResourceableCreatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-
-/** Represents the association between a resourceable object and an external resource. */
-export type ResourceableUpdatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
 
 /** Represents an assignable label for users that provides a configured group of permissions. */
 export type Role = {
@@ -5483,7 +4385,6 @@ export type RoleCreatedAtArgs = {
 
 /** Represents an assignable label for users that provides a configured group of permissions. */
 export type RolePermissionsArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -5495,8 +4396,6 @@ export type RolePermissionsArgs = {
   name?: InputMaybe<Scalars['String']['input']>;
   name_like?: InputMaybe<Scalars['String']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  sort?: InputMaybe<Array<PermissionSortableColumns>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<PermissionWhereConditionsInput>>;
@@ -5529,23 +4428,6 @@ export type RoleFilterableColumns =
   | 'NAME'
   | 'PRIORITY'
   | 'UPDATED_AT';
-
-export type RoleSortableColumns =
-  | 'COLOR'
-  | 'COLOR_DESC'
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DEFAULT'
-  | 'DEFAULT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'PRIORITY'
-  | 'PRIORITY_DESC'
-  | 'RANDOM'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
 
 export type RoleWhereConditionsInput = {
   AND?: InputMaybe<Array<RoleWhereConditionsInput>>;
@@ -5606,10 +4488,8 @@ export type Series = {
  * For example, the Monogatari series is the collection of the Bakemonogatari anime and its related productions.
  */
 export type SeriesAnimeArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -5632,11 +4512,10 @@ export type SeriesAnimeArgs = {
   season_not_in?: InputMaybe<Array<AnimeSeason>>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<AnimeAnimeSeriesSortableColumns>>;
+  sort?: InputMaybe<Array<AnimeSort>>;
   synopsis?: InputMaybe<Scalars['String']['input']>;
   synopsis_like?: InputMaybe<Scalars['String']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<AnimeWhereConditionsInput>>;
@@ -5704,25 +4583,6 @@ export type SeriesAnimeEdgeUpdatedAtArgs = {
   format?: Scalars['String']['input'];
 };
 
-export type SeriesAnimeSeriesSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'PIVOT_CREATED_AT'
-  | 'PIVOT_CREATED_AT_DESC'
-  | 'PIVOT_UPDATED_AT'
-  | 'PIVOT_UPDATED_AT_DESC'
-  | 'RANDOM'
-  | 'SLUG'
-  | 'SLUG_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
-
 export type SeriesFilterableColumns =
   | 'CREATED_AT'
   | 'DELETED_AT'
@@ -5738,18 +4598,14 @@ export type SeriesPagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type SeriesSortableColumns =
+export type SeriesSort =
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
   | 'ID'
   | 'ID_DESC'
   | 'NAME'
   | 'NAME_DESC'
   | 'RANDOM'
-  | 'SLUG'
-  | 'SLUG_DESC'
   | 'UPDATED_AT'
   | 'UPDATED_AT_DESC';
 
@@ -5794,10 +4650,8 @@ export type Song = {
  * For example, Staple Stable is the song for the Bakemonogatari OP1 AnimeTheme.
  */
 export type SongAnimethemesArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -5814,12 +4668,11 @@ export type SongAnimethemesArgs = {
   sequence_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<AnimeThemeSortableColumns>>;
+  sort?: InputMaybe<Array<AnimeThemeSort>>;
   trashed?: InputMaybe<TrashedFilter>;
   type?: InputMaybe<ThemeType>;
   type_in?: InputMaybe<Array<ThemeType>>;
   type_not_in?: InputMaybe<Array<ThemeType>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<AnimeThemeWhereConditionsInput>>;
@@ -5856,10 +4709,8 @@ export type SongPerformancesArgs = {
   alias_like?: InputMaybe<Scalars['String']['input']>;
   as?: InputMaybe<Scalars['String']['input']>;
   as_like?: InputMaybe<Scalars['String']['input']>;
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -5878,9 +4729,8 @@ export type SongPerformancesArgs = {
   relevance_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   relevance_lesser?: InputMaybe<Scalars['Int']['input']>;
   relevance_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  sort?: InputMaybe<Array<PerformanceSortableColumns>>;
+  sort?: InputMaybe<Array<PerformanceSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<PerformanceWhereConditionsInput>>;
@@ -5893,10 +4743,8 @@ export type SongPerformancesArgs = {
  * For example, Staple Stable is the song for the Bakemonogatari OP1 AnimeTheme.
  */
 export type SongResourcesArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   externalId?: InputMaybe<Scalars['Int']['input']>;
@@ -5916,9 +4764,7 @@ export type SongResourcesArgs = {
   site?: InputMaybe<ResourceSite>;
   site_in?: InputMaybe<Array<ResourceSite>>;
   site_not_in?: InputMaybe<Array<ResourceSite>>;
-  sort?: InputMaybe<Array<ExternalResourceResourceableSortableColumns>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ExternalResourceWhereConditionsInput>>;
@@ -5978,32 +4824,9 @@ export type SongPagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type SongResourceableSortableColumns =
+export type SongSort =
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'PIVOT_AS'
-  | 'PIVOT_AS_DESC'
-  | 'PIVOT_CREATED_AT'
-  | 'PIVOT_CREATED_AT_DESC'
-  | 'PIVOT_UPDATED_AT'
-  | 'PIVOT_UPDATED_AT_DESC'
-  | 'RANDOM'
-  | 'TITLE'
-  | 'TITLE_DESC'
-  | 'TITLE_NATIVE'
-  | 'TITLE_NATIVE_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
-
-export type SongSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
   | 'ID'
   | 'ID_DESC'
   | 'RANDOM'
@@ -6059,10 +4882,8 @@ export type Studio = {
  * For example, Shaft is the studio that produced the anime Bakemonogatari.
  */
 export type StudioAnimeArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -6085,11 +4906,10 @@ export type StudioAnimeArgs = {
   season_not_in?: InputMaybe<Array<AnimeSeason>>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<AnimeAnimeStudioSortableColumns>>;
+  sort?: InputMaybe<Array<AnimeSort>>;
   synopsis?: InputMaybe<Scalars['String']['input']>;
   synopsis_like?: InputMaybe<Scalars['String']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<AnimeWhereConditionsInput>>;
@@ -6127,10 +4947,8 @@ export type StudioDeletedAtArgs = {
  * For example, Shaft is the studio that produced the anime Bakemonogatari.
  */
 export type StudioImagesArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   facet?: InputMaybe<ImageFacet>;
@@ -6145,9 +4963,8 @@ export type StudioImagesArgs = {
   page?: InputMaybe<Scalars['Int']['input']>;
   path?: InputMaybe<Scalars['String']['input']>;
   path_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<ImageImageableSortableColumns>>;
+  sort?: InputMaybe<Array<ImageableSort>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ImageWhereConditionsInput>>;
@@ -6160,10 +4977,8 @@ export type StudioImagesArgs = {
  * For example, Shaft is the studio that produced the anime Bakemonogatari.
  */
 export type StudioResourcesArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   externalId?: InputMaybe<Scalars['Int']['input']>;
@@ -6183,9 +4998,7 @@ export type StudioResourcesArgs = {
   site?: InputMaybe<ResourceSite>;
   site_in?: InputMaybe<Array<ResourceSite>>;
   site_not_in?: InputMaybe<Array<ResourceSite>>;
-  sort?: InputMaybe<Array<ExternalResourceResourceableSortableColumns>>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<ExternalResourceWhereConditionsInput>>;
@@ -6227,25 +5040,6 @@ export type StudioAnimeEdgeCreatedAtArgs = {
 export type StudioAnimeEdgeUpdatedAtArgs = {
   format?: Scalars['String']['input'];
 };
-
-export type StudioAnimeStudioSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'PIVOT_CREATED_AT'
-  | 'PIVOT_CREATED_AT_DESC'
-  | 'PIVOT_UPDATED_AT'
-  | 'PIVOT_UPDATED_AT_DESC'
-  | 'RANDOM'
-  | 'SLUG'
-  | 'SLUG_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
 
 export type StudioExternalResourceConnection = {
   /** A list of ExternalResource edges. */
@@ -6313,27 +5107,6 @@ export type StudioImageEdgeUpdatedAtArgs = {
   format?: Scalars['String']['input'];
 };
 
-export type StudioImageableSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'PIVOT_CREATED_AT'
-  | 'PIVOT_CREATED_AT_DESC'
-  | 'PIVOT_DEPTH'
-  | 'PIVOT_DEPTH_DESC'
-  | 'PIVOT_UPDATED_AT'
-  | 'PIVOT_UPDATED_AT_DESC'
-  | 'RANDOM'
-  | 'SLUG'
-  | 'SLUG_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
-
 export type StudioPagination = {
   /** List of items on the current page */
   data: Array<Studio>;
@@ -6341,39 +5114,14 @@ export type StudioPagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type StudioResourceableSortableColumns =
+export type StudioSort =
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'PIVOT_AS'
-  | 'PIVOT_AS_DESC'
-  | 'PIVOT_CREATED_AT'
-  | 'PIVOT_CREATED_AT_DESC'
-  | 'PIVOT_UPDATED_AT'
-  | 'PIVOT_UPDATED_AT_DESC'
-  | 'RANDOM'
-  | 'SLUG'
-  | 'SLUG_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
-
-export type StudioSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
   | 'ID'
   | 'ID_DESC'
   | 'NAME'
   | 'NAME_DESC'
   | 'RANDOM'
-  | 'SLUG'
-  | 'SLUG_DESC'
   | 'UPDATED_AT'
   | 'UPDATED_AT_DESC';
 
@@ -6455,18 +5203,14 @@ export type SynonymPagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type SynonymSortableColumns =
+export type SynonymSort =
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
   | 'ID'
   | 'ID_DESC'
   | 'RANDOM'
   | 'TEXT'
   | 'TEXT_DESC'
-  | 'TYPE'
-  | 'TYPE_DESC'
   | 'UPDATED_AT'
   | 'UPDATED_AT_DESC';
 
@@ -6515,10 +5259,8 @@ export type ThemeGroup = {
  * For example, English Version is the group for english dubbed Theme.
  */
 export type ThemeGroupAnimethemesArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -6535,12 +5277,11 @@ export type ThemeGroupAnimethemesArgs = {
   sequence_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   slug?: InputMaybe<Scalars['String']['input']>;
   slug_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<AnimeThemeSortableColumns>>;
+  sort?: InputMaybe<Array<AnimeThemeSort>>;
   trashed?: InputMaybe<TrashedFilter>;
   type?: InputMaybe<ThemeType>;
   type_in?: InputMaybe<Array<ThemeType>>;
   type_not_in?: InputMaybe<Array<ThemeType>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<AnimeThemeWhereConditionsInput>>;
@@ -6591,21 +5332,6 @@ export type ThemeGroupPagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type ThemeGroupSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'RANDOM'
-  | 'SLUG'
-  | 'SLUG_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
-
 export type ThemeGroupWhereConditionsInput = {
   AND?: InputMaybe<Array<ThemeGroupWhereConditionsInput>>;
   OR?: InputMaybe<Array<ThemeGroupWhereConditionsInput>>;
@@ -6652,7 +5378,6 @@ export type UserCreatedAtArgs = {
 
 /** Represents an AnimeThemes account. */
 export type UserPlaylistsArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -6663,8 +5388,7 @@ export type UserPlaylistsArgs = {
   name?: InputMaybe<Scalars['String']['input']>;
   name_like?: InputMaybe<Scalars['String']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  sort?: InputMaybe<Array<PlaylistSortableColumns>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<PlaylistSort>>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   visibility?: InputMaybe<PlaylistVisibility>;
@@ -6743,10 +5467,8 @@ export type Video = {
  * For example, the video Bakemonogatari-OP1.webm represents the WebM of the Bakemonogatari OP1 theme.
  */
 export type VideoAnimethemeentriesArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
   deletedAt_greater?: InputMaybe<Scalars['String']['input']>;
   deletedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   episodes?: InputMaybe<Scalars['String']['input']>;
@@ -6761,10 +5483,9 @@ export type VideoAnimethemeentriesArgs = {
   notes_like?: InputMaybe<Scalars['String']['input']>;
   nsfw?: InputMaybe<Scalars['Boolean']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
-  sort?: InputMaybe<Array<AnimeThemeEntryAnimeThemeEntryVideoSortableColumns>>;
+  sort?: InputMaybe<Array<AnimeThemeEntrySort>>;
   spoiler?: InputMaybe<Scalars['Boolean']['input']>;
   trashed?: InputMaybe<TrashedFilter>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   version?: InputMaybe<Scalars['Int']['input']>;
@@ -6802,7 +5523,6 @@ export type VideoDeletedAtArgs = {
  * For example, the video Bakemonogatari-OP1.webm represents the WebM of the Bakemonogatari OP1 theme.
  */
 export type VideoTracksArgs = {
-  createdAt?: InputMaybe<Scalars['String']['input']>;
   createdAt_greater?: InputMaybe<Scalars['String']['input']>;
   createdAt_lesser?: InputMaybe<Scalars['String']['input']>;
   first?: Scalars['Int']['input'];
@@ -6814,8 +5534,7 @@ export type VideoTracksArgs = {
   position_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   position_lesser?: InputMaybe<Scalars['Int']['input']>;
   position_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  sort?: InputMaybe<Array<PlaylistTrackSortableColumns>>;
-  updatedAt?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Array<PlaylistTrackSort>>;
   updatedAt_greater?: InputMaybe<Scalars['String']['input']>;
   updatedAt_lesser?: InputMaybe<Scalars['String']['input']>;
   where?: InputMaybe<Array<PlaylistTrackWhereConditionsInput>>;
@@ -6857,77 +5576,6 @@ export type VideoAnimeThemeEntryEdgeCreatedAtArgs = {
 export type VideoAnimeThemeEntryEdgeUpdatedAtArgs = {
   format?: Scalars['String']['input'];
 };
-
-export type VideoAnimeThemeEntryVideoSortableColumns =
-  | 'AUDIO_BASENAME'
-  | 'AUDIO_BASENAME_DESC'
-  | 'AUDIO_CREATED_AT'
-  | 'AUDIO_CREATED_AT_DESC'
-  | 'AUDIO_DELETED_AT'
-  | 'AUDIO_DELETED_AT_DESC'
-  | 'AUDIO_FILENAME'
-  | 'AUDIO_FILENAME_DESC'
-  | 'AUDIO_ID'
-  | 'AUDIO_ID_DESC'
-  | 'AUDIO_MIMETYPE'
-  | 'AUDIO_MIMETYPE_DESC'
-  | 'AUDIO_PATH'
-  | 'AUDIO_PATH_DESC'
-  | 'AUDIO_SIZE'
-  | 'AUDIO_SIZE_DESC'
-  | 'AUDIO_UPDATED_AT'
-  | 'AUDIO_UPDATED_AT_DESC'
-  | 'BASENAME'
-  | 'BASENAME_DESC'
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'FILENAME'
-  | 'FILENAME_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'LYRICS'
-  | 'LYRICS_DESC'
-  | 'MIMETYPE'
-  | 'MIMETYPE_DESC'
-  | 'NC'
-  | 'NC_DESC'
-  | 'OVERLAP'
-  | 'OVERLAP_DESC'
-  | 'PATH'
-  | 'PATH_DESC'
-  | 'PIVOT_CREATED_AT'
-  | 'PIVOT_CREATED_AT_DESC'
-  | 'PIVOT_UPDATED_AT'
-  | 'PIVOT_UPDATED_AT_DESC'
-  | 'RANDOM'
-  | 'RESOLUTION'
-  | 'RESOLUTION_DESC'
-  | 'SIZE'
-  | 'SIZE_DESC'
-  | 'SOURCE'
-  | 'SOURCE_DESC'
-  | 'SUBBED'
-  | 'SUBBED_DESC'
-  | 'TAGS'
-  | 'TAGS_DESC'
-  | 'UNCEN'
-  | 'UNCEN_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC'
-  | 'VIDEOSCRIPT_CREATED_AT'
-  | 'VIDEOSCRIPT_CREATED_AT_DESC'
-  | 'VIDEOSCRIPT_DELETED_AT'
-  | 'VIDEOSCRIPT_DELETED_AT_DESC'
-  | 'VIDEOSCRIPT_ID'
-  | 'VIDEOSCRIPT_ID_DESC'
-  | 'VIDEOSCRIPT_LINK'
-  | 'VIDEOSCRIPT_LINK_DESC'
-  | 'VIDEOSCRIPT_PATH'
-  | 'VIDEOSCRIPT_PATH_DESC'
-  | 'VIDEOSCRIPT_UPDATED_AT'
-  | 'VIDEOSCRIPT_UPDATED_AT_DESC';
 
 export type VideoFilterableColumns =
   | 'BASENAME'
@@ -7029,55 +5677,6 @@ export type VideoScriptPagination = {
   paginationInfo: PaginationInfo;
 };
 
-export type VideoScriptSortableColumns =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'LINK'
-  | 'LINK_DESC'
-  | 'PATH'
-  | 'PATH_DESC'
-  | 'RANDOM'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC'
-  | 'VIDEO_BASENAME'
-  | 'VIDEO_BASENAME_DESC'
-  | 'VIDEO_CREATED_AT'
-  | 'VIDEO_CREATED_AT_DESC'
-  | 'VIDEO_DELETED_AT'
-  | 'VIDEO_DELETED_AT_DESC'
-  | 'VIDEO_FILENAME'
-  | 'VIDEO_FILENAME_DESC'
-  | 'VIDEO_ID'
-  | 'VIDEO_ID_DESC'
-  | 'VIDEO_LYRICS'
-  | 'VIDEO_LYRICS_DESC'
-  | 'VIDEO_MIMETYPE'
-  | 'VIDEO_MIMETYPE_DESC'
-  | 'VIDEO_NC'
-  | 'VIDEO_NC_DESC'
-  | 'VIDEO_OVERLAP'
-  | 'VIDEO_OVERLAP_DESC'
-  | 'VIDEO_PATH'
-  | 'VIDEO_PATH_DESC'
-  | 'VIDEO_RESOLUTION'
-  | 'VIDEO_RESOLUTION_DESC'
-  | 'VIDEO_SIZE'
-  | 'VIDEO_SIZE_DESC'
-  | 'VIDEO_SOURCE'
-  | 'VIDEO_SOURCE_DESC'
-  | 'VIDEO_SUBBED'
-  | 'VIDEO_SUBBED_DESC'
-  | 'VIDEO_TAGS'
-  | 'VIDEO_TAGS_DESC'
-  | 'VIDEO_UNCEN'
-  | 'VIDEO_UNCEN_DESC'
-  | 'VIDEO_UPDATED_AT'
-  | 'VIDEO_UPDATED_AT_DESC';
-
 export type VideoScriptWhereConditionsInput = {
   AND?: InputMaybe<Array<VideoScriptWhereConditionsInput>>;
   OR?: InputMaybe<Array<VideoScriptWhereConditionsInput>>;
@@ -7086,72 +5685,22 @@ export type VideoScriptWhereConditionsInput = {
   value?: InputMaybe<Scalars['Mixed']['input']>;
 };
 
-export type VideoSortableColumns =
-  | 'AUDIO_BASENAME'
-  | 'AUDIO_BASENAME_DESC'
-  | 'AUDIO_CREATED_AT'
-  | 'AUDIO_CREATED_AT_DESC'
-  | 'AUDIO_DELETED_AT'
-  | 'AUDIO_DELETED_AT_DESC'
-  | 'AUDIO_FILENAME'
-  | 'AUDIO_FILENAME_DESC'
-  | 'AUDIO_ID'
-  | 'AUDIO_ID_DESC'
-  | 'AUDIO_MIMETYPE'
-  | 'AUDIO_MIMETYPE_DESC'
-  | 'AUDIO_PATH'
-  | 'AUDIO_PATH_DESC'
-  | 'AUDIO_SIZE'
-  | 'AUDIO_SIZE_DESC'
-  | 'AUDIO_UPDATED_AT'
-  | 'AUDIO_UPDATED_AT_DESC'
+export type VideoSort =
   | 'BASENAME'
   | 'BASENAME_DESC'
   | 'CREATED_AT'
   | 'CREATED_AT_DESC'
-  | 'DELETED_AT'
-  | 'DELETED_AT_DESC'
   | 'FILENAME'
   | 'FILENAME_DESC'
   | 'ID'
   | 'ID_DESC'
-  | 'LYRICS'
-  | 'LYRICS_DESC'
-  | 'MIMETYPE'
-  | 'MIMETYPE_DESC'
-  | 'NC'
-  | 'NC_DESC'
-  | 'OVERLAP'
-  | 'OVERLAP_DESC'
-  | 'PATH'
-  | 'PATH_DESC'
   | 'RANDOM'
   | 'RESOLUTION'
   | 'RESOLUTION_DESC'
   | 'SIZE'
   | 'SIZE_DESC'
-  | 'SOURCE'
-  | 'SOURCE_DESC'
-  | 'SUBBED'
-  | 'SUBBED_DESC'
-  | 'TAGS'
-  | 'TAGS_DESC'
-  | 'UNCEN'
-  | 'UNCEN_DESC'
   | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC'
-  | 'VIDEOSCRIPT_CREATED_AT'
-  | 'VIDEOSCRIPT_CREATED_AT_DESC'
-  | 'VIDEOSCRIPT_DELETED_AT'
-  | 'VIDEOSCRIPT_DELETED_AT_DESC'
-  | 'VIDEOSCRIPT_ID'
-  | 'VIDEOSCRIPT_ID_DESC'
-  | 'VIDEOSCRIPT_LINK'
-  | 'VIDEOSCRIPT_LINK_DESC'
-  | 'VIDEOSCRIPT_PATH'
-  | 'VIDEOSCRIPT_PATH_DESC'
-  | 'VIDEOSCRIPT_UPDATED_AT'
-  | 'VIDEOSCRIPT_UPDATED_AT_DESC';
+  | 'UPDATED_AT_DESC';
 
 export type VideoSource =
   | 'BD'
@@ -7420,7 +5969,7 @@ export type SearchAnimeQueryVariables = Exact<{
   season?: InputMaybe<AnimeSeason>;
   year?: InputMaybe<Scalars['Int']['input']>;
   format?: InputMaybe<AnimeFormat>;
-  sort?: InputMaybe<Array<AnimeSortableColumns> | AnimeSortableColumns>;
+  sort?: InputMaybe<Array<AnimeSort> | AnimeSort>;
   page: Scalars['Int']['input'];
 }>;
 
@@ -7433,7 +5982,7 @@ export type SearchAnimeQuery = { animePagination: { data: Array<(
 export type SearchArtistQueryVariables = Exact<{
   query?: InputMaybe<Scalars['String']['input']>;
   name_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<ArtistSortableColumns> | ArtistSortableColumns>;
+  sort?: InputMaybe<Array<ArtistSort> | ArtistSort>;
   page: Scalars['Int']['input'];
 }>;
 
@@ -7464,7 +6013,7 @@ export type SearchGlobalQuery = { search: { anime: Array<(
 
 export type SearchPlaylistQueryVariables = Exact<{
   query?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<PlaylistSortableColumns> | PlaylistSortableColumns>;
+  sort?: InputMaybe<Array<PlaylistSort> | PlaylistSort>;
   page: Scalars['Int']['input'];
 }>;
 
@@ -7477,7 +6026,7 @@ export type SearchPlaylistQuery = { playlistPagination: { data: Array<(
 export type SearchSeriesQueryVariables = Exact<{
   query?: InputMaybe<Scalars['String']['input']>;
   name_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<SeriesSortableColumns> | SeriesSortableColumns>;
+  sort?: InputMaybe<Array<SeriesSort> | SeriesSort>;
   page: Scalars['Int']['input'];
 }>;
 
@@ -7487,7 +6036,7 @@ export type SearchSeriesQuery = { seriesPagination: { data: Array<{ slug: string
 export type SearchStudioQueryVariables = Exact<{
   query?: InputMaybe<Scalars['String']['input']>;
   name_like?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Array<StudioSortableColumns> | StudioSortableColumns>;
+  sort?: InputMaybe<Array<StudioSort> | StudioSort>;
   page: Scalars['Int']['input'];
 }>;
 
@@ -7500,7 +6049,7 @@ export type SearchStudioQuery = { studioPagination: { data: Array<(
 export type SearchThemeQueryVariables = Exact<{
   query?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<ThemeType>;
-  sort?: InputMaybe<Array<AnimeThemeSortableColumns> | AnimeThemeSortableColumns>;
+  sort?: InputMaybe<Array<AnimeThemeSort> | AnimeThemeSort>;
   page: Scalars['Int']['input'];
 }>;
 
@@ -8066,13 +6615,13 @@ export const PlaylistTrackRemoveDocument = {"kind":"Document","definitions":[{"k
 export const HomePageMostPopularDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"HomePageMostPopular"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"animethemeentryPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"TRACKS_COUNT_DESC"}]}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"10"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"VideoSummaryCardEntry"}},{"kind":"Field","name":{"kind":"Name","value":"videos"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"VideoSummaryCardVideo"}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"version"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"extractImagesImage"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Image"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"facet"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SongTitleSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PerformancesSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"performances"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alias"}},{"kind":"Field","name":{"kind":"Name","value":"as"}},{"kind":"Field","name":{"kind":"Name","value":"relevance"}},{"kind":"Field","name":{"kind":"Name","value":"artist"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"member"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Video"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tags"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"VideoSummaryCardEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugEntry"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"animetheme"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugTheme"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"song"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleSong"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PerformancesSong"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"VideoSummaryCardVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Video"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"basename"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugVideo"}}]}}]} as unknown as DocumentNode<HomePageMostPopularQuery, HomePageMostPopularQueryVariables>;
 export const HomePageRecentlyAddedPlaylistsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"HomePageRecentlyAddedPlaylists"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"playlistPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"CREATED_AT_DESC"}]}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"10"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PlaylistSummaryCardPlaylist"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PlaylistSummaryCardPlaylistWithOwner"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PlaylistSummaryCardPlaylist"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Playlist"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"visibilityLocalized"}},{"kind":"Field","name":{"kind":"Name","value":"tracksCount"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PlaylistSummaryCardPlaylistWithOwner"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Playlist"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<HomePageRecentlyAddedPlaylistsQuery, HomePageRecentlyAddedPlaylistsQueryVariables>;
 export const HomePageRecentlyAddedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"HomePageRecentlyAdded"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"videoPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"ID_DESC"}]}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"10"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"VideoSummaryCardVideo"}},{"kind":"Field","name":{"kind":"Name","value":"animethemeentries"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"VideoSummaryCardEntry"}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Video"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tags"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"version"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"extractImagesImage"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Image"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"facet"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SongTitleSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PerformancesSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"performances"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alias"}},{"kind":"Field","name":{"kind":"Name","value":"as"}},{"kind":"Field","name":{"kind":"Name","value":"relevance"}},{"kind":"Field","name":{"kind":"Name","value":"artist"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"member"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"VideoSummaryCardVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Video"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"basename"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugVideo"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"VideoSummaryCardEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugEntry"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"animetheme"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugTheme"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"song"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleSong"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PerformancesSong"}}]}}]}}]}}]} as unknown as DocumentNode<HomePageRecentlyAddedQuery, HomePageRecentlyAddedQueryVariables>;
-export const SearchAnimeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchAnime"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name_like"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"season"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeSeason"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"year"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"format"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeFormat"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeSortableColumns"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"animePagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"name_like"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name_like"}}},{"kind":"Argument","name":{"kind":"Name","value":"season"},"value":{"kind":"Variable","name":{"kind":"Name","value":"season"}}},{"kind":"Argument","name":{"kind":"Name","value":"year"},"value":{"kind":"Variable","name":{"kind":"Name","value":"year"}}},{"kind":"Argument","name":{"kind":"Name","value":"format"},"value":{"kind":"Variable","name":{"kind":"Name","value":"format"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"15"}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AnimeSummaryCardAnime"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"AnimeSummaryCardAnimeExpandable"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"paginationInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasMorePages"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"extractImagesImage"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Image"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"facet"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"version"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EpisodeTagEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"episodes"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ContentWarningTagsEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"spoiler"}},{"kind":"Field","name":{"kind":"Name","value":"nsfw"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Video"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tags"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"VideoTagsVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Video"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resolution"}},{"kind":"Field","name":{"kind":"Name","value":"nc"}},{"kind":"Field","name":{"kind":"Name","value":"subbed"}},{"kind":"Field","name":{"kind":"Name","value":"lyrics"}},{"kind":"Field","name":{"kind":"Name","value":"uncen"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"overlap"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SongTitleSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeTableTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugTheme"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"animethemeentries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugEntry"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EpisodeTagEntry"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"ContentWarningTagsEntry"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"videos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugVideo"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"VideoTagsVideo"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"song"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleSong"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AnimeSummaryCardAnime"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Anime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"year"}},{"kind":"Field","name":{"kind":"Name","value":"season"}},{"kind":"Field","name":{"kind":"Name","value":"seasonLocalized"}},{"kind":"Field","name":{"kind":"Name","value":"formatLocalized"}},{"kind":"Field","name":{"kind":"Name","value":"animethemes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AnimeSummaryCardAnimeExpandable"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Anime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"animethemes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeTableTheme"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}}]}}]} as unknown as DocumentNode<SearchAnimeQuery, SearchAnimeQueryVariables>;
-export const SearchArtistDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchArtist"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name_like"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtistSortableColumns"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"artistPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"name_like"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name_like"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"15"}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ArtistSummaryCardArtist"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"paginationInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasMorePages"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"extractImagesImage"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Image"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"facet"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ArtistSummaryCardArtist"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artist"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}}]} as unknown as DocumentNode<SearchArtistQuery, SearchArtistQueryVariables>;
+export const SearchAnimeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchAnime"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name_like"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"season"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeSeason"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"year"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"format"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeFormat"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeSort"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"animePagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"name_like"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name_like"}}},{"kind":"Argument","name":{"kind":"Name","value":"season"},"value":{"kind":"Variable","name":{"kind":"Name","value":"season"}}},{"kind":"Argument","name":{"kind":"Name","value":"year"},"value":{"kind":"Variable","name":{"kind":"Name","value":"year"}}},{"kind":"Argument","name":{"kind":"Name","value":"format"},"value":{"kind":"Variable","name":{"kind":"Name","value":"format"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"15"}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AnimeSummaryCardAnime"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"AnimeSummaryCardAnimeExpandable"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"paginationInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasMorePages"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"extractImagesImage"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Image"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"facet"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"version"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EpisodeTagEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"episodes"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ContentWarningTagsEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"spoiler"}},{"kind":"Field","name":{"kind":"Name","value":"nsfw"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Video"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tags"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"VideoTagsVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Video"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resolution"}},{"kind":"Field","name":{"kind":"Name","value":"nc"}},{"kind":"Field","name":{"kind":"Name","value":"subbed"}},{"kind":"Field","name":{"kind":"Name","value":"lyrics"}},{"kind":"Field","name":{"kind":"Name","value":"uncen"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"overlap"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SongTitleSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeTableTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugTheme"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"animethemeentries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugEntry"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EpisodeTagEntry"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"ContentWarningTagsEntry"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"videos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugVideo"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"VideoTagsVideo"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"song"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleSong"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AnimeSummaryCardAnime"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Anime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"year"}},{"kind":"Field","name":{"kind":"Name","value":"season"}},{"kind":"Field","name":{"kind":"Name","value":"seasonLocalized"}},{"kind":"Field","name":{"kind":"Name","value":"formatLocalized"}},{"kind":"Field","name":{"kind":"Name","value":"animethemes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AnimeSummaryCardAnimeExpandable"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Anime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"animethemes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeTableTheme"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}}]}}]} as unknown as DocumentNode<SearchAnimeQuery, SearchAnimeQueryVariables>;
+export const SearchArtistDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchArtist"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name_like"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ArtistSort"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"artistPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"name_like"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name_like"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"15"}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ArtistSummaryCardArtist"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"paginationInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasMorePages"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"extractImagesImage"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Image"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"facet"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ArtistSummaryCardArtist"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artist"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}}]} as unknown as DocumentNode<SearchArtistQuery, SearchArtistQueryVariables>;
 export const SearchGlobalDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchGlobal"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"search"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"4"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AnimeSummaryCardAnime"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"AnimeSummaryCardAnimeExpandable"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"animethemes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeSummaryCardTheme"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeSummaryCardThemeExpandable"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"artists"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ArtistSummaryCardArtist"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"series"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"studios"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"playlists"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PlaylistSummaryCardPlaylist"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PlaylistSummaryCardPlaylistWithOwner"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"extractImagesImage"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Image"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"facet"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"version"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EpisodeTagEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"episodes"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ContentWarningTagsEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"spoiler"}},{"kind":"Field","name":{"kind":"Name","value":"nsfw"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Video"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tags"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"VideoTagsVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Video"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resolution"}},{"kind":"Field","name":{"kind":"Name","value":"nc"}},{"kind":"Field","name":{"kind":"Name","value":"subbed"}},{"kind":"Field","name":{"kind":"Name","value":"lyrics"}},{"kind":"Field","name":{"kind":"Name","value":"uncen"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"overlap"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SongTitleSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeTableTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugTheme"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"animethemeentries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugEntry"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EpisodeTagEntry"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"ContentWarningTagsEntry"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"videos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugVideo"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"VideoTagsVideo"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"song"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleSong"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PerformancesSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"performances"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alias"}},{"kind":"Field","name":{"kind":"Name","value":"as"}},{"kind":"Field","name":{"kind":"Name","value":"relevance"}},{"kind":"Field","name":{"kind":"Name","value":"artist"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"member"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SongTitleWithArtistsSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleSong"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PerformancesSong"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeMenuTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugTheme"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"song"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleWithArtistsSong"}}]}},{"kind":"Field","name":{"kind":"Name","value":"animethemeentries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugEntry"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"videos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugVideo"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"basename"}},{"kind":"Field","name":{"kind":"Name","value":"audio"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"basename"}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AnimeSummaryCardAnime"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Anime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"year"}},{"kind":"Field","name":{"kind":"Name","value":"season"}},{"kind":"Field","name":{"kind":"Name","value":"seasonLocalized"}},{"kind":"Field","name":{"kind":"Name","value":"formatLocalized"}},{"kind":"Field","name":{"kind":"Name","value":"animethemes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AnimeSummaryCardAnimeExpandable"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Anime"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"animethemes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeTableTheme"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeSummaryCardTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugTheme"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeMenuTheme"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"song"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleSong"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PerformancesSong"}},{"kind":"Field","name":{"kind":"Name","value":"performances"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alias"}},{"kind":"Field","name":{"kind":"Name","value":"as"}},{"kind":"Field","name":{"kind":"Name","value":"artist"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"animethemeentries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugEntry"}},{"kind":"Field","name":{"kind":"Name","value":"videos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugVideo"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeSummaryCardThemeExpandable"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeTableTheme"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ArtistSummaryCardArtist"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Artist"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PlaylistSummaryCardPlaylist"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Playlist"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"visibilityLocalized"}},{"kind":"Field","name":{"kind":"Name","value":"tracksCount"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PlaylistSummaryCardPlaylistWithOwner"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Playlist"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<SearchGlobalQuery, SearchGlobalQueryVariables>;
-export const SearchPlaylistDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchPlaylist"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PlaylistSortableColumns"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"playlistPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"15"}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PlaylistSummaryCardPlaylist"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PlaylistSummaryCardPlaylistWithOwner"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"paginationInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasMorePages"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PlaylistSummaryCardPlaylist"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Playlist"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"visibilityLocalized"}},{"kind":"Field","name":{"kind":"Name","value":"tracksCount"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PlaylistSummaryCardPlaylistWithOwner"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Playlist"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<SearchPlaylistQuery, SearchPlaylistQueryVariables>;
-export const SearchSeriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchSeries"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name_like"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SeriesSortableColumns"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"seriesPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"name_like"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name_like"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"15"}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"paginationInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasMorePages"}}]}}]}}]}}]} as unknown as DocumentNode<SearchSeriesQuery, SearchSeriesQueryVariables>;
-export const SearchStudioDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchStudio"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name_like"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"StudioSortableColumns"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"studioPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"name_like"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name_like"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"15"}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"StudioSummaryCardStudio"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"paginationInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasMorePages"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"extractImagesImage"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Image"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"facet"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"StudioSummaryCardStudio"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Studio"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}}]} as unknown as DocumentNode<SearchStudioQuery, SearchStudioQueryVariables>;
-export const SearchThemeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchTheme"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"type"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ThemeType"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeSortableColumns"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"animethemePagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"type"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"15"}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeSummaryCardTheme"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeSummaryCardThemeExpandable"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"paginationInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasMorePages"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"extractImagesImage"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Image"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"facet"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SongTitleSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PerformancesSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"performances"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alias"}},{"kind":"Field","name":{"kind":"Name","value":"as"}},{"kind":"Field","name":{"kind":"Name","value":"relevance"}},{"kind":"Field","name":{"kind":"Name","value":"artist"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"member"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SongTitleWithArtistsSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleSong"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PerformancesSong"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"version"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Video"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tags"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeMenuTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugTheme"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"song"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleWithArtistsSong"}}]}},{"kind":"Field","name":{"kind":"Name","value":"animethemeentries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugEntry"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"videos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugVideo"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"basename"}},{"kind":"Field","name":{"kind":"Name","value":"audio"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"basename"}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EpisodeTagEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"episodes"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ContentWarningTagsEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"spoiler"}},{"kind":"Field","name":{"kind":"Name","value":"nsfw"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"VideoTagsVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Video"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resolution"}},{"kind":"Field","name":{"kind":"Name","value":"nc"}},{"kind":"Field","name":{"kind":"Name","value":"subbed"}},{"kind":"Field","name":{"kind":"Name","value":"lyrics"}},{"kind":"Field","name":{"kind":"Name","value":"uncen"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"overlap"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeTableTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugTheme"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"animethemeentries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugEntry"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EpisodeTagEntry"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"ContentWarningTagsEntry"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"videos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugVideo"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"VideoTagsVideo"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"song"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleSong"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeSummaryCardTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugTheme"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeMenuTheme"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"song"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleSong"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PerformancesSong"}},{"kind":"Field","name":{"kind":"Name","value":"performances"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alias"}},{"kind":"Field","name":{"kind":"Name","value":"as"}},{"kind":"Field","name":{"kind":"Name","value":"artist"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"animethemeentries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugEntry"}},{"kind":"Field","name":{"kind":"Name","value":"videos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugVideo"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeSummaryCardThemeExpandable"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeTableTheme"}}]}}]} as unknown as DocumentNode<SearchThemeQuery, SearchThemeQueryVariables>;
+export const SearchPlaylistDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchPlaylist"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PlaylistSort"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"playlistPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"15"}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PlaylistSummaryCardPlaylist"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PlaylistSummaryCardPlaylistWithOwner"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"paginationInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasMorePages"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PlaylistSummaryCardPlaylist"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Playlist"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"visibilityLocalized"}},{"kind":"Field","name":{"kind":"Name","value":"tracksCount"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PlaylistSummaryCardPlaylistWithOwner"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Playlist"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<SearchPlaylistQuery, SearchPlaylistQueryVariables>;
+export const SearchSeriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchSeries"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name_like"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SeriesSort"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"seriesPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"name_like"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name_like"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"15"}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"paginationInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasMorePages"}}]}}]}}]}}]} as unknown as DocumentNode<SearchSeriesQuery, SearchSeriesQueryVariables>;
+export const SearchStudioDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchStudio"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name_like"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"StudioSort"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"studioPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"name_like"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name_like"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"15"}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"StudioSummaryCardStudio"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"paginationInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasMorePages"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"extractImagesImage"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Image"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"facet"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"StudioSummaryCardStudio"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Studio"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}}]} as unknown as DocumentNode<SearchStudioQuery, SearchStudioQueryVariables>;
+export const SearchThemeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchTheme"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"query"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"type"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ThemeType"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeSort"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"animethemePagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"search"},"value":{"kind":"Variable","name":{"kind":"Name","value":"query"}}},{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"type"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"15"}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeSummaryCardTheme"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeSummaryCardThemeExpandable"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"paginationInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasMorePages"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"extractImagesImage"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Image"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"facet"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SongTitleSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PerformancesSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"performances"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alias"}},{"kind":"Field","name":{"kind":"Name","value":"as"}},{"kind":"Field","name":{"kind":"Name","value":"relevance"}},{"kind":"Field","name":{"kind":"Name","value":"artist"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"member"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SongTitleWithArtistsSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleSong"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PerformancesSong"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"version"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Video"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tags"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeMenuTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugTheme"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"song"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleWithArtistsSong"}}]}},{"kind":"Field","name":{"kind":"Name","value":"animethemeentries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugEntry"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"videos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugVideo"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"basename"}},{"kind":"Field","name":{"kind":"Name","value":"audio"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"basename"}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EpisodeTagEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"episodes"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ContentWarningTagsEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"spoiler"}},{"kind":"Field","name":{"kind":"Name","value":"nsfw"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"VideoTagsVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Video"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resolution"}},{"kind":"Field","name":{"kind":"Name","value":"nc"}},{"kind":"Field","name":{"kind":"Name","value":"subbed"}},{"kind":"Field","name":{"kind":"Name","value":"lyrics"}},{"kind":"Field","name":{"kind":"Name","value":"uncen"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"overlap"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeTableTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugTheme"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"animethemeentries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugEntry"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EpisodeTagEntry"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"ContentWarningTagsEntry"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"videos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugVideo"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"VideoTagsVideo"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"song"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleSong"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeSummaryCardTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugTheme"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeMenuTheme"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"song"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleSong"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PerformancesSong"}},{"kind":"Field","name":{"kind":"Name","value":"performances"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alias"}},{"kind":"Field","name":{"kind":"Name","value":"as"}},{"kind":"Field","name":{"kind":"Name","value":"artist"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"animethemeentries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugEntry"}},{"kind":"Field","name":{"kind":"Name","value":"videos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugVideo"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeSummaryCardThemeExpandable"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeTableTheme"}}]}}]} as unknown as DocumentNode<SearchThemeQuery, SearchThemeQueryVariables>;
 export const UseAuthMeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UseAuthMe"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ProfileImageUser"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"roles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"permissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ProfileImageUser"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Me"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]} as unknown as DocumentNode<UseAuthMeQuery, UseAuthMeQueryVariables>;
 export const RandomGrillDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"RandomGrill"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"imagePagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"facet"},"value":{"kind":"EnumValue","value":"GRILL"}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"ListValue","values":[{"kind":"EnumValue","value":"RANDOM"}]}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"link"}}]}}]}}]}}]} as unknown as DocumentNode<RandomGrillQuery, RandomGrillQueryVariables>;
 export const RandomThemeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"RandomTheme"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"type"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ThemeType"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"format"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeFormat"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"animeYearMin"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"animeYearMax"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"animethemeShuffle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"type"}}},{"kind":"Argument","name":{"kind":"Name","value":"format"},"value":{"kind":"Variable","name":{"kind":"Name","value":"format"}}},{"kind":"Argument","name":{"kind":"Name","value":"year_gte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"animeYearMin"}}},{"kind":"Argument","name":{"kind":"Name","value":"year_lte"},"value":{"kind":"Variable","name":{"kind":"Name","value":"animeYearMax"}}},{"kind":"Argument","name":{"kind":"Name","value":"spoiler"},"value":{"kind":"BooleanValue","value":false}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"10"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeSummaryCardTheme"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeSummaryCardThemeExpandable"}},{"kind":"Field","name":{"kind":"Name","value":"animethemeentries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"VideoSummaryCardEntry"}},{"kind":"Field","name":{"kind":"Name","value":"videos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"VideoSummaryCardVideo"}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"extractImagesImage"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Image"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"facet"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SongTitleSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PerformancesSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"performances"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alias"}},{"kind":"Field","name":{"kind":"Name","value":"as"}},{"kind":"Field","name":{"kind":"Name","value":"relevance"}},{"kind":"Field","name":{"kind":"Name","value":"artist"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"member"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SongTitleWithArtistsSong"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Song"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleSong"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PerformancesSong"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"version"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"createVideoSlugVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Video"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tags"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeMenuTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugTheme"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"song"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleWithArtistsSong"}}]}},{"kind":"Field","name":{"kind":"Name","value":"animethemeentries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugEntry"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"videos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugVideo"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"basename"}},{"kind":"Field","name":{"kind":"Name","value":"audio"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"basename"}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"EpisodeTagEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"episodes"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ContentWarningTagsEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"spoiler"}},{"kind":"Field","name":{"kind":"Name","value":"nsfw"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"VideoTagsVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Video"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resolution"}},{"kind":"Field","name":{"kind":"Name","value":"nc"}},{"kind":"Field","name":{"kind":"Name","value":"subbed"}},{"kind":"Field","name":{"kind":"Name","value":"lyrics"}},{"kind":"Field","name":{"kind":"Name","value":"uncen"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"overlap"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeTableTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugTheme"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"animethemeentries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugEntry"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"EpisodeTagEntry"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"ContentWarningTagsEntry"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"videos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugVideo"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"VideoTagsVideo"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"song"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleSong"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeSummaryCardTheme"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugTheme"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeMenuTheme"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"song"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleSong"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PerformancesSong"}},{"kind":"Field","name":{"kind":"Name","value":"performances"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alias"}},{"kind":"Field","name":{"kind":"Name","value":"as"}},{"kind":"Field","name":{"kind":"Name","value":"artist"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"animethemeentries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugEntry"}},{"kind":"Field","name":{"kind":"Name","value":"videos"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugVideo"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ThemeSummaryCardThemeExpandable"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeTheme"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ThemeTableTheme"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"VideoSummaryCardEntry"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AnimeThemeEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugEntry"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"animetheme"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugTheme"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"sequence"}},{"kind":"Field","name":{"kind":"Name","value":"group"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"anime"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"images"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"extractImagesImage"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"song"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SongTitleSong"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PerformancesSong"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"VideoSummaryCardVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Video"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"basename"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"createVideoSlugVideo"}}]}}]} as unknown as DocumentNode<RandomThemeQuery, RandomThemeQueryVariables>;

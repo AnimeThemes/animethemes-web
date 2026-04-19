@@ -12,7 +12,7 @@ import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortB
 import { SearchFilterYear } from "@/components/search-filter/SearchFilterYear";
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
-import type { AnimeFormat, AnimeSeason, AnimeSortableColumns } from "@/graphql/generated/graphql";
+import type { AnimeFormat, AnimeSeason, AnimeSort } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
 
 interface Filter {
@@ -38,7 +38,7 @@ const query = graphql(`
         $season: AnimeSeason
         $year: Int
         $format: AnimeFormat
-        $sort: [AnimeSortableColumns!]
+        $sort: [AnimeSort!]
         $page: Int!
     ) {
         animePagination(
@@ -80,7 +80,7 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
         ...(filter.season ? { season: filter.season } : {}),
         ...(filter.year ? { year: parseInt(filter.year) } : {}),
         ...(filter.format ? { media_format: filter.format } : {}),
-        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<AnimeSortableColumns> } : {}),
+        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<AnimeSort> } : {}),
     };
 
     const {

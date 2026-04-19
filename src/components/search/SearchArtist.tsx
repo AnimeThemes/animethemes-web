@@ -9,7 +9,7 @@ import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup"
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
-import type { ArtistSortableColumns } from "@/graphql/generated/graphql";
+import type { ArtistSort } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
 
 interface Filter {
@@ -23,7 +23,7 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchArtist($query: String, $name_like: String, $sort: [ArtistSortableColumns!], $page: Int!) {
+    query SearchArtist($query: String, $name_like: String, $sort: [ArtistSort!], $page: Int!) {
         artistPagination(search: $query, name_like: $name_like, sort: $sort, first: 15, page: $page) {
             data {
                 ...ArtistSummaryCardArtist
@@ -50,7 +50,7 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
         ...(filter.firstLetter ? { name_like: `${filter.firstLetter}%` } : {}),
-        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<ArtistSortableColumns> } : {}),
+        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<ArtistSort> } : {}),
     };
 
     const {

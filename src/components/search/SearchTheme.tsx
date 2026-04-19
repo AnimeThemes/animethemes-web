@@ -9,7 +9,7 @@ import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortB
 import { SearchFilterThemeType } from "@/components/search-filter/SearchFilterThemeType";
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
-import type { AnimeThemeSortableColumns, ThemeType } from "@/graphql/generated/graphql";
+import type { AnimeThemeSort, ThemeType } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
 
 interface Filter {
@@ -23,7 +23,7 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchTheme($query: String, $type: ThemeType, $sort: [AnimeThemeSortableColumns!], $page: Int!) {
+    query SearchTheme($query: String, $type: ThemeType, $sort: [AnimeThemeSort!], $page: Int!) {
         animethemePagination(search: $query, type: $type, sort: $sort, first: 15, page: $page) {
             data {
                 ...ThemeSummaryCardTheme
@@ -51,7 +51,7 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
         ...(filter.type ? { type: filter.type } : {}),
-        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<AnimeThemeSortableColumns> } : {}),
+        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<AnimeThemeSort> } : {}),
     };
 
     const {
