@@ -376,7 +376,7 @@ export const getStaticProps: GetStaticProps<AnimeAwardsPage> = async () => {
     const { data } = await client.query({
         query: graphql(`
             query AnimeAwardPage($themeIds: Mixed!) {
-                animethemePagination(where: [{field: ID, operator: IN, value: $themeIds}]) {
+                animethemePagination(where: {AND: [{column: ID, operator: IN, value: $themeIds}]}) {
                     data {
                         ...AnimeAwardsPageTheme
                         id

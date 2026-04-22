@@ -29,7 +29,7 @@ const query = graphql(`
                 ...ArtistSummaryCardArtist
                 slug
             }
-            paginationInfo {
+            paginatorInfo {
                 hasMorePages
             }
         }
@@ -78,7 +78,7 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.paginationInfo.hasMorePages ? lastPageParam + 1 : null,
+            lastPage.paginatorInfo.hasMorePages ? lastPageParam + 1 : null,
         placeholderData: keepPreviousData,
     });
 

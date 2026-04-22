@@ -1,7 +1,7 @@
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
 export const EXTRACT_MULTIPLE_IMAGES_IMAGE_ARTIST_EDGE = graphql(`
-    fragment extractMultipleImagesImageArtistEdge on ArtistImageEdge {
+    fragment extractMultipleImagesImageArtistEdge on ImageEdge {
         depth
         node {
             link
