@@ -45,7 +45,7 @@ interface YearNavigationProps {
 
 export function YearNavigation({ year: yearFragment, years: yearsFragment }: YearNavigationProps) {
     const year = getFragmentData(YEAR_NAVIGATION_YEAR, yearFragment);
-    const years = getFragmentData(YEAR_NAVIGATION_YEARs, yearsFragment);
+    const years = getFragmentData(YEAR_NAVIGATION_YEARS, yearsFragment);
 
     const previousYear = years.find((y) => y.year === year.year - 1)?.year ?? null;
     const nextYear = years.find((y) => y.year === year.year + 1)?.year ?? null;
