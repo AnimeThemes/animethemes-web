@@ -63,7 +63,9 @@ const StyledThemeGroupContainer = styled.div`
 export const ANIME_SUMMARY_CARD_ANIME = graphql(`
     fragment AnimeSummaryCardAnime on Anime {
         slug
-        name
+        title {
+            romaji
+        }
         year
         season
         seasonLocalized
@@ -133,7 +135,7 @@ export function AnimeSummaryCard({ anime: animeFragment, expandable, ...props }:
     return (
         <StyledWrapper>
             <SummaryCard
-                title={anime.name}
+                title={anime.title.romaji}
                 description={description}
                 image={smallCover}
                 to={animeLink}

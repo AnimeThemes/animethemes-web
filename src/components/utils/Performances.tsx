@@ -32,11 +32,15 @@ export const PERFORMANCES_SONG = graphql(`
             artist {
                 id
                 slug
-                name
+                name {
+                    main
+                }
             }
             member {
                 slug
-                name
+                name {
+                    main
+                }
             }
         }
     }
@@ -59,13 +63,15 @@ interface ArtistNameProps {
     alias: string | null;
     as: string | null;
     artist: {
-        name: string;
+        name: {
+            main: string;
+        };
         slug: string;
     };
 }
 
 export function getDisplayedArtistName({ alias, artist, as }: ArtistNameProps) {
-    const artistName = alias ?? artist.name;
+    const artistName = alias ?? artist.name.main;
 
     if (as) {
         return `${as} (CV: ${artistName})`;

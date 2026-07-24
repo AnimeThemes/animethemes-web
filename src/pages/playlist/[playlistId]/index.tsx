@@ -195,7 +195,9 @@ export const PLAYLIST_DETAIL_PAGE_TRACK = graphql(`
             ...PlaylistTrackRemoveDialogEntry
             animetheme {
                 anime {
-                    name
+                    title {
+                        romaji
+                    }
                     year
                     season
                     images {
@@ -205,7 +207,9 @@ export const PLAYLIST_DETAIL_PAGE_TRACK = graphql(`
                     }
                 }
                 song {
-                    title
+                    title {
+                        romaji
+                    }
                 }
             }
         }
@@ -357,7 +361,7 @@ export default function PlaylistDetailPage({
             tracks.flatMap((track) => {
                 const anime = track.animethemeentry.animetheme?.anime;
 
-                return anime ? [{ ...extractImages(anime.images.nodes), name: anime.name }] : [];
+                return anime ? [{ ...extractImages(anime.images.nodes), name: anime.title.romaji }] : [];
             }),
         [tracks],
     );

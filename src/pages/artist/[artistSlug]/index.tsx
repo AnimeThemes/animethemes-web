@@ -62,7 +62,9 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
     fragment ArtistDetailPageArtist on Artist {
         ...ThemeSummaryCardArtist
         slug
-        name
+        name {
+            main
+        }
         synonyms {
             text
         }
@@ -71,7 +73,9 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
             as
             song {
                 id
-                title
+                title {
+                    romaji
+                }
                 performances {
                     alias
                     as
@@ -79,7 +83,9 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                     memberAs
                     artist {
                         slug
-                        name
+                        name {
+                            main
+                        }
                     }
                 }
                 animethemes {
@@ -101,12 +107,16 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                     }
                     anime {
                         slug
-                        name
+                        title {
+                            romaji
+                        }
                         year
                         season
                     }
                     song {
-                        title
+                        title {
+                            romaji
+                        }
                     }
                 }
             }
@@ -118,11 +128,15 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
             memberAs
             artist {
                 slug
-                name
+                name {
+                    main
+                }
             }
             song {
                 id
-                title
+                title {
+                    romaji
+                }
                 performances {
                     alias
                     as
@@ -130,7 +144,9 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                     memberAs
                     artist {
                         slug
-                        name
+                        name {
+                            main
+                        }
                     }
                     
                 }
@@ -153,12 +169,16 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                     }
                     anime {
                         slug
-                        name
+                        title {
+                            romaji
+                        }
                         year
                         season
                     }
                     song {
-                        title
+                        title {
+                            romaji
+                        }
                     }
                 }
             }
@@ -172,7 +192,9 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                 node {
                     ...ArtistSummaryCardArtist
                     slug
-                    name
+                    name {
+                        main
+                    }
                 }
             }
         }
@@ -183,7 +205,9 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                 notes
                 node {
                     slug
-                    name
+                    name {
+                        main
+                    }
                 }
             }
         }
@@ -290,8 +314,8 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
     );
 
     const performedAsFilterOptions = useMemo(
-        () => [null, artist.name, ...aliases, ...characters],
-        [aliases, artist.name, characters],
+        () => [null, artist.name.main, ...aliases, ...characters],
+        [aliases, artist.name.main, characters],
     );
 
     const [showFilter, toggleShowFilter] = useToggle();
@@ -312,7 +336,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                 (performance) =>
                     performance.song?.animethemes[0]?.animethemeentries[0]?.videos.nodes[0] &&
                     (filterPerformedAs === null ||
-                        (filterPerformedAs === artist.name &&
+                        (filterPerformedAs === artist.name.main &&
                             !performance.as &&
                             !groupAs &&
                             !performance.alias &&
@@ -322,7 +346,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                         filterPerformedAs === groupAlias ||
                         filterPerformedAs === performance.alias),
             ),
-        [artist.name, filterPerformedAs],
+        [artist.name.main, filterPerformedAs],
     );
 
     const toSortedThemes = useCallback(
@@ -378,11 +402,11 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
 
     return (
         <>
-            <SEO title={artist.name} image={images[0]?.link} />
-            <Text variant="h1">{artist.name}</Text>
+            <SEO title={artist.name.main} image={images[0]?.link} />
+            <Text variant="h1">{artist.name.main}</Text>
             <SidebarContainer>
                 <Column style={{ "--gap": "24px" }}>
-                    <MultiCoverImage items={images.map((image) => ({ largeCover: image.link, name: artist.name }))} />
+                    <MultiCoverImage items={images.map((image) => ({ largeCover: image.link, name: artist.name.main }))} />
                     <DescriptionList>
                         {artist.synonyms.length > 0 && (
                             <DescriptionList.Item title="Alternative Names">
@@ -401,7 +425,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                                     {artist.members.edges.sort((a, b) => a.relevance - b.relevance).map(({ node, alias, as, notes }) => (
                                         <Column key={node.slug}>
                                             <Text as={Link} href={`/artist/${node.slug}`} link>
-                                                {alias ? alias : node.name}
+                                                {alias ? alias : node.name.main}
                                             </Text>
                                             {as || notes ? (
                                                 <Text variant="small" color="text-muted">
@@ -421,7 +445,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                                     {artist.groups.edges.map(({ node, alias, as, notes }) => (
                                         <Column key={node.slug}>
                                             <Text as={Link} href={`/artist/${node.slug}`} link>
-                                                {node.name}
+                                                {node.name.main}
                                             </Text>
                                             {alias || as || notes ? (
                                                 <Text variant="small" color="text-muted">
@@ -554,7 +578,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                                                 {memberAs ? `As ${memberAs} ` : null}
                                                 In{" "}
                                                 <Link href={`/artist/${artist.slug}`}>
-                                                    <Text link>{alias ?? artist.name}</Text>
+                                                    <Text link>{alias ?? artist.name.main}</Text>
                                                 </Link>
                                                 <Text color="text-disabled">
                                                     {" "}({performances.length})

@@ -19,7 +19,7 @@ interface Filter {
 
 const initialFilter: Filter = {
     type: null,
-    sortBy: "SONG_TITLE",
+    sortBy: "SONG_TITLE_ROMAJI",
 };
 
 const query = graphql(`
@@ -104,12 +104,12 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
                 <SearchFilterThemeType value={filter.type} setValue={bindUpdateFilter("type")} />
                 <SearchFilterSortBy value={filter.sortBy} setValue={bindUpdateFilter("sortBy")}>
                     {searchQuery ? <SearchFilterSortBy.Option value={null}>Relevance</SearchFilterSortBy.Option> : null}
-                    <SearchFilterSortBy.Option value="SONG_TITLE">A ➜ Z</SearchFilterSortBy.Option>
-                    <SearchFilterSortBy.Option value="SONG_TITLE_DESC">Z ➜ A</SearchFilterSortBy.Option>
-                    <SearchFilterSortBy.Option value="ANIME_YEAR,ANIME_SEASON,SONG_TITLE">
+                    <SearchFilterSortBy.Option value="SONG_TITLE_ROMAJI">A ➜ Z</SearchFilterSortBy.Option>
+                    <SearchFilterSortBy.Option value="SONG_TITLE_ROMAJI_DESC">Z ➜ A</SearchFilterSortBy.Option>
+                    <SearchFilterSortBy.Option value="ANIME_YEAR,ANIME_SEASON,SONG_TITLE_ROMAJI">
                         Old ➜ New
                     </SearchFilterSortBy.Option>
-                    <SearchFilterSortBy.Option value="ANIME_YEAR_DESC,ANIME_SEASON_DESC,SONG_TITLE">
+                    <SearchFilterSortBy.Option value="ANIME_YEAR_DESC,ANIME_SEASON_DESC,SONG_TITLE_ROMAJI">
                         New ➜ Old
                     </SearchFilterSortBy.Option>
                     <SearchFilterSortBy.Option value="CREATED_AT_DESC">Last Added</SearchFilterSortBy.Option>

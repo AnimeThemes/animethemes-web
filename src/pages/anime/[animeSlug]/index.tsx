@@ -19,7 +19,7 @@ import { Text } from "@/components/text/Text";
 import { HeightTransition } from "@/components/utils/HeightTransition";
 import createApolloClient from "@/graphql/createApolloClient";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
-import { compare, seriesNameComparator, studioNameComparator } from "@/utils/comparators";
+import { compare, seriesTitleComparator, studioNameComparator } from "@/utils/comparators";
 import extractImages from "@/utils/extractImages";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
@@ -37,7 +37,11 @@ const StyledList = styled.div`
 export const ANIME_DETAIL_PAGE_ANIME = graphql(`
     fragment AnimeDetailPageAnime on Anime {
         slug
-        name
+        title {
+            romaji
+            english
+            native
+        }
         season
         seasonLocalized
         year
@@ -49,7 +53,9 @@ export const ANIME_DETAIL_PAGE_ANIME = graphql(`
         series {
             nodes {
                 slug
-                name
+                title {
+                    romaji
+                }
             }
         }
         studios {
@@ -115,15 +121,17 @@ export default function AnimeDetailPage({ anime: animeFragment, synopsisMarkdown
 
     return (
         <>
-            <SEO title={anime.name} image={largeCover} />
-            <Text variant="h1">{anime.name}</Text>
+            <SEO title={anime.title.romaji} image={largeCover} />
+            <Text variant="h1">{anime.title.romaji}</Text>
             <SidebarContainer>
                 <Column style={{ "--gap": "24px" }}>
-                    <CoverImage smallCover={smallCover} largeCover={largeCover} alt={`Cover image of ${anime.name}`} />
+                    <CoverImage smallCover={smallCover} largeCover={largeCover} alt={`Cover image of ${anime.title.romaji}`} />
                     <DescriptionList>
-                        {anime.synonyms.length ? (
+                        {anime.title.english || anime.title.native || anime.synonyms.length ? (
                             <DescriptionList.Item title="Alternative Titles">
                                 <StyledList>
+                                    {anime.title.english && <Text key={anime.title.english}>{anime.title.english}</Text>}
+                                    {anime.title.native && <Text key={anime.title.native}>{anime.title.native}</Text>}
                                     {anime.synonyms.map((synonym) => (
                                         <Text key={synonym.text}>{synonym.text}</Text>
                                     ))}
@@ -142,9 +150,9 @@ export default function AnimeDetailPage({ anime: animeFragment, synopsisMarkdown
                         {anime.series.nodes.length ? (
                             <DescriptionList.Item title="Series">
                                 <StyledList>
-                                    {anime.series.nodes.sort(seriesNameComparator).map((series) => (
+                                    {anime.series.nodes.sort(seriesTitleComparator).map((series) => (
                                         <Text key={series.slug} as={Link} href={`/series/${series.slug}`} link>
-                                            {series.name}
+                                            {series.title.romaji}
                                         </Text>
                                     ))}
                                 </StyledList>

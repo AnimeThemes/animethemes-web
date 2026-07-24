@@ -49,7 +49,9 @@ export const STUDIO_DETAIL_PAGE_STUDIO = graphql(`
             nodes {
                 ...AnimeSummaryCardAnime
                 ...AnimeSummaryCardAnimeExpandable
-                name
+                title {
+                    romaji
+                }
                 slug
                 year
                 season

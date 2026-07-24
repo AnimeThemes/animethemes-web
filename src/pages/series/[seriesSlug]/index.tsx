@@ -34,12 +34,16 @@ const StyledDesktopOnly = styled.div`
 export const SERIES_DETAIL_PAGE_SERIES = graphql(`
     fragment SeriesDetailPageSeries on Series {
         slug
-        name
+        title {
+            romaji
+        }
         anime {
             nodes {
                 ...AnimeSummaryCardAnime
                 ...AnimeSummaryCardAnimeExpandable
-                name
+                title {
+                    romaji
+                }
                 slug
                 year
                 season
@@ -105,11 +109,11 @@ export default function SeriesDetailPage({ series: seriesFragment }: SeriesDetai
 
     return (
         <>
-            <SEO title={series.name} />
-            <Text variant="h1">{series.name}</Text>
+            <SEO title={series.title.romaji} />
+            <Text variant="h1">{series.title.romaji}</Text>
             <SidebarContainer>
                 <StyledDesktopOnly>
-                    <MultiCoverImage items={anime.map((anime) => ({ images: anime.images.nodes, name: anime.name }))} />
+                    <MultiCoverImage items={anime.map((anime) => ({ images: anime.images.nodes, name: anime.title.romaji }))} />
                 </StyledDesktopOnly>
                 <Column style={{ "--gap": "24px" }}>
                     <Row style={{ "--justify-content": "space-between", "--align-items": "center" }}>

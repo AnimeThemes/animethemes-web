@@ -62,7 +62,9 @@ export const ANIME_AWARDS_PAGE_THEME = graphql(`
         sequence
         anime {
             slug
-            name
+            title {
+                romaji
+            }
             images {
                 nodes {
                     ...extractImagesImage
@@ -170,8 +172,8 @@ function AwardSectionUnvoted({ award }: AwardSectionUnvotedProps) {
     const [typeFilter, setTypeFilter] = useState<string | null>(null);
 
     const sortFn: Comparator<HasTheme> = (a, b) => {
-        const nameA = getFragmentData(ANIME_AWARDS_PAGE_THEME, a.theme)?.anime?.name;
-        const nameB = getFragmentData(ANIME_AWARDS_PAGE_THEME, b.theme)?.anime?.name;
+        const nameA = getFragmentData(ANIME_AWARDS_PAGE_THEME, a.theme)?.anime?.title.romaji;
+        const nameB = getFragmentData(ANIME_AWARDS_PAGE_THEME, b.theme)?.anime?.title.romaji;
 
         return (nameA && nameB && nameA.localeCompare(nameB)) || 0;
     };
@@ -331,7 +333,7 @@ function AwardThemeSummaryCard({
                 {entry.version && entry.version > 1 ? `v${entry.version}` : null}
             </span>
             <Text as={Link} href={`/anime/${theme.anime.slug}`} link>
-                {theme.anime.name}
+                {theme.anime.title.romaji}
             </Text>
         </SummaryCard.Description>
     );

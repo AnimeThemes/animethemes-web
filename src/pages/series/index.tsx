@@ -14,10 +14,12 @@ import getSharedPageProps from "@/utils/getSharedPageProps";
 
 const propsQuery = graphql(`
     query SeriesIndexPage($first: Int!) {
-        seriesPagination(sort: NAME, first: $first) {
+        seriesPagination(sort: TITLE_ROMAJI, first: $first) {
             data {
                 slug
-                name
+                title {
+                    romaji
+                }
             }
         }
     }
@@ -30,10 +32,10 @@ export default function SeriesIndexPage({ seriesPagination }: SeriesIndexPagePro
         <>
             <BackToTopButton />
             <Text variant="h1">Series Index</Text>
-            <AlphabeticalIndex items={seriesPagination.data}>
+            <AlphabeticalIndex items={seriesPagination.data} getName={series => series.title.romaji}>
                 {(series) => (
                     <Text key={series.slug} as={Link} href={`/series/${series.slug}`} prefetch={false} block link>
-                        {series.name}
+                        {series.title.romaji}
                     </Text>
                 )}
             </AlphabeticalIndex>

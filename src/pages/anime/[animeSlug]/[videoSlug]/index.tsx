@@ -34,7 +34,9 @@ import getSharedPageProps from "@/utils/getSharedPageProps";
 export const VIDEO_PAGE_ANIME = graphql(`
     fragment VideoPageAnime on Anime {
         ...AnimeSummaryCardAnime
-        name
+        title {
+            romaji
+        }
         slug
         year
         season
@@ -45,7 +47,9 @@ export const VIDEO_PAGE_ANIME = graphql(`
             type
             sequence
             song {
-                title
+                title {
+                    romaji
+                }
                 performances {
                     artist {
                         id
@@ -111,7 +115,9 @@ export const VIDEO_PAGE_ANIME = graphql(`
         series {
             nodes {
                 slug
-                name
+                title {
+                    romaji
+                }
             }
         }
         studios {
@@ -182,7 +188,7 @@ export default function VideoPage({
     const entry = theme.animethemeentries[entryIndex];
     const video = entry.videos.nodes[videoIndex];
 
-    const songTitle = theme.song?.title || "T.B.A.";
+    const songTitle = theme.song?.title.romaji || "T.B.A.";
 
     const { largeCover } = extractImages(anime.images.nodes);
     const {
@@ -213,8 +219,8 @@ export default function VideoPage({
         .filter((otherTheme) => otherTheme?.anime && otherTheme.anime.slug !== anime.slug);
 
     const pageTitle = entry.version
-        ? `${songTitle} (${anime.name} ${theme.type + (theme.sequence || "")} v${entry.version})`
-        : `${songTitle} (${anime.name} ${theme.type + (theme.sequence || "")})`;
+        ? `${songTitle} (${anime.title.romaji} ${theme.type + (theme.sequence || "")} v${entry.version})`
+        : `${songTitle} (${anime.title.romaji} ${theme.type + (theme.sequence || "")})`;
 
     const pageDesc = (() => {
         // Generates and returns page description for SEO
@@ -223,14 +229,14 @@ export default function VideoPage({
         let artistStr = "";
         if (song?.performances?.length) {
             artistStr = song.performances.reduce((str, performance, index, { length }) => {
-                str += performance.as || performance.artist.name;
+                str += performance.as || performance.artist.name.main;
                 if (index < length - 1) {
                     str += index === length - 2 ? " & " : ", ";
                 }
                 return str;
             }, " by ");
         }
-        return `Watch ${anime.name} ${theme.type + (theme.sequence || "")}${version}: ${songTitle}${artistStr} on AnimeThemes.`;
+        return `Watch ${anime.title.romaji} ${theme.type + (theme.sequence || "")}${version}: ${songTitle}${artistStr} on AnimeThemes.`;
     })();
 
     const videoUrl = `${VIDEO_URL}/${video.basename}`;
@@ -355,7 +361,7 @@ export default function VideoPage({
                         {anime.series.nodes.map((series) => (
                             <SummaryCard
                                 key={series.slug}
-                                title={series.name}
+                                title={series.title.romaji}
                                 description="Series"
                                 to={`/series/${series.slug}`}
                             />

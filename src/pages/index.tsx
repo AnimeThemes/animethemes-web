@@ -246,7 +246,7 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
     const { data } = await client.query({
         query: graphql(`
             query HomePage {
-                currentfeaturedtheme {
+                currentFeaturedTheme {
                     ...HomePageFeaturedTheme
                 }
                 announcementPagination {
@@ -263,7 +263,7 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
     return {
         props: {
             ...getSharedPageProps(),
-            featuredTheme: data.currentfeaturedtheme,
+            featuredTheme: data.currentFeaturedTheme,
             announcementSources: await Promise.all(
                 announcements.map(async (announcement) => (await serializeMarkdownSafe(announcement.content)).source),
             ),

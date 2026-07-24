@@ -22,19 +22,18 @@ const StyledItemGrid = styled.div`
     grid-gap: 16px;
 `;
 
-type AlphabeticalIndexItem = { name: string };
-
-type AlphabeticalIndexProps<T extends AlphabeticalIndexItem> = {
-    items: Array<T>;
+type AlphabeticalIndexProps<T> = {
+    items: T[];
+    getName: (item: T) => string;
     children: (item: T) => ReactNode;
 };
 
-export function AlphabeticalIndex<T extends AlphabeticalIndexItem>({ items, children }: AlphabeticalIndexProps<T>) {
+export function AlphabeticalIndex<T>({ items, getName, children }: AlphabeticalIndexProps<T>) {
     const itemsByFirstLetter = Object.entries(
         groupBy(
-            [...items].sort((a, b) => a.name.localeCompare(b.name)),
+            [...items].sort((a, b) => getName(a).localeCompare(getName(b))),
             (item) => {
-                const firstLetter = item.name[0].toLowerCase();
+                const firstLetter = getName(item)[0].toLowerCase();
                 if (firstLetter.match(/[a-z]/)) {
                     return firstLetter;
                 }

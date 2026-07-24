@@ -28,13 +28,13 @@ const initialFilter: Filter = {
     season: null,
     year: null,
     format: null,
-    sortBy: "NAME",
+    sortBy: "TITLE_ROMAJI",
 };
 
 const query = graphql(`
     query SearchAnime(
         $query: String
-        $name_like: String
+        $titleRomaji_like: String
         $season: AnimeSeason
         $year: Int
         $format: AnimeFormat
@@ -43,7 +43,7 @@ const query = graphql(`
     ) {
         animePagination(
             search: $query
-            name_like: $name_like
+            titleRomaji_like: $titleRomaji_like
             season: $season
             year: $year
             format: $format
@@ -76,10 +76,10 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
 
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
-        ...(filter.firstLetter ? { name_like: `${filter.firstLetter}%` } : {}),
+        ...(filter.firstLetter ? { titleRomaji_like: `${filter.firstLetter}%` } : {}),
         ...(filter.season ? { season: filter.season } : {}),
         ...(filter.year ? { year: parseInt(filter.year) } : {}),
-        ...(filter.format ? { media_format: filter.format } : {}),
+        ...(filter.format ? { format: filter.format } : {}),
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<AnimeSort> } : {}),
     };
 
@@ -136,10 +136,10 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
                 <SearchFilterFormat value={filter.format} setValue={bindUpdateFilter("format")} />
                 <SearchFilterSortBy value={filter.sortBy} setValue={bindUpdateFilter("sortBy")}>
                     {searchQuery ? <SearchFilterSortBy.Option value={null}>Relevance</SearchFilterSortBy.Option> : null}
-                    <SearchFilterSortBy.Option value="NAME">A ➜ Z</SearchFilterSortBy.Option>
-                    <SearchFilterSortBy.Option value="NAME_DESC">Z ➜ A</SearchFilterSortBy.Option>
-                    <SearchFilterSortBy.Option value="YEAR,SEASON,NAME">Old ➜ New</SearchFilterSortBy.Option>
-                    <SearchFilterSortBy.Option value="YEAR_DESC,SEASON_DESC,NAME">New ➜ Old</SearchFilterSortBy.Option>
+                    <SearchFilterSortBy.Option value="TITLE_ROMAJI">A ➜ Z</SearchFilterSortBy.Option>
+                    <SearchFilterSortBy.Option value="TITLE_ROMAJI_DESC">Z ➜ A</SearchFilterSortBy.Option>
+                    <SearchFilterSortBy.Option value="YEAR,SEASON,TITLE_ROMAJI">Old ➜ New</SearchFilterSortBy.Option>
+                    <SearchFilterSortBy.Option value="YEAR_DESC,SEASON_DESC,TITLE_ROMAJI">New ➜ Old</SearchFilterSortBy.Option>
                     <SearchFilterSortBy.Option value="CREATED_AT_DESC">Last Added</SearchFilterSortBy.Option>
                 </SearchFilterSortBy>
             </SearchFilterGroup>

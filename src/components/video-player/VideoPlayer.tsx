@@ -230,11 +230,11 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     useEffect(() => {
         if (theme && smallCover && navigator.mediaSession) {
             navigator.mediaSession.metadata = new MediaMetadata({
-                title: `${theme.type + (theme.sequence || "")} • ${theme.song?.title || "T.B.A."}`,
+                title: `${theme.type + (theme.sequence || "")} • ${theme.song?.title.romaji || "T.B.A."}`,
                 artist: theme.song?.performances
-                    ? theme.song.performances.map((performance) => performance.as || performance.artist.name).join(", ")
+                    ? theme.song.performances.map((performance) => performance.as || performance.artist.name.main).join(", ")
                     : undefined,
-                album: anime.name,
+                album: anime.title.romaji,
                 artwork: [{ src: smallCover, sizes: "512x512", type: "image/jpeg" }],
             });
 
