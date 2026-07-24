@@ -64,6 +64,7 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
         slug
         name {
             main
+            native
         }
         synonyms {
             text
@@ -408,9 +409,10 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                 <Column style={{ "--gap": "24px" }}>
                     <MultiCoverImage items={images.map((image) => ({ largeCover: image.link, name: artist.name.main }))} />
                     <DescriptionList>
-                        {artist.synonyms.length > 0 && (
+                        {artist.name.native || artist.synonyms.length > 0 && (
                             <DescriptionList.Item title="Alternative Names">
                                 <StyledList>
+                                    {artist.name.native && <Text key={artist.name.native}>{artist.name.native}</Text>}
                                     {artist.synonyms.map((synonym) => (
                                         <Text as="a" key={synonym.text}>
                                             {synonym.text}
