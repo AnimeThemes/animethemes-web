@@ -44,7 +44,9 @@ export const BRACKET_THEME_SUMMARY_CARD_THEME = graphql(`
         }
         anime {
             slug
-            name
+            title {
+                romaji
+            }
             images {
                 nodes {
                     ...extractImagesImage
@@ -112,7 +114,7 @@ export function BracketThemeSummaryCard({
         description = (
             <SummaryCard.Description>
                 <span>{theme.type + (theme.sequence || "")}</span>
-                <TextLink href={`/anime/${theme.anime.slug}`}>{theme.anime.name}</TextLink>
+                <TextLink href={`/anime/${theme.anime.slug}`}>{theme.anime.title.romaji}</TextLink>
             </SummaryCard.Description>
         );
     }

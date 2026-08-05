@@ -223,8 +223,8 @@ export const getStaticProps: GetStaticProps<BracketPageProps, BracketPageParams>
 
     const { data } = await client.query({
         query: graphql(`
-            query BracketPage($themeIds: [Int!]!) {
-                animethemePagination(id_in: $themeIds) {
+            query BracketPage($themeIds: Mixed!) {
+                animethemePagination(where: {AND: [{column: ID, operator: IN, value: $themeIds}]}) {
                     data {
                         id
                         ...BracketThemeSummaryCardTheme

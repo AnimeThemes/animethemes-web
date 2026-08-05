@@ -30,7 +30,7 @@ export default function StudioIndexPage({ studioPagination }: StudioIndexPagePro
         <>
             <BackToTopButton />
             <Text variant="h1">Studio Index</Text>
-            <AlphabeticalIndex items={studioPagination.data}>
+            <AlphabeticalIndex items={studioPagination.data} getName={studio => studio.name}>
                 {(studio) => (
                     <Text key={studio.slug} as={Link} href={`/studio/${studio.slug}`} prefetch={false} block link>
                         {studio.name}

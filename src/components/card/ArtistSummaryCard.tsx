@@ -5,7 +5,9 @@ import extractImages from "@/utils/extractImages";
 export const ARTIST_SUMMARY_CARD_ARTIST = graphql(`
     fragment ArtistSummaryCardArtist on Artist {
         slug
-        name
+        name {
+            main
+        }
         images {
             nodes {
                 ...extractImagesImage
@@ -32,6 +34,6 @@ export function ArtistSummaryCard({ artist: artistFragment, as }: ArtistSummaryC
     );
 
     return (
-        <SummaryCard title={artist.name} description={description} image={smallCover} to={`/artist/${artist.slug}`} />
+        <SummaryCard title={artist.name.main} description={description} image={smallCover} to={`/artist/${artist.slug}`} />
     );
 }

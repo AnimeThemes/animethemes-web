@@ -14,10 +14,12 @@ import getSharedPageProps from "@/utils/getSharedPageProps";
 
 const propsQuery = graphql(`
     query ArtistIndexPage($first: Int!) {
-        artistPagination(sort: NAME, first: $first) {
+        artistPagination(sort: NAME_MAIN, first: $first) {
             data {
                 slug
-                name
+                name {
+                    main
+                }
             }
         }
     }
@@ -30,10 +32,10 @@ export default function ArtistIndexPage({ artistPagination }: ArtistIndexPagePro
         <>
             <BackToTopButton />
             <Text variant="h1">Artist Index</Text>
-            <AlphabeticalIndex items={artistPagination.data}>
+            <AlphabeticalIndex items={artistPagination.data} getName={artist => artist.name.main}>
                 {(artist) => (
                     <Text key={artist.slug} as={Link} href={`/artist/${artist.slug}`} prefetch={false} block link>
-                        {artist.name}
+                        {artist.name.main}
                     </Text>
                 )}
             </AlphabeticalIndex>

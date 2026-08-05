@@ -111,7 +111,9 @@ export const VIDEO_PLAYER_BAR_ENTRY = graphql(`
             }
             anime {
                 slug
-                name
+                title {
+                    romaji
+                }
             }
         }
     }
@@ -159,7 +161,7 @@ export function VideoPlayerBar() {
                     </Text>
                     <Text variant="small"> from </Text>
                     <Text as={Link} href={`/anime/${anime.slug}`} link>
-                        {anime.name}
+                        {anime.title.romaji}
                     </Text>
                 </Text>
                 {!!theme.song?.performances?.length && (

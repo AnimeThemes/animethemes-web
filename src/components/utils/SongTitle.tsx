@@ -6,7 +6,9 @@ import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated
 
 export const SONG_TITLE_SONG = graphql(`
     fragment SongTitleSong on Song {
-        title
+        title {
+            romaji
+        }
     }
 `);
 
@@ -17,18 +19,18 @@ export interface SongTitleProps extends ComponentPropsWithoutRef<typeof Text> {
 
 export function SongTitle({ song: songFragment, href, ...props }: SongTitleProps) {
     const song = getFragmentData(SONG_TITLE_SONG, songFragment);
-    const songTitle = song?.title || "T.B.A.";
+    const songTitle = song?.title.romaji || "T.B.A.";
 
     if (href) {
         return (
-            <Text as={Link} href={href} link title={songTitle} italics={!song?.title} wrapAnywhere {...props}>
+            <Text as={Link} href={href} link title={songTitle} italics={!song?.title.romaji} wrapAnywhere {...props}>
                 {songTitle}
             </Text>
         );
     }
 
     return (
-        <Text color="text-primary" weight="600" italics={!song?.title} wrapAnywhere {...props}>
+        <Text color="text-primary" weight="600" italics={!song?.title.romaji} wrapAnywhere {...props}>
             {songTitle}
         </Text>
     );

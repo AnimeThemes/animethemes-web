@@ -74,7 +74,9 @@ export const VIDEO_SUMMARY_CARD_ENTRY = graphql(`
             }
             anime {
                 slug
-                name
+                title {
+                    romaji
+                }
                 images {
                     nodes {
                         ...extractImagesImage
@@ -143,7 +145,7 @@ export function VideoSummaryCard({
                             {videoSlug}
                             {theme.group && ` (${theme.group.name})`}
                         </span>
-                        <TextLink href={`/anime/${anime.slug}`}>{anime.name}</TextLink>
+                        <TextLink href={`/anime/${anime.slug}`}>{anime.title.romaji}</TextLink>
                     </SummaryCard.Description>
                 </SummaryCard.Body>
                 {menu !== null ? <StyledOverlayButtons>{menu}</StyledOverlayButtons> : null}

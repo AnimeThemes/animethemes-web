@@ -83,7 +83,7 @@ const PLAYLIST_TRACK_ADD_FORM_PLAYLIST = graphql(`
             playlists {
                 ...PlaylistTrackAddCardPlaylist
                 id
-                tracks(where: [{ field: ENTRY_ID, value: $entryId }, { field: VIDEO_ID, value: $videoId }]) {
+                tracks(where: {AND: [{ column: ENTRY_ID, value: $entryId }, { column: VIDEO_ID, value: $videoId }]}) {
                     ...PlaylistTrackAddCardTrack
                 }
             }

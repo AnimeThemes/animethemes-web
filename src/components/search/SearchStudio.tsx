@@ -9,7 +9,7 @@ import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup"
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
-import type { StudioSortableColumns } from "@/graphql/generated/graphql";
+import type { StudioSort } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
 
 interface Filter {
@@ -23,13 +23,13 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchStudio($query: String, $name_like: String, $sort: [StudioSortableColumns!], $page: Int!) {
+    query SearchStudio($query: String, $name_like: String, $sort: [StudioSort!], $page: Int!) {
         studioPagination(search: $query, name_like: $name_like, sort: $sort, first: 15, page: $page) {
             data {
                 ...StudioSummaryCardStudio
                 slug
             }
-            paginationInfo {
+            paginatorInfo {
                 hasMorePages
             }
         }
@@ -50,7 +50,7 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
         ...(filter.firstLetter ? { name_like: `${filter.firstLetter}%` } : {}),
-        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<StudioSortableColumns> } : {}),
+        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<StudioSort> } : {}),
     };
 
     const {
@@ -78,7 +78,7 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.paginationInfo.hasMorePages ? lastPageParam + 1 : null,
+            lastPage.paginatorInfo.hasMorePages ? lastPageParam + 1 : null,
         placeholderData: keepPreviousData,
     });
 
