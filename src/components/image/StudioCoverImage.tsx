@@ -22,7 +22,9 @@ export const STUDIO_COVER_IMAGE_STUDIO = graphql(`
         }
         anime {
             nodes {
-                name
+                title {
+                    romaji
+                }
                 images {
                     nodes {
                         ...extractImagesImage
@@ -57,7 +59,7 @@ export function StudioCoverImage({ studio: studioFragment, ...props }: StudioCov
                 <MultiCoverImage
                     items={studio.anime.nodes.map((anime) => ({
                         ...extractImages(anime.images.nodes),
-                        name: anime.name,
+                        name: anime.title.romaji,
                     }))}
                     {...props}
                 />

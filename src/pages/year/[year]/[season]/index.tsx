@@ -32,7 +32,9 @@ export const SEASON_DETAIL_PAGE_SEASON = graphql(`
                 ...AnimeSummaryCardAnime
                 ...AnimeSummaryCardAnimeExpandable
                 slug
-                name
+                title {
+                    romaji
+                }
             }
         }
     }
@@ -84,7 +86,7 @@ interface SeasonDetailPageParams extends ParsedUrlQuery {
 export default function SeasonDetailPage({ year: yearFragment, season: seasonFragment }: SeasonDetailPageProps) {
     const year = getFragmentData(SEASON_DETAIL_PAGE_YEAR, yearFragment);
     const season = getFragmentData(SEASON_DETAIL_PAGE_SEASON, seasonFragment);
-    const animeList = season.anime.data.filter((anime) => anime.name).sort((a, b) => a.name.localeCompare(b.name));
+    const animeList = season.anime.data.filter((anime) => anime.title.romaji).sort((a, b) => a.title.romaji.localeCompare(b.title.romaji));
 
     return (
         <>

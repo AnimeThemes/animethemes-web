@@ -195,7 +195,9 @@ export const PLAYLIST_DETAIL_PAGE_TRACK = graphql(`
             ...PlaylistTrackRemoveDialogEntry
             animetheme {
                 anime {
-                    name
+                    title {
+                        romaji
+                    }
                     year
                     season
                     images {
@@ -205,7 +207,9 @@ export const PLAYLIST_DETAIL_PAGE_TRACK = graphql(`
                     }
                 }
                 song {
-                    title
+                    title {
+                        romaji
+                    }
                 }
             }
         }
@@ -218,7 +222,7 @@ export const PLAYLIST_DETAIL_PAGE_ME = graphql(`
     }
 `);
 
-export const PLAYLIST_DETAIL_PAGE_PLAYLIST = graphql(`
+const PLAYLIST_DETAIL_PAGE_QUERY = graphql(`
     query PlaylistDetailPagePlaylist($playlistId: String!) {
         playlist(id: $playlistId) {
             ...PlaylistDetailPagePlaylist
@@ -263,7 +267,7 @@ export default function PlaylistDetailPage({
     const { setWatchList, setWatchListFactory, setCurrentWatchListItem } = useContext(PlayerContext);
     const router = useRouter();
 
-    const { data: playlistData, refetch } = useQuery(PLAYLIST_DETAIL_PAGE_PLAYLIST, {
+    const { data: playlistData, refetch } = useQuery(PLAYLIST_DETAIL_PAGE_QUERY, {
         variables: { playlistId: initialPlaylist.id },
     });
     const { data: meData } = useQuery(meQuery);
@@ -357,7 +361,7 @@ export default function PlaylistDetailPage({
             tracks.flatMap((track) => {
                 const anime = track.animethemeentry.animetheme?.anime;
 
-                return anime ? [{ ...extractImages(anime.images.nodes), name: anime.name }] : [];
+                return anime ? [{ ...extractImages(anime.images.nodes), name: anime.title.romaji }] : [];
             }),
         [tracks],
     );

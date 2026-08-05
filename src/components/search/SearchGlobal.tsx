@@ -40,7 +40,9 @@ const query = graphql(`
             }
             series {
                 slug
-                name
+                title {
+                    romaji
+                }
             }
             studios {
                 slug
@@ -131,7 +133,7 @@ export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
                 renderSummaryCard={(series) => (
                     <SummaryCard
                         key={series.slug}
-                        title={series.name}
+                        title={series.title.romaji}
                         description="Series"
                         to={`/series/${series.slug}`}
                     />

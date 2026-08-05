@@ -22,7 +22,9 @@ export const THEME_MENU_THEME = graphql(`
         }
         anime {
             slug
-            name
+            title {
+                romaji
+            }
             images {
                 nodes {
                     ...extractImagesImage

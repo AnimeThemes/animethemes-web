@@ -5,21 +5,21 @@ import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { AnimeSummaryCard } from "@/components/card/AnimeSummaryCard";
 import { SearchEntity } from "@/components/search/SearchEntity";
 import { SearchFilterFirstLetter } from "@/components/search-filter/SearchFilterFirstLetter";
+import { SearchFilterFormat } from "@/components/search-filter/SearchFilterFormat";
 import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
-import { SearchFilterMediaFormat } from "@/components/search-filter/SearchFilterMediaFormat";
 import { SearchFilterSeason } from "@/components/search-filter/SearchFilterSeason";
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
 import { SearchFilterYear } from "@/components/search-filter/SearchFilterYear";
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
-import type { AnimeMediaFormat, AnimeSeason, AnimeSortableColumns } from "@/graphql/generated/graphql";
+import type { AnimeFormat, AnimeSeason, AnimeSort } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
 
 interface Filter {
     firstLetter: string | null;
     season: AnimeSeason | null;
     year: string | null;
-    mediaFormat: AnimeMediaFormat | null;
+    format: AnimeFormat | null;
     sortBy: string | null;
 }
 
@@ -27,26 +27,26 @@ const initialFilter: Filter = {
     firstLetter: null,
     season: null,
     year: null,
-    mediaFormat: null,
-    sortBy: "NAME",
+    format: null,
+    sortBy: "TITLE_ROMAJI",
 };
 
 const query = graphql(`
     query SearchAnime(
         $query: String
-        $name_like: String
+        $titleRomaji_like: String
         $season: AnimeSeason
         $year: Int
-        $media_format: AnimeMediaFormat
-        $sort: [AnimeSortableColumns!]
+        $format: AnimeFormat
+        $sort: [AnimeSort!]
         $page: Int!
     ) {
         animePagination(
             search: $query
-            name_like: $name_like
+            titleRomaji_like: $titleRomaji_like
             season: $season
             year: $year
-            mediaFormat: $media_format
+            format: $format
             sort: $sort
             first: 15
             page: $page
@@ -56,7 +56,7 @@ const query = graphql(`
                 ...AnimeSummaryCardAnimeExpandable
                 slug
             }
-            paginationInfo {
+            paginatorInfo {
                 hasMorePages
             }
         }
@@ -76,11 +76,11 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
 
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
-        ...(filter.firstLetter ? { name_like: `${filter.firstLetter}%` } : {}),
+        ...(filter.firstLetter ? { titleRomaji_like: `${filter.firstLetter}%` } : {}),
         ...(filter.season ? { season: filter.season } : {}),
         ...(filter.year ? { year: parseInt(filter.year) } : {}),
-        ...(filter.mediaFormat ? { media_format: filter.mediaFormat } : {}),
-        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<AnimeSortableColumns> } : {}),
+        ...(filter.format ? { format: filter.format } : {}),
+        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<AnimeSort> } : {}),
     };
 
     const {
@@ -108,7 +108,7 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.paginationInfo.hasMorePages ? lastPageParam + 1 : null,
+            lastPage.paginatorInfo.hasMorePages ? lastPageParam + 1 : null,
         placeholderData: keepPreviousData,
     });
 
@@ -133,13 +133,13 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
                 <SearchFilterFirstLetter value={filter.firstLetter} setValue={bindUpdateFilter("firstLetter")} />
                 <SearchFilterSeason value={filter.season} setValue={bindUpdateFilter("season")} />
                 <SearchFilterYear value={filter.year} setValue={bindUpdateFilter("year")} />
-                <SearchFilterMediaFormat value={filter.mediaFormat} setValue={bindUpdateFilter("mediaFormat")} />
+                <SearchFilterFormat value={filter.format} setValue={bindUpdateFilter("format")} />
                 <SearchFilterSortBy value={filter.sortBy} setValue={bindUpdateFilter("sortBy")}>
                     {searchQuery ? <SearchFilterSortBy.Option value={null}>Relevance</SearchFilterSortBy.Option> : null}
-                    <SearchFilterSortBy.Option value="NAME">A ➜ Z</SearchFilterSortBy.Option>
-                    <SearchFilterSortBy.Option value="NAME_DESC">Z ➜ A</SearchFilterSortBy.Option>
-                    <SearchFilterSortBy.Option value="YEAR,SEASON,NAME">Old ➜ New</SearchFilterSortBy.Option>
-                    <SearchFilterSortBy.Option value="YEAR_DESC,SEASON_DESC,NAME">New ➜ Old</SearchFilterSortBy.Option>
+                    <SearchFilterSortBy.Option value="TITLE_ROMAJI">A ➜ Z</SearchFilterSortBy.Option>
+                    <SearchFilterSortBy.Option value="TITLE_ROMAJI_DESC">Z ➜ A</SearchFilterSortBy.Option>
+                    <SearchFilterSortBy.Option value="YEAR,SEASON,TITLE_ROMAJI">Old ➜ New</SearchFilterSortBy.Option>
+                    <SearchFilterSortBy.Option value="YEAR_DESC,SEASON_DESC,TITLE_ROMAJI">New ➜ Old</SearchFilterSortBy.Option>
                     <SearchFilterSortBy.Option value="CREATED_AT_DESC">Last Added</SearchFilterSortBy.Option>
                 </SearchFilterSortBy>
             </SearchFilterGroup>

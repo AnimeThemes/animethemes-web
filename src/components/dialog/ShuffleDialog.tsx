@@ -6,12 +6,12 @@ import { Button } from "@/components/button/Button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
 import { Input } from "@/components/form/Input";
 import { SearchFilter } from "@/components/search-filter/SearchFilter";
+import { SearchFilterFormat } from "@/components/search-filter/SearchFilterFormat";
 import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
-import { SearchFilterMediaFormat } from "@/components/search-filter/SearchFilterMediaFormat";
 import { Switcher, SwitcherOption } from "@/components/switcher/Switcher";
 import { Text } from "@/components/text/Text";
 import { Busy } from "@/components/utils/Busy";
-import type { AnimeMediaFormat, ThemeType } from "@/graphql/generated/graphql";
+import type { AnimeFormat, ThemeType } from "@/graphql/generated/graphql";
 import useRandomThemes from "@/hooks/useRandomThemes";
 
 interface ShuffleDialogProps {
@@ -48,7 +48,7 @@ interface ShuffleFormProps {
 function ShuffleForm({ onSuccess, onCancel }: ShuffleFormProps) {
     const [isBusy, setBusy] = useState(false);
     const [filterThemeType, setFilterThemeType] = useState<ThemeType | null>(null);
-    const [filterMediaFormat, setFilterMediaFormat] = useState<AnimeMediaFormat | null>(null);
+    const [filterFormat, setFilterFormat] = useState<AnimeFormat | null>(null);
     const [filterAnimeYearMin, setFilterAnimeYearMin] = useState("");
     const [filterAnimeYearMax, setFilterAnimeYearMax] = useState("");
 
@@ -62,7 +62,7 @@ function ShuffleForm({ onSuccess, onCancel }: ShuffleFormProps) {
         try {
             await playRandomThemes({
                 themeType: filterThemeType ?? undefined,
-                mediaFormat: filterMediaFormat ?? undefined,
+                format: filterFormat ?? undefined,
                 animeYearMin: parseInt(filterAnimeYearMin),
                 animeYearMax: parseInt(filterAnimeYearMax),
             });
@@ -100,7 +100,7 @@ function ShuffleForm({ onSuccess, onCancel }: ShuffleFormProps) {
                         inputProps={{ type: "number", placeholder: "2100" }}
                     />
                 </SearchFilter>
-                <SearchFilterMediaFormat value={filterMediaFormat} setValue={setFilterMediaFormat} />
+                <SearchFilterFormat value={filterFormat} setValue={setFilterFormat} />
             </SearchFilterGroup>
             <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
                 <Button type="button" variant="silent" onClick={onCancel}>

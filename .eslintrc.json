@@ -4,7 +4,7 @@
     "parserOptions": {
         "project": ["./tsconfig.json"]
     },
-    "ignorePatterns": ["src/generated"],
+    "ignorePatterns": ["src/graphql/generated"],
     "rules": {
         // Sort imports
         "simple-import-sort/imports": [
