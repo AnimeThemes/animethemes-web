@@ -9,7 +9,7 @@ import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup"
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
-import type { SeriesSortableColumns } from "@/graphql/generated/graphql";
+import type { SeriesSort } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
 
 interface Filter {
@@ -19,17 +19,19 @@ interface Filter {
 
 const initialFilter: Filter = {
     firstLetter: null,
-    sortBy: "NAME",
+    sortBy: "TITLE_ROMAJI",
 };
 
 const query = graphql(`
-    query SearchSeries($query: String, $name_like: String, $sort: [SeriesSortableColumns!], $page: Int!) {
-        seriesPagination(search: $query, name_like: $name_like, sort: $sort, first: 15, page: $page) {
+    query SearchSeries($query: String, $titleRomaji_like: String, $sort: [SeriesSort!], $page: Int!) {
+        seriesPagination(search: $query, titleRomaji_like: $titleRomaji_like, sort: $sort, first: 15, page: $page) {
             data {
                 slug
-                name
+                title {
+                    romaji
+                }
             }
-            paginationInfo {
+            paginatorInfo {
                 hasMorePages
             }
         }
@@ -49,8 +51,8 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
 
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
-        ...(filter.firstLetter ? { name_like: `${filter.firstLetter}%` } : {}),
-        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SeriesSortableColumns> } : {}),
+        ...(filter.firstLetter ? { titleRomaji_like: `${filter.firstLetter}%` } : {}),
+        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SeriesSort> } : {}),
     };
 
     const {
@@ -78,7 +80,7 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.paginationInfo.hasMorePages ? lastPageParam + 1 : null,
+            lastPage.paginatorInfo.hasMorePages ? lastPageParam + 1 : null,
         placeholderData: keepPreviousData,
     });
 
@@ -103,8 +105,8 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
                 <SearchFilterFirstLetter value={filter.firstLetter} setValue={bindUpdateFilter("firstLetter")} />
                 <SearchFilterSortBy value={filter.sortBy} setValue={bindUpdateFilter("sortBy")}>
                     {searchQuery ? <SearchFilterSortBy.Option value={null}>Relevance</SearchFilterSortBy.Option> : null}
-                    <SearchFilterSortBy.Option value="NAME">A ➜ Z</SearchFilterSortBy.Option>
-                    <SearchFilterSortBy.Option value="NAME_DESC">Z ➜ A</SearchFilterSortBy.Option>
+                    <SearchFilterSortBy.Option value="TITLE_ROMAJI">A ➜ Z</SearchFilterSortBy.Option>
+                    <SearchFilterSortBy.Option value="TITLE_ROMAJI_DESC">Z ➜ A</SearchFilterSortBy.Option>
                     <SearchFilterSortBy.Option value="CREATED_AT_DESC">Last Added</SearchFilterSortBy.Option>
                 </SearchFilterSortBy>
             </SearchFilterGroup>
@@ -125,7 +127,7 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
                     .map((series) => (
                         <SummaryCard
                             key={series.slug}
-                            title={series.name}
+                            title={series.title.romaji}
                             description="Series"
                             to={`/series/${series.slug}`}
                         />

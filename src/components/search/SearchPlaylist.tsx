@@ -8,7 +8,7 @@ import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup"
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
-import type { PlaylistSortableColumns } from "@/graphql/generated/graphql";
+import type { PlaylistSort } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
 
 interface Filter {
@@ -20,14 +20,14 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchPlaylist($query: String, $sort: [PlaylistSortableColumns!], $page: Int!) {
+    query SearchPlaylist($query: String, $sort: [PlaylistSort!], $page: Int!) {
         playlistPagination(search: $query, sort: $sort, first: 15, page: $page) {
             data {
                 ...PlaylistSummaryCardPlaylist
                 ...PlaylistSummaryCardPlaylistWithOwner
                 id
             }
-            paginationInfo {
+            paginatorInfo {
                 hasMorePages
             }
         }
@@ -47,7 +47,7 @@ export function SearchPlaylist({ searchQuery }: SearchPlaylistProps) {
 
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
-        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<PlaylistSortableColumns> } : {}),
+        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<PlaylistSort> } : {}),
     };
 
     const {
@@ -75,7 +75,7 @@ export function SearchPlaylist({ searchQuery }: SearchPlaylistProps) {
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.paginationInfo.hasMorePages ? lastPageParam + 1 : null,
+            lastPage.paginatorInfo.hasMorePages ? lastPageParam + 1 : null,
         placeholderData: keepPreviousData,
     });
 

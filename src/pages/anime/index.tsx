@@ -14,10 +14,12 @@ import getSharedPageProps from "@/utils/getSharedPageProps";
 
 const propsQuery = graphql(`
     query AnimeIndexPage($first: Int!) {
-        animePagination(sort: NAME, first: $first) {
+        animePagination(sort: TITLE_ROMAJI, first: $first) {
             data {
                 slug
-                name
+                title {
+                    romaji
+                }
             }
         }
     }
@@ -30,10 +32,10 @@ export default function AnimeIndexPage({ animePagination }: AnimeIndexPageProps)
         <>
             <BackToTopButton />
             <Text variant="h1">Anime Index</Text>
-            <AlphabeticalIndex items={animePagination.data}>
+            <AlphabeticalIndex items={animePagination.data} getName={anime => anime.title.romaji}>
                 {(anime) => (
                     <Text key={anime.slug} as={Link} href={`/anime/${anime.slug}`} prefetch={false} block link>
-                        {anime.name}
+                        {anime.title.romaji}
                     </Text>
                 )}
             </AlphabeticalIndex>

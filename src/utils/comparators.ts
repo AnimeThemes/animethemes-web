@@ -49,15 +49,15 @@ function nestedComparator<S, V>(
     return (a, b) => comparator(extractor(a), extractor(b));
 }
 
-export const animeNameComparator: Comparator<{ name: string }> = nestedComparator((anime) => anime.name);
+export const animeTitleComparator: Comparator<{ title: { romaji: string } }> = nestedComparator((anime) => anime.title.romaji);
 export const animeYearComparator: Comparator<{ year: number | null }> = nestedComparator((anime) => anime.year);
 export const animeSeasonComparator: Comparator<{ season: AnimeSeason | null }> = nestedComparator(
     (anime) => anime.season ?? undefined,
     enumComparator(seasonOrder),
 );
 export const animePremiereComparator = either(animeYearComparator).or(animeSeasonComparator).chain();
-export const songTitleComparator: Comparator<{ song: { title: string | null } | null }> = nestedComparator(
-    (theme) => theme.song?.title,
+export const songTitleComparator: Comparator<{ song: { title: { romaji: string | null } } | null }> = nestedComparator(
+    (theme) => theme.song?.title.romaji,
 );
 export const entryVersionComparator: Comparator<{ version: number | null }> = nestedComparator(
     (entry) => entry.version,
@@ -73,7 +73,7 @@ export const themeGroupComparator: Comparator<{ group: { name: string } | null }
     (theme) => theme.group?.name,
 );
 export const studioNameComparator: Comparator<{ name: string }> = nestedComparator((studio) => studio.name);
-export const seriesNameComparator: Comparator<{ name: string }> = nestedComparator((series) => series.name);
+export const seriesTitleComparator: Comparator<{ title: { romaji: string } }> = nestedComparator((series) => series.title.romaji);
 export const resourceSiteComparator: Comparator<{ site: string | null }> = nestedComparator(
     (resource) => resource.site,
 );
@@ -102,23 +102,23 @@ const toAnime =
 
 const comparators = {
     [UNSORTED]: () => 0,
-    [ANIME_A_Z]: animeNameComparator,
-    [ANIME_Z_A]: reverse(animeNameComparator),
-    [ANIME_OLD_NEW]: either(animePremiereComparator).or(animeNameComparator).chain(),
-    [ANIME_NEW_OLD]: either(reverse(animePremiereComparator)).or(animeNameComparator).chain(),
+    [ANIME_A_Z]: animeTitleComparator,
+    [ANIME_Z_A]: reverse(animeTitleComparator),
+    [ANIME_OLD_NEW]: either(animePremiereComparator).or(animeTitleComparator).chain(),
+    [ANIME_NEW_OLD]: either(reverse(animePremiereComparator)).or(animeTitleComparator).chain(),
     [SONG_A_Z]: songTitleComparator,
     [SONG_Z_A]: reverse(songTitleComparator),
-    [SONG_A_Z_ANIME]: either(toAnime(animeNameComparator)).or(themeTypeComparator).or(themeIndexComparator).chain(),
-    [SONG_Z_A_ANIME]: either(reverse(toAnime(animeNameComparator)))
+    [SONG_A_Z_ANIME]: either(toAnime(animeTitleComparator)).or(themeTypeComparator).or(themeIndexComparator).chain(),
+    [SONG_Z_A_ANIME]: either(reverse(toAnime(animeTitleComparator)))
         .or(themeTypeComparator)
         .or(themeIndexComparator)
         .chain(),
     [SONG_OLD_NEW]: either(toAnime(animePremiereComparator))
-        .or(toAnime(animeNameComparator))
+        .or(toAnime(animeTitleComparator))
         .or(songTitleComparator)
         .chain(),
     [SONG_NEW_OLD]: either(reverse(toAnime(animePremiereComparator)))
-        .or(toAnime(animeNameComparator))
+        .or(toAnime(animeTitleComparator))
         .or(songTitleComparator)
         .chain(),
 } as const;

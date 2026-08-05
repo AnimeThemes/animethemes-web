@@ -1,14 +1,14 @@
 import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
 import { SearchFilter } from "@/components/search-filter/SearchFilter";
 import { Text } from "@/components/text/Text";
-import type { AnimeMediaFormat } from "@/graphql/generated/graphql";
+import type { AnimeFormat } from "@/graphql/generated/graphql";
 
-interface SearchFilterMediaFormatProps {
-    value: AnimeMediaFormat | null;
-    setValue: (newValue: AnimeMediaFormat | null) => void;
+interface SearchFilterFormatProps {
+    value: AnimeFormat | null;
+    setValue: (newValue: AnimeFormat | null) => void;
 }
 
-export function SearchFilterMediaFormat({ value, setValue }: SearchFilterMediaFormatProps) {
+export function SearchFilterFormat({ value, setValue }: SearchFilterFormatProps) {
     return (
         <SearchFilter>
             <Text variant="h2">Format</Text>

@@ -69,7 +69,9 @@ export const THEME_SUMMARY_CARD_THEME = graphql(`
         }
         anime {
             slug
-            name
+            title {
+                romaji
+            }
             images {
                 nodes {
                     ...extractImagesImage
@@ -83,16 +85,9 @@ export const THEME_SUMMARY_CARD_THEME = graphql(`
                 alias
                 as
                 artist {
-                    __typename
-                    ... on Artist {
-                        slug
-                        name
-                    }
-                    ... on Membership {
-                        group {
-                            slug
-                            name
-                        }
+                    slug
+                    name {
+                        main
                     }
                 }
             }
@@ -178,12 +173,8 @@ export function ThemeSummaryCard({
     }
 
     const performances = (theme.song?.performances ?? [])
-        .map((performance) => ({
-            artist: performance.artist.__typename === "Artist" ? performance.artist : performance.artist.group,
-            performance,
-        }))
         .filter(({ artist }) => artist.slug !== ownerArtist?.slug)
-        .sort(({ artist: a }, { artist: b }) => a.name.localeCompare(b.name));
+        .sort(({ artist: a }, { artist: b }) => a.name.main.localeCompare(b.name.main));
 
     return (
         <StyledWrapper>
@@ -202,7 +193,7 @@ export function ThemeSummaryCard({
                             {theme.sequence || null}
                             {theme.group && ` (${theme.group.name})`}
                         </span>
-                        <TextLink href={`/anime/${anime.slug}`}>{anime.name}</TextLink>
+                        <TextLink href={`/anime/${anime.slug}`}>{anime.title.romaji}</TextLink>
                     </SummaryCard.Description>
                 </SummaryCard.Body>
                 {children}
@@ -237,11 +228,11 @@ export function ThemeSummaryCard({
                                     <TableHeadCell>Performed {ownerArtist ? "With" : "By"}</TableHeadCell>
                                 </TableHead>
                                 <TableBody>
-                                    {performances.map(({ artist, performance }) => (
+                                    {performances.map(({ alias, as, artist }) => (
                                         <TableRow key={artist.slug} as={Link} href={`/artist/${artist.slug}`}>
                                             <TableCell>
                                                 <Text color="text-primary" weight="600">
-                                                    {getDisplayedArtistName({ ...performance, artist })}
+                                                    {getDisplayedArtistName({ alias, as, artist })}
                                                 </Text>
                                             </TableCell>
                                         </TableRow>

@@ -62,29 +62,32 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
     fragment ArtistDetailPageArtist on Artist {
         ...ThemeSummaryCardArtist
         slug
-        name
+        name {
+            main
+            native
+        }
+        synonyms {
+            text
+        }
         performances {
             alias
             as
             song {
                 id
-                title
+                title {
+                    romaji
+                }
                 performances {
-                    artist {
-                        __typename
-                        ... on Artist {
-                            slug
-                            name
-                        }
-                        ... on Membership {
-                            group {
-                                slug
-                                name
-                            }
-                        }
-                    }
                     alias
                     as
+                    memberAlias
+                    memberAs
+                    artist {
+                        slug
+                        name {
+                            main
+                        }
+                    }
                 }
                 animethemes {
                     ...ThemeSummaryCardTheme
@@ -105,132 +108,77 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                     }
                     anime {
                         slug
-                        name
+                        title {
+                            romaji
+                        }
                         year
                         season
                     }
                     song {
-                        title
-                    }
-                }
-            }
-        }
-        memberships {
-            alias
-            as
-            group {
-                ...ThemeSummaryCardArtist
-                slug
-                name
-            }
-            performances {
-                alias
-                as
-                song {
-                    id
-                    title
-                    performances {
-                        artist {
-                            __typename
-                            ... on Artist {
-                                slug
-                                name
-                            }
-                            ... on Membership {
-                                group {
-                                    slug
-                                    name
-                                }
-                            }
-                        }
-                        alias
-                        as
-                    }
-                    animethemes {
-                        ...ThemeSummaryCardTheme
-                        ...ThemeSummaryCardThemeExpandable
-                        id
-                        type
-                        sequence
-                        animethemeentries {
-                            videos {
-                                nodes {
-                                    id
-                                }
-                            }
-                        }
-                        group {
-                            name
-                            slug
-                        }
-                        anime {
-                            slug
-                            name
-                            year
-                            season
-                        }
-                        song {
-                            title
+                        title {
+                            romaji
                         }
                     }
                 }
             }
         }
-        groupships {
+        memberPerformances {
             alias
             as
-            member {
+            memberAlias
+            memberAs
+            artist {
                 slug
-                name
+                name {
+                    main
+                }
             }
-            performances {
-                alias
-                as
-                song {
-                    id
-                    title
-                    performances {
-                        artist {
-                            __typename
-                            ... on Artist {
-                                slug
-                                name
-                            }
-                            ... on Membership {
-                                group {
-                                    slug
-                                    name
-                                }
-                            }
+            song {
+                id
+                title {
+                    romaji
+                }
+                performances {
+                    alias
+                    as
+                    memberAlias
+                    memberAs
+                    artist {
+                        slug
+                        name {
+                            main
                         }
-                        alias
-                        as
                     }
-                    animethemes {
-                        ...ThemeSummaryCardTheme
-                        ...ThemeSummaryCardThemeExpandable
-                        id
-                        type
-                        sequence
-                        animethemeentries {
-                            videos {
-                                nodes {
-                                    id
-                                }
+                    
+                }
+                animethemes {
+                    ...ThemeSummaryCardTheme
+                    ...ThemeSummaryCardThemeExpandable
+                    id
+                    type
+                    sequence
+                    animethemeentries {
+                        videos {
+                            nodes {
+                                id
                             }
                         }
-                        group {
-                            name
-                            slug
+                    }
+                    group {
+                        name
+                        slug
+                    }
+                    anime {
+                        slug
+                        title {
+                            romaji
                         }
-                        anime {
-                            slug
-                            name
-                            year
-                            season
-                        }
-                        song {
-                            title
+                        year
+                        season
+                    }
+                    song {
+                        title {
+                            romaji
                         }
                     }
                 }
@@ -241,10 +189,13 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                 alias
                 as
                 notes
+                relevance
                 node {
                     ...ArtistSummaryCardArtist
                     slug
-                    name
+                    name {
+                        main
+                    }
                 }
             }
         }
@@ -255,7 +206,9 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                 notes
                 node {
                     slug
-                    name
+                    name {
+                        main
+                    }
                 }
             }
         }
@@ -298,9 +251,9 @@ const pathsQuery = graphql(`
     }
 `);
 
-type Performance =
-    | ResultOf<typeof ARTIST_DETAIL_PAGE_ARTIST>["performances"][number]
-    | ResultOf<typeof ARTIST_DETAIL_PAGE_ARTIST>["groupships"][number]["performances"][number];
+type Performance = ResultOf<typeof ARTIST_DETAIL_PAGE_ARTIST>["performances"][number];
+
+type MemberPerformance = ResultOf<typeof ARTIST_DETAIL_PAGE_ARTIST>["memberPerformances"][number];
 
 function getPerformanceFilter(key: string | null): (performance: Performance) => boolean {
     switch (key) {
@@ -330,10 +283,18 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
     const performances = useMemo(
         () =>
             uniqBy(
-                [...artist.performances, ...artist.groupships.flatMap((groupship) => groupship.performances)],
+                [...artist.performances],
                 (performance) => performance.song.id,
             ),
-        [artist.performances, artist.groupships],
+        [artist.performances],
+    );
+
+    const memberPerformances = useMemo(
+        () =>
+            artist.memberPerformances.map((performance) => ({
+                ...performance,
+            })),
+        [artist.memberPerformances],
     );
 
     const characters = useMemo(
@@ -341,7 +302,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
             uniq([
                 ...performances.map((performance) => performance.as),
                 ...artist.groups.edges.map((group) => group.as),
-            ]).filter((alias) => alias) as Array<string>,
+            ]).filter((character) => character) as Array<string>,
         [performances, artist.groups],
     );
     const aliases = useMemo(
@@ -354,8 +315,8 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
     );
 
     const performedAsFilterOptions = useMemo(
-        () => [null, artist.name, ...aliases, ...characters],
-        [aliases, artist.name, characters],
+        () => [null, artist.name.main, ...aliases, ...characters],
+        [aliases, artist.name.main, characters],
     );
 
     const [showFilter, toggleShowFilter] = useToggle();
@@ -376,7 +337,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                 (performance) =>
                     performance.song?.animethemes[0]?.animethemeentries[0]?.videos.nodes[0] &&
                     (filterPerformedAs === null ||
-                        (filterPerformedAs === artist.name &&
+                        (filterPerformedAs === artist.name.main &&
                             !performance.as &&
                             !groupAs &&
                             !performance.alias &&
@@ -386,7 +347,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                         filterPerformedAs === groupAlias ||
                         filterPerformedAs === performance.alias),
             ),
-        [artist.name, filterPerformedAs],
+        [artist.name.main, filterPerformedAs],
     );
 
     const toSortedThemes = useCallback(
@@ -413,35 +374,48 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
     );
     const performancesAsSelf = useMemo(() => performancesGroupedByAlias.get(null) ?? [], [performancesGroupedByAlias]);
 
-    const memberships = useMemo(
+    const memberPerformancesGroupedByGroup = useMemo(
         () =>
-            artist.memberships.map((membership) => ({
-                ...membership,
-                group: {
-                    ...membership.group,
-                    performances:
-                        filterPerformance === "SOLO"
-                            ? []
-                            : filterPerformances(membership.performances, membership.as, membership.alias),
-                },
-            })),
-        [artist.memberships, filterPerformance, filterPerformances],
+            Object.values(
+                memberPerformances.reduce<Record<string, MemberPerformance[]>>(
+                    (acc, performance) => {
+                        const key = performance.artist.slug
+
+                        if (!acc[key]) {
+                            acc[key] = []
+                        }
+
+                        acc[key].push(performance);
+
+                        return acc;
+                    }, {})
+            ).map((performances) => {
+                return filterPerformance === "SOLO"
+                    ? []
+                    : filterPerformances(
+                        performances,
+                        performances[0].memberAs,
+                        performances[0].memberAlias
+                    )
+            }),
+        [memberPerformances, filterPerformance, filterPerformances]
     );
 
     return (
         <>
-            <SEO title={artist.name} image={images[0]?.link} />
-            <Text variant="h1">{artist.name}</Text>
+            <SEO title={artist.name.main} image={images[0]?.link} />
+            <Text variant="h1">{artist.name.main}</Text>
             <SidebarContainer>
                 <Column style={{ "--gap": "24px" }}>
-                    <MultiCoverImage items={images.map((image) => ({ largeCover: image.link, name: artist.name }))} />
+                    <MultiCoverImage items={images.map((image) => ({ largeCover: image.link, name: artist.name.main }))} />
                     <DescriptionList>
-                        {aliases.length > 0 && (
-                            <DescriptionList.Item title="Aliases">
+                        {artist.name.native || artist.synonyms.length > 0 && (
+                            <DescriptionList.Item title="Alternative Names">
                                 <StyledList>
-                                    {aliases.map((alias) => (
-                                        <Text as="a" key={alias}>
-                                            {alias}
+                                    {artist.name.native && <Text key={artist.name.native}>{artist.name.native}</Text>}
+                                    {artist.synonyms.map((synonym) => (
+                                        <Text as="a" key={synonym.text}>
+                                            {synonym.text}
                                         </Text>
                                     ))}
                                 </StyledList>
@@ -450,10 +424,10 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                         {!!artist.members.edges.length && (
                             <DescriptionList.Item title="Members">
                                 <StyledList>
-                                    {artist.members.edges.map(({ node, alias, as, notes }) => (
+                                    {artist.members.edges.sort((a, b) => a.relevance - b.relevance).map(({ node, alias, as, notes }) => (
                                         <Column key={node.slug}>
                                             <Text as={Link} href={`/artist/${node.slug}`} link>
-                                                {alias ? alias : node.name}
+                                                {alias ? alias : node.name.main}
                                             </Text>
                                             {as || notes ? (
                                                 <Text variant="small" color="text-muted">
@@ -473,7 +447,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                                     {artist.groups.edges.map(({ node, alias, as, notes }) => (
                                         <Column key={node.slug}>
                                             <Text as={Link} href={`/artist/${node.slug}`} link>
-                                                {node.name}
+                                                {node.name.main}
                                             </Text>
                                             {alias || as || notes ? (
                                                 <Text variant="small" color="text-muted">
@@ -593,25 +567,34 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                                     </Text>
                                     <ArtistThemes themes={toSortedThemes(performances)} artist={artist} />
                                 </Column>
-                            ))}
-                        {memberships.map((membership) =>
-                            membership.performances.length ? (
-                                <Column key={membership.group.slug} style={{ "--gap": "16px" }}>
-                                    <Text variant="h2">
-                                        {membership.alias ? `As ${membership.alias} ` : null}
-                                        {membership.as ? `As ${membership.as} ` : null}
-                                        In{" "}
-                                        <Link href={`/artist/${membership.group.slug}`}>
-                                            <Text link>{membership.group.name}</Text>
-                                        </Link>
-                                        <Text color="text-disabled"> ({membership.performances.length})</Text>
-                                    </Text>
-                                    <ArtistThemes
-                                        themes={toSortedThemes(membership.performances)}
-                                        artist={membership.group}
-                                    />
-                                </Column>
-                            ) : null,
+                        ))}
+                        {memberPerformancesGroupedByGroup.map((performances) =>
+                            performances.length ? (
+                                (() => {
+                                    const [{ artist, memberAlias, memberAs, alias }] = performances;
+
+                                    return (
+                                        <Column key={artist.slug} style={{ "--gap": "16px" }}>
+                                            <Text variant="h2">
+                                                {memberAlias ? `As ${memberAlias} ` : null}
+                                                {memberAs ? `As ${memberAs} ` : null}
+                                                In{" "}
+                                                <Link href={`/artist/${artist.slug}`}>
+                                                    <Text link>{alias ?? artist.name.main}</Text>
+                                                </Link>
+                                                <Text color="text-disabled">
+                                                    {" "}({performances.length})
+                                                </Text>
+                                            </Text>
+
+                                            <ArtistThemes
+                                                themes={toSortedThemes(performances)}
+                                                artist={artist}
+                                            />
+                                        </Column>
+                                    )
+                                })()
+                            ) : null
                         )}
                     </Column>
                 </Column>
@@ -619,12 +602,11 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
         </>
     );
 }
-
 interface ArtistThemesProps {
     themes: Performance["song"]["animethemes"];
     artist:
         | ResultOf<typeof ARTIST_DETAIL_PAGE_ARTIST>
-        | ResultOf<typeof ARTIST_DETAIL_PAGE_ARTIST>["memberships"][number]["group"];
+        | ResultOf<typeof ARTIST_DETAIL_PAGE_ARTIST>["memberPerformances"][number]["artist"];
 }
 
 const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemesProps) {
