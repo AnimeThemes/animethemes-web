@@ -308,7 +308,7 @@ export default function PlaylistDetailPage({
 
     const updateTrackOrderRemote = useCallback(
         async (trackId: string) => {
-            const position = tracks.findIndex((track) => track.id === trackId);
+            const position = tracks.findIndex((track) => track.id === trackId) + 1;
 
             await updatePlaylistTrackMutation({
                 variables: {
