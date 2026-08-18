@@ -14,10 +14,10 @@ export function MostPopularEntries() {
             const { data } = await client.query({
                 query: graphql(`
                     query HomePageMostPopular {
-                        animethemeentryPagination(sort: [TRACKS_COUNT_DESC], first: 10) {
-                            data {
+                        mostPopularEntries(pagination: { first: 10 }) {
+                            nodes {
                                 ...VideoSummaryCardEntry
-                                videos(first: 1) {
+                                videos {
                                     nodes {
                                         ...VideoSummaryCardVideo
                                     }
@@ -28,7 +28,7 @@ export function MostPopularEntries() {
                 `),
             });
 
-            return data.animethemeentryPagination.data;
+            return data.mostPopularEntries.nodes;
         },
     });
 

@@ -23,16 +23,16 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchSeries($query: String, $titleRomaji_like: String, $sort: [SeriesSort!], $page: Int!) {
-        seriesPagination(search: $query, titleRomaji_like: $titleRomaji_like, sort: $sort, first: 15, page: $page) {
-            data {
+    query SearchSeries($query: String, $filter: SeriesFilterInput, $pagination: PaginationInput, $sort: [SeriesSort!]) {
+        seriesConnection(search: $query, filter: $filter, pagination: $pagination, sort: $sort) {
+            nodes {
                 slug
                 title {
                     romaji
                 }
             }
-            paginatorInfo {
-                hasMorePages
+            pageInfo {
+                hasNextPage
             }
         }
     }
@@ -51,7 +51,9 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
 
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
-        ...(filter.firstLetter ? { titleRomaji_like: `${filter.firstLetter}%` } : {}),
+        filter: {
+            ...(filter.firstLetter ? { titleRomaji_like: `${filter.firstLetter}%` } : {}),
+        },
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SeriesSort> } : {}),
     };
 
@@ -72,7 +74,10 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
                 query,
                 variables: {
                     ...variables,
-                    page: pageParam,
+                    pagination: {
+                        first: 15,
+                        page: pageParam,
+                    },
                 },
             });
 
@@ -80,7 +85,7 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.paginatorInfo.hasMorePages ? lastPageParam + 1 : null,
+            lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null,
         placeholderData: keepPreviousData,
     });
 

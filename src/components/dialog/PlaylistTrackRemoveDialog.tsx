@@ -110,9 +110,7 @@ function PlaylistTrackRemoveForm({
     const [mutate, { loading, error }] = useMutation(
         graphql(`
             mutation PlaylistTrackRemove($id: String!, $playlistId: String!) {
-                DeletePlaylistTrack(id: $id, playlist: $playlistId) {
-                    message
-                }
+                deletePlaylistTrack(id: $id, playlist: $playlistId)
             }
         `),
         {

@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
@@ -56,17 +56,11 @@ const meQuery = graphql(`
             name
             email
             permissions {
-                nodes {
-                    name
-                }
+                name
             }
             roles {
-                nodes {
-                    permissions {
-                        nodes {
-                            name
-                        }
-                    }
+                permissions {
+                    name
                 }
             }
         }
@@ -78,66 +72,92 @@ export default function useAuth() {
 
     const csrf = () => axios.get(`/sanctum/csrf-cookie`);
 
-    const register = async ({ setErrors, ...props }: RegisterProps) => {
-        await csrf();
-
-        setErrors({});
-
-        axios
-            .post(`${AUTH_PATH}/register`, props)
-            .then(() =>
-                client.refetchQueries({
-                    include: "active",
-                }),
-            )
-            .catch((error) => {
-                if (error.response.status !== 422) {
-                    throw error;
+    const [registerMutation] = useMutation(
+        graphql(`
+            mutation Register($input: RegisterInput!) {
+                register(input: $input) {
+                    id
                 }
+            }
+        `),
+        {
+            awaitRefetchQueries: true,
+            onCompleted: () => {
+                //onSuccess();
+            },
+            refetchQueries: [
+                meQuery,
+            ],
+        },
+    );
 
-                setErrors(error.response.data.errors);
-            });
+    const register = async ({ setErrors, ...props }: RegisterProps) => {
+        await registerMutation({
+            variables: {
+                input: {
+                    name: props.name,
+                    email: props.email,
+                    password: props.password,
+                    passwordConfirm: props.password_confirmation,
+                    terms: props.terms,
+                }
+            }
+        });
     };
+
+    const [loginMutation] = useMutation(
+        graphql(`
+            mutation Login($input: LoginInput!) {
+                login(input: $input) {
+                    id
+                }
+            }
+        `),
+        {
+            awaitRefetchQueries: true,
+        },
+    );
 
     const login = async ({ setErrors, ...props }: LoginProps) => {
-        await csrf();
-
-        setErrors({});
-
-        await axios
-            .post(`${AUTH_PATH}/login`, props)
-            .then(() =>
-                client.refetchQueries({
-                    include: "active",
-                }),
-            )
-            .catch((error) => {
-                if (error.response.status !== 422) {
-                    throw error;
+        await loginMutation({
+            variables: {
+                input: {
+                    email: props.email,
+                    password: props.password,
                 }
+            }
+        });
 
-                setErrors(error.response.data.errors);
-            });
+        await client.refetchQueries({
+            include: "active",
+        });
     };
+
+    const [updateUserInformationMutation] = useMutation(
+        graphql(`
+            mutation UpdateUserInformation($input: UpdateUserInformationInput!) {
+                updateUserInformation(input: $input)
+            }
+        `),
+        {
+            awaitRefetchQueries: true,
+        },
+    );
 
     const updateUserInformation = async ({ setErrors, ...props }: UpdateUserInformationProps) => {
-        await csrf();
-
-        await axios
-            .put(`${AUTH_PATH}/user/profile-information`, props)
-            .then(() =>
-                client.refetchQueries({
-                    include: "active",
-                }),
-            )
-            .catch((error) => {
-                if (error.response.status !== 422) {
-                    throw error;
+        await updateUserInformationMutation({
+            variables: {
+                input: {
+                    name: props.name,
+                    email: props.email,
                 }
+            }
+        });
 
-                setErrors(error.response.data.errors);
-            });
-    };
+        await client.refetchQueries({
+            include: "active",
+        });
+    }
 
     const forgotPassword = async (props: ForgotPasswordProps) => {
         await csrf();
@@ -155,13 +175,24 @@ export default function useAuth() {
         await axios.post(`${AUTH_PATH}/email/verification-notification`);
     };
 
+    const [logoutMutation] = useMutation(
+        graphql(`
+            mutation Logout {
+                logout
+            }
+        `),
+        {
+            awaitRefetchQueries: true,
+        },
+    );
+
     const logout = async () => {
-        await axios.post(`${AUTH_PATH}/logout`).then(() =>
-            client.refetchQueries({
-                include: "active",
-            }),
-        );
-    };
+        await logoutMutation();
+
+        await client.refetchQueries({
+            include: "active",
+        });
+    }
 
     return {
         me: data?.me,

@@ -23,15 +23,15 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchTheme($query: String, $type: ThemeType, $sort: [AnimeThemeSort!], $page: Int!) {
-        animethemePagination(search: $query, type: $type, sort: $sort, first: 15, page: $page) {
-            data {
+    query SearchTheme($query: String, $filter: AnimeThemeFilterInput, $pagination: PaginationInput, $sort: [AnimeThemeSort!]) {
+        animethemeConnection(search: $query, filter: $filter, pagination: $pagination, sort: $sort) {
+            nodes {
                 ...ThemeSummaryCardTheme
                 ...ThemeSummaryCardThemeExpandable
                 slug
             }
-            paginatorInfo {
-                hasMorePages
+            pageInfo {
+                hasNextPage
             }
         }
     }
@@ -50,7 +50,9 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
 
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
-        ...(filter.type ? { type: filter.type } : {}),
+        filter: {
+            ...(filter.type ? { type: filter.type } : {}),
+        },
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<AnimeThemeSort> } : {}),
     };
 
@@ -71,7 +73,10 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
                 query,
                 variables: {
                     ...variables,
-                    page: pageParam,
+                    pagination: {
+                        first: 15,
+                        page: pageParam,
+                    },
                 },
             });
 
@@ -79,7 +84,7 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.paginatorInfo.hasMorePages ? lastPageParam + 1 : null,
+            lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null,
         placeholderData: keepPreviousData,
     });
 

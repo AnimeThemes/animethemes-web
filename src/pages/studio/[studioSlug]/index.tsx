@@ -103,8 +103,8 @@ const propsQuery = graphql(`
 
 const pathsQuery = graphql(`
     query StudioDetailPageAll {
-        studioPagination {
-            data {
+        studioConnection {
+            nodes {
                 ...StudioDetailPageStudio
                 slug
             }
@@ -235,11 +235,11 @@ export const getStaticPaths: GetStaticPaths<StudioDetailPageParams> = async () =
             query: pathsQuery,
         });
 
-        for (const studio of data.studioPagination.data) {
+        for (const studio of data.studioConnection.nodes) {
             buildTimeCache.set(studio.slug, studio);
         }
 
-        return data.studioPagination.data.map((studio) => ({
+        return data.studioConnection.nodes.map((studio) => ({
             params: {
                 studioSlug: studio.slug,
             },

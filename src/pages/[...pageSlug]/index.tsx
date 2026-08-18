@@ -63,8 +63,8 @@ const propsQuery = graphql(`
 
 const pathsQuery = graphql(`
     query DocumentPageAll {
-        pagePagination {
-            data {
+        pageConnection {
+            nodes {
                 slug
             }
         }
@@ -160,7 +160,7 @@ export const getStaticPaths: GetStaticPaths<DocumentPageParams> = () => {
             query: pathsQuery,
         });
 
-        return data.pagePagination.data.map((page) => ({
+        return data.pageConnection.nodes.map((page) => ({
             params: {
                 pageSlug: page.slug.split("/"),
             },

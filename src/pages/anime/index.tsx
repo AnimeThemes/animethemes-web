@@ -13,9 +13,9 @@ import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 
 const propsQuery = graphql(`
-    query AnimeIndexPage($first: Int!) {
-        animePagination(sort: TITLE_ROMAJI, first: $first) {
-            data {
+    query AnimeIndexPage($pagination: PaginationInput) {
+        animeConnection(sort: TITLE_ROMAJI, pagination: $pagination) {
+            nodes {
                 slug
                 title {
                     romaji
@@ -27,12 +27,12 @@ const propsQuery = graphql(`
 
 interface AnimeIndexPageProps extends SharedPageProps, ResultOf<typeof propsQuery> {}
 
-export default function AnimeIndexPage({ animePagination }: AnimeIndexPageProps) {
+export default function AnimeIndexPage({ animeConnection }: AnimeIndexPageProps) {
     return (
         <>
             <BackToTopButton />
             <Text variant="h1">Anime Index</Text>
-            <AlphabeticalIndex items={animePagination.data} getName={anime => anime.title.romaji}>
+            <AlphabeticalIndex items={animeConnection.nodes} getName={anime => anime.title.romaji}>
                 {(anime) => (
                     <Text key={anime.slug} as={Link} href={`/anime/${anime.slug}`} prefetch={false} block link>
                         {anime.title.romaji}
@@ -49,7 +49,9 @@ export const getStaticProps: GetStaticProps<AnimeIndexPageProps> = async () => {
     const { data } = await client.query({
         query: propsQuery,
         variables: {
-            first: Math.pow(2, 16) - 1,
+            pagination: {
+                first: Math.pow(2, 16) - 1,
+            },
         },
     });
 

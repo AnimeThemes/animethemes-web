@@ -14,10 +14,10 @@ export function RecentlyAddedVideos() {
             const { data } = await client.query({
                 query: graphql(`
                     query HomePageRecentlyAdded {
-                        videoPagination(sort: [ID_DESC], first: 10) {
-                            data {
+                        videoConnection(sort: [ID_DESC], pagination: { first: 10 }) {
+                            nodes {
                                 ...VideoSummaryCardVideo
-                                animethemeentries(first: 1) {
+                                animethemeentries {
                                     nodes {
                                         ...VideoSummaryCardEntry
                                     }
@@ -28,7 +28,7 @@ export function RecentlyAddedVideos() {
                 `),
             });
 
-            return data.videoPagination.data;
+            return data.videoConnection.nodes;
         },
     });
 

@@ -23,14 +23,14 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchStudio($query: String, $name_like: String, $sort: [StudioSort!], $page: Int!) {
-        studioPagination(search: $query, name_like: $name_like, sort: $sort, first: 15, page: $page) {
-            data {
+    query SearchStudio($query: String, $filter: StudioFilterInput, $pagination: PaginationInput, $sort: [StudioSort!]) {
+        studioConnection(search: $query, filter: $filter, pagination: $pagination, sort: $sort) {
+            nodes {
                 ...StudioSummaryCardStudio
                 slug
             }
-            paginatorInfo {
-                hasMorePages
+            pageInfo {
+                hasNextPage
             }
         }
     }
@@ -49,7 +49,9 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
 
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
-        ...(filter.firstLetter ? { name_like: `${filter.firstLetter}%` } : {}),
+        filter: {
+            ...(filter.firstLetter ? { name_like: `${filter.firstLetter}%` } : {}),
+        },
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<StudioSort> } : {}),
     };
 
@@ -70,7 +72,10 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
                 query,
                 variables: {
                     ...variables,
-                    page: pageParam,
+                    pagination: {
+                        first: 15,
+                        page: pageParam,
+                    },
                 },
             });
 
@@ -78,7 +83,7 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.paginatorInfo.hasMorePages ? lastPageParam + 1 : null,
+            lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null,
         placeholderData: keepPreviousData,
     });
 

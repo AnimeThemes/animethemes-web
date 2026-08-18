@@ -40,9 +40,9 @@ const StyledImageContainer = styled.div<{ $isPushed: boolean }>`
 `;
 
 const propsQuery = graphql(`
-    query GalleryPage($first: Int!) {
-        grills: imagePagination(facet: GRILL, first: $first) {
-            data {
+    query GalleryPage($pagination: PaginationInput) {
+        grills: imageConnection(filter: { facet: GRILL }, pagination: $pagination) {
+            nodes {
                 id
                 link
             }
@@ -89,7 +89,9 @@ export const getStaticProps: GetStaticProps = async () => {
     const { data } = await client.query({
         query: propsQuery,
         variables: {
-            first: Math.pow(2, 16) - 1,
+            pagination: {
+                first: Math.pow(2, 16) - 1,
+            },
         },
     });
 

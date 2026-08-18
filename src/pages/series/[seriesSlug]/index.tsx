@@ -79,8 +79,8 @@ const propsQuery = graphql(`
 
 const pathsQuery = graphql(`
     query SeriesDetailPageAll {
-        seriesPagination {
-            data {
+        seriesConnection {
+            nodes {
                 ...SeriesDetailPageSeries
                 slug
             }
@@ -192,11 +192,11 @@ export const getStaticPaths: GetStaticPaths<SeriesDetailPageParams> = async () =
             query: pathsQuery,
         });
 
-        for (const series of data.seriesPagination.data) {
+        for (const series of data.seriesConnection.nodes) {
             buildTimeCache.set(series.slug, series);
         }
 
-        return data.seriesPagination.data.map((series) => ({
+        return data.seriesConnection.nodes.map((series) => ({
             params: {
                 seriesSlug: series.slug,
             },
