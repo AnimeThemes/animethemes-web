@@ -127,7 +127,7 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.data)
+                    .flatMap((page) => page.nodes)
                     .map((artist) => <ArtistSummaryCard key={artist.slug} artist={artist} />)}
             </SearchEntity>
         </>

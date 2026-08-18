@@ -80,7 +80,7 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
                 },
             });
 
-            return data.animethemePagination;
+            return data.animethemeConnection;
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, _, lastPageParam) =>
@@ -133,7 +133,7 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.data)
+                    .flatMap((page) => page.nodes)
                     .map((theme) => <ThemeSummaryCard key={theme.slug} theme={theme} expandable={theme} />)}
             </SearchEntity>
         </>

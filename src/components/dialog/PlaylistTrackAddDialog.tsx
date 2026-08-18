@@ -246,8 +246,8 @@ function PlaylistTrackAddCard({
     async function addTrackToPlaylist() {
         await mutateAddTrack({
             variables: {
+                playlistId: playlist.id,
                 input: {
-                    playlistId: playlist.id,
                     videoId: video.id,
                     entryId: entry.id,
                 },

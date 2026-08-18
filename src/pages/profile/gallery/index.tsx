@@ -58,7 +58,7 @@ export default function GalleryPage({ grills }: GalleryPageProps) {
             <SEO title="Grill Gallery" />
             <Text variant="h1">Grill Gallery</Text>
             <StyledGrid>
-                {grills.data.map((grill) => (
+                {grills.nodes.map((grill) => (
                     <Grill key={grill.id} grill={grill} />
                 ))}
             </StyledGrid>
@@ -67,7 +67,7 @@ export default function GalleryPage({ grills }: GalleryPageProps) {
 }
 
 interface GrillProps {
-    grill: GalleryPageProps["grills"]["data"][number];
+    grill: GalleryPageProps["grills"]["nodes"][number];
 }
 
 function Grill({ grill }: GrillProps) {

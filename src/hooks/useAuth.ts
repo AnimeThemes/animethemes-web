@@ -55,13 +55,8 @@ const meQuery = graphql(`
             id
             name
             email
-            permissions {
-                name
-            }
             roles {
-                permissions {
-                    name
-                }
+                name
             }
         }
     }

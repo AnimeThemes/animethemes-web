@@ -392,7 +392,7 @@ export const getStaticProps: GetStaticProps<AnimeAwardsPage> = async () => {
         `),
         variables: {
             filter: {
-                themeIds: [...themeIds],
+                idIn: [...themeIds],
             },
         },
     });

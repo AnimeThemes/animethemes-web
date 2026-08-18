@@ -120,7 +120,7 @@ export function SearchPlaylist({ searchQuery }: SearchPlaylistProps) {
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.data)
+                    .flatMap((page) => page.nodes)
                     .map((playlist) => (
                         <PlaylistSummaryCard key={playlist.id} playlist={playlist} playlistWithOwner={playlist} />
                     ))}

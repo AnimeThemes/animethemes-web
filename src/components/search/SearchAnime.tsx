@@ -154,7 +154,7 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.data)
+                    .flatMap((page) => page.nodes)
                     .map((anime) => <AnimeSummaryCard key={anime.slug} anime={anime} expandable={anime} />)}
             </SearchEntity>
         </>

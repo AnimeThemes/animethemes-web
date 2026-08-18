@@ -81,7 +81,7 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
                 },
             });
 
-            return data.seriesPagination;
+            return data.seriesConnection;
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, _, lastPageParam) =>
@@ -128,7 +128,7 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.data)
+                    .flatMap((page) => page.nodes)
                     .map((series) => (
                         <SummaryCard
                             key={series.slug}

@@ -79,7 +79,7 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
                 },
             });
 
-            return data.studioPagination;
+            return data.studioConnection;
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, _, lastPageParam) =>
@@ -126,7 +126,7 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.data)
+                    .flatMap((page) => page.nodes)
                     .map((studio) => <StudioSummaryCard key={studio.slug} studio={studio} />)}
             </SearchEntity>
         </>
