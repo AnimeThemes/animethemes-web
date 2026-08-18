@@ -76,10 +76,6 @@ export default function useAuth() {
             }
         `),
         {
-            awaitRefetchQueries: true,
-            onCompleted: () => {
-                //onSuccess();
-            },
             refetchQueries: [
                 meQuery,
             ],
@@ -108,9 +104,6 @@ export default function useAuth() {
                 }
             }
         `),
-        {
-            awaitRefetchQueries: true,
-        },
     );
 
     const login = async ({ setErrors, ...props }: LoginProps) => {
@@ -134,9 +127,6 @@ export default function useAuth() {
                 updateUserInformation(input: $input)
             }
         `),
-        {
-            awaitRefetchQueries: true,
-        },
     );
 
     const updateUserInformation = async ({ setErrors, ...props }: UpdateUserInformationProps) => {
@@ -176,9 +166,6 @@ export default function useAuth() {
                 logout
             }
         `),
-        {
-            awaitRefetchQueries: true,
-        },
     );
 
     const logout = async () => {
