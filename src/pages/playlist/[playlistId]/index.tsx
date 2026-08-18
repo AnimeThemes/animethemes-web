@@ -161,6 +161,7 @@ export const PLAYLIST_DETAIL_PAGE_TRACK = graphql(`
             ...PlaylistTrackAddDialogEntry
             ...PlaylistTrackRemoveDialogEntry
             animetheme {
+                ...VideoSummaryCardTheme
                 anime {
                     title {
                         romaji
@@ -234,7 +235,7 @@ export default function PlaylistDetailPage({
     const { data: meData } = useQuery(meQuery);
 
     const playlist = getFragmentData(PLAYLIST_DETAIL_PAGE_PLAYLIST, playlistData?.playlist ?? playlistFragment);
-    const tracks = getFragmentData(PLAYLIST_DETAIL_PAGE_TRACK, playlistData?.playlist.tracks ?? tracksFragment);
+    const tracks = getFragmentData(PLAYLIST_DETAIL_PAGE_TRACK, playlistData?.playlist?.tracks ?? tracksFragment);
     const me = getFragmentData(PLAYLIST_DETAIL_PAGE_ME, meData?.me ?? meFragment);
 
     if (!playlist) {
@@ -274,7 +275,7 @@ export default function PlaylistDetailPage({
         setCurrentWatchListItem(watchList[0]);
 
         const { video, entry } = watchList[0];
-        const theme = entry.theme;
+        const theme = entry.animetheme;
         const anime = theme?.anime;
 
         if (anime && entry && video) {
@@ -285,13 +286,10 @@ export default function PlaylistDetailPage({
 
     const updateTrackOrder = useCallback(
         async (newTracks: typeof tracks) => {
-            await refetch(
-                {
-                    ...playlist,
-                    tracks: newTracks,
-                },
-                { revalidate: false },
-            );
+            await refetch({
+                ...playlist,
+                tracks: newTracks,
+            });
         },
         [refetch, playlist],
     );
@@ -303,7 +301,7 @@ export default function PlaylistDetailPage({
                     id
                 }
             }
-        `)
+        `),
     );
 
     const updateTrackOrderRemote = useCallback(
@@ -317,12 +315,12 @@ export default function PlaylistDetailPage({
                     input: {
                         position: position,
                     },
-                }
+                },
             });
 
             await refetch();
         },
-        [refetch, playlist.id, tracks],
+        [tracks, updatePlaylistTrackMutation, playlist.id, refetch],
     );
 
     const coverImageItems = useMemo(
@@ -625,6 +623,7 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
             <VideoSummaryCard
                 video={track.video}
                 entry={track.animethemeentry}
+                theme={track.animethemeentry.animetheme}
                 onPlay={() => onPlay()}
                 menu={
                     <Menu modal={false}>

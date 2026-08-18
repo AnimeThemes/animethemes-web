@@ -17,6 +17,9 @@ export function MostPopularEntries() {
                         mostPopularEntries(pagination: { first: 10 }) {
                             nodes {
                                 ...VideoSummaryCardEntry
+                                animetheme {
+                                    ...VideoSummaryCardTheme
+                                }
                                 videos {
                                     nodes {
                                         ...VideoSummaryCardVideo
@@ -36,7 +39,9 @@ export function MostPopularEntries() {
         <Column style={{ "--gap": "16px" }}>
             {mostPopular.map((entry, index) => (
                 <Skeleton key={index} variant="summary-card" delay={index * 100}>
-                    {entry ? <VideoSummaryCard video={entry.videos.nodes[0]} entry={entry} /> : null}
+                    {entry ? (
+                        <VideoSummaryCard video={entry.videos.nodes[0]} entry={entry} theme={entry.animetheme} />
+                    ) : null}
                 </Skeleton>
             ))}
         </Column>

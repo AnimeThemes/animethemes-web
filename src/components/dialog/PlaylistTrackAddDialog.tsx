@@ -38,6 +38,9 @@ export const PLAYLIST_TRACK_ADD_DIALOG_ENTRY = graphql(`
         ...PlaylistTrackAddToastEntry
         ...PlaylistTrackRemoveToastEntry
         id
+        animetheme {
+            ...VideoSummaryCardTheme
+        }
     }
 `);
 
@@ -120,7 +123,7 @@ function PlaylistTrackAddForm({ video, entry, onCancel }: PlaylistTrackAddFormPr
 
     return (
         <Column style={{ "--gap": "24px" }}>
-            <VideoSummaryCard video={video} entry={entry} menu={null} />
+            <VideoSummaryCard video={video} entry={entry} theme={entry.animetheme} menu={null} />
             <Row style={{ "--justify-content": "center" }}>
                 <Icon icon={faArrowDown} color="text-disabled" />
             </Row>

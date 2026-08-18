@@ -20,6 +20,9 @@ export function RecentlyAddedVideos() {
                                 animethemeentries {
                                     nodes {
                                         ...VideoSummaryCardEntry
+                                        animetheme {
+                                            ...VideoSummaryCardTheme
+                                        }
                                     }
                                 }
                             }
@@ -36,7 +39,13 @@ export function RecentlyAddedVideos() {
         <Column style={{ "--gap": "16px" }}>
             {recentlyAdded.map((video, index) => (
                 <Skeleton key={index} variant="summary-card" delay={index * 100}>
-                    {video ? <VideoSummaryCard video={video} entry={video.animethemeentries.nodes[0]} /> : null}
+                    {video ? (
+                        <VideoSummaryCard
+                            video={video}
+                            entry={video.animethemeentries.nodes[0]}
+                            theme={video.animethemeentries.nodes[0].animetheme}
+                        />
+                    ) : null}
                 </Skeleton>
             ))}
         </Column>

@@ -345,6 +345,7 @@ export default function VideoPage({
                                     }}
                                     video={watchListItem.video}
                                     entry={watchListItem.entry}
+                                    theme={watchListItem.entry.animetheme}
                                     onPlay={() => setCurrentWatchListItem(watchListItem)}
                                     isPlaying={watchListItem.watchListId === currentWatchListItem?.watchListId}
                                 />
@@ -376,8 +377,8 @@ export default function VideoPage({
                                     new Map(
                                         theme.song.performances
                                             .sort((a, b) => a.relevance - b.relevance)
-                                            .map((p) => [p.artist.id, p])
-                                    ).values()
+                                            .map((p) => [p.artist.id, p]),
+                                    ).values(),
                                 ).map((performance) => (
                                     <ArtistSummaryCard
                                         key={performance.artist.id}

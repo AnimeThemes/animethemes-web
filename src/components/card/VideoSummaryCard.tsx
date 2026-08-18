@@ -63,30 +63,33 @@ export const VIDEO_SUMMARY_CARD_ENTRY = graphql(`
     fragment VideoSummaryCardEntry on AnimeThemeEntry {
         ...createVideoSlugEntry
         id
-        animetheme {
-            ...createVideoSlugTheme
-            id
-            type
-            sequence
-            group {
-                name
-                slug
+    }
+`);
+
+export const VIDEO_SUMMARY_CARD_THEME = graphql(`
+    fragment VideoSummaryCardTheme on AnimeTheme {
+        ...createVideoSlugTheme
+        id
+        type
+        sequence
+        group {
+            name
+            slug
+        }
+        anime {
+            slug
+            title {
+                romaji
             }
-            anime {
-                slug
-                title {
-                    romaji
+            images {
+                nodes {
+                    ...extractImagesImage
                 }
-                images {
-                    nodes {
-                        ...extractImagesImage
-                    }
-                }
             }
-            song {
-                ...SongTitleSong
-                ...PerformancesSong
-            }
+        }
+        song {
+            ...SongTitleSong
+            ...PerformancesSong
         }
     }
 `);
@@ -95,6 +98,7 @@ interface VideoSummaryCardProps {
     ref?: Ref<HTMLDivElement>;
     video: FragmentType<typeof VIDEO_SUMMARY_CARD_VIDEO>;
     entry: FragmentType<typeof VIDEO_SUMMARY_CARD_ENTRY>;
+    theme: FragmentType<typeof VIDEO_SUMMARY_CARD_THEME>;
     menu?: ReactNode;
     append?: ReactNode;
     onPlay?(): void;
@@ -105,6 +109,7 @@ export function VideoSummaryCard({
     ref,
     video: videoFragment,
     entry: entryFragment,
+    theme: themeFragment,
     menu,
     append,
     onPlay,
@@ -113,12 +118,8 @@ export function VideoSummaryCard({
 }: VideoSummaryCardProps) {
     const video = getFragmentData(VIDEO_SUMMARY_CARD_VIDEO, videoFragment);
     const entry = getFragmentData(VIDEO_SUMMARY_CARD_ENTRY, entryFragment);
-    const theme = entry.animetheme;
-    const anime = theme?.anime;
-
-    if (!entry || !theme || !anime) {
-        return null;
-    }
+    const theme = getFragmentData(VIDEO_SUMMARY_CARD_THEME, themeFragment);
+    const anime = theme.anime;
 
     const { smallCover } = extractImages(anime.images.nodes);
     const videoSlug = createVideoSlug(theme, entry, video);
