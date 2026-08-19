@@ -3,7 +3,7 @@ import styled from "styled-components";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 
-import { useQuery } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import {
     faArrowTurnDown,
     faArrowTurnUp,
@@ -64,7 +64,6 @@ import {
     UNSORTED,
 } from "@/utils/comparators";
 import createVideoSlug from "@/utils/createVideoSlug";
-import devLog from "@/utils/devLog";
 import extractImages from "@/utils/extractImages";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
@@ -130,39 +129,6 @@ const comparators = {
     [RANK_DESC]: (a, b) => a.rank - b.rank,
 } satisfies Record<string, Comparator<ResultOf<typeof PLAYLIST_DETAIL_PAGE_TRACK> & { rank: number }>>;
 
-type LinkedList<T> = Array<
-    {
-        id: string;
-        previous?: { id: string } | null;
-        next?: { id: string } | null;
-    } & T
->;
-
-function sortLinkedList<T>(list: LinkedList<T>) {
-    const lookUp = list.reduce(
-        (prev, curr) => {
-            prev[curr.id] = curr;
-            return prev;
-        },
-        {} as Record<string, (typeof list)[number]>,
-    );
-
-    let next = list.find((item) => !item.previous);
-    const sortedList = [];
-
-    while (next) {
-        delete lookUp[next.id];
-        sortedList.push(next);
-        next = next.next ? lookUp[next.next.id] : undefined;
-    }
-
-    if (sortedList.length !== list.length) {
-        devLog.error("The sorted linked list has a different size as the original list. It probably has broken links!");
-    }
-
-    return sortedList;
-}
-
 export const PLAYLIST_DETAIL_PAGE_PLAYLIST = graphql(`
     fragment PlaylistDetailPagePlaylist on Playlist {
         ...PlaylistEditDialogPlaylist
@@ -194,6 +160,7 @@ export const PLAYLIST_DETAIL_PAGE_TRACK = graphql(`
             ...PlaylistTrackAddDialogEntry
             ...PlaylistTrackRemoveDialogEntry
             animetheme {
+                ...VideoSummaryCardTheme
                 anime {
                     title {
                         romaji
@@ -226,15 +193,9 @@ const PLAYLIST_DETAIL_PAGE_QUERY = graphql(`
     query PlaylistDetailPagePlaylist($playlistId: String!) {
         playlist(id: $playlistId) {
             ...PlaylistDetailPagePlaylist
-            tracks {
+            tracks(sort: POSITION) {
                 ...PlaylistDetailPageTrack
                 id
-                previous {
-                    id
-                }
-                next {
-                    id
-                }
             }
         }
     }
@@ -273,9 +234,7 @@ export default function PlaylistDetailPage({
     const { data: meData } = useQuery(meQuery);
 
     const playlist = getFragmentData(PLAYLIST_DETAIL_PAGE_PLAYLIST, playlistData?.playlist ?? playlistFragment);
-    const tracks = sortLinkedList(
-        getFragmentData(PLAYLIST_DETAIL_PAGE_TRACK, playlistData?.playlist.tracks ?? tracksFragment),
-    );
+    const tracks = getFragmentData(PLAYLIST_DETAIL_PAGE_TRACK, playlistData?.playlist?.tracks ?? tracksFragment);
     const me = getFragmentData(PLAYLIST_DETAIL_PAGE_ME, meData?.me ?? meFragment);
 
     if (!playlist) {
@@ -315,7 +274,7 @@ export default function PlaylistDetailPage({
         setCurrentWatchListItem(watchList[0]);
 
         const { video, entry } = watchList[0];
-        const theme = entry.theme;
+        const theme = entry.animetheme;
         const anime = theme?.anime;
 
         if (anime && entry && video) {
@@ -326,34 +285,41 @@ export default function PlaylistDetailPage({
 
     const updateTrackOrder = useCallback(
         async (newTracks: typeof tracks) => {
-            await refetch(
-                {
-                    ...playlist,
-                    tracks: newTracks,
-                },
-                { revalidate: false },
-            );
+            await refetch({
+                ...playlist,
+                tracks: newTracks,
+            });
         },
         [refetch, playlist],
     );
 
+    const [updatePlaylistTrackMutation] = useMutation(
+        graphql(`
+            mutation UpdatePlaylistTrack($id: String!, $playlist: String!, $input: UpdatePlaylistTrackInput!) {
+                updatePlaylistTrack(id: $id, playlist: $playlist, input: $input) {
+                    id
+                }
+            }
+        `),
+    );
+
     const updateTrackOrderRemote = useCallback(
         async (trackId: string) => {
-            const trackIndex = tracks.findIndex((track) => track.id === trackId);
+            const position = tracks.findIndex((track) => track.id === trackId) + 1;
 
-            const nextId = tracks[trackIndex + 1]?.id;
-            const previousId = tracks[trackIndex - 1]?.id;
+            await updatePlaylistTrackMutation({
+                variables: {
+                    id: trackId,
+                    playlist: playlist.id,
+                    input: {
+                        position: position,
+                    },
+                },
+            });
 
-            if (nextId || previousId) {
-                await axios.put(`/playlist/${playlist.id}/track/${trackId}`, {
-                    next: nextId,
-                    previous: nextId ? undefined : previousId,
-                });
-
-                await refetch();
-            }
+            await refetch();
         },
-        [refetch, playlist.id, tracks],
+        [tracks, updatePlaylistTrackMutation, playlist.id, refetch],
     );
 
     const coverImageItems = useMemo(
@@ -656,6 +622,7 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
             <VideoSummaryCard
                 video={track.video}
                 entry={track.animethemeentry}
+                theme={track.animethemeentry.animetheme}
                 onPlay={() => onPlay()}
                 menu={
                     <Menu modal={false}>
@@ -756,15 +723,9 @@ export const getServerSideProps: GetServerSideProps<PlaylistDetailPageProps, Pla
             query PlaylistDetailPage($playlistId: String!) {
                 playlist(id: $playlistId) {
                     ...PlaylistDetailPagePlaylist
-                    tracks {
+                    tracks(sort: POSITION) {
                         ...PlaylistDetailPageTrack
                         id
-                        previous {
-                            id
-                        }
-                        next {
-                            id
-                        }
                     }
                 }
                 me {
@@ -781,13 +742,11 @@ export const getServerSideProps: GetServerSideProps<PlaylistDetailPageProps, Pla
         };
     }
 
-    const tracks = sortLinkedList(data.playlist.tracks);
-
     return {
         props: {
             ...getSharedPageProps(),
             playlist: data.playlist,
-            tracks,
+            tracks: data.playlist.tracks,
             me: data.me,
         },
     };

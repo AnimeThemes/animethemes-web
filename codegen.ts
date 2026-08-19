@@ -1,7 +1,7 @@
 import type { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
-    schema: "http://graphql.animethemes.test",
+    schema: "http://animethemes-rust.test/graphql",
     documents: ["src/**/*.js", "src/**/*.ts", "src/**/*.tsx"],
     ignoreNoDocuments: true,
     verbose: true,

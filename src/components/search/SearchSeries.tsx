@@ -23,16 +23,17 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchSeries($query: String, $titleRomaji_like: String, $sort: [SeriesSort!], $page: Int!) {
-        seriesPagination(search: $query, titleRomaji_like: $titleRomaji_like, sort: $sort, first: 15, page: $page) {
-            data {
+    query SearchSeries($query: String, $filter: SeriesFilterInput, $pagination: PaginationInput, $sort: [SeriesSort!]) {
+        seriesConnection(search: $query, filter: $filter, pagination: $pagination, sort: $sort) {
+            nodes {
                 slug
                 title {
                     romaji
                 }
             }
-            paginatorInfo {
-                hasMorePages
+            pageInfo {
+                hasNextPage
+                endCursor
             }
         }
     }
@@ -51,7 +52,9 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
 
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
-        ...(filter.firstLetter ? { titleRomaji_like: `${filter.firstLetter}%` } : {}),
+        filter: {
+            ...(filter.firstLetter ? { titleRomajiLike: `${filter.firstLetter}%` } : {}),
+        },
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SeriesSort> } : {}),
     };
 
@@ -72,15 +75,17 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
                 query,
                 variables: {
                     ...variables,
-                    page: pageParam,
+                    pagination: {
+                        first: 15,
+                        after: pageParam,
+                    },
                 },
             });
 
-            return data.seriesPagination;
+            return data.seriesConnection;
         },
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.paginatorInfo.hasMorePages ? lastPageParam + 1 : null,
+        initialPageParam: null as string | null,
+        getNextPageParam: (lastPage) => lastPage.pageInfo.endCursor,
         placeholderData: keepPreviousData,
     });
 
@@ -123,7 +128,7 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.data)
+                    .flatMap((page) => page.nodes)
                     .map((series) => (
                         <SummaryCard
                             key={series.slug}

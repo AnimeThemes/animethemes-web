@@ -23,15 +23,16 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchTheme($query: String, $type: ThemeType, $sort: [AnimeThemeSort!], $page: Int!) {
-        animethemePagination(search: $query, type: $type, sort: $sort, first: 15, page: $page) {
-            data {
+    query SearchTheme($query: String, $filter: AnimeThemeFilterInput, $pagination: PaginationInput, $sort: [AnimeThemeSort!]) {
+        animethemeConnection(search: $query, filter: $filter, pagination: $pagination, sort: $sort) {
+            nodes {
                 ...ThemeSummaryCardTheme
                 ...ThemeSummaryCardThemeExpandable
                 slug
             }
-            paginatorInfo {
-                hasMorePages
+            pageInfo {
+                hasNextPage
+                endCursor
             }
         }
     }
@@ -50,7 +51,9 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
 
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
-        ...(filter.type ? { type: filter.type } : {}),
+        filter: {
+            ...(filter.type ? { type: filter.type } : {}),
+        },
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<AnimeThemeSort> } : {}),
     };
 
@@ -71,15 +74,17 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
                 query,
                 variables: {
                     ...variables,
-                    page: pageParam,
+                    pagination: {
+                        first: 15,
+                        after: pageParam,
+                    },
                 },
             });
 
-            return data.animethemePagination;
+            return data.animethemeConnection;
         },
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.paginatorInfo.hasMorePages ? lastPageParam + 1 : null,
+        initialPageParam: null as string | null,
+        getNextPageParam: (lastPage) => lastPage.pageInfo.endCursor,
         placeholderData: keepPreviousData,
     });
 
@@ -128,7 +133,7 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.data)
+                    .flatMap((page) => page.nodes)
                     .map((theme) => <ThemeSummaryCard key={theme.slug} theme={theme} expandable={theme} />)}
             </SearchEntity>
         </>

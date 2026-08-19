@@ -95,8 +95,8 @@ const propsQuery = graphql(`
 
 const pathsQuery = graphql(`
     query AnimeDetailPageAll {
-        animePagination {
-            data {
+        animeConnection {
+            nodes {
                 ...AnimeDetailPageAnime
                 slug
             }
@@ -259,11 +259,11 @@ export const getStaticPaths: GetStaticPaths<AnimeDetailPageParams> = () => {
             query: pathsQuery,
         });
 
-        for (const anime of data.animePagination.data) {
+        for (const anime of data.animeConnection.nodes) {
             buildTimeCache.set(anime.slug, anime);
         }
 
-        return data.animePagination.data.map((anime) => ({
+        return data.animeConnection.nodes.map((anime) => ({
             params: {
                 animeSlug: anime.slug,
             },

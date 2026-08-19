@@ -77,7 +77,7 @@ const nextConfig: NextConfig = {
             },
         ];
     },
-    allowedDevOrigins: ["animethemes.test", "*.animethemes.test"],
+    allowedDevOrigins: ["animethemes.test", "*.animethemes.test", "animethemes-rust.test"],
 };
 
 export default ANALYZE ? withBundleAnalyzer(nextConfig) : nextConfig;

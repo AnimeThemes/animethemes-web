@@ -27,8 +27,8 @@ export const SEASON_DETAIL_PAGE_SEASON = graphql(`
         ...SeasonNavigationSeason
         season
         seasonLocalized
-        anime {
-            data {
+        anime(pagination: { first: 100 }) {
+            nodes {
                 ...AnimeSummaryCardAnime
                 ...AnimeSummaryCardAnimeExpandable
                 slug
@@ -44,7 +44,7 @@ const pathsQuery = graphql(`
     query SeasonDetailPageAll {
         animeyears {
             year
-            seasons {
+            seasons: season {
                 season
             }
         }
@@ -59,7 +59,7 @@ const propsQuery = graphql(`
             season(season: $season) {
                 ...SeasonDetailPageSeason
             }
-            seasons {
+            seasons: season {
                 season
                 seasonLocalized
             }
@@ -86,7 +86,7 @@ interface SeasonDetailPageParams extends ParsedUrlQuery {
 export default function SeasonDetailPage({ year: yearFragment, season: seasonFragment }: SeasonDetailPageProps) {
     const year = getFragmentData(SEASON_DETAIL_PAGE_YEAR, yearFragment);
     const season = getFragmentData(SEASON_DETAIL_PAGE_SEASON, seasonFragment);
-    const animeList = season.anime.data.filter((anime) => anime.title.romaji).sort((a, b) => a.title.romaji.localeCompare(b.title.romaji));
+    const animeList = season.anime.nodes.filter((anime) => anime.title.romaji).sort((a, b) => a.title.romaji.localeCompare(b.title.romaji));
 
     return (
         <>
@@ -137,7 +137,7 @@ export const getStaticProps: GetStaticProps<SeasonDetailPageProps, SeasonDetailP
                     sortTransformed(seasonComparator, (season) => season.season),
                 ),
             },
-            season: data.animeyear[0].season,
+            season: data.animeyear[0].season[0],
             years: [...data.animeyears].sort((a, b) => a.year - b.year),
         },
         // Revalidate after 3 hours (= 10800 seconds).

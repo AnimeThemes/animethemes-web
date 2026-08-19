@@ -377,9 +377,9 @@ export const getStaticProps: GetStaticProps<AnimeAwardsPage> = async () => {
 
     const { data } = await client.query({
         query: graphql(`
-            query AnimeAwardPage($themeIds: Mixed!) {
-                animethemePagination(where: {AND: [{column: ID, operator: IN, value: $themeIds}]}) {
-                    data {
+            query AnimeAwardPage($filter: AnimeThemeFilterInput) {
+                animethemeConnection(filter: $filter) {
+                    nodes {
                         ...AnimeAwardsPageTheme
                         id
                         animethemeentries {
@@ -391,11 +391,13 @@ export const getStaticProps: GetStaticProps<AnimeAwardsPage> = async () => {
             }
         `),
         variables: {
-            themeIds: [...themeIds],
+            filter: {
+                idIn: [...themeIds],
+            },
         },
     });
 
-    const themesById = new Map(data.animethemePagination.data.map((theme) => [theme.id, theme]));
+    const themesById = new Map(data.animethemeConnection.nodes.map((theme) => [theme.id, theme]));
 
     const awards = (event as Array<Award>).map<AwardPopulated>((award) => {
         function populateNominees<T extends Nominee>(nominees: Array<T>): Array<T & HasTheme> {

@@ -55,7 +55,9 @@ export const THEME_DETAIL_CARD_THEME = graphql(`
         anime {
             ...VideoButtonAnime
             slug
-            name
+            title {
+                romaji
+            }
         }
         song {
             ...SongTitleSong

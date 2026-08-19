@@ -241,8 +241,8 @@ const propsQuery = graphql(`
 
 const pathsQuery = graphql(`
     query ArtistDetailPageAll {
-        artistPagination {
-            data {
+        artistConnection {
+            nodes {
                 ...ArtistDetailPageArtist
                 slug
                 information
@@ -687,11 +687,11 @@ export const getStaticPaths: GetStaticPaths<ArtistDetailPageParams> = async () =
             query: pathsQuery,
         });
 
-        for (const artist of data.artistPagination.data) {
+        for (const artist of data.artistConnection.nodes) {
             buildTimeCache.set(artist.slug, artist);
         }
 
-        return data.artistPagination.data.map((artist) => ({
+        return data.artistConnection.nodes.map((artist) => ({
             params: {
                 artistSlug: artist.slug,
             },

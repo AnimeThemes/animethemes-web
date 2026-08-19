@@ -125,6 +125,7 @@ export const FEATURED_THEME_ENTRY = graphql(`
         ...createVideoSlugEntry
         animetheme {
             ...createVideoSlugTheme
+            ...VideoSummaryCardTheme
             anime {
                 slug
                 images {
@@ -176,9 +177,11 @@ export function FeaturedTheme({
 
     const featuredThemeSummaryCard =
         featuredThemePreview !== FeaturedThemePreview.DISABLED ? (
-            <StyledCenter>{card ?? <VideoSummaryCard entry={entry} video={video} />}</StyledCenter>
+            <StyledCenter>
+                {card ?? <VideoSummaryCard theme={entry.animetheme} entry={entry} video={video} />}
+            </StyledCenter>
         ) : (
-            (card ?? <VideoSummaryCard entry={entry} video={video} />)
+            (card ?? <VideoSummaryCard theme={entry.animetheme} entry={entry} video={video} />)
         );
 
     return (

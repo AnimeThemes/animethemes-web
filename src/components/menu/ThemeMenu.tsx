@@ -13,6 +13,7 @@ import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated
 export const THEME_MENU_THEME = graphql(`
     fragment ThemeMenuTheme on AnimeTheme {
         ...createVideoSlugTheme
+        ...VideoSummaryCardTheme
         id
         type
         sequence
@@ -36,10 +37,14 @@ export const THEME_MENU_THEME = graphql(`
         }
         animethemeentries {
             ...createVideoSlugEntry
+            ...PlaylistTrackAddDialogEntry
+            ...VideoSummaryCardEntry
             id
             videos {
                 nodes {
                     ...createVideoSlugVideo
+                    ...PlaylistTrackAddDialogVideo
+                    ...VideoSummaryCardVideo
                     id
                     basename
                     audio {
@@ -70,7 +75,7 @@ export function ThemeMenu({ theme: themeFragment }: ThemeMenuProps) {
     // Flip the structure on it's head, because we need entry as the root object here.
     const entryFlipped = {
         ...entry,
-        theme,
+        animetheme: theme,
     };
 
     return (
@@ -91,19 +96,19 @@ export function ThemeMenu({ theme: themeFragment }: ThemeMenuProps) {
                         </MenuItem>
                     }
                 />
-                {/*{watchList.length ? (*/}
-                {/*    <>*/}
-                {/*        <MenuSeparator />*/}
-                {/*        <MenuItem onSelect={() => addWatchListItem(video, entryFlipped)}>*/}
-                {/*            <Icon icon={faArrowTurnDown} color="text-disabled" />*/}
-                {/*            <Text>Add to Watch List</Text>*/}
-                {/*        </MenuItem>*/}
-                {/*        <MenuItem onSelect={() => addWatchListItemNext(video, entryFlipped)}>*/}
-                {/*            <Icon icon={faArrowTurnUp} color="text-disabled" />*/}
-                {/*            <Text>Play Next</Text>*/}
-                {/*        </MenuItem>*/}
-                {/*    </>*/}
-                {/*) : null}*/}
+                {watchList.length ? (
+                    <>
+                        <MenuSeparator />
+                        <MenuItem onSelect={() => addWatchListItem(video, entryFlipped)}>
+                            <Icon icon={faArrowTurnDown} color="text-disabled" />
+                            <Text>Add to Watch List</Text>
+                        </MenuItem>
+                        <MenuItem onSelect={() => addWatchListItemNext(video, entryFlipped)}>
+                            <Icon icon={faArrowTurnUp} color="text-disabled" />
+                            <Text>Play Next</Text>
+                        </MenuItem>
+                    </>
+                ) : null}
             </MenuContent>
         </Menu>
     );

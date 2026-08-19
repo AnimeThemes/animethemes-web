@@ -14,12 +14,15 @@ export function RecentlyAddedVideos() {
             const { data } = await client.query({
                 query: graphql(`
                     query HomePageRecentlyAdded {
-                        videoPagination(sort: [ID_DESC], first: 10) {
-                            data {
+                        videoConnection(sort: [ID_DESC], pagination: { first: 10 }) {
+                            nodes {
                                 ...VideoSummaryCardVideo
-                                animethemeentries(first: 1) {
+                                animethemeentries {
                                     nodes {
                                         ...VideoSummaryCardEntry
+                                        animetheme {
+                                            ...VideoSummaryCardTheme
+                                        }
                                     }
                                 }
                             }
@@ -28,7 +31,7 @@ export function RecentlyAddedVideos() {
                 `),
             });
 
-            return data.videoPagination.data;
+            return data.videoConnection.nodes;
         },
     });
 
@@ -36,7 +39,13 @@ export function RecentlyAddedVideos() {
         <Column style={{ "--gap": "16px" }}>
             {recentlyAdded.map((video, index) => (
                 <Skeleton key={index} variant="summary-card" delay={index * 100}>
-                    {video ? <VideoSummaryCard video={video} entry={video.animethemeentries.nodes[0]} /> : null}
+                    {video ? (
+                        <VideoSummaryCard
+                            video={video}
+                            entry={video.animethemeentries.nodes[0]}
+                            theme={video.animethemeentries.nodes[0].animetheme}
+                        />
+                    ) : null}
                 </Skeleton>
             ))}
         </Column>

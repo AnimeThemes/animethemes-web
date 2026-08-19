@@ -139,8 +139,8 @@ const propsQuery = graphql(`
 
 const pathsQuery = graphql(`
     query VideoPageAll {
-        animePagination {
-            data {
+        animeConnection {
+            nodes {
                 ...VideoPageAnime
                 slug
                 animethemes {
@@ -345,6 +345,7 @@ export default function VideoPage({
                                     }}
                                     video={watchListItem.video}
                                     entry={watchListItem.entry}
+                                    theme={watchListItem.entry.animetheme}
                                     onPlay={() => setCurrentWatchListItem(watchListItem)}
                                     isPlaying={watchListItem.watchListId === currentWatchListItem?.watchListId}
                                 />
@@ -376,8 +377,8 @@ export default function VideoPage({
                                     new Map(
                                         theme.song.performances
                                             .sort((a, b) => a.relevance - b.relevance)
-                                            .map((p) => [p.artist.id, p])
-                                    ).values()
+                                            .map((p) => [p.artist.id, p]),
+                                    ).values(),
                                 ).map((performance) => (
                                     <ArtistSummaryCard
                                         key={performance.artist.id}
@@ -510,15 +511,15 @@ export const getStaticPaths: GetStaticPaths<VideoPageParams> = () => {
             query: pathsQuery,
         });
 
-        for (const anime of data.animePagination.data) {
+        for (const anime of data.animeConnection.nodes) {
             buildTimeCache.set(anime.slug, anime);
         }
 
-        for (const anime of data.animePagination.data) {
+        for (const anime of data.animeConnection.nodes) {
             buildTimeCache.set(anime.slug, anime);
         }
 
-        return data.animePagination.data.flatMap((anime) =>
+        return data.animeConnection.nodes.flatMap((anime) =>
             anime.animethemes.flatMap((theme) =>
                 theme.animethemeentries.flatMap((entry) =>
                     entry.videos.nodes.flatMap((video) => ({

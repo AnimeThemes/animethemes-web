@@ -61,10 +61,12 @@ function ShuffleForm({ onSuccess, onCancel }: ShuffleFormProps) {
 
         try {
             await playRandomThemes({
-                themeType: filterThemeType ?? undefined,
-                format: filterFormat ?? undefined,
-                animeYearMin: parseInt(filterAnimeYearMin),
-                animeYearMax: parseInt(filterAnimeYearMax),
+                input: {
+                    type: filterThemeType ? [filterThemeType] : undefined,
+                    format: filterFormat ?? undefined,
+                    yearGte: parseInt(filterAnimeYearMin),
+                    yearLte: parseInt(filterAnimeYearMax),
+                },
             });
         } finally {
             setBusy(false);

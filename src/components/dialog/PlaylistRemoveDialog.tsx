@@ -74,9 +74,7 @@ function PlaylistRemoveForm({ playlist, onSuccess, onCancel }: PlaylistRemoveFor
     const [mutate, { loading, error }] = useMutation(
         graphql(`
             mutation PlaylistRemove($id: String!) {
-                DeletePlaylist(id: $id) {
-                    message
-                }
+                deletePlaylist(id: $id)
             }
         `),
         {

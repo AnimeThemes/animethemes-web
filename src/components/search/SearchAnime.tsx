@@ -34,30 +34,24 @@ const initialFilter: Filter = {
 const query = graphql(`
     query SearchAnime(
         $query: String
-        $titleRomaji_like: String
-        $season: AnimeSeason
-        $year: Int
-        $format: AnimeFormat
+        $filter: AnimeFilterInput
+        $pagination: PaginationInput,
         $sort: [AnimeSort!]
-        $page: Int!
     ) {
-        animePagination(
+        animeConnection(
             search: $query
-            titleRomaji_like: $titleRomaji_like
-            season: $season
-            year: $year
-            format: $format
+            filter: $filter,
+            pagination: $pagination,
             sort: $sort
-            first: 15
-            page: $page
         ) {
-            data {
+            nodes {
                 ...AnimeSummaryCardAnime
                 ...AnimeSummaryCardAnimeExpandable
                 slug
             }
-            paginatorInfo {
-                hasMorePages
+            pageInfo {
+                hasNextPage
+                endCursor
             }
         }
     }
@@ -76,10 +70,12 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
 
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
-        ...(filter.firstLetter ? { titleRomaji_like: `${filter.firstLetter}%` } : {}),
-        ...(filter.season ? { season: filter.season } : {}),
-        ...(filter.year ? { year: parseInt(filter.year) } : {}),
-        ...(filter.format ? { format: filter.format } : {}),
+        filter: {
+            ...(filter.firstLetter ? { titleRomajiLike: `${filter.firstLetter}%` } : {}),
+            ...(filter.season ? { season: filter.season } : {}),
+            ...(filter.year ? { year: parseInt(filter.year) } : {}),
+            ...(filter.format ? { format: filter.format } : {}),
+        },
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<AnimeSort> } : {}),
     };
 
@@ -100,15 +96,17 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
                 query,
                 variables: {
                     ...variables,
-                    page: pageParam,
+                    pagination: {
+                        first: 15,
+                        after: pageParam,
+                    },
                 },
             });
 
-            return data.animePagination;
+            return data.animeConnection;
         },
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.paginatorInfo.hasMorePages ? lastPageParam + 1 : null,
+        initialPageParam: null as string | null,
+        getNextPageParam: (lastPage) => lastPage.pageInfo.endCursor,
         placeholderData: keepPreviousData,
     });
 
@@ -156,7 +154,7 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.data)
+                    .flatMap((page) => page.nodes)
                     .map((anime) => <AnimeSummaryCard key={anime.slug} anime={anime} expandable={anime} />)}
             </SearchEntity>
         </>

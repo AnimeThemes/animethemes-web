@@ -66,7 +66,7 @@ const Grid = styled.div<{ $columns: number }>`
 `;
 
 export const HOME_PAGE_FEATURED_THEME = graphql(`
-    fragment HomePageFeaturedTheme on FeaturedTheme {
+    fragment HomePageFeaturedTheme on CurrentFeaturedTheme {
         animethemeentry {
             ...FeaturedThemeEntry
         }
@@ -249,8 +249,8 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
                 currentFeaturedTheme {
                     ...HomePageFeaturedTheme
                 }
-                announcementPagination {
-                    data {
+                announcementConnection {
+                    nodes {
                         ...HomePageAnnouncement
                     }
                 }
@@ -258,7 +258,7 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
         `),
     });
 
-    const announcements = getFragmentData(HOME_PAGE_ANNOUNCEMENT, data.announcementPagination.data);
+    const announcements = getFragmentData(HOME_PAGE_ANNOUNCEMENT, data.announcementConnection.nodes);
 
     return {
         props: {
