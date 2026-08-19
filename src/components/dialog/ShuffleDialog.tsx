@@ -62,7 +62,7 @@ function ShuffleForm({ onSuccess, onCancel }: ShuffleFormProps) {
         try {
             await playRandomThemes({
                 input: {
-                    type: filterThemeType ?? undefined,
+                    type: filterThemeType ? [filterThemeType] : undefined,
                     format: filterFormat ?? undefined,
                     yearGte: parseInt(filterAnimeYearMin),
                     yearLte: parseInt(filterAnimeYearMax),

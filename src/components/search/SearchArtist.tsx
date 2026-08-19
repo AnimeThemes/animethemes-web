@@ -23,7 +23,7 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchArtist($query: String, $filter: ArtistFilterInput,  $pagination: PaginationInput, $sort: [ArtistSort!]) {
+    query SearchArtist($query: String, $filter: ArtistFilterInput, $pagination: PaginationInput, $sort: [ArtistSort!]) {
         artistConnection(search: $query, filter: $filter, pagination: $pagination, sort: $sort) {
             nodes {
                 ...ArtistSummaryCardArtist
@@ -31,6 +31,7 @@ const query = graphql(`
             }
             pageInfo {
                 hasNextPage
+                endCursor
             }
         }
     }
@@ -50,7 +51,7 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
         filter: {
-            ...(filter.firstLetter ? { name_like: `${filter.firstLetter}%` } : {}),
+            ...(filter.firstLetter ? { nameMainLike: `${filter.firstLetter}%` } : {}),
         },
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<ArtistSort> } : {}),
     };
@@ -74,16 +75,15 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
                     ...variables,
                     pagination: {
                         first: 15,
-                        page: pageParam,
+                        after: pageParam,
                     },
                 },
             });
 
             return data.artistConnection;
         },
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null,
+        initialPageParam: null as string | null,
+        getNextPageParam: (lastPage) => lastPage.pageInfo.endCursor,
         placeholderData: keepPreviousData,
     });
 

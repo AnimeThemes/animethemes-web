@@ -51,6 +51,7 @@ const query = graphql(`
             }
             pageInfo {
                 hasNextPage
+                endCursor
             }
         }
     }
@@ -70,7 +71,7 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
         filter: {
-            ...(filter.firstLetter ? { titleRomaji_like: `${filter.firstLetter}%` } : {}),
+            ...(filter.firstLetter ? { titleRomajiLike: `${filter.firstLetter}%` } : {}),
             ...(filter.season ? { season: filter.season } : {}),
             ...(filter.year ? { year: parseInt(filter.year) } : {}),
             ...(filter.format ? { format: filter.format } : {}),
@@ -97,16 +98,15 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
                     ...variables,
                     pagination: {
                         first: 15,
-                        page: pageParam,
+                        after: pageParam,
                     },
                 },
             });
 
             return data.animeConnection;
         },
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null,
+        initialPageParam: null as string | null,
+        getNextPageParam: (lastPage) => lastPage.pageInfo.endCursor,
         placeholderData: keepPreviousData,
     });
 

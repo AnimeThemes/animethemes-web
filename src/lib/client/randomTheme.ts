@@ -26,7 +26,7 @@ const RANDOM_THEME = graphql(`
 
 export interface RandomThemesOptions {
     input?: {
-        type?: ThemeType;
+        type?: ThemeType[];
         format?: AnimeFormat;
         yearGte?: number;
         yearLte?: number;
@@ -36,7 +36,9 @@ export interface RandomThemesOptions {
 export async function fetchRandomThemes(options?: RandomThemesOptions) {
     const { data } = await client.query({
         query: RANDOM_THEME,
-        variables: options?.input,
+        variables: {
+            input: options?.input,
+        },
     });
 
     return data.animethemeShuffle;

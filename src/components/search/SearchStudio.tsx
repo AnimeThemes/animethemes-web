@@ -31,6 +31,7 @@ const query = graphql(`
             }
             pageInfo {
                 hasNextPage
+                endCursor
             }
         }
     }
@@ -50,7 +51,7 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
         filter: {
-            ...(filter.firstLetter ? { name_like: `${filter.firstLetter}%` } : {}),
+            ...(filter.firstLetter ? { nameLike: `${filter.firstLetter}%` } : {}),
         },
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<StudioSort> } : {}),
     };
@@ -74,16 +75,15 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
                     ...variables,
                     pagination: {
                         first: 15,
-                        page: pageParam,
+                        after: pageParam,
                     },
                 },
             });
 
             return data.studioConnection;
         },
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null,
+        initialPageParam: null as string | null,
+        getNextPageParam: (lastPage) => lastPage.pageInfo.endCursor,
         placeholderData: keepPreviousData,
     });
 
