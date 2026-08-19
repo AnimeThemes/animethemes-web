@@ -33,6 +33,8 @@ const documents = {
     "\n    fragment VideoSummaryCardEntry on AnimeThemeEntry {\n        ...createVideoSlugEntry\n        id\n    }\n": types.VideoSummaryCardEntryFragmentDoc,
     "\n    fragment VideoSummaryCardTheme on AnimeTheme {\n        ...createVideoSlugTheme\n        id\n        type\n        sequence\n        group {\n            name\n            slug\n        }\n        anime {\n            slug\n            title {\n                romaji\n            }\n            images {\n                nodes {\n                    ...extractImagesImage\n                }\n            }\n        }\n        song {\n            ...SongTitleSong\n            ...PerformancesSong\n        }\n    }\n": types.VideoSummaryCardThemeFragmentDoc,
     "\n            mutation PlaylistAdd($input: CreatePlaylistInput!) {\n                createPlaylist(input: $input) {\n                    id\n                }\n            }\n        ": types.PlaylistAddDocument,
+    "\n    fragment PlaylistEditDialogPlaylist on Playlist {\n        id\n        name\n        visibility\n    }\n": types.PlaylistEditDialogPlaylistFragmentDoc,
+    "\n            mutation PlaylistEdit($id: String!, $input: UpdatePlaylistInput!) {\n                updatePlaylist(id: $id, input: $input) {\n                    name\n                }\n            }\n        ": types.PlaylistEditDocument,
     "\n    fragment PlaylistRemoveDialogPlaylist on Playlist {\n        ...PlaylistSummaryCardPlaylist\n        ...PlaylistRemoveToastPlaylist\n        id\n        name\n    }\n": types.PlaylistRemoveDialogPlaylistFragmentDoc,
     "\n            mutation PlaylistRemove($id: String!) {\n                deletePlaylist(id: $id)\n            }\n        ": types.PlaylistRemoveDocument,
     "\n    fragment PlaylistTrackAddDialogVideo on Video {\n        ...VideoSummaryCardVideo\n        id\n    }\n": types.PlaylistTrackAddDialogVideoFragmentDoc,
@@ -117,7 +119,7 @@ const documents = {
     "\n    fragment HomePageFeaturedTheme on FeaturedTheme {\n        animethemeentry {\n            ...FeaturedThemeEntry\n        }\n        video {\n            ...FeaturedThemeVideo\n        }\n    }\n": types.HomePageFeaturedThemeFragmentDoc,
     "\n    fragment HomePageAnnouncement on Announcement {\n        content\n    }\n": types.HomePageAnnouncementFragmentDoc,
     "\n            query HomePage {\n                currentFeaturedTheme {\n                    ...HomePageFeaturedTheme\n                }\n                announcementConnection {\n                    nodes {\n                        ...HomePageAnnouncement\n                    }\n                }\n            }\n        ": types.HomePageDocument,
-    "\n    fragment PlaylistDetailPagePlaylist on Playlist {\n        # TODO: Fix\n        #...PlaylistEditDialogPlaylist\n        ...PlaylistTrackRemoveDialogPlaylist\n        id\n        name\n        description\n        visibility\n        tracksCount\n        user {\n            name\n        }\n    }\n": types.PlaylistDetailPagePlaylistFragmentDoc,
+    "\n    fragment PlaylistDetailPagePlaylist on Playlist {\n        ...PlaylistEditDialogPlaylist\n        ...PlaylistTrackRemoveDialogPlaylist\n        id\n        name\n        description\n        visibility\n        tracksCount\n        user {\n            name\n        }\n    }\n": types.PlaylistDetailPagePlaylistFragmentDoc,
     "\n    fragment PlaylistDetailPageTrack on PlaylistTrack {\n        id\n        video {\n            ...VideoSummaryCardVideo\n            ...FeaturedThemeVideo\n            ...PlaylistTrackAddDialogVideo\n            ...PlaylistTrackRemoveDialogVideo\n            id\n        }\n        animethemeentry {\n            ...VideoSummaryCardEntry\n            ...FeaturedThemeEntry\n            ...PlaylistTrackAddDialogEntry\n            ...PlaylistTrackRemoveDialogEntry\n            animetheme {\n                ...VideoSummaryCardTheme\n                anime {\n                    title {\n                        romaji\n                    }\n                    year\n                    season\n                    images {\n                        nodes {\n                            ...extractImagesImage\n                        }\n                    }\n                }\n                song {\n                    title {\n                        romaji\n                    }\n                }\n            }\n        }\n    }\n": types.PlaylistDetailPageTrackFragmentDoc,
     "\n    fragment PlaylistDetailPageMe on Me {\n        name\n    }\n": types.PlaylistDetailPageMeFragmentDoc,
     "\n    query PlaylistDetailPagePlaylist($playlistId: String!) {\n        playlist(id: $playlistId) {\n            ...PlaylistDetailPagePlaylist\n            tracks(sort: POSITION) {\n                ...PlaylistDetailPageTrack\n                id\n            }\n        }\n    }\n": types.PlaylistDetailPagePlaylistDocument,
@@ -240,6 +242,14 @@ export function graphql(source: "\n    fragment VideoSummaryCardTheme on AnimeTh
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n            mutation PlaylistAdd($input: CreatePlaylistInput!) {\n                createPlaylist(input: $input) {\n                    id\n                }\n            }\n        "): (typeof documents)["\n            mutation PlaylistAdd($input: CreatePlaylistInput!) {\n                createPlaylist(input: $input) {\n                    id\n                }\n            }\n        "];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    fragment PlaylistEditDialogPlaylist on Playlist {\n        id\n        name\n        visibility\n    }\n"): (typeof documents)["\n    fragment PlaylistEditDialogPlaylist on Playlist {\n        id\n        name\n        visibility\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n            mutation PlaylistEdit($id: String!, $input: UpdatePlaylistInput!) {\n                updatePlaylist(id: $id, input: $input) {\n                    name\n                }\n            }\n        "): (typeof documents)["\n            mutation PlaylistEdit($id: String!, $input: UpdatePlaylistInput!) {\n                updatePlaylist(id: $id, input: $input) {\n                    name\n                }\n            }\n        "];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -579,7 +589,7 @@ export function graphql(source: "\n            query HomePage {\n               
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    fragment PlaylistDetailPagePlaylist on Playlist {\n        # TODO: Fix\n        #...PlaylistEditDialogPlaylist\n        ...PlaylistTrackRemoveDialogPlaylist\n        id\n        name\n        description\n        visibility\n        tracksCount\n        user {\n            name\n        }\n    }\n"): (typeof documents)["\n    fragment PlaylistDetailPagePlaylist on Playlist {\n        # TODO: Fix\n        #...PlaylistEditDialogPlaylist\n        ...PlaylistTrackRemoveDialogPlaylist\n        id\n        name\n        description\n        visibility\n        tracksCount\n        user {\n            name\n        }\n    }\n"];
+export function graphql(source: "\n    fragment PlaylistDetailPagePlaylist on Playlist {\n        ...PlaylistEditDialogPlaylist\n        ...PlaylistTrackRemoveDialogPlaylist\n        id\n        name\n        description\n        visibility\n        tracksCount\n        user {\n            name\n        }\n    }\n"): (typeof documents)["\n    fragment PlaylistDetailPagePlaylist on Playlist {\n        ...PlaylistEditDialogPlaylist\n        ...PlaylistTrackRemoveDialogPlaylist\n        id\n        name\n        description\n        visibility\n        tracksCount\n        user {\n            name\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

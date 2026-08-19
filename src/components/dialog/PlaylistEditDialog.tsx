@@ -82,7 +82,7 @@ function PlaylistEditForm({ playlist, onSuccess, onCancel }: PlaylistEditFormPro
 
     const [mutate, { loading, error }] = useMutation(
         graphql(`
-            mutation PlaylistEdit($id: String!, input: UpdatePlaylistInput!) {
+            mutation PlaylistEdit($id: String!, $input: UpdatePlaylistInput!) {
                 updatePlaylist(id: $id, input: $input) {
                     name
                 }

@@ -131,8 +131,7 @@ const comparators = {
 
 export const PLAYLIST_DETAIL_PAGE_PLAYLIST = graphql(`
     fragment PlaylistDetailPagePlaylist on Playlist {
-        # TODO: Fix
-        #...PlaylistEditDialogPlaylist
+        ...PlaylistEditDialogPlaylist
         ...PlaylistTrackRemoveDialogPlaylist
         id
         name
