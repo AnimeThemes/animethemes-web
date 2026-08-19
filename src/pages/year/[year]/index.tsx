@@ -32,11 +32,11 @@ const propsQuery = graphql(`
             ...SeasonDetailPageYear
             ...YearNavigationYear
             year
-            seasons {
+            seasons: season {
                 season
                 seasonLocalized
-                anime(sort: NAME, first: 3) {
-                    data {
+                anime(sort: TITLE_ROMAJI, pagination: { first: 3 }) {
+                    nodes {
                         ...SeasonPreviewAnime
                     }
                 }
@@ -64,7 +64,7 @@ export default function YearDetailPage({ year }: YearDetailPageProps) {
         <>
             <SEO title={String(year.year)} />
             {year.seasons?.map((season) => (
-                <SeasonPreview key={season.season} season={season.season} year={year.year} animes={season.anime.data} />
+                <SeasonPreview key={season.season} season={season.season} year={year.year} animes={season.anime.nodes} />
             ))}
         </>
     );

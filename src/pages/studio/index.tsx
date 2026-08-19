@@ -13,9 +13,9 @@ import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 
 const propsQuery = graphql(`
-    query StudioIndexPage($first: Int!) {
-        studioPagination(sort: NAME, first: $first) {
-            data {
+    query StudioIndexPage($pagination: PaginationInput) {
+        studioConnection(sort: NAME, pagination: $pagination) {
+            nodes {
                 slug
                 name
             }
@@ -25,12 +25,12 @@ const propsQuery = graphql(`
 
 interface StudioIndexPageProps extends SharedPageProps, ResultOf<typeof propsQuery> {}
 
-export default function StudioIndexPage({ studioPagination }: StudioIndexPageProps) {
+export default function StudioIndexPage({ studioConnection }: StudioIndexPageProps) {
     return (
         <>
             <BackToTopButton />
             <Text variant="h1">Studio Index</Text>
-            <AlphabeticalIndex items={studioPagination.data} getName={studio => studio.name}>
+            <AlphabeticalIndex items={studioConnection.nodes} getName={studio => studio.name}>
                 {(studio) => (
                     <Text key={studio.slug} as={Link} href={`/studio/${studio.slug}`} prefetch={false} block link>
                         {studio.name}
@@ -47,7 +47,9 @@ export const getStaticProps: GetStaticProps<StudioIndexPageProps> = async () => 
     const { data } = await client.query({
         query: propsQuery,
         variables: {
-            first: Math.pow(2, 16) - 1,
+            pagination: {
+                first: Math.pow(2, 16) - 1,
+            },
         },
     });
 

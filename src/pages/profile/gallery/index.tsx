@@ -40,9 +40,9 @@ const StyledImageContainer = styled.div<{ $isPushed: boolean }>`
 `;
 
 const propsQuery = graphql(`
-    query GalleryPage($first: Int!) {
-        grills: imagePagination(facet: GRILL, first: $first) {
-            data {
+    query GalleryPage($pagination: PaginationInput) {
+        grills: imageConnection(filter: { facet: GRILL }, pagination: $pagination) {
+            nodes {
                 id
                 link
             }
@@ -58,7 +58,7 @@ export default function GalleryPage({ grills }: GalleryPageProps) {
             <SEO title="Grill Gallery" />
             <Text variant="h1">Grill Gallery</Text>
             <StyledGrid>
-                {grills.data.map((grill) => (
+                {grills.nodes.map((grill) => (
                     <Grill key={grill.id} grill={grill} />
                 ))}
             </StyledGrid>
@@ -67,7 +67,7 @@ export default function GalleryPage({ grills }: GalleryPageProps) {
 }
 
 interface GrillProps {
-    grill: GalleryPageProps["grills"]["data"][number];
+    grill: GalleryPageProps["grills"]["nodes"][number];
 }
 
 function Grill({ grill }: GrillProps) {
@@ -89,7 +89,9 @@ export const getStaticProps: GetStaticProps = async () => {
     const { data } = await client.query({
         query: propsQuery,
         variables: {
-            first: Math.pow(2, 16) - 1,
+            pagination: {
+                first: Math.pow(2, 16) - 1,
+            },
         },
     });
 

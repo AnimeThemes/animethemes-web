@@ -23,14 +23,15 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchStudio($query: String, $name_like: String, $sort: [StudioSort!], $page: Int!) {
-        studioPagination(search: $query, name_like: $name_like, sort: $sort, first: 15, page: $page) {
-            data {
+    query SearchStudio($query: String, $filter: StudioFilterInput, $pagination: PaginationInput, $sort: [StudioSort!]) {
+        studioConnection(search: $query, filter: $filter, pagination: $pagination, sort: $sort) {
+            nodes {
                 ...StudioSummaryCardStudio
                 slug
             }
-            paginatorInfo {
-                hasMorePages
+            pageInfo {
+                hasNextPage
+                endCursor
             }
         }
     }
@@ -49,7 +50,9 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
 
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
-        ...(filter.firstLetter ? { name_like: `${filter.firstLetter}%` } : {}),
+        filter: {
+            ...(filter.firstLetter ? { nameLike: `${filter.firstLetter}%` } : {}),
+        },
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<StudioSort> } : {}),
     };
 
@@ -70,15 +73,17 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
                 query,
                 variables: {
                     ...variables,
-                    page: pageParam,
+                    pagination: {
+                        first: 15,
+                        after: pageParam,
+                    },
                 },
             });
 
-            return data.studioPagination;
+            return data.studioConnection;
         },
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.paginatorInfo.hasMorePages ? lastPageParam + 1 : null,
+        initialPageParam: null as string | null,
+        getNextPageParam: (lastPage) => lastPage.pageInfo.endCursor,
         placeholderData: keepPreviousData,
     });
 
@@ -121,7 +126,7 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.data)
+                    .flatMap((page) => page.nodes)
                     .map((studio) => <StudioSummaryCard key={studio.slug} studio={studio} />)}
             </SearchEntity>
         </>

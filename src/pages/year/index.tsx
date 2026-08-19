@@ -41,7 +41,7 @@ const propsQuery = graphql(`
     query YearIndexPage {
         animeyears {
             year
-            seasons {
+            seasons: season {
                 season
                 seasonLocalized
             }

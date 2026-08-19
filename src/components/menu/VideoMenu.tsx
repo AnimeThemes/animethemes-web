@@ -26,7 +26,9 @@ export const VIDEO_MENU_ENTRY = graphql(`
             }
             anime {
                 slug
-                name
+                title {
+                    romaji
+                }
                 images {
                     nodes {
                         ...extractImagesImage

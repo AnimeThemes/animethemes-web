@@ -20,15 +20,16 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchPlaylist($query: String, $sort: [PlaylistSort!], $page: Int!) {
-        playlistPagination(search: $query, sort: $sort, first: 15, page: $page) {
-            data {
+    query SearchPlaylist($query: String, $pagination: PaginationInput, $sort: [PlaylistSort!]) {
+        playlistConnection(search: $query, pagination: $pagination, sort: $sort) {
+            nodes {
                 ...PlaylistSummaryCardPlaylist
                 ...PlaylistSummaryCardPlaylistWithOwner
                 id
             }
-            paginatorInfo {
-                hasMorePages
+            pageInfo {
+                hasNextPage
+                endCursor
             }
         }
     }
@@ -67,15 +68,17 @@ export function SearchPlaylist({ searchQuery }: SearchPlaylistProps) {
                 query,
                 variables: {
                     ...variables,
-                    page: pageParam,
+                    pagination: {
+                        first: 15,
+                        after: pageParam,
+                    },
                 },
             });
 
-            return data.playlistPagination;
+            return data.playlistConnection;
         },
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.paginatorInfo.hasMorePages ? lastPageParam + 1 : null,
+        initialPageParam: null as string | null,
+        getNextPageParam: (lastPage) => lastPage.pageInfo.endCursor,
         placeholderData: keepPreviousData,
     });
 
@@ -117,7 +120,7 @@ export function SearchPlaylist({ searchQuery }: SearchPlaylistProps) {
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.data)
+                    .flatMap((page) => page.nodes)
                     .map((playlist) => (
                         <PlaylistSummaryCard key={playlist.id} playlist={playlist} playlistWithOwner={playlist} />
                     ))}

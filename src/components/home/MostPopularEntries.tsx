@@ -14,10 +14,13 @@ export function MostPopularEntries() {
             const { data } = await client.query({
                 query: graphql(`
                     query HomePageMostPopular {
-                        animethemeentryPagination(sort: [TRACKS_COUNT_DESC], first: 10) {
-                            data {
+                        mostPopularEntries(pagination: { first: 10 }) {
+                            nodes {
                                 ...VideoSummaryCardEntry
-                                videos(first: 1) {
+                                animetheme {
+                                    ...VideoSummaryCardTheme
+                                }
+                                videos {
                                     nodes {
                                         ...VideoSummaryCardVideo
                                     }
@@ -28,7 +31,7 @@ export function MostPopularEntries() {
                 `),
             });
 
-            return data.animethemeentryPagination.data;
+            return data.mostPopularEntries.nodes;
         },
     });
 
@@ -36,7 +39,9 @@ export function MostPopularEntries() {
         <Column style={{ "--gap": "16px" }}>
             {mostPopular.map((entry, index) => (
                 <Skeleton key={index} variant="summary-card" delay={index * 100}>
-                    {entry ? <VideoSummaryCard video={entry.videos.nodes[0]} entry={entry} /> : null}
+                    {entry ? (
+                        <VideoSummaryCard video={entry.videos.nodes[0]} entry={entry} theme={entry.animetheme} />
+                    ) : null}
                 </Skeleton>
             ))}
         </Column>

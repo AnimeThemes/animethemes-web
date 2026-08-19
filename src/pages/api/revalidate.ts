@@ -29,17 +29,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             query RevalidateApi {
                 me {
                     permissions {
-                        nodes {
-                            name
-                        }
+                        name
                     }
                     roles {
-                        nodes {
-                            permissions {
-                                nodes {
-                                    name
-                                }
-                            }
+                        permissions {
+                            name
                         }
                     }
                 }
@@ -48,8 +42,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     });
 
     const canRevalidate = (() => {
-        const userPermissions = me?.permissions.nodes ?? [];
-        const rolePermissions = me?.roles.nodes.flatMap((role) => role.permissions.nodes) ?? [];
+        const userPermissions = me?.permissions ?? [];
+        const rolePermissions = me?.roles.flatMap((role) => role.permissions) ?? [];
         for (const permission of [...userPermissions, ...rolePermissions]) {
             if (permission.name === "revalidate pages") {
                 return true;

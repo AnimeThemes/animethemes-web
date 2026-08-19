@@ -14,8 +14,8 @@ export function RecentlyAddedPlaylists() {
             const { data } = await client.query({
                 query: graphql(`
                     query HomePageRecentlyAddedPlaylists {
-                        playlistPagination(sort: [CREATED_AT_DESC], first: 10) {
-                            data {
+                        playlistConnection(sort: [CREATED_AT_DESC], pagination: { first: 10 }) {
+                            nodes {
                                 ...PlaylistSummaryCardPlaylist
                                 ...PlaylistSummaryCardPlaylistWithOwner
                             }
@@ -24,7 +24,7 @@ export function RecentlyAddedPlaylists() {
                 `),
             });
 
-            return data.playlistPagination.data;
+            return data.playlistConnection.nodes;
         },
     });
 
