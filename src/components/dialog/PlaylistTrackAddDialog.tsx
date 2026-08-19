@@ -38,6 +38,9 @@ export const PLAYLIST_TRACK_ADD_DIALOG_ENTRY = graphql(`
         ...PlaylistTrackAddToastEntry
         ...PlaylistTrackRemoveToastEntry
         id
+        animetheme {
+            ...VideoSummaryCardTheme
+        }
     }
 `);
 
@@ -78,12 +81,12 @@ export function PlaylistTrackAddDialog({
 }
 
 const PLAYLIST_TRACK_ADD_FORM_PLAYLIST = graphql(`
-    query PlaylistTrackAddFormPlaylist($entryId: Mixed!, $videoId: Mixed!) {
+    query PlaylistTrackAddFormPlaylist($entryId: Int!, $videoId: Int!) {
         me {
             playlists {
                 ...PlaylistTrackAddCardPlaylist
                 id
-                tracks(where: {AND: [{ column: ENTRY_ID, value: $entryId }, { column: VIDEO_ID, value: $videoId }]}) {
+                tracks(filter: { entryId: $entryId, videoId: $videoId }) {
                     ...PlaylistTrackAddCardTrack
                 }
             }
@@ -120,7 +123,7 @@ function PlaylistTrackAddForm({ video, entry, onCancel }: PlaylistTrackAddFormPr
 
     return (
         <Column style={{ "--gap": "24px" }}>
-            <VideoSummaryCard video={video} entry={entry} menu={null} />
+            <VideoSummaryCard video={video} entry={entry} theme={entry.animetheme} menu={null} />
             <Row style={{ "--justify-content": "center" }}>
                 <Icon icon={faArrowDown} color="text-disabled" />
             </Row>
@@ -191,8 +194,8 @@ function PlaylistTrackAddCard({
 
     const [mutateAddTrack, { loading: loadingAddTrack, error: errorAddTrack }] = useMutation(
         graphql(`
-            mutation PlaylistTrackAdd($playlistId: String!, $entryId: Int!, $videoId: Int!) {
-                CreatePlaylistTrack(playlist: $playlistId, entryId: $entryId, videoId: $videoId) {
+            mutation PlaylistTrackAdd($playlistId: String!, $input: CreatePlaylistTrackInput!) {
+                createPlaylistTrack(playlist: $playlistId, input: $input) {
                     id
                 }
             }
@@ -216,9 +219,7 @@ function PlaylistTrackAddCard({
     const [mutateRemoveTrack, { loading: loadingRemoveTrack, error: errorRemoveTrack }] = useMutation(
         graphql(`
             mutation PlaylistTrackRemove($id: String!, $playlistId: String!) {
-                DeletePlaylistTrack(id: $id, playlist: $playlistId) {
-                    message
-                }
+                deletePlaylistTrack(id: $id, playlist: $playlistId)
             }
         `),
         {
@@ -249,8 +250,10 @@ function PlaylistTrackAddCard({
         await mutateAddTrack({
             variables: {
                 playlistId: playlist.id,
-                videoId: video.id,
-                entryId: entry.id,
+                input: {
+                    videoId: video.id,
+                    entryId: entry.id,
+                },
             },
         });
     }

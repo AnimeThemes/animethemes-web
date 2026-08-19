@@ -2,7 +2,7 @@ import { ApolloClient, ApolloLink, InMemoryCache } from "@apollo/client";
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
 
 const httpLink = new BatchHttpLink({
-    uri: "http://graphql.animethemes.test",
+    uri: "http://animethemes-rust.test/graphql",
     credentials: "include",
     batchMax: 5,
     batchInterval: 200,

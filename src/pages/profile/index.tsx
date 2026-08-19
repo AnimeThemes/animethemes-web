@@ -143,12 +143,10 @@ export const PROFILE_PAGE_ME = graphql(`
         emailVerifiedAt
         createdAt
         roles {
-            nodes {
-                name
-                color
-                priority
-                default
-            }
+            name
+            color
+            priority
+            default
         }
         playlists(sort: [CREATED_AT_DESC]) {
             ...PlaylistSummaryCardPlaylist
@@ -181,7 +179,7 @@ export default function ProfilePage({ me: meFragment }: ProfilePageProps) {
     const [featuredThemePreview, setFeaturedThemePreview] = useSetting(FeaturedThemePreview);
     const [colorTheme, setColorTheme] = useSetting(ColorTheme);
 
-    const roles = (me?.roles.nodes ?? [])
+    const roles = (me?.roles ?? [])
         .filter((role) => !role.default)
         .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
     const highlightColor = roles[0]?.color ?? "";

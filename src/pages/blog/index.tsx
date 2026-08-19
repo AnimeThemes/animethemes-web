@@ -18,16 +18,10 @@ import getSharedPageProps from "@/utils/getSharedPageProps";
 
 const propsQuery = graphql(`
     query DocumentIndexPage {
-        pagePagination(
-            #            where: {
-            #                OR: [
-            #                    { column: SLUG, operator: LIKE, value: "blog/%" }
-            #                    { column: SLUG, operator: LIKE, value: "status/%" }
-            #                ]
-            #            }
+        blogPages(
             sort: CREATED_AT_DESC
         ) {
-            data {
+            nodes {
                 slug
                 name
                 createdAt
@@ -38,9 +32,9 @@ const propsQuery = graphql(`
 
 interface DocumentIndexPageProps extends SharedPageProps, ResultOf<typeof propsQuery> {}
 
-export default function DocumentIndexPage({ pagePagination }: DocumentIndexPageProps) {
+export default function DocumentIndexPage({ blogPages }: DocumentIndexPageProps) {
     const pageGroups = Object.entries(
-        groupBy(pagePagination.data, (page) => (page.createdAt ? new Date(page.createdAt).getFullYear() : "Unknown")),
+        groupBy(blogPages.nodes, (page) => (page.createdAt ? new Date(page.createdAt).getFullYear() : "Unknown")),
     ).sort((a, b) => parseInt(b[0]) - parseInt(a[0]));
 
     return (
@@ -96,22 +90,10 @@ export const getStaticProps: GetStaticProps<DocumentIndexPageProps> = async () =
         query: propsQuery,
     });
 
-    // We have to do the filtering manually because the `where` clause doesn't support LIKE.
-    // See the commented part of the query above.
-    const transformedData = {
-        ...data,
-        pagePagination: {
-            ...data.pagePagination,
-            data: data.pagePagination.data.filter(
-                (page) => page.slug.startsWith("blog/") || page.slug.startsWith("status/"),
-            ),
-        },
-    };
-
     return {
         props: {
             ...getSharedPageProps(),
-            ...transformedData,
+            ...data,
         },
         // Revalidate after 3 hours (= 10800 seconds).
         revalidate: 10800,

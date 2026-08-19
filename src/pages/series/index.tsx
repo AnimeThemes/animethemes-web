@@ -13,9 +13,9 @@ import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 
 const propsQuery = graphql(`
-    query SeriesIndexPage($first: Int!) {
-        seriesPagination(sort: TITLE_ROMAJI, first: $first) {
-            data {
+    query SeriesIndexPage($pagination: PaginationInput) {
+        seriesConnection(sort: TITLE_ROMAJI, pagination: $pagination) {
+            nodes {
                 slug
                 title {
                     romaji
@@ -27,12 +27,12 @@ const propsQuery = graphql(`
 
 interface SeriesIndexPageProps extends SharedPageProps, ResultOf<typeof propsQuery> {}
 
-export default function SeriesIndexPage({ seriesPagination }: SeriesIndexPageProps) {
+export default function SeriesIndexPage({ seriesConnection }: SeriesIndexPageProps) {
     return (
         <>
             <BackToTopButton />
             <Text variant="h1">Series Index</Text>
-            <AlphabeticalIndex items={seriesPagination.data} getName={series => series.title.romaji}>
+            <AlphabeticalIndex items={seriesConnection.nodes} getName={series => series.title.romaji}>
                 {(series) => (
                     <Text key={series.slug} as={Link} href={`/series/${series.slug}`} prefetch={false} block link>
                         {series.title.romaji}
@@ -49,7 +49,9 @@ export const getStaticProps: GetStaticProps<SeriesIndexPageProps> = async () => 
     const { data } = await client.query({
         query: propsQuery,
         variables: {
-            first: Math.pow(2, 16) - 1,
+            pagination: {
+                first: Math.pow(2, 16) - 1,
+            },
         },
     });
 

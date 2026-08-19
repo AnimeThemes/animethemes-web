@@ -17,7 +17,7 @@ const createApolloClient = (
     return new ApolloClient({
         ...options,
         link: new HttpLink({
-            uri: "http://graphql.animethemes.test",
+            uri: "http://animethemes-rust.test/graphql",
             headers: req && {
                 referer: req.headers.referer ?? "",
                 cookie: req.headers.cookie ?? "",

@@ -25,7 +25,7 @@ const StyledYearNext = styled(StyledYear)`
 export const YEAR_NAVIGATION_YEAR = graphql(`
     fragment YearNavigationYear on AnimeYear {
         year
-        seasons {
+        seasons: season {
             season
             seasonLocalized
         }

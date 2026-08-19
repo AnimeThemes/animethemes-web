@@ -11,16 +11,7 @@ interface PageRevalidationProps {
 export function PageRevalidation({ lastBuildAt, ...props }: PageRevalidationProps) {
     const router = useRouter();
     const { me } = useAuth();
-    const canRevalidate = useMemo(() => {
-        const userPermissions = me?.permissions.nodes ?? [];
-        const rolePermissions = me?.roles.nodes.flatMap((role) => role.permissions.nodes) ?? [];
-        for (const permission of [...userPermissions, ...rolePermissions]) {
-            if (permission.name === "revalidate pages") {
-                return true;
-            }
-        }
-        return false;
-    }, [me]);
+    const canRevalidate = useMemo(() => me?.roles.some(role => role.name == "Admin"), [me]);
 
     const [isRevalidating, setRevalidating] = useState(false);
 

@@ -8,7 +8,7 @@ import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated
 export const SEASON_NAVIGATION_YEAR = graphql(`
     fragment SeasonNavigationYear on AnimeYear {
         year
-        seasons {
+        seasons: season {
             season
             seasonLocalized
         }

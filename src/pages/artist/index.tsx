@@ -13,9 +13,9 @@ import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 
 const propsQuery = graphql(`
-    query ArtistIndexPage($first: Int!) {
-        artistPagination(sort: NAME_MAIN, first: $first) {
-            data {
+    query ArtistIndexPage($pagination: PaginationInput) {
+        artistConnection(sort: NAME_MAIN, pagination: $pagination) {
+            nodes {
                 slug
                 name {
                     main
@@ -27,12 +27,12 @@ const propsQuery = graphql(`
 
 interface ArtistIndexPageProps extends SharedPageProps, ResultOf<typeof propsQuery> {}
 
-export default function ArtistIndexPage({ artistPagination }: ArtistIndexPageProps) {
+export default function ArtistIndexPage({ artistConnection }: ArtistIndexPageProps) {
     return (
         <>
             <BackToTopButton />
             <Text variant="h1">Artist Index</Text>
-            <AlphabeticalIndex items={artistPagination.data} getName={artist => artist.name.main}>
+            <AlphabeticalIndex items={artistConnection.nodes} getName={artist => artist.name.main}>
                 {(artist) => (
                     <Text key={artist.slug} as={Link} href={`/artist/${artist.slug}`} prefetch={false} block link>
                         {artist.name.main}
@@ -49,7 +49,9 @@ export const getStaticProps: GetStaticProps<ArtistIndexPageProps> = async () => 
     const { data } = await client.query({
         query: propsQuery,
         variables: {
-            first: Math.pow(2, 16) - 1,
+            pagination: {
+                first: Math.pow(2, 16) - 1,
+            },
         },
     });
 

@@ -23,14 +23,15 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchArtist($query: String, $nameMain_like: String, $sort: [ArtistSort!], $page: Int!) {
-        artistPagination(search: $query, nameMain_like: $nameMain_like, sort: $sort, first: 15, page: $page) {
-            data {
+    query SearchArtist($query: String, $filter: ArtistFilterInput, $pagination: PaginationInput, $sort: [ArtistSort!]) {
+        artistConnection(search: $query, filter: $filter, pagination: $pagination, sort: $sort) {
+            nodes {
                 ...ArtistSummaryCardArtist
                 slug
             }
-            paginatorInfo {
-                hasMorePages
+            pageInfo {
+                hasNextPage
+                endCursor
             }
         }
     }
@@ -49,7 +50,9 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
 
     const variables = {
         ...(searchQuery ? { query: searchQuery } : {}),
-        ...(filter.firstLetter ? { name_like: `${filter.firstLetter}%` } : {}),
+        filter: {
+            ...(filter.firstLetter ? { nameMainLike: `${filter.firstLetter}%` } : {}),
+        },
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<ArtistSort> } : {}),
     };
 
@@ -70,15 +73,17 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
                 query,
                 variables: {
                     ...variables,
-                    page: pageParam,
+                    pagination: {
+                        first: 15,
+                        after: pageParam,
+                    },
                 },
             });
 
-            return data.artistPagination;
+            return data.artistConnection;
         },
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.paginatorInfo.hasMorePages ? lastPageParam + 1 : null,
+        initialPageParam: null as string | null,
+        getNextPageParam: (lastPage) => lastPage.pageInfo.endCursor,
         placeholderData: keepPreviousData,
     });
 
@@ -122,7 +127,7 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.data)
+                    .flatMap((page) => page.nodes)
                     .map((artist) => <ArtistSummaryCard key={artist.slug} artist={artist} />)}
             </SearchEntity>
         </>

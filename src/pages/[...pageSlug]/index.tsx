@@ -63,8 +63,8 @@ const propsQuery = graphql(`
 
 const pathsQuery = graphql(`
     query DocumentPageAll {
-        pagePagination {
-            data {
+        pageConnection {
+            nodes {
                 slug
             }
         }
@@ -106,7 +106,7 @@ export default function DocumentPage({ page: pageFragment, source, headings }: D
 interface PageHeaderProps {
     title: string;
     author?: string;
-    createdAt: string;
+    createdAt: string | null;
 }
 
 function PageHeader({ title, author, createdAt }: PageHeaderProps) {
@@ -118,9 +118,11 @@ function PageHeader({ title, author, createdAt }: PageHeaderProps) {
                     By: {author} &bull;{" "}
                 </Text>
             )}
-            <Text variant="small" color="text-muted">
-                {new Date(createdAt).toLocaleDateString("en", { dateStyle: "long" })}
-            </Text>
+            {!!createdAt && (
+                <Text variant="small" color="text-muted">
+                    {new Date(createdAt).toLocaleDateString("en", { dateStyle: "long" })}
+                </Text>
+            )}
         </div>
     );
 }
@@ -160,7 +162,7 @@ export const getStaticPaths: GetStaticPaths<DocumentPageParams> = () => {
             query: pathsQuery,
         });
 
-        return data.pagePagination.data.map((page) => ({
+        return data.pageConnection.nodes.map((page) => ({
             params: {
                 pageSlug: page.slug.split("/"),
             },

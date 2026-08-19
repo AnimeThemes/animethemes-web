@@ -64,8 +64,8 @@ function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
 
     const [mutate, { loading, error }] = useMutation(
         graphql(`
-            mutation PlaylistAdd($name: String!, $visibility: PlaylistVisibility!) {
-                CreatePlaylist(name: $name, visibility: $visibility) {
+            mutation PlaylistAdd($input: CreatePlaylistInput!) {
+                createPlaylist(input: $input) {
                     id
                 }
             }
@@ -84,8 +84,10 @@ function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
 
         await mutate({
             variables: {
-                name: title,
-                visibility,
+                input: {
+                    name: title,
+                    visibility,
+                },
             },
         });
     }
