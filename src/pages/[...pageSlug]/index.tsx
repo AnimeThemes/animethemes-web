@@ -106,7 +106,7 @@ export default function DocumentPage({ page: pageFragment, source, headings }: D
 interface PageHeaderProps {
     title: string;
     author?: string;
-    createdAt: string;
+    createdAt: string | null;
 }
 
 function PageHeader({ title, author, createdAt }: PageHeaderProps) {
@@ -118,9 +118,11 @@ function PageHeader({ title, author, createdAt }: PageHeaderProps) {
                     By: {author} &bull;{" "}
                 </Text>
             )}
-            <Text variant="small" color="text-muted">
-                {new Date(createdAt).toLocaleDateString("en", { dateStyle: "long" })}
-            </Text>
+            {!!createdAt && (
+                <Text variant="small" color="text-muted">
+                    {new Date(createdAt).toLocaleDateString("en", { dateStyle: "long" })}
+                </Text>
+            )}
         </div>
     );
 }
