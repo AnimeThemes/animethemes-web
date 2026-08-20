@@ -1,5 +1,3 @@
-import type { VariablesOf } from "@graphql-typed-document-node/core";
-
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
 import type { AnimeFormat, ThemeType } from "@/graphql/generated/graphql";

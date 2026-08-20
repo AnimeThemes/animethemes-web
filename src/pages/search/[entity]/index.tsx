@@ -56,17 +56,17 @@ interface IndexProps {
 function Index({ searchQuery, searchEntity }: IndexProps) {
     switch (searchEntity) {
         case "anime":
-            return <SearchAnime searchQuery={searchQuery} />;
+            return <SearchAnime searchQuery={searchQuery ?? ""} />;
         case "theme":
-            return <SearchTheme searchQuery={searchQuery} />;
+            return <SearchTheme searchQuery={searchQuery ?? ""} />;
         case "artist":
-            return <SearchArtist searchQuery={searchQuery} />;
+            return <SearchArtist searchQuery={searchQuery ?? ""} />;
         case "series":
-            return <SearchSeries searchQuery={searchQuery} />;
+            return <SearchSeries searchQuery={searchQuery ?? ""} />;
         case "studio":
-            return <SearchStudio searchQuery={searchQuery} />;
+            return <SearchStudio searchQuery={searchQuery ?? ""} />;
         case "playlist":
-            return <SearchPlaylist searchQuery={searchQuery} />;
+            return <SearchPlaylist searchQuery={searchQuery ?? ""} />;
         default:
             // Should never happen
             return null;

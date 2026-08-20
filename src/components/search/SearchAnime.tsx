@@ -12,7 +12,7 @@ import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortB
 import { SearchFilterYear } from "@/components/search-filter/SearchFilterYear";
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
-import type { AnimeFormat, AnimeSeason, AnimeSort } from "@/graphql/generated/graphql";
+import type { AnimeFormat, AnimeSeason, SearchAnimeSort } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
 
 interface Filter {
@@ -33,32 +33,32 @@ const initialFilter: Filter = {
 
 const query = graphql(`
     query SearchAnime(
-        $query: String
-        $filter: AnimeFilterInput
-        $pagination: PaginationInput,
-        $sort: [AnimeSort!]
+        $query: String!
+        $filter: SearchAnimeFilterInput
+        $page: Int!,
+        $sort: [SearchAnimeSort!]
     ) {
-        animeConnection(
+        search(
             search: $query
-            filter: $filter,
-            pagination: $pagination,
-            sort: $sort
+            first: 15,
+            page: $page
         ) {
-            nodes {
-                ...AnimeSummaryCardAnime
-                ...AnimeSummaryCardAnimeExpandable
-                slug
-            }
-            pageInfo {
-                hasNextPage
-                endCursor
+            anime(filter: $filter, sort: $sort) {
+                data {
+                    ...AnimeSummaryCardAnime
+                    ...AnimeSummaryCardAnimeExpandable
+                    slug
+                }
+                pageInfo {
+                    hasNextPage
+                }
             }
         }
     }
 `);
 
 interface SearchAnimeProps {
-    searchQuery?: string;
+    searchQuery: string;
 }
 
 export function SearchAnime({ searchQuery }: SearchAnimeProps) {
@@ -69,14 +69,14 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
     const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
 
     const variables = {
-        ...(searchQuery ? { query: searchQuery } : {}),
+        query: searchQuery,
         filter: {
             ...(filter.firstLetter ? { titleRomajiLike: `${filter.firstLetter}%` } : {}),
             ...(filter.season ? { season: filter.season } : {}),
             ...(filter.year ? { year: parseInt(filter.year) } : {}),
             ...(filter.format ? { format: filter.format } : {}),
         },
-        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<AnimeSort> } : {}),
+        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SearchAnimeSort> } : {}),
     };
 
     const {
@@ -96,17 +96,15 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
                 query,
                 variables: {
                     ...variables,
-                    pagination: {
-                        first: 15,
-                        after: pageParam,
-                    },
+                    page: pageParam,
                 },
             });
 
-            return data.animeConnection;
+            return data.search.anime;
         },
-        initialPageParam: null as string | null,
-        getNextPageParam: (lastPage) => lastPage.pageInfo.endCursor,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, _, lastPageParam) =>
+        lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null,
         placeholderData: keepPreviousData,
     });
 
@@ -149,12 +147,12 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
                 isFetching={isFetching}
                 isFetchingNextPage={isFetchingNextPage}
                 isPlaceholderData={isPlaceholderData}
-                hasResults={!!data?.pages.length}
+                hasResults={(data?.pages.reduce((total, page) => total + page.data.length, 0) ?? 0) > 0}
                 hasNextPage={hasNextPage}
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.nodes)
+                    .flatMap((page) => page.data)
                     .map((anime) => <AnimeSummaryCard key={anime.slug} anime={anime} expandable={anime} />)}
             </SearchEntity>
         </>
