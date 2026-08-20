@@ -9,7 +9,7 @@ import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup"
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
-import type { SeriesSort } from "@/graphql/generated/graphql";
+import type { SearchSeriesSort } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
 
 interface Filter {
@@ -23,39 +23,40 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchSeries($query: String, $filter: SeriesFilterInput, $pagination: PaginationInput, $sort: [SeriesSort!]) {
-        seriesConnection(search: $query, filter: $filter, pagination: $pagination, sort: $sort) {
-            nodes {
-                slug
-                title {
-                    romaji
+    query SearchSeries($query: String!, $filter: SearchSeriesFilterInput, $page: Int!, $sort: [SearchSeriesSort!]) {
+        search(search: $query, first: 15, page: $page) {
+            series(filter: $filter, sort: $sort) {
+                data {
+                    slug
+                    title {
+                        romaji
+                    }
                 }
-            }
-            pageInfo {
-                hasNextPage
-                endCursor
+                pageInfo {
+                    hasNextPage
+                }
             }
         }
     }
 `);
 
 interface SearchSeriesProps {
-    searchQuery?: string;
+    searchQuery: string;
 }
 
 export function SearchSeries({ searchQuery }: SearchSeriesProps) {
     const { filter, updateFilter, bindUpdateFilter } = useFilterStorage("filter-series-v2", {
         ...initialFilter,
-        sortBy: searchQuery ? null : initialFilter.sortBy,
+        sortBy: initialFilter.sortBy,
     });
     const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
 
     const variables = {
-        ...(searchQuery ? { query: searchQuery } : {}),
+        query: searchQuery,
         filter: {
             ...(filter.firstLetter ? { titleRomajiLike: `${filter.firstLetter}%` } : {}),
         },
-        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SeriesSort> } : {}),
+        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SearchSeriesSort> } : {}),
     };
 
     const {
@@ -75,17 +76,15 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
                 query,
                 variables: {
                     ...variables,
-                    pagination: {
-                        first: 15,
-                        after: pageParam,
-                    },
+                    page: pageParam,
                 },
             });
 
-            return data.seriesConnection;
+            return data.search.series;
         },
-        initialPageParam: null as string | null,
-        getNextPageParam: (lastPage) => lastPage.pageInfo.endCursor,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, _, lastPageParam) =>
+        lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null,
         placeholderData: keepPreviousData,
     });
 
@@ -123,12 +122,12 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
                 isFetching={isFetching}
                 isFetchingNextPage={isFetchingNextPage}
                 isPlaceholderData={isPlaceholderData}
-                hasResults={!!data?.pages.length}
+                hasResults={(data?.pages.reduce((total, page) => total + page.data.length, 0) ?? 0) > 0}
                 hasNextPage={hasNextPage}
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.nodes)
+                    .flatMap((page) => page.data)
                     .map((series) => (
                         <SummaryCard
                             key={series.slug}
