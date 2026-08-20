@@ -9,7 +9,7 @@ import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup"
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
-import type { StudioSort } from "@/graphql/generated/graphql";
+import type { SearchStudioSort } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
 
 interface Filter {
@@ -23,37 +23,38 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchStudio($query: String, $filter: StudioFilterInput, $pagination: PaginationInput, $sort: [StudioSort!]) {
-        studioConnection(search: $query, filter: $filter, pagination: $pagination, sort: $sort) {
-            nodes {
-                ...StudioSummaryCardStudio
-                slug
-            }
-            pageInfo {
-                hasNextPage
-                endCursor
+    query SearchStudio($query: String!, $filter: SearchStudioFilterInput, $sort: [SearchStudioSort!]) {
+        search(search: $query, first: 15) {
+            studios(filter: $filter, sort: $sort) {
+                data {
+                    ...StudioSummaryCardStudio
+                    slug
+                }
+                pageInfo {
+                    hasNextPage
+                }
             }
         }
     }
 `);
 
 interface SearchStudioProps {
-    searchQuery?: string;
+    searchQuery: string;
 }
 
 export function SearchStudio({ searchQuery }: SearchStudioProps) {
     const { filter, updateFilter, bindUpdateFilter } = useFilterStorage("filter-studio-v2", {
         ...initialFilter,
-        sortBy: searchQuery ? null : initialFilter.sortBy,
+        sortBy: initialFilter.sortBy,
     });
     const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
 
     const variables = {
-        ...(searchQuery ? { query: searchQuery } : {}),
+        query: searchQuery,
         filter: {
             ...(filter.firstLetter ? { nameLike: `${filter.firstLetter}%` } : {}),
         },
-        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<StudioSort> } : {}),
+        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SearchStudioSort> } : {}),
     };
 
     const {
@@ -73,17 +74,15 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
                 query,
                 variables: {
                     ...variables,
-                    pagination: {
-                        first: 15,
-                        after: pageParam,
-                    },
+                    page: pageParam,
                 },
             });
 
-            return data.studioConnection;
+            return data.search.studios;
         },
-        initialPageParam: null as string | null,
-        getNextPageParam: (lastPage) => lastPage.pageInfo.endCursor,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, _, lastPageParam) =>
+        lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null,
         placeholderData: keepPreviousData,
     });
 
@@ -121,12 +120,12 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
                 isFetching={isFetching}
                 isFetchingNextPage={isFetchingNextPage}
                 isPlaceholderData={isPlaceholderData}
-                hasResults={!!data?.pages.length}
+                hasResults={(data?.pages.reduce((total, page) => total + page.data.length, 0) ?? 0) > 0}
                 hasNextPage={hasNextPage}
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.nodes)
+                    .flatMap((page) => page.data)
                     .map((studio) => <StudioSummaryCard key={studio.slug} studio={studio} />)}
             </SearchEntity>
         </>

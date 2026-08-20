@@ -22,36 +22,48 @@ const query = graphql(`
     query SearchGlobal($query: String!) {
         search(search: $query, first: 4) {
             anime {
-                ...AnimeSummaryCardAnime
-                ...AnimeSummaryCardAnimeExpandable
-                slug
-            }
-            animethemes {
-                ...ThemeSummaryCardTheme
-                ...ThemeSummaryCardThemeExpandable
-                id
-                anime {
+                data {
+                    ...AnimeSummaryCardAnime
+                    ...AnimeSummaryCardAnimeExpandable
                     slug
                 }
             }
+            animethemes {
+                data {
+                    ...ThemeSummaryCardTheme
+                    ...ThemeSummaryCardThemeExpandable
+                    id
+                    anime {
+                        slug
+                    }
+                }
+            }
             artists {
-                ...ArtistSummaryCardArtist
-                slug
+                data {
+                    ...ArtistSummaryCardArtist
+                    slug
+                }
             }
             series {
-                slug
-                title {
-                    romaji
+                data {
+                    slug
+                    title {
+                        romaji
+                    }
                 }
             }
             studios {
-                slug
-                name
+                data {
+                    slug
+                    name
+                }
             }
             playlists {
-                ...PlaylistSummaryCardPlaylist
-                ...PlaylistSummaryCardPlaylistWithOwner
-                id
+                data {
+                    ...PlaylistSummaryCardPlaylist
+                    ...PlaylistSummaryCardPlaylistWithOwner
+                    id
+                }
             }
         }
     }
@@ -84,12 +96,12 @@ export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
     }
 
     const {
-        anime: animeResults = [],
-        animethemes: themeResults = [],
-        artists: artistResults = [],
-        series: seriesResults = [],
-        studios: studioResults = [],
-        playlists: playlistResults = [],
+        anime: { data: animeResults = [] } = {},
+        animethemes: { data: themeResults = [] } = {},
+        artists: { data: artistResults = [] } = {},
+        series: { data: seriesResults = [] } = {},
+        studios: { data: studioResults = [] } = {},
+        playlists: { data: playlistResults = [] } = {},
     } = data.search;
 
     const totalResults =

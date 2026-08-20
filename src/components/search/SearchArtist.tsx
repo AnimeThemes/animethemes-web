@@ -9,7 +9,7 @@ import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup"
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
-import type { ArtistSort } from "@/graphql/generated/graphql";
+import type { SearchArtistSort } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
 
 interface Filter {
@@ -23,22 +23,23 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchArtist($query: String, $filter: ArtistFilterInput, $pagination: PaginationInput, $sort: [ArtistSort!]) {
-        artistConnection(search: $query, filter: $filter, pagination: $pagination, sort: $sort) {
-            nodes {
-                ...ArtistSummaryCardArtist
-                slug
-            }
-            pageInfo {
-                hasNextPage
-                endCursor
+    query SearchArtist($query: String!, $filter: SearchArtistFilterInput, $page: Int!, $sort: [SearchArtistSort!]) {
+        search(search: $query, first: 15, page: $page) {
+            artists(filter: $filter, sort: $sort) {
+                data {
+                    ...ArtistSummaryCardArtist
+                    slug
+                }
+                pageInfo {
+                    hasNextPage
+                }
             }
         }
     }
 `);
 
 interface SearchArtistProps {
-    searchQuery?: string;
+    searchQuery: string;
 }
 
 export function SearchArtist({ searchQuery }: SearchArtistProps) {
@@ -49,11 +50,11 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
     const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
 
     const variables = {
-        ...(searchQuery ? { query: searchQuery } : {}),
+        query: searchQuery,
         filter: {
             ...(filter.firstLetter ? { nameMainLike: `${filter.firstLetter}%` } : {}),
         },
-        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<ArtistSort> } : {}),
+        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SearchArtistSort> } : {}),
     };
 
     const {
@@ -73,17 +74,15 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
                 query,
                 variables: {
                     ...variables,
-                    pagination: {
-                        first: 15,
-                        after: pageParam,
-                    },
+                    page: pageParam,
                 },
             });
 
-            return data.artistConnection;
+            return data.search.artists;
         },
-        initialPageParam: null as string | null,
-        getNextPageParam: (lastPage) => lastPage.pageInfo.endCursor,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, _, lastPageParam) =>
+        lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null,
         placeholderData: keepPreviousData,
     });
 
@@ -122,12 +121,12 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
                 isFetching={isFetching}
                 isFetchingNextPage={isFetchingNextPage}
                 isPlaceholderData={isPlaceholderData}
-                hasResults={!!data?.pages.length}
+                hasResults={(data?.pages.reduce((total, page) => total + page.data.length, 0) ?? 0) > 0}
                 hasNextPage={hasNextPage}
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.nodes)
+                    .flatMap((page) => page.data)
                     .map((artist) => <ArtistSummaryCard key={artist.slug} artist={artist} />)}
             </SearchEntity>
         </>
