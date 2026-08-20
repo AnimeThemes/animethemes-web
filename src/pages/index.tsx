@@ -249,16 +249,14 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
                 currentFeaturedTheme {
                     ...HomePageFeaturedTheme
                 }
-                announcementConnection {
-                    nodes {
-                        ...HomePageAnnouncement
-                    }
+                currentAnnouncements {
+                    ...HomePageAnnouncement
                 }
             }
         `),
     });
 
-    const announcements = getFragmentData(HOME_PAGE_ANNOUNCEMENT, data.announcementConnection.nodes);
+    const announcements = getFragmentData(HOME_PAGE_ANNOUNCEMENT, data.currentAnnouncements);
 
     return {
         props: {

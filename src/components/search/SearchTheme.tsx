@@ -9,7 +9,7 @@ import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortB
 import { SearchFilterThemeType } from "@/components/search-filter/SearchFilterThemeType";
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
-import type { AnimeThemeSort, ThemeType } from "@/graphql/generated/graphql";
+import type { SearchAnimeThemeSort, ThemeType } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
 
 interface Filter {
@@ -23,38 +23,39 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchTheme($query: String, $filter: AnimeThemeFilterInput, $pagination: PaginationInput, $sort: [AnimeThemeSort!]) {
-        animethemeConnection(search: $query, filter: $filter, pagination: $pagination, sort: $sort) {
-            nodes {
-                ...ThemeSummaryCardTheme
-                ...ThemeSummaryCardThemeExpandable
-                slug
-            }
-            pageInfo {
-                hasNextPage
-                endCursor
+    query SearchTheme($query: String!, $page: Int!, $filter: SearchAnimeThemeFilterInput, $sort: [SearchAnimeThemeSort!]) {
+        search(search: $query, first: 15, page: $page) {
+            animethemes(filter: $filter, sort: $sort) {
+                data {
+                    ...ThemeSummaryCardTheme
+                    ...ThemeSummaryCardThemeExpandable
+                    slug
+                }
+                pageInfo {
+                    hasNextPage
+                }
             }
         }
     }
 `);
 
 interface SearchThemeProps {
-    searchQuery?: string;
+    searchQuery: string;
 }
 
 export function SearchTheme({ searchQuery }: SearchThemeProps) {
     const { filter, updateFilter, bindUpdateFilter } = useFilterStorage("filter-theme-v2", {
         ...initialFilter,
-        sortBy: searchQuery ? null : initialFilter.sortBy,
+        sortBy: initialFilter.sortBy,
     });
     const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
 
     const variables = {
-        ...(searchQuery ? { query: searchQuery } : {}),
+        query: searchQuery,
         filter: {
             ...(filter.type ? { type: filter.type } : {}),
         },
-        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<AnimeThemeSort> } : {}),
+        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SearchAnimeThemeSort> } : {}),
     };
 
     const {
@@ -74,17 +75,15 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
                 query,
                 variables: {
                     ...variables,
-                    pagination: {
-                        first: 15,
-                        after: pageParam,
-                    },
+                    page: pageParam,
                 },
             });
 
-            return data.animethemeConnection;
+            return data.search.animethemes;
         },
-        initialPageParam: null as string | null,
-        getNextPageParam: (lastPage) => lastPage.pageInfo.endCursor,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, _, lastPageParam) =>
+            lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null,
         placeholderData: keepPreviousData,
     });
 
@@ -128,12 +127,12 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
                 isFetching={isFetching}
                 isFetchingNextPage={isFetchingNextPage}
                 isPlaceholderData={isPlaceholderData}
-                hasResults={!!data?.pages.length}
+                hasResults={(data?.pages.reduce((total, page) => total + page.data.length, 0) ?? 0) > 0}
                 hasNextPage={hasNextPage}
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.nodes)
+                    .flatMap((page) => page.data)
                     .map((theme) => <ThemeSummaryCard key={theme.slug} theme={theme} expandable={theme} />)}
             </SearchEntity>
         </>

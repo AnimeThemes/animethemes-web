@@ -8,7 +8,7 @@ import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup"
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
-import type { PlaylistSort } from "@/graphql/generated/graphql";
+import type { SearchPlaylistSort } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
 
 interface Filter {
@@ -20,35 +20,36 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchPlaylist($query: String, $pagination: PaginationInput, $sort: [PlaylistSort!]) {
-        playlistConnection(search: $query, pagination: $pagination, sort: $sort) {
-            nodes {
-                ...PlaylistSummaryCardPlaylist
-                ...PlaylistSummaryCardPlaylistWithOwner
-                id
-            }
-            pageInfo {
-                hasNextPage
-                endCursor
+    query SearchPlaylist($query: String!, $page: Int!, $sort: [SearchPlaylistSort!]) {
+        search(search: $query, first: 15, page: $page) {
+            playlists(sort: $sort) {
+                data {
+                    ...PlaylistSummaryCardPlaylist
+                    ...PlaylistSummaryCardPlaylistWithOwner
+                    id
+                }
+                pageInfo {
+                    hasNextPage
+                }
             }
         }
     }
 `);
 
 interface SearchPlaylistProps {
-    searchQuery?: string;
+    searchQuery: string;
 }
 
 export function SearchPlaylist({ searchQuery }: SearchPlaylistProps) {
     const { filter, updateFilter, bindUpdateFilter } = useFilterStorage("filter-playlist-v2", {
         ...initialFilter,
-        sortBy: searchQuery ? null : initialFilter.sortBy,
+        sortBy: initialFilter.sortBy,
     });
     const [prevSearchQuery, setPrevSearchQuery] = useState(searchQuery);
 
     const variables = {
-        ...(searchQuery ? { query: searchQuery } : {}),
-        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<PlaylistSort> } : {}),
+        query: searchQuery,
+        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SearchPlaylistSort> } : {}),
     };
 
     const {
@@ -68,17 +69,15 @@ export function SearchPlaylist({ searchQuery }: SearchPlaylistProps) {
                 query,
                 variables: {
                     ...variables,
-                    pagination: {
-                        first: 15,
-                        after: pageParam,
-                    },
+                    page: pageParam,
                 },
             });
 
-            return data.playlistConnection;
+            return data.search.playlists;
         },
-        initialPageParam: null as string | null,
-        getNextPageParam: (lastPage) => lastPage.pageInfo.endCursor,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, _, lastPageParam) =>
+        lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null,
         placeholderData: keepPreviousData,
     });
 
@@ -115,12 +114,12 @@ export function SearchPlaylist({ searchQuery }: SearchPlaylistProps) {
                 isFetching={isFetching}
                 isFetchingNextPage={isFetchingNextPage}
                 isPlaceholderData={isPlaceholderData}
-                hasResults={!!data?.pages.length}
+                hasResults={(data?.pages.reduce((total, page) => total + page.data.length, 0) ?? 0) > 0}
                 hasNextPage={hasNextPage}
                 onLoadMore={fetchNextPage}
             >
                 {data?.pages
-                    .flatMap((page) => page.nodes)
+                    .flatMap((page) => page.data)
                     .map((playlist) => (
                         <PlaylistSummaryCard key={playlist.id} playlist={playlist} playlistWithOwner={playlist} />
                     ))}
