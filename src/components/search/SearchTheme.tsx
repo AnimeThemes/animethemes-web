@@ -23,13 +23,18 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchTheme($query: String!, $page: Int!, $filter: SearchAnimeThemeFilterInput, $sort: [SearchAnimeThemeSort!]) {
+    query SearchTheme(
+        $query: String!
+        $page: Int!
+        $filter: SearchAnimeThemeFilterInput
+        $sort: [SearchAnimeThemeSort!]
+    ) {
         search(search: $query, first: 15, page: $page) {
             animethemes(filter: $filter, sort: $sort) {
                 data {
                     ...ThemeSummaryCardTheme
                     ...ThemeSummaryCardThemeExpandable
-                    slug
+                    id
                 }
                 pageInfo {
                     hasNextPage
@@ -82,8 +87,7 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
             return data.search.animethemes;
         },
         initialPageParam: 1,
-        getNextPageParam: (lastPage, _, lastPageParam) =>
-            lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null,
+        getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null),
         placeholderData: keepPreviousData,
     });
 
@@ -133,7 +137,7 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
             >
                 {data?.pages
                     .flatMap((page) => page.data)
-                    .map((theme) => <ThemeSummaryCard key={theme.slug} theme={theme} expandable={theme} />)}
+                    .map((theme) => <ThemeSummaryCard key={theme.id} theme={theme} expandable={theme} />)}
             </SearchEntity>
         </>
     );
