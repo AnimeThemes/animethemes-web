@@ -1,5 +1,6 @@
 import { ApolloClient, ApolloLink, InMemoryCache } from "@apollo/client";
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
+import { print } from "@apollo/client/utilities";
 
 const httpLink = new BatchHttpLink({
     uri: "http://animethemes-rust.test/graphql",
@@ -9,12 +10,17 @@ const httpLink = new BatchHttpLink({
 });
 
 // const httpLink = new HttpLink({
-//     uri: "http://graphql.animethemes.test",
+//     uri: "http://animethemes-rust.test/graphql",
 //     credentials: "include",
 // });
 
 const logLink = new ApolloLink((operation, forward) => {
-    console.error("Operation:", operation.operationName);
+    console.groupCollapsed("Operation:", operation.operationName);
+    console.log(print(operation.query));
+    console.groupCollapsed("Stack Trace:");
+    console.trace();
+    console.groupEnd();
+    console.groupEnd();
     return forward(operation);
 });
 

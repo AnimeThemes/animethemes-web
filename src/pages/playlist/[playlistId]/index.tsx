@@ -200,7 +200,7 @@ const PLAYLIST_DETAIL_PAGE_QUERY = graphql(`
         }
     }
 `);
-const meQuery = graphql(`
+const ME_QUERY = graphql(`
     query PlaylistDetailPageMe {
         me {
             ...PlaylistDetailPageMe
@@ -231,7 +231,7 @@ export default function PlaylistDetailPage({
     const { data: playlistData, refetch } = useQuery(PLAYLIST_DETAIL_PAGE_QUERY, {
         variables: { playlistId: initialPlaylist.id },
     });
-    const { data: meData } = useQuery(meQuery);
+    const { data: meData } = useQuery(ME_QUERY);
 
     const playlist = getFragmentData(PLAYLIST_DETAIL_PAGE_PLAYLIST, playlistData?.playlist ?? playlistFragment);
     const tracks = getFragmentData(PLAYLIST_DETAIL_PAGE_TRACK, playlistData?.playlist?.tracks ?? tracksFragment);
@@ -251,7 +251,12 @@ export default function PlaylistDetailPage({
     const isOwner = me?.name === playlist.user.name;
     const isRanking = playlist.name.startsWith("[#] ");
 
-    const tracksRanked = useMemo(() => [...tracks].map((track, index) => ({ ...track, rank: index + 1 })), [tracks]);
+    const [tracksPrevious, setTracksPrevious] = useState(tracks);
+    const [tracksSortedByUser, setTracksSortedByUser] = useState(tracks);
+    const tracksRanked = useMemo(
+        () => [...tracksSortedByUser].map((track, index) => ({ ...track, rank: index + 1 })),
+        [tracksSortedByUser],
+    );
     const tracksSorted = useMemo(() => [...tracksRanked].sort(comparators[sortBy]), [sortBy, tracksRanked]);
 
     const playAll = useCallback(
@@ -283,16 +288,6 @@ export default function PlaylistDetailPage({
         }
     }, [router, setCurrentWatchListItem, setWatchList, setWatchListFactory, tracksSorted]);
 
-    const updateTrackOrder = useCallback(
-        async (newTracks: typeof tracks) => {
-            await refetch({
-                ...playlist,
-                tracks: newTracks,
-            });
-        },
-        [refetch, playlist],
-    );
-
     const [updatePlaylistTrackMutation] = useMutation(
         graphql(`
             mutation UpdatePlaylistTrack($id: String!, $playlist: String!, $input: UpdatePlaylistTrackInput!) {
@@ -305,7 +300,7 @@ export default function PlaylistDetailPage({
 
     const updateTrackOrderRemote = useCallback(
         async (trackId: string) => {
-            const position = tracks.findIndex((track) => track.id === trackId) + 1;
+            const position = tracksSortedByUser.findIndex((track) => track.id === trackId) + 1;
 
             await updatePlaylistTrackMutation({
                 variables: {
@@ -319,7 +314,7 @@ export default function PlaylistDetailPage({
 
             await refetch();
         },
-        [tracks, updatePlaylistTrackMutation, playlist.id, refetch],
+        [tracksSortedByUser, updatePlaylistTrackMutation, playlist.id, refetch],
     );
 
     const coverImageItems = useMemo(
@@ -331,6 +326,12 @@ export default function PlaylistDetailPage({
             }),
         [tracks],
     );
+
+    if (tracks !== tracksPrevious) {
+        setTracksPrevious(tracks);
+        setTracksSortedByUser(tracks);
+        return null;
+    }
 
     const topRankedTrack = tracksRanked.find((track) => track.rank === 1);
 
@@ -428,7 +429,7 @@ export default function PlaylistDetailPage({
                         isRanking={isRanking}
                         playAll={playAll}
                         updateTrackOrderRemote={updateTrackOrderRemote}
-                        updateTrackOrder={updateTrackOrder}
+                        updateTrackOrder={setTracksSortedByUser}
                     />
                 </Column>
             </SidebarContainer>
