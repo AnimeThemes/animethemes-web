@@ -3,6 +3,7 @@ import { range } from "lodash-es";
 
 import { Column } from "@/components/box/Flex";
 import { VideoSummaryCard } from "@/components/card/VideoSummaryCard";
+import { VideoMenu } from "@/components/menu/VideoMenu";
 import { Skeleton } from "@/components/skeleton/Skeleton";
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
@@ -17,9 +18,11 @@ export function RecentlyAddedVideos() {
                         videoConnection(sort: [ID_DESC], pagination: { first: 10 }) {
                             nodes {
                                 ...VideoSummaryCardVideo
+                                ...VideoMenuVideo
                                 animethemeentries {
                                     nodes {
                                         ...VideoSummaryCardEntry
+                                        ...VideoMenuEntry
                                         animetheme {
                                             ...VideoSummaryCardTheme
                                         }
@@ -44,6 +47,7 @@ export function RecentlyAddedVideos() {
                             video={video}
                             entry={video.animethemeentries.nodes[0]}
                             theme={video.animethemeentries.nodes[0].animetheme}
+                            menu={<VideoMenu video={video} entry={video.animethemeentries.nodes[0]} />}
                         />
                     ) : null}
                 </Skeleton>

@@ -76,9 +76,7 @@ export default function useAuth() {
             }
         `),
         {
-            refetchQueries: [
-                meQuery,
-            ],
+            refetchQueries: [meQuery],
         },
     );
 
@@ -91,8 +89,8 @@ export default function useAuth() {
                     password: props.password,
                     passwordConfirm: props.password_confirmation,
                     terms: props.terms,
-                }
-            }
+                },
+            },
         });
     };
 
@@ -112,8 +110,8 @@ export default function useAuth() {
                 input: {
                     email: props.email,
                     password: props.password,
-                }
-            }
+                },
+            },
         });
 
         await client.refetchQueries({
@@ -135,14 +133,14 @@ export default function useAuth() {
                 input: {
                     name: props.name,
                     email: props.email,
-                }
-            }
+                },
+            },
         });
 
         await client.refetchQueries({
             include: "active",
         });
-    }
+    };
 
     const forgotPassword = async (props: ForgotPasswordProps) => {
         await csrf();
@@ -174,7 +172,7 @@ export default function useAuth() {
         await client.refetchQueries({
             include: "active",
         });
-    }
+    };
 
     return {
         me: data?.me,
