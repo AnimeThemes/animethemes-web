@@ -52,7 +52,7 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
     const variables = {
         query: searchQuery,
         filter: {
-            ...(filter.firstLetter ? { nameMainLike: `${filter.firstLetter}%` } : {}),
+            ...(filter.firstLetter ? { nameMainPrefix: filter.firstLetter } : {}),
         },
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SearchArtistSort> } : {}),
     };

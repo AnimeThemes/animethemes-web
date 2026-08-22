@@ -71,7 +71,7 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
     const variables = {
         query: searchQuery,
         filter: {
-            ...(filter.firstLetter ? { titleRomajiLike: `${filter.firstLetter}%` } : {}),
+            ...(filter.firstLetter ? { titleRomajiPrefix: filter.firstLetter } : {}),
             ...(filter.season ? { season: filter.season } : {}),
             ...(filter.year ? { year: parseInt(filter.year) } : {}),
             ...(filter.format ? { format: filter.format } : {}),

@@ -54,7 +54,7 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
     const variables = {
         query: searchQuery,
         filter: {
-            ...(filter.firstLetter ? { titleRomajiLike: `${filter.firstLetter}%` } : {}),
+            ...(filter.firstLetter ? { titleRomajiPrefix: filter.firstLetter } : {}),
         },
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SearchSeriesSort> } : {}),
     };

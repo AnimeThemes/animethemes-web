@@ -110,12 +110,12 @@ export type AnimeSeriesConnection = {
 
 /** An edge in a connection. */
 export type AnimeSeriesEdge = {
-  createdAt: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
   /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node: Series;
-  updatedAt: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['String']['output'];
 };
 
 
@@ -158,12 +158,12 @@ export type AnimeStudioConnection = {
 
 /** An edge in a connection. */
 export type AnimeStudioEdge = {
-  createdAt: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
   /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node: Studio;
-  updatedAt: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['String']['output'];
 };
 
 
@@ -275,12 +275,12 @@ export type AnimeThemeEntryVideoConnection = {
 
 /** An edge in a connection. */
 export type AnimeThemeEntryVideoEdge = {
-  createdAt: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
   /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node: Video;
-  updatedAt: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['String']['output'];
 };
 
 
@@ -431,7 +431,7 @@ export type ArtistMemberEdge = {
   /** Used to distinguish member by character */
   as: Maybe<Scalars['String']['output']>;
   /** The date that the resource was created */
-  createdAt: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
   /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
@@ -441,7 +441,7 @@ export type ArtistMemberEdge = {
   /** Used to determine the relevance order of members in group */
   relevance: Scalars['Int']['output'];
   /** The date that the resource was updated */
-  updatedAt: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['String']['output'];
 };
 
 
@@ -628,7 +628,7 @@ export type ImageableConnection = {
 /** An edge in a connection. */
 export type ImageableEdge = {
   /** The date that the resource was created */
-  createdAt: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
   /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
   /** Used to sort the images */
@@ -636,7 +636,7 @@ export type ImageableEdge = {
   /** The item at the end of the edge */
   node: Image;
   /** The date that the resource was updated */
-  updatedAt: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['String']['output'];
 };
 
 
@@ -659,7 +659,7 @@ export type LoginInput = {
 /** Represents an AnimeThemes account. */
 export type Me = {
   /** The date that the resource was created */
-  createdAt: Maybe<Scalars['DateTime']['output']>;
+  createdAt: Scalars['DateTime']['output'];
   /** The email of the user */
   email: Scalars['String']['output'];
   /** The date the user verified their email */
@@ -672,7 +672,8 @@ export type Me = {
   playlists: Array<Playlist>;
   roles: Array<Role>;
   /** The date that the resource was updated */
-  updatedAt: Maybe<Scalars['DateTime']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+  watchHistory: Array<WatchHistory>;
 };
 
 
@@ -693,6 +694,8 @@ export type Mutation = {
   updatePlaylist: Playlist;
   updatePlaylistTrack: PlaylistTrack;
   updateUserInformation: Scalars['Boolean']['output'];
+  /** Mark a video as watched. */
+  watch: WatchHistory;
 };
 
 
@@ -750,6 +753,12 @@ export type MutationUpdateUserInformationArgs = {
   input: UpdateUserInformationInput;
 };
 
+
+export type MutationWatchArgs = {
+  entryId: Scalars['Int']['input'];
+  videoId: Scalars['Int']['input'];
+};
+
 export type OffsetPageInfo = {
   /** The number of items per page. */
   first: Scalars['Int']['output'];
@@ -772,7 +781,7 @@ export type Page = {
   /** The body content of the resource */
   body: Scalars['String']['output'];
   /** The date that the resource was created */
-  createdAt: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
   /** The primary key of the resource */
   id: Scalars['Int']['output'];
   /** The primary title of the page */
@@ -782,7 +791,7 @@ export type Page = {
   /** The URL slug & route key of the resource */
   slug: Scalars['String']['output'];
   /** The date that the resource was updated */
-  updatedAt: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['String']['output'];
 };
 
 
@@ -1183,13 +1192,12 @@ export type ResourceableEdge = {
   /** Used to distinguish resources that map to the same resourceable */
   as: Maybe<Scalars['String']['output']>;
   /** The date that the resource was created */
-  createdAt: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
   /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node: ExternalResource;
-  /** The date that the resource was updated */
-  updatedAt: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['String']['output'];
 };
 
 
@@ -1283,7 +1291,7 @@ export type SearchStudiosArgs = {
 export type SearchAnimeFilterInput = {
   format?: InputMaybe<AnimeFormat>;
   season?: InputMaybe<AnimeSeason>;
-  titleRomajiLike?: InputMaybe<Scalars['String']['input']>;
+  titleRomajiPrefix?: InputMaybe<Scalars['String']['input']>;
   year?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -1297,6 +1305,7 @@ export type SearchAnimeSort =
   | 'YEAR_DESC';
 
 export type SearchAnimeThemeFilterInput = {
+  songTitleRomajiPrefix?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<ThemeType>;
 };
 
@@ -1310,7 +1319,7 @@ export type SearchAnimeThemeSort =
   | 'SONG_TITLE_ROMAJI_DESC';
 
 export type SearchArtistFilterInput = {
-  nameMainLike?: InputMaybe<Scalars['String']['input']>;
+  nameMainPrefix?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SearchArtistSort =
@@ -1324,7 +1333,7 @@ export type SearchPlaylistSort =
   | 'NAME_DESC';
 
 export type SearchSeriesFilterInput = {
-  titleRomajiLike?: InputMaybe<Scalars['String']['input']>;
+  titleRomajiPrefix?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SearchSeriesSort =
@@ -1333,7 +1342,7 @@ export type SearchSeriesSort =
   | 'TITLE_ROMAJI_DESC';
 
 export type SearchStudioFilterInput = {
-  nameLike?: InputMaybe<Scalars['String']['input']>;
+  namePrefix?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SearchStudioSort =
@@ -1367,12 +1376,12 @@ export type SeriesAnimeConnection = {
 
 /** An edge in a connection. */
 export type SeriesAnimeEdge = {
-  createdAt: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
   /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node: Anime;
-  updatedAt: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['String']['output'];
 };
 
 
@@ -1486,12 +1495,12 @@ export type StudioAnimeConnection = {
 
 /** An edge in a connection. */
 export type StudioAnimeEdge = {
-  createdAt: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
   /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node: Anime;
-  updatedAt: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['String']['output'];
 };
 
 
@@ -1675,12 +1684,12 @@ export type VideoAnimeThemeEntryConnection = {
 
 /** An edge in a connection. */
 export type VideoAnimeThemeEntryEdge = {
-  createdAt: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['String']['output'];
   /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node: AnimeThemeEntry;
-  updatedAt: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['String']['output'];
 };
 
 
@@ -1758,6 +1767,11 @@ export type VideoSource =
   | 'RAW'
   | 'VHS'
   | 'WEB';
+
+export type WatchHistory = {
+  animethemeentry: AnimeThemeEntry;
+  video: Video;
+};
 
 export type BracketThemeSummaryCardThemeFragment = (
   { type: ThemeType, sequence: number | null, group: { name: string, slug: string } | null, anime: { slug: string, title: { romaji: string }, images: { nodes: Array<{ ' $fragmentRefs'?: { 'ExtractImagesImageFragment': ExtractImagesImageFragment } }> } }, song: { ' $fragmentRefs'?: { 'SongTitleWithArtistsSongFragment': SongTitleWithArtistsSongFragment } } | null, animethemeentries: Array<(
@@ -2205,7 +2219,7 @@ export type RandomThemeQuery = { animethemeShuffle: Array<(
     & { ' $fragmentRefs'?: { 'ThemeSummaryCardThemeFragment': ThemeSummaryCardThemeFragment;'ThemeSummaryCardThemeExpandableFragment': ThemeSummaryCardThemeExpandableFragment } }
   )> };
 
-export type DocumentPagePageFragment = { name: string, createdAt: string | null } & { ' $fragmentName'?: 'DocumentPagePageFragment' };
+export type DocumentPagePageFragment = { name: string, createdAt: string } & { ' $fragmentName'?: 'DocumentPagePageFragment' };
 
 export type DocumentPageQueryVariables = Exact<{
   pageSlug: Scalars['String']['input'];
@@ -2340,7 +2354,7 @@ export type ArtistIndexPageQuery = { artistConnection: { nodes: Array<{ slug: st
 export type DocumentIndexPageQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DocumentIndexPageQuery = { blogPages: { nodes: Array<{ slug: string, name: string, createdAt: string | null }> } };
+export type DocumentIndexPageQuery = { blogPages: { nodes: Array<{ slug: string, name: string, createdAt: string }> } };
 
 export type BracketPageQueryVariables = Exact<{
   filter?: InputMaybe<AnimeThemeFilterInput>;
@@ -2453,7 +2467,7 @@ export type GalleryPageQueryVariables = Exact<{
 export type GalleryPageQuery = { grills: { nodes: Array<{ id: number, link: string }> } };
 
 export type ProfilePageMeFragment = (
-  { name: string, email: string, emailVerifiedAt: any | null, createdAt: any | null, roles: Array<{ name: string, color: string | null, priority: number, default: boolean }>, playlists: Array<(
+  { name: string, email: string, emailVerifiedAt: any | null, createdAt: any, roles: Array<{ name: string, color: string | null, priority: number, default: boolean }>, playlists: Array<(
     { id: string }
     & { ' $fragmentRefs'?: { 'PlaylistSummaryCardPlaylistFragment': PlaylistSummaryCardPlaylistFragment;'PlaylistRemoveDialogPlaylistFragment': PlaylistRemoveDialogPlaylistFragment } }
   )> }
