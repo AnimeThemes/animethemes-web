@@ -11,13 +11,16 @@ import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
 import type { SearchAnimeThemeSort, ThemeType } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
+import { SearchFilterFirstLetter } from "../search-filter/SearchFilterFirstLetter";
 
 interface Filter {
+    firstLetter: string | null;
     type: ThemeType | null;
     sortBy: string | null;
 }
 
 const initialFilter: Filter = {
+    firstLetter: null,
     type: null,
     sortBy: "SONG_TITLE_ROMAJI",
 };
@@ -58,6 +61,7 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
     const variables = {
         query: searchQuery,
         filter: {
+            ...(filter.firstLetter ? { songTitleRomajiPrefix: filter.firstLetter } : {}),
             ...(filter.type ? { type: filter.type } : {}),
         },
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SearchAnimeThemeSort> } : {}),
@@ -109,6 +113,7 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
     return (
         <>
             <SearchFilterGroup>
+                <SearchFilterFirstLetter value={filter.firstLetter} setValue={bindUpdateFilter("firstLetter")} />
                 <SearchFilterThemeType value={filter.type} setValue={bindUpdateFilter("type")} />
                 <SearchFilterSortBy value={filter.sortBy} setValue={bindUpdateFilter("sortBy")}>
                     {searchQuery ? <SearchFilterSortBy.Option value={null}>Relevance</SearchFilterSortBy.Option> : null}

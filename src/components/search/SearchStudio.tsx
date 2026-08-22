@@ -52,7 +52,7 @@ export function SearchStudio({ searchQuery }: SearchStudioProps) {
     const variables = {
         query: searchQuery,
         filter: {
-            ...(filter.firstLetter ? { nameLike: `${filter.firstLetter}%` } : {}),
+            ...(filter.firstLetter ? { namePrefix: filter.firstLetter } : {}),
         },
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SearchStudioSort> } : {}),
     };
