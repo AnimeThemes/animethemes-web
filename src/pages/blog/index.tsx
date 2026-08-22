@@ -34,7 +34,7 @@ interface DocumentIndexPageProps extends SharedPageProps, ResultOf<typeof propsQ
 
 export default function DocumentIndexPage({ blogPages }: DocumentIndexPageProps) {
     const pageGroups = Object.entries(
-        groupBy(blogPages.nodes, (page) => (page.createdAt ? new Date(page.createdAt).getFullYear() : "Unknown")),
+        groupBy(blogPages.nodes, (page) => new Date(page.createdAt).getFullYear()),
     ).sort((a, b) => parseInt(b[0]) - parseInt(a[0]));
 
     return (
