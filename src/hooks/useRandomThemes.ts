@@ -1,8 +1,12 @@
 import { useContext } from "react";
 import { useRouter } from "next/router";
 
-import { VIDEO_SUMMARY_CARD_ENTRY, VIDEO_SUMMARY_CARD_VIDEO } from "@/components/card/VideoSummaryCard";
-import PlayerContext, { createWatchListItem } from "@/context/playerContext";
+import PlayerContext, {
+    createWatchListItem,
+    WATCH_LIST_ITEM_ENTRY,
+    WATCH_LIST_ITEM_THEME,
+    WATCH_LIST_ITEM_VIDEO,
+} from "@/context/playerContext";
 import { getFragmentData } from "@/graphql/generated";
 import { fetchRandomThemes, type RandomThemesOptions } from "@/lib/client/randomTheme";
 import createVideoSlug from "@/utils/createVideoSlug";
@@ -15,11 +19,15 @@ export default function useRandomThemes() {
         const factory = async () => {
             const themes = await fetchRandomThemes(options);
 
-            return themes.map((theme) => {
-                const entry = getFragmentData(VIDEO_SUMMARY_CARD_ENTRY, theme.animethemeentries[0]);
-                const video = getFragmentData(VIDEO_SUMMARY_CARD_VIDEO, theme.animethemeentries[0].videos.nodes[0]);
+            return themes.map((themeFragment) => {
+                const theme = getFragmentData(WATCH_LIST_ITEM_THEME, themeFragment);
+                const entry = getFragmentData(WATCH_LIST_ITEM_ENTRY, themeFragment.animethemeentries[0]);
+                const video = getFragmentData(
+                    WATCH_LIST_ITEM_VIDEO,
+                    themeFragment.animethemeentries[0].videos.nodes[0],
+                );
 
-                return createWatchListItem(video, entry);
+                return createWatchListItem(video, entry, theme);
             });
         };
 
@@ -30,8 +38,7 @@ export default function useRandomThemes() {
         setWatchList(watchList, true);
         setCurrentWatchListItem(watchList[0]);
 
-        const { video, entry } = watchList[0];
-        const theme = entry.animetheme;
+        const { video, entry, theme } = watchList[0];
         const anime = theme?.anime;
 
         if (anime && entry && video) {

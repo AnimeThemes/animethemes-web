@@ -19,6 +19,7 @@ import createApolloClient from "@/graphql/createApolloClient";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useToggle from "@/hooks/useToggle";
 import theme from "@/theme";
+import collect from "@/utils/collect";
 import { ANIME_A_Z, ANIME_NEW_OLD, ANIME_OLD_NEW, ANIME_Z_A, getComparator } from "@/utils/comparators";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import getSharedPageProps from "@/utils/getSharedPageProps";
@@ -78,11 +79,15 @@ const propsQuery = graphql(`
 `);
 
 const pathsQuery = graphql(`
-    query SeriesDetailPageAll {
-        seriesConnection {
+    query SeriesDetailPageAll($pagination: PaginationInput) {
+        seriesConnection(pagination: $pagination) {
             nodes {
                 ...SeriesDetailPageSeries
                 slug
+            }
+            pageInfo {
+                hasNextPage
+                endCursor
             }
         }
     }
@@ -113,7 +118,9 @@ export default function SeriesDetailPage({ series: seriesFragment }: SeriesDetai
             <Text variant="h1">{series.title.romaji}</Text>
             <SidebarContainer>
                 <StyledDesktopOnly>
-                    <MultiCoverImage items={anime.map((anime) => ({ images: anime.images.nodes, name: anime.title.romaji }))} />
+                    <MultiCoverImage
+                        items={anime.map((anime) => ({ images: anime.images.nodes, name: anime.title.romaji }))}
+                    />
                 </StyledDesktopOnly>
                 <Column style={{ "--gap": "24px" }}>
                     <Row style={{ "--justify-content": "space-between", "--align-items": "center" }}>
@@ -188,15 +195,29 @@ export const getStaticPaths: GetStaticPaths<SeriesDetailPageParams> = async () =
     return fetchStaticPaths(async () => {
         const client = createApolloClient();
 
-        const { data } = await client.query({
-            query: pathsQuery,
+        const allSeries = await collect(async (cursor) => {
+            const { data } = await client.query({
+                query: pathsQuery,
+                variables: {
+                    pagination: {
+                        first: 1000,
+                        after: cursor,
+                    },
+                },
+            });
+
+            return {
+                items: data.seriesConnection.nodes,
+                nextCursor: data.seriesConnection.pageInfo.endCursor,
+                hasNextPage: data.seriesConnection.pageInfo.hasNextPage,
+            };
         });
 
-        for (const series of data.seriesConnection.nodes) {
+        for (const series of allSeries) {
             buildTimeCache.set(series.slug, series);
         }
 
-        return data.seriesConnection.nodes.map((series) => ({
+        return allSeries.map((series) => ({
             params: {
                 seriesSlug: series.slug,
             },

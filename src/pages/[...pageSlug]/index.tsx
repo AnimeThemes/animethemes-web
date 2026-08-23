@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import type { MDXRemoteSerializeResult } from "next-mdx-remote";
 
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
@@ -85,6 +86,10 @@ export default function DocumentPage({ page: pageFragment, source, headings }: D
     const page = getFragmentData(DOCUMENT_PAGE_PAGE, pageFragment);
     const author = typeof source.frontmatter?.author === "string" ? source.frontmatter.author : undefined;
 
+    const router = useRouter();
+    const isWiki = router.asPath.startsWith("/wiki");
+    const isOverview = router.asPath === "/wiki";
+
     return (
         <>
             <PageHeader title={page.name} author={author} createdAt={page.createdAt} />
@@ -93,12 +98,14 @@ export default function DocumentPage({ page: pageFragment, source, headings }: D
                 <Markdown source={source} />
                 <TableOfContents headings={headings} />
             </StyledGrid>
-            <ArrowLink href="/wiki">
-                <Icon icon={faArrowLeft} color="text-disabled" />
-                <Text link color="text-disabled">
-                    Back to overview
-                </Text>
-            </ArrowLink>
+            {!isOverview && (
+                <ArrowLink href={isWiki ? "/wiki" : "/blog"}>
+                    <Icon icon={faArrowLeft} color="text-disabled" />
+                    <Text link color="text-disabled">
+                        Back to overview
+                    </Text>
+                </ArrowLink>
+            )}
         </>
     );
 }

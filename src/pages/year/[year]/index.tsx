@@ -2,13 +2,13 @@ import type { GetStaticPaths, GetStaticProps } from "next";
 import Link from "next/link";
 
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import type { ResultOf } from "@graphql-typed-document-node/core";
 import type { ParsedUrlQuery } from "querystring";
 
 import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
 import { AnimeSummaryCard } from "@/components/card/AnimeSummaryCard";
 import { Icon } from "@/components/icon/Icon";
+import { type SEASON_NAVIGATION_YEAR, type SEASON_NAVIGATION_YEARS } from "@/components/navigation/SeasonNavigation";
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
 import createApolloClient from "@/graphql/createApolloClient";
@@ -17,6 +17,21 @@ import { seasonComparator, sortTransformed } from "@/utils/comparators";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
+
+export const YEAR_DETAIL_PAGE_YEAR = graphql(`
+    fragment YearDetailPageYear on AnimeYear {
+        year
+        seasons: season {
+            season
+            seasonLocalized
+            anime(sort: TITLE_ROMAJI, pagination: { first: 3 }) {
+                nodes {
+                    ...SeasonPreviewAnime
+                }
+            }
+        }
+    }
+`);
 
 const pathsQuery = graphql(`
     query YearDetailPageAll {
@@ -29,21 +44,14 @@ const pathsQuery = graphql(`
 const propsQuery = graphql(`
     query YearDetailPage($year: Int!) {
         animeyear: animeyears(year: [$year]) {
-            ...SeasonDetailPageYear
-            ...YearNavigationYear
-            year
+            ...YearDetailPageYear
+            ...SeasonNavigationYear
             seasons: season {
                 season
-                seasonLocalized
-                anime(sort: TITLE_ROMAJI, pagination: { first: 3 }) {
-                    nodes {
-                        ...SeasonPreviewAnime
-                    }
-                }
             }
         }
         animeyears {
-            ...YearNavigationYears
+            ...SeasonNavigationYears
             year
         }
     }
@@ -51,20 +59,27 @@ const propsQuery = graphql(`
 
 export interface YearDetailPageProps extends SharedPageProps {
     isYearOrSeasonPage: true;
-    year: ResultOf<typeof propsQuery>["animeyear"][number];
-    years: ResultOf<typeof propsQuery>["animeyears"];
+    year: FragmentType<typeof YEAR_DETAIL_PAGE_YEAR> & FragmentType<typeof SEASON_NAVIGATION_YEAR>;
+    years: Array<FragmentType<typeof SEASON_NAVIGATION_YEARS>>;
 }
 
 interface YearDetailPageParams extends ParsedUrlQuery {
     year: string;
 }
 
-export default function YearDetailPage({ year }: YearDetailPageProps) {
+export default function YearDetailPage({ year: yearFragment }: YearDetailPageProps) {
+    const year = getFragmentData(YEAR_DETAIL_PAGE_YEAR, yearFragment);
+
     return (
         <>
             <SEO title={String(year.year)} />
             {year.seasons?.map((season) => (
-                <SeasonPreview key={season.season} season={season.season} year={year.year} animes={season.anime.nodes} />
+                <SeasonPreview
+                    key={season.season}
+                    season={season.season}
+                    year={year.year}
+                    animes={season.anime.nodes}
+                />
             ))}
         </>
     );

@@ -72,8 +72,7 @@ export function getVideoSlugByProps(pageProps: object): string | null {
 }
 
 export function getVideoSlugByWatchListItem(watchListItem: WatchListItem): string {
-    const { video, entry } = watchListItem;
-    const theme = entry.animetheme;
+    const { video, entry, theme } = watchListItem;
 
     return `${theme.anime.slug}/${createVideoSlug(theme, entry, video)}`;
 }

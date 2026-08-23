@@ -138,11 +138,13 @@ const StyledRoleBadge = styled.span<{ $color: string }>`
 export const PROFILE_PAGE_ME = graphql(`
     fragment ProfilePageMe on Me {
         ...ProfileImageUser
+        id
         name
         email
         emailVerifiedAt
         createdAt
         roles {
+            id
             name
             color
             priority
@@ -346,9 +348,9 @@ interface WatchHistoryThemesProps {
 const WatchHistoryThemes = memo(function WatchHistoryThemes({ themes }: WatchHistoryThemesProps) {
     return (
         <>
-            {[...themes].reverse().map((theme) => (
-                <ThemeSummaryCard key={theme.id} theme={theme} />
-            ))}
+            {/*{[...themes].reverse().map((theme) => (*/}
+            {/*    <ThemeSummaryCard key={theme.id} theme={theme} />*/}
+            {/*))}*/}
         </>
     );
 });
