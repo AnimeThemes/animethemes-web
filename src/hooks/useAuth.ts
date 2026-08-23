@@ -48,7 +48,7 @@ interface ResetPasswordProps {
     token: string;
 }
 
-const meQuery = graphql(`
+const USE_AUTH_ME_QUERY = graphql(`
     query UseAuthMe {
         me {
             ...ProfileImageUser
@@ -63,7 +63,7 @@ const meQuery = graphql(`
 `);
 
 export default function useAuth() {
-    const { data } = useQuery(meQuery);
+    const { data } = useQuery(USE_AUTH_ME_QUERY);
 
     const csrf = () => axios.get(`/sanctum/csrf-cookie`);
 
@@ -76,7 +76,7 @@ export default function useAuth() {
             }
         `),
         {
-            refetchQueries: [meQuery],
+            refetchQueries: [USE_AUTH_ME_QUERY],
         },
     );
 

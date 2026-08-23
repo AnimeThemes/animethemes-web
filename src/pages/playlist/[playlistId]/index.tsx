@@ -46,7 +46,12 @@ import { Text } from "@/components/text/Text";
 import { Busy } from "@/components/utils/Busy";
 import { Collapse } from "@/components/utils/Collapse";
 import { HeightTransition } from "@/components/utils/HeightTransition";
-import PlayerContext, { createWatchListItem } from "@/context/playerContext";
+import PlayerContext, {
+    createWatchListItem,
+    WATCH_LIST_ITEM_ENTRY,
+    WATCH_LIST_ITEM_THEME,
+    WATCH_LIST_ITEM_VIDEO,
+} from "@/context/playerContext";
 import createApolloClient from "@/graphql/createApolloClient";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useToggle from "@/hooks/useToggle";
@@ -149,6 +154,7 @@ export const PLAYLIST_DETAIL_PAGE_TRACK = graphql(`
         id
         video {
             ...VideoSummaryCardVideo
+            ...WatchListItemVideo
             ...FeaturedThemeVideo
             ...PlaylistTrackAddDialogVideo
             ...PlaylistTrackRemoveDialogVideo
@@ -156,11 +162,13 @@ export const PLAYLIST_DETAIL_PAGE_TRACK = graphql(`
         }
         animethemeentry {
             ...VideoSummaryCardEntry
+            ...WatchListItemEntry
             ...FeaturedThemeEntry
             ...PlaylistTrackAddDialogEntry
             ...PlaylistTrackRemoveDialogEntry
             animetheme {
                 ...VideoSummaryCardTheme
+                ...WatchListItemTheme
                 anime {
                     title {
                         romaji
@@ -261,7 +269,13 @@ export default function PlaylistDetailPage({
 
     const playAll = useCallback(
         (initiatingVideoIndex: number) => {
-            const watchList = tracksSorted.map((track) => createWatchListItem(track.video, track.animethemeentry));
+            const watchList = tracksSorted.map((track) =>
+                createWatchListItem(
+                    getFragmentData(WATCH_LIST_ITEM_VIDEO, track.video),
+                    getFragmentData(WATCH_LIST_ITEM_ENTRY, track.animethemeentry),
+                    getFragmentData(WATCH_LIST_ITEM_THEME, track.animethemeentry.animetheme),
+                ),
+            );
             setWatchList(watchList, true);
             setWatchListFactory(null);
             setCurrentWatchListItem(watchList[initiatingVideoIndex]);
@@ -273,13 +287,20 @@ export default function PlaylistDetailPage({
         if (tracksSorted.length === 0) {
             return;
         }
-        const watchList = shuffle(tracksSorted.map((track) => createWatchListItem(track.video, track.animethemeentry)));
+        const watchList = shuffle(
+            tracksSorted.map((track) =>
+                createWatchListItem(
+                    getFragmentData(WATCH_LIST_ITEM_VIDEO, track.video),
+                    getFragmentData(WATCH_LIST_ITEM_ENTRY, track.animethemeentry),
+                    getFragmentData(WATCH_LIST_ITEM_THEME, track.animethemeentry.animetheme),
+                ),
+            ),
+        );
         setWatchList(watchList, true);
         setWatchListFactory(null);
         setCurrentWatchListItem(watchList[0]);
 
-        const { video, entry } = watchList[0];
-        const theme = entry.animetheme;
+        const { video, entry, theme } = watchList[0];
         const anime = theme?.anime;
 
         if (anime && entry && video) {
@@ -646,11 +667,33 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
                             {watchList.length ? (
                                 <>
                                     <MenuSeparator />
-                                    <MenuItem onSelect={() => addWatchListItem(track.video, track.animethemeentry)}>
+                                    <MenuItem
+                                        onSelect={() =>
+                                            addWatchListItem(
+                                                getFragmentData(WATCH_LIST_ITEM_VIDEO, track.video),
+                                                getFragmentData(WATCH_LIST_ITEM_ENTRY, track.animethemeentry),
+                                                getFragmentData(
+                                                    WATCH_LIST_ITEM_THEME,
+                                                    track.animethemeentry.animetheme,
+                                                ),
+                                            )
+                                        }
+                                    >
                                         <Icon icon={faArrowTurnDown} color="text-disabled" />
                                         <Text>Add to Watch List</Text>
                                     </MenuItem>
-                                    <MenuItem onSelect={() => addWatchListItemNext(track.video, track.animethemeentry)}>
+                                    <MenuItem
+                                        onSelect={() =>
+                                            addWatchListItemNext(
+                                                getFragmentData(WATCH_LIST_ITEM_VIDEO, track.video),
+                                                getFragmentData(WATCH_LIST_ITEM_ENTRY, track.animethemeentry),
+                                                getFragmentData(
+                                                    WATCH_LIST_ITEM_THEME,
+                                                    track.animethemeentry.animetheme,
+                                                ),
+                                            )
+                                        }
+                                    >
                                         <Icon icon={faArrowTurnUp} color="text-disabled" />
                                         <Text>Play Next</Text>
                                     </MenuItem>

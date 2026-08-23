@@ -19,6 +19,7 @@ import { Text } from "@/components/text/Text";
 import { HeightTransition } from "@/components/utils/HeightTransition";
 import createApolloClient from "@/graphql/createApolloClient";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
+import collect from "@/utils/collect";
 import { compare, seriesTitleComparator, studioNameComparator } from "@/utils/comparators";
 import extractImages from "@/utils/extractImages";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
@@ -94,11 +95,15 @@ const propsQuery = graphql(`
 `);
 
 const pathsQuery = graphql(`
-    query AnimeDetailPageAll {
-        animeConnection {
+    query AnimeDetailPageAll($pagination: PaginationInput) {
+        animeConnection(pagination: $pagination) {
             nodes {
                 ...AnimeDetailPageAnime
                 slug
+            }
+            pageInfo {
+                hasNextPage
+                endCursor
             }
         }
     }
@@ -125,12 +130,18 @@ export default function AnimeDetailPage({ anime: animeFragment, synopsisMarkdown
             <Text variant="h1">{anime.title.romaji}</Text>
             <SidebarContainer>
                 <Column style={{ "--gap": "24px" }}>
-                    <CoverImage smallCover={smallCover} largeCover={largeCover} alt={`Cover image of ${anime.title.romaji}`} />
+                    <CoverImage
+                        smallCover={smallCover}
+                        largeCover={largeCover}
+                        alt={`Cover image of ${anime.title.romaji}`}
+                    />
                     <DescriptionList>
                         {anime.title.english || anime.title.native || anime.synonyms.length ? (
                             <DescriptionList.Item title="Alternative Titles">
                                 <StyledList>
-                                    {anime.title.english && <Text key={anime.title.english}>{anime.title.english}</Text>}
+                                    {anime.title.english && (
+                                        <Text key={anime.title.english}>{anime.title.english}</Text>
+                                    )}
                                     {anime.title.native && <Text key={anime.title.native}>{anime.title.native}</Text>}
                                     {anime.synonyms.map((synonym) => (
                                         <Text key={synonym.text}>{synonym.text}</Text>
@@ -255,15 +266,29 @@ export const getStaticPaths: GetStaticPaths<AnimeDetailPageParams> = () => {
     return fetchStaticPaths(async () => {
         const client = createApolloClient();
 
-        const { data } = await client.query({
-            query: pathsQuery,
+        const allAnime = await collect(async (cursor) => {
+            const { data } = await client.query({
+                query: pathsQuery,
+                variables: {
+                    pagination: {
+                        first: 1000,
+                        after: cursor,
+                    },
+                },
+            });
+
+            return {
+                items: data.animeConnection.nodes,
+                nextCursor: data.animeConnection.pageInfo.endCursor,
+                hasNextPage: data.animeConnection.pageInfo.hasNextPage,
+            };
         });
 
-        for (const anime of data.animeConnection.nodes) {
+        for (const anime of allAnime) {
             buildTimeCache.set(anime.slug, anime);
         }
 
-        return data.animeConnection.nodes.map((anime) => ({
+        return allAnime.map((anime) => ({
             params: {
                 animeSlug: anime.slug,
             },

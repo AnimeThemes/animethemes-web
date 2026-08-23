@@ -1,10 +1,14 @@
 import type { GetStaticPaths, GetStaticProps } from "next";
 
-import type { ResultOf } from "@graphql-typed-document-node/core";
 import type { ParsedUrlQuery } from "querystring";
 
 import { Column } from "@/components/box/Flex";
 import { AnimeSummaryCard } from "@/components/card/AnimeSummaryCard";
+import {
+    type SEASON_NAVIGATION_SEASON,
+    type SEASON_NAVIGATION_YEAR,
+    type SEASON_NAVIGATION_YEARS,
+} from "@/components/navigation/SeasonNavigation";
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
 import createApolloClient from "@/graphql/createApolloClient";
@@ -17,14 +21,12 @@ import getSharedPageProps from "@/utils/getSharedPageProps";
 
 export const SEASON_DETAIL_PAGE_YEAR = graphql(`
     fragment SeasonDetailPageYear on AnimeYear {
-        ...SeasonNavigationYear
         year
     }
 `);
 
 export const SEASON_DETAIL_PAGE_SEASON = graphql(`
     fragment SeasonDetailPageSeason on AnimeYearSeason {
-        ...SeasonNavigationSeason
         season
         seasonLocalized
         anime(pagination: { first: 100 }) {
@@ -55,9 +57,10 @@ const propsQuery = graphql(`
     query SeasonDetailPage($year: Int!, $season: AnimeSeason!) {
         animeyear: animeyears(year: [$year]) {
             ...SeasonDetailPageYear
-            ...YearNavigationYear
+            ...SeasonNavigationYear
             season(season: $season) {
                 ...SeasonDetailPageSeason
+                ...SeasonNavigationSeason
             }
             seasons: season {
                 season
@@ -65,7 +68,7 @@ const propsQuery = graphql(`
             }
         }
         animeyears {
-            ...YearNavigationYears
+            ...SeasonNavigationYears
             year
         }
     }
@@ -73,9 +76,9 @@ const propsQuery = graphql(`
 
 export interface SeasonDetailPageProps extends SharedPageProps {
     isYearOrSeasonPage: true;
-    year: FragmentType<typeof SEASON_DETAIL_PAGE_YEAR>;
-    season: FragmentType<typeof SEASON_DETAIL_PAGE_SEASON>;
-    years: ResultOf<typeof propsQuery>["animeyears"];
+    year: FragmentType<typeof SEASON_DETAIL_PAGE_YEAR> & FragmentType<typeof SEASON_NAVIGATION_YEAR>;
+    season: FragmentType<typeof SEASON_DETAIL_PAGE_SEASON> & FragmentType<typeof SEASON_NAVIGATION_SEASON>;
+    years: Array<FragmentType<typeof SEASON_NAVIGATION_YEARS>>;
 }
 
 interface SeasonDetailPageParams extends ParsedUrlQuery {
@@ -86,7 +89,9 @@ interface SeasonDetailPageParams extends ParsedUrlQuery {
 export default function SeasonDetailPage({ year: yearFragment, season: seasonFragment }: SeasonDetailPageProps) {
     const year = getFragmentData(SEASON_DETAIL_PAGE_YEAR, yearFragment);
     const season = getFragmentData(SEASON_DETAIL_PAGE_SEASON, seasonFragment);
-    const animeList = season.anime.nodes.filter((anime) => anime.title.romaji).sort((a, b) => a.title.romaji.localeCompare(b.title.romaji));
+    const animeList = season.anime.nodes
+        .filter((anime) => anime.title.romaji)
+        .sort((a, b) => a.title.romaji.localeCompare(b.title.romaji));
 
     return (
         <>

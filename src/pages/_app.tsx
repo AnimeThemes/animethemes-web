@@ -20,7 +20,6 @@ import { Footer } from "@/components/footer/Footer";
 import { Navigation } from "@/components/navigation/Navigation";
 import { SearchNavigation } from "@/components/navigation/SearchNavigation";
 import { SeasonNavigation } from "@/components/navigation/SeasonNavigation";
-import { YearNavigation } from "@/components/navigation/YearNavigation";
 import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
 import { ToastHub } from "@/components/toast/ToastHub";
@@ -30,10 +29,16 @@ import { VideoPlayer } from "@/components/video-player/VideoPlayer";
 import { VideoPlayerOverlay } from "@/components/video-player/VideoPlayerOverlay";
 import ColorThemeContext from "@/context/colorThemeContext";
 import FullscreenContext from "@/context/fullscreenContext";
-import type { WatchListItem } from "@/context/playerContext";
+import {
+    WATCH_LIST_ITEM_ENTRY,
+    WATCH_LIST_ITEM_THEME,
+    WATCH_LIST_ITEM_VIDEO,
+    type WatchListItem,
+} from "@/context/playerContext";
 import PlayerContext, { createWatchListItem } from "@/context/playerContext";
 import { ToastProvider } from "@/context/toastContext";
 import { client } from "@/graphql/client";
+import { getFragmentData } from "@/graphql/generated";
 import useColorTheme from "@/hooks/useColorTheme";
 import { getAnimeFromVideoPageFragment, type VideoPageProps } from "@/pages/anime/[animeSlug]/[videoSlug]";
 import type { YearDetailPageProps } from "@/pages/year/[year]";
@@ -222,17 +227,17 @@ export default function MyApp({ Component, pageProps }: AppProps<PageProps>) {
                                 });
                             }
                         },
-                        addWatchListItem: (video, entry) => {
-                            setWatchList((watchList) => [...watchList, createWatchListItem(video, entry)]);
+                        addWatchListItem: (video, entry, theme) => {
+                            setWatchList((watchList) => [...watchList, createWatchListItem(video, entry, theme)]);
                         },
-                        addWatchListItemNext: (video, entry) => {
+                        addWatchListItemNext: (video, entry, theme) => {
                             const currentIndex = currentWatchListItem
                                 ? watchList.findIndex((item) => item.watchListId === currentWatchListItem.watchListId)
                                 : 0;
 
                             setWatchList((watchList) => [
                                 ...watchList.slice(0, currentIndex + 1),
-                                createWatchListItem(video, entry),
+                                createWatchListItem(video, entry, theme),
                                 ...watchList.slice(currentIndex + 1),
                             ]);
                         },
@@ -274,12 +279,7 @@ export default function MyApp({ Component, pageProps }: AppProps<PageProps>) {
                 {!pageProps.isVideoPage ? (
                     <>
                         <Container>
-                            {pageProps.isYearOrSeasonPage && (
-                                <Column style={{ "--gap": "16px" }}>
-                                    <YearNavigation {...pageProps} />
-                                    <SeasonNavigation {...pageProps} />
-                                </Column>
-                            )}
+                            {pageProps.isYearOrSeasonPage && <SeasonNavigation {...pageProps} />}
                             {pageProps.isSearch && <SearchNavigation />}
                             {STAGING ? (
                                 <Card $color="text-warning">
@@ -339,9 +339,15 @@ function createDefaultWatchList(pageProps: VideoPageProps): WatchListItem[] {
     const anime = getAnimeFromVideoPageFragment(animeFragment);
 
     return anime.animethemes
-        .flatMap((theme, index) => {
-            const entry = themeIndex == index ? theme.animethemeentries[entryIndex] : theme.animethemeentries[0];
-            const video = themeIndex == index ? entry?.videos.nodes[videoIndex] : entry?.videos.nodes[0];
+        .flatMap((themeFragment, index) => {
+            const entryFragment =
+                themeIndex === index ? themeFragment.animethemeentries[entryIndex] : themeFragment.animethemeentries[0];
+            const videoFragment =
+                themeIndex === index ? entryFragment?.videos.nodes[videoIndex] : entryFragment?.videos.nodes[0];
+
+            const theme = getFragmentData(WATCH_LIST_ITEM_THEME, themeFragment);
+            const entry = getFragmentData(WATCH_LIST_ITEM_ENTRY, entryFragment);
+            const video = getFragmentData(WATCH_LIST_ITEM_VIDEO, videoFragment);
 
             if (!entry || !video || theme.group?.slug !== anime.animethemes[themeIndex].group?.slug) {
                 return [];
@@ -350,5 +356,5 @@ function createDefaultWatchList(pageProps: VideoPageProps): WatchListItem[] {
             return [{ theme, entry, video }];
         })
         .sort(sortTransformed(either(themeTypeComparator).or(themeIndexComparator).chain(), (value) => value.theme))
-        .map(({ theme, entry, video }) => createWatchListItem(video, { ...entry, theme }));
+        .map(({ theme, entry, video }) => createWatchListItem(video, entry, theme));
 }
