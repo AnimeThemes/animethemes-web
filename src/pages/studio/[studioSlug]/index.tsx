@@ -21,6 +21,7 @@ import createApolloClient from "@/graphql/createApolloClient";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useToggle from "@/hooks/useToggle";
 import theme from "@/theme";
+import collect from "@/utils/collect";
 import { ANIME_A_Z, ANIME_NEW_OLD, ANIME_OLD_NEW, ANIME_Z_A, compare, getComparator } from "@/utils/comparators";
 import extractImages from "@/utils/extractImages";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
@@ -102,11 +103,15 @@ const propsQuery = graphql(`
 `);
 
 const pathsQuery = graphql(`
-    query StudioDetailPageAll {
-        studioConnection {
+    query StudioDetailPageAll($pagination: PaginationInput) {
+        studioConnection(pagination: $pagination) {
             nodes {
                 ...StudioDetailPageStudio
                 slug
+            }
+            pageInfo {
+                hasNextPage
+                endCursor
             }
         }
     }
@@ -231,15 +236,29 @@ export const getStaticPaths: GetStaticPaths<StudioDetailPageParams> = async () =
     return fetchStaticPaths(async () => {
         const client = createApolloClient();
 
-        const { data } = await client.query({
-            query: pathsQuery,
+        const allStudios = await collect(async (cursor) => {
+            const { data } = await client.query({
+                query: pathsQuery,
+                variables: {
+                    pagination: {
+                        first: 1000,
+                        after: cursor,
+                    },
+                },
+            });
+
+            return {
+                items: data.studioConnection.nodes,
+                nextCursor: data.studioConnection.pageInfo.endCursor,
+                hasNextPage: data.studioConnection.pageInfo.hasNextPage,
+            };
         });
 
-        for (const studio of data.studioConnection.nodes) {
+        for (const studio of allStudios) {
             buildTimeCache.set(studio.slug, studio);
         }
 
-        return data.studioConnection.nodes.map((studio) => ({
+        return allStudios.map((studio) => ({
             params: {
                 studioSlug: studio.slug,
             },

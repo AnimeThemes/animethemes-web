@@ -8,7 +8,6 @@ import {
     faExpand,
     faGear,
     faKeyboard,
-    faPlus,
     faShare,
     faUpRightFromSquare,
 } from "@fortawesome/free-solid-svg-icons";
@@ -17,7 +16,6 @@ import { Dialog } from "@radix-ui/react-dialog";
 import { Row } from "@/components/box/Flex";
 import { IconTextButton } from "@/components/button/IconTextButton";
 import { DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
-import { PlaylistTrackAddDialog } from "@/components/dialog/PlaylistTrackAddDialog";
 import { Icon } from "@/components/icon/Icon";
 import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from "@/components/menu/Menu";
 import { ShareMenu } from "@/components/menu/ShareMenu";
@@ -27,7 +25,12 @@ import { Text } from "@/components/text/Text";
 import { VideoPlayerContext } from "@/components/video-player/VideoPlayer";
 import { StyledPlaybackArea } from "@/components/video-player/VideoPlayer.style";
 import FullscreenContext from "@/context/fullscreenContext";
-import PlayerContext from "@/context/playerContext";
+import PlayerContext, {
+    WATCH_LIST_ITEM_ENTRY,
+    WATCH_LIST_ITEM_THEME,
+    WATCH_LIST_ITEM_VIDEO,
+} from "@/context/playerContext";
+import { getFragmentData } from "@/graphql/generated";
 import useSetting from "@/hooks/useSetting";
 import { getAnimeFromVideoPageFragment, type VideoPageProps } from "@/pages/anime/[animeSlug]/[videoSlug]";
 import theme from "@/theme";
@@ -258,8 +261,9 @@ export function VideoPlayerOverlay({ anime: animeFragment, themeIndex, entryInde
 
                                                 const newItem = {
                                                     watchListId: currentItem.watchListId,
-                                                    video: otherVideo,
-                                                    entry: { ...otherEntry, theme },
+                                                    video: getFragmentData(WATCH_LIST_ITEM_VIDEO, otherVideo),
+                                                    entry: getFragmentData(WATCH_LIST_ITEM_ENTRY, otherEntry),
+                                                    theme: getFragmentData(WATCH_LIST_ITEM_THEME, theme),
                                                 };
                                                 const newWatchList = [...watchList];
 

@@ -24,6 +24,7 @@ import PlayerContext from "@/context/playerContext";
 import createApolloClient from "@/graphql/createApolloClient";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import styleTheme from "@/theme";
+import collect from "@/utils/collect";
 import { VIDEO_URL } from "@/utils/config";
 import createVideoSlug from "@/utils/createVideoSlug";
 import extractImages from "@/utils/extractImages";
@@ -42,6 +43,7 @@ export const VIDEO_PAGE_ANIME = graphql(`
         season
         animethemes {
             ...ThemeSummaryCardTheme
+            ...WatchListItemTheme
             ...createVideoSlugTheme
             id
             type
@@ -52,8 +54,11 @@ export const VIDEO_PAGE_ANIME = graphql(`
                 }
                 performances {
                     artist {
-                        id
                         ...ArtistSummaryCardArtist
+                        id
+                        name {
+                            main
+                        }
                     }
                     as
                     relevance
@@ -64,6 +69,8 @@ export const VIDEO_PAGE_ANIME = graphql(`
             }
             animethemeentries {
                 ...VideoPlayerEntry
+                ...WatchListItemEntry
+                ...ThemeEntryTagsEntry
                 ...createVideoSlugEntry
                 id
                 episodes
@@ -74,6 +81,8 @@ export const VIDEO_PAGE_ANIME = graphql(`
                     nodes {
                         ...VideoPlayerVideo
                         ...VideoScriptVideo
+                        ...WatchListItemVideo
+                        ...VideoTagsVideo
                         ...createVideoSlugVideo
                         id
                         basename
@@ -138,8 +147,8 @@ const propsQuery = graphql(`
 `);
 
 const pathsQuery = graphql(`
-    query VideoPageAll {
-        animeConnection {
+    query VideoPageAll($pagination: PaginationInput) {
+        animeConnection(pagination: $pagination) {
             nodes {
                 ...VideoPageAnime
                 slug
@@ -154,6 +163,10 @@ const pathsQuery = graphql(`
                         }
                     }
                 }
+            }
+            pageInfo {
+                hasNextPage
+                endCursor
             }
         }
     }
@@ -345,7 +358,7 @@ export default function VideoPage({
                                     }}
                                     video={watchListItem.video}
                                     entry={watchListItem.entry}
-                                    theme={watchListItem.entry.animetheme}
+                                    theme={watchListItem.theme}
                                     onPlay={() => setCurrentWatchListItem(watchListItem)}
                                     isPlaying={watchListItem.watchListId === currentWatchListItem?.watchListId}
                                 />
@@ -400,7 +413,7 @@ export default function VideoPage({
                             <>
                                 <Text variant="h2">Related themes</Text>
                                 {relatedThemes.map((theme) => (
-                                    <ThemeSummaryCard key={theme.id} theme={{ ...theme, anime }} />
+                                    <ThemeSummaryCard key={theme.id} theme={theme} />
                                 ))}
                                 {anime.animethemes.length > 4 ? (
                                     <Row style={{ "--justify-content": "center" }}>
@@ -507,19 +520,29 @@ export const getStaticPaths: GetStaticPaths<VideoPageParams> = () => {
     return fetchStaticPaths(async () => {
         const client = createApolloClient();
 
-        const { data } = await client.query({
-            query: pathsQuery,
+        const allAnime = await collect(async (cursor) => {
+            const { data } = await client.query({
+                query: pathsQuery,
+                variables: {
+                    pagination: {
+                        first: 1000,
+                        after: cursor,
+                    },
+                },
+            });
+
+            return {
+                items: data.animeConnection.nodes,
+                nextCursor: data.animeConnection.pageInfo.endCursor,
+                hasNextPage: data.animeConnection.pageInfo.hasNextPage,
+            };
         });
 
-        for (const anime of data.animeConnection.nodes) {
+        for (const anime of allAnime) {
             buildTimeCache.set(anime.slug, anime);
         }
 
-        for (const anime of data.animeConnection.nodes) {
-            buildTimeCache.set(anime.slug, anime);
-        }
-
-        return data.animeConnection.nodes.flatMap((anime) =>
+        return allAnime.flatMap((anime) =>
             anime.animethemes.flatMap((theme) =>
                 theme.animethemeentries.flatMap((entry) =>
                     entry.videos.nodes.flatMap((video) => ({

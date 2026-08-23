@@ -2,12 +2,45 @@ import { createContext } from "react";
 
 import type { ResultOf } from "@graphql-typed-document-node/core";
 
-import { type VIDEO_SUMMARY_CARD_ENTRY, type VIDEO_SUMMARY_CARD_VIDEO } from "@/components/card/VideoSummaryCard";
+import { graphql } from "@/graphql/generated";
+
+export const WATCH_LIST_ITEM_VIDEO = graphql(`
+    fragment WatchListItemVideo on Video {
+        ...VideoPlayerVideo
+        ...VideoSummaryCardVideo
+        ...createVideoSlugVideo
+        id
+    }
+`);
+
+export const WATCH_LIST_ITEM_ENTRY = graphql(`
+    fragment WatchListItemEntry on AnimeThemeEntry {
+        ...VideoPlayerEntry
+        ...VideoSummaryCardEntry
+        ...createVideoSlugEntry
+    }
+`);
+
+export const WATCH_LIST_ITEM_THEME = graphql(`
+    fragment WatchListItemTheme on AnimeTheme {
+        ...VideoSummaryCardTheme
+        ...createVideoSlugTheme
+        type
+        sequence
+        anime {
+            slug
+        }
+        group {
+            slug
+        }
+    }
+`);
 
 export interface WatchListItem {
     watchListId: number;
-    video: ResultOf<typeof VIDEO_SUMMARY_CARD_VIDEO>;
-    entry: ResultOf<typeof VIDEO_SUMMARY_CARD_ENTRY>;
+    video: ResultOf<typeof WATCH_LIST_ITEM_VIDEO>;
+    entry: ResultOf<typeof WATCH_LIST_ITEM_ENTRY>;
+    theme: ResultOf<typeof WATCH_LIST_ITEM_THEME>;
 }
 
 interface PlayerContextInterface {
@@ -18,12 +51,14 @@ interface PlayerContextInterface {
     currentWatchListItem: WatchListItem | null;
     setCurrentWatchListItem: (watchListItem: WatchListItem | null) => void;
     addWatchListItem: (
-        video: ResultOf<typeof VIDEO_SUMMARY_CARD_VIDEO>,
-        entry: ResultOf<typeof VIDEO_SUMMARY_CARD_ENTRY>,
+        video: ResultOf<typeof WATCH_LIST_ITEM_VIDEO>,
+        entry: ResultOf<typeof WATCH_LIST_ITEM_ENTRY>,
+        theme: ResultOf<typeof WATCH_LIST_ITEM_THEME>,
     ) => void;
     addWatchListItemNext: (
-        video: ResultOf<typeof VIDEO_SUMMARY_CARD_VIDEO>,
-        entry: ResultOf<typeof VIDEO_SUMMARY_CARD_ENTRY>,
+        video: ResultOf<typeof WATCH_LIST_ITEM_VIDEO>,
+        entry: ResultOf<typeof WATCH_LIST_ITEM_ENTRY>,
+        theme: ResultOf<typeof WATCH_LIST_ITEM_THEME>,
     ) => void;
     clearWatchList: () => void;
     isGlobalAutoPlay: boolean;
@@ -77,12 +112,14 @@ export default PlayerContext;
 let nextWatchListId = 1;
 
 export function createWatchListItem(
-    video: ResultOf<typeof VIDEO_SUMMARY_CARD_VIDEO>,
-    entry: ResultOf<typeof VIDEO_SUMMARY_CARD_ENTRY>,
+    video: ResultOf<typeof WATCH_LIST_ITEM_VIDEO>,
+    entry: ResultOf<typeof WATCH_LIST_ITEM_ENTRY>,
+    theme: ResultOf<typeof WATCH_LIST_ITEM_THEME>,
 ): WatchListItem {
     return {
         watchListId: nextWatchListId++,
         video,
         entry,
+        theme,
     };
 }

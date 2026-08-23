@@ -4,17 +4,13 @@ import type { AnimeFormat, ThemeType } from "@/graphql/generated/graphql";
 
 const RANDOM_THEME = graphql(`
     query RandomTheme($input: AnimeThemeShuffleInput) {
-        animethemeShuffle(
-            input: $input,
-            first: 10
-        ) {
-            ...ThemeSummaryCardTheme
-            ...ThemeSummaryCardThemeExpandable
+        animethemeShuffle(input: $input, first: 10) {
+            ...WatchListItemTheme
             animethemeentries {
-                ...VideoSummaryCardEntry
+                ...WatchListItemEntry
                 videos {
                     nodes {
-                        ...VideoSummaryCardVideo
+                        ...WatchListItemVideo
                     }
                 }
             }
@@ -28,7 +24,7 @@ export interface RandomThemesOptions {
         format?: AnimeFormat;
         yearGte?: number;
         yearLte?: number;
-    }
+    };
 }
 
 export async function fetchRandomThemes(options?: RandomThemesOptions) {

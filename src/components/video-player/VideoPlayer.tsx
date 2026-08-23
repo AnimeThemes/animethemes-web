@@ -45,11 +45,29 @@ export const VIDEO_PLAYER_ENTRY = graphql(`
         ...createVideoSlugEntry
         animetheme {
             ...createVideoSlugTheme
+            type
+            sequence
             anime {
                 slug
+                title {
+                    romaji
+                }
                 images {
                     nodes {
                         ...extractImagesImage
+                    }
+                }
+            }
+            song {
+                title {
+                    romaji
+                }
+                performances {
+                    as
+                    artist {
+                        name {
+                            main
+                        }
                     }
                 }
             }
@@ -72,7 +90,7 @@ interface VideoPlayerContextValue {
     isPlaying: boolean;
     togglePlay(): void;
     videoUrl: string;
-    audioUrl: string;
+    audioUrl: string | null;
     updateAudioMode(audioMode: string): void;
     togglePip(): void;
 }
@@ -126,6 +144,8 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     const [audioMode, setAudioMode] = useSetting(AudioMode, { storageSync: false });
     const { addToHistory } = useWatchHistory();
 
+    const currentWatchListItemVideo = getFragmentData(VIDEO_PLAYER_VIDEO, currentWatchListItem?.video);
+
     const playerMouseRelaxProps = useMouseRelax();
     const playbackAreaMouseRelaxProps = useMouseRelax();
 
@@ -171,13 +191,13 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
                     router.push(nextVideoPath);
                 }
                 // For repeating videos
-                if (currentWatchListItem?.video.basename === nextVideo?.basename) {
+                if (currentWatchListItemVideo?.basename === nextVideo?.basename) {
                     playerRef.current?.play();
                 }
             }
         },
         [
-            currentWatchListItem?.video.basename,
+            currentWatchListItemVideo?.basename,
             nextVideo?.basename,
             nextVideoPath,
             nextWatchListItem,
@@ -203,15 +223,15 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     }, [globalVolume, muted]);
 
     useEffect(() => {
-        addToHistory({
-            ...theme,
-            entries: [
-                {
-                    ...entry,
-                    videos: [video],
-                },
-            ],
-        });
+        // addToHistory({
+        //     ...theme,
+        //     entries: [
+        //         {
+        //             ...entry,
+        //             videos: [video],
+        //         },
+        //     ],
+        // });
 
         // Reset the progress bar (otherwise we'd have to wait for the player to load).
         if (progressRef.current) {
@@ -232,7 +252,9 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: `${theme.type + (theme.sequence || "")} • ${theme.song?.title.romaji || "T.B.A."}`,
                 artist: theme.song?.performances
-                    ? theme.song.performances.map((performance) => performance.as || performance.artist.name.main).join(", ")
+                    ? theme.song.performances
+                          .map((performance) => performance.as || performance.artist.name.main)
+                          .join(", ")
                     : undefined,
                 album: anime.title.romaji,
                 artwork: [{ src: smallCover, sizes: "512x512", type: "image/jpeg" }],
@@ -554,7 +576,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
                         onDoubleClick={() => router.push(videoPagePath)}
                         {...playbackAreaMouseRelaxProps}
                     >
-                        {audioMode === AudioMode.ENABLED ? (
+                        {audioMode === AudioMode.ENABLED && audioUrl !== null ? (
                             <StyledAudioBackground style={{ aspectRatio }}>
                                 <StyledAudioCoverBackground
                                     src={largeCover}

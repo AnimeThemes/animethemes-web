@@ -13,7 +13,7 @@ import { AudioMode } from "@/utils/settings";
 interface ShareMenuProps {
     pagePath: string;
     videoUrl: string;
-    audioUrl: string;
+    audioUrl: string | null;
     trigger?: ReactNode;
 }
 
@@ -38,7 +38,7 @@ export function ShareMenu({ pagePath, videoUrl, audioUrl, trigger }: ShareMenuPr
                 <MenuItem onSelect={() => saveToClipboard(location.origin + BASE_PATH + pagePath)}>
                     Copy URL to this Page
                 </MenuItem>
-                {audioMode === AudioMode.ENABLED ? (
+                {audioMode === AudioMode.ENABLED && audioUrl !== null ? (
                     <>
                         <MenuItem onSelect={() => saveToClipboard(audioUrl)}>Copy URL to Embeddable Audio</MenuItem>
                         <a href={`${audioUrl}?download`}>

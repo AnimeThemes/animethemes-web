@@ -7,15 +7,21 @@ import { PlaylistTrackAddDialog } from "@/components/dialog/PlaylistTrackAddDial
 import { Icon } from "@/components/icon/Icon";
 import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@/components/menu/Menu";
 import { Text } from "@/components/text/Text";
-import PlayerContext from "@/context/playerContext";
+import PlayerContext, {
+    WATCH_LIST_ITEM_ENTRY,
+    WATCH_LIST_ITEM_THEME,
+    WATCH_LIST_ITEM_VIDEO,
+} from "@/context/playerContext";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
 export const VIDEO_MENU_ENTRY = graphql(`
     fragment VideoMenuEntry on AnimeThemeEntry {
         ...createVideoSlugEntry
         ...PlaylistTrackAddDialogEntry
+        ...WatchListItemEntry
         id
         animetheme {
+            ...WatchListItemTheme
             ...createVideoSlugTheme
             id
             type
@@ -46,6 +52,7 @@ export const VIDEO_MENU_VIDEO = graphql(`
     fragment VideoMenuVideo on Video {
         ...createVideoSlugVideo
         ...PlaylistTrackAddDialogVideo
+        ...WatchListItemVideo
         id
         basename
         audio {
@@ -86,11 +93,27 @@ export function VideoMenu({ entry: entryFragment, video: videoFragment }: VideoM
                 {watchList.length ? (
                     <>
                         <MenuSeparator />
-                        <MenuItem onSelect={() => addWatchListItem(video, entry)}>
+                        <MenuItem
+                            onSelect={() =>
+                                addWatchListItem(
+                                    getFragmentData(WATCH_LIST_ITEM_VIDEO, video),
+                                    getFragmentData(WATCH_LIST_ITEM_ENTRY, entry),
+                                    getFragmentData(WATCH_LIST_ITEM_THEME, entry.animetheme),
+                                )
+                            }
+                        >
                             <Icon icon={faArrowTurnDown} color="text-disabled" />
                             <Text>Add to Watch List</Text>
                         </MenuItem>
-                        <MenuItem onSelect={() => addWatchListItemNext(video, entry)}>
+                        <MenuItem
+                            onSelect={() =>
+                                addWatchListItemNext(
+                                    getFragmentData(WATCH_LIST_ITEM_VIDEO, video),
+                                    getFragmentData(WATCH_LIST_ITEM_ENTRY, entry),
+                                    getFragmentData(WATCH_LIST_ITEM_THEME, entry.animetheme),
+                                )
+                            }
+                        >
                             <Icon icon={faArrowTurnUp} color="text-disabled" />
                             <Text>Play Next</Text>
                         </MenuItem>
