@@ -651,6 +651,15 @@ export type ImageableEdgeUpdatedAtArgs = {
   format?: Scalars['String']['input'];
 };
 
+export type Like = {
+  animethemeentry: Maybe<AnimeThemeEntry>;
+  user: User;
+};
+
+export type LikeableType = {
+  entry?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type LoginInput = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -666,6 +675,7 @@ export type Me = {
   emailVerifiedAt: Maybe<Scalars['DateTime']['output']>;
   /** The primary key of the resource */
   id: Scalars['Int']['output'];
+  likes: Array<Like>;
   /** The username of the resource */
   name: Scalars['String']['output'];
   permissions: Array<Permission>;
@@ -690,6 +700,7 @@ export type Mutation = {
   login: Me;
   logout: Scalars['Boolean']['output'];
   register: Me;
+  toggleLike: Maybe<Like>;
   updatePassword: Scalars['Boolean']['output'];
   updatePlaylist: Playlist;
   updatePlaylistTrack: PlaylistTrack;
@@ -728,6 +739,11 @@ export type MutationLoginArgs = {
 
 export type MutationRegisterArgs = {
   input: RegisterInput;
+};
+
+
+export type MutationToggleLikeArgs = {
+  like: LikeableType;
 };
 
 
@@ -1151,7 +1167,7 @@ export type RegisterInput = {
   email: Scalars['String']['input'];
   name: Scalars['String']['input'];
   password: Scalars['String']['input'];
-  passwordConfirm: Scalars['String']['input'];
+  passwordConfirmation: Scalars['String']['input'];
   terms: Scalars['Boolean']['input'];
 };
 
@@ -1592,7 +1608,7 @@ export type ThemeType =
 export type UpdatePasswordInput = {
   currentPassword: Scalars['String']['input'];
   newPassword: Scalars['String']['input'];
-  newPasswordConfirm: Scalars['String']['input'];
+  newPasswordConfirmation: Scalars['String']['input'];
 };
 
 export type UpdatePlaylistInput = {
