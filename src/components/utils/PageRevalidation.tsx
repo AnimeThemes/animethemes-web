@@ -11,7 +11,7 @@ interface PageRevalidationProps {
 export function PageRevalidation({ lastBuildAt, ...props }: PageRevalidationProps) {
     const router = useRouter();
     const { me } = useAuth();
-    const canRevalidate = useMemo(() => me?.roles.some(role => role.name == "Admin"), [me]);
+    const canRevalidate = useMemo(() => me?.roles.some((role) => role.name == "Admin"), [me]);
 
     const [isRevalidating, setRevalidating] = useState(false);
 

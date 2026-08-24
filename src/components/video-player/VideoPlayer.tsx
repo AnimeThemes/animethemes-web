@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import type { PointerEvent, ReactNode, RefObject, SyntheticEvent } from "react";
 import { useRouter } from "next/router";
 
+import { useMutation } from "@apollo/client/react";
 import type { ResultOf } from "@graphql-typed-document-node/core";
 
 import {
@@ -22,7 +23,7 @@ import PlayerContext, { type WatchListItem } from "@/context/playerContext";
 import { getFragmentData, graphql } from "@/graphql/generated";
 import useMouseRelax from "@/hooks/useMouseRelax";
 import useSetting from "@/hooks/useSetting";
-import useWatchHistory from "@/hooks/useWatchHistory";
+import { PROFILE_PAGE } from "@/pages/profile";
 import { AUDIO_URL, VIDEO_URL } from "@/utils/config";
 import createVideoSlug from "@/utils/createVideoSlug";
 import extractImages from "@/utils/extractImages";
@@ -32,6 +33,7 @@ export const VIDEO_PLAYER_VIDEO = graphql(`
     fragment VideoPlayerVideo on Video {
         ...VideoPlayerBarVideo
         ...createVideoSlugVideo
+        id
         basename
         audio {
             basename
@@ -43,6 +45,7 @@ export const VIDEO_PLAYER_ENTRY = graphql(`
     fragment VideoPlayerEntry on AnimeThemeEntry {
         ...VideoPlayerBarEntry
         ...createVideoSlugEntry
+        id
         animetheme {
             ...createVideoSlugTheme
             type
@@ -142,7 +145,18 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     const [muted, setMuted] = useSetting(Muted);
     const { smallCover, largeCover } = extractImages(anime.images.nodes);
     const [audioMode, setAudioMode] = useSetting(AudioMode, { storageSync: false });
-    const { addToHistory } = useWatchHistory();
+    const [addToHistory] = useMutation(
+        graphql(`
+            mutation AddToWatchHistory($entryId: Int!, $videoId: Int!) {
+                watch(entryId: $entryId, videoId: $videoId) {
+                    __typename
+                }
+            }
+        `),
+        {
+            refetchQueries: [PROFILE_PAGE],
+        },
+    );
 
     const currentWatchListItemVideo = getFragmentData(VIDEO_PLAYER_VIDEO, currentWatchListItem?.video);
 
@@ -221,31 +235,6 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
             playerRef.current.volume = globalVolume;
         }
     }, [globalVolume, muted]);
-
-    useEffect(() => {
-        // addToHistory({
-        //     ...theme,
-        //     entries: [
-        //         {
-        //             ...entry,
-        //             videos: [video],
-        //         },
-        //     ],
-        // });
-
-        // Reset the progress bar (otherwise we'd have to wait for the player to load).
-        if (progressRef.current) {
-            progressRef.current.style.width = "0%";
-        }
-
-        if (bufferedRef.current) {
-            bufferedRef.current.style.width = "0%";
-        }
-
-        // We don't want to re-add the theme when the history changes, because it can cause
-        // various issues when multiple tabs are open.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [theme]);
 
     useEffect(() => {
         if (theme && smallCover && navigator.mediaSession) {
@@ -529,6 +518,29 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     }
 
     const constraintRef = useRef<HTMLDivElement>(null);
+
+    const [themeFromPreviousRender, setThemeFromPreviousRender] = useState<typeof theme | null>(null);
+    if (themeFromPreviousRender !== theme) {
+        void addToHistory({
+            variables: {
+                entryId: entry.id,
+                videoId: video.id,
+            },
+        });
+
+        // Reset the progress bar (otherwise we'd have to wait for the player to load).
+        if (progressRef.current) {
+            progressRef.current.style.width = "0%";
+        }
+
+        if (bufferedRef.current) {
+            bufferedRef.current.style.width = "0%";
+        }
+
+        setThemeFromPreviousRender(theme);
+
+        return null;
+    }
 
     return (
         <VideoPlayerContext.Provider

@@ -2,7 +2,7 @@ import type { AnimeSeason } from "@/graphql/generated/graphql";
 import type { Comparator } from "@/utils/types";
 
 const seasonOrder: Array<AnimeSeason> = ["WINTER", "SPRING", "SUMMER", "FALL"];
-const themeTypeOrder = ["op", "ed"];
+const themeTypeOrder = ["op", "ed", "in"];
 
 interface ComparatorChain<T> {
     chain: () => Comparator<T>;
@@ -49,7 +49,9 @@ function nestedComparator<S, V>(
     return (a, b) => comparator(extractor(a), extractor(b));
 }
 
-export const animeTitleComparator: Comparator<{ title: { romaji: string } }> = nestedComparator((anime) => anime.title.romaji);
+export const animeTitleComparator: Comparator<{ title: { romaji: string } }> = nestedComparator(
+    (anime) => anime.title.romaji,
+);
 export const animeYearComparator: Comparator<{ year: number | null }> = nestedComparator((anime) => anime.year);
 export const animeSeasonComparator: Comparator<{ season: AnimeSeason | null }> = nestedComparator(
     (anime) => anime.season ?? undefined,
@@ -73,7 +75,9 @@ export const themeGroupComparator: Comparator<{ group: { name: string } | null }
     (theme) => theme.group?.name,
 );
 export const studioNameComparator: Comparator<{ name: string }> = nestedComparator((studio) => studio.name);
-export const seriesTitleComparator: Comparator<{ title: { romaji: string } }> = nestedComparator((series) => series.title.romaji);
+export const seriesTitleComparator: Comparator<{ title: { romaji: string } }> = nestedComparator(
+    (series) => series.title.romaji,
+);
 export const resourceSiteComparator: Comparator<{ site: string | null }> = nestedComparator(
     (resource) => resource.site,
 );

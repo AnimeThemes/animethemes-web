@@ -133,12 +133,12 @@ function PlaylistEditForm({ playlist, onSuccess, onCancel }: PlaylistEditFormPro
                     <Text>Title</Text>
                     <Input value={title} onChange={setTitle} />
                     {errors.name
-                            ? errors.name.map((error) => (
-                                  <Text key={error} color="text-warning">
-                                      {error}
-                                  </Text>
-                              ))
-                            : null}
+                        ? errors.name.map((error) => (
+                              <Text key={error} color="text-warning">
+                                  {error}
+                              </Text>
+                          ))
+                        : null}
                 </SearchFilter>
                 <SearchFilter>
                     <Text>Visibility</Text>

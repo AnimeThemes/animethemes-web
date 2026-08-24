@@ -15,8 +15,8 @@ export function SearchFilterThemeType({ value, setValue }: SearchFilterThemeType
                 <ListboxOption value={null} hidden>
                     Any
                 </ListboxOption>
-                <ListboxOption value="OP">OP</ListboxOption>
-                <ListboxOption value="ED">ED</ListboxOption>
+                <ListboxOption value="OP">Opening</ListboxOption>
+                <ListboxOption value="ED">Ending</ListboxOption>
             </Listbox>
         </SearchFilter>
     );

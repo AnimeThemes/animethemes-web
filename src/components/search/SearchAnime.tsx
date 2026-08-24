@@ -32,17 +32,8 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchAnime(
-        $query: String!
-        $filter: SearchAnimeFilterInput
-        $page: Int!,
-        $sort: [SearchAnimeSort!]
-    ) {
-        search(
-            search: $query
-            first: 15,
-            page: $page
-        ) {
+    query SearchAnime($query: String!, $filter: SearchAnimeFilterInput, $page: Int!, $sort: [SearchAnimeSort!]) {
+        search(search: $query, first: 15, page: $page) {
             anime(filter: $filter, sort: $sort) {
                 data {
                     ...AnimeSummaryCardAnime
@@ -103,8 +94,7 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
             return data.search.anime;
         },
         initialPageParam: 1,
-        getNextPageParam: (lastPage, _, lastPageParam) =>
-        lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null,
+        getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null),
         placeholderData: keepPreviousData,
     });
 
@@ -135,7 +125,9 @@ export function SearchAnime({ searchQuery }: SearchAnimeProps) {
                     <SearchFilterSortBy.Option value="TITLE_ROMAJI">A ➜ Z</SearchFilterSortBy.Option>
                     <SearchFilterSortBy.Option value="TITLE_ROMAJI_DESC">Z ➜ A</SearchFilterSortBy.Option>
                     <SearchFilterSortBy.Option value="YEAR,SEASON,TITLE_ROMAJI">Old ➜ New</SearchFilterSortBy.Option>
-                    <SearchFilterSortBy.Option value="YEAR_DESC,SEASON_DESC,TITLE_ROMAJI">New ➜ Old</SearchFilterSortBy.Option>
+                    <SearchFilterSortBy.Option value="YEAR_DESC,SEASON_DESC,TITLE_ROMAJI">
+                        New ➜ Old
+                    </SearchFilterSortBy.Option>
                     <SearchFilterSortBy.Option value="CREATED_AT_DESC">Last Added</SearchFilterSortBy.Option>
                 </SearchFilterSortBy>
             </SearchFilterGroup>

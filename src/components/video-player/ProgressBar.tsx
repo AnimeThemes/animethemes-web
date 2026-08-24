@@ -76,7 +76,7 @@ const StyledPlayerProgressBuffered = styled.div`
     position: absolute;
     width: 100%;
     height: 2px;
-    
+
     background-color: ${theme.colors["text-muted"]};
     opacity: 0.2;
 
@@ -87,7 +87,7 @@ const StyledPlayerProgressBuffered = styled.div`
 
 export function ProgressBar() {
     const context = useContext(VideoPlayerContext);
-    
+
     if (!context) {
         throw new Error("ProgressBar needs to be inside VideoPlayer!");
     }

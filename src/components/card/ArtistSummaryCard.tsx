@@ -34,6 +34,11 @@ export function ArtistSummaryCard({ artist: artistFragment, as }: ArtistSummaryC
     );
 
     return (
-        <SummaryCard title={artist.name.main} description={description} image={smallCover} to={`/artist/${artist.slug}`} />
+        <SummaryCard
+            title={artist.name.main}
+            description={description}
+            image={smallCover}
+            to={`/artist/${artist.slug}`}
+        />
     );
 }
