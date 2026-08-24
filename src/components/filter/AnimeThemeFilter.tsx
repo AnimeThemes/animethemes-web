@@ -98,10 +98,11 @@ function AnimeThemeFilterInternal({ themes: themesFragment }: AnimeThemeFilterPr
                                 highlightNonDefault
                             >
                                 <ListboxOption value={null} hidden>
-                                    OP & ED
+                                    All Types
                                 </ListboxOption>
-                                <ListboxOption value="OP">OP</ListboxOption>
-                                <ListboxOption value="ED">ED</ListboxOption>
+                                <ListboxOption value="OP">Openings</ListboxOption>
+                                <ListboxOption value="ED">Endings</ListboxOption>
+                                <ListboxOption value="IN">Insert Songs</ListboxOption>
                             </Listbox>
                         )}
                     </Row>

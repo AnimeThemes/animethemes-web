@@ -2,7 +2,7 @@ import { memo, useState } from "react";
 import styled, { css } from "styled-components";
 import type { GetServerSideProps } from "next";
 
-import { useQuery } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import {
     faCircleExclamation,
     faEllipsisVertical,
@@ -16,7 +16,7 @@ import { Button } from "@/components/button/Button";
 import { IconTextButton } from "@/components/button/IconTextButton";
 import { Card } from "@/components/card/Card";
 import PlaylistSummaryCard from "@/components/card/PlaylistSummaryCard";
-import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
+import { VideoSummaryCard } from "@/components/card/VideoSummaryCard";
 import { LoginDialog } from "@/components/dialog/LoginDialog";
 import { PasswordChangeDialog } from "@/components/dialog/PasswordChangeDialog";
 import { PlaylistAddDialog } from "@/components/dialog/PlaylistAddDialog";
@@ -36,8 +36,6 @@ import createApolloClient from "@/graphql/createApolloClient";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useAuth from "@/hooks/useAuth";
 import useSetting from "@/hooks/useSetting";
-import type { WatchHistory } from "@/hooks/useWatchHistory";
-import useWatchHistory from "@/hooks/useWatchHistory";
 import { handleAxiosError } from "@/lib/client/axios";
 import theme from "@/theme";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
@@ -155,6 +153,9 @@ export const PROFILE_PAGE_ME = graphql(`
             ...PlaylistRemoveDialogPlaylist
             id
         }
+        watchHistory {
+            ...WatchHistoryThemesWatchHistory
+        }
     }
 `);
 
@@ -175,7 +176,16 @@ export default function ProfilePage({ me: meFragment }: ProfilePageProps) {
 
     const me = getFragmentData(PROFILE_PAGE_ME, data?.me ?? meFragment);
 
-    const { history, clearHistory } = useWatchHistory();
+    const [clearHistory] = useMutation(
+        graphql(`
+            mutation ClearWatchHistory {
+                clearWatchHistory
+            }
+        `),
+        {
+            refetchQueries: [PROFILE_PAGE],
+        },
+    );
 
     const [showAnnouncements, setShowAnnouncements] = useSetting(ShowAnnouncements);
     const [featuredThemePreview, setFeaturedThemePreview] = useSetting(FeaturedThemePreview);
@@ -328,29 +338,58 @@ export default function ProfilePage({ me: meFragment }: ProfilePageProps) {
                 <Column style={{ "--gap": "24px" }}>
                     <StyledHeader>
                         <Text variant="h2">Recently Watched</Text>
-                        <IconTextButton icon={faTrash} collapsible onClick={clearHistory}>
-                            Clear
-                        </IconTextButton>
+                        {me ? (
+                            <IconTextButton icon={faTrash} collapsible onClick={() => clearHistory()}>
+                                Clear
+                            </IconTextButton>
+                        ) : null}
                     </StyledHeader>
-                    <Column style={{ "--gap": "16px" }}>
-                        <WatchHistoryThemes themes={history} />
-                    </Column>
+                    {me ? (
+                        <Column style={{ "--gap": "16px" }}>
+                            <WatchHistoryThemes history={me.watchHistory} />
+                        </Column>
+                    ) : (
+                        <Text>Log in to see your watch history.</Text>
+                    )}
                 </Column>
             </StyledProfileGrid>
         </>
     );
 }
 
+export const WATCH_HISTORY_THEMES_WATCH_HISTORY = graphql(`
+    fragment WatchHistoryThemesWatchHistory on WatchHistory {
+        animethemeentry {
+            id
+            ...VideoSummaryCardEntry
+            animetheme {
+                ...VideoSummaryCardTheme
+            }
+        }
+        video {
+            id
+            ...VideoSummaryCardVideo
+        }
+    }
+`);
+
 interface WatchHistoryThemesProps {
-    themes: WatchHistory;
+    history: Array<FragmentType<typeof WATCH_HISTORY_THEMES_WATCH_HISTORY>>;
 }
 
-const WatchHistoryThemes = memo(function WatchHistoryThemes({ themes }: WatchHistoryThemesProps) {
+const WatchHistoryThemes = memo(function WatchHistoryThemes({ history: historyFragment }: WatchHistoryThemesProps) {
+    const history = getFragmentData(WATCH_HISTORY_THEMES_WATCH_HISTORY, historyFragment);
+
     return (
         <>
-            {/*{[...themes].reverse().map((theme) => (*/}
-            {/*    <ThemeSummaryCard key={theme.id} theme={theme} />*/}
-            {/*))}*/}
+            {[...history].reverse().map(({ animethemeentry: entry, video }) => (
+                <VideoSummaryCard
+                    key={`${entry.id}-${video.id}`}
+                    theme={entry.animetheme}
+                    entry={entry}
+                    video={video}
+                />
+            ))}
         </>
     );
 });

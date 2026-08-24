@@ -76,8 +76,7 @@ export function SearchPlaylist({ searchQuery }: SearchPlaylistProps) {
             return data.search.playlists;
         },
         initialPageParam: 1,
-        getNextPageParam: (lastPage, _, lastPageParam) =>
-        lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null,
+        getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null),
         placeholderData: keepPreviousData,
     });
 
