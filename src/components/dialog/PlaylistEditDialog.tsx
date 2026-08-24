@@ -29,6 +29,10 @@ export const PLAYLIST_EDIT_DIALOG_PLAYLIST = graphql(`
     }
 `);
 
+interface PlaylistEditFormErrors {
+    name?: string[];
+}
+
 interface PlaylistEditDialogProps {
     playlist: FragmentType<typeof PLAYLIST_EDIT_DIALOG_PLAYLIST>;
     trigger?: ReactNode;
@@ -80,6 +84,8 @@ function PlaylistEditForm({ playlist, onSuccess, onCancel }: PlaylistEditFormPro
 
     const isValid = title !== "";
 
+    const [errors, setErrors] = useState<PlaylistEditFormErrors>({});
+
     const [mutate, { loading, error }] = useMutation(
         graphql(`
             mutation PlaylistEdit($id: String!, $input: UpdatePlaylistInput!) {
@@ -90,6 +96,13 @@ function PlaylistEditForm({ playlist, onSuccess, onCancel }: PlaylistEditFormPro
         `),
         {
             onCompleted: () => onSuccess(),
+            onError(error) {
+                const extensions = error.graphQLErrors?.[0]?.extensions;
+
+                if (extensions?.code === "VALIDATION") {
+                    setErrors(extensions.validation as PlaylistEditFormErrors);
+                }
+            },
             refetchQueries: [
                 // Update the profile page because it includes a list of the user's playlists
                 PROFILE_PAGE,
@@ -119,6 +132,13 @@ function PlaylistEditForm({ playlist, onSuccess, onCancel }: PlaylistEditFormPro
                 <SearchFilter>
                     <Text>Title</Text>
                     <Input value={title} onChange={setTitle} />
+                    {errors.name
+                            ? errors.name.map((error) => (
+                                  <Text key={error} color="text-warning">
+                                      {error}
+                                  </Text>
+                              ))
+                            : null}
                 </SearchFilter>
                 <SearchFilter>
                     <Text>Visibility</Text>
