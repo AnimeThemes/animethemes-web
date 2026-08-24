@@ -63,7 +63,7 @@ function RegisterForm({ onCancel }: RegisterFormProps) {
             name: username,
             email,
             password,
-            password_confirmation: passwordConfirmation,
+            passwordConfirmation,
             terms: isTermsAccepted,
         }).finally(() => setBusy(false));
     }

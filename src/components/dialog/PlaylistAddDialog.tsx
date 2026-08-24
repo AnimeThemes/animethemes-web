@@ -56,11 +56,17 @@ interface PlaylistAddFormProps {
     onCancel(): void;
 }
 
+interface PlaylistAddFormErrors {
+    name?: string[];
+}
+
 function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
     const [title, setTitle] = useState("");
     const [visibility, setVisibility] = useState<PlaylistVisibility>("PUBLIC");
 
     const isValid = title !== "";
+
+    const [errors, setErrors] = useState<PlaylistAddFormErrors>({});
 
     const [mutate, { loading, error }] = useMutation(
         graphql(`
@@ -72,6 +78,13 @@ function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
         `),
         {
             onCompleted: () => onSuccess(),
+            onError(error) {
+                const extensions = error.graphQLErrors?.[0]?.extensions;
+
+                if (extensions?.code === "VALIDATION") {
+                    setErrors(extensions.validation as PlaylistAddFormErrors);
+                }
+            },
             refetchQueries: [
                 // Update the profile page because it includes a list of the user's playlists
                 PROFILE_PAGE,
@@ -98,6 +111,13 @@ function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
                 <SearchFilter>
                     <Text>Title</Text>
                     <Input value={title} onChange={setTitle} />
+                    {errors.name
+                            ? errors.name.map((error) => (
+                                  <Text key={error} color="text-warning">
+                                      {error}
+                                  </Text>
+                              ))
+                            : null}
                 </SearchFilter>
                 <SearchFilter>
                     <Text>Visibility</Text>
