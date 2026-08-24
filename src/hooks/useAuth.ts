@@ -16,7 +16,7 @@ interface RegisterProps {
     name: string;
     email: string;
     password: string;
-    password_confirmation: string;
+    passwordConfirmation: string;
     terms: boolean;
 }
 
@@ -87,9 +87,16 @@ export default function useAuth() {
                     name: props.name,
                     email: props.email,
                     password: props.password,
-                    passwordConfirm: props.password_confirmation,
+                    passwordConfirmation: props.passwordConfirmation,
                     terms: props.terms,
                 },
+            },
+            onError(error) {
+                const extensions = error.graphQLErrors?.[0]?.extensions;
+
+                if (extensions?.code === "VALIDATION") {
+                    setErrors((extensions.validation ?? {}) as Record<string, string[]>);
+                }
             },
         });
     };
@@ -111,6 +118,13 @@ export default function useAuth() {
                     email: props.email,
                     password: props.password,
                 },
+            },
+            onError(error) {
+                const extensions = error.graphQLErrors?.[0]?.extensions;
+
+                if (extensions?.code === "VALIDATION") {
+                    setErrors((extensions.validation ?? {}) as Record<string, string[]>);
+                }
             },
         });
 
@@ -134,6 +148,13 @@ export default function useAuth() {
                     name: props.name,
                     email: props.email,
                 },
+            },
+            onError(error) {
+                const extensions = error.graphQLErrors?.[0]?.extensions;
+
+                if (extensions?.code === "VALIDATION") {
+                    setErrors((extensions.validation ?? {}) as Record<string, string[]>);
+                }
             },
         });
 
