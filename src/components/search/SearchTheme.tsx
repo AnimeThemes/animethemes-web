@@ -4,6 +4,7 @@ import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 
 import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
 import { SearchEntity } from "@/components/search/SearchEntity";
+import { SearchFilterFirstLetter } from "@/components/search-filter/SearchFilterFirstLetter";
 import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
 import { SearchFilterThemeType } from "@/components/search-filter/SearchFilterThemeType";
@@ -11,7 +12,6 @@ import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
 import type { SearchAnimeThemeSort, ThemeType } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
-import { SearchFilterFirstLetter } from "../search-filter/SearchFilterFirstLetter";
 
 interface Filter {
     firstLetter: string | null;

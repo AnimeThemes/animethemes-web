@@ -127,7 +127,6 @@ export function VideoPlayerBar() {
     }
 
     const {
-        video: videoFragment,
         entry: entryFragment,
         background,
         videoPagePath,
@@ -141,7 +140,6 @@ export function VideoPlayerBar() {
         audioUrl,
     } = context;
 
-    const video = getFragmentData(VIDEO_PLAYER_BAR_VIDEO, videoFragment);
     const entry = getFragmentData(VIDEO_PLAYER_BAR_ENTRY, entryFragment);
     const theme = entry.animetheme;
     const anime = theme.anime;
