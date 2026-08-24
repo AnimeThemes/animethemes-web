@@ -81,8 +81,7 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
             return data.search.artists;
         },
         initialPageParam: 1,
-        getNextPageParam: (lastPage, _, lastPageParam) =>
-        lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null,
+        getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null),
         placeholderData: keepPreviousData,
     });
 

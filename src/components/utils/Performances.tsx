@@ -98,10 +98,9 @@ export function Performances({
         maxPerformances = song.performances.length;
     }
 
-    const performances = uniqBy(
-        song.performances,
-        (performance) => performance.artist.id
-    ).sort((a, b) => a.relevance - b.relevance);
+    const performances = uniqBy(song.performances, (performance) => performance.artist.id).sort(
+        (a, b) => a.relevance - b.relevance,
+    );
 
     const performancesShown = performances.slice(0, maxPerformances);
     const performancesHidden = performances.slice(maxPerformances);
