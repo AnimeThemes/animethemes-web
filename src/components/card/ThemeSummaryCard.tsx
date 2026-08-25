@@ -220,12 +220,10 @@ export function ThemeSummaryCard({
             {expandable && (
                 <Collapse collapse={!isExpanded}>
                     <StyledPerformedWith>
-                        {video &&
-                            <ThemeTable
-                                themes={[expandable]}
-                                onPlay={(_, entryIndex, videoIndex) => onPlay?.(entryIndex, videoIndex)}
-                            />
-                        }
+                        <ThemeTable
+                            themes={[expandable]}
+                            onPlay={(_, entryIndex, videoIndex) => onPlay?.(entryIndex, videoIndex)}
+                        />
                         {performances.length > 0 && (
                             <Table style={{ "--columns": "1fr" }}>
                                 <TableHead>
