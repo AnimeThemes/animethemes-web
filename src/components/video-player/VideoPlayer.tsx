@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useEffectEvent, useRef, useState } from "react";
 import type { PointerEvent, ReactNode, RefObject, SyntheticEvent } from "react";
 import { useRouter } from "next/router";
 
@@ -129,6 +129,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     const bufferedRef = useRef<HTMLDivElement>(null);
     const currentTimeBeforeModeSwitch = useRef<number | null>(null);
     const fpsRef = useRef<number>(24);
+    const constraintRef = useRef<HTMLDivElement>(null);
 
     const {
         watchList,
@@ -174,18 +175,6 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
             ? `/anime/${previousAnime.slug}/${createVideoSlug(previousTheme, previousEntry, previousVideo)}`
             : null;
 
-    const playPreviousTrack = useCallback(
-        (navigate = false) => {
-            if (previousVideoPath) {
-                setCurrentWatchListItem(previousWatchListItem);
-                if (navigate) {
-                    router.push(previousVideoPath);
-                }
-            }
-        },
-        [previousVideoPath, previousWatchListItem, router, setCurrentWatchListItem],
-    );
-
     const nextWatchListItem = getRelativeWatchListItem(1);
     const nextVideo = getFragmentData(VIDEO_PLAYER_VIDEO, nextWatchListItem?.video);
     const nextEntry = getFragmentData(VIDEO_PLAYER_ENTRY, nextWatchListItem?.entry);
@@ -197,37 +186,237 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
             ? `/anime/${nextAnime.slug}/${createVideoSlug(nextTheme, nextEntry, nextVideo)}`
             : null;
 
-    const playNextTrack = useCallback(
-        (navigate = false) => {
-            if (nextVideoPath) {
-                setCurrentWatchListItem(nextWatchListItem);
-                if (navigate) {
-                    router.push(nextVideoPath);
-                }
-                // For repeating videos
-                if (currentWatchListItemVideo?.basename === nextVideo?.basename) {
-                    playerRef.current?.play();
-                }
-            }
-        },
-        [
-            currentWatchListItemVideo?.basename,
-            nextVideo?.basename,
-            nextVideoPath,
-            nextWatchListItem,
-            router,
-            setCurrentWatchListItem,
-        ],
-    );
+    function getRelativeWatchListItem(offset: 1 | -1) {
+        if (!currentWatchListItem) {
+            return null;
+        }
 
-    const autoPlayNextTrack = useCallback(() => {
+        const currentTrackIndex = watchList.findIndex((item) => item.watchListId === currentWatchListItem.watchListId);
+
+        if (currentTrackIndex < 0) {
+            return null;
+        }
+
+        const nextTrackIndex = currentTrackIndex + offset;
+
+        if (!watchList[nextTrackIndex]) {
+            if (!isRepeat) {
+                return null;
+            }
+
+            if (nextTrackIndex < 0) {
+                return watchList[watchList.length - 1];
+            } else if (nextTrackIndex > watchList.length - 1) {
+                return watchList[0];
+            }
+        }
+
+        return watchList[nextTrackIndex];
+    }
+
+    function playPreviousTrack(navigate = false) {
+        if (previousVideoPath) {
+            setCurrentWatchListItem(previousWatchListItem);
+            if (navigate) {
+                router.push(previousVideoPath);
+            }
+        }
+    }
+
+    function playNextTrack(navigate = false) {
+        if (nextVideoPath) {
+            setCurrentWatchListItem(nextWatchListItem);
+            if (navigate) {
+                router.push(nextVideoPath);
+            }
+            // For repeating videos
+            if (currentWatchListItemVideo?.basename === nextVideo?.basename) {
+                playerRef.current?.play();
+            }
+        }
+    }
+
+    function autoPlayNextTrack() {
         if (
             (isWatchListUsingLocalAutoPlay && isLocalAutoPlay) ||
             (!isWatchListUsingLocalAutoPlay && isGlobalAutoPlay)
         ) {
             playNextTrack(!background);
         }
-    }, [background, isGlobalAutoPlay, isLocalAutoPlay, isWatchListUsingLocalAutoPlay, playNextTrack]);
+    }
+
+    function onPlayerMount(player: HTMLVideoElement) {
+        playerRef.current = player;
+        if (playerRef.current) {
+            setPlaying(!playerRef.current.paused);
+            if ("videoWidth" in playerRef.current) {
+                setAspectRatio(playerRef.current.videoWidth / playerRef.current.videoHeight);
+            }
+            playerRef.current.volume = globalVolume;
+            if (currentTimeBeforeModeSwitch.current) {
+                playerRef.current.currentTime = currentTimeBeforeModeSwitch.current;
+                currentTimeBeforeModeSwitch.current = null;
+            }
+        }
+    }
+
+    function onPlayerClick(event: PointerEvent) {
+        if (!background && event.nativeEvent.pointerType === "mouse" && event.nativeEvent.button === 0) {
+            togglePlay();
+        }
+    }
+
+    function togglePlay() {
+        if (isPlaying) {
+            playerRef.current?.pause();
+        } else {
+            playerRef.current?.play();
+        }
+    }
+
+    function togglePip() {
+        const videoElement = document.querySelector("video");
+        if (!videoElement) return;
+        if (document.pictureInPictureElement) {
+            void document.exitPictureInPicture();
+        } else {
+            void videoElement.requestPictureInPicture();
+        }
+    }
+
+    function updateProgress(event: SyntheticEvent<HTMLVideoElement | HTMLAudioElement>) {
+        const duration = event.currentTarget.duration;
+
+        if (progressRef.current) {
+            // Update the progress bar using a ref to prevent re-rendering.
+            const progress = (event.currentTarget.currentTime / duration) * 100;
+            progressRef.current.style.width = `${progress}%`;
+        }
+
+        if (bufferedRef.current) {
+            const buffered = event.currentTarget.buffered;
+            if (buffered.length > 0) {
+                const bufferedEnd = buffered.end(buffered.length - 1);
+                bufferedRef.current.style.width = `${(bufferedEnd / duration) * 100}%`;
+            }
+        }
+    }
+
+    function updateAudioMode(audioMode: string) {
+        currentTimeBeforeModeSwitch.current = playerRef.current?.currentTime ?? null;
+        setAudioMode(audioMode);
+    }
+
+    function onKeyDown(event: KeyboardEvent) {
+        if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+            return;
+        }
+
+        switch (event.key.toLocaleLowerCase()) {
+            case " ": // Play/Pause
+            case "k":
+                event.preventDefault();
+                togglePlay();
+                break;
+            case "arrowright": // Seek forward
+                event.preventDefault();
+                if (playerRef.current) {
+                    playerRef.current.currentTime += 5;
+                }
+                break;
+            case "l": // Seek forward large
+                event.preventDefault();
+                if (playerRef.current) {
+                    playerRef.current.currentTime += 10;
+                }
+                break;
+            case "arrowleft": // Seek backward
+                event.preventDefault();
+                if (playerRef.current) {
+                    playerRef.current.currentTime -= 5;
+                }
+                break;
+            case "j": // Seek backward large
+                event.preventDefault();
+                if (playerRef.current) {
+                    playerRef.current.currentTime -= 10;
+                }
+                break;
+            case "n": // Next track
+                event.preventDefault();
+                playNextTrack(true);
+                break;
+            case "b": // Previous track
+                event.preventDefault();
+                playPreviousTrack(true);
+                break;
+            case "m": // Mute
+                event.preventDefault();
+                if (playerRef.current) {
+                    setMuted(!muted);
+                }
+                break;
+            case "arrowup": // Volume up
+                event.preventDefault();
+                if (playerRef.current) {
+                    setGlobalVolume(Math.min(globalVolume + 0.1, 1));
+                    setMuted(false);
+                }
+                break;
+            case "arrowdown": // Volume down
+                event.preventDefault();
+                if (playerRef.current) {
+                    setGlobalVolume(Math.max(globalVolume - 0.1, 0));
+                    setMuted(false);
+                }
+                break;
+            case "d": // Download
+                event.preventDefault();
+                if (audioMode === AudioMode.ENABLED) {
+                    const link = document.createElement("a");
+                    link.href = `${audioUrl}?download`;
+                    link.click();
+                } else {
+                    const link = document.createElement("a");
+                    link.href = `${videoUrl}?download`;
+                    link.click();
+                }
+                break;
+            case "f": // Fullscreen
+                event.preventDefault();
+                toggleFullscreen();
+                break;
+            case "a": // Toggle audio mode
+                event.preventDefault();
+                updateAudioMode(audioMode === AudioMode.ENABLED ? AudioMode.DISABLED : AudioMode.ENABLED);
+                break;
+            case "p": // Toggle Picture-in-Picture
+                event.preventDefault();
+                togglePip();
+                break;
+            case ",": // Frame back
+                event.preventDefault();
+                if (playerRef.current && playerRef.current.paused) {
+                    playerRef.current.currentTime -= 1 / fpsRef.current;
+                }
+                break;
+            case ".": // Frame forward
+                event.preventDefault();
+                if (playerRef.current && playerRef.current.paused) {
+                    playerRef.current.currentTime += 1 / fpsRef.current;
+                }
+                break;
+        }
+    }
+
+    const playPreviousTrackEvent = useEffectEvent(playPreviousTrack);
+    const playNextTrackEvent = useEffectEvent(playNextTrack);
+    const onKeyDownEvent = useEffectEvent(onKeyDown);
+
+    useEffect(() => {
+        window.addEventListener("keydown", onKeyDownEvent);
+        return () => window.removeEventListener("keydown", onKeyDownEvent);
+    }, []);
 
     useEffect(() => {
         if (playerRef.current) {
@@ -268,13 +457,13 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
             });
 
             navigator.mediaSession.setActionHandler("previoustrack", () => {
-                playPreviousTrack(true);
+                playPreviousTrackEvent(true);
             });
             navigator.mediaSession.setActionHandler("nexttrack", () => {
-                playNextTrack(true);
+                playNextTrackEvent(true);
             });
         }
-    }, [anime, theme, smallCover, playNextTrack, playPreviousTrack]);
+    }, [anime, theme, smallCover]);
 
     // Calculate frame rate
     // Source - https://stackoverflow.com/questions/72997777/how-do-i-get-the-frame-rate-of-an-html-video-with-javascript
@@ -316,226 +505,6 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
         videoElement.addEventListener("seeked", handleSeeked);
         return () => videoElement.removeEventListener("seeked", handleSeeked);
     }, []);
-
-    function onPlayerMount(player: HTMLVideoElement) {
-        playerRef.current = player;
-        if (playerRef.current) {
-            setPlaying(!playerRef.current.paused);
-            if ("videoWidth" in playerRef.current) {
-                setAspectRatio(playerRef.current.videoWidth / playerRef.current.videoHeight);
-            }
-            playerRef.current.volume = globalVolume;
-            if (currentTimeBeforeModeSwitch.current) {
-                playerRef.current.currentTime = currentTimeBeforeModeSwitch.current;
-                currentTimeBeforeModeSwitch.current = null;
-            }
-        }
-    }
-
-    function onPlayerClick(event: PointerEvent) {
-        if (!background && event.nativeEvent.pointerType === "mouse" && event.nativeEvent.button === 0) {
-            togglePlay();
-        }
-    }
-
-    const togglePlay = useCallback(() => {
-        if (isPlaying) {
-            playerRef.current?.pause();
-        } else {
-            playerRef.current?.play();
-        }
-    }, [isPlaying]);
-
-    function togglePip() {
-        const videoElement = document.querySelector("video");
-        if (!videoElement) return;
-        if (document.pictureInPictureElement) {
-            void document.exitPictureInPicture();
-        } else {
-            void videoElement.requestPictureInPicture();
-        }
-    }
-
-    function updateProgress(event: SyntheticEvent<HTMLVideoElement | HTMLAudioElement>) {
-        const duration = event.currentTarget.duration;
-
-        if (progressRef.current) {
-            // Update the progress bar using a ref to prevent re-rendering.
-            const progress = (event.currentTarget.currentTime / duration) * 100;
-            progressRef.current.style.width = `${progress}%`;
-        }
-
-        if (bufferedRef.current) {
-            const buffered = event.currentTarget.buffered;
-            if (buffered.length > 0) {
-                const bufferedEnd = buffered.end(buffered.length - 1);
-                bufferedRef.current.style.width = `${(bufferedEnd / duration) * 100}%`;
-            }
-        }
-    }
-
-    const updateAudioMode = useCallback(
-        (audioMode: string) => {
-            currentTimeBeforeModeSwitch.current = playerRef.current?.currentTime ?? null;
-            setAudioMode(audioMode);
-        },
-        [setAudioMode],
-    );
-
-    // Handle keyboard inputs
-    const onKeyDown = useCallback(
-        (event: KeyboardEvent) => {
-            if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
-                return;
-            }
-
-            switch (event.key.toLocaleLowerCase()) {
-                case " ": // Play/Pause
-                case "k":
-                    event.preventDefault();
-                    togglePlay();
-                    break;
-                case "arrowright": // Seek forward
-                    event.preventDefault();
-                    if (playerRef.current) {
-                        playerRef.current.currentTime += 5;
-                    }
-                    break;
-                case "l": // Seek forward large
-                    event.preventDefault();
-                    if (playerRef.current) {
-                        playerRef.current.currentTime += 10;
-                    }
-                    break;
-                case "arrowleft": // Seek backward
-                    event.preventDefault();
-                    if (playerRef.current) {
-                        playerRef.current.currentTime -= 5;
-                    }
-                    break;
-                case "j": // Seek backward large
-                    event.preventDefault();
-                    if (playerRef.current) {
-                        playerRef.current.currentTime -= 10;
-                    }
-                    break;
-                case "n": // Next track
-                    event.preventDefault();
-                    playNextTrack(true);
-                    break;
-                case "b": // Previous track
-                    event.preventDefault();
-                    playPreviousTrack(true);
-                    break;
-                case "m": // Mute
-                    event.preventDefault();
-                    if (playerRef.current) {
-                        setMuted(!muted);
-                    }
-                    break;
-                case "arrowup": // Volume up
-                    event.preventDefault();
-                    if (playerRef.current) {
-                        setGlobalVolume(Math.min(globalVolume + 0.1, 1));
-                        setMuted(false);
-                    }
-                    break;
-                case "arrowdown": // Volume down
-                    event.preventDefault();
-                    if (playerRef.current) {
-                        setGlobalVolume(Math.max(globalVolume - 0.1, 0));
-                        setMuted(false);
-                    }
-                    break;
-                case "d": // Download
-                    event.preventDefault();
-                    if (audioMode === AudioMode.ENABLED) {
-                        const link = document.createElement("a");
-                        link.href = `${audioUrl}?download`;
-                        link.click();
-                    } else {
-                        const link = document.createElement("a");
-                        link.href = `${videoUrl}?download`;
-                        link.click();
-                    }
-                    break;
-                case "f": // Fullscreen
-                    event.preventDefault();
-                    toggleFullscreen();
-                    break;
-                case "a": // Toggle audio mode
-                    event.preventDefault();
-                    updateAudioMode(audioMode === AudioMode.ENABLED ? AudioMode.DISABLED : AudioMode.ENABLED);
-                    break;
-                case "p": // Toggle Picture-in-Picture
-                    event.preventDefault();
-                    togglePip();
-                    break;
-                case ",": // Frame back
-                    event.preventDefault();
-                    if (playerRef.current && playerRef.current.paused) {
-                        playerRef.current.currentTime -= 1 / fpsRef.current;
-                    }
-                    break;
-                case ".": // Frame forward
-                    event.preventDefault();
-                    if (playerRef.current && playerRef.current.paused) {
-                        playerRef.current.currentTime += 1 / fpsRef.current;
-                    }
-                    break;
-            }
-        },
-        [
-            togglePlay,
-            playNextTrack,
-            playPreviousTrack,
-            audioMode,
-            toggleFullscreen,
-            updateAudioMode,
-            setMuted,
-            muted,
-            setGlobalVolume,
-            globalVolume,
-            audioUrl,
-            videoUrl,
-        ],
-    );
-
-    // Keyboard shortcuts
-    useEffect(() => {
-        window.addEventListener("keydown", onKeyDown);
-        return () => window.removeEventListener("keydown", onKeyDown);
-    }, [onKeyDown]);
-
-    function getRelativeWatchListItem(offset: 1 | -1) {
-        if (!currentWatchListItem) {
-            return null;
-        }
-
-        const currentTrackIndex = watchList.findIndex((item) => item.watchListId === currentWatchListItem.watchListId);
-
-        if (currentTrackIndex < 0) {
-            return null;
-        }
-
-        const nextTrackIndex = currentTrackIndex + offset;
-
-        if (!watchList[nextTrackIndex]) {
-            if (!isRepeat) {
-                return null;
-            }
-
-            if (nextTrackIndex < 0) {
-                return watchList[watchList.length - 1];
-            } else if (nextTrackIndex > watchList.length - 1) {
-                return watchList[0];
-            }
-        }
-
-        return watchList[nextTrackIndex];
-    }
-
-    const constraintRef = useRef<HTMLDivElement>(null);
 
     return (
         <VideoPlayerContext.Provider

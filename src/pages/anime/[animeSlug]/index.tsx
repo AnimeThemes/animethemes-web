@@ -238,8 +238,6 @@ export const getStaticProps: GetStaticProps<AnimeDetailPageProps, AnimeDetailPag
         };
     }
 
-    console.log("PID in getStaticProps:", process.pid);
-
     const animeFragment =
         buildTimeCache.get(params.animeSlug) ??
         (
@@ -295,8 +293,6 @@ export const getStaticPaths: GetStaticPaths<AnimeDetailPageParams> = () => {
         for (const anime of allAnime) {
             buildTimeCache.set(anime.slug, anime);
         }
-
-        console.log("PID in getStaticPaths:", process.pid);
 
         return allAnime.map((anime) => ({
             params: {

@@ -32,6 +32,7 @@ export default function SearchEntityPage({ entity }: SearchEntityPageProps) {
 
     useEffect(() => {
         if (router.isReady) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setShouldRender(true);
         }
     }, [router.isReady]);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { SyntheticEvent } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
@@ -19,12 +19,8 @@ import useAuth from "@/hooks/useAuth";
 export function PasswordResetDialog() {
     const router = useRouter();
 
-    const [open, setOpen] = useState(false);
-
-    useEffect(() => setOpen(true), []);
-
     return (
-        <Dialog open={open}>
+        <Dialog>
             <DialogContent title="Reset Password">
                 <PasswordResetForm onSuccess={() => router.push("/profile")} onCancel={() => router.push("/")} />
             </DialogContent>

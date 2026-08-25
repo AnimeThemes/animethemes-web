@@ -1,5 +1,4 @@
-import useLocalStorageState from "use-local-storage-state";
-import type { LocalStorageOptions } from "use-local-storage-state/src/useLocalStorageState";
+import useLocalStorageState, { type LocalStorageOptions } from "use-local-storage-state";
 
 import type { Setting } from "@/utils/settings";
 
