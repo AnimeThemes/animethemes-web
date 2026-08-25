@@ -23,8 +23,8 @@ const initialFilter: Filter = {
 };
 
 const query = graphql(`
-    query SearchStudio($query: String!, $filter: SearchStudioFilterInput, $sort: [SearchStudioSort!]) {
-        search(search: $query, first: 15) {
+    query SearchStudio($query: String!, $filter: SearchStudioFilterInput, $page: Int!, $sort: [SearchStudioSort!]) {
+        search(search: $query, first: 15, page: $page) {
             studios(filter: $filter, sort: $sort) {
                 data {
                     ...StudioSummaryCardStudio
