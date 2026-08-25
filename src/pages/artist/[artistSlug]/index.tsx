@@ -351,7 +351,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
         ) =>
             performances.filter(
                 (performance) =>
-                    performance.song?.animethemes[0]?.animethemeentries[0]?.videos.nodes[0] &&
+                    performance.song?.animethemes[0]?.animethemeentries[0] &&
                     (filterPerformedAs === null ||
                         (filterPerformedAs === artist.name.main &&
                             !performance.as &&
