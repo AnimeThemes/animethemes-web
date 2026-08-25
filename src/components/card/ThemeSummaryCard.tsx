@@ -136,24 +136,26 @@ export function ThemeSummaryCard({
 }: PropsWithChildren<ThemeSummaryCardProps>) {
     const theme = getFragmentData(THEME_SUMMARY_CARD_THEME, themeFragment);
     const ownerArtist = artistFragment ? getFragmentData(THEME_SUMMARY_CARD_ARTIST, artistFragment) : undefined;
-    const expandable = expandableFragment
+
+    const anime = theme.anime;
+    const entry = theme.animethemeentries[0];
+    const video = entry?.videos.nodes[0];
+
+    const expandable = expandableFragment && video
         ? getFragmentData(THEME_SUMMARY_CARD_THEME_EXPANDABLE, expandableFragment)
         : undefined;
 
     const [isExpanded, toggleExpanded] = useToggle();
     const isMobile = useIsMobile();
 
-    const anime = theme.anime;
-    const entry = theme.animethemeentries[0];
-    const video = entry?.videos.nodes[0];
-
-    if (!anime || !entry || !video) {
+    if (!anime || !entry) {
         return null;
     }
 
     const { smallCover } = extractImages(anime.images.nodes);
-    const videoSlug = createVideoSlug(theme, entry, video);
-    const href = `/anime/${anime.slug}/${videoSlug}`;
+
+    const videoSlug = video ? createVideoSlug(theme, entry, video) : null;
+    const href = videoSlug ? `/anime/${anime.slug}/${videoSlug}` : `/anime/${anime.slug}`;
 
     function handleToggleExpand(event: MouseEvent, filterLinks = false) {
         if (filterLinks && isLink(event.target)) {
@@ -218,10 +220,12 @@ export function ThemeSummaryCard({
             {expandable && (
                 <Collapse collapse={!isExpanded}>
                     <StyledPerformedWith>
-                        <ThemeTable
-                            themes={[expandable]}
-                            onPlay={(_, entryIndex, videoIndex) => onPlay?.(entryIndex, videoIndex)}
-                        />
+                        {video &&
+                            <ThemeTable
+                                themes={[expandable]}
+                                onPlay={(_, entryIndex, videoIndex) => onPlay?.(entryIndex, videoIndex)}
+                            />
+                        }
                         {performances.length > 0 && (
                             <Table style={{ "--columns": "1fr" }}>
                                 <TableHead>
