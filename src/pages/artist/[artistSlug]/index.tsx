@@ -292,7 +292,7 @@ interface ArtistDetailPageParams extends ParsedUrlQuery {
 }
 
 export default function ArtistDetailPage({ artist: artistFragment, informationMarkdownSource }: ArtistDetailPageProps) {
-    const artist = getFragmentData(ARTIST_DETAIL_PAGE_ARTIST, artistFragment);
+    const artist = useMemo(() => getFragmentData(ARTIST_DETAIL_PAGE_ARTIST, artistFragment), [artistFragment]);
     const images = extractMultipleImages(artist.images.edges);
     const [collapseInformation, setCollapseInformation] = useState(true);
 
@@ -388,7 +388,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
             ),
         [performances, filterPerformance, filterPerformances],
     );
-    const performancesAsSelf = useMemo(() => performancesGroupedByAlias.get(null) ?? [], [performancesGroupedByAlias]);
+    const performancesAsSelf = performancesGroupedByAlias.get(null) ?? [];
 
     const memberPerformancesGroupedByGroup = useMemo(
         () =>

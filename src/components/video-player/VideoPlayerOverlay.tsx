@@ -125,6 +125,7 @@ export function VideoPlayerOverlay({ anime: animeFragment, themeIndex, entryInde
         .filter((otherEntry) => !!otherEntry);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIOS(/iPhone|iPad|iPod/.test(navigator.userAgent));
         setPIPSupported(typeof document !== "undefined" && document.pictureInPictureEnabled);
     }, []);

@@ -6,6 +6,7 @@ export default function useMediaQuery(query: string, initialIsMatching = false) 
     useEffect(() => {
         const mediaQuery = window.matchMedia(query);
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsMatching(mediaQuery.matches);
 
         const onChange = (event: MediaQueryListEvent) => setIsMatching(event.matches);

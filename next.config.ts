@@ -19,6 +19,7 @@ if (STAGING) {
 const nextConfig: NextConfig = {
     basePath: BASE_PATH,
     reactStrictMode: true,
+    reactCompiler: true,
     compiler: {
         styledComponents: true,
     },

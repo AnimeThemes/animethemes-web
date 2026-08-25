@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 
 import { Text } from "@/components/text/Text";
@@ -42,7 +42,16 @@ export function PageRevalidation({ lastBuildAt, ...props }: PageRevalidationProp
         return json;
     }
 
-    const minutesSinceLastBuild = Math.round((Date.now() - lastBuildAt) / 60000);
+    const [currentTime, setCurrentTime] = useState<number | null>(null);
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    useEffect(() => setCurrentTime(Date.now()), []);
+
+    if (currentTime === null) {
+        return null;
+    }
+
+    const minutesSinceLastBuild = Math.round((currentTime - lastBuildAt) / 60000);
     const lastBuildDescription = (
         <span suppressHydrationWarning>
             {minutesSinceLastBuild

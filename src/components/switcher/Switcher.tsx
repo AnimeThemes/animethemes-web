@@ -1,10 +1,9 @@
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useContext, useId, useMemo } from "react";
 import type { ComponentPropsWithoutRef, ComponentPropsWithRef, ReactNode } from "react";
 import styled from "styled-components";
 
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { Slot, Slottable } from "@radix-ui/react-slot";
-import { uniqueId as createUniqueId } from "lodash-es";
 import { LayoutGroup, m } from "motion/react";
 
 import { Solid } from "@/components/box/Solid";
@@ -93,7 +92,7 @@ type SwitcherProps<T extends string | null> = Omit<ComponentPropsWithoutRef<type
 };
 
 export function Switcher<T extends string | null>({ selectedItem, onChange, children, ...props }: SwitcherProps<T>) {
-    const uniqueId = useMemo(createUniqueId, []);
+    const uniqueId = useId();
 
     const context = useMemo(
         () => ({
