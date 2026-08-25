@@ -467,23 +467,25 @@ export default function VideoPage({
 const buildTimeCache: Map<string, FragmentType<typeof VIDEO_PAGE_ANIME>> = new Map();
 
 export const getStaticProps: GetStaticProps<VideoPageProps, VideoPageParams> = async ({ params }) => {
-    const client = createApolloClient();
-
-    let animeFragment = params ? buildTimeCache.get(params.animeSlug) : null;
-
-    if (!animeFragment) {
-        animeFragment = (
-            await client.query({
-                query: propsQuery,
-                variables: params,
-            })
-        ).data.anime;
+    if (!params) {
+        return { notFound: true };
     }
 
+    const client = createApolloClient();
+
+    const animeFragment =
+        buildTimeCache.get(params.animeSlug) ??
+        (
+            await client.query({
+                query: propsQuery,
+                variables: {
+                    animeSlug: params.animeSlug,
+                },
+            })
+        ).data.anime;
+
     if (!animeFragment) {
-        return {
-            notFound: true,
-        };
+        return { notFound: true };
     }
 
     const anime = getFragmentData(VIDEO_PAGE_ANIME, animeFragment);

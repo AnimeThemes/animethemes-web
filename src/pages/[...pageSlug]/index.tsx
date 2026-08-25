@@ -137,17 +137,19 @@ function PageHeader({ title, author, createdAt }: PageHeaderProps) {
 export const getStaticProps: GetStaticProps<DocumentPageProps, DocumentPageParams> = async ({ params }) => {
     const client = createApolloClient();
 
+    if (!params) {
+        return { notFound: true };
+    }
+
     const { data } = await client.query({
         query: propsQuery,
-        variables: params && {
+        variables: {
             pageSlug: params.pageSlug.join("/"),
         },
     });
 
     if (!data.page) {
-        return {
-            notFound: true,
-        };
+        return { notFound: true };
     }
 
     return {

@@ -237,6 +237,24 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     }, [globalVolume, muted]);
 
     useEffect(() => {
+        void addToHistory({
+            variables: {
+                entryId: entry.id,
+                videoId: video.id,
+            },
+        });
+
+        // Reset the progress bar (otherwise we'd have to wait for the player to load).
+        if (progressRef.current) {
+            progressRef.current.style.width = "0%";
+        }
+
+        if (bufferedRef.current) {
+            bufferedRef.current.style.width = "0%";
+        }
+    }, [addToHistory, entry.id, theme, video.id]);
+
+    useEffect(() => {
         if (theme && smallCover && navigator.mediaSession) {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: `${theme.type + (theme.sequence || "")} • ${theme.song?.title.romaji || "T.B.A."}`,
@@ -518,29 +536,6 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     }
 
     const constraintRef = useRef<HTMLDivElement>(null);
-
-    const [themeFromPreviousRender, setThemeFromPreviousRender] = useState<typeof theme | null>(null);
-    if (themeFromPreviousRender !== theme) {
-        void addToHistory({
-            variables: {
-                entryId: entry.id,
-                videoId: video.id,
-            },
-        });
-
-        // Reset the progress bar (otherwise we'd have to wait for the player to load).
-        if (progressRef.current) {
-            progressRef.current.style.width = "0%";
-        }
-
-        if (bufferedRef.current) {
-            bufferedRef.current.style.width = "0%";
-        }
-
-        setThemeFromPreviousRender(theme);
-
-        return null;
-    }
 
     return (
         <VideoPlayerContext.Provider

@@ -27,4 +27,12 @@ const logLink = new ApolloLink((operation, forward) => {
 export const client = new ApolloClient({
     link: ApolloLink.from([logLink, httpLink]),
     cache: new InMemoryCache(),
+    defaultOptions: {
+        query: {
+            errorPolicy: "none",
+        },
+        watchQuery: {
+            errorPolicy: "none",
+        },
+    },
 });

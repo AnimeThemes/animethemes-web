@@ -1,3 +1,4 @@
+import { CombinedGraphQLErrors } from "@apollo/client";
 import { useMutation, useQuery } from "@apollo/client/react";
 
 import { client } from "@/graphql/client";
@@ -92,10 +93,12 @@ export default function useAuth() {
                 },
             },
             onError(error) {
-                const extensions = error.graphQLErrors?.[0]?.extensions;
+                if (!CombinedGraphQLErrors.is(error)) {
+                    return;
+                }
 
-                if (extensions?.code === "VALIDATION") {
-                    setErrors((extensions.validation ?? {}) as Record<string, string[]>);
+                if (error.extensions?.code === "VALIDATION") {
+                    setErrors(error.extensions.validation ?? {});
                 }
             },
         });
@@ -120,10 +123,12 @@ export default function useAuth() {
                 },
             },
             onError(error) {
-                const extensions = error.graphQLErrors?.[0]?.extensions;
+                if (!CombinedGraphQLErrors.is(error)) {
+                    return;
+                }
 
-                if (extensions?.code === "VALIDATION") {
-                    setErrors((extensions.validation ?? {}) as Record<string, string[]>);
+                if (error.extensions?.code === "VALIDATION") {
+                    setErrors(error.extensions.validation ?? {});
                 }
             },
         });
@@ -150,10 +155,12 @@ export default function useAuth() {
                 },
             },
             onError(error) {
-                const extensions = error.graphQLErrors?.[0]?.extensions;
+                if (!CombinedGraphQLErrors.is(error)) {
+                    return;
+                }
 
-                if (extensions?.code === "VALIDATION") {
-                    setErrors((extensions.validation ?? {}) as Record<string, string[]>);
+                if (error.extensions?.code === "VALIDATION") {
+                    setErrors(error.extensions.validation ?? {});
                 }
             },
         });

@@ -162,23 +162,25 @@ const SeriesAnime = memo(function SeriesAnime({ anime }: SeriesAnimeProps) {
 const buildTimeCache: Map<string, FragmentType<typeof SERIES_DETAIL_PAGE_SERIES>> = new Map();
 
 export const getStaticProps: GetStaticProps<SeriesDetailPageProps, SeriesDetailPageParams> = async ({ params }) => {
-    const client = createApolloClient();
-
-    let series = params ? buildTimeCache.get(params.seriesSlug) : null;
-
-    if (!series) {
-        series = (
-            await client.query({
-                query: propsQuery,
-                variables: params,
-            })
-        ).data.series;
+    if (!params) {
+        return { notFound: true };
     }
 
+    const client = createApolloClient();
+
+    const series =
+        buildTimeCache.get(params.seriesSlug) ??
+        (
+            await client.query({
+                query: propsQuery,
+                variables: {
+                    seriesSlug: params.seriesSlug,
+                },
+            })
+        ).data.series;
+
     if (!series) {
-        return {
-            notFound: true,
-        };
+        return { notFound: true };
     }
 
     return {

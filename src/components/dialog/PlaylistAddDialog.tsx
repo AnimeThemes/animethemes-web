@@ -2,7 +2,8 @@ import { useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import styled from "styled-components";
 
-import { useMutation } from "@apollo/client";
+import { CombinedGraphQLErrors } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import { LoginGate } from "@/components/auth/LoginGate";
@@ -79,10 +80,12 @@ function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
         {
             onCompleted: () => onSuccess(),
             onError(error) {
-                const extensions = error.graphQLErrors?.[0]?.extensions;
+                if (!CombinedGraphQLErrors.is(error)) {
+                    return;
+                }
 
-                if (extensions?.code === "VALIDATION") {
-                    setErrors(extensions.validation as PlaylistAddFormErrors);
+                if (error.extensions?.code === "VALIDATION") {
+                    setErrors(error.extensions.validation as PlaylistAddFormErrors);
                 }
             },
             refetchQueries: [
