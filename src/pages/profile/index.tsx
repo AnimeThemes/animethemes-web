@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import styled, { css } from "styled-components";
 import type { GetServerSideProps } from "next";
 
@@ -196,7 +196,12 @@ export default function ProfilePage({ me: meFragment }: ProfilePageProps) {
         .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
     const highlightColor = roles[0]?.color ?? "";
 
-    const isNewUser = !!me?.createdAt && (Date.now() - Date.parse(me.createdAt)) / (1000 * 60 * 60 * 24) < 1;
+    const [currentTime, setCurrentTime] = useState<number>(() => Date.now());
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    useEffect(() => setCurrentTime(Date.now()), []);
+
+    const isNewUser = !!me?.createdAt && (currentTime - Date.parse(me.createdAt)) / (1000 * 60 * 60 * 24) < 1;
 
     return (
         <>

@@ -8,6 +8,7 @@ export default function useYearList() {
 
     useEffect(() => {
         // Client-side (hydration)
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setYearList(getYearList());
     }, []);
 

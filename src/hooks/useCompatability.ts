@@ -11,6 +11,7 @@ export default function useCompatability(initialValues: Partial<Compatability> =
         if (document?.createElement) {
             const videoElement = document.createElement("video");
 
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setCanPlayVideo(!!videoElement.canPlayType(`video/webm; codecs="vp8, vp9, opus"`));
         }
     }, []);

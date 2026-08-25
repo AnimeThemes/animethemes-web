@@ -14,6 +14,7 @@ export default function useCurrentSeason(): CurrentSeason {
 
     useEffect(() => {
         // Client-side (hydration)
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrent({
             year: getCurrentYear(),
             season: getCurrentSeason(),
