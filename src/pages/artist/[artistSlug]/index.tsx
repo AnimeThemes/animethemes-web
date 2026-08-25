@@ -669,23 +669,25 @@ const buildTimeCache: Map<string, FragmentType<typeof ARTIST_DETAIL_PAGE_ARTIST>
     new Map();
 
 export const getStaticProps: GetStaticProps<ArtistDetailPageProps, ArtistDetailPageParams> = async ({ params }) => {
-    const client = createApolloClient();
-
-    let artist = params ? buildTimeCache.get(params.artistSlug) : null;
-
-    if (!artist) {
-        artist = (
-            await client.query({
-                query: propsQuery,
-                variables: params,
-            })
-        ).data.artist;
+    if (!params) {
+        return { notFound: true };
     }
 
+    const client = createApolloClient();
+
+    const artist =
+        buildTimeCache.get(params.artistSlug) ??
+        (
+            await client.query({
+                query: propsQuery,
+                variables: {
+                    artistSlug: params.artistSlug,
+                },
+            })
+        ).data.artist;
+
     if (!artist) {
-        return {
-            notFound: true,
-        };
+        return { notFound: true };
     }
 
     return {

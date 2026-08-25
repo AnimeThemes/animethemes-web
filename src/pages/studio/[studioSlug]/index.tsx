@@ -203,23 +203,25 @@ const StudioAnime = memo(function StudioAnime({ anime }: StudioAnimeProps) {
 const buildTimeCache: Map<string, FragmentType<typeof STUDIO_DETAIL_PAGE_STUDIO>> = new Map();
 
 export const getStaticProps: GetStaticProps<StudioDetailPageProps, StudioDetailPageParams> = async ({ params }) => {
-    const client = createApolloClient();
-
-    let studio = params ? buildTimeCache.get(params.studioSlug) : null;
-
-    if (!studio) {
-        studio = (
-            await client.query({
-                query: propsQuery,
-                variables: params,
-            })
-        ).data.studio;
+    if (!params) {
+        return { notFound: true };
     }
 
+    const client = createApolloClient();
+
+    const studio =
+        buildTimeCache.get(params.studioSlug) ??
+        (
+            await client.query({
+                query: propsQuery,
+                variables: {
+                    studioSlug: params.studioSlug,
+                },
+            })
+        ).data.studio;
+
     if (!studio) {
-        return {
-            notFound: true,
-        };
+        return { notFound: true };
     }
 
     return {

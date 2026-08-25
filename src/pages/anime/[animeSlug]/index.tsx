@@ -86,7 +86,7 @@ export const ANIME_DETAIL_PAGE_ANIME = graphql(`
     }
 `);
 
-const propsQuery = graphql(`
+export const ANIME_DETAIL_PAGE_PROPS = graphql(`
     query AnimeDetailPage($animeSlug: String!) {
         anime(slug: $animeSlug) {
             ...AnimeDetailPageAnime
@@ -94,7 +94,7 @@ const propsQuery = graphql(`
     }
 `);
 
-const pathsQuery = graphql(`
+export const ANIME_DETAIL_PAGE_PATHS = graphql(`
     query AnimeDetailPageAll($pagination: PaginationInput) {
         animeConnection(pagination: $pagination) {
             nodes {
@@ -232,16 +232,24 @@ const buildTimeCache: Map<string, FragmentType<typeof ANIME_DETAIL_PAGE_ANIME>> 
 export const getStaticProps: GetStaticProps<AnimeDetailPageProps, AnimeDetailPageParams> = async ({ params }) => {
     const client = createApolloClient();
 
-    let animeFragment = params ? buildTimeCache.get(params.animeSlug) : null;
+    if (!params) {
+        return {
+            notFound: true,
+        };
+    }
 
-    if (!animeFragment) {
-        animeFragment = (
+    console.log("PID in getStaticProps:", process.pid);
+
+    const animeFragment =
+        buildTimeCache.get(params.animeSlug) ??
+        (
             await client.query({
-                query: propsQuery,
-                variables: params,
+                query: ANIME_DETAIL_PAGE_PROPS,
+                variables: {
+                    animeSlug: params.animeSlug,
+                },
             })
         ).data.anime;
-    }
 
     if (!animeFragment) {
         return {
@@ -268,7 +276,7 @@ export const getStaticPaths: GetStaticPaths<AnimeDetailPageParams> = () => {
 
         const allAnime = await collect(async (cursor) => {
             const { data } = await client.query({
-                query: pathsQuery,
+                query: ANIME_DETAIL_PAGE_PATHS,
                 variables: {
                     pagination: {
                         first: 1000,
@@ -287,6 +295,8 @@ export const getStaticPaths: GetStaticPaths<AnimeDetailPageParams> = () => {
         for (const anime of allAnime) {
             buildTimeCache.set(anime.slug, anime);
         }
+
+        console.log("PID in getStaticPaths:", process.pid);
 
         return allAnime.map((anime) => ({
             params: {

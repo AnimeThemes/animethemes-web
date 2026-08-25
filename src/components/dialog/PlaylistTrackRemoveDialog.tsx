@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { faMinus } from "@fortawesome/free-solid-svg-icons";
 import type { ResultOf } from "@graphql-typed-document-node/core";
 

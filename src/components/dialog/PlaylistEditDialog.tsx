@@ -2,7 +2,8 @@ import { useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import styled from "styled-components";
 
-import { useMutation } from "@apollo/client";
+import { CombinedGraphQLErrors } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import type { ResultOf } from "@graphql-typed-document-node/core";
 
@@ -97,10 +98,12 @@ function PlaylistEditForm({ playlist, onSuccess, onCancel }: PlaylistEditFormPro
         {
             onCompleted: () => onSuccess(),
             onError(error) {
-                const extensions = error.graphQLErrors?.[0]?.extensions;
+                if (!CombinedGraphQLErrors.is(error)) {
+                    return;
+                }
 
-                if (extensions?.code === "VALIDATION") {
-                    setErrors(extensions.validation as PlaylistEditFormErrors);
+                if (error.extensions?.code === "VALIDATION") {
+                    setErrors(error.extensions.validation as PlaylistEditFormErrors);
                 }
             },
             refetchQueries: [

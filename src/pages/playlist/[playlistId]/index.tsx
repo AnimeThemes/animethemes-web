@@ -780,7 +780,7 @@ export const getServerSideProps: GetServerSideProps<PlaylistDetailPageProps, Pla
         variables: { playlistId: params.playlistId },
     });
 
-    if (!data.playlist) {
+    if (!data?.playlist) {
         return {
             notFound: true,
         };
