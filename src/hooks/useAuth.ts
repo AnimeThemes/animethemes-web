@@ -3,8 +3,6 @@ import { useMutation, useQuery } from "@apollo/client/react";
 
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
-import axios from "@/lib/client/axios";
-import { AUTH_PATH } from "@/utils/config";
 
 export interface RegisterErrors {
     name?: Array<string>;
@@ -65,8 +63,6 @@ const USE_AUTH_ME_QUERY = graphql(`
 
 export default function useAuth() {
     const { data } = useQuery(USE_AUTH_ME_QUERY);
-
-    const csrf = () => axios.get(`/sanctum/csrf-cookie`);
 
     const [registerMutation] = useMutation(
         graphql(`
@@ -170,20 +166,53 @@ export default function useAuth() {
         });
     };
 
-    const forgotPassword = async (props: ForgotPasswordProps) => {
-        await csrf();
+    const [forgotPasswordMutation] = useMutation(
+        graphql(`
+            mutation ForgotPassword($email: String!) {
+                forgotPassword(email: $email)
+            }
+        `),
+    );
 
-        return axios.post(`${AUTH_PATH}/forgot-password`, props);
+    const forgotPassword = async ({ ...props }: ForgotPasswordProps) => {
+        await forgotPasswordMutation({
+            variables: {
+                email: props.email,
+            },
+        });
     };
 
-    const resetPassword = async (props: ResetPasswordProps) => {
-        await csrf();
+    const [resetPasswordMutation] = useMutation(
+        graphql(`
+            mutation ResetPassword($input: ResetPasswordInput!) {
+                resetPassword(input: $input)
+            }
+        `),
+    );
 
-        await axios.post(`${AUTH_PATH}/reset-password`, props);
+    const resetPassword = async ({ ...props }: ResetPasswordProps) => {
+        await resetPasswordMutation({
+            variables: {
+                input: {
+                    email: props.email,
+                    password: props.password,
+                    passwordConfirmation: props.password_confirmation,
+                    token: props.token,
+                },
+            },
+        });
     };
+
+    const [resendEmailVerificationMutation] = useMutation(
+        graphql(`
+            mutation ResendEmailVerification {
+                resendEmailVerification
+            }
+        `),
+    );
 
     const resendEmailVerification = async () => {
-        await axios.post(`${AUTH_PATH}/email/verification-notification`);
+        await resendEmailVerificationMutation();
     };
 
     const [logoutMutation] = useMutation(
