@@ -3,8 +3,6 @@ import { useMutation, useQuery } from "@apollo/client/react";
 
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
-import axios from "@/lib/client/axios";
-import { AUTH_PATH } from "@/utils/config";
 
 export interface RegisterErrors {
     name?: Array<string>;
@@ -65,8 +63,6 @@ const USE_AUTH_ME_QUERY = graphql(`
 
 export default function useAuth() {
     const { data } = useQuery(USE_AUTH_ME_QUERY);
-
-    const csrf = () => axios.get(`/sanctum/csrf-cookie`);
 
     const [registerMutation] = useMutation(
         graphql(`
