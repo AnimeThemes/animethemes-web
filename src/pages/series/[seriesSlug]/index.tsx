@@ -19,6 +19,7 @@ import createApolloClient from "@/graphql/createApolloClient";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useToggle from "@/hooks/useToggle";
 import theme from "@/theme";
+import { readCache, writeCache } from "@/utils/buildCache";
 import collect from "@/utils/collect";
 import { ANIME_A_Z, ANIME_NEW_OLD, ANIME_OLD_NEW, ANIME_Z_A, getComparator } from "@/utils/comparators";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
@@ -159,17 +160,25 @@ const SeriesAnime = memo(function SeriesAnime({ anime }: SeriesAnimeProps) {
     return <>{animeCards}</>;
 });
 
-const buildTimeCache: Map<string, FragmentType<typeof SERIES_DETAIL_PAGE_SERIES>> = new Map();
+const buildCacheKey = "series";
 
-export const getStaticProps: GetStaticProps<SeriesDetailPageProps, SeriesDetailPageParams> = async ({ params }) => {
+export const getStaticProps: GetStaticProps<SeriesDetailPageProps, SeriesDetailPageParams> = async ({
+    params,
+    revalidateReason,
+}) => {
     if (!params) {
         return { notFound: true };
     }
 
     const client = createApolloClient();
 
+    const buildCache =
+        revalidateReason === "build"
+            ? await readCache<Map<string, FragmentType<typeof SERIES_DETAIL_PAGE_SERIES>>>(buildCacheKey)
+            : null;
+
     const series =
-        buildTimeCache.get(params.seriesSlug) ??
+        buildCache?.get(params.seriesSlug) ??
         (
             await client.query({
                 query: propsQuery,
@@ -215,9 +224,11 @@ export const getStaticPaths: GetStaticPaths<SeriesDetailPageParams> = async () =
             };
         });
 
+        const buildCache: Map<string, FragmentType<typeof SERIES_DETAIL_PAGE_SERIES>> = new Map();
         for (const series of allSeries) {
-            buildTimeCache.set(series.slug, series);
+            buildCache.set(series.slug, series);
         }
+        await writeCache(buildCacheKey, buildCache);
 
         return allSeries.map((series) => ({
             params: {

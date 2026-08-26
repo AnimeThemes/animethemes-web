@@ -34,6 +34,7 @@ import PlayerContext, {
 import createApolloClient from "@/graphql/createApolloClient";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useToggle from "@/hooks/useToggle";
+import { readCache, writeCache } from "@/utils/buildCache";
 import collect from "@/utils/collect";
 import {
     compare,
@@ -665,18 +666,27 @@ const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemes
     return <>{themeCards}</>;
 });
 
-const buildTimeCache: Map<string, FragmentType<typeof ARTIST_DETAIL_PAGE_ARTIST> & { information: string | null }> =
-    new Map();
+const buildCacheKey = "artist";
 
-export const getStaticProps: GetStaticProps<ArtistDetailPageProps, ArtistDetailPageParams> = async ({ params }) => {
+export const getStaticProps: GetStaticProps<ArtistDetailPageProps, ArtistDetailPageParams> = async ({
+    params,
+    revalidateReason,
+}) => {
     if (!params) {
         return { notFound: true };
     }
 
     const client = createApolloClient();
 
+    const buildCache =
+        revalidateReason === "build"
+            ? await readCache<
+                  Map<string, FragmentType<typeof ARTIST_DETAIL_PAGE_ARTIST> & { information: string | null }>
+              >(buildCacheKey)
+            : null;
+
     const artist =
-        buildTimeCache.get(params.artistSlug) ??
+        buildCache?.get(params.artistSlug) ??
         (
             await client.query({
                 query: propsQuery,
@@ -725,9 +735,12 @@ export const getStaticPaths: GetStaticPaths<ArtistDetailPageParams> = async () =
             };
         });
 
+        const buildCache: Map<string, FragmentType<typeof ARTIST_DETAIL_PAGE_ARTIST> & { information: string | null }> =
+            new Map();
         for (const artist of allArtists) {
-            buildTimeCache.set(artist.slug, artist);
+            buildCache.set(artist.slug, artist);
         }
+        await writeCache(buildCacheKey, buildCache);
 
         return allArtists.map((artist) => ({
             params: {

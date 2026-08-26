@@ -25,10 +25,7 @@ const nextConfig: NextConfig = {
     },
     staticPageGenerationTimeout: 3600,
     experimental: {
-        // We don't want to multi-thread page building
-        // to make use of caching between page builds.
-        workerThreads: false,
-        cpus: 1,
+        cpus: 4,
     },
     transpilePackages: ["ahooks"],
     async headers() {

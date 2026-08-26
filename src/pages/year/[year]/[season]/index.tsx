@@ -1,5 +1,6 @@
 import type { GetStaticPaths, GetStaticProps } from "next";
 
+import type { ResultOf } from "@graphql-typed-document-node/core";
 import type { ParsedUrlQuery } from "querystring";
 
 import { Column } from "@/components/box/Flex";
@@ -14,6 +15,7 @@ import { Text } from "@/components/text/Text";
 import createApolloClient from "@/graphql/createApolloClient";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import type { AnimeSeason } from "@/graphql/generated/graphql";
+import { readCache, writeCache } from "@/utils/buildCache";
 import { seasonComparator, sortTransformed } from "@/utils/comparators";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
@@ -42,17 +44,6 @@ export const SEASON_DETAIL_PAGE_SEASON = graphql(`
     }
 `);
 
-const pathsQuery = graphql(`
-    query SeasonDetailPageAll {
-        animeyears {
-            year
-            seasons: season {
-                season
-            }
-        }
-    }
-`);
-
 const propsQuery = graphql(`
     query SeasonDetailPage($year: Int!, $season: AnimeSeason!) {
         animeyear: animeyears(year: [$year]) {
@@ -70,6 +61,23 @@ const propsQuery = graphql(`
         animeyears {
             ...SeasonNavigationYears
             year
+        }
+    }
+`);
+
+const pathsQuery = graphql(`
+    query SeasonDetailPageAll {
+        animeyears {
+            year
+            ...SeasonDetailPageYear
+            ...SeasonNavigationYear
+            ...SeasonNavigationYears
+            seasons: season {
+                season
+                seasonLocalized
+                ...SeasonDetailPageSeason
+                ...SeasonNavigationSeason
+            }
         }
     }
 `);
@@ -109,27 +117,50 @@ export default function SeasonDetailPage({ year: yearFragment, season: seasonFra
     );
 }
 
-export const getStaticProps: GetStaticProps<SeasonDetailPageProps, SeasonDetailPageParams> = async ({ params }) => {
+const buildCacheKey = "season";
+const buildCacheMetaKey = "meta";
+const buildCacheMetaYearsKey = "years";
+
+export const getStaticProps: GetStaticProps<SeasonDetailPageProps, SeasonDetailPageParams> = async ({
+    params,
+    revalidateReason,
+}) => {
     const client = createApolloClient();
 
     if (!params?.year || !params?.season) {
-        return {
-            notFound: true,
-        };
+        return { notFound: true };
     }
 
-    const { data } = await client.query({
-        query: propsQuery,
-        variables: {
-            year: +params.year,
-            season: params.season.toUpperCase() as AnimeSeason,
-        },
-    });
+    const buildCache =
+        revalidateReason === "build"
+            ? await readCache<Map<string, ResultOf<typeof propsQuery>["animeyear"][number]>>(buildCacheKey)
+            : null;
+    const buildCacheMeta =
+        revalidateReason === "build"
+            ? await readCache<Map<string, ResultOf<typeof propsQuery>["animeyears"]>>(buildCacheMetaKey)
+            : null;
 
-    if (!data.animeyear[0] || !data.animeyear[0].season) {
-        return {
-            notFound: true,
-        };
+    const [year, years] = await (async () => {
+        const cachedYear = buildCache?.get(`${params.year}-${params.season}`);
+        const cachedYears = buildCacheMeta?.get(buildCacheMetaYearsKey);
+
+        if (cachedYear && cachedYears) {
+            return [cachedYear, cachedYears];
+        }
+
+        const { data } = await client.query({
+            query: propsQuery,
+            variables: {
+                year: +params.year,
+                season: params.season.toUpperCase() as AnimeSeason,
+            },
+        });
+
+        return [data.animeyear[0], data.animeyears];
+    })();
+
+    if (!year || !year.season) {
+        return { notFound: true };
     }
 
     return {
@@ -137,13 +168,11 @@ export const getStaticProps: GetStaticProps<SeasonDetailPageProps, SeasonDetailP
             ...getSharedPageProps(),
             isYearOrSeasonPage: true,
             year: {
-                ...data.animeyear[0],
-                seasons: [...(data.animeyear[0].seasons ?? [])].sort(
-                    sortTransformed(seasonComparator, (season) => season.season),
-                ),
+                ...year,
+                seasons: [...(year.seasons ?? [])].sort(sortTransformed(seasonComparator, (season) => season.season)),
             },
-            season: data.animeyear[0].season[0],
-            years: [...data.animeyears].sort((a, b) => a.year - b.year),
+            season: year.season[0],
+            years: [...years].sort((a, b) => a.year - b.year),
         },
         // Revalidate after 3 hours (= 10800 seconds).
         revalidate: 10800,
@@ -157,6 +186,18 @@ export const getStaticPaths: GetStaticPaths<SeasonDetailPageParams> = async () =
         const { data } = await client.query({
             query: pathsQuery,
         });
+
+        const buildCache: Map<string, ResultOf<typeof propsQuery>["animeyear"][number]> = new Map();
+        for (const year of data.animeyears) {
+            for (const season of year.seasons) {
+                buildCache.set(`${year.year}-${season.season.toLowerCase()}`, { ...year, season: [season] });
+            }
+        }
+        await writeCache(buildCacheKey, buildCache);
+
+        const buildCacheMeta: Map<string, ResultOf<typeof propsQuery>["animeyears"]> = new Map();
+        buildCacheMeta.set(buildCacheMetaYearsKey, data.animeyears);
+        await writeCache(buildCacheMetaKey, buildCacheMeta);
 
         return data.animeyears.flatMap(
             (year) =>

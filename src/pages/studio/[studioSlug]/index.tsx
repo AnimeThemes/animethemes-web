@@ -21,6 +21,7 @@ import createApolloClient from "@/graphql/createApolloClient";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useToggle from "@/hooks/useToggle";
 import theme from "@/theme";
+import { readCache, writeCache } from "@/utils/buildCache";
 import collect from "@/utils/collect";
 import { ANIME_A_Z, ANIME_NEW_OLD, ANIME_OLD_NEW, ANIME_Z_A, compare, getComparator } from "@/utils/comparators";
 import extractImages from "@/utils/extractImages";
@@ -200,17 +201,25 @@ const StudioAnime = memo(function StudioAnime({ anime }: StudioAnimeProps) {
     return <>{animeCards}</>;
 });
 
-const buildTimeCache: Map<string, FragmentType<typeof STUDIO_DETAIL_PAGE_STUDIO>> = new Map();
+const buildCacheKey = "studio";
 
-export const getStaticProps: GetStaticProps<StudioDetailPageProps, StudioDetailPageParams> = async ({ params }) => {
+export const getStaticProps: GetStaticProps<StudioDetailPageProps, StudioDetailPageParams> = async ({
+    params,
+    revalidateReason,
+}) => {
     if (!params) {
         return { notFound: true };
     }
 
     const client = createApolloClient();
 
+    const buildCache =
+        revalidateReason === "build"
+            ? await readCache<Map<string, FragmentType<typeof STUDIO_DETAIL_PAGE_STUDIO>>>(buildCacheKey)
+            : null;
+
     const studio =
-        buildTimeCache.get(params.studioSlug) ??
+        buildCache?.get(params.studioSlug) ??
         (
             await client.query({
                 query: propsQuery,
@@ -256,9 +265,11 @@ export const getStaticPaths: GetStaticPaths<StudioDetailPageParams> = async () =
             };
         });
 
+        const buildCache: Map<string, FragmentType<typeof STUDIO_DETAIL_PAGE_STUDIO>> = new Map();
         for (const studio of allStudios) {
-            buildTimeCache.set(studio.slug, studio);
+            buildCache.set(studio.slug, studio);
         }
+        await writeCache(buildCacheKey, buildCache);
 
         return allStudios.map((studio) => ({
             params: {
