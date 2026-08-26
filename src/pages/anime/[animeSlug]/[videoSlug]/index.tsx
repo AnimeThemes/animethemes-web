@@ -24,6 +24,7 @@ import PlayerContext from "@/context/playerContext";
 import createApolloClient from "@/graphql/createApolloClient";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import styleTheme from "@/theme";
+import { readCache, writeCache } from "@/utils/buildCache";
 import collect from "@/utils/collect";
 import { VIDEO_URL } from "@/utils/config";
 import createVideoSlug from "@/utils/createVideoSlug";
@@ -464,17 +465,22 @@ export default function VideoPage({
     );
 }
 
-const buildTimeCache: Map<string, FragmentType<typeof VIDEO_PAGE_ANIME>> = new Map();
+const buildCacheKey = "video";
 
-export const getStaticProps: GetStaticProps<VideoPageProps, VideoPageParams> = async ({ params }) => {
+export const getStaticProps: GetStaticProps<VideoPageProps, VideoPageParams> = async ({ params, revalidateReason }) => {
     if (!params) {
         return { notFound: true };
     }
 
     const client = createApolloClient();
 
+    const buildCache =
+        revalidateReason === "build"
+            ? await readCache<Map<string, FragmentType<typeof VIDEO_PAGE_ANIME>>>(buildCacheKey)
+            : null;
+
     const animeFragment =
-        buildTimeCache.get(params.animeSlug) ??
+        buildCache?.get(params.animeSlug) ??
         (
             await client.query({
                 query: propsQuery,
@@ -540,9 +546,11 @@ export const getStaticPaths: GetStaticPaths<VideoPageParams> = () => {
             };
         });
 
+        const buildCache: Map<string, FragmentType<typeof VIDEO_PAGE_ANIME>> = new Map();
         for (const anime of allAnime) {
-            buildTimeCache.set(anime.slug, anime);
+            buildCache.set(anime.slug, anime);
         }
+        await writeCache(buildCacheKey, buildCache);
 
         return allAnime.flatMap((anime) =>
             anime.animethemes.flatMap((theme) =>

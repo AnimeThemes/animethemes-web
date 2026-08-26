@@ -19,6 +19,7 @@ import { Text } from "@/components/text/Text";
 import { HeightTransition } from "@/components/utils/HeightTransition";
 import createApolloClient from "@/graphql/createApolloClient";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
+import { readCache, writeCache } from "@/utils/buildCache";
 import collect from "@/utils/collect";
 import { compare, seriesTitleComparator, studioNameComparator } from "@/utils/comparators";
 import extractImages from "@/utils/extractImages";
@@ -227,19 +228,27 @@ export default function AnimeDetailPage({ anime: animeFragment, synopsisMarkdown
     );
 }
 
-const buildTimeCache: Map<string, FragmentType<typeof ANIME_DETAIL_PAGE_ANIME>> = new Map();
+const buildCacheKey = "anime";
 
-export const getStaticProps: GetStaticProps<AnimeDetailPageProps, AnimeDetailPageParams> = async ({ params }) => {
-    const client = createApolloClient();
-
+export const getStaticProps: GetStaticProps<AnimeDetailPageProps, AnimeDetailPageParams> = async ({
+    params,
+    revalidateReason,
+}) => {
     if (!params) {
         return {
             notFound: true,
         };
     }
 
+    const client = createApolloClient();
+
+    const buildCache =
+        revalidateReason === "build"
+            ? await readCache<Map<string, FragmentType<typeof ANIME_DETAIL_PAGE_ANIME>>>(buildCacheKey)
+            : null;
+
     const animeFragment =
-        buildTimeCache.get(params.animeSlug) ??
+        buildCache?.get(params.animeSlug) ??
         (
             await client.query({
                 query: ANIME_DETAIL_PAGE_PROPS,
@@ -290,9 +299,11 @@ export const getStaticPaths: GetStaticPaths<AnimeDetailPageParams> = () => {
             };
         });
 
+        const buildCache: Map<string, FragmentType<typeof ANIME_DETAIL_PAGE_ANIME>> = new Map();
         for (const anime of allAnime) {
-            buildTimeCache.set(anime.slug, anime);
+            buildCache.set(anime.slug, anime);
         }
+        await writeCache(buildCacheKey, buildCache);
 
         return allAnime.map((anime) => ({
             params: {
