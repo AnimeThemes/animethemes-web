@@ -96,6 +96,9 @@ const documents = {
     "\n            mutation Register($input: RegisterInput!) {\n                register(input: $input) {\n                    id\n                }\n            }\n        ": types.RegisterDocument,
     "\n            mutation Login($input: LoginInput!) {\n                login(input: $input) {\n                    id\n                }\n            }\n        ": types.LoginDocument,
     "\n            mutation UpdateUserInformation($input: UpdateUserInformationInput!) {\n                updateUserInformation(input: $input)\n            }\n        ": types.UpdateUserInformationDocument,
+    "\n            mutation ForgotPassword($email: String!) {\n                forgotPassword(email: $email)\n            }\n        ": types.ForgotPasswordDocument,
+    "\n            mutation ResetPassword($input: ResetPasswordInput!) {\n                resetPassword(input: $input)\n            }\n        ": types.ResetPasswordDocument,
+    "\n            mutation ResendEmailVerification {\n                resendEmailVerification\n            }\n        ": types.ResendEmailVerificationDocument,
     "\n            mutation Logout {\n                logout\n            }\n        ": types.LogoutDocument,
     "\n    query RandomGrill {\n        imageConnection(filter: { facet: GRILL }, sort: [RANDOM], pagination: { first: 1 }) {\n            nodes {\n                link\n            }\n        }\n    }\n": types.RandomGrillDocument,
     "\n    query RandomTheme($input: AnimeThemeShuffleInput) {\n        animethemeShuffle(input: $input, first: 10) {\n            ...WatchListItemTheme\n            animethemeentries {\n                ...WatchListItemEntry\n                videos {\n                    nodes {\n                        ...WatchListItemVideo\n                    }\n                }\n            }\n        }\n    }\n": types.RandomThemeDocument,
@@ -500,6 +503,18 @@ export function graphql(source: "\n            mutation Login($input: LoginInput
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n            mutation UpdateUserInformation($input: UpdateUserInformationInput!) {\n                updateUserInformation(input: $input)\n            }\n        "): (typeof documents)["\n            mutation UpdateUserInformation($input: UpdateUserInformationInput!) {\n                updateUserInformation(input: $input)\n            }\n        "];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n            mutation ForgotPassword($email: String!) {\n                forgotPassword(email: $email)\n            }\n        "): (typeof documents)["\n            mutation ForgotPassword($email: String!) {\n                forgotPassword(email: $email)\n            }\n        "];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n            mutation ResetPassword($input: ResetPasswordInput!) {\n                resetPassword(input: $input)\n            }\n        "): (typeof documents)["\n            mutation ResetPassword($input: ResetPasswordInput!) {\n                resetPassword(input: $input)\n            }\n        "];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n            mutation ResendEmailVerification {\n                resendEmailVerification\n            }\n        "): (typeof documents)["\n            mutation ResendEmailVerification {\n                resendEmailVerification\n            }\n        "];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
