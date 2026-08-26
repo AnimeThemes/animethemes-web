@@ -170,20 +170,53 @@ export default function useAuth() {
         });
     };
 
-    const forgotPassword = async (props: ForgotPasswordProps) => {
-        await csrf();
+    const [forgotPasswordMutation] = useMutation(
+        graphql(`
+            mutation ForgotPassword($email: String!) {
+                forgotPassword(email: $email)
+            }
+        `),
+    );
 
-        return axios.post(`${AUTH_PATH}/forgot-password`, props);
+    const forgotPassword = async ({ ...props }: ForgotPasswordProps) => {
+        await forgotPasswordMutation({
+            variables: {
+                email: props.email,
+            },
+        });
     };
 
-    const resetPassword = async (props: ResetPasswordProps) => {
-        await csrf();
+    const [resetPasswordMutation] = useMutation(
+        graphql(`
+            mutation ResetPassword($input: ResetPasswordInput!) {
+                resetPassword(input: $input)
+            }
+        `),
+    );
 
-        await axios.post(`${AUTH_PATH}/reset-password`, props);
+    const resetPassword = async ({ ...props }: ResetPasswordProps) => {
+        await resetPasswordMutation({
+            variables: {
+                input: {
+                    email: props.email,
+                    password: props.password,
+                    passwordConfirmation: props.password_confirmation,
+                    token: props.token,
+                },
+            },
+        });
     };
+
+    const [resendEmailVerificationMutation] = useMutation(
+        graphql(`
+            mutation ResendEmailVerification {
+                resendEmailVerification
+            }
+        `),
+    );
 
     const resendEmailVerification = async () => {
-        await axios.post(`${AUTH_PATH}/email/verification-notification`);
+        await resendEmailVerificationMutation();
     };
 
     const [logoutMutation] = useMutation(
