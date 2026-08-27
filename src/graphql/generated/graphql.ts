@@ -1,83 +1,9 @@
 /* eslint-disable */
-import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
-export type Maybe<T> = T | null;
-export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+/** Internal type. DO NOT USE DIRECTLY. */
+type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+/** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
-/** All built-in and custom scalars, mapped to their actual values */
-export type Scalars = {
-  ID: { input: string; output: string; }
-  String: { input: string; output: string; }
-  Boolean: { input: boolean; output: boolean; }
-  Int: { input: number; output: number; }
-  Float: { input: number; output: number; }
-  /**
-   * Implement the DateTime<Utc> scalar
-   *
-   * The input/output is a string in RFC3339 format.
-   */
-  DateTime: { input: any; output: any; }
-};
-
-/**
- * Represents a production with at least one opening or ending sequence.
- *
- * For example, Bakemonogatari is an anime production with five opening sequences and one ending sequence.
- */
-export type Anime = {
-  animethemes: Array<AnimeTheme>;
-  /** The format of the anime */
-  format: Maybe<AnimeFormat>;
-  /** The localized string value of the format field */
-  formatLocalized: Maybe<Scalars['String']['output']>;
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  images: ImageableConnection;
-  resources: ResourceableConnection;
-  /** The premiere season of the anime */
-  season: Maybe<AnimeSeason>;
-  /** The localized string value of the season field */
-  seasonLocalized: Maybe<Scalars['String']['output']>;
-  series: AnimeSeriesConnection;
-  /** The URL slug & route key of the resource */
-  slug: Scalars['String']['output'];
-  studios: AnimeStudioConnection;
-  synonyms: Array<Synonym>;
-  /** The brief summary of the anime */
-  synopsis: Maybe<Scalars['String']['output']>;
-  /** The primary title of the anime */
-  title: AnimeTitle;
-  /** The premiere season year of the anime */
-  year: Maybe<Scalars['Int']['output']>;
-};
-
-export type AnimeConnection = {
-  /** A list of edges. */
-  edges: Array<AnimeEdge>;
-  /** A list of nodes. */
-  nodes: Array<Anime>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type AnimeEdge = {
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: Anime;
-};
-
-export type AnimeFilterInput = {
-  format?: InputMaybe<AnimeFormat>;
-  season?: InputMaybe<AnimeSeason>;
-  titleLike?: InputMaybe<Scalars['String']['input']>;
-  year?: InputMaybe<Scalars['Int']['input']>;
-};
-
+import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type AnimeFormat =
   | 'MOVIE'
   | 'ONA'
@@ -86,513 +12,35 @@ export type AnimeFormat =
   | 'TV'
   | 'TV_SHORT';
 
-export type AnimePagination = {
-  /** The data for the current page. */
-  data: Array<Anime>;
-  /** Information to aid in pagination. */
-  pageInfo: OffsetPageInfo;
-};
-
 export type AnimeSeason =
   | 'FALL'
   | 'SPRING'
   | 'SUMMER'
   | 'WINTER';
 
-export type AnimeSeriesConnection = {
-  /** A list of edges. */
-  edges: Array<AnimeSeriesEdge>;
-  /** A list of nodes. */
-  nodes: Array<Series>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type AnimeSeriesEdge = {
-  createdAt: Scalars['String']['output'];
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: Series;
-  updatedAt: Scalars['String']['output'];
-};
-
-
-/** An edge in a connection. */
-export type AnimeSeriesEdgeCreatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-
-/** An edge in a connection. */
-export type AnimeSeriesEdgeUpdatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-export type AnimeSort =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'RANDOM'
-  | 'TITLE_ENGLISH'
-  | 'TITLE_ENGLISH_DESC'
-  | 'TITLE_NATIVE'
-  | 'TITLE_NATIVE_DESC'
-  | 'TITLE_ROMAJI'
-  | 'TITLE_ROMAJI_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC'
-  | 'YEAR'
-  | 'YEAR_DESC';
-
-export type AnimeStudioConnection = {
-  /** A list of edges. */
-  edges: Array<AnimeStudioEdge>;
-  /** A list of nodes. */
-  nodes: Array<Studio>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type AnimeStudioEdge = {
-  createdAt: Scalars['String']['output'];
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: Studio;
-  updatedAt: Scalars['String']['output'];
-};
-
-
-/** An edge in a connection. */
-export type AnimeStudioEdgeCreatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-
-/** An edge in a connection. */
-export type AnimeStudioEdgeUpdatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-/**
- * Represents an OP or ED sequence for an anime.
- *
- * For example, the anime Bakemonogatari has five OP anime themes and one ED anime theme.
- */
-export type AnimeTheme = {
-  anime: Anime;
-  animethemeentries: Array<AnimeThemeEntry>;
-  group: Maybe<ThemeGroup>;
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  /** The numeric ordering of the theme */
-  sequence: Maybe<Scalars['Int']['output']>;
-  /** The slug that represents the anime theme. */
-  slug: Scalars['String']['output'];
-  song: Maybe<Song>;
-  /** The type of the sequence */
-  type: ThemeType;
-  /** The localized string value of the type field */
-  typeLocalized: Scalars['String']['output'];
-};
-
-export type AnimeThemeConnection = {
-  /** A list of edges. */
-  edges: Array<AnimeThemeEdge>;
-  /** A list of nodes. */
-  nodes: Array<AnimeTheme>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type AnimeThemeEdge = {
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: AnimeTheme;
-};
-
-/**
- * Represents a version of an anime theme.
- *
- * For example, the ED theme of the Bakemonogatari anime has three anime theme entries to represent three versions.
- */
-export type AnimeThemeEntry = {
-  animetheme: AnimeTheme;
-  /** The episodes that the theme is used for */
-  episodes: Maybe<Scalars['String']['output']>;
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  /** The number of likes recorded for the resource */
-  likesCount: Scalars['Int']['output'];
-  /** Any additional information for this sequence */
-  notes: Maybe<Scalars['String']['output']>;
-  /** Is not safe for work content included? */
-  nsfw: Scalars['Boolean']['output'];
-  /** Is content included that may spoil the viewer? */
-  spoiler: Scalars['Boolean']['output'];
-  /** The number of tracks belonging to the resource */
-  tracksCount: Scalars['Int']['output'];
-  /** The version number of the theme */
-  version: Scalars['Int']['output'];
-  videos: AnimeThemeEntryVideoConnection;
-};
-
-export type AnimeThemeEntryConnection = {
-  /** A list of edges. */
-  edges: Array<AnimeThemeEntryEdge>;
-  /** A list of nodes. */
-  nodes: Array<AnimeThemeEntry>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type AnimeThemeEntryEdge = {
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: AnimeThemeEntry;
-};
-
-export type AnimeThemeEntryFilterInput = {
-  spoiler?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type AnimeThemeEntryVideoConnection = {
-  /** A list of edges. */
-  edges: Array<AnimeThemeEntryVideoEdge>;
-  /** A list of nodes. */
-  nodes: Array<Video>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type AnimeThemeEntryVideoEdge = {
-  createdAt: Scalars['String']['output'];
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: Video;
-  updatedAt: Scalars['String']['output'];
-};
-
-
-/** An edge in a connection. */
-export type AnimeThemeEntryVideoEdgeCreatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-
-/** An edge in a connection. */
-export type AnimeThemeEntryVideoEdgeUpdatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
 export type AnimeThemeFilterInput = {
-  idIn?: InputMaybe<Array<Scalars['Int']['input']>>;
-  type?: InputMaybe<ThemeType>;
-};
-
-export type AnimeThemePagination = {
-  /** The data for the current page. */
-  data: Array<AnimeTheme>;
-  /** Information to aid in pagination. */
-  pageInfo: OffsetPageInfo;
+  idIn?: Array<number> | null | undefined;
+  type?: ThemeType | null | undefined;
 };
 
 export type AnimeThemeShuffleInput = {
-  format?: InputMaybe<AnimeFormat>;
-  spoiler?: InputMaybe<Scalars['Boolean']['input']>;
-  type?: InputMaybe<Array<ThemeType>>;
-  yearGte?: InputMaybe<Scalars['Int']['input']>;
-  yearLte?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type AnimeThemeSort =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'RANDOM'
-  | 'SEQUENCE'
-  | 'SEQUENCE_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
-
-export type AnimeTitle = {
-  english: Maybe<Scalars['String']['output']>;
-  native: Maybe<Scalars['String']['output']>;
-  romaji: Scalars['String']['output'];
-};
-
-/** The anime year response type, grouped by season */
-export type AnimeYear = {
-  /** The available seasons of the year and its anime */
-  season: Array<AnimeYearSeason>;
-  /** The year of the AnimeYear type */
-  year: Scalars['Int']['output'];
-};
-
-
-/** The anime year response type, grouped by season */
-export type AnimeYearSeasonArgs = {
-  season?: InputMaybe<AnimeSeason>;
-};
-
-/** The anime year season type. */
-export type AnimeYearSeason = {
-  anime: AnimeConnection;
-  /** The season of the anime year. */
-  season: AnimeSeason;
-  /** The formatted string value of the season field. */
-  seasonLocalized: Scalars['String']['output'];
-};
-
-
-/** The anime year season type. */
-export type AnimeYearSeasonAnimeArgs = {
-  filter?: InputMaybe<AnimeFilterInput>;
-  pagination?: InputMaybe<PaginationInput>;
-  sort?: InputMaybe<Array<AnimeSort>>;
-};
-
-/** Represents a site-wide message to be broadcasted on the homepage. */
-export type Announcement = {
-  /** The announcement text */
-  content: Scalars['String']['output'];
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-};
-
-/**
- * Represents a musical performer of anime sequences.
- *
- * For example, Chiwa Saitou is the musical performer of the Bakemonogatari OP1 theme, among many others.
- */
-export type Artist = {
-  groups: ArtistMemberConnection;
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  images: ImageableConnection;
-  /** The brief information of the resource */
-  information: Maybe<Scalars['String']['output']>;
-  memberPerformances: Array<Performance>;
-  members: ArtistMemberConnection;
-  /** The primary title of the artist */
-  name: ArtistName;
-  performances: Array<Performance>;
-  resources: ResourceableConnection;
-  /** The URL slug & route key of the resource */
-  slug: Scalars['String']['output'];
-  synonyms: Array<Synonym>;
-};
-
-export type ArtistConnection = {
-  /** A list of edges. */
-  edges: Array<ArtistEdge>;
-  /** A list of nodes. */
-  nodes: Array<Artist>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type ArtistEdge = {
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: Artist;
-};
-
-export type ArtistFilterInput = {
-  nameMainLike?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type ArtistMemberConnection = {
-  /** A list of edges. */
-  edges: Array<ArtistMemberEdge>;
-  /** A list of nodes. */
-  nodes: Array<Artist>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type ArtistMemberEdge = {
-  /** Used to distinguish member by alias */
-  alias: Maybe<Scalars['String']['output']>;
-  /** Used to distinguish member by character */
-  as: Maybe<Scalars['String']['output']>;
-  /** The date that the resource was created */
-  createdAt: Scalars['String']['output'];
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: Artist;
-  /** Used to extra annotation, like member role */
-  notes: Maybe<Scalars['String']['output']>;
-  /** Used to determine the relevance order of members in group */
-  relevance: Scalars['Int']['output'];
-  /** The date that the resource was updated */
-  updatedAt: Scalars['String']['output'];
-};
-
-
-/** An edge in a connection. */
-export type ArtistMemberEdgeCreatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-
-/** An edge in a connection. */
-export type ArtistMemberEdgeUpdatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-export type ArtistName = {
-  /** The stylized name of the artist */
-  main: Scalars['String']['output'];
-  /** The native name of the artist */
-  native: Maybe<Scalars['String']['output']>;
-};
-
-export type ArtistPagination = {
-  /** The data for the current page. */
-  data: Array<Artist>;
-  /** Information to aid in pagination. */
-  pageInfo: OffsetPageInfo;
-};
-
-export type ArtistSort =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'NAME_MAIN'
-  | 'NAME_MAIN_DESC'
-  | 'NAME_NATIVE'
-  | 'NAME_NATIVE_DESC'
-  | 'RANDOM'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
-
-/**
- * Represents the audio track of a video.
- *
- * For example, the audio Bakemonogatari-OP1.ogg represents the audio track of the Bakemonogatari-OP1.webm video.
- */
-export type Audio = {
-  /** The basename of the file in storage */
-  basename: Scalars['String']['output'];
-  /** The filename of the file in storage */
-  filename: Scalars['String']['output'];
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  /** The URL to stream the file from storage */
-  link: Scalars['String']['output'];
-  /** The media type of the file in storage */
-  mimetype: Scalars['String']['output'];
-  /** The path of the file in storage */
-  path: Scalars['String']['output'];
-  /** The size of the file in storage in Bytes */
-  size: Scalars['Int']['output'];
+  format?: AnimeFormat | null | undefined;
+  spoiler?: boolean | null | undefined;
+  type?: Array<ThemeType> | null | undefined;
+  yearGte?: number | null | undefined;
+  yearLte?: number | null | undefined;
 };
 
 export type CreatePlaylistInput = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  name: Scalars['String']['input'];
+  description?: string | null | undefined;
+  name: string;
   visibility: PlaylistVisibility;
 };
 
 export type CreatePlaylistTrackInput = {
-  entryId: Scalars['Int']['input'];
-  position?: InputMaybe<Scalars['Int']['input']>;
-  videoId: Scalars['Int']['input'];
-};
-
-/** Represents the current featured theme on the homepage of the site. */
-export type CurrentFeaturedTheme = {
-  animethemeentry: AnimeThemeEntry;
-  /** The end date of the resource */
-  endAt: Maybe<Scalars['String']['output']>;
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  /** The start date of the resource */
-  startAt: Maybe<Scalars['String']['output']>;
-  user: Maybe<User>;
-  video: Video;
-};
-
-
-/** Represents the current featured theme on the homepage of the site. */
-export type CurrentFeaturedThemeEndAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-
-/** Represents the current featured theme on the homepage of the site. */
-export type CurrentFeaturedThemeStartAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-/**
- * Represents a site with supplementary information for another resource such as an anime or artist.
- *
- * For example, the Bakemonogatari anime has MyAnimeList, AniList and AniDB resources.
- */
-export type ExternalResource = {
-  /** The primary key of the resource in the external site */
-  externalId: Maybe<Scalars['Int']['output']>;
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  /** The URL of the external site */
-  link: Scalars['String']['output'];
-  /** The external site that the resource belongs to */
-  site: ResourceSite;
-  /** The localized string value of the site field */
-  siteLocalized: Scalars['String']['output'];
-};
-
-/**
- * Represents a visual component for another resource such as an anime or artist.
- *
- * For example, the Bakemonogatari anime has two images to represent small and large cover images.
- */
-export type Image = {
-  /** The component that the resource is intended for */
-  facet: ImageFacet;
-  /** The localized string value of the facet field */
-  facetLocalized: Scalars['String']['output'];
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  /** The URL to stream the file from storage */
-  link: Scalars['String']['output'];
-  /** The path of the file in storage */
-  path: Scalars['String']['output'];
-};
-
-export type ImageConnection = {
-  /** A list of edges. */
-  edges: Array<ImageEdge>;
-  /** A list of nodes. */
-  nodes: Array<Image>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type ImageEdge = {
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: Image;
+  entryId: number;
+  position?: number | null | undefined;
+  videoId: number;
 };
 
 export type ImageFacet =
@@ -603,444 +51,16 @@ export type ImageFacet =
   | 'LARGE_COVER'
   | 'SMALL_COVER';
 
-export type ImageFilterInput = {
-  facet?: InputMaybe<ImageFacet>;
-};
-
-export type ImageSort =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'RANDOM'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
-
-export type ImageableConnection = {
-  /** A list of edges. */
-  edges: Array<ImageableEdge>;
-  /** A list of nodes. */
-  nodes: Array<Image>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type ImageableEdge = {
-  /** The date that the resource was created */
-  createdAt: Scalars['String']['output'];
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** Used to sort the images */
-  depth: Scalars['Int']['output'];
-  /** The item at the end of the edge */
-  node: Image;
-  /** The date that the resource was updated */
-  updatedAt: Scalars['String']['output'];
-};
-
-
-/** An edge in a connection. */
-export type ImageableEdgeCreatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-
-/** An edge in a connection. */
-export type ImageableEdgeUpdatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-export type Like = {
-  animethemeentry: Maybe<AnimeThemeEntry>;
-  user: User;
-};
-
-export type LikeableType = {
-  entry?: InputMaybe<Scalars['Int']['input']>;
-};
-
 export type LoginInput = {
-  email: Scalars['String']['input'];
-  password: Scalars['String']['input'];
+  email: string;
+  password: string;
 };
-
-/** Represents an AnimeThemes account. */
-export type Me = {
-  /** The date that the resource was created */
-  createdAt: Scalars['DateTime']['output'];
-  /** The email of the user */
-  email: Scalars['String']['output'];
-  /** The date the user verified their email */
-  emailVerifiedAt: Maybe<Scalars['DateTime']['output']>;
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  likes: Array<Like>;
-  /** The username of the resource */
-  name: Scalars['String']['output'];
-  permissions: Array<Permission>;
-  playlists: Array<Playlist>;
-  roles: Array<Role>;
-  /** The date that the resource was updated */
-  updatedAt: Scalars['DateTime']['output'];
-  watchHistory: Array<WatchHistory>;
-};
-
-
-/** Represents an AnimeThemes account. */
-export type MePlaylistsArgs = {
-  sort?: InputMaybe<Array<PlaylistSort>>;
-};
-
-export type Mutation = {
-  /** Clear the watch history for the authenticated user. */
-  clearWatchHistory: Scalars['Boolean']['output'];
-  createPlaylist: Playlist;
-  createPlaylistTrack: PlaylistTrack;
-  deletePlaylist: Scalars['Boolean']['output'];
-  deletePlaylistTrack: Scalars['Boolean']['output'];
-  forgotPassword: Scalars['Boolean']['output'];
-  login: Me;
-  logout: Scalars['Boolean']['output'];
-  register: Me;
-  resendEmailVerification: Scalars['Boolean']['output'];
-  resetPassword: Scalars['Boolean']['output'];
-  toggleLike: Maybe<Like>;
-  updatePassword: Scalars['Boolean']['output'];
-  updatePlaylist: Playlist;
-  updatePlaylistTrack: PlaylistTrack;
-  updateUserInformation: Scalars['Boolean']['output'];
-  /** Mark a video as watched for the authenticated user. */
-  watch: WatchHistory;
-};
-
-
-export type MutationCreatePlaylistArgs = {
-  input: CreatePlaylistInput;
-};
-
-
-export type MutationCreatePlaylistTrackArgs = {
-  input: CreatePlaylistTrackInput;
-  playlist: Scalars['String']['input'];
-};
-
-
-export type MutationDeletePlaylistArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-export type MutationDeletePlaylistTrackArgs = {
-  id: Scalars['String']['input'];
-  playlist: Scalars['String']['input'];
-};
-
-
-export type MutationForgotPasswordArgs = {
-  email: Scalars['String']['input'];
-};
-
-
-export type MutationLoginArgs = {
-  input: LoginInput;
-};
-
-
-export type MutationRegisterArgs = {
-  input: RegisterInput;
-};
-
-
-export type MutationResetPasswordArgs = {
-  input: ResetPasswordInput;
-};
-
-
-export type MutationToggleLikeArgs = {
-  like: LikeableType;
-};
-
-
-export type MutationUpdatePasswordArgs = {
-  input: UpdatePasswordInput;
-};
-
-
-export type MutationUpdatePlaylistArgs = {
-  id: Scalars['String']['input'];
-  input: UpdatePlaylistInput;
-};
-
-
-export type MutationUpdatePlaylistTrackArgs = {
-  id: Scalars['String']['input'];
-  input: UpdatePlaylistTrackInput;
-  playlist: Scalars['String']['input'];
-};
-
-
-export type MutationUpdateUserInformationArgs = {
-  input: UpdateUserInformationInput;
-};
-
-
-export type MutationWatchArgs = {
-  entryId: Scalars['Int']['input'];
-  videoId: Scalars['Int']['input'];
-};
-
-export type OffsetPageInfo = {
-  /** The number of items per page. */
-  first: Scalars['Int']['output'];
-  /** When paginating forwards, are there more items? */
-  hasNextPage: Scalars['Boolean']['output'];
-  /** When paginating backwards, are there more items? Note: Paginating backwards is not supported. */
-  hasPreviousPage: Scalars['Boolean']['output'];
-  /** The offset of the current page. */
-  offset: Scalars['Int']['output'];
-  /** The total number of items. */
-  total: Scalars['Int']['output'];
-};
-
-/**
- * Represents a static markdown page used for guides and other documentation.
- *
- * For example, the 'encoding/audio_normalization' page represents the documentation for audio normalization.
- */
-export type Page = {
-  /** The body content of the resource */
-  body: Scalars['String']['output'];
-  /** The date that the resource was created */
-  createdAt: Scalars['String']['output'];
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  /** The primary title of the page */
-  name: Scalars['String']['output'];
-  next: Maybe<Page>;
-  previous: Maybe<Page>;
-  /** The URL slug & route key of the resource */
-  slug: Scalars['String']['output'];
-  /** The date that the resource was updated */
-  updatedAt: Scalars['String']['output'];
-};
-
-
-/**
- * Represents a static markdown page used for guides and other documentation.
- *
- * For example, the 'encoding/audio_normalization' page represents the documentation for audio normalization.
- */
-export type PageCreatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-
-/**
- * Represents a static markdown page used for guides and other documentation.
- *
- * For example, the 'encoding/audio_normalization' page represents the documentation for audio normalization.
- */
-export type PageUpdatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-export type PageConnection = {
-  /** A list of edges. */
-  edges: Array<PageEdge>;
-  /** A list of nodes. */
-  nodes: Array<Page>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type PageEdge = {
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: Page;
-};
-
-export type PageFilterInput = {
-  nameLike?: InputMaybe<Scalars['String']['input']>;
-};
-
-/** Information about pagination in a connection */
-export type PageInfo = {
-  /** When paginating forwards, the cursor to continue. */
-  endCursor: Maybe<Scalars['String']['output']>;
-  /** When paginating forwards, are there more items? */
-  hasNextPage: Scalars['Boolean']['output'];
-  /** When paginating backwards, are there more items? */
-  hasPreviousPage: Scalars['Boolean']['output'];
-  /** When paginating backwards, the cursor to continue. */
-  startCursor: Maybe<Scalars['String']['output']>;
-};
-
-export type PageSort =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'RANDOM'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
 
 export type PaginationInput = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-};
-
-/** Represents the link between a song and an artist or group. */
-export type Performance = {
-  /** The alias the artist is using for this performance */
-  alias: Maybe<Scalars['String']['output']>;
-  artist: Artist;
-  /** The character the artist is performing as */
-  as: Maybe<Scalars['String']['output']>;
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  member: Maybe<Artist>;
-  /** The alias the member is using for this performance */
-  memberAlias: Maybe<Scalars['String']['output']>;
-  /** The character the member is performing as */
-  memberAs: Maybe<Scalars['String']['output']>;
-  /** Used to determine the relevance order of artists in performances */
-  relevance: Scalars['Int']['output'];
-  song: Song;
-};
-
-/** Represents an assignable label for users and roles that authorizes a particular action in AnimeThemes. */
-export type Permission = {
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  /** The label of the resource */
-  name: Scalars['String']['output'];
-};
-
-export type Permissions = {
-  canCreatePlaylist: PermissionsResult;
-  canRevalidatePages: Scalars['Boolean']['output'];
-};
-
-export type PermissionsResult = {
-  /** Whether the permission check was successful. */
-  allow: Scalars['Boolean']['output'];
-  /** The reason for the permission check failure, if any. */
-  reason: Maybe<Scalars['String']['output']>;
-};
-
-/**
- * Represents a list of ordered tracks intended for continuous playback.
- *
- * For example, a "/r/anime's Best OPs and EDs of 2022" playlist may contain a collection of tracks allowing the continuous playback of Best OP and ED nominations for the /r/anime Awards.
- */
-export type Playlist = {
-  /** The description of the playlist */
-  description: Maybe<Scalars['String']['output']>;
-  /** The primary key of the resource */
-  id: Scalars['String']['output'];
-  /** The title of the playlist */
-  name: Scalars['String']['output'];
-  permissions: PlaylistPermissions;
-  tracks: Array<PlaylistTrack>;
-  tracksCount: Scalars['Int']['output'];
-  tracksExists: Scalars['Boolean']['output'];
-  user: User;
-  /** The state of who can see the playlist */
-  visibility: PlaylistVisibility;
-  /** The localized string value of the visibility field */
-  visibilityLocalized: Scalars['String']['output'];
-};
-
-
-/**
- * Represents a list of ordered tracks intended for continuous playback.
- *
- * For example, a "/r/anime's Best OPs and EDs of 2022" playlist may contain a collection of tracks allowing the continuous playback of Best OP and ED nominations for the /r/anime Awards.
- */
-export type PlaylistTracksArgs = {
-  filter?: InputMaybe<PlaylistTracksFilterInput>;
-  sort?: InputMaybe<Array<PlaylistTrackSort>>;
-};
-
-export type PlaylistConnection = {
-  /** A list of edges. */
-  edges: Array<PlaylistEdge>;
-  /** A list of nodes. */
-  nodes: Array<Playlist>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type PlaylistEdge = {
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: Playlist;
-};
-
-export type PlaylistFilterInput = {
-  nameLike?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type PlaylistPagination = {
-  /** The data for the current page. */
-  data: Array<Playlist>;
-  /** Information to aid in pagination. */
-  pageInfo: OffsetPageInfo;
-};
-
-export type PlaylistPermissions = {
-  canDelete: Scalars['Boolean']['output'];
-  canReorderTracks: Scalars['Boolean']['output'];
-  canUpdate: Scalars['Boolean']['output'];
-};
-
-export type PlaylistSort =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'RANDOM'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
-
-/**
- * Represents an entry in a playlist.
- *
- * For example, a "/r/anime's Best OPs and EDs of 2022" playlist may contain a track for the ParipiKoumei-OP1.webm video.
- */
-export type PlaylistTrack = {
-  animethemeentry: AnimeThemeEntry;
-  /** The primary key of the resource */
-  id: Scalars['String']['output'];
-  playlist: Playlist;
-  /** The position of the playlist track within the playlist */
-  position: Scalars['Int']['output'];
-  video: Video;
-};
-
-export type PlaylistTrackSort =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'POSITION'
-  | 'POSITION_DESC'
-  | 'RANDOM'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
-
-export type PlaylistTracksFilterInput = {
-  entryId?: InputMaybe<Scalars['Int']['input']>;
-  videoId?: InputMaybe<Scalars['Int']['input']>;
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  first?: number | null | undefined;
+  last?: number | null | undefined;
 };
 
 export type PlaylistVisibility =
@@ -1048,169 +68,19 @@ export type PlaylistVisibility =
   | 'PUBLIC'
   | 'UNLISTED';
 
-export type Query = {
-  anime: Maybe<Anime>;
-  animeConnection: AnimeConnection;
-  animethemeConnection: AnimeThemeConnection;
-  animethemeShuffle: Array<AnimeTheme>;
-  /** Returns a list of years grouped by its seasons. */
-  animeyears: Array<AnimeYear>;
-  artist: Maybe<Artist>;
-  artistConnection: ArtistConnection;
-  blogPages: PageConnection;
-  currentAnnouncements: Array<Announcement>;
-  currentFeaturedTheme: Maybe<CurrentFeaturedTheme>;
-  imageConnection: ImageConnection;
-  me: Maybe<Me>;
-  mostPopularEntries: AnimeThemeEntryConnection;
-  page: Maybe<Page>;
-  pageConnection: PageConnection;
-  permissions: Permissions;
-  playlist: Maybe<Playlist>;
-  playlistConnection: PlaylistConnection;
-  search: Search;
-  series: Maybe<Series>;
-  seriesConnection: SeriesConnection;
-  studio: Maybe<Studio>;
-  studioConnection: StudioConnection;
-  videoConnection: VideoConnection;
-};
-
-
-export type QueryAnimeArgs = {
-  slug: Scalars['String']['input'];
-};
-
-
-export type QueryAnimeConnectionArgs = {
-  filter?: InputMaybe<AnimeFilterInput>;
-  pagination?: InputMaybe<PaginationInput>;
-  sort?: InputMaybe<Array<AnimeSort>>;
-};
-
-
-export type QueryAnimethemeConnectionArgs = {
-  filter?: InputMaybe<AnimeThemeFilterInput>;
-  pagination?: InputMaybe<PaginationInput>;
-  sort?: InputMaybe<Array<AnimeThemeSort>>;
-};
-
-
-export type QueryAnimethemeShuffleArgs = {
-  first?: Scalars['Int']['input'];
-  input?: InputMaybe<AnimeThemeShuffleInput>;
-};
-
-
-export type QueryAnimeyearsArgs = {
-  year?: InputMaybe<Array<Scalars['Int']['input']>>;
-};
-
-
-export type QueryArtistArgs = {
-  slug: Scalars['String']['input'];
-};
-
-
-export type QueryArtistConnectionArgs = {
-  filter?: InputMaybe<ArtistFilterInput>;
-  pagination?: InputMaybe<PaginationInput>;
-  sort?: InputMaybe<Array<ArtistSort>>;
-};
-
-
-export type QueryBlogPagesArgs = {
-  pagination?: InputMaybe<PaginationInput>;
-  sort?: InputMaybe<Array<PageSort>>;
-};
-
-
-export type QueryImageConnectionArgs = {
-  filter?: InputMaybe<ImageFilterInput>;
-  pagination?: InputMaybe<PaginationInput>;
-  sort?: InputMaybe<Array<ImageSort>>;
-};
-
-
-export type QueryMostPopularEntriesArgs = {
-  filter?: InputMaybe<AnimeThemeEntryFilterInput>;
-  pagination?: InputMaybe<PaginationInput>;
-};
-
-
-export type QueryPageArgs = {
-  slug: Scalars['String']['input'];
-};
-
-
-export type QueryPageConnectionArgs = {
-  filter?: InputMaybe<PageFilterInput>;
-  pagination?: InputMaybe<PaginationInput>;
-};
-
-
-export type QueryPlaylistArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-export type QueryPlaylistConnectionArgs = {
-  filter?: InputMaybe<PlaylistFilterInput>;
-  pagination?: InputMaybe<PaginationInput>;
-  sort?: InputMaybe<Array<PlaylistSort>>;
-};
-
-
-export type QuerySearchArgs = {
-  first?: Scalars['Int']['input'];
-  page?: Scalars['Int']['input'];
-  search: Scalars['String']['input'];
-};
-
-
-export type QuerySeriesArgs = {
-  slug: Scalars['String']['input'];
-};
-
-
-export type QuerySeriesConnectionArgs = {
-  filter?: InputMaybe<SeriesFilterInput>;
-  pagination?: InputMaybe<PaginationInput>;
-  sort?: InputMaybe<Array<SeriesSort>>;
-};
-
-
-export type QueryStudioArgs = {
-  slug: Scalars['String']['input'];
-};
-
-
-export type QueryStudioConnectionArgs = {
-  filter?: InputMaybe<StudioFilterInput>;
-  pagination?: InputMaybe<PaginationInput>;
-  sort?: InputMaybe<Array<StudioSort>>;
-};
-
-
-export type QueryVideoConnectionArgs = {
-  filter?: InputMaybe<VideoFilterInput>;
-  pagination?: InputMaybe<PaginationInput>;
-  sort?: InputMaybe<Array<VideoSort>>;
-};
-
 export type RegisterInput = {
-  email: Scalars['String']['input'];
-  name: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-  passwordConfirmation: Scalars['String']['input'];
-  terms: Scalars['Boolean']['input'];
+  email: string;
+  name: string;
+  password: string;
+  passwordConfirmation: string;
+  terms: boolean;
 };
 
 export type ResetPasswordInput = {
-  email: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-  passwordConfirmation: Scalars['String']['input'];
-  token: Scalars['String']['input'];
+  email: string;
+  password: string;
+  passwordConfirmation: string;
+  token: string;
 };
 
 export type ResourceSite =
@@ -1236,121 +106,11 @@ export type ResourceSite =
   | 'YOUTUBE'
   | 'YOUTUBE_MUSIC';
 
-export type ResourceableConnection = {
-  /** A list of edges. */
-  edges: Array<ResourceableEdge>;
-  /** A list of nodes. */
-  nodes: Array<ExternalResource>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type ResourceableEdge = {
-  /** Used to distinguish resources that map to the same resourceable */
-  as: Maybe<Scalars['String']['output']>;
-  /** The date that the resource was created */
-  createdAt: Scalars['String']['output'];
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: ExternalResource;
-  updatedAt: Scalars['String']['output'];
-};
-
-
-/** An edge in a connection. */
-export type ResourceableEdgeCreatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-
-/** An edge in a connection. */
-export type ResourceableEdgeUpdatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-/** Represents an assignable label for users that provides a configured group of permissions. */
-export type Role = {
-  /** The hex representation of the color used to distinguish the resource */
-  color: Maybe<Scalars['String']['output']>;
-  /** Is the role assigned on account verification? */
-  default: Scalars['Boolean']['output'];
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  /** The label of the resource */
-  name: Scalars['String']['output'];
-  permissions: Array<Permission>;
-  /** The weight assigned to the resource, where higher values correspond to higher priority */
-  priority: Scalars['Int']['output'];
-};
-
-/** Returns a listing of resources that match a given search term. */
-export type Search = {
-  /** The anime results of the search */
-  anime: AnimePagination;
-  /** The theme results of the search */
-  animethemes: AnimeThemePagination;
-  /** The artist results of the search */
-  artists: ArtistPagination;
-  /** The playlist results of the search */
-  playlists: PlaylistPagination;
-  /** The series results of the search */
-  series: SeriesPagination;
-  /** The song results of the search */
-  songs: SongPagination;
-  /** The studio results of the search */
-  studios: StudioPagination;
-  /** The video results of the search */
-  videos: VideoPagination;
-};
-
-
-/** Returns a listing of resources that match a given search term. */
-export type SearchAnimeArgs = {
-  filter?: InputMaybe<SearchAnimeFilterInput>;
-  sort?: InputMaybe<Array<SearchAnimeSort>>;
-};
-
-
-/** Returns a listing of resources that match a given search term. */
-export type SearchAnimethemesArgs = {
-  filter?: InputMaybe<SearchAnimeThemeFilterInput>;
-  sort?: InputMaybe<Array<SearchAnimeThemeSort>>;
-};
-
-
-/** Returns a listing of resources that match a given search term. */
-export type SearchArtistsArgs = {
-  filter?: InputMaybe<SearchArtistFilterInput>;
-  sort?: InputMaybe<Array<SearchArtistSort>>;
-};
-
-
-/** Returns a listing of resources that match a given search term. */
-export type SearchPlaylistsArgs = {
-  sort?: InputMaybe<Array<SearchPlaylistSort>>;
-};
-
-
-/** Returns a listing of resources that match a given search term. */
-export type SearchSeriesArgs = {
-  filter?: InputMaybe<SearchSeriesFilterInput>;
-  sort?: InputMaybe<Array<SearchSeriesSort>>;
-};
-
-
-/** Returns a listing of resources that match a given search term. */
-export type SearchStudiosArgs = {
-  filter?: InputMaybe<SearchStudioFilterInput>;
-  sort?: InputMaybe<Array<SearchStudioSort>>;
-};
-
 export type SearchAnimeFilterInput = {
-  format?: InputMaybe<AnimeFormat>;
-  season?: InputMaybe<AnimeSeason>;
-  titleRomajiPrefix?: InputMaybe<Scalars['String']['input']>;
-  year?: InputMaybe<Scalars['Int']['input']>;
+  format?: AnimeFormat | null | undefined;
+  season?: AnimeSeason | null | undefined;
+  titleRomajiPrefix?: string | null | undefined;
+  year?: number | null | undefined;
 };
 
 export type SearchAnimeSort =
@@ -1363,8 +123,8 @@ export type SearchAnimeSort =
   | 'YEAR_DESC';
 
 export type SearchAnimeThemeFilterInput = {
-  songTitleRomajiPrefix?: InputMaybe<Scalars['String']['input']>;
-  type?: InputMaybe<ThemeType>;
+  songTitleRomajiPrefix?: string | null | undefined;
+  type?: ThemeType | null | undefined;
 };
 
 export type SearchAnimeThemeSort =
@@ -1377,7 +137,7 @@ export type SearchAnimeThemeSort =
   | 'SONG_TITLE_ROMAJI_DESC';
 
 export type SearchArtistFilterInput = {
-  nameMainPrefix?: InputMaybe<Scalars['String']['input']>;
+  nameMainPrefix?: string | null | undefined;
 };
 
 export type SearchArtistSort =
@@ -1391,7 +151,7 @@ export type SearchPlaylistSort =
   | 'NAME_DESC';
 
 export type SearchSeriesFilterInput = {
-  titleRomajiPrefix?: InputMaybe<Scalars['String']['input']>;
+  titleRomajiPrefix?: string | null | undefined;
 };
 
 export type SearchSeriesSort =
@@ -1400,244 +160,13 @@ export type SearchSeriesSort =
   | 'TITLE_ROMAJI_DESC';
 
 export type SearchStudioFilterInput = {
-  namePrefix?: InputMaybe<Scalars['String']['input']>;
+  namePrefix?: string | null | undefined;
 };
 
 export type SearchStudioSort =
   | 'CREATED_AT_DESC'
   | 'NAME'
   | 'NAME_DESC';
-
-/**
- * Represents a collection of related anime.
- *
- * For example, the Monogatari series is the collection of the Bakemonogatari anime and its related productions.
- */
-export type Series = {
-  anime: SeriesAnimeConnection;
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  /** The URL slug & route key of the resource */
-  slug: Scalars['String']['output'];
-  /** The primary title of the series */
-  title: SeriesTitle;
-};
-
-export type SeriesAnimeConnection = {
-  /** A list of edges. */
-  edges: Array<SeriesAnimeEdge>;
-  /** A list of nodes. */
-  nodes: Array<Anime>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type SeriesAnimeEdge = {
-  createdAt: Scalars['String']['output'];
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: Anime;
-  updatedAt: Scalars['String']['output'];
-};
-
-
-/** An edge in a connection. */
-export type SeriesAnimeEdgeCreatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-
-/** An edge in a connection. */
-export type SeriesAnimeEdgeUpdatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-export type SeriesConnection = {
-  /** A list of edges. */
-  edges: Array<SeriesEdge>;
-  /** A list of nodes. */
-  nodes: Array<Series>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type SeriesEdge = {
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: Series;
-};
-
-export type SeriesFilterInput = {
-  titleRomajiLike?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type SeriesPagination = {
-  /** The data for the current page. */
-  data: Array<Series>;
-  /** Information to aid in pagination. */
-  pageInfo: OffsetPageInfo;
-};
-
-export type SeriesSort =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'RANDOM'
-  | 'TITLE_ROMAJI'
-  | 'TITLE_ROMAJI_DESC'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
-
-export type SeriesTitle = {
-  romaji: Scalars['String']['output'];
-};
-
-/**
- * Represents the composition that accompanies an AnimeTheme.
- *
- * For example, Staple Stable is the song for the Bakemonogatari OP1 AnimeTheme.
- */
-export type Song = {
-  animethemes: Array<AnimeTheme>;
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  performances: Array<Performance>;
-  /** The title of the composition */
-  title: SongTitle;
-};
-
-export type SongPagination = {
-  /** The data for the current page. */
-  data: Array<Song>;
-  /** Information to aid in pagination. */
-  pageInfo: OffsetPageInfo;
-};
-
-export type SongTitle = {
-  /** The native title of the composition */
-  native: Maybe<Scalars['String']['output']>;
-  /** The romaji title of the composition */
-  romaji: Maybe<Scalars['String']['output']>;
-};
-
-/**
- * Represents a company that produces anime.
- *
- * For example, Shaft is the studio that produced the anime Bakemonogatari.
- */
-export type Studio = {
-  anime: StudioAnimeConnection;
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  images: ImageableConnection;
-  /** The primary title of the Studio */
-  name: Scalars['String']['output'];
-  resources: ResourceableConnection;
-  /** The URL slug & route key of the resource */
-  slug: Scalars['String']['output'];
-};
-
-export type StudioAnimeConnection = {
-  /** A list of edges. */
-  edges: Array<StudioAnimeEdge>;
-  /** A list of nodes. */
-  nodes: Array<Anime>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type StudioAnimeEdge = {
-  createdAt: Scalars['String']['output'];
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: Anime;
-  updatedAt: Scalars['String']['output'];
-};
-
-
-/** An edge in a connection. */
-export type StudioAnimeEdgeCreatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-
-/** An edge in a connection. */
-export type StudioAnimeEdgeUpdatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-export type StudioConnection = {
-  /** A list of edges. */
-  edges: Array<StudioEdge>;
-  /** A list of nodes. */
-  nodes: Array<Studio>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type StudioEdge = {
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: Studio;
-};
-
-export type StudioFilterInput = {
-  nameLike?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type StudioPagination = {
-  /** The data for the current page. */
-  data: Array<Studio>;
-  /** Information to aid in pagination. */
-  pageInfo: OffsetPageInfo;
-};
-
-export type StudioSort =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'NAME'
-  | 'NAME_DESC'
-  | 'RANDOM'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
-
-/**
- * Represents an alternate title or common abbreviation for an entity.
- *
- * For example, the anime Bakemonogatari has the synonym "Monstory".
- */
-export type Synonym = {
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  /** The language of the synonym. It may be used for short synonyms */
-  language: Maybe<Scalars['String']['output']>;
-  /** The alternate title or common abbreviations */
-  text: Scalars['String']['output'];
-};
-
-/**
- * Represents the group that accompanies a Theme.
- * For example, English Version is the group for english dubbed Theme.For example, Staple Stable is the song for the Bakemonogatari OP1 AnimeTheme.
- */
-export type ThemeGroup = {
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  /** The name of the group */
-  name: Scalars['String']['output'];
-  /** The slug of the group */
-  slug: Scalars['String']['output'];
-};
 
 export type ThemeType =
   /** Ending */
@@ -1648,175 +177,32 @@ export type ThemeType =
   | 'OP';
 
 export type UpdatePasswordInput = {
-  currentPassword: Scalars['String']['input'];
-  newPassword: Scalars['String']['input'];
-  newPasswordConfirmation: Scalars['String']['input'];
+  currentPassword: string;
+  newPassword: string;
+  newPasswordConfirmation: string;
 };
 
 export type UpdatePlaylistInput = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  visibility?: InputMaybe<PlaylistVisibility>;
+  description?: string | null | undefined;
+  name?: string | null | undefined;
+  visibility?: PlaylistVisibility | null | undefined;
 };
 
 export type UpdatePlaylistTrackInput = {
-  entryId?: InputMaybe<Scalars['Int']['input']>;
-  position?: InputMaybe<Scalars['Int']['input']>;
-  videoId?: InputMaybe<Scalars['Int']['input']>;
+  entryId?: number | null | undefined;
+  position?: number | null | undefined;
+  videoId?: number | null | undefined;
 };
 
 export type UpdateUserInformationInput = {
-  email?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-};
-
-/** Represents an AnimeThemes account. */
-export type User = {
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  /** The username of the resource */
-  name: Scalars['String']['output'];
-  playlists: Array<Playlist>;
-};
-
-
-/** Represents an AnimeThemes account. */
-export type UserPlaylistsArgs = {
-  sort?: InputMaybe<Array<PlaylistSort>>;
-};
-
-/**
- * Represents a WebM of an anime theme.
- *
- * For example, the video Bakemonogatari-OP1.webm represents the WebM of the Bakemonogatari OP1 theme.
- */
-export type Video = {
-  animethemeentries: VideoAnimeThemeEntryConnection;
-  audio: Maybe<Audio>;
-  /** The basename of the file in storage */
-  basename: Scalars['String']['output'];
-  /** The filename of the file in storage */
-  filename: Scalars['String']['output'];
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  /** The URL to stream the file from storage */
-  link: Scalars['String']['output'];
-  /** Does the video include subtitles of song lyrics? */
-  lyrics: Scalars['Boolean']['output'];
-  /** The media type of the file in storage */
-  mimetype: Scalars['String']['output'];
-  /** Is the video creditless? */
-  nc: Scalars['Boolean']['output'];
-  /** The degree to which the sequence and episode content overlap */
-  overlap: VideoOverlap;
-  /** The formatted string value of the overlap field */
-  overlapLocalized: Scalars['String']['output'];
-  /** The path of the file in storage */
-  path: Scalars['String']['output'];
-  /** The frame height of the file in storage */
-  resolution: Maybe<Scalars['Int']['output']>;
-  /** The size of the file in storage in Bytes */
-  size: Maybe<Scalars['Int']['output']>;
-  /** Where did this video come from? */
-  source: Maybe<VideoSource>;
-  /** The formatted string value of the source field */
-  sourceLocalized: Maybe<Scalars['String']['output']>;
-  /** Does the video include subtitles of dialogue? */
-  subbed: Scalars['Boolean']['output'];
-  /** The attributes used to distinguish the file within the context of a theme */
-  tags: Scalars['String']['output'];
-  tracks: Array<PlaylistTrack>;
-  /** Is the video an uncensored version of a censored sequence? */
-  uncen: Scalars['Boolean']['output'];
-  videoscript: Maybe<VideoScript>;
-};
-
-export type VideoAnimeThemeEntryConnection = {
-  /** A list of edges. */
-  edges: Array<VideoAnimeThemeEntryEdge>;
-  /** A list of nodes. */
-  nodes: Array<AnimeThemeEntry>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type VideoAnimeThemeEntryEdge = {
-  createdAt: Scalars['String']['output'];
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: AnimeThemeEntry;
-  updatedAt: Scalars['String']['output'];
-};
-
-
-/** An edge in a connection. */
-export type VideoAnimeThemeEntryEdgeCreatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-
-/** An edge in a connection. */
-export type VideoAnimeThemeEntryEdgeUpdatedAtArgs = {
-  format?: Scalars['String']['input'];
-};
-
-export type VideoConnection = {
-  /** A list of edges. */
-  edges: Array<VideoEdge>;
-  /** A list of nodes. */
-  nodes: Array<Video>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type VideoEdge = {
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: Video;
-};
-
-export type VideoFilterInput = {
-  nc?: InputMaybe<Scalars['Boolean']['input']>;
+  email?: string | null | undefined;
+  name?: string | null | undefined;
 };
 
 export type VideoOverlap =
   | 'NONE'
   | 'OVER'
   | 'TRANS';
-
-export type VideoPagination = {
-  /** The data for the current page. */
-  data: Array<Video>;
-  /** Information to aid in pagination. */
-  pageInfo: OffsetPageInfo;
-};
-
-/**
- * Represents an encoding script used to produce a video.
- *
- * For example, the 2009/Summer/Bakemonogatari-OP1.txt video script represents the encoding script of the Bakemonogatari-OP1.webm video.
- */
-export type VideoScript = {
-  /** The primary key of the resource */
-  id: Scalars['Int']['output'];
-  /** The URL to stream the file from storage */
-  link: Scalars['String']['output'];
-  /** The path of the file in storage */
-  path: Scalars['String']['output'];
-};
-
-export type VideoSort =
-  | 'CREATED_AT'
-  | 'CREATED_AT_DESC'
-  | 'ID'
-  | 'ID_DESC'
-  | 'RANDOM'
-  | 'UPDATED_AT'
-  | 'UPDATED_AT_DESC';
 
 export type VideoSource =
   | 'BD'
@@ -1825,11 +211,6 @@ export type VideoSource =
   | 'RAW'
   | 'VHS'
   | 'WEB';
-
-export type WatchHistory = {
-  animethemeentry: AnimeThemeEntry;
-  video: Video;
-};
 
 export type BracketThemeSummaryCardThemeFragment = (
   { type: ThemeType, sequence: number | null, group: { name: string, slug: string } | null, anime: { slug: string, title: { romaji: string }, images: { nodes: Array<{ ' $fragmentRefs'?: { 'ExtractImagesImageFragment': ExtractImagesImageFragment } }> } }, song: { ' $fragmentRefs'?: { 'SongTitleWithArtistsSongFragment': SongTitleWithArtistsSongFragment } } | null, animethemeentries: Array<(
@@ -1922,7 +303,7 @@ export type PlaylistAddMutation = { createPlaylist: { id: string } };
 export type PlaylistEditDialogPlaylistFragment = { id: string, name: string, visibility: PlaylistVisibility } & { ' $fragmentName'?: 'PlaylistEditDialogPlaylistFragment' };
 
 export type PlaylistEditMutationVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: string;
   input: UpdatePlaylistInput;
 }>;
 
@@ -1935,7 +316,7 @@ export type PlaylistRemoveDialogPlaylistFragment = (
 ) & { ' $fragmentName'?: 'PlaylistRemoveDialogPlaylistFragment' };
 
 export type PlaylistRemoveMutationVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: string;
 }>;
 
 
@@ -1952,8 +333,8 @@ export type PlaylistTrackAddDialogEntryFragment = (
 ) & { ' $fragmentName'?: 'PlaylistTrackAddDialogEntryFragment' };
 
 export type PlaylistTrackAddFormPlaylistQueryVariables = Exact<{
-  entryId: Scalars['Int']['input'];
-  videoId: Scalars['Int']['input'];
+  entryId: number;
+  videoId: number;
 }>;
 
 
@@ -1970,7 +351,7 @@ export type PlaylistTrackAddCardPlaylistFragment = (
 export type PlaylistTrackAddCardTrackFragment = { id: string } & { ' $fragmentName'?: 'PlaylistTrackAddCardTrackFragment' };
 
 export type PlaylistTrackAddMutationVariables = Exact<{
-  playlistId: Scalars['String']['input'];
+  playlistId: string;
   input: CreatePlaylistTrackInput;
 }>;
 
@@ -1978,8 +359,8 @@ export type PlaylistTrackAddMutationVariables = Exact<{
 export type PlaylistTrackAddMutation = { createPlaylistTrack: { id: string } };
 
 export type PlaylistTrackRemoveMutationVariables = Exact<{
-  id: Scalars['String']['input'];
-  playlistId: Scalars['String']['input'];
+  id: string;
+  playlistId: string;
 }>;
 
 
@@ -2074,10 +455,10 @@ export type SeasonNavigationSeasonFragment = { season: AnimeSeason } & { ' $frag
 export type SeasonNavigationYearsFragment = { year: number } & { ' $fragmentName'?: 'SeasonNavigationYearsFragment' };
 
 export type SearchAnimeQueryVariables = Exact<{
-  query: Scalars['String']['input'];
-  filter?: InputMaybe<SearchAnimeFilterInput>;
-  page: Scalars['Int']['input'];
-  sort?: InputMaybe<Array<SearchAnimeSort> | SearchAnimeSort>;
+  query: string;
+  filter?: SearchAnimeFilterInput | null | undefined;
+  page: number;
+  sort?: Array<SearchAnimeSort> | SearchAnimeSort | null | undefined;
 }>;
 
 
@@ -2087,10 +468,10 @@ export type SearchAnimeQuery = { search: { anime: { data: Array<(
       )>, pageInfo: { hasNextPage: boolean } } } };
 
 export type SearchArtistQueryVariables = Exact<{
-  query: Scalars['String']['input'];
-  filter?: InputMaybe<SearchArtistFilterInput>;
-  page: Scalars['Int']['input'];
-  sort?: InputMaybe<Array<SearchArtistSort> | SearchArtistSort>;
+  query: string;
+  filter?: SearchArtistFilterInput | null | undefined;
+  page: number;
+  sort?: Array<SearchArtistSort> | SearchArtistSort | null | undefined;
 }>;
 
 
@@ -2100,7 +481,7 @@ export type SearchArtistQuery = { search: { artists: { data: Array<(
       )>, pageInfo: { hasNextPage: boolean } } } };
 
 export type SearchGlobalQueryVariables = Exact<{
-  query: Scalars['String']['input'];
+  query: string;
 }>;
 
 
@@ -2119,9 +500,9 @@ export type SearchGlobalQuery = { search: { anime: { data: Array<(
       )> } } };
 
 export type SearchPlaylistQueryVariables = Exact<{
-  query: Scalars['String']['input'];
-  page: Scalars['Int']['input'];
-  sort?: InputMaybe<Array<SearchPlaylistSort> | SearchPlaylistSort>;
+  query: string;
+  page: number;
+  sort?: Array<SearchPlaylistSort> | SearchPlaylistSort | null | undefined;
 }>;
 
 
@@ -2131,20 +512,20 @@ export type SearchPlaylistQuery = { search: { playlists: { data: Array<(
       )>, pageInfo: { hasNextPage: boolean } } } };
 
 export type SearchSeriesQueryVariables = Exact<{
-  query: Scalars['String']['input'];
-  filter?: InputMaybe<SearchSeriesFilterInput>;
-  page: Scalars['Int']['input'];
-  sort?: InputMaybe<Array<SearchSeriesSort> | SearchSeriesSort>;
+  query: string;
+  filter?: SearchSeriesFilterInput | null | undefined;
+  page: number;
+  sort?: Array<SearchSeriesSort> | SearchSeriesSort | null | undefined;
 }>;
 
 
 export type SearchSeriesQuery = { search: { series: { data: Array<{ slug: string, title: { romaji: string } }>, pageInfo: { hasNextPage: boolean } } } };
 
 export type SearchStudioQueryVariables = Exact<{
-  query: Scalars['String']['input'];
-  filter?: InputMaybe<SearchStudioFilterInput>;
-  page: Scalars['Int']['input'];
-  sort?: InputMaybe<Array<SearchStudioSort> | SearchStudioSort>;
+  query: string;
+  filter?: SearchStudioFilterInput | null | undefined;
+  page: number;
+  sort?: Array<SearchStudioSort> | SearchStudioSort | null | undefined;
 }>;
 
 
@@ -2154,10 +535,10 @@ export type SearchStudioQuery = { search: { studios: { data: Array<(
       )>, pageInfo: { hasNextPage: boolean } } } };
 
 export type SearchThemeQueryVariables = Exact<{
-  query: Scalars['String']['input'];
-  page: Scalars['Int']['input'];
-  filter?: InputMaybe<SearchAnimeThemeFilterInput>;
-  sort?: InputMaybe<Array<SearchAnimeThemeSort> | SearchAnimeThemeSort>;
+  query: string;
+  page: number;
+  filter?: SearchAnimeThemeFilterInput | null | undefined;
+  sort?: Array<SearchAnimeThemeSort> | SearchAnimeThemeSort | null | undefined;
 }>;
 
 
@@ -2216,8 +597,8 @@ export type VideoPlayerEntryFragment = (
 ) & { ' $fragmentName'?: 'VideoPlayerEntryFragment' };
 
 export type AddToWatchHistoryMutationVariables = Exact<{
-  entryId: Scalars['Int']['input'];
-  videoId: Scalars['Int']['input'];
+  entryId: number;
+  videoId: number;
 }>;
 
 
@@ -2281,7 +662,7 @@ export type UpdatePasswordMutationVariables = Exact<{
 export type UpdatePasswordMutation = { updatePassword: boolean };
 
 export type ForgotPasswordMutationVariables = Exact<{
-  email: Scalars['String']['input'];
+  email: string;
 }>;
 
 
@@ -2310,7 +691,7 @@ export type RandomGrillQueryVariables = Exact<{ [key: string]: never; }>;
 export type RandomGrillQuery = { imageConnection: { nodes: Array<{ link: string }> } };
 
 export type RandomThemeQueryVariables = Exact<{
-  input?: InputMaybe<AnimeThemeShuffleInput>;
+  input?: AnimeThemeShuffleInput | null | undefined;
 }>;
 
 
@@ -2325,7 +706,7 @@ export type RandomThemeQuery = { animethemeShuffle: Array<(
 export type DocumentPagePageFragment = { name: string, createdAt: string } & { ' $fragmentName'?: 'DocumentPagePageFragment' };
 
 export type DocumentPageQueryVariables = Exact<{
-  pageSlug: Scalars['String']['input'];
+  pageSlug: string;
 }>;
 
 
@@ -2366,14 +747,14 @@ export type VideoPageAnimeFragment = (
 ) & { ' $fragmentName'?: 'VideoPageAnimeFragment' };
 
 export type VideoPageQueryVariables = Exact<{
-  animeSlug: Scalars['String']['input'];
+  animeSlug: string;
 }>;
 
 
 export type VideoPageQuery = { anime: { ' $fragmentRefs'?: { 'VideoPageAnimeFragment': VideoPageAnimeFragment } } | null };
 
 export type VideoPageAllQueryVariables = Exact<{
-  pagination?: InputMaybe<PaginationInput>;
+  pagination?: PaginationInput | null | undefined;
 }>;
 
 
@@ -2391,14 +772,14 @@ export type VideoPageAllQuery = { animeConnection: { nodes: Array<(
 export type AnimeDetailPageAnimeFragment = { slug: string, season: AnimeSeason | null, seasonLocalized: string | null, year: number | null, synopsis: string | null, formatLocalized: string | null, title: { romaji: string, english: string | null, native: string | null }, synonyms: Array<{ text: string }>, series: { nodes: Array<{ slug: string, title: { romaji: string } }> }, studios: { nodes: Array<{ slug: string, name: string }> }, resources: { edges: Array<{ as: string | null, node: { site: ResourceSite, siteLocalized: string, link: string } }> }, images: { nodes: Array<{ ' $fragmentRefs'?: { 'ExtractImagesImageFragment': ExtractImagesImageFragment } }> }, animethemes: Array<{ ' $fragmentRefs'?: { 'AnimeThemeFilterThemeFragment': AnimeThemeFilterThemeFragment } }> } & { ' $fragmentName'?: 'AnimeDetailPageAnimeFragment' };
 
 export type AnimeDetailPageQueryVariables = Exact<{
-  animeSlug: Scalars['String']['input'];
+  animeSlug: string;
 }>;
 
 
 export type AnimeDetailPageQuery = { anime: { ' $fragmentRefs'?: { 'AnimeDetailPageAnimeFragment': AnimeDetailPageAnimeFragment } } | null };
 
 export type AnimeDetailPageAllQueryVariables = Exact<{
-  pagination?: InputMaybe<PaginationInput>;
+  pagination?: PaginationInput | null | undefined;
 }>;
 
 
@@ -2408,7 +789,7 @@ export type AnimeDetailPageAllQuery = { animeConnection: { nodes: Array<(
     )>, pageInfo: { hasNextPage: boolean, endCursor: string | null } } };
 
 export type AnimeIndexPageQueryVariables = Exact<{
-  pagination?: InputMaybe<PaginationInput>;
+  pagination?: PaginationInput | null | undefined;
 }>;
 
 
@@ -2449,7 +830,7 @@ export type ArtistDetailPageArtistFragment = (
 ) & { ' $fragmentName'?: 'ArtistDetailPageArtistFragment' };
 
 export type ArtistDetailPageQueryVariables = Exact<{
-  artistSlug: Scalars['String']['input'];
+  artistSlug: string;
 }>;
 
 
@@ -2459,7 +840,7 @@ export type ArtistDetailPageQuery = { artist: (
   ) | null };
 
 export type ArtistDetailPageAllQueryVariables = Exact<{
-  pagination?: InputMaybe<PaginationInput>;
+  pagination?: PaginationInput | null | undefined;
 }>;
 
 
@@ -2469,7 +850,7 @@ export type ArtistDetailPageAllQuery = { artistConnection: { nodes: Array<(
     )>, pageInfo: { hasNextPage: boolean, endCursor: string | null } } };
 
 export type ArtistIndexPageQueryVariables = Exact<{
-  pagination?: InputMaybe<PaginationInput>;
+  pagination?: PaginationInput | null | undefined;
 }>;
 
 
@@ -2481,7 +862,7 @@ export type DocumentIndexPageQueryVariables = Exact<{ [key: string]: never; }>;
 export type DocumentIndexPageQuery = { blogPages: { nodes: Array<{ slug: string, name: string, createdAt: string }> } };
 
 export type BracketPageQueryVariables = Exact<{
-  filter?: InputMaybe<AnimeThemeFilterInput>;
+  filter?: AnimeThemeFilterInput | null | undefined;
 }>;
 
 
@@ -2504,7 +885,7 @@ export type AnimeAwardPageEntryFragment = (
 ) & { ' $fragmentName'?: 'AnimeAwardPageEntryFragment' };
 
 export type AnimeAwardPageQueryVariables = Exact<{
-  filter?: InputMaybe<AnimeThemeFilterInput>;
+  filter?: AnimeThemeFilterInput | null | undefined;
 }>;
 
 
@@ -2544,7 +925,7 @@ export type PlaylistDetailPageTrackFragment = { id: string, video: (
 export type PlaylistDetailPageMeFragment = { name: string } & { ' $fragmentName'?: 'PlaylistDetailPageMeFragment' };
 
 export type PlaylistDetailPagePlaylistQueryVariables = Exact<{
-  playlistId: Scalars['String']['input'];
+  playlistId: string;
 }>;
 
 
@@ -2562,8 +943,8 @@ export type PlaylistDetailPageMeQueryVariables = Exact<{ [key: string]: never; }
 export type PlaylistDetailPageMeQuery = { me: { ' $fragmentRefs'?: { 'PlaylistDetailPageMeFragment': PlaylistDetailPageMeFragment } } | null };
 
 export type UpdatePlaylistTrackMutationVariables = Exact<{
-  id: Scalars['String']['input'];
-  playlist: Scalars['String']['input'];
+  id: string;
+  playlist: string;
   input: UpdatePlaylistTrackInput;
 }>;
 
@@ -2571,7 +952,7 @@ export type UpdatePlaylistTrackMutationVariables = Exact<{
 export type UpdatePlaylistTrackMutation = { updatePlaylistTrack: { id: string } };
 
 export type UpdatePlaylistDescriptionMutationVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: string;
   input: UpdatePlaylistInput;
 }>;
 
@@ -2579,7 +960,7 @@ export type UpdatePlaylistDescriptionMutationVariables = Exact<{
 export type UpdatePlaylistDescriptionMutation = { updatePlaylist: { id: string } };
 
 export type PlaylistDetailPageQueryVariables = Exact<{
-  playlistId: Scalars['String']['input'];
+  playlistId: string;
 }>;
 
 
@@ -2592,14 +973,14 @@ export type PlaylistDetailPageQuery = { playlist: (
   ) | null, me: { ' $fragmentRefs'?: { 'PlaylistDetailPageMeFragment': PlaylistDetailPageMeFragment } } | null };
 
 export type GalleryPageQueryVariables = Exact<{
-  pagination?: InputMaybe<PaginationInput>;
+  pagination?: PaginationInput | null | undefined;
 }>;
 
 
 export type GalleryPageQuery = { grills: { nodes: Array<{ id: number, link: string }> } };
 
 export type ProfilePageMeFragment = (
-  { id: number, name: string, email: string, emailVerifiedAt: any | null, createdAt: any, roles: Array<{ id: number, name: string, color: string | null, priority: number, default: boolean }>, playlists: Array<(
+  { id: number, name: string, email: string, emailVerifiedAt: string | null, createdAt: string, roles: Array<{ id: number, name: string, color: string | null, priority: number, default: boolean }>, playlists: Array<(
     { id: string }
     & { ' $fragmentRefs'?: { 'PlaylistSummaryCardPlaylistFragment': PlaylistSummaryCardPlaylistFragment;'PlaylistRemoveDialogPlaylistFragment': PlaylistRemoveDialogPlaylistFragment } }
   )>, watchHistory: Array<{ ' $fragmentRefs'?: { 'WatchHistoryThemesWatchHistoryFragment': WatchHistoryThemesWatchHistoryFragment } }> }
@@ -2630,14 +1011,14 @@ export type SeriesDetailPageSeriesFragment = { slug: string, title: { romaji: st
     )> } } & { ' $fragmentName'?: 'SeriesDetailPageSeriesFragment' };
 
 export type SeriesDetailPageQueryVariables = Exact<{
-  seriesSlug: Scalars['String']['input'];
+  seriesSlug: string;
 }>;
 
 
 export type SeriesDetailPageQuery = { series: { ' $fragmentRefs'?: { 'SeriesDetailPageSeriesFragment': SeriesDetailPageSeriesFragment } } | null };
 
 export type SeriesDetailPageAllQueryVariables = Exact<{
-  pagination?: InputMaybe<PaginationInput>;
+  pagination?: PaginationInput | null | undefined;
 }>;
 
 
@@ -2647,7 +1028,7 @@ export type SeriesDetailPageAllQuery = { seriesConnection: { nodes: Array<(
     )>, pageInfo: { hasNextPage: boolean, endCursor: string | null } } };
 
 export type SeriesIndexPageQueryVariables = Exact<{
-  pagination?: InputMaybe<PaginationInput>;
+  pagination?: PaginationInput | null | undefined;
 }>;
 
 
@@ -2662,14 +1043,14 @@ export type StudioDetailPageStudioFragment = (
 ) & { ' $fragmentName'?: 'StudioDetailPageStudioFragment' };
 
 export type StudioDetailPageQueryVariables = Exact<{
-  studioSlug: Scalars['String']['input'];
+  studioSlug: string;
 }>;
 
 
 export type StudioDetailPageQuery = { studio: { ' $fragmentRefs'?: { 'StudioDetailPageStudioFragment': StudioDetailPageStudioFragment } } | null };
 
 export type StudioDetailPageAllQueryVariables = Exact<{
-  pagination?: InputMaybe<PaginationInput>;
+  pagination?: PaginationInput | null | undefined;
 }>;
 
 
@@ -2679,7 +1060,7 @@ export type StudioDetailPageAllQuery = { studioConnection: { nodes: Array<(
     )>, pageInfo: { hasNextPage: boolean, endCursor: string | null } } };
 
 export type StudioIndexPageQueryVariables = Exact<{
-  pagination?: InputMaybe<PaginationInput>;
+  pagination?: PaginationInput | null | undefined;
 }>;
 
 
@@ -2693,7 +1074,7 @@ export type SeasonDetailPageSeasonFragment = { season: AnimeSeason, seasonLocali
     )> } } & { ' $fragmentName'?: 'SeasonDetailPageSeasonFragment' };
 
 export type SeasonDetailPageQueryVariables = Exact<{
-  year: Scalars['Int']['input'];
+  year: number;
   season: AnimeSeason;
 }>;
 
@@ -2725,7 +1106,7 @@ export type YearDetailPageAllQueryVariables = Exact<{ [key: string]: never; }>;
 export type YearDetailPageAllQuery = { animeyears: Array<{ year: number }> };
 
 export type YearDetailPageQueryVariables = Exact<{
-  year: Scalars['Int']['input'];
+  year: number;
 }>;
 
 
