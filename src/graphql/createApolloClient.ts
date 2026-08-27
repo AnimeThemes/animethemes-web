@@ -1,6 +1,8 @@
 import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from "@apollo/client";
 import type { IncomingMessage } from "node:http";
 
+import { SERVER_GRAPHQL_URL } from "@/utils/config";
+
 let totalOperations = 0;
 
 const logLink = new ApolloLink((operation, forward) => {
@@ -16,7 +18,7 @@ const createApolloClient = (req?: IncomingMessage) => {
         link: ApolloLink.from([
             logLink,
             new HttpLink({
-                uri: "http://animethemes-rust.test/graphql",
+                uri: SERVER_GRAPHQL_URL,
                 headers: req && {
                     referer: req.headers.referer ?? "",
                     cookie: req.headers.cookie ?? "",

@@ -13,7 +13,7 @@ export interface Heading {
 interface ExtractHeadingsConfig {
     minRank?: number;
     maxRank?: number;
-    headings: Heading[];
+    headings: Array<Heading>;
 }
 
 export default function rehypeExtractHeadings({ minRank = 2, maxRank = 3, headings }: ExtractHeadingsConfig) {

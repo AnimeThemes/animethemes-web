@@ -6,19 +6,20 @@ const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const projectDir = path.join(currentDir, "..", "..");
 const cacheDir = path.join(projectDir, "build-cache");
 
-const inMemoryCache = new Map<string, unknown>();
+const inMemoryCache = new Map<string, Promise<Map<string, unknown>>>();
 
 export async function readCache<T extends Map<string, unknown>>(id: string) {
     if (inMemoryCache.has(id)) {
-        return inMemoryCache.get(id) as T;
+        return (await inMemoryCache.get(id)) as T;
     }
 
-    const json = await fs.readFile(path.join(cacheDir, `${id}.json`), "utf-8");
-    const data = new Map(JSON.parse(json));
+    const promise = fs
+        .readFile(path.join(cacheDir, `${id}.json`), "utf-8")
+        .then((data) => new Map(JSON.parse(data)) as T);
 
-    inMemoryCache.set(id, data);
+    inMemoryCache.set(id, promise);
 
-    return data as T;
+    return await promise;
 }
 
 export async function writeCache(id: string, data: Map<string, unknown>) {
@@ -28,5 +29,5 @@ export async function writeCache(id: string, data: Map<string, unknown>) {
 
     await fs.writeFile(path.join(cacheDir, `${id}.json`), JSON.stringify([...data.entries()]));
 
-    inMemoryCache.set(id, data);
+    inMemoryCache.set(id, Promise.resolve(data));
 }

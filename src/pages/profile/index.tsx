@@ -9,7 +9,6 @@ import {
     faRightFromBracket,
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
-import { isAxiosError } from "axios";
 
 import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
@@ -36,7 +35,6 @@ import createApolloClient from "@/graphql/createApolloClient";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useAuth from "@/hooks/useAuth";
 import useSetting from "@/hooks/useSetting";
-import { handleAxiosError } from "@/lib/client/axios";
 import theme from "@/theme";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
@@ -174,7 +172,7 @@ interface ProfilePageProps extends SharedPageProps {
 export default function ProfilePage({ me: meFragment }: ProfilePageProps) {
     const { data } = useQuery(PROFILE_PAGE);
 
-    const me = getFragmentData(PROFILE_PAGE_ME, data?.me ?? meFragment);
+    const me = getFragmentData(PROFILE_PAGE_ME, data ? data?.me : meFragment);
 
     const [clearHistory] = useMutation(
         graphql(`
@@ -429,13 +427,11 @@ function ResendVerificationEmailLink() {
         setError("");
 
         try {
-            await resendEmailVerification();
-        } catch (error) {
-            if (isAxiosError(error)) {
-                setError(handleAxiosError(error));
-            }
+            const result = await resendEmailVerification();
 
-            return;
+            if (!result.ok) {
+                setError(result.error);
+            }
         } finally {
             setBusy(false);
         }

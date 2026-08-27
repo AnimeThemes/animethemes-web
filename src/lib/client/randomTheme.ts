@@ -20,7 +20,7 @@ const RANDOM_THEME = graphql(`
 
 export interface RandomThemesOptions {
     input?: {
-        type?: ThemeType[];
+        type?: Array<ThemeType>;
         format?: AnimeFormat;
         yearGte?: number;
         yearLte?: number;

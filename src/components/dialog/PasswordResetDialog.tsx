@@ -3,8 +3,6 @@ import type { SyntheticEvent } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 
-import { isAxiosError } from "axios";
-
 import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
 import { Dialog, DialogContent } from "@/components/dialog/Dialog";
@@ -14,13 +12,14 @@ import { Text } from "@/components/text/Text";
 import { Toast } from "@/components/toast/Toast";
 import { Busy } from "@/components/utils/Busy";
 import { useToasts } from "@/context/toastContext";
-import useAuth from "@/hooks/useAuth";
+import useAuth, { type ResetPasswordOptions } from "@/hooks/useAuth";
+import type { ValidationError } from "@/utils/errorHandling";
 
 export function PasswordResetDialog() {
     const router = useRouter();
 
     return (
-        <Dialog>
+        <Dialog open>
             <DialogContent title="Reset Password">
                 <PasswordResetForm onSuccess={() => router.push("/profile")} onCancel={() => router.push("/")} />
             </DialogContent>
@@ -52,10 +51,7 @@ function PasswordResetForm({ onSuccess, onCancel }: PasswordResetFormProps) {
     const isValid = email && newPassword && newPasswordConfirmation;
 
     const [isBusy, setBusy] = useState(false);
-    const [errors, setErrors] = useState<{
-        email?: string[];
-        password?: string[];
-    }>({});
+    const [errors, setErrors] = useState<ValidationError<ResetPasswordOptions>>({});
 
     async function performResetPassword(event: SyntheticEvent) {
         event.preventDefault();
@@ -64,22 +60,21 @@ function PasswordResetForm({ onSuccess, onCancel }: PasswordResetFormProps) {
         setErrors({});
 
         try {
-            await resetPassword({
+            const result = await resetPassword({
                 email,
                 password: newPassword,
-                password_confirmation: newPasswordConfirmation,
+                passwordConfirmation: newPasswordConfirmation,
                 token: (Array.isArray(token) ? token[0] : token) ?? "",
             });
+
+            if (!result.ok) {
+                setErrors(result.error);
+                return;
+            }
 
             dispatchToast("password-reset", <Toast>Password reset successfully.</Toast>);
 
             onSuccess();
-        } catch (error) {
-            if (!isAxiosError(error) || !error.response || error.response.status !== 422) {
-                throw error;
-            }
-
-            setErrors(error.response.data.errors);
         } finally {
             setBusy(false);
         }

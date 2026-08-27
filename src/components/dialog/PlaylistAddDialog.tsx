@@ -58,7 +58,7 @@ interface PlaylistAddFormProps {
 }
 
 interface PlaylistAddFormErrors {
-    name?: string[];
+    name?: Array<string>;
 }
 
 function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {

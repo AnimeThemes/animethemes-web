@@ -474,7 +474,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
         let lastMediaTime = 0,
             lastFrameNum = 0,
             frameNotSeeked = true;
-        const fpsRounder: number[] = [];
+        const fpsRounder: Array<number> = [];
 
         const ticker: VideoFrameRequestCallback = (_, metadata) => {
             const diff =

@@ -102,7 +102,7 @@ function mergeProps(slotProps: AnyProps, childProps: AnyProps) {
         if (isHandler) {
             // if the handler exists on both, we compose them
             if (slotPropValue && childPropValue) {
-                overrideProps[propName] = (...args: unknown[]) => {
+                overrideProps[propName] = (...args: Array<unknown>) => {
                     childPropValue(...args);
                     slotPropValue(...args);
                 };

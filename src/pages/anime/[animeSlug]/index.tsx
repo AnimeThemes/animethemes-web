@@ -22,6 +22,7 @@ import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated
 import { readCache, writeCache } from "@/utils/buildCache";
 import collect from "@/utils/collect";
 import { compare, seriesTitleComparator, studioNameComparator } from "@/utils/comparators";
+import { PAGINATION_PAGE_SIZE } from "@/utils/config";
 import extractImages from "@/utils/extractImages";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
@@ -286,7 +287,7 @@ export const getStaticPaths: GetStaticPaths<AnimeDetailPageParams> = () => {
                 query: ANIME_DETAIL_PAGE_PATHS,
                 variables: {
                     pagination: {
-                        first: 1000,
+                        first: PAGINATION_PAGE_SIZE,
                         after: cursor,
                     },
                 },

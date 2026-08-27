@@ -22,6 +22,7 @@ import theme from "@/theme";
 import { readCache, writeCache } from "@/utils/buildCache";
 import collect from "@/utils/collect";
 import { ANIME_A_Z, ANIME_NEW_OLD, ANIME_OLD_NEW, ANIME_Z_A, getComparator } from "@/utils/comparators";
+import { PAGINATION_PAGE_SIZE } from "@/utils/config";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import getSharedPageProps from "@/utils/getSharedPageProps";
 
@@ -211,7 +212,7 @@ export const getStaticPaths: GetStaticPaths<SeriesDetailPageParams> = async () =
                 query: pathsQuery,
                 variables: {
                     pagination: {
-                        first: 1000,
+                        first: PAGINATION_PAGE_SIZE,
                         after: cursor,
                     },
                 },

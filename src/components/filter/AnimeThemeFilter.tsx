@@ -38,11 +38,11 @@ function AnimeThemeFilterInternal({ themes: themesFragment }: AnimeThemeFilterPr
     const groups = useMemo(
         () =>
             filteredThemes.reduce<
-                {
+                Array<{
                     name: string;
                     slug: string;
                     themes: typeof themes;
-                }[]
+                }>
             >((groups, theme) => {
                 const groupName = theme.group?.name || "Original";
                 const groupSlug = theme.group?.slug || "original";

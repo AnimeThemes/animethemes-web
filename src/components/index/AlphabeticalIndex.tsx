@@ -23,7 +23,7 @@ const StyledItemGrid = styled.div`
 `;
 
 type AlphabeticalIndexProps<T> = {
-    items: T[];
+    items: Array<T>;
     getName: (item: T) => string;
     children: (item: T) => ReactNode;
 };

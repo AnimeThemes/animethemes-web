@@ -24,6 +24,7 @@ import theme from "@/theme";
 import { readCache, writeCache } from "@/utils/buildCache";
 import collect from "@/utils/collect";
 import { ANIME_A_Z, ANIME_NEW_OLD, ANIME_OLD_NEW, ANIME_Z_A, compare, getComparator } from "@/utils/comparators";
+import { PAGINATION_PAGE_SIZE } from "@/utils/config";
 import extractImages from "@/utils/extractImages";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import getSharedPageProps from "@/utils/getSharedPageProps";
@@ -252,7 +253,7 @@ export const getStaticPaths: GetStaticPaths<StudioDetailPageParams> = async () =
                 query: pathsQuery,
                 variables: {
                     pagination: {
-                        first: 1000,
+                        first: PAGINATION_PAGE_SIZE,
                         after: cursor,
                     },
                 },
