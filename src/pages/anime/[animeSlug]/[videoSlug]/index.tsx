@@ -26,7 +26,7 @@ import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated
 import styleTheme from "@/theme";
 import { readCache, writeCache } from "@/utils/buildCache";
 import collect from "@/utils/collect";
-import { VIDEO_URL } from "@/utils/config";
+import { PAGINATION_PAGE_SIZE, VIDEO_URL } from "@/utils/config";
 import createVideoSlug from "@/utils/createVideoSlug";
 import extractImages from "@/utils/extractImages";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
@@ -533,7 +533,7 @@ export const getStaticPaths: GetStaticPaths<VideoPageParams> = () => {
                 query: pathsQuery,
                 variables: {
                     pagination: {
-                        first: 1000,
+                        first: PAGINATION_PAGE_SIZE,
                         after: cursor,
                     },
                 },

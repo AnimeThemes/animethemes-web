@@ -88,13 +88,13 @@ export default function MyApp({ Component, pageProps }: AppProps<PageProps>) {
     const router = useRouter();
     const [colorTheme, setColorTheme] = useColorTheme();
 
-    const [watchList, setWatchList] = useState<WatchListItem[]>(() => {
+    const [watchList, setWatchList] = useState<Array<WatchListItem>>(() => {
         if (pageProps.isVideoPage) {
             return createDefaultWatchList(pageProps);
         }
         return [];
     });
-    const [watchListFactory, setWatchListFactory] = useState<(() => Promise<WatchListItem[]>) | null>(null);
+    const [watchListFactory, setWatchListFactory] = useState<(() => Promise<Array<WatchListItem>>) | null>(null);
     const [currentWatchListItemId, setCurrentWatchListItemId] = useState<number | null>(() => {
         if (pageProps.isVideoPage && watchList.length) {
             const { anime: animeFragment, themeIndex, entryIndex, videoIndex } = pageProps;
@@ -184,7 +184,7 @@ export default function MyApp({ Component, pageProps }: AppProps<PageProps>) {
             const anime = getAnimeFromVideoPageFragment(animeFragment);
             const video = anime.animethemes[themeIndex].animethemeentries[entryIndex].videos.nodes[videoIndex];
 
-            const watchList: WatchListItem[] = createDefaultWatchList(pageProps);
+            const watchList: Array<WatchListItem> = createDefaultWatchList(pageProps);
             setWatchList(watchList);
             setWatchListFactory(null);
             setCurrentWatchListItemId(watchList.find((item) => item.video.id === video.id)?.watchListId ?? null);
@@ -334,7 +334,7 @@ function MultiContextProvider({ providers = [], children }: MultiContextProvider
     return <>{stack}</>;
 }
 
-function createDefaultWatchList(pageProps: VideoPageProps): WatchListItem[] {
+function createDefaultWatchList(pageProps: VideoPageProps): Array<WatchListItem> {
     const { anime: animeFragment, themeIndex, entryIndex, videoIndex } = pageProps;
     const anime = getAnimeFromVideoPageFragment(animeFragment);
 

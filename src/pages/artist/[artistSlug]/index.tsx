@@ -46,6 +46,7 @@ import {
     SONG_Z_A,
     SONG_Z_A_ANIME,
 } from "@/utils/comparators";
+import { PAGINATION_PAGE_SIZE } from "@/utils/config";
 import extractMultipleImages from "@/utils/extractMultipleImages";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import getSharedPageProps from "@/utils/getSharedPageProps";
@@ -722,7 +723,7 @@ export const getStaticPaths: GetStaticPaths<ArtistDetailPageParams> = async () =
                 query: pathsQuery,
                 variables: {
                     pagination: {
-                        first: 1000,
+                        first: PAGINATION_PAGE_SIZE,
                         after: cursor,
                     },
                 },

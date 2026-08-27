@@ -96,6 +96,7 @@ const documents = {
     "\n            mutation Register($input: RegisterInput!) {\n                register(input: $input) {\n                    id\n                }\n            }\n        ": types.RegisterDocument,
     "\n            mutation Login($input: LoginInput!) {\n                login(input: $input) {\n                    id\n                }\n            }\n        ": types.LoginDocument,
     "\n            mutation UpdateUserInformation($input: UpdateUserInformationInput!) {\n                updateUserInformation(input: $input)\n            }\n        ": types.UpdateUserInformationDocument,
+    "\n            mutation UpdatePassword($input: UpdatePasswordInput!) {\n                updatePassword(input: $input)\n            }\n        ": types.UpdatePasswordDocument,
     "\n            mutation ForgotPassword($email: String!) {\n                forgotPassword(email: $email)\n            }\n        ": types.ForgotPasswordDocument,
     "\n            mutation ResetPassword($input: ResetPasswordInput!) {\n                resetPassword(input: $input)\n            }\n        ": types.ResetPasswordDocument,
     "\n            mutation ResendEmailVerification {\n                resendEmailVerification\n            }\n        ": types.ResendEmailVerificationDocument,
@@ -131,6 +132,7 @@ const documents = {
     "\n    query PlaylistDetailPagePlaylist($playlistId: String!) {\n        playlist(id: $playlistId) {\n            ...PlaylistDetailPagePlaylist\n            tracks(sort: POSITION) {\n                ...PlaylistDetailPageTrack\n                id\n            }\n        }\n    }\n": types.PlaylistDetailPagePlaylistDocument,
     "\n    query PlaylistDetailPageMe {\n        me {\n            ...PlaylistDetailPageMe\n        }\n    }\n": types.PlaylistDetailPageMeDocument,
     "\n            mutation UpdatePlaylistTrack($id: String!, $playlist: String!, $input: UpdatePlaylistTrackInput!) {\n                updatePlaylistTrack(id: $id, playlist: $playlist, input: $input) {\n                    id\n                }\n            }\n        ": types.UpdatePlaylistTrackDocument,
+    "\n            mutation UpdatePlaylistDescription($id: String!, $input: UpdatePlaylistInput!) {\n                updatePlaylist(id: $id, input: $input) {\n                    id\n                }\n            }\n        ": types.UpdatePlaylistDescriptionDocument,
     "\n            query PlaylistDetailPage($playlistId: String!) {\n                playlist(id: $playlistId) {\n                    ...PlaylistDetailPagePlaylist\n                    tracks(sort: POSITION) {\n                        ...PlaylistDetailPageTrack\n                        id\n                    }\n                }\n                me {\n                    ...PlaylistDetailPageMe\n                }\n            }\n        ": types.PlaylistDetailPageDocument,
     "\n    query GalleryPage($pagination: PaginationInput) {\n        grills: imageConnection(filter: { facet: GRILL }, pagination: $pagination) {\n            nodes {\n                id\n                link\n            }\n        }\n    }\n": types.GalleryPageDocument,
     "\n    fragment ProfilePageMe on Me {\n        ...ProfileImageUser\n        id\n        name\n        email\n        emailVerifiedAt\n        createdAt\n        roles {\n            id\n            name\n            color\n            priority\n            default\n        }\n        playlists(sort: [CREATED_AT_DESC]) {\n            ...PlaylistSummaryCardPlaylist\n            ...PlaylistRemoveDialogPlaylist\n            id\n        }\n        watchHistory {\n            ...WatchHistoryThemesWatchHistory\n        }\n    }\n": types.ProfilePageMeFragmentDoc,
@@ -506,6 +508,10 @@ export function graphql(source: "\n            mutation UpdateUserInformation($i
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n            mutation UpdatePassword($input: UpdatePasswordInput!) {\n                updatePassword(input: $input)\n            }\n        "): (typeof documents)["\n            mutation UpdatePassword($input: UpdatePasswordInput!) {\n                updatePassword(input: $input)\n            }\n        "];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n            mutation ForgotPassword($email: String!) {\n                forgotPassword(email: $email)\n            }\n        "): (typeof documents)["\n            mutation ForgotPassword($email: String!) {\n                forgotPassword(email: $email)\n            }\n        "];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -643,6 +649,10 @@ export function graphql(source: "\n    query PlaylistDetailPageMe {\n        me 
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n            mutation UpdatePlaylistTrack($id: String!, $playlist: String!, $input: UpdatePlaylistTrackInput!) {\n                updatePlaylistTrack(id: $id, playlist: $playlist, input: $input) {\n                    id\n                }\n            }\n        "): (typeof documents)["\n            mutation UpdatePlaylistTrack($id: String!, $playlist: String!, $input: UpdatePlaylistTrackInput!) {\n                updatePlaylistTrack(id: $id, playlist: $playlist, input: $input) {\n                    id\n                }\n            }\n        "];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n            mutation UpdatePlaylistDescription($id: String!, $input: UpdatePlaylistInput!) {\n                updatePlaylist(id: $id, input: $input) {\n                    id\n                }\n            }\n        "): (typeof documents)["\n            mutation UpdatePlaylistDescription($id: String!, $input: UpdatePlaylistInput!) {\n                updatePlaylist(id: $id, input: $input) {\n                    id\n                }\n            }\n        "];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

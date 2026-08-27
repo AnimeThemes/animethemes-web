@@ -11,7 +11,8 @@ import Switch from "@/components/form/Switch";
 import { SearchFilter } from "@/components/search-filter/SearchFilter";
 import { Text } from "@/components/text/Text";
 import { Busy } from "@/components/utils/Busy";
-import useAuth, { type LoginErrors } from "@/hooks/useAuth";
+import useAuth, { type LoginOptions } from "@/hooks/useAuth";
+import type { ValidationError } from "@/utils/errorHandling";
 
 const StyledForm = styled.form`
     display: flex;
@@ -49,19 +50,26 @@ function LoginForm({ onCancel }: LoginFormProps) {
     const isValid = email && password;
 
     const [isBusy, setBusy] = useState(false);
-    const [errors, setErrors] = useState<LoginErrors>({});
+    const [errors, setErrors] = useState<ValidationError<LoginOptions>>({});
 
-    function performLogin(event: SyntheticEvent) {
+    async function performLogin(event: SyntheticEvent) {
         event.preventDefault();
 
         setBusy(true);
 
-        login({
-            setErrors,
-            email,
-            password,
-            remember: isRemember,
-        }).finally(() => setBusy(false));
+        try {
+            const result = await login({
+                email,
+                password,
+                remember: isRemember,
+            });
+
+            if (!result.ok) {
+                setErrors(result.error);
+            }
+        } finally {
+            setBusy(false);
+        }
     }
 
     return (

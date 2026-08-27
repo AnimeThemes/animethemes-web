@@ -2,15 +2,17 @@ import { ApolloClient, ApolloLink, InMemoryCache } from "@apollo/client";
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
 import { print } from "@apollo/client/utilities";
 
+import { CLIENT_GRAPHQL_URL } from "@/utils/config";
+
 const httpLink = new BatchHttpLink({
-    uri: "http://animethemes-rust.test/graphql",
+    uri: CLIENT_GRAPHQL_URL,
     credentials: "include",
     batchMax: 5,
     batchInterval: 200,
 });
 
 // const httpLink = new HttpLink({
-//     uri: "http://animethemes-rust.test/graphql",
+//     uri: CLIENT_GRAPHQL_URL,
 //     credentials: "include",
 // });
 

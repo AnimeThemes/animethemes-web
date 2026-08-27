@@ -11,7 +11,8 @@ import { Text } from "@/components/text/Text";
 import { Toast } from "@/components/toast/Toast";
 import { Busy } from "@/components/utils/Busy";
 import { useToasts } from "@/context/toastContext";
-import useAuth from "@/hooks/useAuth";
+import useAuth, { type UpdateUserInformationOptions } from "@/hooks/useAuth";
+import type { ValidationError } from "@/utils/errorHandling";
 
 export function UserInformationDialog() {
     const [open, setOpen] = useState(false);
@@ -50,10 +51,7 @@ function UserInformationForm({ onSuccess, onCancel }: UserInformationFormProps) 
     const isValid = username && email;
 
     const [isBusy, setBusy] = useState(false);
-    const [errors, setErrors] = useState<{
-        name?: string[];
-        email?: string[];
-    }>({});
+    const [errors, setErrors] = useState<ValidationError<UpdateUserInformationOptions>>({});
 
     async function performChangeUserInformation(event: SyntheticEvent) {
         event.preventDefault();
@@ -62,7 +60,12 @@ function UserInformationForm({ onSuccess, onCancel }: UserInformationFormProps) 
         setErrors({});
 
         try {
-            await updateUserInformation({ setErrors, name: username, email });
+            const result = await updateUserInformation({ name: username, email });
+
+            if (!result.ok) {
+                setErrors(result.error);
+                return;
+            }
 
             dispatchToast("email-change", <Toast>User information changed successfully.</Toast>);
 

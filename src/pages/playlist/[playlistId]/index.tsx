@@ -3,6 +3,7 @@ import styled from "styled-components";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 
+import { CombinedGraphQLErrors } from "@apollo/client";
 import { useMutation, useQuery } from "@apollo/client/react";
 import {
     faArrowTurnDown,
@@ -18,7 +19,6 @@ import {
     faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import type { ResultOf } from "@graphql-typed-document-node/core";
-import { isAxiosError } from "axios";
 import { shuffle } from "lodash-es";
 import { Reorder, useDragControls } from "motion/react";
 import type { ParsedUrlQuery } from "querystring";
@@ -55,7 +55,6 @@ import PlayerContext, {
 import createApolloClient from "@/graphql/createApolloClient";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useToggle from "@/hooks/useToggle";
-import axios from "@/lib/client/axios";
 import theme from "@/theme";
 import {
     ANIME_A_Z,
@@ -473,21 +472,38 @@ function Description({ playlist, description, setDescription, isEditable, setEdi
     const [isBusy, setBusy] = useState(false);
     const [error, setError] = useState("");
 
+    const [updatePlaylistDescription] = useMutation(
+        graphql(`
+            mutation UpdatePlaylistDescription($id: String!, $input: UpdatePlaylistInput!) {
+                updatePlaylist(id: $id, input: $input) {
+                    id
+                }
+            }
+        `),
+        {
+            refetchQueries: [PLAYLIST_DETAIL_PAGE_QUERY],
+        },
+    );
+
     async function submit() {
         setBusy(true);
         setError("");
 
         try {
-            await axios.put(`/playlist/${playlist.id}`, {
-                description,
+            await updatePlaylistDescription({
+                variables: {
+                    id: playlist.id,
+                    input: {
+                        description,
+                    },
+                },
             });
-            // await mutate((key) =>
-            //     [key].flat().some((key) => key === `/api/playlist/${playlist.id}` || key === "/api/me/playlist"),
-            // );
         } catch (error: unknown) {
-            if (isAxiosError(error) && error.response) {
-                setError(error.response.data.message ?? "An unknown error occured!");
+            if (!CombinedGraphQLErrors.is(error)) {
+                throw error;
             }
+
+            setError(error.message);
 
             return;
         } finally {
@@ -500,6 +516,7 @@ function Description({ playlist, description, setDescription, isEditable, setEdi
     function cancel() {
         setDescription(playlist.description ?? "");
         setEditable(false);
+        setError("");
     }
 
     return (

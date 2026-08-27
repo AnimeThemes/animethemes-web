@@ -31,7 +31,7 @@ export const PLAYLIST_EDIT_DIALOG_PLAYLIST = graphql(`
 `);
 
 interface PlaylistEditFormErrors {
-    name?: string[];
+    name?: Array<string>;
 }
 
 interface PlaylistEditDialogProps {
