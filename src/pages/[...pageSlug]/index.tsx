@@ -75,7 +75,7 @@ const pathsQuery = graphql(`
 export interface DocumentPageProps extends SharedPageProps {
     page: FragmentType<typeof DOCUMENT_PAGE_PAGE>;
     source: MDXRemoteSerializeResult;
-    headings: Heading[];
+    headings: Array<Heading>;
 }
 
 interface DocumentPageParams extends ParsedUrlQuery {

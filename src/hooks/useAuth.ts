@@ -1,17 +1,10 @@
-import { CombinedGraphQLErrors } from "@apollo/client";
 import { useMutation, useQuery } from "@apollo/client/react";
 
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
+import { parseSimpleError, parseValidationError, type Result, type ValidationError } from "@/utils/errorHandling";
 
-export interface RegisterErrors {
-    name?: Array<string>;
-    email?: Array<string>;
-    password?: Array<string>;
-}
-
-interface RegisterProps {
-    setErrors: (errors: RegisterErrors) => void;
+export interface RegisterOptions {
     name: string;
     email: string;
     password: string;
@@ -19,31 +12,31 @@ interface RegisterProps {
     terms: boolean;
 }
 
-export interface LoginErrors {
-    email?: Array<string>;
-}
-
-interface LoginProps {
-    setErrors: (errors: LoginErrors) => void;
+export interface LoginOptions {
     email: string;
     password: string;
     remember: boolean;
 }
 
-interface UpdateUserInformationProps {
-    setErrors: (errors: LoginErrors) => void;
+export interface UpdateUserInformationOptions {
     name: string;
     email: string;
 }
 
-interface ForgotPasswordProps {
+export interface UpdatePasswordOptions {
+    currentPassword: string;
+    newPassword: string;
+    newPasswordConfirmation: string;
+}
+
+export interface ForgotPasswordOptions {
     email: string;
 }
 
-interface ResetPasswordProps {
+export interface ResetPasswordOptions {
     email: string;
     password: string;
-    password_confirmation: string;
+    passwordConfirmation: string;
     token: string;
 }
 
@@ -77,28 +70,31 @@ export default function useAuth() {
         },
     );
 
-    const register = async ({ setErrors, ...props }: RegisterProps) => {
-        await registerMutation({
-            variables: {
-                input: {
-                    name: props.name,
-                    email: props.email,
-                    password: props.password,
-                    passwordConfirmation: props.passwordConfirmation,
-                    terms: props.terms,
+    async function register({
+        name,
+        email,
+        password,
+        passwordConfirmation,
+        terms,
+    }: RegisterOptions): Promise<Result<void, ValidationError<RegisterOptions>>> {
+        try {
+            await registerMutation({
+                variables: {
+                    input: {
+                        name,
+                        email,
+                        password,
+                        passwordConfirmation,
+                        terms,
+                    },
                 },
-            },
-            onError(error) {
-                if (!CombinedGraphQLErrors.is(error)) {
-                    return;
-                }
+            });
 
-                if (error.extensions?.code === "VALIDATION") {
-                    setErrors(error.extensions.validation ?? {});
-                }
-            },
-        });
-    };
+            return { ok: true };
+        } catch (error) {
+            return { ok: false, error: parseValidationError(error) };
+        }
+    }
 
     const [loginMutation] = useMutation(
         graphql(`
@@ -110,29 +106,26 @@ export default function useAuth() {
         `),
     );
 
-    const login = async ({ setErrors, ...props }: LoginProps) => {
-        await loginMutation({
-            variables: {
-                input: {
-                    email: props.email,
-                    password: props.password,
+    async function login({ email, password }: LoginOptions): Promise<Result<void, ValidationError<LoginOptions>>> {
+        try {
+            await loginMutation({
+                variables: {
+                    input: {
+                        email,
+                        password,
+                    },
                 },
-            },
-            onError(error) {
-                if (!CombinedGraphQLErrors.is(error)) {
-                    return;
-                }
+            });
 
-                if (error.extensions?.code === "VALIDATION") {
-                    setErrors(error.extensions.validation ?? {});
-                }
-            },
-        });
+            await client.refetchQueries({
+                include: "active",
+            });
 
-        await client.refetchQueries({
-            include: "active",
-        });
-    };
+            return { ok: true };
+        } catch (error) {
+            return { ok: false, error: parseValidationError(error) };
+        }
+    }
 
     const [updateUserInformationMutation] = useMutation(
         graphql(`
@@ -142,29 +135,63 @@ export default function useAuth() {
         `),
     );
 
-    const updateUserInformation = async ({ setErrors, ...props }: UpdateUserInformationProps) => {
-        await updateUserInformationMutation({
-            variables: {
-                input: {
-                    name: props.name,
-                    email: props.email,
+    async function updateUserInformation({
+        name,
+        email,
+    }: UpdateUserInformationOptions): Promise<Result<void, ValidationError<UpdateUserInformationOptions>>> {
+        try {
+            await updateUserInformationMutation({
+                variables: {
+                    input: {
+                        name,
+                        email,
+                    },
                 },
-            },
-            onError(error) {
-                if (!CombinedGraphQLErrors.is(error)) {
-                    return;
-                }
+            });
 
-                if (error.extensions?.code === "VALIDATION") {
-                    setErrors(error.extensions.validation ?? {});
-                }
-            },
-        });
+            await client.refetchQueries({
+                include: "active",
+            });
 
-        await client.refetchQueries({
-            include: "active",
-        });
-    };
+            return { ok: true };
+        } catch (error) {
+            return { ok: false, error: parseValidationError(error) };
+        }
+    }
+
+    const [updatePasswordMutation] = useMutation(
+        graphql(`
+            mutation UpdatePassword($input: UpdatePasswordInput!) {
+                updatePassword(input: $input)
+            }
+        `),
+    );
+
+    async function updatePassword({
+        currentPassword,
+        newPassword,
+        newPasswordConfirmation,
+    }: UpdatePasswordOptions): Promise<Result<void, ValidationError<UpdatePasswordOptions>>> {
+        try {
+            await updatePasswordMutation({
+                variables: {
+                    input: {
+                        currentPassword,
+                        newPassword,
+                        newPasswordConfirmation,
+                    },
+                },
+            });
+
+            await client.refetchQueries({
+                include: "active",
+            });
+
+            return { ok: true };
+        } catch (error) {
+            return { ok: false, error: parseValidationError(error) };
+        }
+    }
 
     const [forgotPasswordMutation] = useMutation(
         graphql(`
@@ -174,13 +201,21 @@ export default function useAuth() {
         `),
     );
 
-    const forgotPassword = async ({ ...props }: ForgotPasswordProps) => {
-        await forgotPasswordMutation({
-            variables: {
-                email: props.email,
-            },
-        });
-    };
+    async function forgotPassword({
+        email,
+    }: ForgotPasswordOptions): Promise<Result<void, ValidationError<ForgotPasswordOptions>>> {
+        try {
+            await forgotPasswordMutation({
+                variables: {
+                    email,
+                },
+            });
+
+            return { ok: true };
+        } catch (error) {
+            return { ok: false, error: parseValidationError(error) };
+        }
+    }
 
     const [resetPasswordMutation] = useMutation(
         graphql(`
@@ -190,18 +225,29 @@ export default function useAuth() {
         `),
     );
 
-    const resetPassword = async ({ ...props }: ResetPasswordProps) => {
-        await resetPasswordMutation({
-            variables: {
-                input: {
-                    email: props.email,
-                    password: props.password,
-                    passwordConfirmation: props.password_confirmation,
-                    token: props.token,
+    async function resetPassword({
+        email,
+        password,
+        passwordConfirmation,
+        token,
+    }: ResetPasswordOptions): Promise<Result<void, ValidationError<ResetPasswordOptions>>> {
+        try {
+            await resetPasswordMutation({
+                variables: {
+                    input: {
+                        email,
+                        password,
+                        passwordConfirmation,
+                        token,
+                    },
                 },
-            },
-        });
-    };
+            });
+
+            return { ok: true };
+        } catch (error) {
+            return { ok: false, error: parseValidationError(error) };
+        }
+    }
 
     const [resendEmailVerificationMutation] = useMutation(
         graphql(`
@@ -211,9 +257,15 @@ export default function useAuth() {
         `),
     );
 
-    const resendEmailVerification = async () => {
-        await resendEmailVerificationMutation();
-    };
+    async function resendEmailVerification(): Promise<Result<void, string>> {
+        try {
+            await resendEmailVerificationMutation();
+
+            return { ok: true };
+        } catch (error) {
+            return { ok: false, error: parseSimpleError(error) };
+        }
+    }
 
     const [logoutMutation] = useMutation(
         graphql(`
@@ -223,19 +275,20 @@ export default function useAuth() {
         `),
     );
 
-    const logout = async () => {
+    async function logout() {
         await logoutMutation();
 
         await client.refetchQueries({
             include: "active",
         });
-    };
+    }
 
     return {
         me: data?.me,
         register,
         login,
         updateUserInformation,
+        updatePassword,
         forgotPassword,
         resetPassword,
         resendEmailVerification,

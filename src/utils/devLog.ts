@@ -1,19 +1,19 @@
 import { VERBOSE_LOGS } from "@/utils/config";
 import * as log from "@/utils/log";
 
-function info(...message: string[]) {
+function info(...message: Array<string>) {
     logIfDevelopment(log.info, ...message);
 }
 
-function warn(...message: string[]) {
+function warn(...message: Array<string>) {
     logIfDevelopment(log.warn, ...message);
 }
 
-function error(...message: string[]) {
+function error(...message: Array<string>) {
     logIfDevelopment(log.error, ...message);
 }
 
-function logIfDevelopment(fn: (...message: string[]) => void, ...message: string[]) {
+function logIfDevelopment(fn: (...message: Array<string>) => void, ...message: Array<string>) {
     if (process.env.NODE_ENV === "development" || VERBOSE_LOGS) {
         fn(...message);
     }

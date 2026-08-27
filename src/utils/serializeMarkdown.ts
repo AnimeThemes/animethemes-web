@@ -10,7 +10,7 @@ import type { Heading } from "@/utils/rehypeExtractHeadings";
 import rehypeExtractHeadings from "@/utils/rehypeExtractHeadings";
 
 export default async function serializeMarkdown(markdown: Compatible) {
-    const headings: Heading[] = [];
+    const headings: Array<Heading> = [];
 
     const source = await serialize(markdown, {
         mdxOptions: {

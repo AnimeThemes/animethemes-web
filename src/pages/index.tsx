@@ -84,7 +84,7 @@ export const HOME_PAGE_ANNOUNCEMENT = graphql(`
 
 interface HomePageProps {
     featuredTheme: FragmentType<typeof HOME_PAGE_FEATURED_THEME> | null;
-    announcementSources: MDXRemoteSerializeResult[];
+    announcementSources: Array<MDXRemoteSerializeResult>;
 }
 
 export default function HomePage({ featuredTheme: featuredThemeFragment, announcementSources }: HomePageProps) {

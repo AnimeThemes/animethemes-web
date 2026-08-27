@@ -44,10 +44,10 @@ export interface WatchListItem {
 }
 
 interface PlayerContextInterface {
-    watchList: WatchListItem[];
-    setWatchList: (watchList: WatchListItem[], forceAutoPlay?: boolean) => void;
-    watchListFactory: (() => Promise<WatchListItem[]>) | null;
-    setWatchListFactory: (factory: (() => Promise<WatchListItem[]>) | null) => void;
+    watchList: Array<WatchListItem>;
+    setWatchList: (watchList: Array<WatchListItem>, forceAutoPlay?: boolean) => void;
+    watchListFactory: (() => Promise<Array<WatchListItem>>) | null;
+    setWatchListFactory: (factory: (() => Promise<Array<WatchListItem>>) | null) => void;
     currentWatchListItem: WatchListItem | null;
     setCurrentWatchListItem: (watchListItem: WatchListItem | null) => void;
     addWatchListItem: (

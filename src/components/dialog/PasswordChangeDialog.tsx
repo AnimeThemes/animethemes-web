@@ -2,8 +2,6 @@ import { useState } from "react";
 import type { SyntheticEvent } from "react";
 import styled from "styled-components";
 
-import { isAxiosError } from "axios";
-
 import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
@@ -13,8 +11,8 @@ import { Text } from "@/components/text/Text";
 import { Toast } from "@/components/toast/Toast";
 import { Busy } from "@/components/utils/Busy";
 import { useToasts } from "@/context/toastContext";
-import axios from "@/lib/client/axios";
-import { AUTH_PATH } from "@/utils/config";
+import useAuth, { type UpdatePasswordOptions } from "@/hooks/useAuth";
+import type { ValidationError } from "@/utils/errorHandling";
 
 export function PasswordChangeDialog() {
     const [open, setOpen] = useState(false);
@@ -44,6 +42,7 @@ interface PasswordChangeFormProps {
 }
 
 function PasswordChangeForm({ onSuccess, onCancel }: PasswordChangeFormProps) {
+    const { updatePassword } = useAuth();
     const { dispatchToast } = useToasts();
 
     const [currentPassword, setCurrentPassword] = useState("");
@@ -53,10 +52,7 @@ function PasswordChangeForm({ onSuccess, onCancel }: PasswordChangeFormProps) {
     const isValid = currentPassword && newPassword && newPasswordConfirmation;
 
     const [isBusy, setBusy] = useState(false);
-    const [errors, setErrors] = useState<{
-        current_password?: string[];
-        password?: string[];
-    }>({});
+    const [errors, setErrors] = useState<ValidationError<UpdatePasswordOptions>>({});
 
     async function performChangePassword(event: SyntheticEvent) {
         event.preventDefault();
@@ -65,21 +61,20 @@ function PasswordChangeForm({ onSuccess, onCancel }: PasswordChangeFormProps) {
         setErrors({});
 
         try {
-            await axios.put(`${AUTH_PATH}/user/password`, {
-                current_password: currentPassword,
-                password: newPassword,
-                password_confirmation: newPasswordConfirmation,
+            const result = await updatePassword({
+                currentPassword,
+                newPassword,
+                newPasswordConfirmation,
             });
+
+            if (!result.ok) {
+                setErrors(result.error);
+                return;
+            }
 
             dispatchToast("password-change", <Toast>Password changed successfully.</Toast>);
 
             onSuccess();
-        } catch (error) {
-            if (!isAxiosError(error) || !error.response || error.response.status !== 422) {
-                throw error;
-            }
-
-            setErrors(error.response.data.errors);
         } finally {
             setBusy(false);
         }
@@ -99,8 +94,8 @@ function PasswordChangeForm({ onSuccess, onCancel }: PasswordChangeFormProps) {
                                 required: true,
                             }}
                         />
-                        {errors.current_password
-                            ? errors.current_password.map((error) => (
+                        {errors.currentPassword
+                            ? errors.currentPassword.map((error) => (
                                   <Text key={error} color="text-warning">
                                       {error}
                                   </Text>
@@ -117,8 +112,8 @@ function PasswordChangeForm({ onSuccess, onCancel }: PasswordChangeFormProps) {
                                 required: true,
                             }}
                         />
-                        {errors.password
-                            ? errors.password.map((error) => (
+                        {errors.newPassword
+                            ? errors.newPassword.map((error) => (
                                   <Text key={error} color="text-warning">
                                       {error}
                                   </Text>

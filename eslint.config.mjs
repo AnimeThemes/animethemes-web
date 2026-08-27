@@ -60,8 +60,13 @@ export default defineConfig([
                     fixStyle: "inline-type-imports",
                 },
             ],
-
             "@typescript-eslint/consistent-type-exports": "error",
+            "@typescript-eslint/array-type": [
+                "error",
+                {
+                    default: "generic",
+                },
+            ],
         },
     },
 ]);

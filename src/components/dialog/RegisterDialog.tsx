@@ -11,7 +11,8 @@ import Switch from "@/components/form/Switch";
 import { SearchFilter } from "@/components/search-filter/SearchFilter";
 import { Text } from "@/components/text/Text";
 import { Busy } from "@/components/utils/Busy";
-import useAuth, { type RegisterErrors } from "@/hooks/useAuth";
+import useAuth, { type RegisterOptions } from "@/hooks/useAuth";
+import type { ValidationError } from "@/utils/errorHandling";
 
 export function RegisterDialog() {
     const [open, setOpen] = useState(false);
@@ -51,21 +52,29 @@ function RegisterForm({ onCancel }: RegisterFormProps) {
     const isValid = username && email && password && passwordConfirmation && isTermsAccepted;
 
     const [isBusy, setBusy] = useState(false);
-    const [errors, setErrors] = useState<RegisterErrors>({});
+    const [errors, setErrors] = useState<ValidationError<RegisterOptions>>({});
 
-    function performRegister(event: SyntheticEvent) {
+    async function performRegister(event: SyntheticEvent) {
         event.preventDefault();
 
         setBusy(true);
 
-        register({
-            setErrors,
-            name: username,
-            email,
-            password,
-            passwordConfirmation,
-            terms: isTermsAccepted,
-        }).finally(() => setBusy(false));
+        try {
+            const result = await register({
+                name: username,
+                email,
+                password,
+                passwordConfirmation,
+                terms: isTermsAccepted,
+            });
+
+            if (!result.ok) {
+                setErrors(result.error);
+                return;
+            }
+        } finally {
+            setBusy(false);
+        }
     }
 
     return (
