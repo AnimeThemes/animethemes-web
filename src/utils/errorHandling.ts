@@ -14,7 +14,7 @@ export function parseValidationError<Data extends object>(error: unknown): Valid
     }
 
     for (const subError of error.errors) {
-        if (subError.extensions?.code !== "VALIDATION") {
+        if (subError.extensions?.code !== 422) {
             continue;
         }
 
