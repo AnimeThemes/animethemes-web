@@ -23,36 +23,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const client = createApolloClient(req);
 
     const {
-        data: { me },
+        data: { permissions },
     } = await client.query({
         query: graphql(`
             query RevalidateApi {
-                me {
-                    permissions {
-                        name
-                    }
-                    roles {
-                        permissions {
-                            name
-                        }
-                    }
+                permissions {
+                    canRevalidatePages
                 }
             }
         `),
     });
 
-    const canRevalidate = (() => {
-        const userPermissions = me?.permissions ?? [];
-        const rolePermissions = me?.roles.flatMap((role) => role.permissions) ?? [];
-        for (const permission of [...userPermissions, ...rolePermissions]) {
-            if (permission.name === "revalidate pages") {
-                return true;
-            }
-        }
-        return false;
-    })();
-
-    if (!canRevalidate) {
+    if (!permissions.canRevalidatePages) {
         return res.status(403).json({ message: "Forbidden." });
     }
 

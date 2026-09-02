@@ -14,11 +14,11 @@ export function parseValidationError<Data extends object>(error: unknown): Valid
     }
 
     for (const subError of error.errors) {
-        if (subError.extensions?.code !== 422) {
+        if (subError.extensions?.code !== 401 && subError.extensions?.code !== 422) {
             continue;
         }
 
-        return subError.extensions.validation as ValidationError<Data>;
+        return (subError.extensions.validation ?? {}) as ValidationError<Data>;
     }
 
     throw error;
