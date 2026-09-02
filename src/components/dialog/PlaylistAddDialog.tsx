@@ -1,8 +1,7 @@
 import { useState } from "react";
-import type { FormEvent, ReactNode } from "react";
+import type { ReactNode, SubmitEvent } from "react";
 import styled from "styled-components";
 
-import { CombinedGraphQLErrors } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
@@ -17,8 +16,10 @@ import { SearchFilter } from "@/components/search-filter/SearchFilter";
 import { Text } from "@/components/text/Text";
 import { Busy } from "@/components/utils/Busy";
 import { graphql } from "@/graphql/generated";
-import type { PlaylistVisibility } from "@/graphql/generated/graphql";
+import type { CreatePlaylistInput, PlaylistVisibility } from "@/graphql/generated/graphql";
 import { PROFILE_PAGE } from "@/pages/profile";
+import { parseValidationError, type ValidationError } from "@/utils/errorHandling";
+import { validate } from "@/utils/validation";
 
 interface PlaylistAddDialogProps {
     trigger?: ReactNode;
@@ -57,19 +58,20 @@ interface PlaylistAddFormProps {
     onCancel(): void;
 }
 
-interface PlaylistAddFormErrors {
-    name?: Array<string>;
-}
-
 function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
-    const [title, setTitle] = useState("");
+    const [name, setName] = useState("");
     const [visibility, setVisibility] = useState<PlaylistVisibility>("PUBLIC");
 
-    const isValid = title !== "";
+    const validation = validate<CreatePlaylistInput>({
+        name: {
+            "Title is required!": name.trim() === "",
+            "Title must be less than 192 characters!": name.trim().length > 192,
+        },
+    });
 
-    const [errors, setErrors] = useState<PlaylistAddFormErrors>({});
+    const [errors, setErrors] = useState<ValidationError<CreatePlaylistInput>>({});
 
-    const [mutate, { loading, error }] = useMutation(
+    const [mutate, { loading }] = useMutation(
         graphql(`
             mutation PlaylistAdd($input: CreatePlaylistInput!) {
                 createPlaylist(input: $input) {
@@ -78,16 +80,6 @@ function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
             }
         `),
         {
-            onCompleted: () => onSuccess(),
-            onError(error) {
-                if (!CombinedGraphQLErrors.is(error)) {
-                    return;
-                }
-
-                if (error.extensions?.code === "VALIDATION") {
-                    setErrors(error.extensions.validation as PlaylistAddFormErrors);
-                }
-            },
             refetchQueries: [
                 // Update the profile page because it includes a list of the user's playlists
                 PROFILE_PAGE,
@@ -95,17 +87,32 @@ function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
         },
     );
 
-    async function submit(event: FormEvent) {
+    async function submit(event: SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
 
-        await mutate({
-            variables: {
-                input: {
-                    name: title,
-                    visibility,
+        if (loading) {
+            return;
+        }
+
+        if (!validation.valid) {
+            setErrors(validation.errors);
+            return;
+        }
+
+        try {
+            await mutate({
+                variables: {
+                    input: {
+                        name,
+                        visibility,
+                    },
                 },
-            },
-        });
+            });
+
+            onSuccess();
+        } catch (error) {
+            setErrors(parseValidationError(error));
+        }
     }
 
     return (
@@ -113,7 +120,7 @@ function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
             <Column style={{ "--gap": "24px" }}>
                 <SearchFilter>
                     <Text>Title</Text>
-                    <Input value={title} onChange={setTitle} />
+                    <Input value={name} onChange={setName} />
                     {errors.name
                         ? errors.name.map((error) => (
                               <Text key={error} color="text-warning">
@@ -137,16 +144,10 @@ function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
                     <Button type="button" variant="silent" onClick={onCancel}>
                         Cancel
                     </Button>
-                    <Button type="submit" variant="primary" disabled={!isValid || loading}>
+                    <Button type="submit" variant="primary" disabled={loading}>
                         <Busy isBusy={loading}>Create Playlist</Busy>
                     </Button>
                 </Row>
-                {error ? (
-                    <Text color="text-warning">
-                        <strong>The playlist could not be created: </strong>
-                        {error.message}
-                    </Text>
-                ) : null}
             </Column>
         </StyledForm>
     );
