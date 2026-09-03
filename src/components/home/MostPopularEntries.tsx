@@ -19,7 +19,7 @@ export function MostPopularEntries() {
                             nodes {
                                 ...VideoSummaryCardEntry
                                 ...VideoMenuEntry
-                                animetheme {
+                                theme {
                                     ...VideoSummaryCardTheme
                                 }
                                 videos {
@@ -46,7 +46,7 @@ export function MostPopularEntries() {
                         <VideoSummaryCard
                             video={entry.videos.nodes[0]}
                             entry={entry}
-                            theme={entry.animetheme}
+                            theme={entry.theme}
                             menu={<VideoMenu video={entry.videos.nodes[0]} entry={entry} />}
                         />
                     ) : null}

@@ -55,7 +55,7 @@ const StyledNomineeGrid = styled.div<{ style: { "--columns": number; "--rows": n
 `;
 
 export const ANIME_AWARDS_PAGE_THEME = graphql(`
-    fragment AnimeAwardsPageTheme on AnimeTheme {
+    fragment AnimeAwardsPageTheme on Theme {
         ...createVideoSlugTheme
         id
         type
@@ -78,7 +78,7 @@ export const ANIME_AWARDS_PAGE_THEME = graphql(`
 `);
 
 export const ANIME_AWARD_PAGE_ENTRY = graphql(`
-    fragment AnimeAwardPageEntry on AnimeThemeEntry {
+    fragment AnimeAwardPageEntry on Entry {
         ...createVideoSlugEntry
         version
         videos {
@@ -377,12 +377,12 @@ export const getStaticProps: GetStaticProps<AnimeAwardsPage> = async () => {
 
     const { data } = await client.query({
         query: graphql(`
-            query AnimeAwardPage($filter: AnimeThemeFilterInput) {
-                animethemeConnection(filter: $filter) {
+            query AnimeAwardPage($filter: ThemeFilterInput) {
+                themeConnection(filter: $filter) {
                     nodes {
                         ...AnimeAwardsPageTheme
                         id
-                        animethemeentries {
+                        entries {
                             ...AnimeAwardPageEntry
                             version
                         }
@@ -397,7 +397,7 @@ export const getStaticProps: GetStaticProps<AnimeAwardsPage> = async () => {
         },
     });
 
-    const themesById = new Map(data.animethemeConnection.nodes.map((theme) => [theme.id, theme]));
+    const themesById = new Map(data.themeConnection.nodes.map((theme) => [theme.id, theme]));
 
     const awards = (event as Array<Award>).map<AwardPopulated>((award) => {
         function populateNominees<T extends Nominee>(nominees: Array<T>): Array<T & HasTheme> {
@@ -414,8 +414,8 @@ export const getStaticProps: GetStaticProps<AnimeAwardsPage> = async () => {
                         theme,
                         entry:
                             (nominee.version !== undefined
-                                ? theme?.animethemeentries.find((entry) => entry.version === nominee.version)
-                                : null) ?? theme?.animethemeentries[0],
+                                ? theme?.entries.find((entry) => entry.version === nominee.version)
+                                : null) ?? theme?.entries[0],
                     },
                 ];
             });

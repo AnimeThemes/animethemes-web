@@ -28,7 +28,7 @@ const query = graphql(`
                     slug
                 }
             }
-            animethemes {
+            themes {
                 data {
                     ...ThemeSummaryCardTheme
                     ...ThemeSummaryCardThemeExpandable
@@ -97,7 +97,7 @@ export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
 
     const {
         anime: { data: animeResults = [] } = {},
-        animethemes: { data: themeResults = [] } = {},
+        themes: { data: themeResults = [] } = {},
         artists: { data: artistResults = [] } = {},
         series: { data: seriesResults = [] } = {},
         studios: { data: studioResults = [] } = {},

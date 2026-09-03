@@ -42,11 +42,11 @@ export const VIDEO_PLAYER_VIDEO = graphql(`
 `);
 
 export const VIDEO_PLAYER_ENTRY = graphql(`
-    fragment VideoPlayerEntry on AnimeThemeEntry {
+    fragment VideoPlayerEntry on Entry {
         ...VideoPlayerBarEntry
         ...createVideoSlugEntry
         id
-        animetheme {
+        theme {
             ...createVideoSlugTheme
             type
             sequence
@@ -111,7 +111,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     const { video: videoFragment, entry: entryFragment } = watchListItem;
     const video = getFragmentData(VIDEO_PLAYER_VIDEO, videoFragment);
     const entry = getFragmentData(VIDEO_PLAYER_ENTRY, entryFragment);
-    const theme = entry.animetheme;
+    const theme = entry.theme;
     const anime = theme.anime;
 
     const videoPagePath = `/anime/${anime.slug}/${createVideoSlug(theme, entry, video)}`;
@@ -167,7 +167,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     const previousWatchListItem = getRelativeWatchListItem(-1);
     const previousVideo = getFragmentData(VIDEO_PLAYER_VIDEO, previousWatchListItem?.video);
     const previousEntry = getFragmentData(VIDEO_PLAYER_ENTRY, previousWatchListItem?.entry);
-    const previousTheme = previousEntry?.animetheme;
+    const previousTheme = previousEntry?.theme;
     const previousAnime = previousTheme?.anime;
 
     const previousVideoPath =
@@ -178,7 +178,7 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
     const nextWatchListItem = getRelativeWatchListItem(1);
     const nextVideo = getFragmentData(VIDEO_PLAYER_VIDEO, nextWatchListItem?.video);
     const nextEntry = getFragmentData(VIDEO_PLAYER_ENTRY, nextWatchListItem?.entry);
-    const nextTheme = nextEntry?.animetheme;
+    const nextTheme = nextEntry?.theme;
     const nextAnime = nextTheme?.anime;
 
     const nextVideoPath =

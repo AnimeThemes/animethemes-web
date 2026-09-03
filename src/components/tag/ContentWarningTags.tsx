@@ -5,7 +5,7 @@ import { Tag } from "@/components/tag/Tag";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
 export const CONTENT_WARNING_TAGS_ENTRY = graphql(`
-    fragment ContentWarningTagsEntry on AnimeThemeEntry {
+    fragment ContentWarningTagsEntry on Entry {
         spoiler
         nsfw
     }

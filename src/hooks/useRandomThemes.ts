@@ -21,10 +21,10 @@ export default function useRandomThemes() {
 
             return themes.map((themeFragment) => {
                 const theme = getFragmentData(WATCH_LIST_ITEM_THEME, themeFragment);
-                const entry = getFragmentData(WATCH_LIST_ITEM_ENTRY, themeFragment.animethemeentries[0]);
+                const entry = getFragmentData(WATCH_LIST_ITEM_ENTRY, themeFragment.entries[0]);
                 const video = getFragmentData(
                     WATCH_LIST_ITEM_VIDEO,
-                    themeFragment.animethemeentries[0].videos.nodes[0],
+                    themeFragment.entries[0].videos.nodes[0],
                 );
 
                 return createWatchListItem(video, entry, theme);

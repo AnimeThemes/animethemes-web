@@ -120,10 +120,10 @@ const StyledGrill = styled.img`
 const Box = styled.div``;
 
 export const FEATURED_THEME_ENTRY = graphql(`
-    fragment FeaturedThemeEntry on AnimeThemeEntry {
+    fragment FeaturedThemeEntry on Entry {
         ...VideoSummaryCardEntry
         ...createVideoSlugEntry
-        animetheme {
+        theme {
             ...createVideoSlugTheme
             ...VideoSummaryCardTheme
             anime {
@@ -178,10 +178,10 @@ export function FeaturedTheme({
     const featuredThemeSummaryCard =
         featuredThemePreview !== FeaturedThemePreview.DISABLED ? (
             <StyledCenter>
-                {card ?? <VideoSummaryCard theme={entry.animetheme} entry={entry} video={video} />}
+                {card ?? <VideoSummaryCard theme={entry.theme} entry={entry} video={video} />}
             </StyledCenter>
         ) : (
-            (card ?? <VideoSummaryCard theme={entry.animetheme} entry={entry} video={video} />)
+            (card ?? <VideoSummaryCard theme={entry.theme} entry={entry} video={video} />)
         );
 
     return (
@@ -207,11 +207,11 @@ function FeaturedThemeBackground({ entry, video, onPlay }: FeaturedThemeBackgrou
     const [featuredThemePreview] = useSetting(FeaturedThemePreview);
     const { canPlayVideo } = useCompatability();
     const [fallbackToCover, setFallbackToCover] = useState(false);
-    const { smallCover: featuredCover } = extractImages(entry.animetheme.anime.images.nodes);
+    const { smallCover: featuredCover } = extractImages(entry.theme.anime.images.nodes);
 
-    const videoSlug = createVideoSlug(entry.animetheme, entry, video);
+    const videoSlug = createVideoSlug(entry.theme, entry, video);
 
-    const href = `/anime/${entry.animetheme.anime.slug}/${videoSlug}`;
+    const href = `/anime/${entry.theme.anime.slug}/${videoSlug}`;
 
     if (featuredThemePreview === FeaturedThemePreview.VIDEO && canPlayVideo && !fallbackToCover) {
         return (

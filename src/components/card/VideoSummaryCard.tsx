@@ -60,14 +60,14 @@ export const VIDEO_SUMMARY_CARD_VIDEO = graphql(`
 `);
 
 export const VIDEO_SUMMARY_CARD_ENTRY = graphql(`
-    fragment VideoSummaryCardEntry on AnimeThemeEntry {
+    fragment VideoSummaryCardEntry on Entry {
         ...createVideoSlugEntry
         id
     }
 `);
 
 export const VIDEO_SUMMARY_CARD_THEME = graphql(`
-    fragment VideoSummaryCardTheme on AnimeTheme {
+    fragment VideoSummaryCardTheme on Theme {
         ...createVideoSlugTheme
         id
         type

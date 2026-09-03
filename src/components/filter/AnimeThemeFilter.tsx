@@ -9,7 +9,7 @@ import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated
 import { either, themeGroupComparator, themeIndexComparator, themeTypeComparator } from "@/utils/comparators";
 
 export const ANIME_THEME_FILTER_THEME = graphql(`
-    fragment AnimeThemeFilterTheme on AnimeTheme {
+    fragment AnimeThemeFilterTheme on Theme {
         ...ThemeDetailCardTheme
         id
         type

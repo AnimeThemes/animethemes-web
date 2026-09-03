@@ -18,13 +18,13 @@ export const VIDEO_BUTTON_ANIME = graphql(`
 `);
 
 export const VIDEO_BUTTON_THEME = graphql(`
-    fragment VideoButtonTheme on AnimeTheme {
+    fragment VideoButtonTheme on Theme {
         ...createVideoSlugTheme
     }
 `);
 
 export const VIDEO_BUTTON_ENTRY = graphql(`
-    fragment VideoButtonEntry on AnimeThemeEntry {
+    fragment VideoButtonEntry on Entry {
         ...createVideoSlugEntry
     }
 `);
