@@ -15,12 +15,12 @@ import PlayerContext, {
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
 export const VIDEO_MENU_ENTRY = graphql(`
-    fragment VideoMenuEntry on AnimeThemeEntry {
+    fragment VideoMenuEntry on Entry {
         ...createVideoSlugEntry
         ...PlaylistTrackAddDialogEntry
         ...WatchListItemEntry
         id
-        animetheme {
+        theme {
             ...WatchListItemTheme
             ...createVideoSlugTheme
             id
@@ -98,7 +98,7 @@ export function VideoMenu({ entry: entryFragment, video: videoFragment }: VideoM
                                 addWatchListItem(
                                     getFragmentData(WATCH_LIST_ITEM_VIDEO, video),
                                     getFragmentData(WATCH_LIST_ITEM_ENTRY, entry),
-                                    getFragmentData(WATCH_LIST_ITEM_THEME, entry.animetheme),
+                                    getFragmentData(WATCH_LIST_ITEM_THEME, entry.theme),
                                 )
                             }
                         >
@@ -110,7 +110,7 @@ export function VideoMenu({ entry: entryFragment, video: videoFragment }: VideoM
                                 addWatchListItemNext(
                                     getFragmentData(WATCH_LIST_ITEM_VIDEO, video),
                                     getFragmentData(WATCH_LIST_ITEM_ENTRY, entry),
-                                    getFragmentData(WATCH_LIST_ITEM_THEME, entry.animetheme),
+                                    getFragmentData(WATCH_LIST_ITEM_THEME, entry.theme),
                                 )
                             }
                         >

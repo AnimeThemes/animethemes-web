@@ -92,8 +92,8 @@ const StyledKeyHintSpace = styled(StyledKeyHint)`
 
 export function VideoPlayerOverlay({ anime: animeFragment, themeIndex, entryIndex, videoIndex }: VideoPageProps) {
     const anime = getAnimeFromVideoPageFragment(animeFragment);
-    const theme = anime.animethemes[themeIndex];
-    const entry = theme.animethemeentries[entryIndex];
+    const theme = anime.themes[themeIndex];
+    const entry = theme.entries[entryIndex];
     const video = entry.videos.nodes[videoIndex];
 
     const { watchList, setWatchList, currentWatchListItem } = useContext(PlayerContext);
@@ -109,7 +109,7 @@ export function VideoPlayerOverlay({ anime: animeFragment, themeIndex, entryInde
 
     const { updateAudioMode } = context;
 
-    const otherEntries = theme.animethemeentries
+    const otherEntries = theme.entries
         .map((otherEntry) => {
             const videos = otherEntry.videos.nodes;
 

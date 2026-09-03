@@ -19,11 +19,11 @@ export function RecentlyAddedVideos() {
                             nodes {
                                 ...VideoSummaryCardVideo
                                 ...VideoMenuVideo
-                                animethemeentries {
+                                entries {
                                     nodes {
                                         ...VideoSummaryCardEntry
                                         ...VideoMenuEntry
-                                        animetheme {
+                                        theme {
                                             ...VideoSummaryCardTheme
                                         }
                                     }
@@ -45,9 +45,9 @@ export function RecentlyAddedVideos() {
                     {video ? (
                         <VideoSummaryCard
                             video={video}
-                            entry={video.animethemeentries.nodes[0]}
-                            theme={video.animethemeentries.nodes[0].animetheme}
-                            menu={<VideoMenu video={video} entry={video.animethemeentries.nodes[0]} />}
+                            entry={video.entries.nodes[0]}
+                            theme={video.entries.nodes[0].theme}
+                            menu={<VideoMenu video={video} entry={video.entries.nodes[0]} />}
                         />
                     ) : null}
                 </Skeleton>

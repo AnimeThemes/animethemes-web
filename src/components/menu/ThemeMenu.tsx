@@ -15,7 +15,7 @@ import PlayerContext, {
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
 export const THEME_MENU_THEME = graphql(`
-    fragment ThemeMenuTheme on AnimeTheme {
+    fragment ThemeMenuTheme on Theme {
         ...createVideoSlugTheme
         ...WatchListItemTheme
         id
@@ -39,7 +39,7 @@ export const THEME_MENU_THEME = graphql(`
         song {
             ...SongTitleWithArtistsSong
         }
-        animethemeentries {
+        entries {
             ...createVideoSlugEntry
             ...PlaylistTrackAddDialogEntry
             ...WatchListItemEntry
@@ -69,7 +69,7 @@ export function ThemeMenu({ theme: themeFragment }: ThemeMenuProps) {
 
     const { watchList, addWatchListItem, addWatchListItemNext } = useContext(PlayerContext);
 
-    const entry = theme.animethemeentries[0];
+    const entry = theme.entries[0];
     const video = entry?.videos.nodes[0];
 
     if (!entry || !video) {
@@ -79,7 +79,7 @@ export function ThemeMenu({ theme: themeFragment }: ThemeMenuProps) {
     // Flip the structure on it's head, because we need entry as the root object here.
     const entryFlipped = {
         ...entry,
-        animetheme: theme,
+        theme: theme,
     };
 
     return (

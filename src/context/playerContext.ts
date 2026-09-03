@@ -14,7 +14,7 @@ export const WATCH_LIST_ITEM_VIDEO = graphql(`
 `);
 
 export const WATCH_LIST_ITEM_ENTRY = graphql(`
-    fragment WatchListItemEntry on AnimeThemeEntry {
+    fragment WatchListItemEntry on Entry {
         ...VideoPlayerEntry
         ...VideoSummaryCardEntry
         ...createVideoSlugEntry
@@ -22,7 +22,7 @@ export const WATCH_LIST_ITEM_ENTRY = graphql(`
 `);
 
 export const WATCH_LIST_ITEM_THEME = graphql(`
-    fragment WatchListItemTheme on AnimeTheme {
+    fragment WatchListItemTheme on Theme {
         ...VideoSummaryCardTheme
         ...createVideoSlugTheme
         type

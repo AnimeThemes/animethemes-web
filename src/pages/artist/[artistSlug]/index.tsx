@@ -97,14 +97,14 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                         }
                     }
                 }
-                animethemes {
+                themes {
                     ...ThemeSummaryCardTheme
                     ...ThemeSummaryCardThemeExpandable
                     ...WatchListItemTheme
                     id
                     type
                     sequence
-                    animethemeentries {
+                    entries {
                         ...WatchListItemEntry
                         videos {
                             nodes {
@@ -162,14 +162,14 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                         }
                     }
                 }
-                animethemes {
+                themes {
                     ...ThemeSummaryCardTheme
                     ...ThemeSummaryCardThemeExpandable
                     ...WatchListItemTheme
                     id
                     type
                     sequence
-                    animethemeentries {
+                    entries {
                         ...WatchListItemEntry
                         videos {
                             nodes {
@@ -353,7 +353,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
         ) =>
             performances.filter(
                 (performance) =>
-                    performance.song?.animethemes[0]?.animethemeentries[0] &&
+                    performance.song?.themes[0]?.entries[0] &&
                     (filterPerformedAs === null ||
                         (filterPerformedAs === artist.name.main &&
                             !performance.as &&
@@ -370,7 +370,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
 
     const toSortedThemes = useCallback(
         (performances: Array<Performance>) =>
-            performances.flatMap((performance) => performance.song.animethemes).sort(getComparator(sortBy)),
+            performances.flatMap((performance) => performance.song.themes).sort(getComparator(sortBy)),
         [sortBy],
     );
 
@@ -618,7 +618,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
     );
 }
 interface ArtistThemesProps {
-    themes: Performance["song"]["animethemes"];
+    themes: Performance["song"]["themes"];
     artist:
         | ResultOf<typeof ARTIST_DETAIL_PAGE_ARTIST>
         | ResultOf<typeof ARTIST_DETAIL_PAGE_ARTIST>["memberPerformances"][number]["artist"];
@@ -631,8 +631,8 @@ const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemes
         const watchList = themes.flatMap((themeFragment, index) => {
             const entryFragment =
                 initiatingThemeIndex == index
-                    ? themeFragment.animethemeentries[entryIndex]
-                    : themeFragment.animethemeentries[0];
+                    ? themeFragment.entries[entryIndex]
+                    : themeFragment.entries[0];
             const videoFragment =
                 initiatingThemeIndex == index
                     ? entryFragment?.videos.nodes[videoIndex]

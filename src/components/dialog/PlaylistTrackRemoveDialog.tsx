@@ -33,10 +33,10 @@ export const PLAYLIST_TRACK_REMOVE_DIALOG_VIDEO = graphql(`
 `);
 
 export const PLAYLIST_TRACK_REMOVE_DIALOG_ENTRY = graphql(`
-    fragment PlaylistTrackRemoveDialogEntry on AnimeThemeEntry {
+    fragment PlaylistTrackRemoveDialogEntry on Entry {
         ...VideoSummaryCardEntry
         ...PlaylistTrackRemoveToastEntry
-        animetheme {
+        theme {
             ...VideoSummaryCardTheme
         }
     }
@@ -150,7 +150,7 @@ function PlaylistTrackRemoveForm({
                 </Text>
                 ?
             </Text>
-            <VideoSummaryCard video={video} entry={entry} theme={entry.animetheme} menu={null} />
+            <VideoSummaryCard video={video} entry={entry} theme={entry.theme} menu={null} />
             <Row $wrap style={{ "--gap": "8px", "--justify-content": "flex-end" }}>
                 <Button variant="silent" onClick={onCancel}>
                     Close

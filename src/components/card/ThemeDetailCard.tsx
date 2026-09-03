@@ -43,7 +43,7 @@ const StyledVideoList = styled(Row)`
 `;
 
 export const THEME_DETAIL_CARD_THEME = graphql(`
-    fragment ThemeDetailCardTheme on AnimeTheme {
+    fragment ThemeDetailCardTheme on Theme {
         ...ThemeMenuTheme
         ...VideoButtonTheme
         type
@@ -63,7 +63,7 @@ export const THEME_DETAIL_CARD_THEME = graphql(`
             ...SongTitleSong
             ...PerformancesSong
         }
-        animethemeentries {
+        entries {
             ...ThemeEntryTagsEntry
             ...VideoButtonEntry
             version
@@ -103,7 +103,7 @@ export function ThemeDetailCard({ theme: themeFragment }: ThemeDetailCardProps) 
                 </Text>
                 <ThemeMenu theme={theme} />
             </StyledRow>
-            {[...theme.animethemeentries].sort(entryVersionComparator).map((entry) => (
+            {[...theme.entries].sort(entryVersionComparator).map((entry) => (
                 <StyledRow key={entry.version ?? 0}>
                     <Text variant="small" color="text-muted">
                         v{entry.version ?? 1}

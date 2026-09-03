@@ -10,7 +10,7 @@ import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortB
 import { SearchFilterThemeType } from "@/components/search-filter/SearchFilterThemeType";
 import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
-import type { SearchAnimeThemeSort, ThemeType } from "@/graphql/generated/graphql";
+import type { SearchThemeSort, ThemeType } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
 
 interface Filter {
@@ -29,11 +29,11 @@ const query = graphql(`
     query SearchTheme(
         $query: String!
         $page: Int!
-        $filter: SearchAnimeThemeFilterInput
-        $sort: [SearchAnimeThemeSort!]
+        $filter: SearchThemeFilterInput
+        $sort: [SearchThemeSort!]
     ) {
         search(search: $query, first: 15, page: $page) {
-            animethemes(filter: $filter, sort: $sort) {
+            themes(filter: $filter, sort: $sort) {
                 data {
                     ...ThemeSummaryCardTheme
                     ...ThemeSummaryCardThemeExpandable
@@ -64,7 +64,7 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
             ...(filter.firstLetter ? { songTitleRomajiPrefix: filter.firstLetter } : {}),
             ...(filter.type ? { type: filter.type } : {}),
         },
-        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SearchAnimeThemeSort> } : {}),
+        ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SearchThemeSort> } : {}),
     };
 
     const {
@@ -88,7 +88,7 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
                 },
             });
 
-            return data.search.animethemes;
+            return data.search.themes;
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null),
