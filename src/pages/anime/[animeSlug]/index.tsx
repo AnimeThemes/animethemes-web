@@ -82,7 +82,7 @@ export const ANIME_DETAIL_PAGE_ANIME = graphql(`
                 ...extractImagesImage
             }
         }
-        animethemes {
+        themes {
             ...AnimeThemeFilterTheme
         }
     }
@@ -216,10 +216,10 @@ export default function AnimeDetailPage({ anime: animeFragment, synopsisMarkdown
                     )}
                     <Text variant="h2">
                         Themes
-                        <Text color="text-disabled"> ({anime.animethemes.length || 0})</Text>
+                        <Text color="text-disabled"> ({anime.themes.length || 0})</Text>
                     </Text>
-                    {anime.animethemes.length ? (
-                        <AnimeThemeFilter themes={anime.animethemes} />
+                    {anime.themes.length ? (
+                        <AnimeThemeFilter themes={anime.themes} />
                     ) : (
                         <Text as="p">There are no themes for this anime, yet.</Text>
                     )}

@@ -123,12 +123,12 @@ const RANK_DESC = "rank-desc";
 
 const comparators = {
     [UNSORTED]: () => 0,
-    [SONG_A_Z]: sortTransformed(getComparator(SONG_A_Z), (track) => track.animethemeentry.animetheme),
-    [SONG_Z_A]: sortTransformed(getComparator(SONG_Z_A), (track) => track.animethemeentry.animetheme),
-    [ANIME_A_Z]: sortTransformed(getComparator(ANIME_A_Z), (track) => track.animethemeentry.animetheme?.anime),
-    [ANIME_Z_A]: sortTransformed(getComparator(ANIME_Z_A), (track) => track.animethemeentry.animetheme?.anime),
-    [ANIME_OLD_NEW]: sortTransformed(getComparator(ANIME_OLD_NEW), (track) => track.animethemeentry.animetheme?.anime),
-    [ANIME_NEW_OLD]: sortTransformed(getComparator(ANIME_NEW_OLD), (track) => track.animethemeentry.animetheme?.anime),
+    [SONG_A_Z]: sortTransformed(getComparator(SONG_A_Z), (track) => track.entry.theme),
+    [SONG_Z_A]: sortTransformed(getComparator(SONG_Z_A), (track) => track.entry.theme),
+    [ANIME_A_Z]: sortTransformed(getComparator(ANIME_A_Z), (track) => track.entry.theme?.anime),
+    [ANIME_Z_A]: sortTransformed(getComparator(ANIME_Z_A), (track) => track.entry.theme?.anime),
+    [ANIME_OLD_NEW]: sortTransformed(getComparator(ANIME_OLD_NEW), (track) => track.entry.theme?.anime),
+    [ANIME_NEW_OLD]: sortTransformed(getComparator(ANIME_NEW_OLD), (track) => track.entry.theme?.anime),
     [RANK_ASC]: (a, b) => a.rank - b.rank,
     [RANK_DESC]: (a, b) => a.rank - b.rank,
 } satisfies Record<string, Comparator<ResultOf<typeof PLAYLIST_DETAIL_PAGE_TRACK> & { rank: number }>>;
@@ -159,13 +159,13 @@ export const PLAYLIST_DETAIL_PAGE_TRACK = graphql(`
             ...PlaylistTrackRemoveDialogVideo
             id
         }
-        animethemeentry {
+        entry {
             ...VideoSummaryCardEntry
             ...WatchListItemEntry
             ...FeaturedThemeEntry
             ...PlaylistTrackAddDialogEntry
             ...PlaylistTrackRemoveDialogEntry
-            animetheme {
+            theme {
                 ...VideoSummaryCardTheme
                 ...WatchListItemTheme
                 anime {
@@ -271,8 +271,8 @@ export default function PlaylistDetailPage({
             const watchList = tracksSorted.map((track) =>
                 createWatchListItem(
                     getFragmentData(WATCH_LIST_ITEM_VIDEO, track.video),
-                    getFragmentData(WATCH_LIST_ITEM_ENTRY, track.animethemeentry),
-                    getFragmentData(WATCH_LIST_ITEM_THEME, track.animethemeentry.animetheme),
+                    getFragmentData(WATCH_LIST_ITEM_ENTRY, track.entry),
+                    getFragmentData(WATCH_LIST_ITEM_THEME, track.entry.theme),
                 ),
             );
             setWatchList(watchList, true);
@@ -290,8 +290,8 @@ export default function PlaylistDetailPage({
             tracksSorted.map((track) =>
                 createWatchListItem(
                     getFragmentData(WATCH_LIST_ITEM_VIDEO, track.video),
-                    getFragmentData(WATCH_LIST_ITEM_ENTRY, track.animethemeentry),
-                    getFragmentData(WATCH_LIST_ITEM_THEME, track.animethemeentry.animetheme),
+                    getFragmentData(WATCH_LIST_ITEM_ENTRY, track.entry),
+                    getFragmentData(WATCH_LIST_ITEM_THEME, track.entry.theme),
                 ),
             ),
         );
@@ -340,7 +340,7 @@ export default function PlaylistDetailPage({
     const coverImageItems = useMemo(
         () =>
             tracks.flatMap((track) => {
-                const anime = track.animethemeentry.animetheme?.anime;
+                const anime = track.entry.theme?.anime;
 
                 return anime ? [{ ...extractImages(anime.images.nodes), name: anime.title.romaji }] : [];
             }),
@@ -397,7 +397,7 @@ export default function PlaylistDetailPage({
                     ) : null}
                     {isRanking && topRankedTrack ? (
                         <FeaturedTheme
-                            entry={tracks[0].animethemeentry}
+                            entry={tracks[0].entry}
                             video={tracks[0].video}
                             hasGrill={false}
                             card={
@@ -660,8 +660,8 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
         <StyledSummaryCardWrapper key={track.id}>
             <VideoSummaryCard
                 video={track.video}
-                entry={track.animethemeentry}
-                theme={track.animethemeentry.animetheme}
+                entry={track.entry}
+                theme={track.entry.theme}
                 onPlay={() => onPlay()}
                 menu={
                     <Menu modal={false}>
@@ -673,7 +673,7 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
                         <MenuContent>
                             <PlaylistTrackAddDialog
                                 video={track.video}
-                                entry={track.animethemeentry}
+                                entry={track.entry}
                                 trigger={
                                     <MenuItem onSelect={(event) => event.preventDefault()}>
                                         <Icon icon={faPlus} color="text-disabled" />
@@ -688,10 +688,10 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
                                         onSelect={() =>
                                             addWatchListItem(
                                                 getFragmentData(WATCH_LIST_ITEM_VIDEO, track.video),
-                                                getFragmentData(WATCH_LIST_ITEM_ENTRY, track.animethemeentry),
+                                                getFragmentData(WATCH_LIST_ITEM_ENTRY, track.entry),
                                                 getFragmentData(
                                                     WATCH_LIST_ITEM_THEME,
-                                                    track.animethemeentry.animetheme,
+                                                    track.entry.theme,
                                                 ),
                                             )
                                         }
@@ -703,10 +703,10 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
                                         onSelect={() =>
                                             addWatchListItemNext(
                                                 getFragmentData(WATCH_LIST_ITEM_VIDEO, track.video),
-                                                getFragmentData(WATCH_LIST_ITEM_ENTRY, track.animethemeentry),
+                                                getFragmentData(WATCH_LIST_ITEM_ENTRY, track.entry),
                                                 getFragmentData(
                                                     WATCH_LIST_ITEM_THEME,
-                                                    track.animethemeentry.animetheme,
+                                                    track.entry.theme,
                                                 ),
                                             )
                                         }
@@ -723,7 +723,7 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
                                         playlist={playlist}
                                         trackId={track.id}
                                         video={track.video}
-                                        entry={track.animethemeentry}
+                                        entry={track.entry}
                                         trigger={
                                             <MenuItem onSelect={(event) => event.preventDefault()}>
                                                 <Icon icon={faTrash} color="text-disabled" />

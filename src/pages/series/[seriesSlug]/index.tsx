@@ -50,10 +50,10 @@ export const SERIES_DETAIL_PAGE_SERIES = graphql(`
                 slug
                 year
                 season
-                animethemes {
+                themes {
                     type
                     sequence
-                    animethemeentries {
+                    entries {
                         version
                         videos {
                             nodes {

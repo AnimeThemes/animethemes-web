@@ -94,9 +94,9 @@ export const VIDEO_PLAYER_BAR_VIDEO = graphql(`
 `);
 
 export const VIDEO_PLAYER_BAR_ENTRY = graphql(`
-    fragment VideoPlayerBarEntry on AnimeThemeEntry {
+    fragment VideoPlayerBarEntry on Entry {
         #            ...PlaylistTrackAddDialogEntry
-        animetheme {
+        theme {
             type
             sequence
             song {
@@ -141,7 +141,7 @@ export function VideoPlayerBar() {
     } = context;
 
     const entry = getFragmentData(VIDEO_PLAYER_BAR_ENTRY, entryFragment);
-    const theme = entry.animetheme;
+    const theme = entry.theme;
     const anime = theme.anime;
 
     const { clearWatchList } = useContext(PlayerContext);

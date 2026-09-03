@@ -223,8 +223,8 @@ export const getStaticProps: GetStaticProps<BracketPageProps, BracketPageParams>
 
     const { data } = await client.query({
         query: graphql(`
-            query BracketPage($filter: AnimeThemeFilterInput) {
-                animethemeConnection(filter: $filter) {
+            query BracketPage($filter: ThemeFilterInput) {
+                themeConnection(filter: $filter) {
                     nodes {
                         id
                         ...BracketThemeSummaryCardTheme
@@ -239,7 +239,7 @@ export const getStaticProps: GetStaticProps<BracketPageProps, BracketPageParams>
         },
     });
 
-    const themesById = new Map(data.animethemeConnection.nodes.map((theme) => [theme.id, theme]));
+    const themesById = new Map(data.themeConnection.nodes.map((theme) => [theme.id, theme]));
 
     function populateRound(round: BracketRound): BracketRoundWithThemes {
         return {

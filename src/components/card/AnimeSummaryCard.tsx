@@ -70,7 +70,7 @@ export const ANIME_SUMMARY_CARD_ANIME = graphql(`
         season
         seasonLocalized
         formatLocalized
-        animethemes {
+        themes {
             group {
                 name
                 slug
@@ -86,7 +86,7 @@ export const ANIME_SUMMARY_CARD_ANIME = graphql(`
 
 export const ANIME_SUMMARY_CARD_ANIME_EXPANDABLE = graphql(`
     fragment AnimeSummaryCardAnimeExpandable on Anime {
-        animethemes {
+        themes {
             ...ThemeTableTheme
             group {
                 name
@@ -120,7 +120,7 @@ export function AnimeSummaryCard({ anime: animeFragment, expandable, ...props }:
         <SummaryCard.Description>
             <span>{anime.formatLocalized ?? "Anime"}</span>
             {!!anime.year && <TextLink href={premiereLink}>{premiere}</TextLink>}
-            <span>{anime.animethemes.length} themes</span>
+            <span>{anime.themes.length} themes</span>
         </SummaryCard.Description>
     );
 
@@ -180,7 +180,7 @@ interface AnimeSummaryCardCollapseProps {
 
 function AnimeSummaryCardCollapse({ anime, isExpanded }: AnimeSummaryCardCollapseProps) {
     const groups = uniqBy(
-        anime.animethemes.map((theme) => theme.group),
+        anime.themes.map((theme) => theme.group),
         (group) => group?.slug,
     );
 
@@ -190,7 +190,7 @@ function AnimeSummaryCardCollapse({ anime, isExpanded }: AnimeSummaryCardCollaps
                 {groups.map((group) => (
                     <Fragment key={group?.slug}>
                         {!!group && <Text variant="h2">{group.name}</Text>}
-                        <ThemeTable themes={anime.animethemes.filter((theme) => theme.group?.slug === group?.slug)} />
+                        <ThemeTable themes={anime.themes.filter((theme) => theme.group?.slug === group?.slug)} />
                     </Fragment>
                 ))}
             </StyledThemeGroupContainer>

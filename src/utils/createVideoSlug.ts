@@ -3,7 +3,7 @@ import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated
 import { getAnimeFromVideoPageFragment, type VideoPageProps } from "@/pages/anime/[animeSlug]/[videoSlug]";
 
 export const CREATE_VIDEO_SLUG_THEME = graphql(`
-    fragment createVideoSlugTheme on AnimeTheme {
+    fragment createVideoSlugTheme on Theme {
         type
         sequence
         group {
@@ -13,7 +13,7 @@ export const CREATE_VIDEO_SLUG_THEME = graphql(`
 `);
 
 export const CREATE_VIDEO_SLUG_ENTRY = graphql(`
-    fragment createVideoSlugEntry on AnimeThemeEntry {
+    fragment createVideoSlugEntry on Entry {
         version
     }
 `);
@@ -62,8 +62,8 @@ export function getVideoSlugByProps(pageProps: object): string | null {
         const { anime: animeFragment, themeIndex, entryIndex, videoIndex } = pageProps;
         const anime = getAnimeFromVideoPageFragment(animeFragment);
 
-        const theme = anime.animethemes[themeIndex];
-        const entry = theme.animethemeentries[entryIndex];
+        const theme = anime.themes[themeIndex];
+        const entry = theme.entries[entryIndex];
         const video = entry.videos.nodes[videoIndex];
 
         return `${anime.slug}/${createVideoSlug(theme, entry, video)}`;

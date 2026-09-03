@@ -67,7 +67,7 @@ const Grid = styled.div<{ $columns: number }>`
 
 export const HOME_PAGE_FEATURED_THEME = graphql(`
     fragment HomePageFeaturedTheme on CurrentFeaturedTheme {
-        animethemeentry {
+        entry {
             ...FeaturedThemeEntry
         }
         video {
@@ -100,10 +100,10 @@ export default function HomePage({ featuredTheme: featuredThemeFragment, announc
 
             {announcementSources.length > 0 ? <AnnouncementCard announcementSource={announcementSources[0]} /> : null}
 
-            {featuredTheme && featuredTheme.animethemeentry && featuredTheme.video ? (
+            {featuredTheme && featuredTheme.entry && featuredTheme.video ? (
                 <>
                     <Text variant="h2">Featured Theme</Text>
-                    <FeaturedTheme entry={featuredTheme.animethemeentry} video={featuredTheme.video} />
+                    <FeaturedTheme entry={featuredTheme.entry} video={featuredTheme.video} />
                 </>
             ) : null}
 

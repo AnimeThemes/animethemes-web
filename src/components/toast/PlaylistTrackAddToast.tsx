@@ -14,8 +14,8 @@ export const PLAYLIST_TRACK_ADD_TOAST_PLAYLIST = graphql(`
 `);
 
 export const PLAYLIST_TRACK_ADD_TOAST_ENTRY = graphql(`
-    fragment PlaylistTrackAddToastEntry on AnimeThemeEntry {
-        animetheme {
+    fragment PlaylistTrackAddToastEntry on Entry {
+        theme {
             song {
                 ...SongTitleSong
             }
@@ -39,7 +39,7 @@ export function PlaylistTrackAddToast({
         <Toast as={Link} href={`/playlist/${playlist.id}`} $hoverable>
             <Row $wrap style={{ "--justify-content": "space-between", "--gap": "8px" }}>
                 <span>
-                    <SongTitle song={entry.animetheme.song} /> was added to{" "}
+                    <SongTitle song={entry.theme.song} /> was added to{" "}
                     <Text color="text-primary">{playlist.name}</Text>!
                 </span>
                 <Text color="text-disabled">(Click to view playlist.)</Text>

@@ -12,7 +12,7 @@ import { either, themeIndexComparator, themeTypeComparator } from "@/utils/compa
 import createVideoSlug from "@/utils/createVideoSlug";
 
 export const THEME_TABLE_THEME = graphql(`
-    fragment ThemeTableTheme on AnimeTheme {
+    fragment ThemeTableTheme on Theme {
         ...createVideoSlugTheme
         id
         type
@@ -20,7 +20,7 @@ export const THEME_TABLE_THEME = graphql(`
         anime {
             slug
         }
-        animethemeentries {
+        entries {
             ...createVideoSlugEntry
             ...EpisodeTagEntry
             ...ContentWarningTagsEntry
@@ -48,11 +48,11 @@ export function ThemeTable({ themes: themesFragment, onPlay }: ThemeTableProps) 
 
     const rows = themes
         .filter(
-            (theme) => theme.anime && theme.animethemeentries.length && theme.animethemeentries[0]?.videos.nodes.length,
+            (theme) => theme.anime && theme.entries.length && theme.entries[0]?.videos.nodes.length,
         )
         .sort(either(themeTypeComparator).or(themeIndexComparator).chain())
         .map((theme) =>
-            theme.animethemeentries.map((entry, entryIndex) =>
+            theme.entries.map((entry, entryIndex) =>
                 entry.videos.nodes.map((video, videoIndex) => {
                     const anime = theme.anime as NonNullable<(typeof theme)["anime"]>;
                     const videoSlug = createVideoSlug(theme, entry, video);

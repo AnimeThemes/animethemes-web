@@ -33,7 +33,7 @@ const StyledRank = styled(Text)`
 `;
 
 export const BRACKET_THEME_SUMMARY_CARD_THEME = graphql(`
-    fragment BracketThemeSummaryCardTheme on AnimeTheme {
+    fragment BracketThemeSummaryCardTheme on Theme {
         ...createVideoSlugTheme
         ...ThemeMenuTheme
         type
@@ -56,7 +56,7 @@ export const BRACKET_THEME_SUMMARY_CARD_THEME = graphql(`
         song {
             ...SongTitleWithArtistsSong
         }
-        animethemeentries {
+        entries {
             ...createVideoSlugEntry
             videos {
                 nodes {
@@ -105,7 +105,7 @@ export function BracketThemeSummaryCard({
     let description: ReactNode = character.source;
 
     if (theme?.anime) {
-        const entry = theme.animethemeentries?.[0];
+        const entry = theme.entries?.[0];
         const video = entry?.videos.nodes[0];
         const videoSlug = createVideoSlug(theme, entry, video);
 

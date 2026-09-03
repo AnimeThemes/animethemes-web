@@ -99,7 +99,7 @@ export default function MyApp({ Component, pageProps }: AppProps<PageProps>) {
         if (pageProps.isVideoPage && watchList.length) {
             const { anime: animeFragment, themeIndex, entryIndex, videoIndex } = pageProps;
             const anime = getAnimeFromVideoPageFragment(animeFragment);
-            const video = anime.animethemes[themeIndex].animethemeentries[entryIndex].videos.nodes[videoIndex];
+            const video = anime.themes[themeIndex].entries[entryIndex].videos.nodes[videoIndex];
             return watchList.find((item) => item.video.id === video.id)?.watchListId ?? null;
         }
         return null;
@@ -182,7 +182,7 @@ export default function MyApp({ Component, pageProps }: AppProps<PageProps>) {
         if (currentVideoSlug !== watchListVideoSlug) {
             const { anime: animeFragment, themeIndex, entryIndex, videoIndex } = pageProps;
             const anime = getAnimeFromVideoPageFragment(animeFragment);
-            const video = anime.animethemes[themeIndex].animethemeentries[entryIndex].videos.nodes[videoIndex];
+            const video = anime.themes[themeIndex].entries[entryIndex].videos.nodes[videoIndex];
 
             const watchList: Array<WatchListItem> = createDefaultWatchList(pageProps);
             setWatchList(watchList);
@@ -338,10 +338,10 @@ function createDefaultWatchList(pageProps: VideoPageProps): Array<WatchListItem>
     const { anime: animeFragment, themeIndex, entryIndex, videoIndex } = pageProps;
     const anime = getAnimeFromVideoPageFragment(animeFragment);
 
-    return anime.animethemes
+    return anime.themes
         .flatMap((themeFragment, index) => {
             const entryFragment =
-                themeIndex === index ? themeFragment.animethemeentries[entryIndex] : themeFragment.animethemeentries[0];
+                themeIndex === index ? themeFragment.entries[entryIndex] : themeFragment.entries[0];
             const videoFragment =
                 themeIndex === index ? entryFragment?.videos.nodes[videoIndex] : entryFragment?.videos.nodes[0];
 
@@ -349,7 +349,7 @@ function createDefaultWatchList(pageProps: VideoPageProps): Array<WatchListItem>
             const entry = getFragmentData(WATCH_LIST_ITEM_ENTRY, entryFragment);
             const video = getFragmentData(WATCH_LIST_ITEM_VIDEO, videoFragment);
 
-            if (!entry || !video || theme.group?.slug !== anime.animethemes[themeIndex].group?.slug) {
+            if (!entry || !video || theme.group?.slug !== anime.themes[themeIndex].group?.slug) {
                 return [];
             }
 
