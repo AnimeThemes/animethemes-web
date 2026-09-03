@@ -58,7 +58,7 @@ const StyledPerformedWith = styled.div`
 `;
 
 export const THEME_SUMMARY_CARD_THEME = graphql(`
-    fragment ThemeSummaryCardTheme on AnimeTheme {
+    fragment ThemeSummaryCardTheme on Theme {
         ...createVideoSlugTheme
         ...ThemeMenuTheme
         type
@@ -92,7 +92,7 @@ export const THEME_SUMMARY_CARD_THEME = graphql(`
                 }
             }
         }
-        animethemeentries {
+        entries {
             ...createVideoSlugEntry
             videos {
                 nodes {
@@ -111,7 +111,7 @@ export const THEME_SUMMARY_CARD_ARTIST = graphql(`
 `);
 
 export const THEME_SUMMARY_CARD_THEME_EXPANDABLE = graphql(`
-    fragment ThemeSummaryCardThemeExpandable on AnimeTheme {
+    fragment ThemeSummaryCardThemeExpandable on Theme {
         ...ThemeTableTheme
     }
 `);
@@ -138,7 +138,7 @@ export function ThemeSummaryCard({
     const ownerArtist = artistFragment ? getFragmentData(THEME_SUMMARY_CARD_ARTIST, artistFragment) : undefined;
 
     const anime = theme.anime;
-    const entry = theme.animethemeentries[0];
+    const entry = theme.entries[0];
     const video = entry?.videos.nodes[0];
 
     const expandable = expandableFragment && video

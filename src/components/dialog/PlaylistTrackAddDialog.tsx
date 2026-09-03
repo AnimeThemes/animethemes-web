@@ -33,12 +33,12 @@ export const PLAYLIST_TRACK_ADD_DIALOG_VIDEO = graphql(`
 `);
 
 export const PLAYLIST_TRACK_ADD_DIALOG_ENTRY = graphql(`
-    fragment PlaylistTrackAddDialogEntry on AnimeThemeEntry {
+    fragment PlaylistTrackAddDialogEntry on Entry {
         ...VideoSummaryCardEntry
         ...PlaylistTrackAddToastEntry
         ...PlaylistTrackRemoveToastEntry
         id
-        animetheme {
+        theme {
             ...VideoSummaryCardTheme
         }
     }
@@ -123,7 +123,7 @@ function PlaylistTrackAddForm({ video, entry, onCancel }: PlaylistTrackAddFormPr
 
     return (
         <Column style={{ "--gap": "24px" }}>
-            <VideoSummaryCard video={video} entry={entry} theme={entry.animetheme} menu={null} />
+            <VideoSummaryCard video={video} entry={entry} theme={entry.theme} menu={null} />
             <Row style={{ "--justify-content": "center" }}>
                 <Icon icon={faArrowDown} color="text-disabled" />
             </Row>

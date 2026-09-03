@@ -58,10 +58,10 @@ export const STUDIO_DETAIL_PAGE_STUDIO = graphql(`
                 slug
                 year
                 season
-                animethemes {
+                themes {
                     type
                     sequence
-                    animethemeentries {
+                    entries {
                         version
                         videos {
                             nodes {

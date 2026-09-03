@@ -42,7 +42,7 @@ export const VIDEO_PAGE_ANIME = graphql(`
         slug
         year
         season
-        animethemes {
+        themes {
             ...ThemeSummaryCardTheme
             ...WatchListItemTheme
             ...createVideoSlugTheme
@@ -68,7 +68,7 @@ export const VIDEO_PAGE_ANIME = graphql(`
             group {
                 slug
             }
-            animethemeentries {
+            entries {
                 ...VideoPlayerEntry
                 ...WatchListItemEntry
                 ...ThemeEntryTagsEntry
@@ -96,9 +96,9 @@ export const VIDEO_PAGE_ANIME = graphql(`
                         subbed
                         uncen
                         tags
-                        animethemeentries {
+                        entries {
                             nodes {
-                                animetheme {
+                                theme {
                                     ...ThemeSummaryCardTheme
                                     anime {
                                         slug
@@ -153,9 +153,9 @@ const pathsQuery = graphql(`
             nodes {
                 ...VideoPageAnime
                 slug
-                animethemes {
+                themes {
                     ...createVideoSlugTheme
-                    animethemeentries {
+                    entries {
                         ...createVideoSlugEntry
                         videos {
                             nodes {
@@ -198,8 +198,8 @@ export default function VideoPage({
     lastBuildAt,
 }: VideoPageProps) {
     const anime = getAnimeFromVideoPageFragment(animeFragment);
-    const theme = anime.animethemes[themeIndex];
-    const entry = theme.animethemeentries[entryIndex];
+    const theme = anime.themes[themeIndex];
+    const entry = theme.entries[entryIndex];
     const video = entry.videos.nodes[videoIndex];
 
     const songTitle = theme.song?.title.romaji || "T.B.A.";
@@ -223,13 +223,13 @@ export default function VideoPage({
     const [showMoreRelatedThemes, setShowMoreRelatedThemes] = useState(false);
     const [showMoreRelatedPlaylists, setShowMoreRelatedPlaylists] = useState(false);
 
-    const relatedThemes = anime.animethemes
+    const relatedThemes = anime.themes
         .filter((relatedTheme) => relatedTheme.id !== theme.id)
         .slice(0, showMoreRelatedThemes ? undefined : 3);
     const relatedPlaylists = video.tracks.map((track) => track.playlist);
 
-    const usedAlsoAs = video.animethemeentries.nodes
-        .map((entry) => entry.animetheme)
+    const usedAlsoAs = video.entries.nodes
+        .map((entry) => entry.theme)
         .filter((otherTheme) => otherTheme?.anime && otherTheme.anime.slug !== anime.slug);
 
     const pageTitle = entry.version
@@ -416,7 +416,7 @@ export default function VideoPage({
                                 {relatedThemes.map((theme) => (
                                     <ThemeSummaryCard key={theme.id} theme={theme} />
                                 ))}
-                                {anime.animethemes.length > 4 ? (
+                                {anime.themes.length > 4 ? (
                                     <Row style={{ "--justify-content": "center" }}>
                                         <IconTextButton
                                             icon={showMoreRelatedThemes ? faChevronUp : faChevronDown}
@@ -497,8 +497,8 @@ export const getStaticProps: GetStaticProps<VideoPageProps, VideoPageParams> = a
     const anime = getFragmentData(VIDEO_PAGE_ANIME, animeFragment);
 
     if (anime) {
-        for (const [themeIndex, theme] of anime.animethemes.entries()) {
-            for (const [entryIndex, entry] of theme.animethemeentries.entries()) {
+        for (const [themeIndex, theme] of anime.themes.entries()) {
+            for (const [entryIndex, entry] of theme.entries.entries()) {
                 for (const [videoIndex, video] of entry.videos.nodes.entries()) {
                     if (createVideoSlug(theme, entry, video) === params?.videoSlug) {
                         return {
@@ -553,8 +553,8 @@ export const getStaticPaths: GetStaticPaths<VideoPageParams> = () => {
         await writeCache(buildCacheKey, buildCache);
 
         return allAnime.flatMap((anime) =>
-            anime.animethemes.flatMap((theme) =>
-                theme.animethemeentries.flatMap((entry) =>
+            anime.themes.flatMap((theme) =>
+                theme.entries.flatMap((entry) =>
                     entry.videos.nodes.flatMap((video) => ({
                         params: {
                             animeSlug: anime.slug,

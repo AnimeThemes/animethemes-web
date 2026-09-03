@@ -362,10 +362,10 @@ export default function ProfilePage({ me: meFragment }: ProfilePageProps) {
 
 export const WATCH_HISTORY_THEMES_WATCH_HISTORY = graphql(`
     fragment WatchHistoryThemesWatchHistory on WatchHistory {
-        animethemeentry {
+        entry {
             id
             ...VideoSummaryCardEntry
-            animetheme {
+            theme {
                 ...VideoSummaryCardTheme
             }
         }
@@ -385,10 +385,10 @@ const WatchHistoryThemes = memo(function WatchHistoryThemes({ history: historyFr
 
     return (
         <>
-            {[...history].reverse().map(({ animethemeentry: entry, video }) => (
+            {[...history].reverse().map(({ entry: entry, video }) => (
                 <VideoSummaryCard
                     key={`${entry.id}-${video.id}`}
-                    theme={entry.animetheme}
+                    theme={entry.theme}
                     entry={entry}
                     video={video}
                 />

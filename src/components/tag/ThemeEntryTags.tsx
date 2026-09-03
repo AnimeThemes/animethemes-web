@@ -4,7 +4,7 @@ import { EpisodeTag } from "@/components/tag/EpisodeTag";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
 export const THEME_ENTRY_TAGS_ENTRY = graphql(`
-    fragment ThemeEntryTagsEntry on AnimeThemeEntry {
+    fragment ThemeEntryTagsEntry on Entry {
         ...EpisodeTagEntry
         ...ContentWarningTagsEntry
     }

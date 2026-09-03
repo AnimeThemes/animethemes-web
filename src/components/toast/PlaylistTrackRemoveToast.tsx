@@ -14,8 +14,8 @@ export const PLAYLIST_TRACK_REMOVE_TOAST_PLAYLIST = graphql(`
 `);
 
 export const PLAYLIST_TRACK_REMOVE_TOAST_ENTRY = graphql(`
-    fragment PlaylistTrackRemoveToastEntry on AnimeThemeEntry {
-        animetheme {
+    fragment PlaylistTrackRemoveToastEntry on Entry {
+        theme {
             song {
                 ...SongTitleSong
             }
@@ -39,7 +39,7 @@ export function PlaylistTrackRemoveToast({
         <Toast as={Link} href={`/playlist/${playlist.id}`} $hoverable>
             <Row $wrap style={{ "--justify-content": "space-between", "--gap": "8px" }}>
                 <span>
-                    <SongTitle song={entry.animetheme.song} /> was removed from{" "}
+                    <SongTitle song={entry.theme.song} /> was removed from{" "}
                     <Text color="text-primary">{playlist.name}</Text>!
                 </span>
                 <Text color="text-disabled">(Click to view playlist.)</Text>
