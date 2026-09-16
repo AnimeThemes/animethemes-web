@@ -2,11 +2,13 @@ import { useContext } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
-import { faBackwardStep, faForwardStep, faPause, faPlay, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faBackwardStep, faForwardStep, faPause, faPlay, faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 import { Column } from "@/components/box/Flex";
 import { Solid } from "@/components/box/Solid";
+import { FavoriteButton } from "@/components/button/FavoriteButton";
 import { IconTextButton } from "@/components/button/IconTextButton";
+import { PlaylistTrackAddDialog } from "@/components/dialog/PlaylistTrackAddDialog";
 import { Icon } from "@/components/icon/Icon";
 import { ShareMenu } from "@/components/menu/ShareMenu";
 import { Text } from "@/components/text/Text";
@@ -88,14 +90,14 @@ const StyledVolumeControl = styled(VolumeControl)`
 
 export const VIDEO_PLAYER_BAR_VIDEO = graphql(`
     fragment VideoPlayerBarVideo on Video {
-        __typename
-        #            ...PlaylistTrackAddDialogVideo
+        ...PlaylistTrackAddDialogVideo
     }
 `);
 
 export const VIDEO_PLAYER_BAR_ENTRY = graphql(`
     fragment VideoPlayerBarEntry on Entry {
-        #            ...PlaylistTrackAddDialogEntry
+        ...PlaylistTrackAddDialogEntry
+        id
         theme {
             type
             sequence
@@ -127,6 +129,7 @@ export function VideoPlayerBar() {
     }
 
     const {
+        video: videoFragment,
         entry: entryFragment,
         background,
         videoPagePath,
@@ -140,6 +143,7 @@ export function VideoPlayerBar() {
         audioUrl,
     } = context;
 
+    const video = getFragmentData(VIDEO_PLAYER_BAR_VIDEO, videoFragment);
     const entry = getFragmentData(VIDEO_PLAYER_BAR_ENTRY, entryFragment);
     const theme = entry.theme;
     const anime = theme.anime;
@@ -212,15 +216,16 @@ export function VideoPlayerBar() {
             </StyledPlayerBarControls>
             <StyledPlayerBarActions>
                 <StyledVolumeControl />
-                {/*<PlaylistTrackAddDialog*/}
-                {/*    video={video}*/}
-                {/*    entry={entry}*/}
-                {/*    trigger={*/}
-                {/*        <IconTextButton icon={faPlus} variant="solid" collapsible="socialListMax">*/}
-                {/*            Add to Playlist*/}
-                {/*        </IconTextButton>*/}
-                {/*    }*/}
-                {/*/>*/}
+                <FavoriteButton entryId={entry.id} />
+                <PlaylistTrackAddDialog
+                    video={video}
+                    entry={entry}
+                    trigger={
+                        <IconTextButton icon={faPlus} variant="solid" collapsible="socialListMax">
+                            Add to Playlist
+                        </IconTextButton>
+                    }
+                />
                 <ShareMenu pagePath={videoPagePath} videoUrl={videoUrl} audioUrl={audioUrl} />
                 <IconTextButton icon={faXmark} isCircle disabled={!background} onClick={() => clearWatchList()} />
             </StyledPlayerBarActions>

@@ -2,12 +2,15 @@ import { Fragment, useState } from "react";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import styled, { css } from "styled-components";
 
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import type { Property } from "csstype";
 
 import { Column } from "@/components/box/Flex";
 import { Card } from "@/components/card/Card";
+import { Icon } from "@/components/icon/Icon";
 import { Text } from "@/components/text/Text";
 import { loadingAnimation } from "@/styles/mixins";
+import theme from "@/theme";
 import withBasePath from "@/utils/withBasePath";
 
 const StyledSummaryCard = styled(Card)`
@@ -43,6 +46,18 @@ const StyledCover = styled.img.attrs({
             : props.$isLoading
               ? loadingAnimation
               : null}
+`;
+
+const StyledIconCover = styled.div<{
+    $backgroundColor?: Property.Background;
+}>`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 48px;
+    height: 64px;
+    background: ${(props) => props.$backgroundColor};
 `;
 
 const StyledBody = styled(Column)`
@@ -126,5 +141,17 @@ SummaryCard.Cover = function SummaryCardCover({ src, ...props }: SummaryCardCove
                 }
             }}
         />
+    );
+};
+
+interface SummaryCardIconCoverProps extends ComponentPropsWithoutRef<typeof StyledIconCover> {
+    icon: IconDefinition;
+}
+
+SummaryCard.IconCover = function SummaryCardIconCover({ icon, ...props }: SummaryCardIconCoverProps) {
+    return (
+        <StyledIconCover $backgroundColor={theme.colors["text-on-primary"]} {...props}>
+            <Icon icon={icon} color="solid-primary" />
+        </StyledIconCover>
     );
 };

@@ -1,11 +1,13 @@
 import { memo, useEffect, useState } from "react";
 import styled, { css } from "styled-components";
 import type { GetServerSideProps } from "next";
+import Link from "next/link";
 
 import { useMutation, useQuery } from "@apollo/client/react";
 import {
     faCircleExclamation,
     faEllipsisVertical,
+    faHeart,
     faRightFromBracket,
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
@@ -15,6 +17,7 @@ import { Button } from "@/components/button/Button";
 import { IconTextButton } from "@/components/button/IconTextButton";
 import { Card } from "@/components/card/Card";
 import PlaylistSummaryCard from "@/components/card/PlaylistSummaryCard";
+import { SummaryCard } from "@/components/card/SummaryCard2";
 import { VideoSummaryCard } from "@/components/card/VideoSummaryCard";
 import { LoginDialog } from "@/components/dialog/LoginDialog";
 import { PasswordChangeDialog } from "@/components/dialog/PasswordChangeDialog";
@@ -260,43 +263,56 @@ export default function ProfilePage({ me: meFragment }: ProfilePageProps) {
             ) : null}
             <StyledProfileGrid>
                 <Column style={{ "--gap": "48px" }}>
-                    {me?.playlists ? (
+                    {me ? (
                         <Column style={{ "--gap": "24px" }}>
                             <StyledHeader>
                                 <Text variant="h2">Playlists</Text>
                                 <PlaylistAddDialog />
                             </StyledHeader>
                             <Column style={{ "--gap": "16px" }}>
-                                {me.playlists.length ? (
-                                    me.playlists.map((playlist) => (
-                                        <PlaylistSummaryCard
-                                            key={playlist.id}
-                                            playlist={playlist}
-                                            menu={
-                                                <Menu modal={false}>
-                                                    <MenuTrigger asChild>
-                                                        <Button variant="silent" isCircle>
-                                                            <Icon icon={faEllipsisVertical} />
-                                                        </Button>
-                                                    </MenuTrigger>
-                                                    <MenuContent>
-                                                        <PlaylistRemoveDialog
-                                                            playlist={playlist}
-                                                            trigger={
-                                                                <MenuItem onSelect={(event) => event.preventDefault()}>
-                                                                    <Icon icon={faTrash} />
-                                                                    <Text>Delete Playlist</Text>
-                                                                </MenuItem>
-                                                            }
-                                                        />
-                                                    </MenuContent>
-                                                </Menu>
-                                            }
-                                        />
-                                    ))
-                                ) : (
-                                    <Text>You have not created a playlist, yet.</Text>
-                                )}
+                                <SummaryCard>
+                                    <Link href="/profile/favorites">
+                                        <SummaryCard.IconCover icon={faHeart} />
+                                    </Link>
+                                    <SummaryCard.Body>
+                                        <SummaryCard.Title>
+                                            <Text as={Link} href="/profile/favorites" link>
+                                                Your Favorites
+                                            </Text>
+                                        </SummaryCard.Title>
+                                        <SummaryCard.Description>Auto-generated playlist</SummaryCard.Description>
+                                    </SummaryCard.Body>
+                                </SummaryCard>
+                                {me.playlists.length
+                                    ? me.playlists.map((playlist) => (
+                                          <PlaylistSummaryCard
+                                              key={playlist.id}
+                                              playlist={playlist}
+                                              menu={
+                                                  <Menu modal={false}>
+                                                      <MenuTrigger asChild>
+                                                          <Button variant="silent" isCircle>
+                                                              <Icon icon={faEllipsisVertical} />
+                                                          </Button>
+                                                      </MenuTrigger>
+                                                      <MenuContent>
+                                                          <PlaylistRemoveDialog
+                                                              playlist={playlist}
+                                                              trigger={
+                                                                  <MenuItem
+                                                                      onSelect={(event) => event.preventDefault()}
+                                                                  >
+                                                                      <Icon icon={faTrash} />
+                                                                      <Text>Delete Playlist</Text>
+                                                                  </MenuItem>
+                                                              }
+                                                          />
+                                                      </MenuContent>
+                                                  </Menu>
+                                              }
+                                          />
+                                      ))
+                                    : null}
                             </Column>
                         </Column>
                     ) : null}
@@ -386,12 +402,7 @@ const WatchHistoryThemes = memo(function WatchHistoryThemes({ history: historyFr
     return (
         <>
             {[...history].reverse().map(({ entry: entry, video }) => (
-                <VideoSummaryCard
-                    key={`${entry.id}-${video.id}`}
-                    theme={entry.theme}
-                    entry={entry}
-                    video={video}
-                />
+                <VideoSummaryCard key={`${entry.id}-${video.id}`} theme={entry.theme} entry={entry} video={video} />
             ))}
         </>
     );
