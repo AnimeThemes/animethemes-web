@@ -65,8 +65,9 @@ const BaseButton = styled.button<{ $isCircle?: boolean }>`
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1rem;
+    line-height: 1.25;
 
-    padding: ${(props) => (props.$isCircle ? "8px" : "8px 16px")};
+    padding: ${(props) => (props.$isCircle ? "12px" : "12px 16px")};
     border-radius: 999px;
     gap: var(--gap, 0);
     aspect-ratio: ${(props) => props.$isCircle && "1 / 1"};
@@ -74,12 +75,6 @@ const BaseButton = styled.button<{ $isCircle?: boolean }>`
     opacity: ${(props) => props.disabled && "0.5"};
     box-shadow: ${theme.shadows.low};
     transition: background-color 250ms;
-
-    // Buttons within other buttons should have a special margin and no shadow.
-    & & {
-        box-shadow: none;
-        margin: -8px 8px -8px -16px;
-    }
 
     &:focus:focus-visible {
         box-shadow: 0 0 0 2px var(--focus-ring-color);

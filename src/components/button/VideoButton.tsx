@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import type { ComponentPropsWithoutRef } from "react";
+import styled from "styled-components";
 import Link from "next/link";
 
 import { faCompactDisc, faPlay } from "@fortawesome/free-solid-svg-icons";
@@ -9,7 +10,27 @@ import { Icon } from "@/components/icon/Icon";
 import { VideoTags } from "@/components/tag/VideoTags";
 import PlayerContext from "@/context/playerContext";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
+import theme from "@/theme";
 import createVideoSlug, { getVideoSlugByWatchListItem } from "@/utils/createVideoSlug";
+
+const StyledOuterButton = styled(Button)`
+    padding: 0;
+`;
+
+const StyledOuterButtonContent = styled.div`
+    padding: 12px 16px 12px 8px;
+`;
+
+const StyledInnerButton = styled(Button)`
+    box-shadow: none;
+
+    @media (hover: hover) and (pointer: fine) {
+        ${StyledOuterButton}:hover & {
+            background-color: ${theme.colors["text-on-primary"]};
+            color: ${theme.colors["text-primary"]};
+        }
+    }
+`;
 
 export const VIDEO_BUTTON_ANIME = graphql(`
     fragment VideoButtonAnime on Anime {
@@ -63,15 +84,17 @@ export function VideoButton({
         : false;
 
     return (
-        <Button asChild {...props}>
+        <StyledOuterButton asChild {...props}>
             <Link href={`/anime/${anime.slug}/${videoSlug}`}>
-                <Button asChild variant="primary" isCircle>
+                <StyledInnerButton asChild variant="primary" isCircle>
                     <span>
                         <Icon icon={isPlaying ? faCompactDisc : faPlay} className={isPlaying ? "fa-spin" : undefined} />
                     </span>
-                </Button>
-                <VideoTags video={video} />
+                </StyledInnerButton>
+                <StyledOuterButtonContent>
+                    <VideoTags video={video} />
+                </StyledOuterButtonContent>
             </Link>
-        </Button>
+        </StyledOuterButton>
     );
 }

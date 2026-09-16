@@ -43,12 +43,14 @@ export function IconTextButton({ ref, icon, children, collapsible, ...props }: I
         collapseBreakpoint = theme.breakpoints[collapsible];
     }
 
+    const iconColor = props.variant !== "primary" ? "text-disabled" : undefined;
+
     return (
         <StyledButton ref={ref} variant="silent" $collapseBreakpoint={collapseBreakpoint} {...props}>
             <NestableSlottable child={children}>
                 {(child) => (
                     <>
-                        {isIconDefinition(icon) ? <Icon icon={icon} color="text-disabled" /> : icon}
+                        {isIconDefinition(icon) ? <Icon icon={icon} color={iconColor} /> : icon}
                         {child !== null && child !== undefined ? (
                             <StyledText $collapseBreakpoint={collapseBreakpoint}>{child}</StyledText>
                         ) : null}
