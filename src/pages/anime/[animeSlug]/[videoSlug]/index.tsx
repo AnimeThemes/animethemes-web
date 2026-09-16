@@ -72,6 +72,7 @@ export const VIDEO_PAGE_ANIME = graphql(`
                 ...VideoPlayerEntry
                 ...WatchListItemEntry
                 ...ThemeEntryTagsEntry
+                ...PlaylistTrackAddDialogEntry
                 ...createVideoSlugEntry
                 id
                 episodes
@@ -84,6 +85,7 @@ export const VIDEO_PAGE_ANIME = graphql(`
                         ...VideoScriptVideo
                         ...WatchListItemVideo
                         ...VideoTagsVideo
+                        ...PlaylistTrackAddDialogVideo
                         ...createVideoSlugVideo
                         id
                         basename

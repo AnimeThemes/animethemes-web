@@ -1,0 +1,21 @@
+services:
+  build:
+    profiles:
+      - build
+    image: ghcr.io/animethemes/animethemes-web:main
+    container_name: build
+    env_file: .env
+    environment:
+      NODE_ENV: production
+    restart: no
+    command: npm run build
+  server:
+    image: ghcr.io/animethemes/animethemes-web:main
+    container_name: server
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+    ports:
+      - "127.0.0.1:3000:3000"
+    restart: unless-stopped

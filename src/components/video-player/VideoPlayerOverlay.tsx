@@ -8,6 +8,7 @@ import {
     faExpand,
     faGear,
     faKeyboard,
+    faPlus,
     faShare,
     faUpRightFromSquare,
 } from "@fortawesome/free-solid-svg-icons";
@@ -16,6 +17,7 @@ import { Dialog } from "@radix-ui/react-dialog";
 import { Row } from "@/components/box/Flex";
 import { IconTextButton } from "@/components/button/IconTextButton";
 import { DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
+import { PlaylistTrackAddDialog } from "@/components/dialog/PlaylistTrackAddDialog";
 import { Icon } from "@/components/icon/Icon";
 import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from "@/components/menu/Menu";
 import { ShareMenu } from "@/components/menu/ShareMenu";
@@ -133,11 +135,11 @@ export function VideoPlayerOverlay({ anime: animeFragment, themeIndex, entryInde
     return (
         <StyledOverlay>
             <Row style={{ "--gap": "16px" }}>
-                {/*<PlaylistTrackAddDialog*/}
-                {/*    video={video}*/}
-                {/*    entry={{ ...entry, theme }}*/}
-                {/*    trigger={<StyledOverlayButton icon={faPlus} isCircle title="Add to playlist" />}*/}
-                {/*/>*/}
+                <PlaylistTrackAddDialog
+                    video={video}
+                    entry={entry}
+                    trigger={<StyledOverlayButton icon={faPlus} isCircle title="Add to playlist" />}
+                />
                 <Dialog>
                     <DialogTrigger asChild>
                         <StyledOverlayButton icon={faKeyboard} isCircle title="Keyboard shortcuts" />
