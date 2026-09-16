@@ -31,8 +31,11 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Set correct permissions for working dir
+RUN chown node:node /app
+
 # Switch to non-root user for security best practices
 USER node
 
 # Start Next.js standalone server
-CMD ["node", "server.js"]
+CMD ["npm", "run", "start"]
