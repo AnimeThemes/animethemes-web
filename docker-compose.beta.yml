@@ -1,5 +1,5 @@
 services:
-  build:
+  client-build:
     profiles:
       - build
     image: ghcr.io/animethemes/animethemes-web:graphql
@@ -8,10 +8,12 @@ services:
     environment:
       NODE_ENV: production
     volumes:
-      - "./app/.next:/app/.next"
+      - "app:/server"
+    networks:
+      - beta-shared-network
     restart: no
-    command: npm run build
-  server:
+    command: bash run_build.sh
+  client-server:
     image: ghcr.io/animethemes/animethemes-web:graphql
     container_name: server
     env_file: .env
@@ -19,7 +21,17 @@ services:
       NODE_ENV: production
       PORT: "3000"
     ports:
-      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:3001:3000"
     volumes:
-      - "./app/.next:/app/.next"
+      - "app:/app"
+    networks:
+      - beta-shared-network
     restart: unless-stopped
+    command: bash run_server.sh
+
+volumes:
+  app:
+
+networks:
+  beta-shared-network:
+    external: true
