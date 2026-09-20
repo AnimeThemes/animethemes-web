@@ -36,6 +36,3 @@ RUN chown -R node:node /app
 
 # Switch to non-root user for security best practices
 USER node
-
-# Start Next.js standalone server
-CMD ["npm", "run", "start"]
