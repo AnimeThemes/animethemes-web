@@ -1,0 +1,37 @@
+services:
+  client-build:
+    profiles:
+      - build
+    image: ghcr.io/animethemes/animethemes-web:graphql
+    container_name: build
+    env_file: .env
+    environment:
+      NODE_ENV: production
+    volumes:
+      - "app:/server"
+    networks:
+      - shared-network
+    restart: no
+    command: bash run_build.sh
+  client-server:
+    image: ghcr.io/animethemes/animethemes-web:graphql
+    container_name: server
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - "app:/app"
+    networks:
+      - shared-network
+    restart: unless-stopped
+    command: bash run_server.sh
+
+volumes:
+  app:
+
+networks:
+  shared-network:
+    external: true
