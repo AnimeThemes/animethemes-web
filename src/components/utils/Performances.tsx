@@ -137,7 +137,7 @@ export function Performances({
                         <span> with </span>
                         <span>
                             {performedWith.map((performance) => (
-                                <StyledArtist key={performance.artist.slug}>
+                                <StyledArtist key={performance.artist.slug} $featuring={performance.role.toLowerCase().indexOf("feat") > -1}>
                                     <StyledArtistLink as={Link} href={`/artist/${performance.artist.slug}`}>
                                         {getDisplayedArtistName(performance)}
                                     </StyledArtistLink>
