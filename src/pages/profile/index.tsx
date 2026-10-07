@@ -150,12 +150,16 @@ export const PROFILE_PAGE_ME = graphql(`
             default
         }
         playlists(sort: [CREATED_AT_DESC]) {
-            ...PlaylistSummaryCardPlaylist
-            ...PlaylistRemoveDialogPlaylist
-            id
+            nodes {
+                ...PlaylistSummaryCardPlaylist
+                ...PlaylistRemoveDialogPlaylist
+                id
+            }
         }
         watchHistory {
-            ...WatchHistoryThemesWatchHistory
+            nodes {
+                ...WatchHistoryThemesWatchHistory
+            }
         }
     }
 `);
@@ -283,8 +287,8 @@ export default function ProfilePage({ me: meFragment }: ProfilePageProps) {
                                         <SummaryCard.Description>Auto-generated playlist</SummaryCard.Description>
                                     </SummaryCard.Body>
                                 </SummaryCard>
-                                {me.playlists.length
-                                    ? me.playlists.map((playlist) => (
+                                {me.playlists.nodes.length
+                                    ? me.playlists.nodes.map((playlist) => (
                                           <PlaylistSummaryCard
                                               key={playlist.id}
                                               playlist={playlist}
@@ -365,7 +369,7 @@ export default function ProfilePage({ me: meFragment }: ProfilePageProps) {
                     </StyledHeader>
                     {me ? (
                         <Column style={{ "--gap": "16px" }}>
-                            <WatchHistoryThemes history={me.watchHistory} />
+                            <WatchHistoryThemes history={me.watchHistory.nodes} />
                         </Column>
                     ) : (
                         <Text>Log in to see your watch history.</Text>
