@@ -13,7 +13,7 @@ import { ThemeTable } from "@/components/table/ThemeTable";
 import { Text } from "@/components/text/Text";
 import { TextLink } from "@/components/text/TextLink";
 import { Collapse } from "@/components/utils/Collapse";
-import { getDisplayedArtistName, Performances } from "@/components/utils/Performances";
+import { filterPerformancesFromStaff, getDisplayedArtistName, Performances } from "@/components/utils/Performances";
 import { SongTitle } from "@/components/utils/SongTitle";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useMediaQuery from "@/hooks/useMediaQuery";
@@ -83,11 +83,12 @@ export const THEME_SUMMARY_CARD_THEME = graphql(`
         }
         song {
             ...SongTitleSong
-            ...PerformancesSong
-            performances {
+            ...StaffSong
+            staff {
                 id
                 alias
                 as
+                role
                 artist {
                     id
                     slug
@@ -110,7 +111,7 @@ export const THEME_SUMMARY_CARD_THEME = graphql(`
 
 export const THEME_SUMMARY_CARD_ARTIST = graphql(`
     fragment ThemeSummaryCardArtist on Artist {
-        ...PerformancesArtist
+        ...SongStaffArtist
         id
         slug
     }
@@ -181,7 +182,8 @@ export function ThemeSummaryCard({
         return isLink(element.parentElement);
     }
 
-    const performances = (theme.song?.performances ?? [])
+    const performances = (theme.song?.staff ?? [])
+        .filter(filterPerformancesFromStaff)
         .filter(({ artist }) => artist.slug !== ownerArtist?.slug)
         .sort(({ artist: a }, { artist: b }) => a.name.main.localeCompare(b.name.main));
 

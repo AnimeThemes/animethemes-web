@@ -6,14 +6,14 @@ import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated
 export const SONG_TITLE_WITH_ARTISTS_SONG = graphql(`
     fragment SongTitleWithArtistsSong on Song {
         ...SongTitleSong
-        ...PerformancesSong
+        ...StaffSong
         id
     }
 `);
 
 export const SONG_TITLE_WITH_ARTISTS_ARTIST = graphql(`
     fragment SongTitleWithArtistsArtist on Artist {
-        ...PerformancesArtist
+        ...SongStaffArtist
         id
     }
 `);

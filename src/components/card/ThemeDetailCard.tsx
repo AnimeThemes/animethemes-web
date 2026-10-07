@@ -63,7 +63,7 @@ export const THEME_DETAIL_CARD_THEME = graphql(`
         }
         song {
             ...SongTitleSong
-            ...PerformancesSong
+            ...StaffSong
         }
         entries {
             ...ThemeEntryTagsEntry
