@@ -84,10 +84,12 @@ const PLAYLIST_TRACK_ADD_FORM_PLAYLIST = graphql(`
     query PlaylistTrackAddFormPlaylist($entryId: Int!, $videoId: Int!) {
         me {
             playlists {
-                ...PlaylistTrackAddCardPlaylist
-                id
-                tracks(filter: { entryId: $entryId, videoId: $videoId }) {
-                    ...PlaylistTrackAddCardTrack
+                nodes {
+                    ...PlaylistTrackAddCardPlaylist
+                    id
+                    tracks(filter: { entryId: $entryId, videoId: $videoId }) {
+                        ...PlaylistTrackAddCardTrack
+                    }
                 }
             }
         }
@@ -119,7 +121,7 @@ function PlaylistTrackAddForm({ video, entry, onCancel }: PlaylistTrackAddFormPr
         );
     }
 
-    const playlists = data.me?.playlists ?? [];
+    const playlists = data.me?.playlists.nodes ?? [];
 
     return (
         <Column style={{ "--gap": "24px" }}>
