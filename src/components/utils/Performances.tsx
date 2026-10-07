@@ -7,15 +7,15 @@ import { uniqBy } from "lodash-es";
 import { Text } from "@/components/text/Text";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
-const StyledArtist = styled(Text)`
+const StyledArtist = styled(Text)<{ $featuring?: boolean }>`
     &:not(:first-of-type)::before {
-        content: ", ";
+        content: ${({ $featuring }) => ($featuring ? '" featuring "' : '", "')};
         font-size: 0.8rem;
         font-weight: 700;
     }
 
     &:not(:first-of-type):last-of-type::before {
-        content: " & ";
+        content: ${({ $featuring }) => ($featuring ? '" featuring "' : '" & "')};
     }
 `;
 
@@ -23,12 +23,13 @@ const StyledArtistLink = styled(Text).attrs({ as: "a", link: true })`
     font-size: 1rem;
 `;
 
-export const PERFORMANCES_SONG = graphql(`
-    fragment PerformancesSong on Song {
-        performances {
+export const STAFF_SONG = graphql(`
+    fragment StaffSong on Song {
+        staff {
             alias
             as
             relevance
+            role
             artist {
                 id
                 slug
@@ -46,17 +47,25 @@ export const PERFORMANCES_SONG = graphql(`
     }
 `);
 
-export const PERFORMANCES_ARTIST = graphql(`
-    fragment PerformancesArtist on Artist {
+export const SONG_STAFF_ARTIST = graphql(`
+    fragment SongStaffArtist on Artist {
         id
     }
 `);
 
 export interface PerformancesProps {
-    song: FragmentType<typeof PERFORMANCES_SONG> | null;
-    artist?: FragmentType<typeof PERFORMANCES_ARTIST>;
+    song: FragmentType<typeof STAFF_SONG> | null;
+    artist?: FragmentType<typeof SONG_STAFF_ARTIST>;
     maxPerformances?: number | null;
     expandable?: boolean;
+}
+
+interface FilterPerformancesFromStaffProps {
+    role: string;
+}
+
+export function filterPerformancesFromStaff(staff: FilterPerformancesFromStaffProps): boolean {
+    return staff.role === "Performance" || staff.role.toLowerCase().indexOf("feat") > -1;
 }
 
 interface ArtistNameProps {
@@ -86,19 +95,21 @@ export function Performances({
     maxPerformances = 3,
     expandable = false,
 }: PerformancesProps) {
-    const song = getFragmentData(PERFORMANCES_SONG, songFragment);
-    const artist = getFragmentData(PERFORMANCES_ARTIST, artistFragment);
+    const song = getFragmentData(STAFF_SONG, songFragment);
+    const artist = getFragmentData(SONG_STAFF_ARTIST, artistFragment);
     const [expandPerformances, setExpandPerformances] = useState(false);
 
-    if (!song?.performances.length) {
+    const songPerformances = song?.staff.filter(filterPerformancesFromStaff);
+
+    if (!songPerformances?.length) {
         return null;
     }
 
     if (maxPerformances === null || expandPerformances) {
-        maxPerformances = song.performances.length;
+        maxPerformances = songPerformances.length;
     }
 
-    const performances = uniqBy(song.performances, (performance) => performance.artist.id).sort(
+    const performances = uniqBy(songPerformances, (performance) => performance.artist.id).sort(
         (a, b) => a.relevance - b.relevance,
     );
 
@@ -144,7 +155,7 @@ export function Performances({
             <Text variant="small"> by </Text>
             <Text>
                 {performancesShown.map((performance) => (
-                    <StyledArtist key={performance.artist.slug}>
+                    <StyledArtist key={performance.artist.slug} $featuring={performance.role.toLowerCase().indexOf("feat") > -1}>
                         <Text as={Link} href={`/artist/${performance.artist.slug}`} link>
                             {getDisplayedArtistName(performance)}
                         </Text>

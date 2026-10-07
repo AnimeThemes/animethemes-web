@@ -138,19 +138,29 @@ export default function AnimeDetailPage({ anime: animeFragment, synopsisMarkdown
                         alt={`Cover image of ${anime.title.romaji}`}
                     />
                     <DescriptionList>
-                        {anime.title.english || anime.title.native || anime.synonyms.length ? (
+                        {anime.title.english &&
+                            <DescriptionList.Item title="English Title">
+                                <StyledList>
+                                    <Text>{anime.title.english}</Text>
+                                </StyledList>
+                            </DescriptionList.Item>
+                        }
+                        {anime.title.native &&
+                            <DescriptionList.Item title="Native Title">
+                                <StyledList>
+                                    <Text>{anime.title.native}</Text>
+                                </StyledList>
+                            </DescriptionList.Item>
+                        }
+                        {anime.synonyms.length > 0 && (
                             <DescriptionList.Item title="Alternative Titles">
                                 <StyledList>
-                                    {anime.title.english && (
-                                        <Text key={anime.title.english}>{anime.title.english}</Text>
-                                    )}
-                                    {anime.title.native && <Text key={anime.title.native}>{anime.title.native}</Text>}
                                     {anime.synonyms.map((synonym) => (
                                         <Text key={synonym.text}>{synonym.text}</Text>
                                     ))}
                                 </StyledList>
                             </DescriptionList.Item>
-                        ) : null}
+                        )}
                         <DescriptionList.Item title="Premiere">
                             <Text
                                 as={Link}

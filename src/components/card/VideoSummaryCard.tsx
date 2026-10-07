@@ -89,7 +89,7 @@ export const VIDEO_SUMMARY_CARD_THEME = graphql(`
         }
         song {
             ...SongTitleSong
-            ...PerformancesSong
+            ...StaffSong
         }
     }
 `);

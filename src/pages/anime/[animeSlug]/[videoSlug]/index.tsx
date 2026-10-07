@@ -18,6 +18,7 @@ import { SwitcherOption } from "@/components/switcher/Switcher";
 import { Text } from "@/components/text/Text";
 import { HorizontalScroll } from "@/components/utils/HorizontalScroll";
 import { PageRevalidation } from "@/components/utils/PageRevalidation";
+import { filterPerformancesFromStaff } from "@/components/utils/Performances";
 import { StyledScrollArea, StyledSwitcher } from "@/components/video-player/VideoPlayer.style";
 import VideoScript from "@/components/video-script/VideoScript";
 import PlayerContext from "@/context/playerContext";
@@ -53,7 +54,7 @@ export const VIDEO_PAGE_ANIME = graphql(`
                 title {
                     romaji
                 }
-                performances {
+                staff {
                     artist {
                         ...ArtistSummaryCardArtist
                         id
@@ -63,6 +64,7 @@ export const VIDEO_PAGE_ANIME = graphql(`
                     }
                     as
                     relevance
+                    role
                 }
             }
             group {
@@ -243,9 +245,9 @@ export default function VideoPage({
         const song = theme.song;
         const version = entry.version ? ` Version ${entry.version}` : "";
         let artistStr = "";
-        if (song?.performances?.length) {
-            artistStr = song.performances.reduce((str, performance, index, { length }) => {
-                str += performance.as || performance.artist.name.main;
+        if (song?.staff?.filter(filterPerformancesFromStaff).length) {
+            artistStr = song.staff.filter(filterPerformancesFromStaff).reduce((str, staff, index, { length }) => {
+                str += staff.as || staff.artist.name.main;
                 if (index < length - 1) {
                     str += index === length - 2 ? " & " : ", ";
                 }
@@ -386,20 +388,38 @@ export default function VideoPage({
                         {anime.studios.nodes.map((studio) => (
                             <StudioSummaryCard key={studio.slug} studio={studio} />
                         ))}
-                        {!!theme.song?.performances?.length && (
+                        {!!theme.song?.staff?.length && (
                             <>
                                 <Text variant="h2">Artists</Text>
                                 {Array.from(
-                                    new Map(
-                                        theme.song.performances
-                                            .sort((a, b) => a.relevance - b.relevance)
-                                            .map((p) => [p.artist.id, p]),
-                                    ).values(),
-                                ).map((performance) => (
+                                    theme.song.staff
+                                        .sort((a, b) => a.relevance - b.relevance)
+                                        .reduce((map, staff) => {
+                                            const existing = map.get(staff.artist.id);
+                                
+                                            if (existing) {
+                                                if (!existing.roles.includes(staff.role)) {
+                                                    existing.roles.push(staff.role);
+                                                }
+                                            } else {
+                                                map.set(staff.artist.id, {
+                                                    ...staff,
+                                                    roles: [staff.role],
+                                                });
+                                            }
+                                
+                                            return map;
+                                        }, new Map<
+                                            number,
+                                            (typeof theme.song.staff)[number] & { roles: Array<string> }
+                                        >())
+                                        .values(),
+                                ).map((staff) => (
                                     <ArtistSummaryCard
-                                        key={performance.artist.id}
-                                        artist={performance.artist}
-                                        as={performance.as}
+                                        key={staff.artist.id}
+                                        artist={staff.artist}
+                                        as={staff.as}
+                                        roles={staff.roles}
                                     />
                                 ))}
                             </>
