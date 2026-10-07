@@ -103,8 +103,8 @@ export const VIDEO_PLAYER_BAR_ENTRY = graphql(`
             sequence
             song {
                 ...SongTitleSong
-                ...PerformancesSong
-                performances {
+                ...StaffSong
+                staff {
                     __typename
                 }
             }
@@ -166,7 +166,7 @@ export function VideoPlayerBar() {
                         {anime.title.romaji}
                     </Text>
                 </Text>
-                {!!theme.song?.performances?.length && (
+                {!!theme.song?.staff?.length && (
                     <Text variant="small" color="text-muted" maxLines={1}>
                         <Text>Performed</Text>
                         <Performances song={theme.song} maxPerformances={3} />
