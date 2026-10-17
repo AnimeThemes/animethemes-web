@@ -22,6 +22,9 @@ RUN --mount=type=cache,target=/root/.npm \
 # Copy application source code
 COPY . .
 
+# Set working directory
+WORKDIR /app
+
 # Set production environment variables
 ENV NODE_ENV=production
 ENV PORT=3000
