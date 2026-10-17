@@ -4,11 +4,12 @@ services:
       - build
     image: ghcr.io/animethemes/animethemes-web:graphql
     container_name: build
+    working_dir: /app/build
     env_file: .env
     environment:
       NODE_ENV: production
     volumes:
-      - "app:/server"
+      - "app:/app"
     networks:
       - shared-network
     restart: no
@@ -16,6 +17,7 @@ services:
   client-server:
     image: ghcr.io/animethemes/animethemes-web:graphql
     container_name: server
+    working_dir: /app/server
     env_file: .env
     environment:
       NODE_ENV: production
