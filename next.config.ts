@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 import NextBundleAnalyzer from "@next/bundle-analyzer";
 
-import { ANALYZE, BASE_PATH, STAGING, validateConfig } from "@/utils/config";
+import { ANALYZE, BASE_PATH, STAGING, validateConfig, WORKER_THREADS } from "@/utils/config";
 import { error, info } from "@/utils/log";
 
 const withBundleAnalyzer = NextBundleAnalyzer();
@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
     staticPageGenerationTimeout: 3600,
     output: "standalone",
     experimental: {
-        cpus: 4,
+        cpus: WORKER_THREADS,
     },
     transpilePackages: ["ahooks"],
     async headers() {
