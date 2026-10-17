@@ -8,6 +8,7 @@ const SERVER_GRAPHQL_URL = process.env.GRAPHQL_URL;
 
 const ANALYZE = !!process.env.ANALYZE;
 const MINIMAL_BUILD = !!process.env.MINIMAL_BUILD;
+const WORKER_THREADS = process.env.WORKER_THREADS ? Number(process.env.WORKER_THREADS) : 4;
 
 // Server-side + Client-side
 
@@ -57,4 +58,5 @@ export {
     validateConfig,
     VERBOSE_LOGS,
     VIDEO_URL,
+    WORKER_THREADS,
 };
