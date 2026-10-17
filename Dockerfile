@@ -6,7 +6,7 @@ ARG NODE_VERSION=24.19.0-slim
 FROM node:${NODE_VERSION}
 
 # Set working directory
-WORKDIR /app/build
+WORKDIR /work
 
 # Copy package-related files first to leverage Docker's caching mechanism
 COPY package.json package-lock.json ./
@@ -22,9 +22,6 @@ RUN --mount=type=cache,target=/root/.npm \
 # Copy application source code
 COPY . .
 
-# Set working directory
-WORKDIR /app
-
 # Set production environment variables
 ENV NODE_ENV=production
 ENV PORT=3000
@@ -32,7 +29,7 @@ ENV HOSTNAME="0.0.0.0"
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Set correct permissions for working dir
-RUN chown -R node:node /app
+RUN chown -R node:node /work
 
 # Switch to non-root user for security best practices
 USER node
