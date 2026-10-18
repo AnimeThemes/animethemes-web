@@ -159,7 +159,7 @@ export const getStaticProps: GetStaticProps<SeasonDetailPageProps, SeasonDetailP
         return [data.animeyear[0], data.animeyears];
     })();
 
-    if (!year || !year.season) {
+    if (!year || !year.season?.[0]) {
         return { notFound: true };
     }
 
