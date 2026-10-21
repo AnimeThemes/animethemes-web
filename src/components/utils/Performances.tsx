@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
@@ -6,18 +6,6 @@ import { uniqBy } from "lodash-es";
 
 import { Text } from "@/components/text/Text";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
-
-const StyledArtist = styled(Text)<{ $featuring?: boolean }>`
-    &:not(:first-of-type)::before {
-        content: ${({ $featuring }) => ($featuring ? '" featuring "' : '", "')};
-        font-size: 0.8rem;
-        font-weight: 700;
-    }
-
-    &:not(:first-of-type):last-of-type::before {
-        content: ${({ $featuring }) => ($featuring ? '" featuring "' : '" & "')};
-    }
-`;
 
 const StyledArtistLink = styled(Text).attrs({ as: "a", link: true })`
     font-size: 1rem;
@@ -68,7 +56,7 @@ interface FilterPerformancesFromStaffProps {
 }
 
 export function filterPerformancesFromStaff(staff: FilterPerformancesFromStaffProps): boolean {
-    return staff.role === "Performance" || staff.role.toLowerCase().indexOf("feat") > -1;
+    return staff.role === "Performance" || staff.role.toLowerCase().includes("feat");
 }
 
 interface ArtistNameProps {
@@ -116,12 +104,20 @@ export function Performances({
         (a, b) => a.relevance - b.relevance,
     );
 
-    const performancesShown = performances.slice(0, maxPerformances);
-    const performancesHidden = performances.slice(maxPerformances);
+    const isFeaturing = ({ role }: (typeof performances)[number]) => role.toLowerCase().includes("feat");
+
+    const shown = performances.slice(0, maxPerformances);
+    const performancesShown = shown.filter((p) => !isFeaturing(p));
+    const featuringShown = shown.filter(isFeaturing);
+
+    const performancesHidden = performances.slice(maxPerformances).filter((p) => !isFeaturing(p));
 
     if (artist) {
         const performedAs = performances.find((performance) => performance.artist.id === artist.id);
-        const performedWith = performances.filter((performance) => performance.artist.id !== artist.id);
+
+        const performancesWith = performances.filter((performance) => performance.artist.id !== artist.id);
+        const performedWith = performancesWith.filter((p) => !isFeaturing(p));
+        const featuredWith = performancesWith.filter(isFeaturing);
 
         return (
             <>
@@ -139,12 +135,22 @@ export function Performances({
                     <Text variant="small" color="text-muted">
                         <span> with </span>
                         <span>
-                            {performedWith.map((performance) => (
-                                <StyledArtist key={performance.artist.slug} $featuring={performance.role.toLowerCase().indexOf("feat") > -1}>
+                            {performedWith.map((performance, index) => (
+                                <Fragment key={performance.artist.slug}>
+                                    {index > 0 && (index === performedWith.length - 1 ? " & " : ", ")}
                                     <StyledArtistLink as={Link} href={`/artist/${performance.artist.slug}`}>
                                         {getDisplayedArtistName(performance)}
                                     </StyledArtistLink>
-                                </StyledArtist>
+                                </Fragment>
+                            ))}
+                            {featuredWith.length ? <span> featuring </span> : null}
+                            {featuredWith.map((featuring, index) => (
+                                <Fragment key={featuring.artist.slug}>
+                                    {index > 0 && (index === featuredWith.length - 1 ? " & " : ", ")}
+                                    <StyledArtistLink as={Link} href={`/artist/${featuring.artist.slug}`}>
+                                        {getDisplayedArtistName(featuring)}
+                                    </StyledArtistLink>
+                                </Fragment>
                             ))}
                         </span>
                     </Text>
@@ -153,23 +159,34 @@ export function Performances({
         );
     }
 
+    const hasMore = performancesHidden.length > 0;
+
     return (
         <Text color="text-muted">
             <Text variant="small"> by </Text>
             <Text>
-                {performancesShown.map((performance) => (
-                    <StyledArtist key={performance.artist.slug} $featuring={performance.role.toLowerCase().indexOf("feat") > -1}>
+                {performancesShown.map((performance, index) => (
+                    <Fragment key={performance.artist.slug}>
+                        {index > 0 && (index === performancesShown.length - 1 && !hasMore ? " & " : ", ")}
                         <Text as={Link} href={`/artist/${performance.artist.slug}`} link>
                             {getDisplayedArtistName(performance)}
                         </Text>
-                    </StyledArtist>
+                    </Fragment>
                 ))}
-                {!!performancesHidden.length && (
-                    <StyledArtist>
-                        <Text link onClick={() => expandable && setExpandPerformances(true)}>
-                            {performancesHidden.length} more
+                {featuringShown.length > 0 && " feat. "}
+                {featuringShown.map((featuring, index) => (
+                    <Fragment key={featuring.artist.slug}>
+                        {index > 0 && (index === featuringShown.length - 1 && !hasMore ? " & " : ", ")}
+                        <Text as={Link} href={`/artist/${featuring.artist.slug}`} link>
+                            {getDisplayedArtistName(featuring)}
                         </Text>
-                    </StyledArtist>
+                    </Fragment>
+                ))}
+                {hasMore && shown.length > 0 && " & "}
+                {hasMore && (
+                    <Text link onClick={() => expandable && setExpandPerformances(true)}>
+                        {performancesHidden.length} more
+                    </Text>
                 )}
             </Text>
         </Text>
