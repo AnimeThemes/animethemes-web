@@ -13,7 +13,7 @@ import { ThemeTable } from "@/components/table/ThemeTable";
 import { Text } from "@/components/text/Text";
 import { TextLink } from "@/components/text/TextLink";
 import { Collapse } from "@/components/utils/Collapse";
-import { filterPerformancesFromStaff, getDisplayedArtistName, Performances } from "@/components/utils/Performances";
+import { getDisplayedArtistName, Performances } from "@/components/utils/Performances";
 import { SongTitle } from "@/components/utils/SongTitle";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useMediaQuery from "@/hooks/useMediaQuery";
@@ -84,8 +84,10 @@ export const THEME_SUMMARY_CARD_THEME = graphql(`
             staff {
                 alias
                 as
+                relevance
                 role
                 artist {
+                    id
                     slug
                     name {
                         main
@@ -175,10 +177,10 @@ export function ThemeSummaryCard({
         return isLink(element.parentElement);
     }
 
-    const performances = (theme.song?.staff ?? [])
-        .filter(filterPerformancesFromStaff)
-        .filter(({ artist }) => artist.slug !== ownerArtist?.slug)
-        .sort(({ artist: a }, { artist: b }) => a.name.main.localeCompare(b.name.main));
+    const songStaff = Map.groupBy(
+        (theme.song?.staff ?? []).toSorted(({ relevance: a }, { relevance: b }) => a - b),
+        ({ role }) => role
+    );
 
     return (
         <StyledWrapper>
@@ -226,21 +228,32 @@ export function ThemeSummaryCard({
                             themes={[expandable]}
                             onPlay={(_, entryIndex, videoIndex) => onPlay?.(entryIndex, videoIndex)}
                         />
-                        {performances.length > 0 && (
-                            <Table style={{ "--columns": "1fr" }}>
+                        {songStaff.size > 0 && (
+                            <Table style={{ "--columns": "1fr 1fr" }}>
                                 <TableHead>
-                                    <TableHeadCell>Performed {ownerArtist ? "With" : "By"}</TableHeadCell>
+                                    <TableHeadCell>Role</TableHeadCell>
+                                    <TableHeadCell>Artists</TableHeadCell>
                                 </TableHead>
                                 <TableBody>
-                                    {performances.map(({ alias, as, artist }) => (
-                                        <TableRow key={artist.slug} as={Link} href={`/artist/${artist.slug}`}>
-                                            <TableCell>
-                                                <Text color="text-primary" weight="600">
-                                                    {getDisplayedArtistName({ alias, as, artist })}
-                                                </Text>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
+                                    {[...songStaff].map(([id, staff]) =>
+                                        staff && (
+                                            <TableRow key={id}>
+                                                <TableCell>
+                                                    <Text weight="600">
+                                                        {staff[0].role}
+                                                    </Text>
+                                                </TableCell>
+                                                <TableCell>
+                                                    {staff.flatMap(({ alias, as, artist }, index) => [
+                                                        ...(index > 0 ? [index === staff.length - 1 ? ' & ' : ', '] : []),
+                                                        <Text key={artist.id} color="text-primary" weight="600" as={Link} href={`/artist/${artist.slug}`}>
+                                                            {getDisplayedArtistName({ alias, as, artist })}
+                                                        </Text>,
+                                                    ])}
+                                                </TableCell>
+                                            </TableRow>
+                                        )
+                                    )}
                                 </TableBody>
                             </Table>
                         )}

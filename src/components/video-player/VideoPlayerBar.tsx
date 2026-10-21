@@ -13,7 +13,7 @@ import { Icon } from "@/components/icon/Icon";
 import { ShareMenu } from "@/components/menu/ShareMenu";
 import { Text } from "@/components/text/Text";
 import { ConditionalWrapper } from "@/components/utils/ConditionalWrapper";
-import { Performances } from "@/components/utils/Performances";
+import { filterPerformancesFromStaff, Performances } from "@/components/utils/Performances";
 import { SongTitle } from "@/components/utils/SongTitle";
 import { ProgressBar } from "@/components/video-player/ProgressBar";
 import { VideoPlayerContext } from "@/components/video-player/VideoPlayer";
@@ -106,6 +106,7 @@ export const VIDEO_PLAYER_BAR_ENTRY = graphql(`
                 ...StaffSong
                 staff {
                     __typename
+                    role
                 }
             }
             group {
@@ -166,10 +167,10 @@ export function VideoPlayerBar() {
                         {anime.title.romaji}
                     </Text>
                 </Text>
-                {!!theme.song?.staff?.length && (
-                    <Text variant="small" color="text-muted" maxLines={1}>
+                {!!theme.song?.staff?.filter(filterPerformancesFromStaff).length && (
+                    <Text variant="small" color="text-muted" maxLines={2}>
                         <Text>Performed</Text>
-                        <Performances song={theme.song} maxPerformances={3} />
+                        <Performances song={theme.song} maxPerformances={3} expandable />
                     </Text>
                 )}
             </Column>
