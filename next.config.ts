@@ -24,8 +24,10 @@ const nextConfig: NextConfig = {
         styledComponents: true,
     },
     staticPageGenerationTimeout: 3600,
+    output: "standalone",
     experimental: {
         cpus: WORKER_THREADS,
+        largePageDataBytes: 1024 * 1024, // = 1 MB
     },
     transpilePackages: ["ahooks"],
     async headers() {

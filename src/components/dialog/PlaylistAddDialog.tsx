@@ -10,6 +10,7 @@ import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
 import { IconTextButton } from "@/components/button/IconTextButton";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
+import { PLAYLIST_TRACK_ADD_FORM_PLAYLIST } from "@/components/dialog/PlaylistTrackAddDialog";
 import { Input } from "@/components/form/Input";
 import { Listbox, ListboxOption } from "@/components/listbox/Listbox";
 import { SearchFilter } from "@/components/search-filter/SearchFilter";
@@ -83,6 +84,8 @@ function PlaylistAddForm({ onSuccess, onCancel }: PlaylistAddFormProps) {
             refetchQueries: [
                 // Update the profile page because it includes a list of the user's playlists
                 PROFILE_PAGE,
+                // Update the add-to-playlist dialog if the user is creating a new playlist from there
+                PLAYLIST_TRACK_ADD_FORM_PLAYLIST,
             ],
         },
     );

@@ -472,20 +472,14 @@ function ResendVerificationEmailLink() {
 export const getServerSideProps: GetServerSideProps<ProfilePageProps> = async ({ req }) => {
     const client = createApolloClient(req);
 
-    try {
-        const { data } = await client.query({
-            query: PROFILE_PAGE,
-        });
+    const { data } = await client.query({
+        query: PROFILE_PAGE,
+    });
 
-        return {
-            props: {
-                ...getSharedPageProps(),
-                me: data.me,
-            },
-        };
-    } catch (e) {
-        console.log(JSON.stringify(e, null, 2));
-
-        return { notFound: true };
-    }
+    return {
+        props: {
+            ...getSharedPageProps(),
+            me: data.me,
+        },
+    };
 };

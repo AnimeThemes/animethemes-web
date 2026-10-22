@@ -3,12 +3,15 @@ import { print } from "@apollo/client/utilities";
 import type { IncomingMessage } from "node:http";
 
 import { SERVER_GRAPHQL_URL } from "@/utils/config";
+import { info } from "@/utils/log";
 
 let totalOperations = 0;
 
 const logLink = new ApolloLink((operation, forward) => {
-    console.log("Operation:", operation.operationName, "Total:", ++totalOperations);
-    console.log(print(operation.query));
+    info("Operation:", operation.operationName, "Total:", ++totalOperations);
+    if (process.env.NODE_ENV === "development") {
+        info(print(operation.query));
+    }
     return forward(operation);
 });
 

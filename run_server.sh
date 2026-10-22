@@ -18,4 +18,4 @@ fi
 
 # Start the Next.js server
 cd /app/server
-npm run start
+node server.js
