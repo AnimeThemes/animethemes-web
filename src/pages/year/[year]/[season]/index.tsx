@@ -67,17 +67,20 @@ const propsQuery = graphql(`
 
 const pathsQuery = graphql(`
     query SeasonDetailPageAll {
-        animeyears {
+        animeyearForAllPages: animeyears {
             year
             ...SeasonDetailPageYear
             ...SeasonNavigationYear
-            ...SeasonNavigationYears
             seasons: season {
                 season
                 seasonLocalized
                 ...SeasonDetailPageSeason
                 ...SeasonNavigationSeason
             }
+        }
+        animeyears {
+            ...SeasonNavigationYears
+            year
         }
     }
 `);
@@ -188,7 +191,7 @@ export const getStaticPaths: GetStaticPaths<SeasonDetailPageParams> = async () =
         });
 
         const buildCache: Map<string, ResultOf<typeof propsQuery>["animeyear"][number]> = new Map();
-        for (const year of data.animeyears) {
+        for (const year of data.animeyearForAllPages) {
             for (const season of year.seasons) {
                 buildCache.set(`${year.year}-${season.season.toLowerCase()}`, { ...year, season: [season] });
             }
@@ -199,7 +202,7 @@ export const getStaticPaths: GetStaticPaths<SeasonDetailPageParams> = async () =
         buildCacheMeta.set(buildCacheMetaYearsKey, data.animeyears);
         await writeCache(buildCacheMetaKey, buildCacheMeta);
 
-        return data.animeyears.flatMap(
+        return data.animeyearForAllPages.flatMap(
             (year) =>
                 year.seasons?.map((season) => ({
                     params: {
