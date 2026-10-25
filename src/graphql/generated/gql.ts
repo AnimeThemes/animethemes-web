@@ -15,10 +15,6 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  */
 type Documents = {
     "\n    fragment BracketThemeSummaryCardTheme on Theme {\n        ...createVideoSlugTheme\n        ...ThemeMenuTheme\n        type\n        sequence\n        group {\n            name\n            slug\n        }\n        anime {\n            slug\n            title {\n                romaji\n            }\n            images {\n                nodes {\n                    ...extractImagesImage\n                }\n            }\n        }\n        song {\n            ...SongTitleWithArtistsSong\n        }\n        entries {\n            ...createVideoSlugEntry\n            videos {\n                nodes {\n                    ...createVideoSlugVideo\n                }\n            }\n        }\n    }\n": typeof types.BracketThemeSummaryCardThemeFragmentDoc,
-    "\n    query FavoriteButton($entryId: Int!) {\n        me {\n            id\n            favorites(filter: { entryId: $entryId }) {\n                id\n            }\n        }\n    }\n": typeof types.FavoriteButtonDocument,
-    "\n            mutation ToggleFavorite($entryId: Int!) {\n                toggleFavorite(favorite: { entry: $entryId }) {\n                    id\n                }\n            }\n        ": typeof types.ToggleFavoriteDocument,
-    "\n                        query FavoriteButtonReadMe {\n                            me {\n                                id\n                            }\n                        }\n                    ": typeof types.FavoriteButtonReadMeDocument,
-    "\n                            fragment FavoriteButtonUpdateMe on Me {\n                                id\n                                favorites(filter: { entryId: $entryId }) {\n                                    id\n                                }\n                            }\n                        ": typeof types.FavoriteButtonUpdateMeFragmentDoc,
     "\n    fragment VideoButtonAnime on Anime {\n        slug\n    }\n": typeof types.VideoButtonAnimeFragmentDoc,
     "\n    fragment VideoButtonTheme on Theme {\n        ...createVideoSlugTheme\n    }\n": typeof types.VideoButtonThemeFragmentDoc,
     "\n    fragment VideoButtonEntry on Entry {\n        ...createVideoSlugEntry\n    }\n": typeof types.VideoButtonEntryFragmentDoc,
@@ -105,8 +101,12 @@ type Documents = {
     "\n            mutation ResetPassword($input: ResetPasswordInput!) {\n                resetPassword(input: $input)\n            }\n        ": typeof types.ResetPasswordDocument,
     "\n            mutation ResendEmailVerification {\n                resendEmailVerification\n            }\n        ": typeof types.ResendEmailVerificationDocument,
     "\n            mutation Logout {\n                logout\n            }\n        ": typeof types.LogoutDocument,
+    "\n    query FavoriteButton($entryId: Int!) {\n        me {\n            id\n            favorites(filter: { entryId: $entryId }) {\n                id\n            }\n        }\n    }\n": typeof types.FavoriteButtonDocument,
+    "\n            mutation ToggleFavorite($entryId: Int!) {\n                toggleFavorite(favorite: { entry: $entryId }) {\n                    id\n                }\n            }\n        ": typeof types.ToggleFavoriteDocument,
+    "\n                        query FavoriteButtonReadMe {\n                            me {\n                                id\n                            }\n                        }\n                    ": typeof types.FavoriteButtonReadMeDocument,
+    "\n                            fragment FavoriteButtonUpdateMe on Me {\n                                id\n                                favorites(filter: { entryId: $entryId }) {\n                                    id\n                                }\n                            }\n                        ": typeof types.FavoriteButtonUpdateMeFragmentDoc,
     "\n    query RandomGrill {\n        imageConnection(filter: { facet: GRILL }, sort: [RANDOM], pagination: { first: 1 }) {\n            nodes {\n                link\n            }\n        }\n    }\n": typeof types.RandomGrillDocument,
-    "\n    query RandomTheme($input:ThemeShuffleInput) {\n        themeShuffle(input: $input, first: 10) {\n            ...WatchListItemTheme\n            entries {\n                ...WatchListItemEntry\n                videos {\n                    nodes {\n                        ...WatchListItemVideo\n                    }\n                }\n            }\n        }\n    }\n": typeof types.RandomThemeDocument,
+    "\n    query RandomTheme($input: ThemeShuffleInput) {\n        themeShuffle(input: $input, first: 10) {\n            ...WatchListItemTheme\n            entries {\n                ...WatchListItemEntry\n                videos {\n                    nodes {\n                        ...WatchListItemVideo\n                    }\n                }\n            }\n        }\n    }\n": typeof types.RandomThemeDocument,
     "\n    fragment DocumentPagePage on Page {\n        name\n        createdAt\n    }\n": typeof types.DocumentPagePageFragmentDoc,
     "\n    query DocumentPage($pageSlug: String!) {\n        page(slug: $pageSlug) {\n            ...DocumentPagePage\n            body\n        }\n    }\n": typeof types.DocumentPageDocument,
     "\n    query DocumentPageAll {\n        pageConnection {\n            nodes {\n                slug\n            }\n        }\n    }\n": typeof types.DocumentPageAllDocument,
@@ -172,10 +172,6 @@ type Documents = {
 };
 const documents: Documents = {
     "\n    fragment BracketThemeSummaryCardTheme on Theme {\n        ...createVideoSlugTheme\n        ...ThemeMenuTheme\n        type\n        sequence\n        group {\n            name\n            slug\n        }\n        anime {\n            slug\n            title {\n                romaji\n            }\n            images {\n                nodes {\n                    ...extractImagesImage\n                }\n            }\n        }\n        song {\n            ...SongTitleWithArtistsSong\n        }\n        entries {\n            ...createVideoSlugEntry\n            videos {\n                nodes {\n                    ...createVideoSlugVideo\n                }\n            }\n        }\n    }\n": types.BracketThemeSummaryCardThemeFragmentDoc,
-    "\n    query FavoriteButton($entryId: Int!) {\n        me {\n            id\n            favorites(filter: { entryId: $entryId }) {\n                id\n            }\n        }\n    }\n": types.FavoriteButtonDocument,
-    "\n            mutation ToggleFavorite($entryId: Int!) {\n                toggleFavorite(favorite: { entry: $entryId }) {\n                    id\n                }\n            }\n        ": types.ToggleFavoriteDocument,
-    "\n                        query FavoriteButtonReadMe {\n                            me {\n                                id\n                            }\n                        }\n                    ": types.FavoriteButtonReadMeDocument,
-    "\n                            fragment FavoriteButtonUpdateMe on Me {\n                                id\n                                favorites(filter: { entryId: $entryId }) {\n                                    id\n                                }\n                            }\n                        ": types.FavoriteButtonUpdateMeFragmentDoc,
     "\n    fragment VideoButtonAnime on Anime {\n        slug\n    }\n": types.VideoButtonAnimeFragmentDoc,
     "\n    fragment VideoButtonTheme on Theme {\n        ...createVideoSlugTheme\n    }\n": types.VideoButtonThemeFragmentDoc,
     "\n    fragment VideoButtonEntry on Entry {\n        ...createVideoSlugEntry\n    }\n": types.VideoButtonEntryFragmentDoc,
@@ -262,8 +258,12 @@ const documents: Documents = {
     "\n            mutation ResetPassword($input: ResetPasswordInput!) {\n                resetPassword(input: $input)\n            }\n        ": types.ResetPasswordDocument,
     "\n            mutation ResendEmailVerification {\n                resendEmailVerification\n            }\n        ": types.ResendEmailVerificationDocument,
     "\n            mutation Logout {\n                logout\n            }\n        ": types.LogoutDocument,
+    "\n    query FavoriteButton($entryId: Int!) {\n        me {\n            id\n            favorites(filter: { entryId: $entryId }) {\n                id\n            }\n        }\n    }\n": types.FavoriteButtonDocument,
+    "\n            mutation ToggleFavorite($entryId: Int!) {\n                toggleFavorite(favorite: { entry: $entryId }) {\n                    id\n                }\n            }\n        ": types.ToggleFavoriteDocument,
+    "\n                        query FavoriteButtonReadMe {\n                            me {\n                                id\n                            }\n                        }\n                    ": types.FavoriteButtonReadMeDocument,
+    "\n                            fragment FavoriteButtonUpdateMe on Me {\n                                id\n                                favorites(filter: { entryId: $entryId }) {\n                                    id\n                                }\n                            }\n                        ": types.FavoriteButtonUpdateMeFragmentDoc,
     "\n    query RandomGrill {\n        imageConnection(filter: { facet: GRILL }, sort: [RANDOM], pagination: { first: 1 }) {\n            nodes {\n                link\n            }\n        }\n    }\n": types.RandomGrillDocument,
-    "\n    query RandomTheme($input:ThemeShuffleInput) {\n        themeShuffle(input: $input, first: 10) {\n            ...WatchListItemTheme\n            entries {\n                ...WatchListItemEntry\n                videos {\n                    nodes {\n                        ...WatchListItemVideo\n                    }\n                }\n            }\n        }\n    }\n": types.RandomThemeDocument,
+    "\n    query RandomTheme($input: ThemeShuffleInput) {\n        themeShuffle(input: $input, first: 10) {\n            ...WatchListItemTheme\n            entries {\n                ...WatchListItemEntry\n                videos {\n                    nodes {\n                        ...WatchListItemVideo\n                    }\n                }\n            }\n        }\n    }\n": types.RandomThemeDocument,
     "\n    fragment DocumentPagePage on Page {\n        name\n        createdAt\n    }\n": types.DocumentPagePageFragmentDoc,
     "\n    query DocumentPage($pageSlug: String!) {\n        page(slug: $pageSlug) {\n            ...DocumentPagePage\n            body\n        }\n    }\n": types.DocumentPageDocument,
     "\n    query DocumentPageAll {\n        pageConnection {\n            nodes {\n                slug\n            }\n        }\n    }\n": types.DocumentPageAllDocument,
@@ -346,22 +346,6 @@ export function graphql(source: string): unknown;
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    fragment BracketThemeSummaryCardTheme on Theme {\n        ...createVideoSlugTheme\n        ...ThemeMenuTheme\n        type\n        sequence\n        group {\n            name\n            slug\n        }\n        anime {\n            slug\n            title {\n                romaji\n            }\n            images {\n                nodes {\n                    ...extractImagesImage\n                }\n            }\n        }\n        song {\n            ...SongTitleWithArtistsSong\n        }\n        entries {\n            ...createVideoSlugEntry\n            videos {\n                nodes {\n                    ...createVideoSlugVideo\n                }\n            }\n        }\n    }\n"): (typeof documents)["\n    fragment BracketThemeSummaryCardTheme on Theme {\n        ...createVideoSlugTheme\n        ...ThemeMenuTheme\n        type\n        sequence\n        group {\n            name\n            slug\n        }\n        anime {\n            slug\n            title {\n                romaji\n            }\n            images {\n                nodes {\n                    ...extractImagesImage\n                }\n            }\n        }\n        song {\n            ...SongTitleWithArtistsSong\n        }\n        entries {\n            ...createVideoSlugEntry\n            videos {\n                nodes {\n                    ...createVideoSlugVideo\n                }\n            }\n        }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n    query FavoriteButton($entryId: Int!) {\n        me {\n            id\n            favorites(filter: { entryId: $entryId }) {\n                id\n            }\n        }\n    }\n"): (typeof documents)["\n    query FavoriteButton($entryId: Int!) {\n        me {\n            id\n            favorites(filter: { entryId: $entryId }) {\n                id\n            }\n        }\n    }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n            mutation ToggleFavorite($entryId: Int!) {\n                toggleFavorite(favorite: { entry: $entryId }) {\n                    id\n                }\n            }\n        "): (typeof documents)["\n            mutation ToggleFavorite($entryId: Int!) {\n                toggleFavorite(favorite: { entry: $entryId }) {\n                    id\n                }\n            }\n        "];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n                        query FavoriteButtonReadMe {\n                            me {\n                                id\n                            }\n                        }\n                    "): (typeof documents)["\n                        query FavoriteButtonReadMe {\n                            me {\n                                id\n                            }\n                        }\n                    "];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n                            fragment FavoriteButtonUpdateMe on Me {\n                                id\n                                favorites(filter: { entryId: $entryId }) {\n                                    id\n                                }\n                            }\n                        "): (typeof documents)["\n                            fragment FavoriteButtonUpdateMe on Me {\n                                id\n                                favorites(filter: { entryId: $entryId }) {\n                                    id\n                                }\n                            }\n                        "];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -709,11 +693,27 @@ export function graphql(source: "\n            mutation Logout {\n              
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n    query FavoriteButton($entryId: Int!) {\n        me {\n            id\n            favorites(filter: { entryId: $entryId }) {\n                id\n            }\n        }\n    }\n"): (typeof documents)["\n    query FavoriteButton($entryId: Int!) {\n        me {\n            id\n            favorites(filter: { entryId: $entryId }) {\n                id\n            }\n        }\n    }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n            mutation ToggleFavorite($entryId: Int!) {\n                toggleFavorite(favorite: { entry: $entryId }) {\n                    id\n                }\n            }\n        "): (typeof documents)["\n            mutation ToggleFavorite($entryId: Int!) {\n                toggleFavorite(favorite: { entry: $entryId }) {\n                    id\n                }\n            }\n        "];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n                        query FavoriteButtonReadMe {\n                            me {\n                                id\n                            }\n                        }\n                    "): (typeof documents)["\n                        query FavoriteButtonReadMe {\n                            me {\n                                id\n                            }\n                        }\n                    "];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n                            fragment FavoriteButtonUpdateMe on Me {\n                                id\n                                favorites(filter: { entryId: $entryId }) {\n                                    id\n                                }\n                            }\n                        "): (typeof documents)["\n                            fragment FavoriteButtonUpdateMe on Me {\n                                id\n                                favorites(filter: { entryId: $entryId }) {\n                                    id\n                                }\n                            }\n                        "];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n    query RandomGrill {\n        imageConnection(filter: { facet: GRILL }, sort: [RANDOM], pagination: { first: 1 }) {\n            nodes {\n                link\n            }\n        }\n    }\n"): (typeof documents)["\n    query RandomGrill {\n        imageConnection(filter: { facet: GRILL }, sort: [RANDOM], pagination: { first: 1 }) {\n            nodes {\n                link\n            }\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    query RandomTheme($input:ThemeShuffleInput) {\n        themeShuffle(input: $input, first: 10) {\n            ...WatchListItemTheme\n            entries {\n                ...WatchListItemEntry\n                videos {\n                    nodes {\n                        ...WatchListItemVideo\n                    }\n                }\n            }\n        }\n    }\n"): (typeof documents)["\n    query RandomTheme($input:ThemeShuffleInput) {\n        themeShuffle(input: $input, first: 10) {\n            ...WatchListItemTheme\n            entries {\n                ...WatchListItemEntry\n                videos {\n                    nodes {\n                        ...WatchListItemVideo\n                    }\n                }\n            }\n        }\n    }\n"];
+export function graphql(source: "\n    query RandomTheme($input: ThemeShuffleInput) {\n        themeShuffle(input: $input, first: 10) {\n            ...WatchListItemTheme\n            entries {\n                ...WatchListItemEntry\n                videos {\n                    nodes {\n                        ...WatchListItemVideo\n                    }\n                }\n            }\n        }\n    }\n"): (typeof documents)["\n    query RandomTheme($input: ThemeShuffleInput) {\n        themeShuffle(input: $input, first: 10) {\n            ...WatchListItemTheme\n            entries {\n                ...WatchListItemEntry\n                videos {\n                    nodes {\n                        ...WatchListItemVideo\n                    }\n                }\n            }\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

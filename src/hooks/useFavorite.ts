@@ -1,13 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client/react";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
 
-import { IconTextButton } from "@/components/button/IconTextButton";
 import { graphql } from "@/graphql/generated";
 import { FAVORITES_PAGE_QUERY } from "@/pages/profile/favorites";
-
-interface FavoriteButtonProps {
-    entryId: number;
-}
 
 const FAVORITE_BUTTON_QUERY = graphql(`
     query FavoriteButton($entryId: Int!) {
@@ -20,7 +14,7 @@ const FAVORITE_BUTTON_QUERY = graphql(`
     }
 `);
 
-export function FavoriteButton({ entryId }: FavoriteButtonProps) {
+export default function useFavorite(entryId: number) {
     const { data } = useQuery(FAVORITE_BUTTON_QUERY, {
         variables: { entryId },
     });
@@ -85,13 +79,5 @@ export function FavoriteButton({ entryId }: FavoriteButtonProps) {
         },
     );
 
-    return (
-        <IconTextButton
-            icon={faHeart}
-            isCircle
-            variant={isFavorite ? "primary" : "solid"}
-            collapsible="socialListMax"
-            onClick={() => toggleFavorite()}
-        />
-    );
+    return { isFavorite, toggleFavorite };
 }

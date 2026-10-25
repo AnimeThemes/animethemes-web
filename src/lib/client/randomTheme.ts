@@ -3,7 +3,7 @@ import { graphql } from "@/graphql/generated";
 import type { AnimeFormat, ThemeType } from "@/graphql/generated/graphql";
 
 const RANDOM_THEME = graphql(`
-    query RandomTheme($input:ThemeShuffleInput) {
+    query RandomTheme($input: ThemeShuffleInput) {
         themeShuffle(input: $input, first: 10) {
             ...WatchListItemTheme
             entries {
@@ -33,6 +33,7 @@ export async function fetchRandomThemes(options?: RandomThemesOptions) {
         variables: {
             input: options?.input,
         },
+        fetchPolicy: "network-only",
     });
 
     return data.themeShuffle;

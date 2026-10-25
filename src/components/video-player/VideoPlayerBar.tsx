@@ -2,12 +2,20 @@ import { useContext } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
-import { faBackwardStep, faForwardStep, faPause, faPlay, faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+    faBackwardStep,
+    faForwardStep,
+    faHeart,
+    faPause,
+    faPlay,
+    faPlus,
+    faXmark,
+} from "@fortawesome/free-solid-svg-icons";
 
 import { Column } from "@/components/box/Flex";
 import { Solid } from "@/components/box/Solid";
-import { FavoriteButton } from "@/components/button/FavoriteButton";
 import { IconTextButton } from "@/components/button/IconTextButton";
+import { FavoriteDialog } from "@/components/dialog/FavoriteDialog";
 import { PlaylistTrackAddDialog } from "@/components/dialog/PlaylistTrackAddDialog";
 import { Icon } from "@/components/icon/Icon";
 import { ShareMenu } from "@/components/menu/ShareMenu";
@@ -20,6 +28,7 @@ import { VideoPlayerContext } from "@/components/video-player/VideoPlayer";
 import { VolumeControl } from "@/components/video-player/VolumeControl";
 import PlayerContext from "@/context/playerContext";
 import { getFragmentData, graphql } from "@/graphql/generated";
+import useFavorite from "@/hooks/useFavorite";
 import theme from "@/theme";
 
 const StyledPlayerBar = styled(Solid)`
@@ -149,6 +158,7 @@ export function VideoPlayerBar() {
     const anime = theme.anime;
 
     const { clearWatchList } = useContext(PlayerContext);
+    const { isFavorite } = useFavorite(entry.id);
 
     return (
         <StyledPlayerBar>
@@ -216,7 +226,18 @@ export function VideoPlayerBar() {
             </StyledPlayerBarControls>
             <StyledPlayerBarActions>
                 <StyledVolumeControl />
-                <FavoriteButton entryId={entry.id} />
+                <FavoriteDialog
+                    entryId={entry.id}
+                    trigger={
+                        <IconTextButton
+                            icon={faHeart}
+                            title="Add to favorites"
+                            isCircle
+                            variant={isFavorite ? "primary" : "solid"}
+                            collapsible="socialListMax"
+                        />
+                    }
+                />
                 <PlaylistTrackAddDialog
                     video={video}
                     entry={entry}

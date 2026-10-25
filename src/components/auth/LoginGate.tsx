@@ -7,7 +7,7 @@ import { Text } from "@/components/text/Text";
 import useAuth from "@/hooks/useAuth";
 
 interface LoginGateProps {
-    children: ReactNode;
+    children?: ReactNode;
 }
 
 export function LoginGate({ children }: LoginGateProps) {
@@ -15,7 +15,7 @@ export function LoginGate({ children }: LoginGateProps) {
 
     if (me) {
         // User is already logged in, so we can safely show the content.
-        return <>{children}</>;
+        return children ? <>{children}</> : null;
     }
 
     return (
