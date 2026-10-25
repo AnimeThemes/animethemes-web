@@ -172,7 +172,11 @@ export function ThemeSummaryCard({
     }
 
     const songStaff = Map.groupBy(
-        (theme.song?.staff ?? []).toSorted(({ relevance: a }, { relevance: b }) => a - b),
+        (theme.song?.staff ?? [])
+            .toSorted(({ relevance: a }, { relevance: b }) => a - b)
+            .filter((staff, index, array) =>
+                array.findIndex(({ artist }) => artist.id === staff.artist.id) === index
+            ),
         ({ role }) => role
     );
 
