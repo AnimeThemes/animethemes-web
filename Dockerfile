@@ -28,8 +28,9 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Set correct permissions for working dir
+# Set correct permissions for working dir and app dir
 RUN chown -R node:node /work
+RUN mkdir /app && chown node:node /app
 
 # Switch to non-root user for security best practices
 USER node
