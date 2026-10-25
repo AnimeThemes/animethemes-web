@@ -7,16 +7,17 @@ import {
     faCompress,
     faExpand,
     faGear,
+    faHeart,
     faKeyboard,
     faPlus,
     faShare,
     faUpRightFromSquare,
 } from "@fortawesome/free-solid-svg-icons";
-import { Dialog } from "@radix-ui/react-dialog";
 
 import { Row } from "@/components/box/Flex";
 import { IconTextButton } from "@/components/button/IconTextButton";
-import { DialogContent, DialogTrigger } from "@/components/dialog/Dialog";
+import { FavoriteDialog } from "@/components/dialog/FavoriteDialog";
+import { KeyboardShortcutDialog } from "@/components/dialog/KeyboardShortcutDialog";
 import { PlaylistTrackAddDialog } from "@/components/dialog/PlaylistTrackAddDialog";
 import { Icon } from "@/components/icon/Icon";
 import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from "@/components/menu/Menu";
@@ -33,9 +34,9 @@ import PlayerContext, {
     WATCH_LIST_ITEM_VIDEO,
 } from "@/context/playerContext";
 import { getFragmentData } from "@/graphql/generated";
+import useFavorite from "@/hooks/useFavorite";
 import useSetting from "@/hooks/useSetting";
 import { getAnimeFromVideoPageFragment, type VideoPageProps } from "@/pages/anime/[animeSlug]/[videoSlug]";
-import theme from "@/theme";
 import createVideoSlug from "@/utils/createVideoSlug";
 import { AudioMode } from "@/utils/settings";
 
@@ -56,40 +57,8 @@ const StyledOverlay = styled.div`
     }
 `;
 const StyledOverlayButton = styled(IconTextButton)`
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(5px);
-`;
-
-const StyledKeyList = styled.dl`
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 8px 16px;
-    align-items: baseline;
-    margin: 0;
-`;
-const StyledKey = styled.dt`
-    text-align: right;
-    color: ${theme.colors["text-muted"]};
-`;
-const StyledKeyDescription = styled.dd`
-    margin: 0;
-    color: ${theme.colors["text-disabled"]};
-`;
-const StyledKeyHint = styled.kbd`
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-
-    width: 32px;
-    height: 32px;
-    border: 1px solid ${theme.colors["text-disabled"]};
-    border-radius: 4px;
-
-    font-size: 1.25rem;
-    background-color: ${theme.colors["background"]};
-`;
-const StyledKeyHintSpace = styled(StyledKeyHint)`
-    width: 96px;
 `;
 
 export function VideoPlayerOverlay({ anime: animeFragment, themeIndex, entryIndex, videoIndex }: VideoPageProps) {
@@ -104,6 +73,7 @@ export function VideoPlayerOverlay({ anime: animeFragment, themeIndex, entryInde
     const [isPIPSupported, setPIPSupported] = useState(false);
     const context = useContext(VideoPlayerContext);
     const [audioMode] = useSetting(AudioMode, { storageSync: false });
+    const { isFavorite } = useFavorite(entry.id);
 
     if (!context) {
         throw new Error("VideoPlayerOverlay needs to be inside VideoPlayer!");
@@ -135,85 +105,22 @@ export function VideoPlayerOverlay({ anime: animeFragment, themeIndex, entryInde
     return (
         <StyledOverlay>
             <Row style={{ "--gap": "16px" }}>
+                <FavoriteDialog
+                    entryId={entry.id}
+                    trigger={
+                        <StyledOverlayButton
+                            icon={faHeart}
+                            isCircle
+                            variant={isFavorite ? "primary" : undefined}
+                            title="Add to favorites"
+                        />
+                    }
+                />
                 <PlaylistTrackAddDialog
                     video={video}
                     entry={entry}
                     trigger={<StyledOverlayButton icon={faPlus} isCircle title="Add to playlist" />}
                 />
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <StyledOverlayButton icon={faKeyboard} isCircle title="Keyboard shortcuts" />
-                    </DialogTrigger>
-                    <DialogContent title="Keyboard Shortcuts">
-                        <StyledKeyList>
-                            <StyledKey>
-                                <StyledKeyHintSpace title="Space">_</StyledKeyHintSpace> or{" "}
-                                <StyledKeyHint>K</StyledKeyHint>
-                            </StyledKey>
-                            <StyledKeyDescription>Play / Pause</StyledKeyDescription>
-                            <StyledKey>
-                                <StyledKeyHint>→</StyledKeyHint>
-                            </StyledKey>
-                            <StyledKeyDescription>Seek forward 5 seconds</StyledKeyDescription>
-                            <StyledKey>
-                                <StyledKeyHint>←</StyledKeyHint>
-                            </StyledKey>
-                            <StyledKeyDescription>Seek backward 5 seconds</StyledKeyDescription>
-                            <StyledKey>
-                                <StyledKeyHint>L</StyledKeyHint>
-                            </StyledKey>
-                            <StyledKeyDescription>Seek forward 10 seconds</StyledKeyDescription>
-                            <StyledKey>
-                                <StyledKeyHint>J</StyledKeyHint>
-                            </StyledKey>
-                            <StyledKeyDescription>Seek backward 10 seconds</StyledKeyDescription>
-                            <StyledKey>
-                                <StyledKeyHint>.</StyledKeyHint>
-                            </StyledKey>
-                            <StyledKeyDescription>Seek forward 1 frame</StyledKeyDescription>
-                            <StyledKey>
-                                <StyledKeyHint>,</StyledKeyHint>
-                            </StyledKey>
-                            <StyledKeyDescription>Seek backward 1 frame</StyledKeyDescription>
-                            <StyledKey>
-                                <StyledKeyHint>N</StyledKeyHint>
-                            </StyledKey>
-                            <StyledKeyDescription>Next track</StyledKeyDescription>
-                            <StyledKey>
-                                <StyledKeyHint>B</StyledKeyHint>
-                            </StyledKey>
-                            <StyledKeyDescription>Previous track</StyledKeyDescription>
-                            <StyledKey>
-                                <StyledKeyHint>M</StyledKeyHint>
-                            </StyledKey>
-                            <StyledKeyDescription>Mute / Unmute</StyledKeyDescription>
-                            <StyledKey>
-                                <StyledKeyHint>↑</StyledKeyHint>
-                            </StyledKey>
-                            <StyledKeyDescription>Volume up</StyledKeyDescription>
-                            <StyledKey>
-                                <StyledKeyHint>↓</StyledKeyHint>
-                            </StyledKey>
-                            <StyledKeyDescription>Volume down</StyledKeyDescription>
-                            <StyledKey>
-                                <StyledKeyHint>D</StyledKeyHint>
-                            </StyledKey>
-                            <StyledKeyDescription>Download track</StyledKeyDescription>
-                            <StyledKey>
-                                <StyledKeyHint>F</StyledKeyHint>
-                            </StyledKey>
-                            <StyledKeyDescription>Toggle fullscreen</StyledKeyDescription>
-                            <StyledKey>
-                                <StyledKeyHint>A</StyledKeyHint>
-                            </StyledKey>
-                            <StyledKeyDescription>Toggle audio mode</StyledKeyDescription>
-                            <StyledKey>
-                                <StyledKeyHint>P</StyledKeyHint>
-                            </StyledKey>
-                            <StyledKeyDescription>Toggle picture-in-picture</StyledKeyDescription>
-                        </StyledKeyList>
-                    </DialogContent>
-                </Dialog>
                 <ShareMenu
                     pagePath={context.videoPagePath}
                     videoUrl={context.videoUrl}
@@ -293,16 +200,23 @@ export function VideoPlayerOverlay({ anime: animeFragment, themeIndex, entryInde
                                 </Fragment>
                             ) : null,
                         )}
+                        <MenuSeparator />
+                        {isPIPSupported && audioMode === AudioMode.DISABLED && (
+                            <MenuItem onSelect={() => context.togglePip()}>
+                                <Icon icon={faUpRightFromSquare} color="text-disabled" />
+                                Toggle picture-in-picture
+                            </MenuItem>
+                        )}
+                        <KeyboardShortcutDialog
+                            trigger={
+                                <MenuItem onSelect={(event) => event.preventDefault()}>
+                                    <Icon icon={faKeyboard} color="text-disabled" />
+                                    Keyboard shortcuts
+                                </MenuItem>
+                            }
+                        />
                     </MenuContent>
                 </Menu>
-                {isPIPSupported && audioMode === AudioMode.DISABLED && (
-                    <StyledOverlayButton
-                        icon={faUpRightFromSquare}
-                        isCircle
-                        onClick={context.togglePip}
-                        title="Toggle picture-in-picture"
-                    />
-                )}
                 {!(isIOS && audioMode === AudioMode.ENABLED) && ( // Hide fullscreen button on iOS when audio mode is enabled
                     <StyledOverlayButton
                         icon={isFullscreen ? faCompress : faExpand}
