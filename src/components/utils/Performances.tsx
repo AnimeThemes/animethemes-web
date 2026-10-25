@@ -1,15 +1,10 @@
 import { Fragment, useState } from "react";
-import styled from "styled-components";
 import Link from "next/link";
 
 import { uniqBy } from "lodash-es";
 
 import { Text } from "@/components/text/Text";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
-
-const StyledArtistLink = styled(Text).attrs({ as: "a", link: true })`
-    font-size: 1rem;
-`;
 
 export const STAFF_SONG = graphql(`
     fragment StaffSong on Song {
@@ -82,12 +77,10 @@ export function getDisplayedArtistName({ alias, artist, as }: ArtistNameProps) {
 
 export function Performances({
     song: songFragment,
-    artist: artistFragment,
     maxPerformances = 3,
     expandable = false,
 }: PerformancesProps) {
     const song = getFragmentData(STAFF_SONG, songFragment);
-    const artist = getFragmentData(SONG_STAFF_ARTIST, artistFragment);
     const [expandPerformances, setExpandPerformances] = useState(false);
 
     const songPerformances = song?.staff.filter(filterPerformancesFromStaff);
@@ -111,53 +104,6 @@ export function Performances({
     const featuringShown = shown.filter(isFeaturing);
 
     const performancesHidden = performances.slice(maxPerformances).filter((p) => !isFeaturing(p));
-
-    if (artist) {
-        const performedAs = performances.find((performance) => performance.artist.id === artist.id);
-
-        const performancesWith = performances.filter((performance) => performance.artist.id !== artist.id);
-        const performedWith = performancesWith.filter((p) => !isFeaturing(p));
-        const featuredWith = performancesWith.filter(isFeaturing);
-
-        return (
-            <>
-                {performedAs?.as ? (
-                    <Text variant="small" color="text-muted">
-                        <span> as </span>
-                        <span>
-                            <StyledArtistLink as={Link} href={`/artist/${performedAs.artist.slug}`}>
-                                {performedAs.as}
-                            </StyledArtistLink>
-                        </span>
-                    </Text>
-                ) : null}
-                {performedWith.length ? (
-                    <Text variant="small" color="text-muted">
-                        <span> with </span>
-                        <span>
-                            {performedWith.map((performance, index) => (
-                                <Fragment key={performance.artist.slug}>
-                                    {index > 0 && (index === performedWith.length - 1 ? " & " : ", ")}
-                                    <StyledArtistLink as={Link} href={`/artist/${performance.artist.slug}`}>
-                                        {getDisplayedArtistName(performance)}
-                                    </StyledArtistLink>
-                                </Fragment>
-                            ))}
-                            {featuredWith.length ? <span> featuring </span> : null}
-                            {featuredWith.map((featuring, index) => (
-                                <Fragment key={featuring.artist.slug}>
-                                    {index > 0 && (index === featuredWith.length - 1 ? " & " : ", ")}
-                                    <StyledArtistLink as={Link} href={`/artist/${featuring.artist.slug}`}>
-                                        {getDisplayedArtistName(featuring)}
-                                    </StyledArtistLink>
-                                </Fragment>
-                            ))}
-                        </span>
-                    </Text>
-                ) : null}
-            </>
-        );
-    }
 
     const hasMore = performancesHidden.length > 0;
 

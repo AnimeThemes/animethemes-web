@@ -110,14 +110,6 @@ export const THEME_SUMMARY_CARD_THEME = graphql(`
     }
 `);
 
-export const THEME_SUMMARY_CARD_ARTIST = graphql(`
-    fragment ThemeSummaryCardArtist on Artist {
-        ...SongStaffArtist
-        id
-        slug
-    }
-`);
-
 export const THEME_SUMMARY_CARD_THEME_EXPANDABLE = graphql(`
     fragment ThemeSummaryCardThemeExpandable on Theme {
         ...ThemeTableTheme
@@ -129,22 +121,18 @@ const useIsMobile = () => useMediaQuery(`(max-width: ${theme.breakpoints.mobileM
 
 interface ThemeSummaryCardProps {
     theme: FragmentType<typeof THEME_SUMMARY_CARD_THEME>;
-    artist?: FragmentType<typeof THEME_SUMMARY_CARD_ARTIST>;
     expandable?: FragmentType<typeof THEME_SUMMARY_CARD_THEME_EXPANDABLE>;
     onPlay?(entryIndex?: number, videoIndex?: number): void;
 }
 
-// Specify an artist if you want to display this in an artist context (e.g. artist page)
 export function ThemeSummaryCard({
     theme: themeFragment,
-    artist: artistFragment,
     children,
     expandable: expandableFragment,
     onPlay,
     ...props
 }: PropsWithChildren<ThemeSummaryCardProps>) {
     const theme = getFragmentData(THEME_SUMMARY_CARD_THEME, themeFragment);
-    const ownerArtist = artistFragment ? getFragmentData(THEME_SUMMARY_CARD_ARTIST, artistFragment) : undefined;
 
     const anime = theme.anime;
     const entry = theme.entries[0];
@@ -197,7 +185,7 @@ export function ThemeSummaryCard({
                 <SummaryCard.Body onClick={(event) => handleToggleExpand(event, true)}>
                     <SummaryCard.Title>
                         <SongTitle song={theme.song} href={href} onClick={() => onPlay?.()} />
-                        <Performances song={theme.song} artist={ownerArtist} />
+                        <Performances song={theme.song} />
                     </SummaryCard.Title>
                     <SummaryCard.Description>
                         <span>
@@ -235,7 +223,7 @@ export function ThemeSummaryCard({
                             onPlay={(_, entryIndex, videoIndex) => onPlay?.(entryIndex, videoIndex)}
                         />
                         {songStaff.size > 0 && (
-                            <Table style={{ "--columns": "1fr 1fr" }}>
+                            <Table style={{ "--columns": "1fr 3fr" }}>
                                 <TableHead>
                                     <TableHeadCell>Role</TableHeadCell>
                                     <TableHeadCell>Artists</TableHeadCell>

@@ -68,7 +68,6 @@ const StyledHeader = styled.div`
 
 export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
     fragment ArtistDetailPageArtist on Artist {
-        ...ThemeSummaryCardArtist
         id
         slug
         name {
@@ -150,7 +149,6 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
             memberAs
             role
             artist {
-                ...ThemeSummaryCardArtist
                 slug
                 name {
                     main
@@ -351,17 +349,15 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
         [songStaffs],
     );
 
-    const defaultRole = roles.find((role) => role === "Performance") ?? roles[0];
-
-    const performedAsFilterOptions = useMemo(
+    const creditedAsFilterOptions = useMemo(
         () => [null, artist.name.main, ...aliases, ...characters],
         [aliases, artist.name.main, characters],
     );
 
     const [showFilter, toggleShowFilter] = useToggle();
-    const [filterSongStaff, setFilterSongStaff] = useState<string | null>(null);
-    const [filterPerformedAs, setFilterPerformedAs] = useState(performedAsFilterOptions[0]);
-    const [filterRole, setFilterRole] = useState(defaultRole);
+    const [filterSongStaffFormat, setFilterSongStaffFormat] = useState<string | null>(null);
+    const [filterCreditedAs, setFilterCreditedAs] = useState(creditedAsFilterOptions[0]);
+    const [filterRole, setFilterRole] = useState<string | null>(null);
     const [sortBy, setSortBy] = useState<
         | typeof SONG_A_Z_ANIME
         | typeof SONG_Z_A_ANIME
@@ -379,16 +375,16 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
         ) =>
             staffs.filter((staff) => {
                 const matchesPerformedAs =
-                    filterPerformedAs === null ||
-                    (filterPerformedAs === artist.name.main &&
+                    filterCreditedAs === null ||
+                    (filterCreditedAs === artist.name.main &&
                         !staff.as &&
                         !groupAs &&
                         !staff.alias &&
                         !groupAlias) ||
-                    filterPerformedAs === groupAs ||
-                    filterPerformedAs === staff.as ||
-                    filterPerformedAs === groupAlias ||
-                    filterPerformedAs === staff.alias;
+                    filterCreditedAs === groupAs ||
+                    filterCreditedAs === staff.as ||
+                    filterCreditedAs === groupAlias ||
+                    filterCreditedAs === staff.alias;
 
                 const matchesRole = filterRole === null || filterRole === staff.role;
 
@@ -398,7 +394,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                     matchesRole
                 );
             }),
-        [artist.name.main, filterPerformedAs, filterRole],
+        [artist.name.main, filterCreditedAs, filterRole],
     );
 
     const toSortedThemes = useCallback(
@@ -409,7 +405,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
 
     const songStaffsGroupedByAlias = useMemo(
         () =>
-            filterSongStaffs(songStaffs.filter(getSongStaffFilter(filterSongStaff)), null, null).reduce(
+            filterSongStaffs(songStaffs.filter(getSongStaffFilter(filterSongStaffFormat)), null, null).reduce(
                 (prev, curr) => {
                     const group = prev.get(curr.alias);
                     if (!group) {
@@ -421,7 +417,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                 },
                 new Map<string | null, Array<SongStaff>>(),
             ),
-        [songStaffs, filterSongStaff, filterSongStaffs],
+        [songStaffs, filterSongStaffFormat, filterSongStaffs],
     );
     const songStaffsAsSelf = songStaffsGroupedByAlias.get(null) ?? [];
 
@@ -440,11 +436,11 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                     return acc;
                 }, {}),
             ).map((staffs) => {
-                return filterSongStaff === "SOLO"
+                return filterSongStaffFormat === "SOLO"
                     ? []
                     : filterSongStaffs(staffs, staffs[0].memberAs, staffs[0].memberAlias);
             }),
-        [memberSongStaffs, filterSongStaff, filterSongStaffs],
+        [memberSongStaffs, filterSongStaffFormat, filterSongStaffs],
     );
 
     return (
@@ -552,7 +548,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                     )}
                     <StyledHeader>
                         <Text variant="h2">
-                            Song Performances
+                            Songs
                             <Text color="text-disabled"> ({songStaffsAsSelf.length})</Text>
                         </Text>
                         <FilterToggleButton onClick={toggleShowFilter} />
@@ -562,10 +558,10 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                             gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
                         }}>
                             <SearchFilter>
-                                <Text variant="h2">Performed with</Text>
+                                <Text variant="h2">Format</Text>
                                 <Listbox
-                                    value={filterSongStaff}
-                                    onValueChange={setFilterSongStaff}
+                                    value={filterSongStaffFormat}
+                                    onValueChange={setFilterSongStaffFormat}
                                     defaultValue={null}
                                     nullable
                                     resettable
@@ -579,16 +575,16 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                                 </Listbox>
                             </SearchFilter>
                             <SearchFilter>
-                                <Text variant="h2">Performed as</Text>
+                                <Text variant="h2">Credited as</Text>
                                 <Listbox
-                                    value={filterPerformedAs}
-                                    onValueChange={setFilterPerformedAs}
+                                    value={filterCreditedAs}
+                                    onValueChange={setFilterCreditedAs}
                                     defaultValue={null}
                                     nullable
                                     resettable
                                     highlightNonDefault
                                 >
-                                    {performedAsFilterOptions.map((option) => (
+                                    {creditedAsFilterOptions.map((option) => (
                                         <ListboxOption key={option} value={option} hidden={!option}>
                                             {option ?? "Any"}
                                         </ListboxOption>
@@ -600,7 +596,9 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                                 <Listbox
                                     value={filterRole}
                                     onValueChange={setFilterRole}
-                                    defaultValue={defaultRole}
+                                    defaultValue={null}
+                                    nullable
+                                    resettable
                                     highlightNonDefault
                                 >
                                     {roles.map((option) => (
@@ -608,6 +606,9 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                                             {option}
                                         </ListboxOption>
                                     ))}
+                                    <ListboxOption value={null} hidden>
+                                        Any
+                                    </ListboxOption>
                                 </Listbox>
                             </SearchFilter>
                             <SearchFilterSortBy value={sortBy} setValue={setSortBy}>
@@ -627,7 +628,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                     <Column style={{ "--gap": "48px" }}>
                         {songStaffsAsSelf.length ? (
                             <Column style={{ "--gap": "16px" }}>
-                                <ArtistThemes themes={toSortedThemes(songStaffsAsSelf)} artist={artist} />
+                                <ArtistThemes themes={toSortedThemes(songStaffsAsSelf)} />
                             </Column>
                         ) : null}
                         {[...songStaffsGroupedByAlias.entries()]
@@ -638,7 +639,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                                         {`As ${alias} `}
                                         <Text color="text-disabled"> ({staffs.length})</Text>
                                     </Text>
-                                    <ArtistThemes themes={toSortedThemes(staffs)} artist={artist} />
+                                    <ArtistThemes themes={toSortedThemes(staffs)} />
                                 </Column>
                             ))}
                         {memberSongStaffsGroupedByGroup.map((staffs) =>
@@ -658,7 +659,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                                                   <Text color="text-disabled"> ({staffs.length})</Text>
                                               </Text>
 
-                                              <ArtistThemes themes={toSortedThemes(staffs)} artist={artist} />
+                                              <ArtistThemes themes={toSortedThemes(staffs)} />
                                           </Column>
                                       );
                                   })()
@@ -672,12 +673,9 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
 }
 interface ArtistThemesProps {
     themes: SongStaff["song"]["themes"];
-    artist:
-        | ResultOf<typeof ARTIST_DETAIL_PAGE_ARTIST>
-        | ResultOf<typeof ARTIST_DETAIL_PAGE_ARTIST>["memberSongStaff"][number]["artist"];
 }
 
-const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemesProps) {
+const ArtistThemes = memo(function ArtistThemes({ themes }: ArtistThemesProps) {
     const { setWatchListFactory, setWatchList, setCurrentWatchListItem } = useContext(PlayerContext);
 
     function playArtistThemes(initiatingThemeIndex: number, entryIndex = 0, videoIndex = 0) {
@@ -711,7 +709,6 @@ const ArtistThemes = memo(function ArtistThemes({ themes, artist }: ArtistThemes
         <ThemeSummaryCard
             key={`${theme.anime?.slug}-${theme.id}`}
             theme={theme}
-            artist={artist}
             expandable={theme}
             onPlay={(entryIndex, videoIndex) => playArtistThemes(index, entryIndex, videoIndex)}
         />
