@@ -21,7 +21,7 @@ import theme from "@/theme";
 import createVideoSlug from "@/utils/createVideoSlug";
 import extractImages from "@/utils/extractImages";
 
-const StyledWrapper = styled.div`
+export const StyledWrapper = styled.div`
     position: relative;
 `;
 
@@ -43,13 +43,13 @@ const StyledOverlayButtons = styled.div`
     }
 `;
 
-const StyledExpandButton = styled(Button)`
+export const StyledExpandButton = styled(Button)`
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         display: none;
     }
 `;
 
-const StyledPerformedWith = styled.div`
+export const StyledPerformedWith = styled.div`
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -123,7 +123,7 @@ export const THEME_SUMMARY_CARD_THEME_EXPANDABLE = graphql(`
     }
 `);
 
-const useIsMobile = () => useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
+export const useIsMobile = () => useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
 
 interface ThemeSummaryCardProps {
     theme: FragmentType<typeof THEME_SUMMARY_CARD_THEME>;

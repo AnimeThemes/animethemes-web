@@ -34,7 +34,7 @@ export function SongStaffTable({ staffs: staffsFragment }: SongStaffTableProps) 
         (staffs ?? [])
             .toSorted(({ relevance: a }, { relevance: b }) => a - b)
             .filter((staff, index, array) =>
-                array.findIndex(({ artist }) => artist.id === staff.artist.id) === index
+                array.findIndex(({ artist, role }) => artist.id === staff.artist.id && role === staff.role) === index
             ),
         ({ role }) => role
     );
