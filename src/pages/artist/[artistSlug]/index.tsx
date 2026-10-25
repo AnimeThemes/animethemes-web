@@ -315,7 +315,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
     const [collapseInformation, setCollapseInformation] = useState(true);
 
     const songStaffs = useMemo(
-        () => uniqBy([...artist.songStaff], (staff) => `${staff.song.id}-${staff.role}`),
+        () => uniqBy([...artist.songStaff], (staff) => staff.song.id),
         [artist.songStaff],
     );
 
