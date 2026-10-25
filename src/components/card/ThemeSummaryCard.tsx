@@ -4,16 +4,15 @@ import Link from "next/link";
 
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
+import { SongStaffTable } from "../table/SongStaffTable";
 import { Button } from "@/components/button/Button";
 import { SummaryCard } from "@/components/card/SummaryCard2";
 import { Icon } from "@/components/icon/Icon";
 import { ThemeMenu } from "@/components/menu/ThemeMenu";
-import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "@/components/table/Table";
 import { ThemeTable } from "@/components/table/ThemeTable";
-import { Text } from "@/components/text/Text";
 import { TextLink } from "@/components/text/TextLink";
 import { Collapse } from "@/components/utils/Collapse";
-import { getDisplayedArtistName, Performances } from "@/components/utils/Performances";
+import { Performances } from "@/components/utils/Performances";
 import { SongTitle } from "@/components/utils/SongTitle";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useMediaQuery from "@/hooks/useMediaQuery";
@@ -114,6 +113,13 @@ export const THEME_SUMMARY_CARD_THEME_EXPANDABLE = graphql(`
     fragment ThemeSummaryCardThemeExpandable on Theme {
         ...ThemeTableTheme
         id
+        song {
+            id
+            staff {
+                id
+                ...SongStaffTableStaff
+            }
+        }
     }
 `);
 
@@ -138,7 +144,7 @@ export function ThemeSummaryCard({
     const entry = theme.entries[0];
     const video = entry?.videos.nodes[0];
 
-    const expandable = expandableFragment && video
+    const expandable = expandableFragment && (video || theme.song?.staff)
         ? getFragmentData(THEME_SUMMARY_CARD_THEME_EXPANDABLE, expandableFragment)
         : undefined;
 
@@ -170,15 +176,6 @@ export function ThemeSummaryCard({
         }
         return isLink(element.parentElement);
     }
-
-    const songStaff = Map.groupBy(
-        (theme.song?.staff ?? [])
-            .toSorted(({ relevance: a }, { relevance: b }) => a - b)
-            .filter((staff, index, array) =>
-                array.findIndex(({ artist }) => artist.id === staff.artist.id) === index
-            ),
-        ({ role }) => role
-    );
 
     return (
         <StyledWrapper>
@@ -222,38 +219,14 @@ export function ThemeSummaryCard({
             {expandable && (
                 <Collapse collapse={!isExpanded}>
                     <StyledPerformedWith>
-                        <ThemeTable
-                            themes={[expandable]}
-                            onPlay={(_, entryIndex, videoIndex) => onPlay?.(entryIndex, videoIndex)}
-                        />
-                        {songStaff.size > 0 && (
-                            <Table style={{ "--columns": "1fr 3fr" }}>
-                                <TableHead>
-                                    <TableHeadCell>Role</TableHeadCell>
-                                    <TableHeadCell>Artists</TableHeadCell>
-                                </TableHead>
-                                <TableBody>
-                                    {[...songStaff].map(([id, staff]) =>
-                                        staff && (
-                                            <TableRow key={id}>
-                                                <TableCell>
-                                                    <Text weight="600">
-                                                        {staff[0].role}
-                                                    </Text>
-                                                </TableCell>
-                                                <TableCell>
-                                                    {staff.flatMap(({ alias, as, artist }, index) => [
-                                                        ...(index > 0 ? [index === staff.length - 1 ? ' & ' : ', '] : []),
-                                                        <Text key={artist.id} color="text-primary" weight="600" as={Link} href={`/artist/${artist.slug}`}>
-                                                            {getDisplayedArtistName({ alias, as, artist })}
-                                                        </Text>,
-                                                    ])}
-                                                </TableCell>
-                                            </TableRow>
-                                        )
-                                    )}
-                                </TableBody>
-                            </Table>
+                        {theme.entries.some((entry) => entry.videos.nodes.length) && (
+                            <ThemeTable
+                                themes={[expandable]}
+                                onPlay={(_, entryIndex, videoIndex) => onPlay?.(entryIndex, videoIndex)}
+                            />
+                        )}
+                        {expandable.song?.staff && (
+                            <SongStaffTable staffs={expandable.song.staff} />
                         )}
                     </StyledPerformedWith>
                 </Collapse>
