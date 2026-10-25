@@ -50,7 +50,7 @@ const StyledVideoList = styled(Row)`
     }
 `;
 
-export const StyledButtons = styled.div`
+const StyledButtons = styled.div`
     position: static;
     opacity: 1;
 `;
