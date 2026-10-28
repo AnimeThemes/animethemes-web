@@ -7,7 +7,6 @@ import { useRouter } from "next/router";
 
 import { ApolloProvider } from "@apollo/client/react";
 import { config } from "@fortawesome/fontawesome-svg-core";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFullscreen } from "ahooks";
 import { LazyMotion } from "motion/react";
 import useLocalStorageState from "use-local-storage-state";
@@ -55,8 +54,6 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import "styles/prism.scss";
 
 config.autoAddCss = false;
-
-const queryClient = new QueryClient();
 
 const StyledWrapper = styled(Column)`
     isolation: isolate;
@@ -257,7 +254,6 @@ export default function MyApp({ Component, pageProps }: AppProps<PageProps>) {
                         setRepeat,
                     },
                 }),
-                stackContext(QueryClientProvider, { client: queryClient }),
                 stackContext(ApolloProvider, { client }),
                 stackContext(ToastProvider, {}),
                 stackContext(LazyMotion, { features: () => import("utils/motionFeatures").then((res) => res.default) }),

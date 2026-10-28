@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
+import { useQuery } from "@apollo/client/react";
 
 import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
 import { SearchEntity } from "@/components/search/SearchEntity";
@@ -8,10 +8,10 @@ import { SearchFilterFirstLetter } from "@/components/search-filter/SearchFilter
 import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
 import { SearchFilterThemeType } from "@/components/search-filter/SearchFilterThemeType";
-import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
 import type { SearchThemeSort, ThemeType } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
+import { getNextPage, getSearchStatus } from "@/utils/searchPagination";
 
 interface Filter {
     firstLetter: string | null;
@@ -25,13 +25,8 @@ const initialFilter: Filter = {
     sortBy: "SONG_TITLE_ROMAJI",
 };
 
-const query = graphql(`
-    query SearchTheme(
-        $query: String!
-        $page: Int!
-        $filter: SearchThemeFilterInput
-        $sort: [SearchThemeSort!]
-    ) {
+export const SEARCH_THEME_QUERY = graphql(`
+    query SearchTheme($query: String!, $page: Int!, $filter: SearchThemeFilterInput, $sort: [SearchThemeSort!]) {
         search(search: $query, first: 15, page: $page) {
             themes(filter: $filter, sort: $sort) {
                 data {
@@ -40,6 +35,8 @@ const query = graphql(`
                     id
                 }
                 pageInfo {
+                    offset
+                    first
                     hasNextPage
                 }
             }
@@ -67,33 +64,16 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SearchThemeSort> } : {}),
     };
 
-    const {
-        data,
-        error,
-        isError,
-        isLoading,
-        isFetching,
-        isFetchingNextPage,
-        isPlaceholderData,
-        hasNextPage,
-        fetchNextPage,
-    } = useInfiniteQuery({
-        queryKey: ["searchEntity", "theme", variables],
-        queryFn: async ({ pageParam }) => {
-            const { data } = await client.query({
-                query,
-                variables: {
-                    ...variables,
-                    page: pageParam,
-                },
-            });
+    const result = useQuery(SEARCH_THEME_QUERY, { variables: { ...variables, page: 1 } });
+    const results = (result.data ?? result.previousData)?.search.themes;
 
-            return data.search.themes;
-        },
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null),
-        placeholderData: keepPreviousData,
-    });
+    function loadMore() {
+        if (!results) {
+            return;
+        }
+
+        void result.fetchMore({ variables: { page: getNextPage(results.pageInfo) } });
+    }
 
     if (!searchQuery && filter.sortBy === null) {
         updateFilter("sortBy", initialFilter.sortBy);
@@ -129,20 +109,13 @@ export function SearchTheme({ searchQuery }: SearchThemeProps) {
                 </SearchFilterSortBy>
             </SearchFilterGroup>
             <SearchEntity
-                error={error}
+                {...getSearchStatus(result)}
                 searchQuery={searchQuery}
-                isError={isError}
-                isLoading={isLoading}
-                isFetching={isFetching}
-                isFetchingNextPage={isFetchingNextPage}
-                isPlaceholderData={isPlaceholderData}
-                hasResults={(data?.pages.reduce((total, page) => total + page.data.length, 0) ?? 0) > 0}
-                hasNextPage={hasNextPage}
-                onLoadMore={fetchNextPage}
+                hasResults={!!results?.data.length}
+                hasNextPage={!!results?.pageInfo.hasNextPage}
+                onLoadMore={loadMore}
             >
-                {data?.pages
-                    .flatMap((page) => page.data)
-                    .map((theme) => <ThemeSummaryCard key={theme.id} theme={theme} expandable={theme} />)}
+                {results?.data.map((theme) => <ThemeSummaryCard key={theme.id} theme={theme} expandable={theme} />)}
             </SearchEntity>
         </>
     );
