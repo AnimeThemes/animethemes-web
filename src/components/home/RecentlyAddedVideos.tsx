@@ -1,42 +1,35 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@apollo/client/react";
 import { range } from "lodash-es";
 
 import { Column } from "@/components/box/Flex";
 import { VideoSummaryCard } from "@/components/card/VideoSummaryCard";
 import { VideoMenu } from "@/components/menu/VideoMenu";
 import { Skeleton } from "@/components/skeleton/Skeleton";
-import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
 
-export function RecentlyAddedVideos() {
-    const { data: recentlyAdded = range(10).map(() => null) } = useQuery({
-        queryKey: ["HomePageRecentlyAdded"],
-        queryFn: async () => {
-            const { data } = await client.query({
-                query: graphql(`
-                    query HomePageRecentlyAdded {
-                        videoConnection(sort: [ID_DESC], pagination: { first: 10 }) {
-                            nodes {
-                                ...VideoSummaryCardVideo
-                                ...VideoMenuVideo
-                                entries {
-                                    nodes {
-                                        ...VideoSummaryCardEntry
-                                        ...VideoMenuEntry
-                                        theme {
-                                            ...VideoSummaryCardTheme
-                                        }
-                                    }
-                                }
-                            }
+const query = graphql(`
+    query HomePageRecentlyAdded {
+        videoConnection(sort: [ID_DESC], pagination: { first: 10 }) {
+            nodes {
+                ...VideoSummaryCardVideo
+                ...VideoMenuVideo
+                entries {
+                    nodes {
+                        ...VideoSummaryCardEntry
+                        ...VideoMenuEntry
+                        theme {
+                            ...VideoSummaryCardTheme
                         }
                     }
-                `),
-            });
+                }
+            }
+        }
+    }
+`);
 
-            return data.videoConnection.nodes;
-        },
-    });
+export function RecentlyAddedVideos() {
+    const { data } = useQuery(query);
+    const recentlyAdded = data?.videoConnection.nodes ?? range(10).map(() => null);
 
     return (
         <Column style={{ "--gap": "16px" }}>

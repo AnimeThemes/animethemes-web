@@ -1,15 +1,15 @@
 import { useState } from "react";
 
-import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
+import { useQuery } from "@apollo/client/react";
 
 import PlaylistSummaryCard from "@/components/card/PlaylistSummaryCard";
 import { SearchEntity } from "@/components/search/SearchEntity";
 import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
-import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
 import type { SearchPlaylistSort } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
+import { getNextPage, getSearchStatus } from "@/utils/searchPagination";
 
 interface Filter {
     sortBy: string | null;
@@ -19,7 +19,7 @@ const initialFilter: Filter = {
     sortBy: "NAME",
 };
 
-const query = graphql(`
+export const SEARCH_PLAYLIST_QUERY = graphql(`
     query SearchPlaylist($query: String!, $page: Int!, $sort: [SearchPlaylistSort!]) {
         search(search: $query, first: 15, page: $page) {
             playlists(sort: $sort) {
@@ -29,6 +29,8 @@ const query = graphql(`
                     id
                 }
                 pageInfo {
+                    offset
+                    first
                     hasNextPage
                 }
             }
@@ -52,33 +54,16 @@ export function SearchPlaylist({ searchQuery }: SearchPlaylistProps) {
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SearchPlaylistSort> } : {}),
     };
 
-    const {
-        data,
-        error,
-        isError,
-        isLoading,
-        isFetching,
-        isFetchingNextPage,
-        isPlaceholderData,
-        hasNextPage,
-        fetchNextPage,
-    } = useInfiniteQuery({
-        queryKey: ["searchEntity", "playlist", variables],
-        queryFn: async ({ pageParam }) => {
-            const { data } = await client.query({
-                query,
-                variables: {
-                    ...variables,
-                    page: pageParam,
-                },
-            });
+    const result = useQuery(SEARCH_PLAYLIST_QUERY, { variables: { ...variables, page: 1 } });
+    const results = (result.data ?? result.previousData)?.search.playlists;
 
-            return data.search.playlists;
-        },
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null),
-        placeholderData: keepPreviousData,
-    });
+    function loadMore() {
+        if (!results) {
+            return;
+        }
+
+        void result.fetchMore({ variables: { page: getNextPage(results.pageInfo) } });
+    }
 
     if (!searchQuery && filter.sortBy === null) {
         updateFilter("sortBy", initialFilter.sortBy);
@@ -106,22 +91,15 @@ export function SearchPlaylist({ searchQuery }: SearchPlaylistProps) {
                 </SearchFilterSortBy>
             </SearchFilterGroup>
             <SearchEntity
-                error={error}
+                {...getSearchStatus(result)}
                 searchQuery={searchQuery}
-                isError={isError}
-                isLoading={isLoading}
-                isFetching={isFetching}
-                isFetchingNextPage={isFetchingNextPage}
-                isPlaceholderData={isPlaceholderData}
-                hasResults={(data?.pages.reduce((total, page) => total + page.data.length, 0) ?? 0) > 0}
-                hasNextPage={hasNextPage}
-                onLoadMore={fetchNextPage}
+                hasResults={!!results?.data.length}
+                hasNextPage={!!results?.pageInfo.hasNextPage}
+                onLoadMore={loadMore}
             >
-                {data?.pages
-                    .flatMap((page) => page.data)
-                    .map((playlist) => (
-                        <PlaylistSummaryCard key={playlist.id} playlist={playlist} playlistWithOwner={playlist} />
-                    ))}
+                {results?.data.map((playlist) => (
+                    <PlaylistSummaryCard key={playlist.id} playlist={playlist} playlistWithOwner={playlist} />
+                ))}
             </SearchEntity>
         </>
     );

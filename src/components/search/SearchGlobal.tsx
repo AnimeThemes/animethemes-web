@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { useQuery } from "@apollo/client/react";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import { Column, Row } from "@/components/box/Flex";
 import { Button } from "@/components/button/Button";
@@ -15,7 +15,6 @@ import { SummaryCard } from "@/components/card/SummaryCard";
 import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
 import { Icon } from "@/components/icon/Icon";
 import { Text } from "@/components/text/Text";
-import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
 
 const query = graphql(`
@@ -74,24 +73,14 @@ interface SearchGlobalProps {
 }
 
 export function SearchGlobal({ searchQuery }: SearchGlobalProps) {
-    const { data, error, isLoading, isError } = useQuery({
-        queryKey: ["searchGlobal", searchQuery],
-        queryFn: async () => {
-            const { data } = await client.query({
-                query,
-                variables: { query: searchQuery },
-            });
+    const { data: currentData, previousData, error } = useQuery(query, { variables: { query: searchQuery } });
+    const data = currentData ?? previousData;
 
-            return data;
-        },
-        placeholderData: keepPreviousData,
-    });
-
-    if (isError) {
+    if (error) {
         return <ErrorCard error={error} />;
     }
 
-    if (isLoading || !data) {
+    if (!data) {
         return <Text block>Searching...</Text>;
     }
 
