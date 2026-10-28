@@ -91,6 +91,7 @@ function PlaylistEditForm({ playlist, onSuccess, onCancel }: PlaylistEditFormPro
         graphql(`
             mutation PlaylistEdit($id: String!, $input: UpdatePlaylistInput!) {
                 updatePlaylist(id: $id, input: $input) {
+                    id
                     name
                 }
             }

@@ -143,6 +143,7 @@ export const PLAYLIST_DETAIL_PAGE_PLAYLIST = graphql(`
         visibility
         tracksCount
         user {
+            id
             name
         }
     }
@@ -169,6 +170,7 @@ export const PLAYLIST_DETAIL_PAGE_TRACK = graphql(`
                 ...VideoSummaryCardTheme
                 ...WatchListItemTheme
                 anime {
+                    id
                     title {
                         romaji
                     }
@@ -181,6 +183,7 @@ export const PLAYLIST_DETAIL_PAGE_TRACK = graphql(`
                     }
                 }
                 song {
+                    id
                     title {
                         romaji
                     }
@@ -192,6 +195,7 @@ export const PLAYLIST_DETAIL_PAGE_TRACK = graphql(`
 
 export const PLAYLIST_DETAIL_PAGE_ME = graphql(`
     fragment PlaylistDetailPageMe on Me {
+        id
         name
     }
 `);

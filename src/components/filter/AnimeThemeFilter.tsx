@@ -15,6 +15,7 @@ export const ANIME_THEME_FILTER_THEME = graphql(`
         type
         sequence
         group {
+            id
             name
             slug
         }

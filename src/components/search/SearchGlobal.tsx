@@ -33,6 +33,7 @@ const query = graphql(`
                     ...ThemeSummaryCardThemeExpandable
                     id
                     anime {
+                        id
                         slug
                     }
                 }
@@ -45,6 +46,7 @@ const query = graphql(`
             }
             series {
                 data {
+                    id
                     slug
                     title {
                         romaji
@@ -53,6 +55,7 @@ const query = graphql(`
             }
             studios {
                 data {
+                    id
                     slug
                     name
                 }

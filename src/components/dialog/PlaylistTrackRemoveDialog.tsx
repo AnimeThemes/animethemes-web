@@ -29,6 +29,7 @@ export const PLAYLIST_TRACK_REMOVE_DIALOG_PLAYLIST = graphql(`
 export const PLAYLIST_TRACK_REMOVE_DIALOG_VIDEO = graphql(`
     fragment PlaylistTrackRemoveDialogVideo on Video {
         ...VideoSummaryCardVideo
+        id
     }
 `);
 
@@ -36,6 +37,7 @@ export const PLAYLIST_TRACK_REMOVE_DIALOG_ENTRY = graphql(`
     fragment PlaylistTrackRemoveDialogEntry on Entry {
         ...VideoSummaryCardEntry
         ...PlaylistTrackRemoveToastEntry
+        id
         theme {
             ...VideoSummaryCardTheme
         }

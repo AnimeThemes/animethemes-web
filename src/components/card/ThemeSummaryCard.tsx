@@ -61,13 +61,16 @@ export const THEME_SUMMARY_CARD_THEME = graphql(`
     fragment ThemeSummaryCardTheme on Theme {
         ...createVideoSlugTheme
         ...ThemeMenuTheme
+        id
         type
         sequence
         group {
+            id
             name
             slug
         }
         anime {
+            id
             slug
             title {
                 romaji
@@ -82,9 +85,11 @@ export const THEME_SUMMARY_CARD_THEME = graphql(`
             ...SongTitleSong
             ...PerformancesSong
             performances {
+                id
                 alias
                 as
                 artist {
+                    id
                     slug
                     name {
                         main
@@ -106,6 +111,7 @@ export const THEME_SUMMARY_CARD_THEME = graphql(`
 export const THEME_SUMMARY_CARD_ARTIST = graphql(`
     fragment ThemeSummaryCardArtist on Artist {
         ...PerformancesArtist
+        id
         slug
     }
 `);
@@ -113,6 +119,7 @@ export const THEME_SUMMARY_CARD_ARTIST = graphql(`
 export const THEME_SUMMARY_CARD_THEME_EXPANDABLE = graphql(`
     fragment ThemeSummaryCardThemeExpandable on Theme {
         ...ThemeTableTheme
+        id
     }
 `);
 

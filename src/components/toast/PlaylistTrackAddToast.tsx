@@ -15,7 +15,9 @@ export const PLAYLIST_TRACK_ADD_TOAST_PLAYLIST = graphql(`
 
 export const PLAYLIST_TRACK_ADD_TOAST_ENTRY = graphql(`
     fragment PlaylistTrackAddToastEntry on Entry {
+        id
         theme {
+            id
             song {
                 ...SongTitleSong
             }

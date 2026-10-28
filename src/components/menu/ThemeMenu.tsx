@@ -22,10 +22,12 @@ export const THEME_MENU_THEME = graphql(`
         type
         sequence
         group {
+            id
             name
             slug
         }
         anime {
+            id
             slug
             title {
                 romaji
@@ -52,6 +54,7 @@ export const THEME_MENU_THEME = graphql(`
                     id
                     basename
                     audio {
+                        id
                         basename
                     }
                 }

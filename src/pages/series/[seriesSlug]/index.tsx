@@ -36,6 +36,7 @@ const StyledDesktopOnly = styled.div`
 
 export const SERIES_DETAIL_PAGE_SERIES = graphql(`
     fragment SeriesDetailPageSeries on Series {
+        id
         slug
         title {
             romaji
@@ -51,12 +52,15 @@ export const SERIES_DETAIL_PAGE_SERIES = graphql(`
                 year
                 season
                 themes {
+                    id
                     type
                     sequence
                     entries {
+                        id
                         version
                         videos {
                             nodes {
+                                id
                                 tags
                             }
                         }
