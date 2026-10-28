@@ -36,13 +36,16 @@ export const BRACKET_THEME_SUMMARY_CARD_THEME = graphql(`
     fragment BracketThemeSummaryCardTheme on Theme {
         ...createVideoSlugTheme
         ...ThemeMenuTheme
+        id
         type
         sequence
         group {
+            id
             name
             slug
         }
         anime {
+            id
             slug
             title {
                 romaji

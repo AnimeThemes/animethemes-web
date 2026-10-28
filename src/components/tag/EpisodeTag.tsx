@@ -5,6 +5,7 @@ import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated
 
 export const EPISODE_TAG_ENTRY = graphql(`
     fragment EpisodeTagEntry on Entry {
+        id
         episodes
     }
 `);

@@ -123,10 +123,12 @@ export const FEATURED_THEME_ENTRY = graphql(`
     fragment FeaturedThemeEntry on Entry {
         ...VideoSummaryCardEntry
         ...createVideoSlugEntry
+        id
         theme {
             ...createVideoSlugTheme
             ...VideoSummaryCardTheme
             anime {
+                id
                 slug
                 images {
                     nodes {
@@ -142,6 +144,7 @@ export const FEATURED_THEME_VIDEO = graphql(`
     fragment FeaturedThemeVideo on Video {
         ...VideoSummaryCardVideo
         ...createVideoSlugVideo
+        id
         basename
     }
 `);

@@ -1,1 +1,20 @@
-schema: http://animethemes-rust.test/graphql
+schema: ${GRAPHQL_URL}
+documents:
+  - src/**/*.js
+  - src/**/*.ts
+  - src/**/*.tsx
+extensions:
+  codegen:
+    ignoreNoDocuments: true
+    verbose: true
+    generates:
+      "src/graphql/generated/":
+        preset: client
+        presetConfig:
+          fragmentMasking:
+            unmaskFunctionName: getFragmentData
+        config:
+          useTypeImports: true
+          scalars:
+            DateTime: string
+          strictScalars: true

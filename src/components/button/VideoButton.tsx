@@ -34,6 +34,7 @@ const StyledInnerButton = styled(Button)`
 
 export const VIDEO_BUTTON_ANIME = graphql(`
     fragment VideoButtonAnime on Anime {
+        id
         slug
     }
 `);
@@ -41,12 +42,14 @@ export const VIDEO_BUTTON_ANIME = graphql(`
 export const VIDEO_BUTTON_THEME = graphql(`
     fragment VideoButtonTheme on Theme {
         ...createVideoSlugTheme
+        id
     }
 `);
 
 export const VIDEO_BUTTON_ENTRY = graphql(`
     fragment VideoButtonEntry on Entry {
         ...createVideoSlugEntry
+        id
     }
 `);
 

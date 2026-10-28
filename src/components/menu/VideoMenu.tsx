@@ -27,10 +27,12 @@ export const VIDEO_MENU_ENTRY = graphql(`
             type
             sequence
             group {
+                id
                 name
                 slug
             }
             anime {
+                id
                 slug
                 title {
                     romaji
@@ -56,6 +58,7 @@ export const VIDEO_MENU_VIDEO = graphql(`
         id
         basename
         audio {
+            id
             basename
         }
     }

@@ -13,6 +13,7 @@ const StyledVideoTags = styled(Row)`
 
 export const VIDEO_TAGS_VIDEO = graphql(`
     fragment VideoTagsVideo on Video {
+        id
         resolution
         nc
         subbed

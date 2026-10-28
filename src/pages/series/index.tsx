@@ -16,6 +16,7 @@ const propsQuery = graphql(`
     query SeriesIndexPage($pagination: PaginationInput) {
         seriesConnection(sort: TITLE_ROMAJI, pagination: $pagination) {
             nodes {
+                id
                 slug
                 title {
                     romaji

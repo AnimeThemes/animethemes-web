@@ -7,6 +7,7 @@ export const THEME_ENTRY_TAGS_ENTRY = graphql(`
     fragment ThemeEntryTagsEntry on Entry {
         ...EpisodeTagEntry
         ...ContentWarningTagsEntry
+        id
     }
 `);
 

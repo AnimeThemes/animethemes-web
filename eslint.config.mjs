@@ -1,8 +1,12 @@
+import graphql from "@graphql-eslint/eslint-plugin";
+import * as dotenv from "dotenv";
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import prettier from "eslint-config-prettier/flat";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
+
+dotenv.config({ path: [".env.local", ".env"] });
 
 export default defineConfig([
     ...nextVitals,
@@ -10,6 +14,7 @@ export default defineConfig([
     prettier,
     globalIgnores(["src/graphql/generated", ".next/**", "out/**", "build/**", "next-env.d.ts", "next.config.mjs"]),
     {
+        files: ["**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx}"],
         plugins: {
             "simple-import-sort": simpleImportSort,
         },
@@ -67,6 +72,22 @@ export default defineConfig([
                     default: "generic",
                 },
             ],
+        },
+    },
+    {
+        files: ["src/**/*.{js,ts,tsx}"],
+        processor: graphql.processor,
+    },
+    {
+        files: ["**/*.graphql"],
+        languageOptions: {
+            parser: graphql.parser,
+        },
+        plugins: {
+            "@graphql-eslint": graphql,
+        },
+        rules: {
+            "@graphql-eslint/require-selections": "error",
         },
     },
 ]);

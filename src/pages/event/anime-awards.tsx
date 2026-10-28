@@ -61,6 +61,7 @@ export const ANIME_AWARDS_PAGE_THEME = graphql(`
         type
         sequence
         anime {
+            id
             slug
             title {
                 romaji
@@ -80,6 +81,7 @@ export const ANIME_AWARDS_PAGE_THEME = graphql(`
 export const ANIME_AWARD_PAGE_ENTRY = graphql(`
     fragment AnimeAwardPageEntry on Entry {
         ...createVideoSlugEntry
+        id
         version
         videos {
             nodes {

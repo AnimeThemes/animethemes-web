@@ -6,6 +6,7 @@ import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated
 
 export const SONG_TITLE_SONG = graphql(`
     fragment SongTitleSong on Song {
+        id
         title {
             romaji
         }

@@ -18,7 +18,9 @@ const StyledCodeBlock = styled.pre`
 
 export const VIDEO_SCRIPT_VIDEO = graphql(`
     fragment VideoScriptVideo on Video {
+        id
         videoscript {
+            id
             link
         }
     }

@@ -67,6 +67,7 @@ const Grid = styled.div<{ $columns: number }>`
 
 export const HOME_PAGE_FEATURED_THEME = graphql(`
     fragment HomePageFeaturedTheme on CurrentFeaturedTheme {
+        id
         entry {
             ...FeaturedThemeEntry
         }
@@ -78,6 +79,7 @@ export const HOME_PAGE_FEATURED_THEME = graphql(`
 
 export const HOME_PAGE_ANNOUNCEMENT = graphql(`
     fragment HomePageAnnouncement on Announcement {
+        id
         content
     }
 `);

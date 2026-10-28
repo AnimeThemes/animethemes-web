@@ -36,6 +36,7 @@ import getSharedPageProps from "@/utils/getSharedPageProps";
 export const VIDEO_PAGE_ANIME = graphql(`
     fragment VideoPageAnime on Anime {
         ...AnimeSummaryCardAnime
+        id
         title {
             romaji
         }
@@ -50,10 +51,12 @@ export const VIDEO_PAGE_ANIME = graphql(`
             type
             sequence
             song {
+                id
                 title {
                     romaji
                 }
                 performances {
+                    id
                     artist {
                         ...ArtistSummaryCardArtist
                         id
@@ -66,6 +69,7 @@ export const VIDEO_PAGE_ANIME = graphql(`
                 }
             }
             group {
+                id
                 slug
             }
             entries {
@@ -100,15 +104,18 @@ export const VIDEO_PAGE_ANIME = graphql(`
                         tags
                         entries {
                             nodes {
+                                id
                                 theme {
                                     ...ThemeSummaryCardTheme
                                     anime {
+                                        id
                                         slug
                                     }
                                 }
                             }
                         }
                         tracks {
+                            id
                             playlist {
                                 ...PlaylistSummaryCardPlaylist
                                 ...PlaylistSummaryCardPlaylistWithOwner
@@ -126,6 +133,7 @@ export const VIDEO_PAGE_ANIME = graphql(`
         }
         series {
             nodes {
+                id
                 slug
                 title {
                     romaji

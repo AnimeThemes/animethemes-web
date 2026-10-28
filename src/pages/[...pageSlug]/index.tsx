@@ -48,6 +48,7 @@ const ArrowLink = styled(Link)`
 
 export const DOCUMENT_PAGE_PAGE = graphql(`
     fragment DocumentPagePage on Page {
+        id
         name
         createdAt
     }
@@ -66,6 +67,7 @@ const pathsQuery = graphql(`
     query DocumentPageAll {
         pageConnection {
             nodes {
+                id
                 slug
             }
         }

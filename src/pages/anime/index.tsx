@@ -16,6 +16,7 @@ const propsQuery = graphql(`
     query AnimeIndexPage($pagination: PaginationInput) {
         animeConnection(sort: TITLE_ROMAJI, pagination: $pagination) {
             nodes {
+                id
                 slug
                 title {
                     romaji

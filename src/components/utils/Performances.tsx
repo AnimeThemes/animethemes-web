@@ -25,7 +25,9 @@ const StyledArtistLink = styled(Text).attrs({ as: "a", link: true })`
 
 export const PERFORMANCES_SONG = graphql(`
     fragment PerformancesSong on Song {
+        id
         performances {
+            id
             alias
             as
             relevance
@@ -37,6 +39,7 @@ export const PERFORMANCES_SONG = graphql(`
                 }
             }
             member {
+                id
                 slug
                 name {
                     main

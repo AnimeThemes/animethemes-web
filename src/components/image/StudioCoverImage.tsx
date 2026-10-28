@@ -15,6 +15,7 @@ const StyledImage = styled(FullWidthImage)`
 
 export const STUDIO_COVER_IMAGE_STUDIO = graphql(`
     fragment StudioCoverImageStudio on Studio {
+        id
         images {
             nodes {
                 ...extractImagesImage
@@ -22,6 +23,7 @@ export const STUDIO_COVER_IMAGE_STUDIO = graphql(`
         }
         anime {
             nodes {
+                id
                 title {
                     romaji
                 }

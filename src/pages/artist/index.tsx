@@ -16,6 +16,7 @@ const propsQuery = graphql(`
     query ArtistIndexPage($pagination: PaginationInput) {
         artistConnection(sort: NAME_MAIN, pagination: $pagination) {
             nodes {
+                id
                 slug
                 name {
                     main

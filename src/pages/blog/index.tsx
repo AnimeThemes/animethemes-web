@@ -22,6 +22,7 @@ const propsQuery = graphql(`
             sort: CREATED_AT_DESC
         ) {
             nodes {
+                id
                 slug
                 name
                 createdAt

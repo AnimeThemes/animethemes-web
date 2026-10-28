@@ -48,6 +48,7 @@ const USE_AUTH_ME_QUERY = graphql(`
             name
             email
             roles {
+                id
                 name
             }
         }

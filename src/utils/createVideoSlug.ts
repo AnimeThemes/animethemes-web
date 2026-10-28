@@ -4,9 +4,11 @@ import { getAnimeFromVideoPageFragment, type VideoPageProps } from "@/pages/anim
 
 export const CREATE_VIDEO_SLUG_THEME = graphql(`
     fragment createVideoSlugTheme on Theme {
+        id
         type
         sequence
         group {
+            id
             slug
         }
     }
@@ -14,12 +16,14 @@ export const CREATE_VIDEO_SLUG_THEME = graphql(`
 
 export const CREATE_VIDEO_SLUG_ENTRY = graphql(`
     fragment createVideoSlugEntry on Entry {
+        id
         version
     }
 `);
 
 export const CREATE_VIDEO_SLUG_VIDEO = graphql(`
     fragment createVideoSlugVideo on Video {
+        id
         tags
     }
 `);

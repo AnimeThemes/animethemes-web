@@ -39,6 +39,7 @@ const StyledList = styled.div`
 
 export const ANIME_DETAIL_PAGE_ANIME = graphql(`
     fragment AnimeDetailPageAnime on Anime {
+        id
         slug
         title {
             romaji
@@ -51,10 +52,12 @@ export const ANIME_DETAIL_PAGE_ANIME = graphql(`
         synopsis
         formatLocalized
         synonyms {
+            id
             text
         }
         series {
             nodes {
+                id
                 slug
                 title {
                     romaji
@@ -63,6 +66,7 @@ export const ANIME_DETAIL_PAGE_ANIME = graphql(`
         }
         studios {
             nodes {
+                id
                 slug
                 name
             }
@@ -70,6 +74,7 @@ export const ANIME_DETAIL_PAGE_ANIME = graphql(`
         resources {
             edges {
                 node {
+                    id
                     site
                     siteLocalized
                     link

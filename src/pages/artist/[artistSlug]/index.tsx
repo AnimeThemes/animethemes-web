@@ -69,15 +69,18 @@ const StyledHeader = styled.div`
 export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
     fragment ArtistDetailPageArtist on Artist {
         ...ThemeSummaryCardArtist
+        id
         slug
         name {
             main
             native
         }
         synonyms {
+            id
             text
         }
         performances {
+            id
             alias
             as
             song {
@@ -86,11 +89,13 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                     romaji
                 }
                 performances {
+                    id
                     alias
                     as
                     memberAlias
                     memberAs
                     artist {
+                        id
                         slug
                         name {
                             main
@@ -114,10 +119,12 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                         }
                     }
                     group {
+                        id
                         name
                         slug
                     }
                     anime {
+                        id
                         slug
                         title {
                             romaji
@@ -126,6 +133,7 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                         season
                     }
                     song {
+                        id
                         title {
                             romaji
                         }
@@ -134,6 +142,7 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
             }
         }
         memberPerformances {
+            id
             alias
             as
             memberAlias
@@ -151,11 +160,13 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                     romaji
                 }
                 performances {
+                    id
                     alias
                     as
                     memberAlias
                     memberAs
                     artist {
+                        id
                         slug
                         name {
                             main
@@ -179,10 +190,12 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                         }
                     }
                     group {
+                        id
                         name
                         slug
                     }
                     anime {
+                        id
                         slug
                         title {
                             romaji
@@ -191,6 +204,7 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                         season
                     }
                     song {
+                        id
                         title {
                             romaji
                         }
@@ -219,6 +233,7 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                 as
                 notes
                 node {
+                    id
                     slug
                     name {
                         main
@@ -234,6 +249,7 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
         resources {
             edges {
                 node {
+                    id
                     link
                     site
                     siteLocalized

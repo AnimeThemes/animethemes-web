@@ -4,6 +4,7 @@ import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated
 
 export const PROFILE_IMAGE_USER = graphql(`
     fragment ProfileImageUser on Me {
+        id
         name
         email
     }

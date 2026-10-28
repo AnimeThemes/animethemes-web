@@ -9,6 +9,7 @@ import extractImages from "@/utils/extractImages";
 
 export const STUDIO_SUMMARY_CARD_STUDIO = graphql(`
     fragment StudioSummaryCardStudio on Studio {
+        id
         slug
         name
         images {

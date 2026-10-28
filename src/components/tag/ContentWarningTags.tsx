@@ -6,6 +6,7 @@ import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated
 
 export const CONTENT_WARNING_TAGS_ENTRY = graphql(`
     fragment ContentWarningTagsEntry on Entry {
+        id
         spoiler
         nsfw
     }

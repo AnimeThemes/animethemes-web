@@ -16,6 +16,7 @@ const propsQuery = graphql(`
     query StudioIndexPage($pagination: PaginationInput) {
         studioConnection(sort: NAME, pagination: $pagination) {
             nodes {
+                id
                 slug
                 name
             }

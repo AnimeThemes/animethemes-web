@@ -18,6 +18,7 @@ export const THEME_TABLE_THEME = graphql(`
         type
         sequence
         anime {
+            id
             slug
         }
         entries {
