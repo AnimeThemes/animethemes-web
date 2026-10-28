@@ -7,6 +7,7 @@ import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated
 
 export const SONG_STAFF_TABLE = graphql(`
     fragment SongStaffTableStaff on SongStaff {
+        id
         alias
         as
         relevance
@@ -33,10 +34,12 @@ export function SongStaffTable({ staffs: staffsFragment }: SongStaffTableProps) 
     const songStaff = Map.groupBy(
         (staffs ?? [])
             .toSorted(({ relevance: a }, { relevance: b }) => a - b)
-            .filter((staff, index, array) =>
-                array.findIndex(({ artist, role }) => artist.id === staff.artist.id && role === staff.role) === index
+            .filter(
+                (staff, index, array) =>
+                    array.findIndex(({ artist, role }) => artist.id === staff.artist.id && role === staff.role) ===
+                    index,
             ),
-        ({ role }) => role
+        ({ role }) => role,
     );
 
     if (staffs.length === 0) return null;
@@ -48,24 +51,29 @@ export function SongStaffTable({ staffs: staffsFragment }: SongStaffTableProps) 
                 <TableHeadCell>Artists</TableHeadCell>
             </TableHead>
             <TableBody>
-                {[...songStaff].map(([id, staff]) =>
-                    staff && (
-                        <TableRow key={id}>
-                            <TableCell>
-                                <Text weight="600">
-                                    {staff[0].role}
-                                </Text>
-                            </TableCell>
-                            <TableCell>
-                                {staff.flatMap(({ alias, as, artist }, index) => [
-                                    ...(index > 0 ? [index === staff.length - 1 ? ' & ' : ', '] : []),
-                                    <Text key={artist.id} color="text-primary" weight="600" as={Link} href={`/artist/${artist.slug}`}>
-                                        {getDisplayedArtistName({ alias, as, artist })}
-                                    </Text>,
-                                ])}
-                            </TableCell>
-                        </TableRow>
-                    )
+                {[...songStaff].map(
+                    ([id, staff]) =>
+                        staff && (
+                            <TableRow key={id}>
+                                <TableCell>
+                                    <Text weight="600">{staff[0].role}</Text>
+                                </TableCell>
+                                <TableCell>
+                                    {staff.flatMap(({ alias, as, artist }, index) => [
+                                        ...(index > 0 ? [index === staff.length - 1 ? " & " : ", "] : []),
+                                        <Text
+                                            key={artist.id}
+                                            color="text-primary"
+                                            weight="600"
+                                            as={Link}
+                                            href={`/artist/${artist.slug}`}
+                                        >
+                                            {getDisplayedArtistName({ alias, as, artist })}
+                                        </Text>,
+                                    ])}
+                                </TableCell>
+                            </TableRow>
+                        ),
                 )}
             </TableBody>
         </Table>

@@ -79,6 +79,7 @@ export const THEME_DETAIL_CARD_THEME = graphql(`
             ...StaffSong
             staff {
                 ...SongStaffTableStaff
+                id
             }
         }
         entries {
@@ -172,7 +173,13 @@ export function ThemeDetailCard({ theme: themeFragment }: ThemeDetailCardProps) 
                             {!!entry.videos && (
                                 <StyledVideoList>
                                     {entry.videos.nodes.map((video, index) => (
-                                        <VideoButton key={index} anime={anime} theme={theme} entry={entry} video={video} />
+                                        <VideoButton
+                                            key={index}
+                                            anime={anime}
+                                            theme={theme}
+                                            entry={entry}
+                                            video={video}
+                                        />
                                     ))}
                                 </StyledVideoList>
                             )}
@@ -182,9 +189,7 @@ export function ThemeDetailCard({ theme: themeFragment }: ThemeDetailCardProps) 
             </StyledThemeCard>
             <Collapse collapse={!isExpanded}>
                 <StyledPerformedWith>
-                    {theme.song?.staff && (
-                        <SongStaffTable staffs={theme.song.staff} />
-                    )}
+                    {theme.song?.staff && <SongStaffTable staffs={theme.song.staff} />}
                 </StyledPerformedWith>
             </Collapse>
         </StyledWrapper>

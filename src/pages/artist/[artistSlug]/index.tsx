@@ -149,6 +149,7 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
             memberAs
             role
             artist {
+                id
                 slug
                 name {
                     main
@@ -314,10 +315,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
     const images = extractMultipleImages(artist.images.edges);
     const [collapseInformation, setCollapseInformation] = useState(true);
 
-    const songStaffs = useMemo(
-        () => uniqBy([...artist.songStaff], (staff) => staff.song.id),
-        [artist.songStaff],
-    );
+    const songStaffs = useMemo(() => uniqBy([...artist.songStaff], (staff) => staff.song.id), [artist.songStaff]);
 
     const memberSongStaffs = useMemo(
         () =>
@@ -329,10 +327,9 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
 
     const characters = useMemo(
         () =>
-            uniq([
-                ...songStaffs.map((staff) => staff.as),
-                ...artist.groups.edges.map((group) => group.as),
-            ]).filter((character) => character) as Array<string>,
+            uniq([...songStaffs.map((staff) => staff.as), ...artist.groups.edges.map((group) => group.as)]).filter(
+                (character) => character,
+            ) as Array<string>,
         [songStaffs, artist.groups],
     );
     const aliases = useMemo(
@@ -344,10 +341,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
         [songStaffs, artist.groups],
     );
 
-    const roles = useMemo(
-        () => uniq(songStaffs.map((staff) => staff.role)),
-        [songStaffs],
-    );
+    const roles = useMemo(() => uniq(songStaffs.map((staff) => staff.role)), [songStaffs]);
 
     const creditedAsFilterOptions = useMemo(
         () => [null, artist.name.main, ...aliases, ...characters],
@@ -368,19 +362,11 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
     >(SONG_A_Z_ANIME);
 
     const filterSongStaffs = useCallback(
-        <T extends SongStaff | MemberSongStaff>(
-            staffs: Array<T>,
-            groupAs: string | null,
-            groupAlias: string | null,
-        ) =>
+        <T extends SongStaff | MemberSongStaff>(staffs: Array<T>, groupAs: string | null, groupAlias: string | null) =>
             staffs.filter((staff) => {
                 const matchesPerformedAs =
                     filterCreditedAs === null ||
-                    (filterCreditedAs === artist.name.main &&
-                        !staff.as &&
-                        !groupAs &&
-                        !staff.alias &&
-                        !groupAlias) ||
+                    (filterCreditedAs === artist.name.main && !staff.as && !groupAs && !staff.alias && !groupAlias) ||
                     filterCreditedAs === groupAs ||
                     filterCreditedAs === staff.as ||
                     filterCreditedAs === groupAlias ||
@@ -388,18 +374,13 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
 
                 const matchesRole = filterRole === null || filterRole === staff.role;
 
-                return (
-                    !!staff.song?.themes[0]?.entries[0] &&
-                    matchesPerformedAs &&
-                    matchesRole
-                );
+                return !!staff.song?.themes[0]?.entries[0] && matchesPerformedAs && matchesRole;
             }),
         [artist.name.main, filterCreditedAs, filterRole],
     );
 
     const toSortedThemes = useCallback(
-        (staffs: Array<SongStaff>) =>
-            staffs.flatMap((staff) => staff.song.themes).sort(getComparator(sortBy)),
+        (staffs: Array<SongStaff>) => staffs.flatMap((staff) => staff.song.themes).sort(getComparator(sortBy)),
         [sortBy],
     );
 
@@ -554,9 +535,11 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                         <FilterToggleButton onClick={toggleShowFilter} />
                     </StyledHeader>
                     <Collapse collapse={!showFilter}>
-                        <SearchFilterGroup style={{
-                            gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-                        }}>
+                        <SearchFilterGroup
+                            style={{
+                                gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+                            }}
+                        >
                             <SearchFilter>
                                 <Text variant="h2">Format</Text>
                                 <Listbox
@@ -681,9 +664,7 @@ const ArtistThemes = memo(function ArtistThemes({ themes }: ArtistThemesProps) {
     function playArtistThemes(initiatingThemeIndex: number, entryIndex = 0, videoIndex = 0) {
         const watchList = themes.flatMap((themeFragment, index) => {
             const entryFragment =
-                initiatingThemeIndex == index
-                    ? themeFragment.entries[entryIndex]
-                    : themeFragment.entries[0];
+                initiatingThemeIndex == index ? themeFragment.entries[entryIndex] : themeFragment.entries[0];
             const videoFragment =
                 initiatingThemeIndex == index
                     ? entryFragment?.videos.nodes[videoIndex]
