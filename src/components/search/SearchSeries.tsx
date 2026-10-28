@@ -1,16 +1,16 @@
 import { useState } from "react";
 
-import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
+import { useQuery } from "@apollo/client/react";
 
 import { SummaryCard } from "@/components/card/SummaryCard";
 import { SearchEntity } from "@/components/search/SearchEntity";
 import { SearchFilterFirstLetter } from "@/components/search-filter/SearchFilterFirstLetter";
 import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
-import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
 import type { SearchSeriesSort } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
+import { getNextPage, getSearchStatus } from "@/utils/searchPagination";
 
 interface Filter {
     firstLetter: string | null;
@@ -22,7 +22,7 @@ const initialFilter: Filter = {
     sortBy: "TITLE_ROMAJI",
 };
 
-const query = graphql(`
+export const SEARCH_SERIES_QUERY = graphql(`
     query SearchSeries($query: String!, $filter: SearchSeriesFilterInput, $page: Int!, $sort: [SearchSeriesSort!]) {
         search(search: $query, first: 15, page: $page) {
             series(filter: $filter, sort: $sort) {
@@ -33,6 +33,8 @@ const query = graphql(`
                     }
                 }
                 pageInfo {
+                    offset
+                    first
                     hasNextPage
                 }
             }
@@ -59,33 +61,16 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SearchSeriesSort> } : {}),
     };
 
-    const {
-        data,
-        error,
-        isError,
-        isLoading,
-        isFetching,
-        isFetchingNextPage,
-        isPlaceholderData,
-        hasNextPage,
-        fetchNextPage,
-    } = useInfiniteQuery({
-        queryKey: ["searchEntity", "series", variables],
-        queryFn: async ({ pageParam }) => {
-            const { data } = await client.query({
-                query,
-                variables: {
-                    ...variables,
-                    page: pageParam,
-                },
-            });
+    const result = useQuery(SEARCH_SERIES_QUERY, { variables: { ...variables, page: 1 } });
+    const results = (result.data ?? result.previousData)?.search.series;
 
-            return data.search.series;
-        },
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null),
-        placeholderData: keepPreviousData,
-    });
+    function loadMore() {
+        if (!results) {
+            return;
+        }
+
+        void result.fetchMore({ variables: { page: getNextPage(results.pageInfo) } });
+    }
 
     if (!searchQuery && filter.sortBy === null) {
         updateFilter("sortBy", initialFilter.sortBy);
@@ -114,27 +99,20 @@ export function SearchSeries({ searchQuery }: SearchSeriesProps) {
                 </SearchFilterSortBy>
             </SearchFilterGroup>
             <SearchEntity
-                error={error}
+                {...getSearchStatus(result)}
                 searchQuery={searchQuery}
-                isError={isError}
-                isLoading={isLoading}
-                isFetching={isFetching}
-                isFetchingNextPage={isFetchingNextPage}
-                isPlaceholderData={isPlaceholderData}
-                hasResults={(data?.pages.reduce((total, page) => total + page.data.length, 0) ?? 0) > 0}
-                hasNextPage={hasNextPage}
-                onLoadMore={fetchNextPage}
+                hasResults={!!results?.data.length}
+                hasNextPage={!!results?.pageInfo.hasNextPage}
+                onLoadMore={loadMore}
             >
-                {data?.pages
-                    .flatMap((page) => page.data)
-                    .map((series) => (
-                        <SummaryCard
-                            key={series.slug}
-                            title={series.title.romaji}
-                            description="Series"
-                            to={`/series/${series.slug}`}
-                        />
-                    ))}
+                {results?.data.map((series) => (
+                    <SummaryCard
+                        key={series.slug}
+                        title={series.title.romaji}
+                        description="Series"
+                        to={`/series/${series.slug}`}
+                    />
+                ))}
             </SearchEntity>
         </>
     );

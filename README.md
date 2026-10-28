@@ -84,7 +84,7 @@ For more information on environment variables see the [Next.js documentation](ht
 
 -   [Next.js](https://www.nextjs.org/)
 -   [styled-components](https://styled-components.com/)
--   [react-query](https://react-query.tanstack.com/)
+-   [Apollo Client](https://www.apollographql.com/docs/react/)
 -   [Font Awesome](https://fontawesome.com/)
 -   ...some other small packages, see the `package.json`.
 

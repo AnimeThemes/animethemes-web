@@ -1,3 +1,4 @@
+import type { FieldPolicy } from "@apollo/client";
 import { ApolloClient, ApolloLink, InMemoryCache } from "@apollo/client";
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
 import { print } from "@apollo/client/utilities";
@@ -26,9 +27,55 @@ const logLink = new ApolloLink((operation, forward) => {
     return forward(operation);
 });
 
+interface SearchResults {
+    data: Array<unknown>;
+    pageInfo?: {
+        offset: number;
+        first: number;
+    };
+}
+
+const searchResultsPolicy: FieldPolicy<SearchResults> = {
+    merge(existing, incoming) {
+        if (!existing?.pageInfo || !incoming.pageInfo) {
+            return incoming;
+        }
+
+        const data = [...existing.data];
+        data.splice(incoming.pageInfo.offset - incoming.pageInfo.first, incoming.data.length, ...incoming.data);
+
+        return {
+            ...incoming,
+            data,
+            pageInfo: incoming.pageInfo.offset > existing.pageInfo.offset ? incoming.pageInfo : existing.pageInfo,
+        };
+    },
+};
+
 export const client = new ApolloClient({
     link: ApolloLink.from([logLink, httpLink]),
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+        typePolicies: {
+            Query: {
+                fields: {
+                    search: {
+                        keyArgs: ["search", "first"],
+                    },
+                },
+            },
+            Search: {
+                merge: true,
+                fields: {
+                    anime: searchResultsPolicy,
+                    artists: searchResultsPolicy,
+                    playlists: searchResultsPolicy,
+                    series: searchResultsPolicy,
+                    studios: searchResultsPolicy,
+                    themes: searchResultsPolicy,
+                },
+            },
+        },
+    }),
     defaultOptions: {
         query: {
             errorPolicy: "none",

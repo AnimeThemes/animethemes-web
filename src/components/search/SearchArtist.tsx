@@ -1,16 +1,16 @@
 import { useState } from "react";
 
-import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
+import { useQuery } from "@apollo/client/react";
 
 import { ArtistSummaryCard } from "@/components/card/ArtistSummaryCard";
 import { SearchEntity } from "@/components/search/SearchEntity";
 import { SearchFilterFirstLetter } from "@/components/search-filter/SearchFilterFirstLetter";
 import { SearchFilterGroup } from "@/components/search-filter/SearchFilterGroup";
 import { SearchFilterSortBy } from "@/components/search-filter/SearchFilterSortBy";
-import { client } from "@/graphql/client";
 import { graphql } from "@/graphql/generated";
 import type { SearchArtistSort } from "@/graphql/generated/graphql";
 import useFilterStorage from "@/hooks/useFilterStorage";
+import { getNextPage, getSearchStatus } from "@/utils/searchPagination";
 
 interface Filter {
     firstLetter: string | null;
@@ -22,7 +22,7 @@ const initialFilter: Filter = {
     sortBy: "NAME_MAIN",
 };
 
-const query = graphql(`
+export const SEARCH_ARTIST_QUERY = graphql(`
     query SearchArtist($query: String!, $filter: SearchArtistFilterInput, $page: Int!, $sort: [SearchArtistSort!]) {
         search(search: $query, first: 15, page: $page) {
             artists(filter: $filter, sort: $sort) {
@@ -31,6 +31,8 @@ const query = graphql(`
                     slug
                 }
                 pageInfo {
+                    offset
+                    first
                     hasNextPage
                 }
             }
@@ -57,33 +59,16 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
         ...(filter.sortBy ? { sort: filter.sortBy.split(",") as Array<SearchArtistSort> } : {}),
     };
 
-    const {
-        data,
-        error,
-        isError,
-        isLoading,
-        isFetching,
-        isFetchingNextPage,
-        isPlaceholderData,
-        hasNextPage,
-        fetchNextPage,
-    } = useInfiniteQuery({
-        queryKey: ["searchEntity", "artist", variables],
-        queryFn: async ({ pageParam }) => {
-            const { data } = await client.query({
-                query,
-                variables: {
-                    ...variables,
-                    page: pageParam,
-                },
-            });
+    const result = useQuery(SEARCH_ARTIST_QUERY, { variables: { ...variables, page: 1 } });
+    const results = (result.data ?? result.previousData)?.search.artists;
 
-            return data.search.artists;
-        },
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.pageInfo.hasNextPage ? lastPageParam + 1 : null),
-        placeholderData: keepPreviousData,
-    });
+    function loadMore() {
+        if (!results) {
+            return;
+        }
+
+        void result.fetchMore({ variables: { page: getNextPage(results.pageInfo) } });
+    }
 
     if (!searchQuery && filter.sortBy === null) {
         updateFilter("sortBy", initialFilter.sortBy);
@@ -113,20 +98,13 @@ export function SearchArtist({ searchQuery }: SearchArtistProps) {
             </SearchFilterGroup>
 
             <SearchEntity
-                error={error}
+                {...getSearchStatus(result)}
                 searchQuery={searchQuery}
-                isError={isError}
-                isLoading={isLoading}
-                isFetching={isFetching}
-                isFetchingNextPage={isFetchingNextPage}
-                isPlaceholderData={isPlaceholderData}
-                hasResults={(data?.pages.reduce((total, page) => total + page.data.length, 0) ?? 0) > 0}
-                hasNextPage={hasNextPage}
-                onLoadMore={fetchNextPage}
+                hasResults={!!results?.data.length}
+                hasNextPage={!!results?.pageInfo.hasNextPage}
+                onLoadMore={loadMore}
             >
-                {data?.pages
-                    .flatMap((page) => page.data)
-                    .map((artist) => <ArtistSummaryCard key={artist.slug} artist={artist} />)}
+                {results?.data.map((artist) => <ArtistSummaryCard key={artist.slug} artist={artist} />)}
             </SearchEntity>
         </>
     );
