@@ -1392,10 +1392,6 @@ export type DocumentPageAllQueryVariables = Exact<{ [key: string]: never }>;
 
 export type DocumentPageAllQuery = { pageAll: Array<{ slug: string }> };
 
-export type DumpIndexPageQueryVariables = Exact<{ [key: string]: never }>;
-
-export type DumpIndexPageQuery = { dumpAll: Array<{ path: string; link: string; created_at: string }> };
-
 export type VideoPageAnimeFragment = {
     name: string;
     slug: string;
