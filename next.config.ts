@@ -23,6 +23,7 @@ const nextConfig: NextConfig = {
         styledComponents: true,
     },
     staticPageGenerationTimeout: 3600,
+    output: "standalone",
     experimental: {
         // We don't want to multi-thread page building
         // to make use of caching between page builds.
