@@ -2,6 +2,7 @@ import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated
 
 export const EXTRACT_IMAGES_IMAGE = graphql(`
     fragment extractImagesImage on Image {
+        id
         link
         facet
     }

@@ -5,6 +5,7 @@ const RANDOM_GRILL = graphql(`
     query RandomGrill {
         imageConnection(filter: { facet: GRILL }, sort: [RANDOM], pagination: { first: 1 }) {
             nodes {
+                id
                 link
             }
         }

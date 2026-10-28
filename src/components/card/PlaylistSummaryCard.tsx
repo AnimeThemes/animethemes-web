@@ -39,7 +39,9 @@ export const PLAYLIST_SUMMARY_CARD_PLAYLIST = graphql(`
 
 export const PLAYLIST_SUMMARY_CARD_PLAYLIST_WITH_OWNER = graphql(`
     fragment PlaylistSummaryCardPlaylistWithOwner on Playlist {
+        id
         user {
+            id
             name
         }
     }

@@ -46,6 +46,7 @@ const StyledList = styled.div`
 export const STUDIO_DETAIL_PAGE_STUDIO = graphql(`
     fragment StudioDetailPageStudio on Studio {
         ...StudioCoverImageStudio
+        id
         slug
         name
         anime {
@@ -59,12 +60,15 @@ export const STUDIO_DETAIL_PAGE_STUDIO = graphql(`
                 year
                 season
                 themes {
+                    id
                     type
                     sequence
                     entries {
+                        id
                         version
                         videos {
                             nodes {
+                                id
                                 tags
                             }
                         }
@@ -72,6 +76,7 @@ export const STUDIO_DETAIL_PAGE_STUDIO = graphql(`
                 }
                 images {
                     nodes {
+                        id
                         facet
                         link
                     }
@@ -82,6 +87,7 @@ export const STUDIO_DETAIL_PAGE_STUDIO = graphql(`
             edges {
                 as
                 node {
+                    id
                     link
                     site
                     siteLocalized

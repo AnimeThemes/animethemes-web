@@ -46,9 +46,11 @@ export const THEME_DETAIL_CARD_THEME = graphql(`
     fragment ThemeDetailCardTheme on Theme {
         ...ThemeMenuTheme
         ...VideoButtonTheme
+        id
         type
         sequence
         group {
+            id
             name
             slug
         }

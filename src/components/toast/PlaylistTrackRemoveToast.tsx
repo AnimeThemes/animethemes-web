@@ -15,7 +15,9 @@ export const PLAYLIST_TRACK_REMOVE_TOAST_PLAYLIST = graphql(`
 
 export const PLAYLIST_TRACK_REMOVE_TOAST_ENTRY = graphql(`
     fragment PlaylistTrackRemoveToastEntry on Entry {
+        id
         theme {
+            id
             song {
                 ...SongTitleSong
             }

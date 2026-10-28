@@ -27,6 +27,7 @@ export const SEARCH_SERIES_QUERY = graphql(`
         search(search: $query, first: 15, page: $page) {
             series(filter: $filter, sort: $sort) {
                 data {
+                    id
                     slug
                     title {
                         romaji

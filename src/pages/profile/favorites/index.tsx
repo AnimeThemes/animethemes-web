@@ -97,6 +97,7 @@ export const FAVORITES_PAGE_ENTRY = graphql(`
             ...VideoSummaryCardTheme
             ...WatchListItemTheme
             anime {
+                id
                 title {
                     romaji
                 }
@@ -109,6 +110,7 @@ export const FAVORITES_PAGE_ENTRY = graphql(`
                 }
             }
             song {
+                id
                 title {
                     romaji
                 }
@@ -129,7 +131,9 @@ export const FAVORITES_PAGE_ENTRY = graphql(`
 export const FAVORITES_PAGE_QUERY = graphql(`
     query FavoritesPagePlaylist {
         me {
+            id
             favorites {
+                id
                 entry {
                     ...FavoritesPageEntry
                 }

@@ -89,6 +89,7 @@ export const SEASON_PREVIEW_ANIME = graphql(`
     fragment SeasonPreviewAnime on Anime {
         ...AnimeSummaryCardAnime
         ...AnimeSummaryCardAnimeExpandable
+        id
         slug
     }
 `);

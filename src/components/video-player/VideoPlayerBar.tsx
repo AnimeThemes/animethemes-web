@@ -100,6 +100,7 @@ const StyledVolumeControl = styled(VolumeControl)`
 export const VIDEO_PLAYER_BAR_VIDEO = graphql(`
     fragment VideoPlayerBarVideo on Video {
         ...PlaylistTrackAddDialogVideo
+        id
     }
 `);
 
@@ -108,19 +109,23 @@ export const VIDEO_PLAYER_BAR_ENTRY = graphql(`
         ...PlaylistTrackAddDialogEntry
         id
         theme {
+            id
             type
             sequence
             song {
                 ...SongTitleSong
                 ...PerformancesSong
                 performances {
+                    id
                     __typename
                 }
             }
             group {
+                id
                 name
             }
             anime {
+                id
                 slug
                 title {
                     romaji

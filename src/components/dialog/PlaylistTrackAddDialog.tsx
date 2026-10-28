@@ -83,6 +83,7 @@ export function PlaylistTrackAddDialog({
 export const PLAYLIST_TRACK_ADD_FORM_PLAYLIST = graphql(`
     query PlaylistTrackAddFormPlaylist($entryId: Int!, $videoId: Int!) {
         me {
+            id
             playlists {
                 nodes {
                     ...PlaylistTrackAddCardPlaylist

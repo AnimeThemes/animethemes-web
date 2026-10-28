@@ -62,6 +62,7 @@ const StyledThemeGroupContainer = styled.div`
 
 export const ANIME_SUMMARY_CARD_ANIME = graphql(`
     fragment AnimeSummaryCardAnime on Anime {
+        id
         slug
         title {
             romaji
@@ -71,7 +72,9 @@ export const ANIME_SUMMARY_CARD_ANIME = graphql(`
         seasonLocalized
         formatLocalized
         themes {
+            id
             group {
+                id
                 name
                 slug
             }
@@ -86,9 +89,11 @@ export const ANIME_SUMMARY_CARD_ANIME = graphql(`
 
 export const ANIME_SUMMARY_CARD_ANIME_EXPANDABLE = graphql(`
     fragment AnimeSummaryCardAnimeExpandable on Anime {
+        id
         themes {
             ...ThemeTableTheme
             group {
+                id
                 name
                 slug
             }

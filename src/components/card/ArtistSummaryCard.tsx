@@ -4,6 +4,7 @@ import extractImages from "@/utils/extractImages";
 
 export const ARTIST_SUMMARY_CARD_ARTIST = graphql(`
     fragment ArtistSummaryCardArtist on Artist {
+        id
         slug
         name {
             main

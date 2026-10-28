@@ -36,6 +36,7 @@ export const VIDEO_PLAYER_VIDEO = graphql(`
         id
         basename
         audio {
+            id
             basename
         }
     }
@@ -51,6 +52,7 @@ export const VIDEO_PLAYER_ENTRY = graphql(`
             type
             sequence
             anime {
+                id
                 slug
                 title {
                     romaji
@@ -62,12 +64,15 @@ export const VIDEO_PLAYER_ENTRY = graphql(`
                 }
             }
             song {
+                id
                 title {
                     romaji
                 }
                 performances {
+                    id
                     as
                     artist {
+                        id
                         name {
                             main
                         }

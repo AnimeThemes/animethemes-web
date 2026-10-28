@@ -73,10 +73,12 @@ export const VIDEO_SUMMARY_CARD_THEME = graphql(`
         type
         sequence
         group {
+            id
             name
             slug
         }
         anime {
+            id
             slug
             title {
                 romaji
