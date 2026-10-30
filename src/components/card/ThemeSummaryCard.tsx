@@ -4,11 +4,11 @@ import Link from "next/link";
 
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
-import { SongStaffTable } from "../table/SongStaffTable";
 import { Button } from "@/components/button/Button";
 import { SummaryCard } from "@/components/card/SummaryCard2";
 import { Icon } from "@/components/icon/Icon";
 import { ThemeMenu } from "@/components/menu/ThemeMenu";
+import { SongStaffTable } from "@/components/table/SongStaffTable";
 import { ThemeTable } from "@/components/table/ThemeTable";
 import { TextLink } from "@/components/text/TextLink";
 import { Collapse } from "@/components/utils/Collapse";

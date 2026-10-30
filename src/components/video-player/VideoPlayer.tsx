@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useMutation } from "@apollo/client/react";
 import type { ResultOf } from "@graphql-typed-document-node/core";
 
-import { filterPerformancesFromStaff } from "../utils/Performances";
+import { filterPerformancesFromStaff } from "@/components/utils/Performances";
 import {
     StyledAside,
     StyledAudio,

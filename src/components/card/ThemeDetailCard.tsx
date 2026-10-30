@@ -3,16 +3,16 @@ import styled from "styled-components";
 
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
-import { Icon } from "../icon/Icon";
-import { SongStaffTable } from "../table/SongStaffTable";
-import { Collapse } from "../utils/Collapse";
-import { StyledExpandButton, StyledPerformedWith, StyledWrapper, useIsMobile } from "./ThemeSummaryCard";
 import { Row } from "@/components/box/Flex";
 import { VideoButton } from "@/components/button/VideoButton";
 import { Card } from "@/components/card/Card";
+import { StyledExpandButton, StyledPerformedWith, StyledWrapper, useIsMobile } from "@/components/card/ThemeSummaryCard";
+import { Icon } from "@/components/icon/Icon";
 import { ThemeMenu } from "@/components/menu/ThemeMenu";
+import { SongStaffTable } from "@/components/table/SongStaffTable";
 import { ThemeEntryTags } from "@/components/tag/ThemeEntryTags";
 import { Text } from "@/components/text/Text";
+import { Collapse } from "@/components/utils/Collapse";
 import { Performances } from "@/components/utils/Performances";
 import { SongTitle } from "@/components/utils/SongTitle";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
