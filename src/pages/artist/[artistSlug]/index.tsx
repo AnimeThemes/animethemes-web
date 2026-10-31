@@ -25,6 +25,7 @@ import { SEO } from "@/components/seo/SEO";
 import { Text } from "@/components/text/Text";
 import { Collapse } from "@/components/utils/Collapse";
 import { HeightTransition } from "@/components/utils/HeightTransition";
+import { filterPerformancesFromStaff } from "@/components/utils/Performances";
 import PlayerContext, {
     createWatchListItem,
     WATCH_LIST_ITEM_ENTRY,
@@ -94,6 +95,7 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                     as
                     memberAlias
                     memberAs
+                    role
                     artist {
                         id
                         slug
@@ -293,9 +295,9 @@ type MemberSongStaff = ResultOf<typeof ARTIST_DETAIL_PAGE_ARTIST>["memberSongSta
 function getSongStaffFilter(key: string | null): (staff: SongStaff) => boolean {
     switch (key) {
         case "SOLO":
-            return (staff) => staff.song.staff.length === 1;
+            return (staff) => staff.song.staff.filter(filterPerformancesFromStaff).length === 1;
         case "GROUP":
-            return (staff) => staff.song.staff.length > 1;
+            return (staff) => staff.song.staff.filter(filterPerformancesFromStaff).length > 1;
         default:
             return () => true;
     }
