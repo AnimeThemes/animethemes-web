@@ -8,6 +8,7 @@ import {
     faCircleExclamation,
     faEllipsisVertical,
     faHeart,
+    faPen,
     faRightFromBracket,
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
@@ -22,6 +23,7 @@ import { VideoSummaryCard } from "@/components/card/VideoSummaryCard";
 import { LoginDialog } from "@/components/dialog/LoginDialog";
 import { PasswordChangeDialog } from "@/components/dialog/PasswordChangeDialog";
 import { PlaylistAddDialog } from "@/components/dialog/PlaylistAddDialog";
+import { PlaylistEditDialog } from "@/components/dialog/PlaylistEditDialog";
 import { PlaylistRemoveDialog } from "@/components/dialog/PlaylistRemoveDialog";
 import { RegisterDialog } from "@/components/dialog/RegisterDialog";
 import { UserInformationDialog } from "@/components/dialog/UserInformationDialog";
@@ -152,6 +154,7 @@ export const PROFILE_PAGE_ME = graphql(`
         playlists(sort: [CREATED_AT_DESC]) {
             nodes {
                 ...PlaylistSummaryCardPlaylist
+                ...PlaylistEditDialogPlaylist
                 ...PlaylistRemoveDialogPlaylist
                 id
             }
@@ -300,6 +303,17 @@ export default function ProfilePage({ me: meFragment }: ProfilePageProps) {
                                                           </Button>
                                                       </MenuTrigger>
                                                       <MenuContent>
+                                                          <PlaylistEditDialog
+                                                              playlist={playlist}
+                                                              trigger={
+                                                                  <MenuItem
+                                                                      onSelect={(event) => event.preventDefault()}
+                                                                  >
+                                                                      <Icon icon={faPen} />
+                                                                      <Text>Edit Playlist</Text>
+                                                                  </MenuItem>
+                                                              }
+                                                          />
                                                           <PlaylistRemoveDialog
                                                               playlist={playlist}
                                                               trigger={
