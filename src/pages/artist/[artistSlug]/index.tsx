@@ -168,6 +168,7 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                     as
                     memberAlias
                     memberAs
+                    role
                     artist {
                         id
                         slug
