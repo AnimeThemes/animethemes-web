@@ -51,6 +51,18 @@ export default defineConfig([
             ],
             "simple-import-sort/exports": "error",
 
+            "no-restricted-imports": [
+                "error",
+                {
+                    patterns: [
+                        {
+                            group: ["./*", "../*"],
+                            message: "Use the @ alias instead of relative imports.",
+                        },
+                    ],
+                },
+            ],
+
             // TypeScript rules
             "@typescript-eslint/no-unused-vars": "error",
             "@typescript-eslint/no-empty-interface": [

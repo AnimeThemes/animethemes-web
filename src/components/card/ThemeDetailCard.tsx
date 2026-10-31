@@ -1,14 +1,22 @@
+import type { MouseEvent } from "react";
 import styled from "styled-components";
+
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
 import { Row } from "@/components/box/Flex";
 import { VideoButton } from "@/components/button/VideoButton";
 import { Card } from "@/components/card/Card";
+import { StyledExpandButton, StyledPerformedWith, StyledWrapper, useIsMobile } from "@/components/card/ThemeSummaryCard";
+import { Icon } from "@/components/icon/Icon";
 import { ThemeMenu } from "@/components/menu/ThemeMenu";
+import { SongStaffTable } from "@/components/table/SongStaffTable";
 import { ThemeEntryTags } from "@/components/tag/ThemeEntryTags";
 import { Text } from "@/components/text/Text";
+import { Collapse } from "@/components/utils/Collapse";
 import { Performances } from "@/components/utils/Performances";
 import { SongTitle } from "@/components/utils/SongTitle";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
+import useToggle from "@/hooks/useToggle";
 import theme from "@/theme";
 import { entryVersionComparator } from "@/utils/comparators";
 
@@ -42,6 +50,11 @@ const StyledVideoList = styled(Row)`
     }
 `;
 
+const StyledButtons = styled.div`
+    position: static;
+    opacity: 1;
+`;
+
 export const THEME_DETAIL_CARD_THEME = graphql(`
     fragment ThemeDetailCardTheme on Theme {
         ...ThemeMenuTheme
@@ -63,7 +76,11 @@ export const THEME_DETAIL_CARD_THEME = graphql(`
         }
         song {
             ...SongTitleSong
-            ...PerformancesSong
+            ...StaffSong
+            staff {
+                ...SongStaffTableStaff
+                id
+            }
         }
         entries {
             ...ThemeEntryTagsEntry
@@ -88,42 +105,93 @@ export function ThemeDetailCard({ theme: themeFragment }: ThemeDetailCardProps) 
     const theme = getFragmentData(THEME_DETAIL_CARD_THEME, themeFragment);
     const { anime } = theme;
 
+    const [isExpanded, toggleExpanded] = useToggle();
+    const isMobile = useIsMobile();
+
     if (!anime) {
         return null;
     }
 
+    const isExpandable = theme.song?.staff !== undefined && theme.song.staff.length > 0;
+
+    function handleToggleExpand(event: MouseEvent, filterLinks = false) {
+        if (filterLinks && isLink(event.target)) {
+            return;
+        } else if (isExpandable && !isMobile) {
+            toggleExpanded();
+        }
+    }
+
+    function isLink(element: EventTarget | null): boolean {
+        if (!element || !(element instanceof HTMLElement)) {
+            return false;
+        } else if (element instanceof HTMLAnchorElement && element.href) {
+            return true;
+        }
+        return isLink(element.parentElement);
+    }
+
     return (
-        <StyledThemeCard>
-            <StyledRow>
-                <Text variant="small" color="text">
-                    {theme.type}
-                    {theme.sequence || null}
-                </Text>
-                <Text>
-                    <SongTitle song={theme.song} />
-                    <Performances song={theme.song} expandable />
-                </Text>
-                <ThemeMenu theme={theme} />
-            </StyledRow>
-            {[...theme.entries].sort(entryVersionComparator).map((entry) => (
-                <StyledRow key={entry.version ?? 0}>
-                    <Text variant="small" color="text-muted">
-                        v{entry.version ?? 1}
+        <StyledWrapper>
+            <StyledThemeCard>
+                <StyledRow>
+                    <Text variant="small" color="text">
+                        {theme.type}
+                        {theme.sequence || null}
                     </Text>
-                    <Text color="text-muted">
-                        <ThemeEntryTags entry={entry} />
+                    <Text>
+                        <SongTitle song={theme.song} />
+                        <Performances song={theme.song} expandable />
                     </Text>
-                    <StyledVideoListContainer>
-                        {!!entry.videos && (
-                            <StyledVideoList>
-                                {entry.videos.nodes.map((video, index) => (
-                                    <VideoButton key={index} anime={anime} theme={theme} entry={entry} video={video} />
-                                ))}
-                            </StyledVideoList>
+                    <StyledButtons>
+                        <ThemeMenu theme={theme} />
+                        {isExpandable && (
+                            <StyledExpandButton
+                                variant="silent"
+                                isCircle
+                                title={isExpanded ? "Collapse" : "Expand"}
+                                onClick={handleToggleExpand}
+                            >
+                                <Icon
+                                    icon={faChevronDown}
+                                    className={isExpanded ? "fa-rotate-180" : undefined}
+                                    style={{ transition: "transform 400ms" }}
+                                />
+                            </StyledExpandButton>
                         )}
-                    </StyledVideoListContainer>
+                    </StyledButtons>
                 </StyledRow>
-            ))}
-        </StyledThemeCard>
+                {[...theme.entries].sort(entryVersionComparator).map((entry) => (
+                    <StyledRow key={entry.version ?? 0}>
+                        <Text variant="small" color="text-muted">
+                            v{entry.version ?? 1}
+                        </Text>
+                        <Text color="text-muted">
+                            <ThemeEntryTags entry={entry} />
+                        </Text>
+                        <StyledVideoListContainer>
+                            {!!entry.videos && (
+                                <StyledVideoList>
+                                    {entry.videos.nodes.map((video, index) => (
+                                        <VideoButton
+                                            key={index}
+                                            anime={anime}
+                                            theme={theme}
+                                            entry={entry}
+                                            video={video}
+                                        />
+                                    ))}
+                                </StyledVideoList>
+                            )}
+                        </StyledVideoListContainer>
+                    </StyledRow>
+                ))}
+            </StyledThemeCard>
+            <Collapse collapse={!isExpanded}>
+                <StyledPerformedWith>
+                    {theme.song?.staff && <SongStaffTable staffs={theme.song.staff} />}
+                </StyledPerformedWith>
+            </Collapse>
+        </StyledWrapper>
     );
 }

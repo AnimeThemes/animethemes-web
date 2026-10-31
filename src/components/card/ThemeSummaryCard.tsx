@@ -8,12 +8,11 @@ import { Button } from "@/components/button/Button";
 import { SummaryCard } from "@/components/card/SummaryCard2";
 import { Icon } from "@/components/icon/Icon";
 import { ThemeMenu } from "@/components/menu/ThemeMenu";
-import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "@/components/table/Table";
+import { SongStaffTable } from "@/components/table/SongStaffTable";
 import { ThemeTable } from "@/components/table/ThemeTable";
-import { Text } from "@/components/text/Text";
 import { TextLink } from "@/components/text/TextLink";
 import { Collapse } from "@/components/utils/Collapse";
-import { getDisplayedArtistName, Performances } from "@/components/utils/Performances";
+import { Performances } from "@/components/utils/Performances";
 import { SongTitle } from "@/components/utils/SongTitle";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 import useMediaQuery from "@/hooks/useMediaQuery";
@@ -22,7 +21,7 @@ import theme from "@/theme";
 import createVideoSlug from "@/utils/createVideoSlug";
 import extractImages from "@/utils/extractImages";
 
-const StyledWrapper = styled.div`
+export const StyledWrapper = styled.div`
     position: relative;
 `;
 
@@ -44,13 +43,13 @@ const StyledOverlayButtons = styled.div`
     }
 `;
 
-const StyledExpandButton = styled(Button)`
+export const StyledExpandButton = styled(Button)`
     @media (max-width: ${theme.breakpoints.mobileMax}) {
         display: none;
     }
 `;
 
-const StyledPerformedWith = styled.div`
+export const StyledPerformedWith = styled.div`
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -83,11 +82,13 @@ export const THEME_SUMMARY_CARD_THEME = graphql(`
         }
         song {
             ...SongTitleSong
-            ...PerformancesSong
-            performances {
+            ...StaffSong
+            staff {
                 id
                 alias
                 as
+                relevance
+                role
                 artist {
                     id
                     slug
@@ -108,47 +109,42 @@ export const THEME_SUMMARY_CARD_THEME = graphql(`
     }
 `);
 
-export const THEME_SUMMARY_CARD_ARTIST = graphql(`
-    fragment ThemeSummaryCardArtist on Artist {
-        ...PerformancesArtist
-        id
-        slug
-    }
-`);
-
 export const THEME_SUMMARY_CARD_THEME_EXPANDABLE = graphql(`
     fragment ThemeSummaryCardThemeExpandable on Theme {
         ...ThemeTableTheme
         id
+        song {
+            id
+            staff {
+                id
+                ...SongStaffTableStaff
+            }
+        }
     }
 `);
 
-const useIsMobile = () => useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
+export const useIsMobile = () => useMediaQuery(`(max-width: ${theme.breakpoints.mobileMax})`);
 
 interface ThemeSummaryCardProps {
     theme: FragmentType<typeof THEME_SUMMARY_CARD_THEME>;
-    artist?: FragmentType<typeof THEME_SUMMARY_CARD_ARTIST>;
     expandable?: FragmentType<typeof THEME_SUMMARY_CARD_THEME_EXPANDABLE>;
     onPlay?(entryIndex?: number, videoIndex?: number): void;
 }
 
-// Specify an artist if you want to display this in an artist context (e.g. artist page)
 export function ThemeSummaryCard({
     theme: themeFragment,
-    artist: artistFragment,
     children,
     expandable: expandableFragment,
     onPlay,
     ...props
 }: PropsWithChildren<ThemeSummaryCardProps>) {
     const theme = getFragmentData(THEME_SUMMARY_CARD_THEME, themeFragment);
-    const ownerArtist = artistFragment ? getFragmentData(THEME_SUMMARY_CARD_ARTIST, artistFragment) : undefined;
 
     const anime = theme.anime;
     const entry = theme.entries[0];
     const video = entry?.videos.nodes[0];
 
-    const expandable = expandableFragment && video
+    const expandable = expandableFragment && (video || theme.song?.staff)
         ? getFragmentData(THEME_SUMMARY_CARD_THEME_EXPANDABLE, expandableFragment)
         : undefined;
 
@@ -181,10 +177,6 @@ export function ThemeSummaryCard({
         return isLink(element.parentElement);
     }
 
-    const performances = (theme.song?.performances ?? [])
-        .filter(({ artist }) => artist.slug !== ownerArtist?.slug)
-        .sort(({ artist: a }, { artist: b }) => a.name.main.localeCompare(b.name.main));
-
     return (
         <StyledWrapper>
             <SummaryCard {...props}>
@@ -194,7 +186,7 @@ export function ThemeSummaryCard({
                 <SummaryCard.Body onClick={(event) => handleToggleExpand(event, true)}>
                     <SummaryCard.Title>
                         <SongTitle song={theme.song} href={href} onClick={() => onPlay?.()} />
-                        <Performances song={theme.song} artist={ownerArtist} />
+                        <Performances song={theme.song} />
                     </SummaryCard.Title>
                     <SummaryCard.Description>
                         <span>
@@ -227,27 +219,14 @@ export function ThemeSummaryCard({
             {expandable && (
                 <Collapse collapse={!isExpanded}>
                     <StyledPerformedWith>
-                        <ThemeTable
-                            themes={[expandable]}
-                            onPlay={(_, entryIndex, videoIndex) => onPlay?.(entryIndex, videoIndex)}
-                        />
-                        {performances.length > 0 && (
-                            <Table style={{ "--columns": "1fr" }}>
-                                <TableHead>
-                                    <TableHeadCell>Performed {ownerArtist ? "With" : "By"}</TableHeadCell>
-                                </TableHead>
-                                <TableBody>
-                                    {performances.map(({ alias, as, artist }) => (
-                                        <TableRow key={artist.slug} as={Link} href={`/artist/${artist.slug}`}>
-                                            <TableCell>
-                                                <Text color="text-primary" weight="600">
-                                                    {getDisplayedArtistName({ alias, as, artist })}
-                                                </Text>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                        {theme.entries.some((entry) => entry.videos.nodes.length) && (
+                            <ThemeTable
+                                themes={[expandable]}
+                                onPlay={(_, entryIndex, videoIndex) => onPlay?.(entryIndex, videoIndex)}
+                            />
+                        )}
+                        {expandable.song?.staff && (
+                            <SongStaffTable staffs={expandable.song.staff} />
                         )}
                     </StyledPerformedWith>
                 </Collapse>

@@ -1,5 +1,4 @@
-import { useState } from "react";
-import styled from "styled-components";
+import { Fragment, useState } from "react";
 import Link from "next/link";
 
 import { uniqBy } from "lodash-es";
@@ -7,30 +6,15 @@ import { uniqBy } from "lodash-es";
 import { Text } from "@/components/text/Text";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
-const StyledArtist = styled(Text)`
-    &:not(:first-of-type)::before {
-        content: ", ";
-        font-size: 0.8rem;
-        font-weight: 700;
-    }
-
-    &:not(:first-of-type):last-of-type::before {
-        content: " & ";
-    }
-`;
-
-const StyledArtistLink = styled(Text).attrs({ as: "a", link: true })`
-    font-size: 1rem;
-`;
-
-export const PERFORMANCES_SONG = graphql(`
-    fragment PerformancesSong on Song {
+export const STAFF_SONG = graphql(`
+    fragment StaffSong on Song {
         id
-        performances {
+        staff {
             id
             alias
             as
             relevance
+            role
             artist {
                 id
                 slug
@@ -49,17 +33,25 @@ export const PERFORMANCES_SONG = graphql(`
     }
 `);
 
-export const PERFORMANCES_ARTIST = graphql(`
-    fragment PerformancesArtist on Artist {
+export const SONG_STAFF_ARTIST = graphql(`
+    fragment SongStaffArtist on Artist {
         id
     }
 `);
 
 export interface PerformancesProps {
-    song: FragmentType<typeof PERFORMANCES_SONG> | null;
-    artist?: FragmentType<typeof PERFORMANCES_ARTIST>;
+    song: FragmentType<typeof STAFF_SONG> | null;
+    artist?: FragmentType<typeof SONG_STAFF_ARTIST>;
     maxPerformances?: number | null;
     expandable?: boolean;
+}
+
+interface FilterPerformancesFromStaffProps {
+    role: string;
+}
+
+export function filterPerformancesFromStaff(staff: FilterPerformancesFromStaffProps): boolean {
+    return staff.role === "Performance" || staff.role.toLowerCase().includes("feat");
 }
 
 interface ArtistNameProps {
@@ -85,80 +77,62 @@ export function getDisplayedArtistName({ alias, artist, as }: ArtistNameProps) {
 
 export function Performances({
     song: songFragment,
-    artist: artistFragment,
     maxPerformances = 3,
     expandable = false,
 }: PerformancesProps) {
-    const song = getFragmentData(PERFORMANCES_SONG, songFragment);
-    const artist = getFragmentData(PERFORMANCES_ARTIST, artistFragment);
+    const song = getFragmentData(STAFF_SONG, songFragment);
     const [expandPerformances, setExpandPerformances] = useState(false);
 
-    if (!song?.performances.length) {
+    const songPerformances = song?.staff.filter(filterPerformancesFromStaff);
+
+    if (!songPerformances?.length) {
         return null;
     }
 
     if (maxPerformances === null || expandPerformances) {
-        maxPerformances = song.performances.length;
+        maxPerformances = songPerformances.length;
     }
 
-    const performances = uniqBy(song.performances, (performance) => performance.artist.id).sort(
+    const performances = uniqBy(songPerformances, (performance) => performance.artist.id).sort(
         (a, b) => a.relevance - b.relevance,
     );
 
-    const performancesShown = performances.slice(0, maxPerformances);
-    const performancesHidden = performances.slice(maxPerformances);
+    const isFeaturing = ({ role }: (typeof performances)[number]) => role.toLowerCase().includes("feat");
 
-    if (artist) {
-        const performedAs = performances.find((performance) => performance.artist.id === artist.id);
-        const performedWith = performances.filter((performance) => performance.artist.id !== artist.id);
+    const shown = performances.slice(0, maxPerformances);
+    const performancesShown = shown.filter((p) => !isFeaturing(p));
+    const featuringShown = shown.filter(isFeaturing);
 
-        return (
-            <>
-                {performedAs?.as ? (
-                    <Text variant="small" color="text-muted">
-                        <span> as </span>
-                        <span>
-                            <StyledArtistLink as={Link} href={`/artist/${performedAs.artist.slug}`}>
-                                {performedAs.as}
-                            </StyledArtistLink>
-                        </span>
-                    </Text>
-                ) : null}
-                {performedWith.length ? (
-                    <Text variant="small" color="text-muted">
-                        <span> with </span>
-                        <span>
-                            {performedWith.map((performance) => (
-                                <StyledArtist key={performance.artist.slug}>
-                                    <StyledArtistLink as={Link} href={`/artist/${performance.artist.slug}`}>
-                                        {getDisplayedArtistName(performance)}
-                                    </StyledArtistLink>
-                                </StyledArtist>
-                            ))}
-                        </span>
-                    </Text>
-                ) : null}
-            </>
-        );
-    }
+    const performancesHidden = performances.slice(maxPerformances).filter((p) => !isFeaturing(p));
+
+    const hasMore = performancesHidden.length > 0;
 
     return (
         <Text color="text-muted">
             <Text variant="small"> by </Text>
             <Text>
-                {performancesShown.map((performance) => (
-                    <StyledArtist key={performance.artist.slug}>
+                {performancesShown.map((performance, index) => (
+                    <Fragment key={performance.artist.slug}>
+                        {index > 0 && (index === performancesShown.length - 1 && !hasMore ? " & " : ", ")}
                         <Text as={Link} href={`/artist/${performance.artist.slug}`} link>
                             {getDisplayedArtistName(performance)}
                         </Text>
-                    </StyledArtist>
+                    </Fragment>
                 ))}
-                {!!performancesHidden.length && (
-                    <StyledArtist>
-                        <Text link onClick={() => expandable && setExpandPerformances(true)}>
-                            {performancesHidden.length} more
+                {featuringShown.length > 0 && " feat. "}
+                {featuringShown.map((featuring, index) => (
+                    <Fragment key={featuring.artist.slug}>
+                        {index > 0 && (index === featuringShown.length - 1 && !hasMore ? " & " : ", ")}
+                        <Text as={Link} href={`/artist/${featuring.artist.slug}`} link>
+                            {getDisplayedArtistName(featuring)}
                         </Text>
-                    </StyledArtist>
+                    </Fragment>
+                ))}
+                {hasMore && shown.length > 0 && " & "}
+                {hasMore && (
+                    <Text link onClick={() => expandable && setExpandPerformances(true)}>
+                        {performancesHidden.length} more
+                    </Text>
                 )}
             </Text>
         </Text>
