@@ -352,7 +352,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
     );
 
     const [showFilter, toggleShowFilter] = useToggle();
-    const [filterSongStaffFormat, setFilterSongStaffFormat] = useState<string | null>(null);
+    const [filterSongStaffPerformedWith, setFilterSongStaffPerformedWith] = useState<string | null>(null);
     const [filterCreditedAs, setFilterCreditedAs] = useState(creditedAsFilterOptions[0]);
     const [filterRole, setFilterRole] = useState<string | null>(null);
     const [sortBy, setSortBy] = useState<
@@ -389,7 +389,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
 
     const songStaffsGroupedByAlias = useMemo(
         () =>
-            filterSongStaffs(songStaffs.filter(getSongStaffFilter(filterSongStaffFormat)), null, null).reduce(
+            filterSongStaffs(songStaffs.filter(getSongStaffFilter(filterSongStaffPerformedWith)), null, null).reduce(
                 (prev, curr) => {
                     const group = prev.get(curr.alias);
                     if (!group) {
@@ -401,7 +401,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                 },
                 new Map<string | null, Array<SongStaff>>(),
             ),
-        [songStaffs, filterSongStaffFormat, filterSongStaffs],
+        [songStaffs, filterSongStaffPerformedWith, filterSongStaffs],
     );
     const songStaffsAsSelf = songStaffsGroupedByAlias.get(null) ?? [];
 
@@ -420,11 +420,11 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                     return acc;
                 }, {}),
             ).map((staffs) => {
-                return filterSongStaffFormat === "SOLO"
+                return filterSongStaffPerformedWith === "SOLO"
                     ? []
                     : filterSongStaffs(staffs, staffs[0].memberAs, staffs[0].memberAlias);
             }),
-        [memberSongStaffs, filterSongStaffFormat, filterSongStaffs],
+        [memberSongStaffs, filterSongStaffPerformedWith, filterSongStaffs],
     );
 
     return (
@@ -544,10 +544,10 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                             }}
                         >
                             <SearchFilter>
-                                <Text variant="h2">Format</Text>
+                                <Text variant="h2">Performed With</Text>
                                 <Listbox
-                                    value={filterSongStaffFormat}
-                                    onValueChange={setFilterSongStaffFormat}
+                                    value={filterSongStaffPerformedWith}
+                                    onValueChange={setFilterSongStaffPerformedWith}
                                     defaultValue={null}
                                     nullable
                                     resettable
