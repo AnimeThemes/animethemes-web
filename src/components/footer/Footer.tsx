@@ -61,14 +61,15 @@ export function Footer() {
         <StyledFooter>
             <StyledContainer>
                 <StyledLinkList>
+                    <FooterTextLink href="/about/guidelines">Guidelines</FooterTextLink>
                     <FooterTextLink href="/about/faq">FAQ</FooterTextLink>
                     <FooterTextLink href="/about/donate">Donate</FooterTextLink>
-                    <FooterTextLink href="/about/transparency">Transparency</FooterTextLink>
                     <FooterTextLink as="a" href="https://api-docs.animethemes.moe" target="_blank">
                         API Documentation
                     </FooterTextLink>
                 </StyledLinkList>
                 <StyledLinkList>
+                    <FooterTextLink href="/about/transparency">Transparency</FooterTextLink>
                     <FooterTextLink href="/about/terms-of-service">Terms of Service</FooterTextLink>
                     <FooterTextLink href="/about/privacy-policy">Privacy Policy</FooterTextLink>
                     <FooterTextLink as="a" href="mailto:admin@animethemes.moe">
@@ -76,26 +77,38 @@ export function Footer() {
                     </FooterTextLink>
                 </StyledLinkList>
                 <StyledSocialList>
-                    <FooterLink href="https://reddit.com/r/AnimeThemes">
-                        <StyledSocialButton title="Reddit">
-                            <Icon icon={faReddit} />
-                        </StyledSocialButton>
-                    </FooterLink>
-                    <FooterLink href="https://discordapp.com/invite/m9zbVyQ">
-                        <StyledSocialButton title="Discord">
-                            <Icon icon={faDiscord} />
-                        </StyledSocialButton>
-                    </FooterLink>
-                    <FooterLink href="https://twitter.com/AnimeThemesMoe">
-                        <StyledSocialButton title="Twitter">
-                            <Icon icon={faTwitter} />
-                        </StyledSocialButton>
-                    </FooterLink>
-                    <FooterLink href="https://github.com/AnimeThemes">
-                        <StyledSocialButton title="GitHub">
-                            <Icon icon={faGithub} />
-                        </StyledSocialButton>
-                    </FooterLink>
+                    <StyledSocialButton
+                        forwardedAs={FooterLink}
+                        href="https://reddit.com/r/AnimeThemes"
+                        target="_blank"
+                        title="Reddit"
+                    >
+                        <Icon icon={faReddit} />
+                    </StyledSocialButton>
+                    <StyledSocialButton
+                        forwardedAs={FooterLink}
+                        href="https://discordapp.com/invite/m9zbVyQ"
+                        target="_blank"
+                        title="Discord"
+                    >
+                        <Icon icon={faDiscord} />
+                    </StyledSocialButton>
+                    <StyledSocialButton
+                        forwardedAs={FooterLink}
+                        href="https://twitter.com/AnimeThemesMoe"
+                        target="_blank"
+                        title="Twitter"
+                    >
+                        <Icon icon={faTwitter} />
+                    </StyledSocialButton>
+                    <StyledSocialButton
+                        forwardedAs={FooterLink}
+                        href="https://github.com/AnimeThemes"
+                        target="_blank"
+                        title="GitHub"
+                    >
+                        <Icon icon={faGithub} />
+                    </StyledSocialButton>
                 </StyledSocialList>
             </StyledContainer>
         </StyledFooter>
