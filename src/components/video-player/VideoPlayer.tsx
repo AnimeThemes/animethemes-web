@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { useMutation } from "@apollo/client/react";
 import type { ResultOf } from "@graphql-typed-document-node/core";
 
+import { filterPerformancesFromStaff } from "@/components/utils/Performances";
 import {
     StyledAside,
     StyledAudio,
@@ -68,9 +69,10 @@ export const VIDEO_PLAYER_ENTRY = graphql(`
                 title {
                     romaji
                 }
-                performances {
+                staff {
                     id
                     as
+                    role
                     artist {
                         id
                         name {
@@ -452,9 +454,9 @@ export function VideoPlayer({ watchListItem, background, children, overlay, ...p
         if (theme && smallCover && navigator.mediaSession) {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: `${theme.type + (theme.sequence || "")} • ${theme.song?.title.romaji || "T.B.A."}`,
-                artist: theme.song?.performances
-                    ? theme.song.performances
-                          .map((performance) => performance.as || performance.artist.name.main)
+                artist: theme.song?.staff.filter(filterPerformancesFromStaff)
+                    ? theme.song.staff.filter(filterPerformancesFromStaff)
+                          .map((staff) => staff.as || staff.artist.name.main)
                           .join(", ")
                     : undefined,
                 album: anime.title.romaji,
