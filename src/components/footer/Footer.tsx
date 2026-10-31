@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Link from "next/link";
 
-import { faDiscord, faGithub, faReddit, faXTwitter } from "@fortawesome/free-brands-svg-icons";
+import { faDiscord, faGithub, faReddit, faTwitter } from "@fortawesome/free-brands-svg-icons";
 
 import { Column, Row } from "@/components/box/Flex";
 import { Solid } from "@/components/box/Solid";
@@ -77,26 +77,38 @@ export function Footer() {
                     </FooterTextLink>
                 </StyledLinkList>
                 <StyledSocialList>
-                    <FooterLink href="https://reddit.com/r/AnimeThemes">
-                        <StyledSocialButton title="Reddit">
-                            <Icon icon={faReddit} />
-                        </StyledSocialButton>
-                    </FooterLink>
-                    <FooterLink href="https://discordapp.com/invite/m9zbVyQ">
-                        <StyledSocialButton title="Discord">
-                            <Icon icon={faDiscord} />
-                        </StyledSocialButton>
-                    </FooterLink>
-                    <FooterLink href="https://x.com/AnimeThemesMoe">
-                        <StyledSocialButton title="X">
-                            <Icon icon={faXTwitter} />
-                        </StyledSocialButton>
-                    </FooterLink>
-                    <FooterLink href="https://github.com/AnimeThemes">
-                        <StyledSocialButton title="GitHub">
-                            <Icon icon={faGithub} />
-                        </StyledSocialButton>
-                    </FooterLink>
+                    <StyledSocialButton
+                        forwardedAs={FooterLink}
+                        href="https://reddit.com/r/AnimeThemes"
+                        target="_blank"
+                        title="Reddit"
+                    >
+                        <Icon icon={faReddit} />
+                    </StyledSocialButton>
+                    <StyledSocialButton
+                        forwardedAs={FooterLink}
+                        href="https://discordapp.com/invite/m9zbVyQ"
+                        target="_blank"
+                        title="Discord"
+                    >
+                        <Icon icon={faDiscord} />
+                    </StyledSocialButton>
+                    <StyledSocialButton
+                        forwardedAs={FooterLink}
+                        href="https://twitter.com/AnimeThemesMoe"
+                        target="_blank"
+                        title="Twitter"
+                    >
+                        <Icon icon={faTwitter} />
+                    </StyledSocialButton>
+                    <StyledSocialButton
+                        forwardedAs={FooterLink}
+                        href="https://github.com/AnimeThemes"
+                        target="_blank"
+                        title="GitHub"
+                    >
+                        <Icon icon={faGithub} />
+                    </StyledSocialButton>
                 </StyledSocialList>
             </StyledContainer>
         </StyledFooter>
