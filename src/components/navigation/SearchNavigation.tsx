@@ -45,7 +45,7 @@ const updateSearchQuery = debounce((router, newSearchQuery) => {
             shallow: true,
         },
     );
-}, 500);
+}, 300);
 
 export function SearchNavigation() {
     const router = useRouter();
