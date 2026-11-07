@@ -236,7 +236,7 @@ export default function PlaylistDetailPage({
     const { setWatchList, setWatchListFactory, setCurrentWatchListItem } = useContext(PlayerContext);
     const router = useRouter();
 
-    const { data: playlistData, refetch } = useQuery(PLAYLIST_DETAIL_PAGE_QUERY, {
+    const { data: playlistData } = useQuery(PLAYLIST_DETAIL_PAGE_QUERY, {
         variables: { playlistId: initialPlaylist.id },
     });
 
@@ -330,10 +330,8 @@ export default function PlaylistDetailPage({
                     },
                 },
             });
-
-            await refetch();
         },
-        [tracksSortedByUser, updatePlaylistTrackMutation, playlist.id, refetch],
+        [tracksSortedByUser, updatePlaylistTrackMutation, playlist.id],
     );
 
     const coverImageItems = useMemo(
