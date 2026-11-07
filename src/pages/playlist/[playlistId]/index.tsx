@@ -193,10 +193,11 @@ export const PLAYLIST_DETAIL_PAGE_TRACK = graphql(`
     }
 `);
 
-export const PLAYLIST_DETAIL_PAGE_ME = graphql(`
-    fragment PlaylistDetailPageMe on Me {
-        id
-        name
+export const PLAYLIST_DETAIL_PAGE_PERMISSIONS = graphql(`
+    fragment PlaylistDetailPagePermissions on PlaylistPermissions {
+        canUpdate
+        canDelete
+        canReorderTracks
     }
 `);
 
@@ -208,13 +209,9 @@ const PLAYLIST_DETAIL_PAGE_QUERY = graphql(`
                 ...PlaylistDetailPageTrack
                 id
             }
-        }
-    }
-`);
-const ME_QUERY = graphql(`
-    query PlaylistDetailPageMe {
-        me {
-            ...PlaylistDetailPageMe
+            permissions {
+                ...PlaylistDetailPagePermissions
+            }
         }
     }
 `);
@@ -222,7 +219,7 @@ const ME_QUERY = graphql(`
 interface PlaylistDetailPageProps extends SharedPageProps {
     playlist: FragmentType<typeof PLAYLIST_DETAIL_PAGE_PLAYLIST>;
     tracks: Array<FragmentType<typeof PLAYLIST_DETAIL_PAGE_TRACK>>;
-    me: FragmentType<typeof PLAYLIST_DETAIL_PAGE_ME> | null;
+    permissions: FragmentType<typeof PLAYLIST_DETAIL_PAGE_PERMISSIONS>;
 }
 
 interface PlaylistDetailPageParams extends ParsedUrlQuery {
@@ -232,7 +229,7 @@ interface PlaylistDetailPageParams extends ParsedUrlQuery {
 export default function PlaylistDetailPage({
     playlist: playlistFragment,
     tracks: tracksFragment,
-    me: meFragment,
+    permissions: permissionsFragment,
 }: PlaylistDetailPageProps) {
     const initialPlaylist = getFragmentData(PLAYLIST_DETAIL_PAGE_PLAYLIST, playlistFragment);
 
@@ -242,11 +239,10 @@ export default function PlaylistDetailPage({
     const { data: playlistData, refetch } = useQuery(PLAYLIST_DETAIL_PAGE_QUERY, {
         variables: { playlistId: initialPlaylist.id },
     });
-    const { data: meData } = useQuery(ME_QUERY);
 
     const playlist = getFragmentData(PLAYLIST_DETAIL_PAGE_PLAYLIST, playlistData?.playlist ?? playlistFragment);
     const tracks = getFragmentData(PLAYLIST_DETAIL_PAGE_TRACK, playlistData?.playlist?.tracks ?? tracksFragment);
-    const me = getFragmentData(PLAYLIST_DETAIL_PAGE_ME, meData?.me ?? meFragment);
+    const permissions = getFragmentData(PLAYLIST_DETAIL_PAGE_PERMISSIONS, playlistData?.playlist?.permissions ?? permissionsFragment);
 
     if (!playlist) {
         location.reload();
@@ -259,7 +255,6 @@ export default function PlaylistDetailPage({
     const [isDescriptionEditable, setDescriptionEditable] = useState(false);
     const [description, setDescription] = useState(playlist.description ?? "");
 
-    const isOwner = me?.name === playlist.user.name;
     const isRanking = playlist.name.startsWith("[#] ");
 
     const [tracksPrevious, setTracksPrevious] = useState(tracks);
@@ -368,7 +363,7 @@ export default function PlaylistDetailPage({
                     <StyledDesktopOnly>
                         <MultiCoverImage key={JSON.stringify(coverImageItems)} items={coverImageItems} />
                     </StyledDesktopOnly>
-                    {isOwner && (
+                    {permissions.canUpdate && (
                         <Column style={{ "--gap": "16px" }}>
                             <PlaylistEditDialog playlist={playlist} />
                             {!isDescriptionEditable && !description && (
@@ -392,11 +387,11 @@ export default function PlaylistDetailPage({
                     {isDescriptionEditable || description ? (
                         <Description
                             playlist={playlist}
+                            permissions={permissions}
                             description={description}
                             setDescription={setDescription}
                             isEditable={isDescriptionEditable}
                             setEditable={setDescriptionEditable}
-                            isOwner={isOwner}
                         />
                     ) : null}
                     {isRanking && topRankedTrack ? (
@@ -408,7 +403,7 @@ export default function PlaylistDetailPage({
                                 <PlaylistTrack
                                     playlist={playlist}
                                     track={topRankedTrack}
-                                    isOwner={isOwner}
+                                    permissions={permissions}
                                     isRanking={isRanking}
                                     onPlay={() => playAll(0)}
                                 />
@@ -448,8 +443,8 @@ export default function PlaylistDetailPage({
                     <PlaylistTrackList
                         playlist={playlist}
                         tracks={tracksSorted}
-                        isReorderable={sortBy === UNSORTED && isOwner}
-                        isOwner={isOwner}
+                        permissions={permissions}
+                        isReorderable={sortBy === UNSORTED && permissions.canReorderTracks}
                         isRanking={isRanking}
                         playAll={playAll}
                         updateTrackOrderRemote={updateTrackOrderRemote}
@@ -463,14 +458,14 @@ export default function PlaylistDetailPage({
 
 interface DescriptionProps {
     playlist: ResultOf<typeof PLAYLIST_DETAIL_PAGE_PLAYLIST>;
+    permissions: ResultOf<typeof PLAYLIST_DETAIL_PAGE_PERMISSIONS>;
     description: string;
     setDescription: (newValue: string) => void;
     isEditable: boolean;
     setEditable: (newIsEditable: boolean) => void;
-    isOwner: boolean;
 }
 
-function Description({ playlist, description, setDescription, isEditable, setEditable, isOwner }: DescriptionProps) {
+function Description({ playlist, permissions, description, setDescription, isEditable, setEditable }: DescriptionProps) {
     const [isCollapsed, setCollapsed] = useState(true);
 
     const [isBusy, setBusy] = useState(false);
@@ -527,7 +522,7 @@ function Description({ playlist, description, setDescription, isEditable, setEdi
         <>
             <StyledHeader>
                 <Text variant="h2">Description</Text>
-                {isOwner ? (
+                {permissions.canUpdate ? (
                     isEditable ? (
                         <Row>
                             {!isBusy && (
@@ -548,7 +543,7 @@ function Description({ playlist, description, setDescription, isEditable, setEdi
                     )
                 ) : null}
             </StyledHeader>
-            {isOwner && isEditable ? (
+            {permissions.canUpdate && isEditable ? (
                 <div>
                     <TextArea
                         value={description}
@@ -583,8 +578,8 @@ function Description({ playlist, description, setDescription, isEditable, setEdi
 interface PlaylistTrackListProps {
     playlist: ResultOf<typeof PLAYLIST_DETAIL_PAGE_PLAYLIST>;
     tracks: Array<ResultOf<typeof PLAYLIST_DETAIL_PAGE_TRACK> & { rank: number }>;
+    permissions: ResultOf<typeof PLAYLIST_DETAIL_PAGE_PERMISSIONS>;
     isReorderable: boolean;
-    isOwner: boolean;
     isRanking: boolean;
     playAll: (index: number) => void;
     updateTrackOrderRemote: (trackId: string) => void;
@@ -594,8 +589,8 @@ interface PlaylistTrackListProps {
 const PlaylistTrackList = memo(function PlaylistTrackList({
     playlist,
     tracks,
+    permissions,
     isReorderable,
-    isOwner,
     isRanking,
     playAll,
     updateTrackOrderRemote,
@@ -610,7 +605,7 @@ const PlaylistTrackList = memo(function PlaylistTrackList({
                             key={track.id}
                             playlist={playlist}
                             track={track}
-                            isOwner={isOwner}
+                            permissions={permissions}
                             isRanking={isRanking}
                             isDraggable
                             onPlay={() => playAll(index)}
@@ -625,7 +620,7 @@ const PlaylistTrackList = memo(function PlaylistTrackList({
                             key={track.id}
                             playlist={playlist}
                             track={track}
-                            isOwner={isOwner}
+                            permissions={permissions}
                             isRanking={isRanking}
                             onPlay={() => playAll(index)}
                         />
@@ -649,14 +644,14 @@ const StyledDragHandle = styled(Icon)`
 interface PlaylistTrackProps {
     playlist: ResultOf<typeof PLAYLIST_DETAIL_PAGE_PLAYLIST>;
     track: ResultOf<typeof PLAYLIST_DETAIL_PAGE_TRACK> & { rank: number };
-    isOwner: boolean;
+    permissions: ResultOf<typeof PLAYLIST_DETAIL_PAGE_PERMISSIONS>;
     isRanking: boolean;
     isDraggable?: boolean;
     onPlay: () => void;
     onDragEnd?: () => void;
 }
 
-function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPlay, onDragEnd }: PlaylistTrackProps) {
+function PlaylistTrack({ playlist, track, permissions, isRanking, isDraggable, onPlay, onDragEnd }: PlaylistTrackProps) {
     const { watchList, addWatchListItem, addWatchListItemNext } = useContext(PlayerContext);
     const controls = useDragControls();
 
@@ -720,7 +715,7 @@ function PlaylistTrack({ playlist, track, isOwner, isRanking, isDraggable, onPla
                                     </MenuItem>
                                 </>
                             ) : null}
-                            {isOwner ? (
+                            {permissions.canDelete ? (
                                 <>
                                     <MenuSeparator />
                                     <PlaylistTrackRemoveDialog
@@ -792,9 +787,9 @@ export const getServerSideProps: GetServerSideProps<PlaylistDetailPageProps, Pla
                         ...PlaylistDetailPageTrack
                         id
                     }
-                }
-                me {
-                    ...PlaylistDetailPageMe
+                    permissions {
+                        ...PlaylistDetailPagePermissions
+                    }
                 }
             }
         `),
@@ -812,7 +807,7 @@ export const getServerSideProps: GetServerSideProps<PlaylistDetailPageProps, Pla
             ...getSharedPageProps(),
             playlist: data.playlist,
             tracks: data.playlist.tracks,
-            me: data.me,
+            permissions: data.playlist.permissions,
         },
     };
 };
