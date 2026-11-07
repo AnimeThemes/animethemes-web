@@ -318,7 +318,7 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
     const images = extractMultipleImages(artist.images.edges);
     const [collapseInformation, setCollapseInformation] = useState(true);
 
-    const songStaffs = useMemo(() => uniqBy([...artist.songStaff], (staff) => staff.song.id), [artist.songStaff]);
+    const songStaffs = artist.songStaff;
 
     const memberSongStaffs = useMemo(
         () =>
@@ -389,7 +389,10 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
 
     const songStaffsGroupedByAlias = useMemo(
         () =>
-            filterSongStaffs(songStaffs.filter(getSongStaffFilter(filterSongStaffPerformedWith)), null, null).reduce(
+            uniqBy(
+                filterSongStaffs(songStaffs.filter(getSongStaffFilter(filterSongStaffPerformedWith)), null, null),
+                (staff) => staff.song.id,
+            ).reduce(
                 (prev, curr) => {
                     const group = prev.get(curr.alias);
                     if (!group) {
