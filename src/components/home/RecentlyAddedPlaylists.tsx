@@ -8,7 +8,7 @@ import { graphql } from "@/graphql/generated";
 
 const query = graphql(`
     query HomePageRecentlyAddedPlaylists {
-        playlistConnection(sort: [CREATED_AT_DESC], pagination: { first: 10 }) {
+        playlistConnection(filter: { tracksExist: true }, sort: [CREATED_AT_DESC], pagination: { first: 10 }) {
             nodes {
                 ...PlaylistSummaryCardPlaylist
                 ...PlaylistSummaryCardPlaylistWithOwner
