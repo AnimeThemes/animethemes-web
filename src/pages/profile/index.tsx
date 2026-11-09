@@ -159,7 +159,7 @@ export const PROFILE_PAGE_ME = graphql(`
                 id
             }
         }
-        watchHistory {
+        watchHistory(pagination: { first: 30 }, sort: [ID_DESC]) {
             nodes {
                 ...WatchHistoryThemesWatchHistory
             }
