@@ -1,11 +1,13 @@
 import { Row } from "@/components/box/Flex";
 import { ContentWarningTags } from "@/components/tag/ContentWarningTags";
+import { EntryNotesTags } from "@/components/tag/EntryNotesTags";
 import { EpisodeTag } from "@/components/tag/EpisodeTag";
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
 export const THEME_ENTRY_TAGS_ENTRY = graphql(`
     fragment ThemeEntryTagsEntry on Entry {
         ...EpisodeTagEntry
+        ...EntryNotesTagsEntry
         ...ContentWarningTagsEntry
         id
     }
@@ -21,6 +23,7 @@ export function ThemeEntryTags({ entry: entryFragment }: ThemeEntryTagsProps) {
     return (
         <Row style={{ "--gap": "8px", "--align-items": "baseline" }}>
             <EpisodeTag entry={entry} />
+            <EntryNotesTags entry={entry} />
             <ContentWarningTags entry={entry} />
         </Row>
     );
