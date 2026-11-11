@@ -1,5 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import type { GetStaticPaths, GetStaticProps } from "next";
+import type { MDXRemoteSerializeResult } from "next-mdx-remote";
 
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 
@@ -7,15 +8,18 @@ import { Column, Row } from "@/components/box/Flex";
 import { IconTextButton } from "@/components/button/IconTextButton";
 import { AnimeSummaryCard } from "@/components/card/AnimeSummaryCard";
 import { ArtistSummaryCard } from "@/components/card/ArtistSummaryCard";
+import { Card } from "@/components/card/Card";
 import PlaylistSummaryCard from "@/components/card/PlaylistSummaryCard";
 import { StudioSummaryCard } from "@/components/card/StudioSummaryCard";
 import { SummaryCard } from "@/components/card/SummaryCard";
 import { ThemeSummaryCard } from "@/components/card/ThemeSummaryCard";
 import { VideoSummaryCard } from "@/components/card/VideoSummaryCard";
 import Switch from "@/components/form/Switch";
+import { Markdown } from "@/components/markdown/Markdown";
 import { SEO } from "@/components/seo/SEO";
 import { SwitcherOption } from "@/components/switcher/Switcher";
 import { Text } from "@/components/text/Text";
+import { HeightTransition } from "@/components/utils/HeightTransition";
 import { HorizontalScroll } from "@/components/utils/HorizontalScroll";
 import { PageRevalidation } from "@/components/utils/PageRevalidation";
 import { filterPerformancesFromStaff } from "@/components/utils/Performances";
@@ -33,6 +37,7 @@ import extractImages from "@/utils/extractImages";
 import fetchStaticPaths from "@/utils/fetchStaticPaths";
 import type { SharedPageProps } from "@/utils/getSharedPageProps";
 import getSharedPageProps from "@/utils/getSharedPageProps";
+import { serializeMarkdownSafe } from "@/utils/serializeMarkdown";
 
 export const VIDEO_PAGE_ANIME = graphql(`
     fragment VideoPageAnime on Anime {
@@ -85,6 +90,7 @@ export const VIDEO_PAGE_ANIME = graphql(`
                 nsfw
                 spoiler
                 version
+                notes
                 videos {
                     nodes {
                         ...VideoPlayerVideo
@@ -191,6 +197,7 @@ export function getAnimeFromVideoPageFragment(fragment: FragmentType<typeof VIDE
 
 export interface VideoPageProps extends SharedPageProps {
     anime: FragmentType<typeof VIDEO_PAGE_ANIME>;
+    entryNotesMarkdownSource: MDXRemoteSerializeResult | null;
     themeIndex: number;
     entryIndex: number;
     videoIndex: number;
@@ -204,6 +211,7 @@ type VideoPageParams = {
 
 export default function VideoPage({
     anime: animeFragment,
+    entryNotesMarkdownSource,
     themeIndex,
     entryIndex,
     videoIndex,
@@ -232,6 +240,7 @@ export default function VideoPage({
     const [selectedTab, setSelectedTab] = useState<"watch-list" | "info" | "related">(() => {
         return watchList.length > 1 ? "watch-list" : "info";
     });
+    const [collapseEntryNotes, setCollapseEntryNotes] = useState(true);
     const [showMoreRelatedThemes, setShowMoreRelatedThemes] = useState(false);
     const [showMoreRelatedPlaylists, setShowMoreRelatedPlaylists] = useState(false);
 
@@ -383,6 +392,18 @@ export default function VideoPage({
             {selectedTab === "info" ? (
                 <StyledScrollArea>
                     <Column style={{ "--gap": "16px" }}>
+                        {!!entryNotesMarkdownSource && (
+                            <>
+                                <Text variant="h2">Notes</Text>
+                                <Card $hoverable onClick={() => setCollapseEntryNotes(!collapseEntryNotes)}>
+                                    <HeightTransition>
+                                        <Text as="div" maxLines={collapseEntryNotes ? 1 : undefined}>
+                                            <Markdown source={entryNotesMarkdownSource} />
+                                        </Text>
+                                    </HeightTransition>
+                                </Card>
+                            </>
+                        )}
                         <Text variant="h2">Origin</Text>
                         <AnimeSummaryCard anime={anime} />
                         {anime.series.nodes.map((series) => (
@@ -535,6 +556,7 @@ export const getStaticProps: GetStaticProps<VideoPageProps, VideoPageParams> = a
                             props: {
                                 ...getSharedPageProps(),
                                 anime: animeFragment,
+                                entryNotesMarkdownSource: entry.notes ? (await serializeMarkdownSafe(entry.notes)).source : null,
                                 themeIndex,
                                 entryIndex,
                                 videoIndex,
