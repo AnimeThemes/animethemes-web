@@ -8,12 +8,14 @@ import {
     faArrowTurnDown,
     faArrowTurnUp,
     faEllipsisVertical,
+    faGripVertical,
     faPlus,
     faShuffle,
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import type { ResultOf } from "@graphql-typed-document-node/core";
 import { shuffle } from "lodash-es";
+import { Reorder, useDragControls } from "motion/react";
 import type { ParsedUrlQuery } from "querystring";
 
 import { Column } from "@/components/box/Flex";
@@ -38,7 +40,7 @@ import PlayerContext, {
     WATCH_LIST_ITEM_VIDEO,
 } from "@/context/playerContext";
 import createApolloClient from "@/graphql/createApolloClient";
-import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
+import { getFragmentData, graphql } from "@/graphql/generated";
 import useToggle from "@/hooks/useToggle";
 import theme from "@/theme";
 import {
@@ -74,55 +76,70 @@ const StyledHeader = styled.div`
         margin-inline-start: auto;
     }
 `;
+const StyledReorderContainer = styled.div`
+    // Hack to style the framer motion reorder component
+    & > div {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+`;
 
 const comparators = {
     [UNSORTED]: () => 0,
-    [SONG_A_Z]: sortTransformed(getComparator(SONG_A_Z), (entry) => entry.theme),
-    [SONG_Z_A]: sortTransformed(getComparator(SONG_Z_A), (entry) => entry.theme),
-    [ANIME_A_Z]: sortTransformed(getComparator(ANIME_A_Z), (entry) => entry.theme?.anime),
-    [ANIME_Z_A]: sortTransformed(getComparator(ANIME_Z_A), (entry) => entry.theme?.anime),
-    [ANIME_OLD_NEW]: sortTransformed(getComparator(ANIME_OLD_NEW), (entry) => entry.theme?.anime),
-    [ANIME_NEW_OLD]: sortTransformed(getComparator(ANIME_NEW_OLD), (entry) => entry.theme?.anime),
-} satisfies Record<string, Comparator<ResultOf<typeof FAVORITES_PAGE_ENTRY>>>;
+    [SONG_A_Z]: sortTransformed(getComparator(SONG_A_Z), (favorite) => favorite.entry.theme),
+    [SONG_Z_A]: sortTransformed(getComparator(SONG_Z_A), (favorite) => favorite.entry.theme),
+    [ANIME_A_Z]: sortTransformed(getComparator(ANIME_A_Z), (favorite) => favorite.entry.theme?.anime),
+    [ANIME_Z_A]: sortTransformed(getComparator(ANIME_Z_A), (favorite) => favorite.entry.theme?.anime),
+    [ANIME_OLD_NEW]: sortTransformed(getComparator(ANIME_OLD_NEW), (favorite) => favorite.entry.theme?.anime),
+    [ANIME_NEW_OLD]: sortTransformed(getComparator(ANIME_NEW_OLD), (favorite) => favorite.entry.theme?.anime),
+} satisfies Record<string, Comparator<ResultOf<typeof FAVORITES_PAGE_FAVORITE>>>;
 
-export const FAVORITES_PAGE_ENTRY = graphql(`
-    fragment FavoritesPageEntry on Entry {
+export const FAVORITES_PAGE_FAVORITE = graphql(`
+    fragment FavoritesPageFavorite on Favorite {
         id
-        ...VideoSummaryCardEntry
-        ...WatchListItemEntry
-        ...FeaturedThemeEntry
-        ...PlaylistTrackAddDialogEntry
-        ...PlaylistTrackRemoveDialogEntry
-        theme {
-            ...VideoSummaryCardTheme
-            ...WatchListItemTheme
-            anime {
+        position
+        entry: favoriteable {
+            __typename
+            ... on Entry {
                 id
-                title {
-                    romaji
-                }
-                year
-                season
-                images {
-                    nodes {
-                        ...extractImagesImage
+                ...VideoSummaryCardEntry
+                ...WatchListItemEntry
+                ...FeaturedThemeEntry
+                ...PlaylistTrackAddDialogEntry
+                ...PlaylistTrackRemoveDialogEntry
+                theme {
+                    ...VideoSummaryCardTheme
+                    ...WatchListItemTheme
+                    anime {
+                        id
+                        title {
+                            romaji
+                        }
+                        year
+                        season
+                        images {
+                            nodes {
+                                ...extractImagesImage
+                            }
+                        }
+                    }
+                    song {
+                        id
+                        title {
+                            romaji
+                        }
                     }
                 }
-            }
-            song {
-                id
-                title {
-                    romaji
+                videos {
+                    nodes {
+                        ...VideoSummaryCardVideo
+                        ...WatchListItemVideo
+                        ...PlaylistTrackAddDialogVideo
+                        ...PlaylistTrackRemoveDialogVideo
+                        id
+                    }
                 }
-            }
-        }
-        videos {
-            nodes {
-                ...VideoSummaryCardVideo
-                ...WatchListItemVideo
-                ...PlaylistTrackAddDialogVideo
-                ...PlaylistTrackRemoveDialogVideo
-                id
             }
         }
     }
@@ -132,28 +149,26 @@ export const FAVORITES_PAGE_QUERY = graphql(`
     query FavoritesPagePlaylist {
         me {
             id
-            favorites {
+            favorites(sort: POSITION) {
                 id
-                entry {
-                    ...FavoritesPageEntry
-                }
+                ...FavoritesPageFavorite
             }
         }
     }
 `);
 
 interface FavoritesPageProps extends SharedPageProps {
-    entries: Array<FragmentType<typeof FAVORITES_PAGE_ENTRY>>;
+    favorites: Array<ResultOf<typeof FAVORITES_PAGE_FAVORITE>>;
 }
 
 type FavoritesPageParams = ParsedUrlQuery;
 
-export default function FavoritesPage({ entries: entryFragments }: FavoritesPageProps) {
+export default function FavoritesPage({ favorites: favoriteFragments }: FavoritesPageProps) {
     const { data } = useQuery(FAVORITES_PAGE_QUERY);
 
-    const entries = getFragmentData(FAVORITES_PAGE_ENTRY, data ? extractValidEntries(data) : entryFragments);
+    const favorites = data ? extractValidFavorites(data) : favoriteFragments;
 
-    if (!entries) {
+    if (!favorites) {
         location.reload();
         throw new Error("User lost auth.");
     }
@@ -164,34 +179,36 @@ export default function FavoritesPage({ entries: entryFragments }: FavoritesPage
     const [showFilter, toggleShowFilter] = useToggle();
     const [sortBy, setSortBy] = useState<keyof typeof comparators>(UNSORTED);
 
-    const entriesSorted = useMemo(() => [...entries].sort(comparators[sortBy]), [sortBy, entries]);
+    const [favoritesPrevious, setFavoritesPrevious] = useState(favorites);
+    const [favoritesSortedByUser, setFavoritesSortedByUser] = useState(favorites);    
+    const favoritesSorted = useMemo(() => [...favoritesSortedByUser].sort(comparators[sortBy]), [sortBy, favoritesSortedByUser]);
 
     const playAll = useCallback(
         (initiatingVideoIndex: number) => {
-            const watchList = entriesSorted.map((entry) =>
+            const watchList = favoritesSorted.map((favorite) =>
                 createWatchListItem(
-                    getFragmentData(WATCH_LIST_ITEM_VIDEO, entry.videos.nodes[0]),
-                    getFragmentData(WATCH_LIST_ITEM_ENTRY, entry),
-                    getFragmentData(WATCH_LIST_ITEM_THEME, entry.theme),
+                    getFragmentData(WATCH_LIST_ITEM_VIDEO, favorite.entry.videos.nodes[0]),
+                    getFragmentData(WATCH_LIST_ITEM_ENTRY, favorite.entry),
+                    getFragmentData(WATCH_LIST_ITEM_THEME, favorite.entry.theme),
                 ),
             );
             setWatchList(watchList, true);
             setWatchListFactory(null);
             setCurrentWatchListItem(watchList[initiatingVideoIndex]);
         },
-        [setCurrentWatchListItem, setWatchList, setWatchListFactory, entriesSorted],
+        [setCurrentWatchListItem, setWatchList, setWatchListFactory, favoritesSorted],
     );
 
     const shuffleAll = useCallback(() => {
-        if (entriesSorted.length === 0) {
+        if (favoritesSorted.length === 0) {
             return;
         }
         const watchList = shuffle(
-            entriesSorted.map((entry) =>
+            favoritesSorted.map((favorite) =>
                 createWatchListItem(
-                    getFragmentData(WATCH_LIST_ITEM_VIDEO, entry.videos.nodes[0]),
-                    getFragmentData(WATCH_LIST_ITEM_ENTRY, entry),
-                    getFragmentData(WATCH_LIST_ITEM_THEME, entry.theme),
+                    getFragmentData(WATCH_LIST_ITEM_VIDEO, favorite.entry.videos.nodes[0]),
+                    getFragmentData(WATCH_LIST_ITEM_ENTRY, favorite.entry),
+                    getFragmentData(WATCH_LIST_ITEM_THEME, favorite.entry.theme),
                 ),
             ),
         );
@@ -206,17 +223,49 @@ export default function FavoritesPage({ entries: entryFragments }: FavoritesPage
             const videoSlug = createVideoSlug(theme, entry, video);
             void router.push(`/anime/${anime.slug}/${videoSlug}`);
         }
-    }, [router, setCurrentWatchListItem, setWatchList, setWatchListFactory, entriesSorted]);
+    }, [router, setCurrentWatchListItem, setWatchList, setWatchListFactory, favoritesSorted]);
+
+    const [updateFavoriteMutation] = useMutation(
+        graphql(`
+            mutation UpdateFavorite($id: Int!, $input: UpdateFavoriteInput!) {
+                updateFavorite(id: $id, input: $input) {
+                    id
+                }
+            }
+        `),
+    );
+
+    const updateFavoriteOrderRemote = useCallback(
+        async (favoriteId: number) => {
+            const position = favoritesSortedByUser.findIndex((favorite) => favorite.id === favoriteId) + 1;
+
+            await updateFavoriteMutation({
+                variables: {
+                    id: favoriteId,
+                    input: {
+                        position: position,
+                    },
+                },
+            });
+        },
+        [favoritesSortedByUser, updateFavoriteMutation],
+    );
 
     const coverImageItems = useMemo(
         () =>
-            entries.flatMap((entry) => {
-                const anime = entry.theme?.anime;
+            favorites.flatMap((favorite) => {
+                const anime = favorite.entry.theme?.anime;
 
                 return anime ? [{ ...extractImages(anime.images.nodes), name: anime.title.romaji }] : [];
             }),
-        [entries],
+        [favorites],
     );
+
+    if (favorites !== favoritesPrevious) {
+        setFavoritesPrevious(favorites);
+        setFavoritesSortedByUser(favorites);
+        return null;
+    }
 
     return (
         <>
@@ -232,9 +281,9 @@ export default function FavoritesPage({ entries: entryFragments }: FavoritesPage
                     <StyledHeader>
                         <Text variant="h2">
                             Themes
-                            <Text color="text-disabled"> ({entries.length})</Text>
+                            <Text color="text-disabled"> ({favorites.length})</Text>
                         </Text>
-                        {entries.length > 0 && (
+                        {favorites.length > 0 && (
                             <IconTextButton icon={faShuffle} collapsible onClick={shuffleAll}>
                                 Shuffle All
                             </IconTextButton>
@@ -257,7 +306,13 @@ export default function FavoritesPage({ entries: entryFragments }: FavoritesPage
                             </SearchFilterSortBy>
                         </SearchFilterGroup>
                     </Collapse>
-                    <FavoritesEntryList entries={entriesSorted} playAll={playAll} />
+                    <FavoritesEntryList
+                        favorites={favoritesSorted}
+                        isReorderable={sortBy === UNSORTED}
+                        playAll={playAll}
+                        updateFavoriteOrderRemote={updateFavoriteOrderRemote}
+                        updateFavoriteOrder={setFavoritesSortedByUser}
+                    />
                 </Column>
             </SidebarContainer>
         </>
@@ -265,28 +320,71 @@ export default function FavoritesPage({ entries: entryFragments }: FavoritesPage
 }
 
 interface FavoritesEntryListProps {
-    entries: Array<ResultOf<typeof FAVORITES_PAGE_ENTRY>>;
+    favorites: Array<ResultOf<typeof FAVORITES_PAGE_FAVORITE>>;
+    isReorderable: boolean;
     playAll: (index: number) => void;
+    updateFavoriteOrderRemote: (favoriteId: number) => void;
+    updateFavoriteOrder: (favorites: Array<ResultOf<typeof FAVORITES_PAGE_FAVORITE>>) => void;
 }
 
-const FavoritesEntryList = memo(function FavoritesEntryList({ entries, playAll }: FavoritesEntryListProps) {
+const FavoritesEntryList = memo(function FavoritesEntryList({
+    favorites,
+    isReorderable,
+    playAll,
+    updateFavoriteOrderRemote,
+    updateFavoriteOrder,
+}: FavoritesEntryListProps) {
     return (
-        <Column style={{ "--gap": "16px" }}>
-            {entries.map((entry, index) => (
-                <FavoritesEntry key={entry.id} entry={entry} onPlay={() => playAll(index)} />
-            ))}
-        </Column>
+        <StyledReorderContainer>
+            {isReorderable ? (
+                <Reorder.Group as="div" axis="y" values={favorites} onReorder={updateFavoriteOrder}>
+                    {favorites.map((favorite, index) => (
+                        <FavoritesEntry
+                            key={favorite.id}
+                            favorite={favorite}
+                            isDraggable
+                            onPlay={() => playAll(index)}
+                            onDragEnd={() => updateFavoriteOrderRemote(favorite.id)}
+                        />
+                    ))}
+                </Reorder.Group>
+            ) : (
+                <div>
+                    {favorites.map((favorite, index) => (
+                        <FavoritesEntry
+                            key={favorite.id}
+                            favorite={favorite}
+                            onPlay={() => playAll(index)}
+                        />
+                    ))}
+                </div>   
+            )}
+        </StyledReorderContainer>
     );
 });
 
+const StyledDragHandle = styled(Icon)`
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+
+    &:active:hover {
+        cursor: grabbing;
+    }
+`;
+
 interface FavoritesEntryProps {
-    entry: ResultOf<typeof FAVORITES_PAGE_ENTRY>;
+    favorite: ResultOf<typeof FAVORITES_PAGE_FAVORITE>;
+    isDraggable?: boolean;
     onPlay: () => void;
+    onDragEnd?: () => void;
 }
 
-function FavoritesEntry({ entry, onPlay }: FavoritesEntryProps) {
+function FavoritesEntry({ favorite, isDraggable, onPlay, onDragEnd }: FavoritesEntryProps) {
     const { watchList, addWatchListItem, addWatchListItemNext } = useContext(PlayerContext);
+    const controls = useDragControls();
 
+    const entry = favorite.entry;
     const video = entry.videos.nodes[0];
     const theme = entry.theme;
 
@@ -323,8 +421,11 @@ function FavoritesEntry({ entry, onPlay }: FavoritesEntryProps) {
                                 id
                                 favorites {
                                     id
-                                    entry {
-                                        id
+                                    favoriteable {
+                                        __typename
+                                        ... on Entry {
+                                            id
+                                        }
                                     }
                                 }
                             }
@@ -334,7 +435,7 @@ function FavoritesEntry({ entry, onPlay }: FavoritesEntryProps) {
                         me
                             ? {
                                   ...me,
-                                  favorites: me.favorites.filter((favorite) => favorite.entry?.id !== entry.id),
+                                  favorites: me.favorites.filter((favorite) => favorite.favoriteable.__typename === "Entry" && favorite.favoriteable.id !== entry.id),
                               }
                             : undefined,
                 );
@@ -346,7 +447,7 @@ function FavoritesEntry({ entry, onPlay }: FavoritesEntryProps) {
         },
     );
 
-    return (
+    const element = (
         <VideoSummaryCard
             video={video}
             entry={entry}
@@ -407,8 +508,33 @@ function FavoritesEntry({ entry, onPlay }: FavoritesEntryProps) {
                     </MenuContent>
                 </Menu>
             }
+            append={
+                isDraggable ? (
+                    <StyledDragHandle
+                        icon={faGripVertical}
+                        color="text-disabled"
+                        onPointerDown={(event) => controls.start(event)}
+                    />
+                ) : null
+            }
         />
     );
+
+    if (isDraggable) {
+        return (
+            <Reorder.Item
+                as="div"
+                value={favorite}
+                dragListener={false}
+                dragControls={controls}
+                onDragEnd={() => onDragEnd?.()}
+            >
+                {element}
+            </Reorder.Item>
+        );
+    }
+
+    return element;
 }
 
 export const getServerSideProps: GetServerSideProps<FavoritesPageProps, FavoritesPageParams> = async ({ req }) => {
@@ -418,9 +544,9 @@ export const getServerSideProps: GetServerSideProps<FavoritesPageProps, Favorite
         query: FAVORITES_PAGE_QUERY,
     });
 
-    const entries = extractValidEntries(data);
+    const favorites = extractValidFavorites(data);
 
-    if (!entries) {
+    if (!favorites) {
         return {
             notFound: true,
         };
@@ -429,22 +555,27 @@ export const getServerSideProps: GetServerSideProps<FavoritesPageProps, Favorite
     return {
         props: {
             ...getSharedPageProps(),
-            entries,
+            favorites: favorites,
         },
     };
 };
 
-function extractValidEntries(data: ResultOf<typeof FAVORITES_PAGE_QUERY> | null | undefined) {
+function extractValidFavorites(data: ResultOf<typeof FAVORITES_PAGE_QUERY> | null | undefined) {
+    const favorites = getFragmentData(FAVORITES_PAGE_FAVORITE, data?.me?.favorites);
+
+    if (!favorites) {
+        return null;
+    }
+
     return (
-        data?.me?.favorites.flatMap((favorite) => {
-            if (favorite.entry === null) {
+        favorites.flatMap((favorite) => {
+            if (favorite.entry.__typename !== "Entry") {
                 return [];
             }
-            const entry = getFragmentData(FAVORITES_PAGE_ENTRY, favorite.entry);
-            if (entry.videos.nodes.length === 0) {
+            if (favorite.entry.videos.nodes.length === 0) {
                 return [];
             }
-            return [favorite.entry];
+            return [favorite];
         }) ?? null
     );
 }
