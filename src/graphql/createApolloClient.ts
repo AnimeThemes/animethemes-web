@@ -1,4 +1,5 @@
-import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from "@apollo/client";
+import { ApolloClient, ApolloLink, CombinedGraphQLErrors, HttpLink, InMemoryCache } from "@apollo/client";
+import { ErrorLink } from "@apollo/client/link/error";
 import { print } from "@apollo/client/utilities";
 import type { IncomingMessage } from "node:http";
 
@@ -15,6 +16,16 @@ const logLink = new ApolloLink((operation, forward) => {
     return forward(operation);
 });
 
+const errorLink = new ErrorLink(({ error }) => {
+    if (CombinedGraphQLErrors.is(error)) {
+        error.errors.forEach(({ message, locations, path }) =>
+            console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`),
+        );
+    } else {
+        console.error("[Network error]:", error);
+    }
+});
+
 /**
  * This function is for server-side use only! For client side queries use ./client.ts instead.
  */
@@ -22,6 +33,7 @@ const createApolloClient = (req?: IncomingMessage) => {
     return new ApolloClient({
         link: ApolloLink.from([
             logLink,
+            errorLink,
             new HttpLink({
                 uri: SERVER_GRAPHQL_URL,
                 headers: req && {
