@@ -151,7 +151,7 @@ export const PROFILE_PAGE_ME = graphql(`
             priority
             default
         }
-        playlists(sort: [CREATED_AT_DESC]) {
+        playlists(pagination: { first: 1000 }, sort: [CREATED_AT_DESC]) {
             nodes {
                 ...PlaylistSummaryCardPlaylist
                 ...PlaylistEditDialogPlaylist
@@ -201,7 +201,7 @@ export default function ProfilePage({ me: meFragment }: ProfilePageProps) {
 
     const roles = (me?.roles ?? [])
         .filter((role) => !role.default)
-        .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+        .sort((a, b) => b.priority - a.priority);
     const highlightColor = roles[0]?.color ?? "";
 
     const [currentTime, setCurrentTime] = useState<number>(() => Date.now());
