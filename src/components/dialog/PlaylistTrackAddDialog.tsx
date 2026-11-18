@@ -84,7 +84,7 @@ export const PLAYLIST_TRACK_ADD_FORM_PLAYLIST = graphql(`
     query PlaylistTrackAddFormPlaylist($entryId: Int!, $videoId: Int!) {
         me {
             id
-            playlists {
+            playlists(pagination: { first: 1000 }) {
                 nodes {
                     ...PlaylistTrackAddCardPlaylist
                     id
