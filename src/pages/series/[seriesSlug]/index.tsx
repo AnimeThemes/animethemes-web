@@ -66,10 +66,8 @@ export const SERIES_DETAIL_PAGE_SERIES = graphql(`
                         }
                     }
                 }
-                images {
-                    nodes {
-                        ...extractImagesImage
-                    }
+                imagesV2 {
+                    ...extractImagesImage
                 }
             }
         }
@@ -125,7 +123,7 @@ export default function SeriesDetailPage({ series: seriesFragment }: SeriesDetai
             <SidebarContainer>
                 <StyledDesktopOnly>
                     <MultiCoverImage
-                        items={anime.map((anime) => ({ images: anime.images.nodes, name: anime.title.romaji }))}
+                        items={anime.map((anime) => ({ images: anime.imagesV2, name: anime.title.romaji }))}
                     />
                 </StyledDesktopOnly>
                 <Column style={{ "--gap": "24px" }}>

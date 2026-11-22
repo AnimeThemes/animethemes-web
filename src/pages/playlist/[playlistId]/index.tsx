@@ -176,10 +176,8 @@ export const PLAYLIST_DETAIL_PAGE_TRACK = graphql(`
                     }
                     year
                     season
-                    images {
-                        nodes {
-                            ...extractImagesImage
-                        }
+                    imagesV2 {
+                        ...extractImagesImage
                     }
                 }
                 song {
@@ -339,7 +337,7 @@ export default function PlaylistDetailPage({
             tracks.flatMap((track) => {
                 const anime = track.entry.theme?.anime;
 
-                return anime ? [{ ...extractImages(anime.images.nodes), name: anime.title.romaji }] : [];
+                return anime ? [{ ...extractImages(anime.imagesV2), name: anime.title.romaji }] : [];
             }),
         [tracks],
     );
