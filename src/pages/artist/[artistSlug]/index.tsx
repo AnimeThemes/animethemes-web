@@ -245,21 +245,15 @@ export const ARTIST_DETAIL_PAGE_ARTIST = graphql(`
                 }
             }
         }
-        images {
-            edges {
-                ...extractMultipleImagesImageArtistEdge
-            }
+        imagesV2 {
+            ...extractMultipleImagesImageArtist
         }
-        resources {
-            edges {
-                node {
-                    id
-                    link
-                    site
-                    siteLocalized
-                }
-                as
-            }
+        resourcesV2 {
+            id
+            link
+            site
+            siteLocalized
+            as
         }
     }
 `);
@@ -315,7 +309,7 @@ interface ArtistDetailPageParams extends ParsedUrlQuery {
 
 export default function ArtistDetailPage({ artist: artistFragment, informationMarkdownSource }: ArtistDetailPageProps) {
     const artist = useMemo(() => getFragmentData(ARTIST_DETAIL_PAGE_ARTIST, artistFragment), [artistFragment]);
-    const images = extractMultipleImages(artist.images.edges);
+    const images = extractMultipleImages(artist.imagesV2);
     const [collapseInformation, setCollapseInformation] = useState(true);
 
     const songStaffs = artist.songStaff;
@@ -504,14 +498,14 @@ export default function ArtistDetailPage({ artist: artistFragment, informationMa
                                 </StyledList>
                             </DescriptionList.Item>
                         )}
-                        {!!artist.resources.edges.length && (
+                        {!!artist.resourcesV2.length && (
                             <DescriptionList.Item title="Links">
                                 <StyledList>
-                                    {[...artist.resources.edges]
-                                        .sort((a, b) => compare(a.node.site, b.node.site) || compare(a.as, b.as))
+                                    {[...artist.resourcesV2]
+                                        .sort((a, b) => compare(a.site, b.site) || compare(a.as, b.as))
                                         .map((resource) => (
-                                            <ExternalLink key={resource.node.link} href={resource.node.link}>
-                                                {resource.node.siteLocalized}
+                                            <ExternalLink key={resource.link} href={resource.link}>
+                                                {resource.siteLocalized}
                                                 {!!resource.as && ` (${resource.as})`}
                                             </ExternalLink>
                                         ))}

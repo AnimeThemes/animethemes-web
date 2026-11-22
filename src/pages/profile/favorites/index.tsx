@@ -118,10 +118,8 @@ export const FAVORITES_PAGE_FAVORITE = graphql(`
                         }
                         year
                         season
-                        images {
-                            nodes {
-                                ...extractImagesImage
-                            }
+                        imagesV2 {
+                            ...extractImagesImage
                         }
                     }
                     song {
@@ -256,7 +254,7 @@ export default function FavoritesPage({ favorites: favoriteFragments }: Favorite
             favorites.flatMap((favorite) => {
                 const anime = favorite.entry.theme?.anime;
 
-                return anime ? [{ ...extractImages(anime.images.nodes), name: anime.title.romaji }] : [];
+                return anime ? [{ ...extractImages(anime.imagesV2), name: anime.title.romaji }] : [];
             }),
         [favorites],
     );

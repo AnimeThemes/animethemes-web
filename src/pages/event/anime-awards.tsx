@@ -66,10 +66,8 @@ export const ANIME_AWARDS_PAGE_THEME = graphql(`
             title {
                 romaji
             }
-            images {
-                nodes {
-                    ...extractImagesImage
-                }
+            imagesV2 {
+                ...extractImagesImage
             }
         }
         song {
@@ -318,7 +316,7 @@ function AwardThemeSummaryCard({
         return null;
     }
 
-    const { smallCover } = extractImages(theme.anime.images.nodes);
+    const { smallCover } = extractImages(theme.anime.imagesV2);
 
     if (!entry.videos.nodes.length) {
         return null;

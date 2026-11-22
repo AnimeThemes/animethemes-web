@@ -71,21 +71,15 @@ export const ANIME_DETAIL_PAGE_ANIME = graphql(`
                 name
             }
         }
-        resources {
-            edges {
-                node {
-                    id
-                    site
-                    siteLocalized
-                    link
-                }
-                as
-            }
+        resourcesV2 {
+            id
+            site
+            siteLocalized
+            link
+            as
         }
-        images {
-            nodes {
-                ...extractImagesImage
-            }
+        imagesV2 {
+            ...extractImagesImage
         }
         themes {
             ...AnimeThemeFilterTheme
@@ -129,7 +123,7 @@ export default function AnimeDetailPage({ anime: animeFragment, synopsisMarkdown
     const anime = getFragmentData(ANIME_DETAIL_PAGE_ANIME, animeFragment);
 
     const [collapseSynopsis, setCollapseSynopsis] = useState(true);
-    const { smallCover, largeCover } = extractImages(anime.images.nodes);
+    const { smallCover, largeCover } = extractImages(anime.imagesV2);
 
     return (
         <>
@@ -200,14 +194,14 @@ export default function AnimeDetailPage({ anime: animeFragment, synopsisMarkdown
                                 </StyledList>
                             </DescriptionList.Item>
                         ) : null}
-                        {anime.resources.edges.length ? (
+                        {anime.resourcesV2.length ? (
                             <DescriptionList.Item title="Links">
                                 <StyledList>
-                                    {[...anime.resources.edges]
-                                        .sort((a, b) => compare(a.node.site, b.node.site) || compare(a.as, b.as))
+                                    {[...anime.resourcesV2]
+                                        .sort((a, b) => compare(a.site, b.site) || compare(a.as, b.as))
                                         .map((resource) => (
-                                            <ExternalLink key={resource.node.link} href={resource.node.link}>
-                                                {resource.node.siteLocalized}
+                                            <ExternalLink key={resource.link} href={resource.link}>
+                                                {resource.siteLocalized}
                                                 {!!resource.as && ` (${resource.as})`}
                                             </ExternalLink>
                                         ))}

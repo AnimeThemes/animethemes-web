@@ -1,13 +1,11 @@
 import { type FragmentType, getFragmentData, graphql } from "@/graphql/generated";
 
-export const EXTRACT_MULTIPLE_IMAGES_IMAGE_ARTIST_EDGE = graphql(`
-    fragment extractMultipleImagesImageArtistEdge on ImageableEdge {
+export const EXTRACT_MULTIPLE_IMAGES_IMAGE_ARTIST = graphql(`
+    fragment extractMultipleImagesImageArtist on Image {
         depth
-        node {
-            id
-            link
-            facet
-        }
+        id
+        link
+        facet
     }
 `);
 
@@ -18,14 +16,14 @@ interface ExtractMultipleImagesResult {
 }
 
 export default function extractMultipleImages(
-    imageEdgeFragments: Array<FragmentType<typeof EXTRACT_MULTIPLE_IMAGES_IMAGE_ARTIST_EDGE>> | null,
+    imageFragments: Array<FragmentType<typeof EXTRACT_MULTIPLE_IMAGES_IMAGE_ARTIST>> | null,
 ): Array<ExtractMultipleImagesResult> {
-    const imageEdges = imageEdgeFragments
-        ? getFragmentData(EXTRACT_MULTIPLE_IMAGES_IMAGE_ARTIST_EDGE, imageEdgeFragments)
+    const images = imageFragments
+        ? getFragmentData(EXTRACT_MULTIPLE_IMAGES_IMAGE_ARTIST, imageFragments)
         : [];
 
-    if (imageEdges?.length > 0) {
-        const largeCovers = imageEdges.filter((edge) => edge.node.facet === "LARGE_COVER");
+    if (images?.length > 0) {
+        const largeCovers = images.filter((image) => image.facet === "LARGE_COVER");
 
         return largeCovers
             .sort((a, b) => {
@@ -40,7 +38,7 @@ export default function extractMultipleImages(
                 }
                 return 0;
             })
-            .map((edge) => ({ depth: edge.depth, facet: edge.node.facet, link: edge.node.link }));
+            .map((image) => ({ depth: image.depth, facet: image.facet, link: image.link }));
     }
 
     return [];

@@ -74,30 +74,22 @@ export const STUDIO_DETAIL_PAGE_STUDIO = graphql(`
                         }
                     }
                 }
-                images {
-                    nodes {
-                        id
-                        facet
-                        link
-                    }
-                }
-            }
-        }
-        resources {
-            edges {
-                as
-                node {
+                imagesV2 {
                     id
+                    facet
                     link
-                    site
-                    siteLocalized
                 }
             }
         }
-        images {
-            nodes {
-                ...extractImagesImage
-            }
+        resourcesV2 {
+            as
+            id
+            link
+            site
+            siteLocalized
+        }
+        imagesV2 {
+            ...extractImagesImage
         }
     }
 `);
@@ -136,7 +128,7 @@ interface StudioDetailPageParams extends ParsedUrlQuery {
 export default function StudioDetailPage({ studio: studioFragment }: StudioDetailPageProps) {
     const studio = getFragmentData(STUDIO_DETAIL_PAGE_STUDIO, studioFragment);
     const anime = studio.anime.nodes;
-    const { largeCover } = extractImages(studio.images.nodes);
+    const { largeCover } = extractImages(studio.imagesV2);
 
     const [showFilter, toggleShowFilter] = useToggle();
     const [sortBy, setSortBy] = useState<
@@ -155,14 +147,14 @@ export default function StudioDetailPage({ studio: studioFragment }: StudioDetai
                         <StudioCoverImage studio={studio} alt={`Logo of ${studio.name}`} />
                     </StyledDesktopOnly>
                     <DescriptionList>
-                        {!!studio.resources.edges.length && (
+                        {!!studio.resourcesV2.length && (
                             <DescriptionList.Item title="Links">
                                 <StyledList>
-                                    {[...studio.resources.edges]
-                                        .sort((a, b) => compare(a.node.site, b.node.site) || compare(a.as, b.as))
+                                    {[...studio.resourcesV2]
+                                        .sort((a, b) => compare(a.site, b.site) || compare(a.as, b.as))
                                         .map((resource) => (
-                                            <ExternalLink key={resource.node.link} href={resource.node.link}>
-                                                {resource.node.siteLocalized}
+                                            <ExternalLink key={resource.link} href={resource.link}>
+                                                {resource.siteLocalized}
                                                 {!!resource.as && ` (${resource.as})`}
                                             </ExternalLink>
                                         ))}
